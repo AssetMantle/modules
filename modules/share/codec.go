@@ -17,10 +17,3 @@ func RegisterCodec(codec *codec.Codec) {
 	mint.RegisterCodec(codec)
 	send.RegisterCodec(codec)
 }
-
-var packageCodec = codec.New()
-
-func init() {
-	RegisterCodec(packageCodec)
-	packageCodec.Seal()
-}

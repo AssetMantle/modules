@@ -8,10 +8,3 @@ import (
 func RegisterCodec(codec *codec.Codec) {
 	feedback.RegisterCodec(codec)
 }
-
-var packageCodec = codec.New()
-
-func init() {
-	RegisterCodec(packageCodec)
-	packageCodec.Seal()
-}
