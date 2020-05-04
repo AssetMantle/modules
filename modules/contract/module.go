@@ -31,14 +31,14 @@ func (AppModuleBasic) Name() string {
 func (AppModuleBasic) RegisterCodec(codec *codec.Codec) {
 	RegisterCodec(codec)
 }
-func (AppModuleBasic) DefaultGenesis() json.RawMessage {
-	return packageCodec.MustMarshalJSON(DefaultGenesisState())
+func (AppModuleBasic) DefaultGenesis(jsonMarshaler codec.JSONMarshaler) json.RawMessage {
+	return jsonMarshaler.MustMarshalJSON(DefaultGenesisState())
 }
-func (AppModuleBasic) ValidateGenesis(bz json.RawMessage) error {
+func (AppModuleBasic) ValidateGenesis(jsonMarshaler codec.JSONMarshaler, rawMessage json.RawMessage) error {
 	var genesisState GenesisState
-	error := packageCodec.UnmarshalJSON(bz, &genesisState)
-	if error != nil {
-		return error
+	Error := jsonMarshaler.UnmarshalJSON(rawMessage, &genesisState)
+	if Error != nil {
+		return Error
 	}
 	return ValidateGenesis(genesisState)
 }
@@ -76,15 +76,15 @@ func (AppModule) QuerierRoute() string {
 func (appModule AppModule) NewQuerierHandler() sdkTypes.Querier {
 	return NewQuerier(appModule.keeper)
 }
-func (appModule AppModule) InitGenesis(context sdkTypes.Context, data json.RawMessage) []abciTypes.ValidatorUpdate {
+func (appModule AppModule) InitGenesis(context sdkTypes.Context, jsonMarshaler codec.JSONMarshaler, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
 	var genesisState GenesisState
-	packageCodec.MustUnmarshalJSON(data, &genesisState)
+	jsonMarshaler.MustUnmarshalJSON(rawMessage, &genesisState)
 	InitializeGenesisState(context, appModule.keeper, genesisState)
 	return []abciTypes.ValidatorUpdate{}
 }
-func (appModule AppModule) ExportGenesis(context sdkTypes.Context) json.RawMessage {
+func (appModule AppModule) ExportGenesis(context sdkTypes.Context, jsonMarshaler codec.JSONMarshaler) json.RawMessage {
 	gs := ExportGenesis(context, appModule.keeper)
-	return packageCodec.MustMarshalJSON(gs)
+	return jsonMarshaler.MustMarshalJSON(gs)
 }
 func (AppModule) BeginBlock(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {}
 
