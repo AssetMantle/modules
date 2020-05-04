@@ -7,8 +7,8 @@ import (
 
 func HandleMessage(context sdkTypes.Context, keeper Keeper, message Message) (*sdkTypes.Result, error) {
 
-	if error := keeper.transact(context, message); error != nil {
-		return nil, error
+	if Error := keeper.transact(context, message); Error != nil {
+		return nil, Error
 	}
 
 	context.EventManager().EmitEvent(
@@ -18,5 +18,5 @@ func HandleMessage(context sdkTypes.Context, keeper Keeper, message Message) (*s
 		),
 	)
 
-	return &sdkTypes.Result{Events: context.EventManager().Events()}, nil
+	return &sdkTypes.Result{Events: context.EventManager().ABCIEvents()}, nil
 }

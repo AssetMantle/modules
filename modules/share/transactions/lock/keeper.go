@@ -25,6 +25,5 @@ func (baseKeeper baseKeeper) transact(context sdkTypes.Context, message Message)
 		return err
 	}
 	share.SetLock(message.Lock)
-	baseKeeper.mapper.Update(context, share)
-	return nil
+	return baseKeeper.mapper.Update(context, share)
 }

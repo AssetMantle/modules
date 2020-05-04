@@ -20,11 +20,10 @@ func NewKeeper(mapper mapper.Mapper) Keeper {
 var _ Keeper = (*baseKeeper)(nil)
 
 func (baseKeeper baseKeeper) transact(context sdkTypes.Context, message Message) error {
-	share, error := baseKeeper.mapper.Read(context, mapper.NewShareAddress(message.Address))
-	if error != nil {
-		return error
+	share, Error := baseKeeper.mapper.Read(context, mapper.NewShareAddress(message.Address))
+	if Error != nil {
+		return Error
 	}
 	share.SetOwner(message.To)
-	baseKeeper.mapper.Update(context, share)
-	return nil
+	return baseKeeper.mapper.Update(context, share)
 }

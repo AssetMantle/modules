@@ -21,7 +21,7 @@ func QueryRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		responseWriter.Header().Set("Content-Type", "application/json")
 
-		rest.PostProcessResponse(responseWriter, cliContext, "dfsdfsdfsdfs")
+		rest.PostProcessResponse(responseWriter, cliContext, "")
 
 	}
 }

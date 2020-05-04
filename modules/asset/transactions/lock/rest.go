@@ -2,12 +2,12 @@ package lock
 
 import (
 	"github.com/asaskevich/govalidator"
+	"github.com/cosmos/cosmos-sdk/x/auth/client"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 )
 
 type Request struct {
@@ -29,15 +29,15 @@ func RestRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		_, error := govalidator.ValidateStruct(request)
-		if error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, error.Error())
+		_, Error := govalidator.ValidateStruct(request)
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
 
-		from, error := sdkTypes.AccAddressFromBech32(request.BaseReq.From)
-		if error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, error.Error())
+		from, Error := sdkTypes.AccAddressFromBech32(request.BaseReq.From)
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
 
@@ -46,6 +46,6 @@ func RestRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 			Address: request.Address,
 			Lock:    request.Lock,
 		}
-		utils.WriteGenerateStdTxResponse(responseWriter, cliContext, request.BaseReq, []sdkTypes.Msg{message})
+		client.WriteGenerateStdTxResponse(responseWriter, cliContext, request.BaseReq, []sdkTypes.Msg{message})
 	}
 }
