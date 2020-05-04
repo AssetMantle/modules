@@ -28,9 +28,9 @@ func (baseShare *baseShare) SetOwner(Owner sdkTypes.AccAddress) { baseShare.Owne
 func (baseShare baseShare) GetLock() bool                       { return baseShare.Lock }
 func (baseShare *baseShare) SetLock(Lock bool)                  { baseShare.Lock = Lock }
 func (baseShare baseShare) String() string {
-	bytes, error := json.Marshal(baseShare)
-	if error != nil {
-		panic(error)
+	bytes, Error := json.Marshal(baseShare)
+	if Error != nil {
+		panic(Error)
 	}
 	return string(bytes)
 }

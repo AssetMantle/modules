@@ -2,6 +2,7 @@ package send
 
 import (
 	"bufio"
+	"github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/persistenceOne/persistenceSDK/modules/asset/constants"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -10,7 +11,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 )
 
 func TransactionCommand(codec *codec.Codec) *cobra.Command {
@@ -37,7 +37,7 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			return utils.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{message})
+			return client.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{message})
 		},
 	}
 

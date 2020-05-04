@@ -19,9 +19,9 @@ var _ types.AssetAddress = (*baseAssetAddress)(nil)
 
 func (baseAssetAddress baseAssetAddress) Bytes() []byte { return []byte(baseAssetAddress.Address) }
 func (baseAssetAddress baseAssetAddress) String() string {
-	bytes, error := json.Marshal(baseAssetAddress)
-	if error != nil {
-		panic(error)
+	bytes, Error := json.Marshal(baseAssetAddress)
+	if Error != nil {
+		panic(Error)
 	}
 	return string(bytes)
 }

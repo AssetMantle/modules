@@ -2,6 +2,7 @@ package sign
 
 import (
 	"bufio"
+	"github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/persistenceOne/persistenceSDK/modules/contract/constants"
 	"github.com/spf13/cobra"
 
@@ -9,7 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 )
 
 func TransactionCommand(codec *codec.Codec) *cobra.Command {
@@ -27,11 +27,11 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 				From: cliContext.GetFromAddress(),
 			}
 
-			if error := message.ValidateBasic(); error != nil {
-				return error
+			if Error := message.ValidateBasic(); Error != nil {
+				return Error
 			}
 
-			return utils.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{message})
+			return client.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{message})
 		},
 	}
 

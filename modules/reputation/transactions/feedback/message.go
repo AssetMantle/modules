@@ -18,9 +18,9 @@ func (message Message) Route() string { return constants.ModuleName }
 func (message Message) Type() string { return constants.FeedbackTransaction }
 
 func (message Message) ValidateBasic() error {
-	var _, error = govalidator.ValidateStruct(message)
-	if error != nil {
-		return errors.Wrap(constants.IncorrectMessageCode, error.Error())
+	var _, Error = govalidator.ValidateStruct(message)
+	if Error != nil {
+		return errors.Wrap(constants.IncorrectMessageCode, Error.Error())
 	}
 	return nil
 }

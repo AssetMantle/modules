@@ -9,19 +9,13 @@ type baseAssetAddress struct {
 	Address string `json:"address" yaml:"address" valid:"required~address"`
 }
 
-func NewAssetAddress(address string) types.AssetAddress {
-	return baseAssetAddress{
-		Address: address,
-	}
-}
-
 var _ types.AssetAddress = (*baseAssetAddress)(nil)
 
 func (baseAssetAddress baseAssetAddress) Bytes() []byte { return []byte(baseAssetAddress.Address) }
 func (baseAssetAddress baseAssetAddress) String() string {
-	bytes, error := json.Marshal(baseAssetAddress)
-	if error != nil {
-		panic(error)
+	bytes, Error := json.Marshal(baseAssetAddress)
+	if Error != nil {
+		panic(Error)
 	}
 	return string(bytes)
 }

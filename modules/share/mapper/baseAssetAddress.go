@@ -19,9 +19,9 @@ var _ types.ShareAddress = (*baseShareAddress)(nil)
 
 func (baseShareAddress baseShareAddress) Bytes() []byte { return []byte(baseShareAddress.Address) }
 func (baseShareAddress baseShareAddress) String() string {
-	bytes, error := json.Marshal(baseShareAddress)
-	if error != nil {
-		panic(error)
+	bytes, Error := json.Marshal(baseShareAddress)
+	if Error != nil {
+		panic(Error)
 	}
 	return string(bytes)
 }

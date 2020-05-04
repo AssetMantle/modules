@@ -28,9 +28,9 @@ func (baseAsset *baseAsset) SetOwner(Owner sdkTypes.AccAddress) { baseAsset.Owne
 func (baseAsset baseAsset) GetLock() bool                       { return baseAsset.Lock }
 func (baseAsset *baseAsset) SetLock(Lock bool)                  { baseAsset.Lock = Lock }
 func (baseAsset baseAsset) String() string {
-	bytes, error := json.Marshal(baseAsset)
-	if error != nil {
-		panic(error)
+	bytes, Error := json.Marshal(baseAsset)
+	if Error != nil {
+		panic(Error)
 	}
 	return string(bytes)
 }
