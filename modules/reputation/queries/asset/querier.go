@@ -4,8 +4,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/asset/constants"
-	"github.com/persistenceOne/persistenceSDK/modules/asset/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/mapper"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 )
 

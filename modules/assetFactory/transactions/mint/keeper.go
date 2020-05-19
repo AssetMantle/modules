@@ -1,4 +1,4 @@
-package execute
+package mint
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -20,5 +20,5 @@ func NewKeeper(mapper mapper.Mapper) Keeper {
 var _ Keeper = (*baseKeeper)(nil)
 
 func (baseKeeper baseKeeper) transact(context sdkTypes.Context, message Message) error {
-	return nil
+	return baseKeeper.mapper.Create(context, mapper.NewAssetAddress(message.Address), message.To, message.Lock)
 }

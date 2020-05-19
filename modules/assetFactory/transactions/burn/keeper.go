@@ -1,4 +1,4 @@
-package execute
+package burn
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -20,5 +20,6 @@ func NewKeeper(mapper mapper.Mapper) Keeper {
 var _ Keeper = (*baseKeeper)(nil)
 
 func (baseKeeper baseKeeper) transact(context sdkTypes.Context, message Message) error {
+	baseKeeper.mapper.Delete(context, mapper.NewAssetAddress(message.Address))
 	return nil
 }
