@@ -1,8 +1,6 @@
 package types
 
-type Fact interface {
+type ID interface {
 	String() string
 	Bytes() []byte
-
-	Signatures() Signatures
 }

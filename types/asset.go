@@ -7,17 +7,15 @@ import (
 type Asset interface {
 	String() string
 
-	Address() Address
-
-	Issuer() sdkTypes.AccAddress
-	MutateIssuer(sdkTypes.AccAddress) error
-	IsIssuer(sdkTypes.AccAddress) bool
+	ID() ID
 
 	Owner() sdkTypes.AccAddress
 	MutateOwner(sdkTypes.AccAddress) error
 	IsOwner(sdkTypes.AccAddress) bool
 
+	ClassificationID() ID
 	Properties() Properties
+	MaintainersID() ID
 
 	GetLock() int
 	SetLock(int)

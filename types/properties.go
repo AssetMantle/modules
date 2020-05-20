@@ -3,5 +3,7 @@ package types
 type Properties interface {
 	String() string
 
-	Mutate(Property) error
+	AddProperty(Property) error
+	RemoveProperty(Property) error
+	MutateProperty(Property) error
 }

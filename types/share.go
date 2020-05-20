@@ -3,9 +3,7 @@ package types
 import sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 type Share interface {
-	//Immutable
-	GetAddress() Address
-	//Mutable
+	ID() ID
 	GetOwner() sdkTypes.AccAddress
 	SetOwner(sdkTypes.AccAddress)
 	GetLock() bool

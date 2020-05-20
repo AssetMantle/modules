@@ -3,8 +3,7 @@ package types
 type Trait interface {
 	String() string
 
-	GetID() TraitID
+	ID() ID
+
 	IsMutable() bool
 }
-
-type TraitID []byte

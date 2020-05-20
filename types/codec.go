@@ -6,6 +6,6 @@ import (
 
 func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*Asset)(nil), nil)
-	codec.RegisterInterface((*Address)(nil), nil)
+	codec.RegisterInterface((*ID)(nil), nil)
 	codec.RegisterInterface((*Share)(nil), nil)
 }

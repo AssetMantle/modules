@@ -1,6 +1,8 @@
 package types
 
-type Property struct {
-	TraitID
-	Fact
+type Property interface {
+	String() string
+
+	ID() ID
+	Fact() Fact
 }
