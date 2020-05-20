@@ -5,6 +5,7 @@ type Assets interface {
 
 	Asset(ID) Asset
 
-	Remove(Asset) error
 	Add(Asset) error
+	Remove(Asset) error
+	Mutate(Asset) error
 }

@@ -7,4 +7,5 @@ type Signatures interface {
 
 	Add(Signature) error
 	Remove(Signature) error
+	Mutate(Signature) error
 }

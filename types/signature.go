@@ -6,6 +6,5 @@ type Signature interface {
 	ID() ID
 
 	IsValid([]byte) bool
-
 	HasExpired(Height) bool
 }

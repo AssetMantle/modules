@@ -9,7 +9,7 @@ type Maintainers interface {
 
 	Maintainer(ID) Maintainer
 
-	AddMaintainer(Maintainer) error
-	RemoveMaintainer(Maintainer) error
-	MutateMaintainer(Maintainer) error
+	Add(Maintainer) error
+	Remove(Maintainer) error
+	Mutate(Maintainer) error
 }

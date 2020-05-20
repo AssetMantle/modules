@@ -5,12 +5,11 @@ type Maintainer interface {
 
 	ID() ID
 
-	CanMutateMaintainersID() bool
 	CanMutateMaintainersProperty(ID) bool
 
 	CanAddMaintainer() bool
-	CanMutateMaintainer() bool
 	CanRemoveMaintainer() bool
+	CanMutateMaintainer() bool
 
 	CanMutateLock() bool
 	CanMutateBurn() bool

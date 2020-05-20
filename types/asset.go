@@ -10,18 +10,17 @@ type Asset interface {
 	ID() ID
 
 	Owner() sdkTypes.AccAddress
-	MutateOwner(sdkTypes.AccAddress) error
 	IsOwner(sdkTypes.AccAddress) bool
 
 	ClassificationID() ID
 	Properties() Properties
 	MaintainersID() ID
 
-	GetLock() int
-	SetLock(int)
-	CanSend() bool
+	GetLock() Height
+	SetLock(Height) error
+	CanSend(Height) bool
 
-	GetBurn() int
-	SetBurn(int)
-	CanBurn() bool
+	GetBurn() Height
+	SetBurn(Height) error
+	CanBurn(Height) bool
 }
