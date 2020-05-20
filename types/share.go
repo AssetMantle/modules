@@ -4,7 +4,7 @@ import sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 type Share interface {
 	//Immutable
-	GetAddress() ShareAddress
+	GetAddress() Address
 	//Mutable
 	GetOwner() sdkTypes.AccAddress
 	SetOwner(sdkTypes.AccAddress)

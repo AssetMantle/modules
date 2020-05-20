@@ -5,12 +5,25 @@ import (
 )
 
 type Asset interface {
-	//Immutable
-	GetAddress() AssetAddress
-	//Mutable
-	GetOwner() sdkTypes.AccAddress
-	SetOwner(sdkTypes.AccAddress)
-	GetLock() bool
-	SetLock(bool)
 	String() string
+
+	Address() Address
+
+	Issuer() sdkTypes.AccAddress
+	MutateIssuer(sdkTypes.AccAddress) error
+	IsIssuer(sdkTypes.AccAddress) bool
+
+	Owner() sdkTypes.AccAddress
+	MutateOwner(sdkTypes.AccAddress) error
+	IsOwner(sdkTypes.AccAddress) bool
+
+	Properties() Properties
+
+	GetLock() int
+	SetLock(int)
+	CanSend() bool
+
+	GetBurn() int
+	SetBurn(int)
+	CanBurn() bool
 }

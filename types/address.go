@@ -1,6 +1,6 @@
 package types
 
-type AssetAddress interface {
+type Address interface {
 	Bytes() []byte
 	String() string
 }
