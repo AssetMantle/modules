@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
-	"github.com/persistenceOne/persistenceSDK/modules/asset/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
 	"net/http"
 	"strings"
 )
