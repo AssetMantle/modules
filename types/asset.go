@@ -1,20 +1,15 @@
 package types
 
-import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-)
-
 type Asset interface {
 	String() string
 
 	ID() ID
 
-	Owner() sdkTypes.AccAddress
-	IsOwner(sdkTypes.AccAddress) bool
-
 	ClassificationID() ID
-	Properties() Properties
+	OwnersID() Owners
 	MaintainersID() ID
+
+	Properties() Properties
 
 	GetLock() Height
 	SetLock(Height) error
@@ -23,4 +18,6 @@ type Asset interface {
 	GetBurn() Height
 	SetBurn(Height) error
 	CanBurn(Height) bool
+
+	IsSplittable() bool
 }
