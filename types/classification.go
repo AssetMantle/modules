@@ -8,5 +8,7 @@ type Classification interface {
 	IsBurnMutable() bool
 	IsLockMutable() bool
 
+	IsSplittable() bool
+
 	Traits() Traits
 }

@@ -5,19 +5,22 @@ type Asset interface {
 
 	ID() ID
 
+	ChainID() ID
 	ClassificationID() ID
-	OwnersID() Owners
+	HashID() ID
+
+	OwnersID() ID
 	MaintainersID() ID
 
 	Properties() Properties
 
 	GetLock() Height
-	SetLock(Height) error
 	CanSend(Height) bool
 
 	GetBurn() Height
-	SetBurn(Height) error
 	CanBurn(Height) bool
 
-	IsSplittable() bool
+	MutateProperties(Properties) error
+	MutateLock(Height) error
+	MutateBurn(Height) error
 }
