@@ -1,18 +1,18 @@
 package mapper
 
-import "github.com/persistenceOne/persistenceSDK/types"
+import (
+	"encoding/base64"
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
+	"github.com/persistenceOne/persistenceSDK/types"
+	"strings"
+)
 
-func baseAssetFromInterface(asset types.Asset) baseAsset {
-	return baseAsset{
-		baseAssetID{
-			asset.ChainID(),
-			asset.MaintainersID(),
-			asset.ClassificationID(),
-			asset.HashID(),
-		},
-		asset.OwnersID(),
-		asset.Properties(),
-		asset.GetLock(),
-		asset.GetBurn(),
+func AssetIdentifiersFromString(assetID string) (chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) {
+	base64IDs := strings.Split(assetID, constants.IDSeparator)
+	baseAssetID := baseAssetID{base64.URLEncoding.DecodeString(base64IDs[0]),
+		base64.URLEncoding.DecodeString(base64IDs[1]),
+		base64.URLEncoding.DecodeString(base64IDs[2]),
+		base64.URLEncoding.DecodeString(base64IDs[3]),
 	}
+	return baseAssetID.chainID, baseAssetID.maintainersID, baseAssetID.classificationID, baseAssetID.hashID
 }

@@ -3,6 +3,7 @@ package burn
 import (
 	"bufio"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/mapper"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -24,9 +25,13 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 			transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(auth.DefaultTxEncoder(codec))
 			cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
 
+			chainID, maintainersID, classificationID, hashID := mapper.AssetIdentifiersFromString(viper.GetString(constants.AddressFlag))
 			message := Message{
-				From:    cliContext.GetFromAddress(),
-				Address: viper.GetString(constants.AddressFlag),
+				from:             cliContext.GetFromAddress(),
+				chainID:          chainID,
+				maintainersID:    maintainersID,
+				classificationID: classificationID,
+				hashID:           hashID,
 			}
 
 			if err := message.ValidateBasic(); err != nil {

@@ -20,6 +20,8 @@ func NewKeeper(mapper mapper.Mapper) Keeper {
 var _ Keeper = (*baseKeeper)(nil)
 
 func (baseKeeper baseKeeper) transact(context sdkTypes.Context, message Message) error {
-	baseKeeper.mapper.Delete(context, mapper.NewAssetAddress(message.Address))
-	return nil
+	assetID := baseKeeper.mapper.AssetID(message.chainID, message.classificationID, message.maintainersID, message.hashID)
+	assets := baseKeeper.mapper.Assets(context, assetID)
+	asset := assets.Asset(assetID)
+	return assets.Remove(asset)
 }

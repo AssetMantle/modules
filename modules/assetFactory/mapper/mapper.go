@@ -18,8 +18,12 @@ type Mapper interface {
 	delete(sdkTypes.Context, baseAssetID)
 	iterate(sdkTypes.Context, baseAssetID, func(baseAsset) bool)
 
+	assetBaseImplementationFromInterface(asset types.Asset) baseAsset
+
+	AssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) baseAssetID
+
 	New(sdkTypes.Context) types.Assets
-	Assets(context sdkTypes.Context, chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.Assets
+	Assets(sdkTypes.Context, baseAssetID) types.Assets
 }
 
 type baseMapper struct {
@@ -95,17 +99,32 @@ func (baseMapper baseMapper) New(context sdkTypes.Context) types.Assets {
 	return &baseAssets{baseMapper: baseMapper, context: context}
 }
 
-func (baseMapper baseMapper) Assets(context sdkTypes.Context, chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.Assets {
+func (baseMapper baseMapper) Assets(context sdkTypes.Context, baseAssetID baseAssetID) types.Assets {
 	var baseAssetList []baseAsset
-	baseAssetID := baseAssetID{chainID, maintainersID, classificationID, hashID}
-	if hashID != nil {
-		baseAssetList = append(baseAssetList, baseMapper.read(context, baseAssetID))
-	} else {
-		appendBaseAssetList := func(baseAsset baseAsset) bool {
-			baseAssetList = append(baseAssetList, baseAsset)
-			return false
-		}
-		baseMapper.iterate(context, baseAssetID, appendBaseAssetList)
+
+	appendBaseAssetList := func(baseAsset baseAsset) bool {
+		baseAssetList = append(baseAssetList, baseAsset)
+		return false
 	}
+	baseMapper.iterate(context, baseAssetID, appendBaseAssetList)
+
 	return &baseAssets{baseAssetID, baseAssetList, baseMapper, context}
+}
+func (baseMapper baseMapper) assetBaseImplementationFromInterface(asset types.Asset) baseAsset {
+	return baseAsset{
+		baseAssetID{
+			asset.ChainID(),
+			asset.MaintainersID(),
+			asset.ClassificationID(),
+			asset.HashID(),
+		},
+		asset.OwnersID(),
+		asset.Properties(),
+		asset.GetLock(),
+		asset.GetBurn(),
+	}
+}
+
+func (baseMapper baseMapper) AssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) baseAssetID {
+	return baseAssetID{chainID, maintainersID, classificationID, hashID}
 }
