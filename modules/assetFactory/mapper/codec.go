@@ -6,5 +6,5 @@ import (
 
 func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterConcrete(&baseAsset{}, "assetFactory/baseAsset", nil)
-	codec.RegisterConcrete(&baseAssetAddress{}, "assetFactory/baseAssetAddress", nil)
+	codec.RegisterConcrete(&baseAssetID{}, "assetFactory/baseAssetAddress", nil)
 }

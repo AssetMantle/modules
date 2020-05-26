@@ -5,5 +5,5 @@ type ID interface {
 
 	Bytes() []byte
 
-	IsEqualTo(ID) bool
+	Compare(ID) int
 }

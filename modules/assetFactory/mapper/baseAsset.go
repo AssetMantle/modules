@@ -8,14 +8,11 @@ import (
 var _ types.Asset = (*baseAsset)(nil)
 
 type baseAsset struct {
-	id baseAssetID
-
-	ownersID types.ID
-
-	properties types.Properties
-
-	lock types.Height
-	burn types.Height
+	baseAssetID baseAssetID
+	ownersID    types.ID
+	properties  types.Properties
+	lock        types.Height
+	burn        types.Height
 }
 
 func (baseAsset baseAsset) String() string {
@@ -26,14 +23,14 @@ func (baseAsset baseAsset) String() string {
 	return string(bytes)
 }
 
-func (baseAsset baseAsset) ID() types.ID { return baseAsset.id }
+func (baseAsset baseAsset) ID() types.ID { return baseAsset.baseAssetID }
 
-func (baseAsset baseAsset) ChainID() types.ID          { return baseAsset.id.chainID }
-func (baseAsset baseAsset) ClassificationID() types.ID { return baseAsset.id.classificationID }
-func (baseAsset baseAsset) HashID() types.ID           { return baseAsset.id.hashID }
+func (baseAsset baseAsset) ChainID() types.ID          { return baseAsset.baseAssetID.chainID }
+func (baseAsset baseAsset) ClassificationID() types.ID { return baseAsset.baseAssetID.classificationID }
+func (baseAsset baseAsset) HashID() types.ID           { return baseAsset.baseAssetID.hashID }
 
 func (baseAsset baseAsset) OwnersID() types.ID      { return baseAsset.ownersID }
-func (baseAsset baseAsset) MaintainersID() types.ID { return baseAsset.maintainersID }
+func (baseAsset baseAsset) MaintainersID() types.ID { return baseAsset.baseAssetID.maintainersID }
 
 func (baseAsset *baseAsset) Properties() types.Properties { return baseAsset.properties }
 

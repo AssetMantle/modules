@@ -31,9 +31,6 @@ func (baseAssetID baseAssetID) String() string {
 	return string(bytes)
 }
 
-func (baseAssetID baseAssetID) IsEqualTo(id types.ID) bool {
-	if bytes.Compare(baseAssetID.Bytes(), id.Bytes()) == 0 {
-		return true
-	}
-	return false
+func (baseAssetID baseAssetID) Compare(id types.ID) int {
+	return bytes.Compare(baseAssetID.Bytes(), id.Bytes())
 }
