@@ -19,7 +19,7 @@ type Mapper interface {
 	iterate(sdkTypes.Context, baseAssetID, func(baseAsset) bool)
 
 	New(sdkTypes.Context) types.Assets
-	Assets(sdkTypes.Context, types.ID) types.Assets
+	Assets(context sdkTypes.Context, chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.Assets
 }
 
 type baseMapper struct {
@@ -91,8 +91,8 @@ func (baseMapper baseMapper) iterate(context sdkTypes.Context, baseAssetID baseA
 	}
 }
 
-func (baseMapper baseMapper) New() types.Assets {
-	return &baseAssets{baseMapper: baseMapper}
+func (baseMapper baseMapper) New(context sdkTypes.Context) types.Assets {
+	return &baseAssets{baseMapper: baseMapper, context: context}
 }
 
 func (baseMapper baseMapper) Assets(context sdkTypes.Context, chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.Assets {
