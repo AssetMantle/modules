@@ -24,11 +24,11 @@ func (baseAssetID baseAssetID) Bytes() []byte {
 }
 
 func (baseAssetID baseAssetID) String() string {
-	bytes, Error := json.Marshal(baseAssetID)
+	Bytes, Error := json.Marshal(baseAssetID)
 	if Error != nil {
 		panic(Error)
 	}
-	return string(bytes)
+	return string(Bytes)
 }
 
 func (baseAssetID baseAssetID) Compare(id types.ID) int {

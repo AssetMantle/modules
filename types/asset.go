@@ -7,10 +7,10 @@ type Asset interface {
 
 	ChainID() ID
 	ClassificationID() ID
+	MaintainersID() ID
 	HashID() ID
 
 	OwnersID() ID
-	MaintainersID() ID
 
 	Properties() Properties
 

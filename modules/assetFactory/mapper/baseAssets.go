@@ -2,6 +2,7 @@ package mapper
 
 import (
 	"encoding/json"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
@@ -10,6 +11,9 @@ var _ types.Assets = (*baseAssets)(nil)
 type baseAssets struct {
 	baseAssetID   baseAssetID
 	baseAssetList []baseAsset
+
+	baseMapper baseMapper
+	context    sdkTypes.Context
 }
 
 func (baseAssets baseAssets) String() string {
@@ -30,6 +34,8 @@ func (baseAssets baseAssets) Asset(id types.ID) types.Asset {
 	return nil
 }
 
-func (baseAssets *baseAssets) Add(asset types.Asset) error    {}
+func (baseAssets *baseAssets) Add(asset types.Asset) error {
+
+}
 func (baseAssets *baseAssets) Remove(asset types.Asset) error {}
 func (baseAssets *baseAssets) Mutate(asset types.Asset) error {}

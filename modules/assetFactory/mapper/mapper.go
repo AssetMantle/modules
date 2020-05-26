@@ -18,8 +18,8 @@ type Mapper interface {
 	delete(sdkTypes.Context, baseAssetID)
 	iterate(sdkTypes.Context, baseAssetID, func(baseAsset) bool)
 
-	New() types.Assets
-	Assets(types.ID) types.Assets
+	New(sdkTypes.Context) types.Assets
+	Assets(sdkTypes.Context, types.ID) types.Assets
 }
 
 type baseMapper struct {
@@ -92,9 +92,20 @@ func (baseMapper baseMapper) iterate(context sdkTypes.Context, baseAssetID baseA
 }
 
 func (baseMapper baseMapper) New() types.Assets {
-	return &baseAssets{}
+	return &baseAssets{baseMapper: baseMapper}
 }
 
-func (baseMapper baseMapper) Assets(id types.ID) types.Assets {
-
+func (baseMapper baseMapper) Assets(context sdkTypes.Context, chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.Assets {
+	var baseAssetList []baseAsset
+	baseAssetID := baseAssetID{chainID, maintainersID, classificationID, hashID}
+	if hashID != nil {
+		baseAssetList = append(baseAssetList, baseMapper.read(context, baseAssetID))
+	} else {
+		appendBaseAssetList := func(baseAsset baseAsset) bool {
+			baseAssetList = append(baseAssetList, baseAsset)
+			return false
+		}
+		baseMapper.iterate(context, baseAssetID, appendBaseAssetList)
+	}
+	return &baseAssets{baseAssetID, baseAssetList, baseMapper, context}
 }
