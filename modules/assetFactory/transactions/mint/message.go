@@ -13,9 +13,9 @@ type message struct {
 	chainID          types.ID
 	maintainersID    types.ID
 	classificationID types.ID
-	properties       [2][]string
-	lock             int
-	burn             int
+	propertyList     []types.Property
+	lock             types.Height
+	burn             types.Height
 }
 
 var _ sdkTypes.Msg = message{}

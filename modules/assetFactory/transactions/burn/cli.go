@@ -3,6 +3,7 @@ package burn
 import (
 	"bufio"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
+	"github.com/persistenceOne/persistenceSDK/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -26,7 +27,7 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 
 			message := message{
 				from:    cliContext.GetFromAddress(),
-				assetID: viper.GetString(constants.AssetID),
+				assetID: types.BaseID{BaseBytes: []byte(viper.GetString(constants.AssetID))},
 			}
 
 			if err := message.ValidateBasic(); err != nil {

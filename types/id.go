@@ -2,7 +2,6 @@ package types
 
 import (
 	"bytes"
-	"encoding/base64"
 )
 
 type ID interface {
@@ -12,11 +11,11 @@ type ID interface {
 }
 
 type BaseID struct {
-	BaseBytes []byte
+	BaseString string
 }
 
 var _ ID = (*BaseID)(nil)
 
-func (baseID BaseID) String() string    { return base64.URLEncoding.EncodeToString(baseID.BaseBytes) }
-func (baseID BaseID) Bytes() []byte     { return baseID.BaseBytes }
-func (baseID BaseID) Compare(id ID) int { return bytes.Compare(baseID.BaseBytes, id.Bytes()) }
+func (baseID BaseID) String() string    { return baseID.BaseString }
+func (baseID BaseID) Bytes() []byte     { return []byte(baseID.BaseString) }
+func (baseID BaseID) Compare(id ID) int { return bytes.Compare(baseID.Bytes(), id.Bytes()) }

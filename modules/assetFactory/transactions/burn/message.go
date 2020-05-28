@@ -5,11 +5,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
+	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 type message struct {
 	from    sdkTypes.AccAddress
-	assetID string
+	assetID types.ID
 }
 
 var _ sdkTypes.Msg = message{}

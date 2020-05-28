@@ -2,6 +2,7 @@ package burn
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/mapper"
 )
 
@@ -20,8 +21,10 @@ func NewKeeper(mapper mapper.Mapper) Keeper {
 var _ Keeper = (*baseKeeper)(nil)
 
 func (baseKeeper baseKeeper) transact(context sdkTypes.Context, message message) error {
-	assetID := mapper.AssetIDFromString(message.assetID)
-	assets := baseKeeper.mapper.Assets(context, assetID)
-	asset := assets.Asset(assetID)
+	assets := baseKeeper.mapper.Assets(context, message.assetID)
+	asset := assets.Asset(message.assetID)
+	if asset == nil {
+		return constants.EntityNotFoundCode
+	}
 	return assets.Remove(asset)
 }

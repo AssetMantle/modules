@@ -11,7 +11,7 @@ type Properties interface {
 }
 
 type BaseProperties struct {
-	BasePropertyList []BaseProperty
+	PropertyList []Property
 }
 
 var _ Properties = (*BaseProperties)(nil)

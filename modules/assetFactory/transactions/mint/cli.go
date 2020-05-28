@@ -25,23 +25,25 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 			transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(auth.DefaultTxEncoder(codec))
 			cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
 
-			var properties [2][]string
+			var propertyList []types.Property
 			for i := 0; i <= constants.MaxTraitCount; i++ {
 				if viper.GetString(viper.GetString(constants.TraitID+strconv.Itoa(i))) != "" {
-					traitID := viper.GetString(constants.TraitID + strconv.Itoa(i))
-					property := viper.GetString(constants.Property + strconv.Itoa(i))
-					properties[0] = append(properties[0], traitID)
-					properties[1] = append(properties[1], property)
+					var basePropertyList []types.BaseProperty
+					basePropertyList = append(basePropertyList,
+						types.BaseProperty{
+							BaseID:   types.BaseID{BaseBytes: []byte(viper.GetString(constants.TraitID + strconv.Itoa(i)))},
+							BaseFact: types.BaseFact{BaseBytes: []byte(viper.GetString(constants.Property + strconv.Itoa(i)))},
+						})
 				}
 			}
 			message := message{
 				from:             cliContext.GetFromAddress(),
-				chainID:          types.BaseID{Binary: []byte(viper.GetString(constants.ChainID))},
-				maintainersID:    types.BaseID{Binary: []byte(viper.GetString(constants.MaintainersID))},
-				classificationID: types.BaseID{Binary: []byte(viper.GetString(constants.ClassificationID))},
-				properties:       properties,
-				lock:             viper.GetInt(constants.Lock),
-				burn:             viper.GetInt(constants.Burn),
+				chainID:          types.BaseID{BaseBytes: []byte(viper.GetString(constants.ChainID))},
+				maintainersID:    types.BaseID{BaseBytes: []byte(viper.GetString(constants.MaintainersID))},
+				classificationID: types.BaseID{BaseBytes: []byte(viper.GetString(constants.ClassificationID))},
+				propertyList:     propertyList,
+				lock:             types.BaseHeight{Height: viper.GetInt(constants.Lock)},
+				burn:             types.BaseHeight{Height: viper.GetInt(constants.Burn)},
 			}
 
 			if err := message.ValidateBasic(); err != nil {
