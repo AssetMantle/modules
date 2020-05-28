@@ -10,20 +10,20 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
-type Request struct {
-	BaseReq rest.BaseReq `json:"base_req" yaml:"base_req" valid:"required~base_req"`
-	Address string       `json:"address" yaml:"address" valid:"required~address"`
+type request struct {
+	baseReq rest.BaseReq
+	assetID string
 }
 
 func RestRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
-		var request Request
+		var request request
 		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
 			return
 		}
 
-		request.BaseReq = request.BaseReq.Sanitize()
-		if !request.BaseReq.ValidateBasic(responseWriter) {
+		request.baseReq = request.baseReq.Sanitize()
+		if !request.baseReq.ValidateBasic(responseWriter) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
@@ -34,16 +34,16 @@ func RestRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		from, Error := sdkTypes.AccAddressFromBech32(request.BaseReq.From)
+		from, Error := sdkTypes.AccAddressFromBech32(request.baseReq.From)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
 
-		message := Message{
-			From:    from,
-			Address: request.Address,
+		message := message{
+			from:    from,
+			assetID: request.assetID,
 		}
-		client.WriteGenerateStdTxResponse(responseWriter, cliContext, request.BaseReq, []sdkTypes.Msg{message})
+		client.WriteGenerateStdTxResponse(responseWriter, cliContext, request.baseReq, []sdkTypes.Msg{message})
 	}
 }
