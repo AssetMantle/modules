@@ -5,7 +5,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
 )
 
-func HandleMessage(context sdkTypes.Context, keeper Keeper, message Message) (*sdkTypes.Result, error) {
+func HandleMessage(context sdkTypes.Context, keeper Keeper, message message) (*sdkTypes.Result, error) {
 
 	if Error := keeper.transact(context, message); Error != nil {
 		return nil, Error
