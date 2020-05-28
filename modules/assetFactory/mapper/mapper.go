@@ -1,10 +1,14 @@
 package mapper
 
 import (
+	"crypto/sha1"
+	"encoding/base64"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
+	"sort"
+	"strings"
 )
 
 func storeKey(assetID assetID) []byte {
@@ -20,10 +24,12 @@ type Mapper interface {
 
 	assetBaseImplementationFromInterface(asset types.Asset) baseAsset
 
-	GenerateAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) assetID
+	GenerateHashID(immutablePropertyList []types.Property) types.ID
+	GenerateAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID
+	MakeAsset(assetID types.ID, properties types.Properties, lock types.Height, burn types.Height) types.Asset
 
 	New(sdkTypes.Context) types.Assets
-	Assets(sdkTypes.Context, assetID) types.Assets
+	Assets(sdkTypes.Context, types.ID) types.Assets
 }
 
 type baseMapper struct {
@@ -109,21 +115,54 @@ func (baseMapper baseMapper) assetBaseImplementationFromInterface(asset types.As
 	}
 }
 
-func (baseMapper baseMapper) GenerateAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) assetID {
+func (baseMapper baseMapper) assetIDFromInterface(id types.ID) assetID {
+	base64IDs := strings.Split(id.String(), constants.IDSeparator)
+	chainID, _ := base64.URLEncoding.DecodeString(base64IDs[0])
+	classificationID, _ := base64.URLEncoding.DecodeString(base64IDs[1])
+	maintainersID, _ := base64.URLEncoding.DecodeString(base64IDs[2])
+	hashID, _ := base64.URLEncoding.DecodeString(base64IDs[3])
+
+	return assetID{
+		chainID:          types.BaseID{BaseBytes: chainID},
+		maintainersID:    types.BaseID{BaseBytes: classificationID},
+		classificationID: types.BaseID{BaseBytes: maintainersID},
+		hashID:           types.BaseID{BaseBytes: hashID},
+	}
+}
+
+func (baseMapper baseMapper) GenerateHashID(immutablePropertyList []types.Property) types.ID {
+	var facts []string
+	for _, immutableProperty := range immutablePropertyList {
+		facts = append(facts, immutableProperty.String())
+	}
+	sort.Strings(facts)
+	toDigest := strings.Join(facts, constants.PropertySeparator)
+	h := sha1.New()
+	h.Write([]byte(toDigest))
+	return types.BaseID{BaseBytes: h.Sum(nil)}
+}
+
+func (baseMapper baseMapper) GenerateAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
 	return assetID{chainID, maintainersID, classificationID, hashID}
+}
+
+func (baseMapper baseMapper) MakeAsset(id types.ID, properties types.Properties, lock types.Height, burn types.Height) types.Asset {
+	assetID := baseMapper.assetIDFromInterface(id)
+	return &baseAsset{assetID: assetID, properties: properties, lock: lock, burn: burn}
 }
 
 func (baseMapper baseMapper) New(context sdkTypes.Context) types.Assets {
 	return &baseAssets{baseMapper: baseMapper, context: context}
 }
 
-func (baseMapper baseMapper) Assets(context sdkTypes.Context, assetID assetID) types.Assets {
+func (baseMapper baseMapper) Assets(context sdkTypes.Context, id types.ID) types.Assets {
 	var baseAssetList []baseAsset
 
 	appendBaseAssetList := func(baseAsset baseAsset) bool {
 		baseAssetList = append(baseAssetList, baseAsset)
 		return false
 	}
+	assetID := baseMapper.assetIDFromInterface(id)
 	baseMapper.iterate(context, assetID, appendBaseAssetList)
 
 	return &baseAssets{assetID, baseAssetList, baseMapper, context}
