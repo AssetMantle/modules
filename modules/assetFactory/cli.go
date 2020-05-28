@@ -4,7 +4,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/queries/asset"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/burn"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/lock"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/send"
 	"github.com/spf13/cobra"
@@ -23,7 +22,6 @@ func GetCLIRootTransactionCommand(codec *codec.Codec) *cobra.Command {
 	}
 	rootTransactionCommand.AddCommand(flags.PostCommands(
 		burn.TransactionCommand(codec),
-		lock.TransactionCommand(codec),
 		mint.TransactionCommand(codec),
 		send.TransactionCommand(codec),
 	)...)

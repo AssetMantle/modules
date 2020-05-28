@@ -19,8 +19,6 @@ func NewHandler(keeper Keeper) sdkTypes.Handler {
 		switch message := msg.(type) {
 		case burn.Message:
 			return burn.HandleMessage(context, keeper.getBurnKeeper(), message)
-		case lock.Message:
-			return lock.HandleMessage(context, keeper.getLockKeeper(), message)
 		case mint.Message:
 			return mint.HandleMessage(context, keeper.getMintKeeper(), message)
 		case send.Message:
