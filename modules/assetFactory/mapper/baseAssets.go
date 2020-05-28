@@ -9,7 +9,7 @@ import (
 var _ types.Assets = (*baseAssets)(nil)
 
 type baseAssets struct {
-	baseAssetID   baseAssetID
+	assetID       assetID
 	baseAssetList []baseAsset
 
 	baseMapper baseMapper
@@ -24,10 +24,10 @@ func (baseAssets baseAssets) String() string {
 	return string(bytes)
 }
 
-func (baseAssets baseAssets) ID() types.ID { return baseAssets.baseAssetID }
+func (baseAssets baseAssets) ID() types.ID { return baseAssets.assetID }
 func (baseAssets baseAssets) Asset(id types.ID) types.Asset {
 	for _, baseAsset := range baseAssets.baseAssetList {
-		if baseAsset.baseAssetID.Compare(id) == 0 {
+		if baseAsset.assetID.Compare(id) == 0 {
 			return &baseAsset
 		}
 	}
@@ -38,7 +38,7 @@ func (baseAssets *baseAssets) Add(asset types.Asset) error {
 	for i, baseAsset := range baseAssets.baseAssetList {
 		if baseAsset.ID().Compare(asset.ID()) < 0 {
 			baseAssets.baseAssetList = append(append(baseAssets.baseAssetList[:i], baseAsset), baseAssets.baseAssetList[i+1:]...)
-			baseAssets.baseMapper.create(baseAssets.context, baseAssetFromInterface(asset))
+			baseAssets.baseMapper.create(baseAssets.context, baseAssets.baseMapper.assetBaseImplementationFromInterface(asset))
 			break
 		}
 	}
@@ -48,7 +48,7 @@ func (baseAssets *baseAssets) Remove(asset types.Asset) error {
 	for i, baseAsset := range baseAssets.baseAssetList {
 		if baseAsset.ID().Compare(asset.ID()) == 0 {
 			baseAssets.baseAssetList = append(baseAssets.baseAssetList[:i], baseAssets.baseAssetList[i+1:]...)
-			baseAssets.baseMapper.delete(baseAssets.context, baseAssetFromInterface(asset).baseAssetID)
+			baseAssets.baseMapper.delete(baseAssets.context, baseAssets.baseMapper.assetBaseImplementationFromInterface(asset).assetID)
 			break
 		}
 	}
@@ -57,8 +57,8 @@ func (baseAssets *baseAssets) Remove(asset types.Asset) error {
 func (baseAssets *baseAssets) Mutate(asset types.Asset) error {
 	for i, baseAsset := range baseAssets.baseAssetList {
 		if baseAsset.ID().Compare(asset.ID()) == 0 {
-			baseAssets.baseAssetList[i] = baseAssetFromInterface(asset)
-			baseAssets.baseMapper.update(baseAssets.context, baseAssetFromInterface(asset))
+			baseAssets.baseAssetList[i] = baseAssets.baseMapper.assetBaseImplementationFromInterface(asset)
+			baseAssets.baseMapper.update(baseAssets.context, baseAssets.baseMapper.assetBaseImplementationFromInterface(asset))
 			break
 		}
 	}
