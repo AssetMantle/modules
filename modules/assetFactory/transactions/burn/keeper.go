@@ -6,7 +6,7 @@ import (
 )
 
 type Keeper interface {
-	transact(sdkTypes.Context, Message) error
+	transact(sdkTypes.Context, message) error
 }
 
 type baseKeeper struct {
@@ -19,8 +19,8 @@ func NewKeeper(mapper mapper.Mapper) Keeper {
 
 var _ Keeper = (*baseKeeper)(nil)
 
-func (baseKeeper baseKeeper) transact(context sdkTypes.Context, message Message) error {
-	assetID := baseKeeper.mapper.AssetID(message.chainID, message.classificationID, message.maintainersID, message.hashID)
+func (baseKeeper baseKeeper) transact(context sdkTypes.Context, message message) error {
+	assetID := mapper.AssetIDFromString(message.assetID)
 	assets := baseKeeper.mapper.Assets(context, assetID)
 	asset := assets.Asset(assetID)
 	return assets.Remove(asset)
