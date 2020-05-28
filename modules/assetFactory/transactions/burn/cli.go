@@ -25,9 +25,9 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 			transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(auth.DefaultTxEncoder(codec))
 			cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
 
-			message := message{
+			message := Message{
 				from:    cliContext.GetFromAddress(),
-				assetID: types.BaseID{BaseBytes: []byte(viper.GetString(constants.AssetID))},
+				assetID: types.BaseID{BaseString: viper.GetString(constants.AssetID)},
 			}
 
 			if err := message.ValidateBasic(); err != nil {

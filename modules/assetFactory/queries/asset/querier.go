@@ -28,12 +28,9 @@ func (baseQuerier baseQuerier) Query(context sdkTypes.Context, requestQuery abci
 	if Error := packageCodec.UnmarshalJSON(requestQuery.Data, &query); Error != nil {
 		return nil, errors.Wrap(constants.IncorrectQueryCode, Error.Error())
 	}
-	asset, getAssetError := baseQuerier.mapper.Read(context, mapper.NewAssetAddress(query.Address))
-	if getAssetError != nil {
-		return nil, getAssetError
-	}
+	assets := baseQuerier.mapper.Assets(context, query.id)
 
-	bytes, marshalJSONIndentError := codec.MarshalJSONIndent(packageCodec, asset)
+	bytes, marshalJSONIndentError := codec.MarshalJSONIndent(packageCodec, assets)
 	if marshalJSONIndentError != nil {
 		panic(marshalJSONIndentError)
 	}

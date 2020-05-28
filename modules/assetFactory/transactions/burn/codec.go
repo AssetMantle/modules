@@ -5,7 +5,7 @@ import (
 )
 
 func RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(message{}, "assetFactory/burn", nil)
+	codec.RegisterConcrete(Message{}, "assetFactory/burn", nil)
 }
 
 var packageCodec = codec.New()

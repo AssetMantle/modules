@@ -3,6 +3,7 @@ package burn
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/x/auth/client"
+	"github.com/persistenceOne/persistenceSDK/types"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -40,9 +41,9 @@ func RestRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		message := message{
+		message := Message{
 			from:    from,
-			assetID: request.assetID,
+			assetID: types.BaseID{BaseString: request.assetID},
 		}
 		client.WriteGenerateStdTxResponse(responseWriter, cliContext, request.baseReq, []sdkTypes.Msg{message})
 	}

@@ -19,7 +19,7 @@ func QueryCommand(codec *codec.Codec) *cobra.Command {
 			cliContext := context.NewCLIContext().WithCodec(codec)
 
 			bytes := packageCodec.MustMarshalJSON(query{
-				Address: viper.GetString(constants.AddressFlag),
+				Address: viper.GetString(constants.AssetID),
 			})
 
 			response, _, queryWithDataError := cliContext.QueryWithData(strings.Join([]string{"", "custom", constants.QuerierRoute, constants.AssetQuery}, "/"), bytes)
@@ -36,6 +36,6 @@ func QueryCommand(codec *codec.Codec) *cobra.Command {
 		},
 	}
 
-	command.Flags().String(constants.AddressFlag, "", "address")
+	command.Flags().String(constants.AssetID, "", "assetID")
 	return command
 }

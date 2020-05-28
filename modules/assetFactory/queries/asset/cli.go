@@ -18,9 +18,7 @@ func QueryCommand(codec *codec.Codec) *cobra.Command {
 		RunE: func(command *cobra.Command, args []string) error {
 			cliContext := context.NewCLIContext().WithCodec(codec)
 
-			bytes := packageCodec.MustMarshalJSON(query{
-				Address: viper.GetString(constants.AddressFlag),
-			})
+			bytes := packageCodec.MustMarshalJSON(query{id: types.BaseID{BaseString: viper.GetString(constants.AssetID)}})
 
 			response, _, queryWithDataError := cliContext.QueryWithData(strings.Join([]string{"", "custom", constants.QuerierRoute, constants.AssetQuery}, "/"), bytes)
 			if queryWithDataError != nil {
@@ -36,6 +34,6 @@ func QueryCommand(codec *codec.Codec) *cobra.Command {
 		},
 	}
 
-	command.Flags().String(constants.AddressFlag, "", "address")
+	command.Flags().String(constants.AssetID, "", "assetID")
 	return command
 }

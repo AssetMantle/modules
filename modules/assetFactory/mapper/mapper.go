@@ -116,17 +116,12 @@ func (baseMapper baseMapper) assetBaseImplementationFromInterface(asset types.As
 }
 
 func (baseMapper baseMapper) assetIDFromInterface(id types.ID) assetID {
-	base64IDs := strings.Split(id.String(), constants.IDSeparator)
-	chainID, _ := base64.URLEncoding.DecodeString(base64IDs[0])
-	classificationID, _ := base64.URLEncoding.DecodeString(base64IDs[1])
-	maintainersID, _ := base64.URLEncoding.DecodeString(base64IDs[2])
-	hashID, _ := base64.URLEncoding.DecodeString(base64IDs[3])
-
+	base64IDList := strings.Split(id.String(), constants.IDSeparator)
 	return assetID{
-		chainID:          types.BaseID{BaseBytes: chainID},
-		maintainersID:    types.BaseID{BaseBytes: classificationID},
-		classificationID: types.BaseID{BaseBytes: maintainersID},
-		hashID:           types.BaseID{BaseBytes: hashID},
+		chainID:          types.BaseID{BaseString: base64IDList[0]},
+		maintainersID:    types.BaseID{BaseString: base64IDList[1]},
+		classificationID: types.BaseID{BaseString: base64IDList[2]},
+		hashID:           types.BaseID{BaseString: base64IDList[4]},
 	}
 }
 
@@ -139,7 +134,7 @@ func (baseMapper baseMapper) GenerateHashID(immutablePropertyList []types.Proper
 	toDigest := strings.Join(facts, constants.PropertySeparator)
 	h := sha1.New()
 	h.Write([]byte(toDigest))
-	return types.BaseID{BaseBytes: h.Sum(nil)}
+	return types.BaseID{BaseString: base64.URLEncoding.EncodeToString(h.Sum(nil))}
 }
 
 func (baseMapper baseMapper) GenerateAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {

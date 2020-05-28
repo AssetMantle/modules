@@ -3,6 +3,7 @@ package mint
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/x/auth/client"
+	"github.com/persistenceOne/persistenceSDK/types"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -10,22 +11,25 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
-type Request struct {
-	BaseReq rest.BaseReq `json:"base_req" yaml:"base_req" valid:"required~base_req"`
-	To      string       `json:"to" yaml:"to" valid:"required~to"`
-	Address string       `json:"address" yaml:"address" valid:"required~address"`
-	Lock    bool         `json:"lock" yaml:"lock"`
+type request struct {
+	baseReq          rest.BaseReq
+	chainID          types.BaseID
+	classificationID types.BaseID
+	maintainersID    types.BaseID
+	properties       []types.BaseProperty
+	lock             types.BaseHeight
+	burn             types.BaseHeight
 }
 
 func RestRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
-		var request Request
+		var request request
 		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
 			return
 		}
 
-		request.BaseReq = request.BaseReq.Sanitize()
-		if !request.BaseReq.ValidateBasic(responseWriter) {
+		request.baseReq = request.baseReq.Sanitize()
+		if !request.baseReq.ValidateBasic(responseWriter) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
@@ -36,24 +40,25 @@ func RestRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		from, Error := sdkTypes.AccAddressFromBech32(request.BaseReq.From)
+		from, Error := sdkTypes.AccAddressFromBech32(request.baseReq.From)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
 
-		to, Error := sdkTypes.AccAddressFromBech32(request.To)
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
-			return
+		propertyList := make([]types.Property, len(request.properties))
+		for i, property := range request.properties {
+			propertyList[i] = &property
 		}
-
 		message := Message{
-			From:    from,
-			To:      to,
-			Address: request.Address,
-			Lock:    request.Lock,
+			from:             from,
+			chainID:          request.chainID,
+			maintainersID:    request.maintainersID,
+			classificationID: request.classificationID,
+			propertyList:     propertyList,
+			lock:             request.lock,
+			burn:             request.burn,
 		}
-		client.WriteGenerateStdTxResponse(responseWriter, cliContext, request.BaseReq, []sdkTypes.Msg{message})
+		client.WriteGenerateStdTxResponse(responseWriter, cliContext, request.baseReq, []sdkTypes.Msg{message})
 	}
 }

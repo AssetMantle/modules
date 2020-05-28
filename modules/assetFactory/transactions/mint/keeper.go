@@ -7,7 +7,7 @@ import (
 )
 
 type Keeper interface {
-	transact(sdkTypes.Context, message) error
+	transact(sdkTypes.Context, Message) error
 }
 
 type baseKeeper struct {
@@ -20,7 +20,7 @@ func NewKeeper(mapper mapper.Mapper) Keeper {
 
 var _ Keeper = (*baseKeeper)(nil)
 
-func (baseKeeper baseKeeper) transact(context sdkTypes.Context, message message) error {
+func (baseKeeper baseKeeper) transact(context sdkTypes.Context, message Message) error {
 	immutablePropertyList := message.propertyList
 	hashID := baseKeeper.mapper.GenerateHashID(immutablePropertyList)
 	assetID := baseKeeper.mapper.GenerateAssetID(message.chainID, message.maintainersID, message.classificationID, hashID)

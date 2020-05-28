@@ -8,7 +8,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
-type message struct {
+type Message struct {
 	from             sdkTypes.AccAddress
 	chainID          types.ID
 	maintainersID    types.ID
@@ -18,20 +18,20 @@ type message struct {
 	burn             types.Height
 }
 
-var _ sdkTypes.Msg = message{}
+var _ sdkTypes.Msg = Message{}
 
-func (message message) Route() string { return constants.ModuleName }
-func (message message) Type() string  { return constants.MintTransaction }
-func (message message) ValidateBasic() error {
+func (message Message) Route() string { return constants.ModuleName }
+func (message Message) Type() string  { return constants.MintTransaction }
+func (message Message) ValidateBasic() error {
 	var _, Error = govalidator.ValidateStruct(message)
 	if Error != nil {
 		return errors.Wrap(constants.IncorrectMessageCode, Error.Error())
 	}
 	return nil
 }
-func (message message) GetSignBytes() []byte {
+func (message Message) GetSignBytes() []byte {
 	return sdkTypes.MustSortJSON(packageCodec.MustMarshalJSON(message))
 }
-func (message message) GetSigners() []sdkTypes.AccAddress {
+func (message Message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.from}
 }
