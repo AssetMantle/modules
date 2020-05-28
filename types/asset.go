@@ -10,8 +10,6 @@ type Asset interface {
 	MaintainersID() ID
 	HashID() ID
 
-	OwnersID() ID
-
 	Properties() Properties
 
 	GetLock() Height
