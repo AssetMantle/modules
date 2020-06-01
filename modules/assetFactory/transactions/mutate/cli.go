@@ -32,7 +32,7 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 					basePropertyList = append(basePropertyList,
 						types.BaseProperty{
 							BaseID:   types.BaseID{IDString: viper.GetString(constants.TraitID + strconv.Itoa(i))},
-							BaseFact: types.BaseFact{BaseBytes: []byte(viper.GetString(constants.Property + strconv.Itoa(i)))},
+							BaseFact: types.BaseFact{FactBytes: []byte(viper.GetString(constants.Property + strconv.Itoa(i)))},
 						})
 				}
 			}
