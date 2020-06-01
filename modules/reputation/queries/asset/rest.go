@@ -1,4 +1,4 @@
-package asset
+package interNFT
 
 import (
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -22,7 +22,7 @@ func RestQueryHandler(cliContext context.CLIContext) http.HandlerFunc {
 		bytes := packageCodec.MustMarshalJSON(query{
 			Address: address,
 		})
-		response, height, err := cliContext.QueryWithData(strings.Join([]string{"", "custom", constants.QuerierRoute, constants.AssetQuery}, "/"), bytes)
+		response, height, err := cliContext.QueryWithData(strings.Join([]string{"", "custom", constants.QuerierRoute, constants.InterNFTQuery}, "/"), bytes)
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return

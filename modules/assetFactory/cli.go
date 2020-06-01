@@ -15,7 +15,7 @@ import (
 func GetCLIRootTransactionCommand(codec *codec.Codec) *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
 		Use:                        TransactionRoute,
-		Short:                      "Asset root transaction command.",
+		Short:                      "Get root transaction command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -31,7 +31,7 @@ func GetCLIRootTransactionCommand(codec *codec.Codec) *cobra.Command {
 func GetCLIRootQueryCommand(codec *codec.Codec) *cobra.Command {
 	rootQueryCommand := &cobra.Command{
 		Use:                        QuerierRoute,
-		Short:                      "Asset root query command.",
+		Short:                      "Get root query command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,

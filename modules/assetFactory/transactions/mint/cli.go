@@ -31,16 +31,16 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 					var basePropertyList []types.BaseProperty
 					basePropertyList = append(basePropertyList,
 						types.BaseProperty{
-							BaseID:   types.BaseID{BaseString: viper.GetString(constants.TraitID + strconv.Itoa(i))},
+							BaseID:   types.BaseID{IDString: viper.GetString(constants.TraitID + strconv.Itoa(i))},
 							BaseFact: types.BaseFact{BaseBytes: []byte(viper.GetString(constants.Property + strconv.Itoa(i)))},
 						})
 				}
 			}
 			message := Message{
 				from:             cliContext.GetFromAddress(),
-				chainID:          types.BaseID{BaseString: viper.GetString(constants.ChainID)},
-				maintainersID:    types.BaseID{BaseString: viper.GetString(constants.MaintainersID)},
-				classificationID: types.BaseID{BaseString: viper.GetString(constants.ClassificationID)},
+				chainID:          types.BaseID{IDString: viper.GetString(constants.ChainID)},
+				maintainersID:    types.BaseID{IDString: viper.GetString(constants.MaintainersID)},
+				classificationID: types.BaseID{IDString: viper.GetString(constants.ClassificationID)},
 				propertyList:     propertyList,
 				lock:             types.BaseHeight{Height: viper.GetInt(constants.Lock)},
 				burn:             types.BaseHeight{Height: viper.GetInt(constants.Burn)},

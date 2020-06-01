@@ -1,6 +1,6 @@
 package types
 
-type Asset interface {
+type InterNFT interface {
 	NFT
 
 	String() string
@@ -19,8 +19,4 @@ type Asset interface {
 
 	GetBurn() Height
 	CanBurn(Height) bool
-
-	MutateProperties(Properties) error
-	MutateLock(Height) error
-	MutateBurn(Height) error
 }

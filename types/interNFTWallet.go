@@ -2,7 +2,7 @@ package types
 
 import sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-type AssetWallet interface {
+type InterNFTWallet interface {
 	NFTWallet
 
 	String() string

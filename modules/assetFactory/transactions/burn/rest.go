@@ -43,7 +43,7 @@ func RestRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 
 		message := Message{
 			from:    from,
-			assetID: types.BaseID{BaseString: request.assetID},
+			assetID: types.BaseID{IDString: request.assetID},
 		}
 		client.WriteGenerateStdTxResponse(responseWriter, cliContext, request.baseReq, []sdkTypes.Msg{message})
 	}

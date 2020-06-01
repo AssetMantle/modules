@@ -18,7 +18,7 @@ type Keeper interface {
 	getAssetQuerier() asset.Querier
 }
 
-type baseKeeper struct {
+type keeper struct {
 	burnKeeper   burn.Keeper
 	mintKeeper   mint.Keeper
 	mutateKeeper mutate.Keeper
@@ -27,7 +27,7 @@ type baseKeeper struct {
 
 func NewKeeper(codec *codec.Codec, storeKey sdkTypes.StoreKey, paramSpace params.Subspace) Keeper {
 	Mapper := mapper.NewMapper(codec, storeKey)
-	return baseKeeper{
+	return keeper{
 		burnKeeper:   burn.NewKeeper(Mapper),
 		mintKeeper:   mint.NewKeeper(Mapper),
 		mutateKeeper: mutate.NewKeeper(Mapper),
@@ -35,9 +35,9 @@ func NewKeeper(codec *codec.Codec, storeKey sdkTypes.StoreKey, paramSpace params
 	}
 }
 
-var _ Keeper = (*baseKeeper)(nil)
+var _ Keeper = (*keeper)(nil)
 
-func (baseKeeper baseKeeper) getBurnKeeper() burn.Keeper     { return baseKeeper.burnKeeper }
-func (baseKeeper baseKeeper) getMintKeeper() mint.Keeper     { return baseKeeper.mintKeeper }
-func (baseKeeper baseKeeper) getMutateKeeper() mutate.Keeper { return baseKeeper.mutateKeeper }
-func (baseKeeper baseKeeper) getAssetQuerier() asset.Querier { return baseKeeper.assetQuerier }
+func (keeper keeper) getBurnKeeper() burn.Keeper     { return keeper.burnKeeper }
+func (keeper keeper) getMintKeeper() mint.Keeper     { return keeper.mintKeeper }
+func (keeper keeper) getMutateKeeper() mutate.Keeper { return keeper.mutateKeeper }
+func (keeper keeper) getAssetQuerier() asset.Querier { return keeper.assetQuerier }

@@ -10,19 +10,19 @@ type Keeper interface {
 	transact(sdkTypes.Context, Message) error
 }
 
-type baseKeeper struct {
+type keeper struct {
 	mapper mapper.Mapper
 }
 
 func NewKeeper(mapper mapper.Mapper) Keeper {
-	return baseKeeper{mapper: mapper}
+	return keeper{mapper: mapper}
 }
 
-var _ Keeper = (*baseKeeper)(nil)
+var _ Keeper = (*keeper)(nil)
 
-func (baseKeeper baseKeeper) transact(context sdkTypes.Context, message Message) error {
-	assets := baseKeeper.mapper.Assets(context, message.assetID)
-	asset := assets.Asset(message.assetID)
+func (keeper keeper) transact(context sdkTypes.Context, message Message) error {
+	assets := keeper.mapper.Assets(context, message.assetID)
+	asset := assets.Get(message.assetID)
 	if asset == nil {
 		return constants.EntityNotFoundCode
 	}

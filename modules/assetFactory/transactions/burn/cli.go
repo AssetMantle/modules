@@ -27,7 +27,7 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 
 			message := Message{
 				from:    cliContext.GetFromAddress(),
-				assetID: types.BaseID{BaseString: viper.GetString(constants.AssetID)},
+				assetID: types.BaseID{IDString: viper.GetString(constants.AssetID)},
 			}
 
 			if Error := message.ValidateBasic(); Error != nil {

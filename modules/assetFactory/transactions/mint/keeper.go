@@ -11,23 +11,23 @@ type Keeper interface {
 	transact(sdkTypes.Context, Message) error
 }
 
-type baseKeeper struct {
+type keeper struct {
 	mapper mapper.Mapper
 }
 
 func NewKeeper(mapper mapper.Mapper) Keeper {
-	return baseKeeper{mapper: mapper}
+	return keeper{mapper: mapper}
 }
 
-var _ Keeper = (*baseKeeper)(nil)
+var _ Keeper = (*keeper)(nil)
 
-func (baseKeeper baseKeeper) transact(context sdkTypes.Context, message Message) error {
+func (keeper keeper) transact(context sdkTypes.Context, message Message) error {
 	immutablePropertyList := message.propertyList
-	hashID := baseKeeper.mapper.GenerateHashID(immutablePropertyList)
-	assetID := baseKeeper.mapper.GenerateAssetID(message.chainID, message.maintainersID, message.classificationID, hashID)
-	asset := baseKeeper.mapper.MakeAsset(assetID, &types.BaseProperties{PropertyList: message.propertyList}, message.lock, message.burn)
-	assets := baseKeeper.mapper.Assets(context, assetID)
-	if assets.Asset(assetID) != nil {
+	hashID := keeper.mapper.GenerateHashID(immutablePropertyList)
+	assetID := keeper.mapper.GenerateAssetID(message.chainID, message.maintainersID, message.classificationID, hashID)
+	asset := keeper.mapper.MakeAsset(assetID, &types.BaseProperties{PropertyList: message.propertyList}, message.lock, message.burn)
+	assets := keeper.mapper.Assets(context, assetID)
+	if assets.Get(assetID) != nil {
 		return constants.EntityAlreadyExistsCode
 	}
 	return assets.Add(asset)

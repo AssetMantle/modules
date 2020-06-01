@@ -5,15 +5,17 @@ import (
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
-type baseAssetAddress struct {
+type baseInterNFTAddress struct {
 	Address string `json:"address" yaml:"address" valid:"required~address"`
 }
 
-var _ types.AssetAddress = (*baseAssetAddress)(nil)
+var _ types.InterNFTAddress = (*baseInterNFTAddress)(nil)
 
-func (baseAssetAddress baseAssetAddress) Bytes() []byte { return []byte(baseAssetAddress.Address) }
-func (baseAssetAddress baseAssetAddress) String() string {
-	bytes, Error := json.Marshal(baseAssetAddress)
+func (baseInterNFTAddress baseInterNFTAddress) Bytes() []byte {
+	return []byte(baseInterNFTAddress.Address)
+}
+func (baseInterNFTAddress baseInterNFTAddress) String() string {
+	bytes, Error := json.Marshal(baseInterNFTAddress)
 	if Error != nil {
 		panic(Error)
 	}

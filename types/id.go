@@ -11,11 +11,11 @@ type ID interface {
 }
 
 type BaseID struct {
-	BaseString string
+	IDString string
 }
 
 var _ ID = (*BaseID)(nil)
 
-func (baseID BaseID) String() string    { return baseID.BaseString }
-func (baseID BaseID) Bytes() []byte     { return []byte(baseID.BaseString) }
+func (baseID BaseID) String() string    { return baseID.IDString }
+func (baseID BaseID) Bytes() []byte     { return []byte(baseID.IDString) }
 func (baseID BaseID) Compare(id ID) int { return bytes.Compare(baseID.Bytes(), id.Bytes()) }

@@ -14,7 +14,7 @@ func RestQueryHandler(cliContext context.CLIContext) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		responseWriter.Header().Set("Content-Type", "application/json")
 		vars := mux.Vars(httpRequest)
-		id := types.BaseID{BaseString: vars["id"]}
+		id := types.BaseID{IDString: vars["id"]}
 
 		cliContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, cliContext, httpRequest)
 		if !ok {

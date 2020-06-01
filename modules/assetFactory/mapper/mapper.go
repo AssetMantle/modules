@@ -16,116 +16,116 @@ func storeKey(assetID assetID) []byte {
 }
 
 type Mapper interface {
-	create(sdkTypes.Context, baseAsset)
-	read(sdkTypes.Context, assetID) baseAsset
-	update(sdkTypes.Context, baseAsset)
+	create(sdkTypes.Context, asset)
+	read(sdkTypes.Context, assetID) asset
+	update(sdkTypes.Context, asset)
 	delete(sdkTypes.Context, assetID)
-	iterate(sdkTypes.Context, assetID, func(baseAsset) bool)
+	iterate(sdkTypes.Context, assetID, func(asset) bool)
 
-	assetBaseImplementationFromInterface(asset types.Asset) baseAsset
+	assetFromInterNFT(interNFT types.InterNFT) asset
 
 	GenerateHashID(immutablePropertyList []types.Property) types.ID
 	GenerateAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID
-	MakeAsset(assetID types.ID, properties types.Properties, lock types.Height, burn types.Height) types.Asset
+	MakeAsset(assetID types.ID, properties types.Properties, lock types.Height, burn types.Height) types.InterNFT
 
-	New(sdkTypes.Context) types.Assets
-	Assets(sdkTypes.Context, types.ID) types.Assets
+	New(sdkTypes.Context) types.InterNFTs
+	Assets(sdkTypes.Context, types.ID) types.InterNFTs
 }
 
-type baseMapper struct {
+type mapper struct {
 	storeKey sdkTypes.StoreKey
 	codec    *codec.Codec
 }
 
 func NewMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) Mapper {
-	return baseMapper{
+	return mapper{
 		storeKey: storeKey,
 		codec:    codec,
 	}
 }
 
-var _ Mapper = (*baseMapper)(nil)
+var _ Mapper = (*mapper)(nil)
 
-func (baseMapper baseMapper) create(context sdkTypes.Context, baseAsset baseAsset) {
-	bytes, Error := baseMapper.codec.MarshalBinaryBare(baseAsset)
+func (mapper mapper) create(context sdkTypes.Context, asset asset) {
+	bytes, Error := mapper.codec.MarshalBinaryBare(asset)
 	if Error != nil {
 		panic(Error)
 	}
-	kvStore := context.KVStore(baseMapper.storeKey)
-	kvStore.Set(storeKey(baseAsset.assetID), bytes)
+	kvStore := context.KVStore(mapper.storeKey)
+	kvStore.Set(storeKey(asset.assetID), bytes)
 }
-func (baseMapper baseMapper) read(context sdkTypes.Context, assetID assetID) baseAsset {
-	kvStore := context.KVStore(baseMapper.storeKey)
+func (mapper mapper) read(context sdkTypes.Context, assetID assetID) asset {
+	kvStore := context.KVStore(mapper.storeKey)
 	bytes := kvStore.Get(storeKey(assetID))
 	if bytes == nil {
-		return baseAsset{}
+		return asset{}
 	}
-	baseAsset := baseAsset{}
-	Error := baseMapper.codec.UnmarshalBinaryBare(bytes, &baseAsset)
+	asset := asset{}
+	Error := mapper.codec.UnmarshalBinaryBare(bytes, &asset)
 	if Error != nil {
 		panic(Error)
 	}
-	return baseAsset
+	return asset
 }
-func (baseMapper baseMapper) update(context sdkTypes.Context, baseAsset baseAsset) {
-	bytes, Error := baseMapper.codec.MarshalBinaryBare(baseAsset)
+func (mapper mapper) update(context sdkTypes.Context, asset asset) {
+	bytes, Error := mapper.codec.MarshalBinaryBare(asset)
 	if Error != nil {
 		panic(Error)
 	}
-	assetID := baseAsset.assetID
-	kvStore := context.KVStore(baseMapper.storeKey)
+	assetID := asset.assetID
+	kvStore := context.KVStore(mapper.storeKey)
 	kvStore.Set(storeKey(assetID), bytes)
 }
-func (baseMapper baseMapper) delete(context sdkTypes.Context, assetID assetID) {
-	bytes, Error := baseMapper.codec.MarshalBinaryBare(&baseAsset{})
+func (mapper mapper) delete(context sdkTypes.Context, assetID assetID) {
+	bytes, Error := mapper.codec.MarshalBinaryBare(&asset{})
 	if Error != nil {
 		panic(Error)
 	}
-	kvStore := context.KVStore(baseMapper.storeKey)
+	kvStore := context.KVStore(mapper.storeKey)
 	kvStore.Set(storeKey(assetID), bytes)
 }
-func (baseMapper baseMapper) iterate(context sdkTypes.Context, assetID assetID, accumulator func(baseAsset) bool) {
-	store := context.KVStore(baseMapper.storeKey)
+func (mapper mapper) iterate(context sdkTypes.Context, assetID assetID, accumulator func(asset) bool) {
+	store := context.KVStore(mapper.storeKey)
 	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(store, storeKey(assetID))
 
 	defer kvStorePrefixIterator.Close()
 	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {
-		baseAsset := baseAsset{}
-		Error := baseMapper.codec.UnmarshalBinaryBare(kvStorePrefixIterator.Value(), &baseAsset)
+		asset := asset{}
+		Error := mapper.codec.UnmarshalBinaryBare(kvStorePrefixIterator.Value(), &asset)
 		if Error != nil {
 			panic(Error)
 		}
-		if accumulator(baseAsset) {
+		if accumulator(asset) {
 			break
 		}
 	}
 }
 
-func (baseMapper baseMapper) assetBaseImplementationFromInterface(asset types.Asset) baseAsset {
-	return baseAsset{
+func (mapper mapper) assetFromInterNFT(interNFT types.InterNFT) asset {
+	return asset{
 		assetID{
-			asset.ChainID(),
-			asset.MaintainersID(),
-			asset.ClassificationID(),
-			asset.HashID(),
+			interNFT.ChainID(),
+			interNFT.MaintainersID(),
+			interNFT.ClassificationID(),
+			interNFT.HashID(),
 		},
-		asset.Properties(),
-		asset.GetLock(),
-		asset.GetBurn(),
+		interNFT.Properties(),
+		interNFT.GetLock(),
+		interNFT.GetBurn(),
 	}
 }
 
-func (baseMapper baseMapper) assetIDFromInterface(id types.ID) assetID {
+func (mapper mapper) assetIDFromInterface(id types.ID) assetID {
 	base64IDList := strings.Split(id.String(), constants.IDSeparator)
 	return assetID{
-		chainID:          types.BaseID{BaseString: base64IDList[0]},
-		maintainersID:    types.BaseID{BaseString: base64IDList[1]},
-		classificationID: types.BaseID{BaseString: base64IDList[2]},
-		hashID:           types.BaseID{BaseString: base64IDList[4]},
+		chainID:          types.BaseID{IDString: base64IDList[0]},
+		maintainersID:    types.BaseID{IDString: base64IDList[1]},
+		classificationID: types.BaseID{IDString: base64IDList[2]},
+		hashID:           types.BaseID{IDString: base64IDList[4]},
 	}
 }
 
-func (baseMapper baseMapper) GenerateHashID(immutablePropertyList []types.Property) types.ID {
+func (mapper mapper) GenerateHashID(immutablePropertyList []types.Property) types.ID {
 	var facts []string
 	for _, immutableProperty := range immutablePropertyList {
 		facts = append(facts, immutableProperty.String())
@@ -134,31 +134,31 @@ func (baseMapper baseMapper) GenerateHashID(immutablePropertyList []types.Proper
 	toDigest := strings.Join(facts, constants.PropertySeparator)
 	h := sha1.New()
 	h.Write([]byte(toDigest))
-	return types.BaseID{BaseString: base64.URLEncoding.EncodeToString(h.Sum(nil))}
+	return types.BaseID{IDString: base64.URLEncoding.EncodeToString(h.Sum(nil))}
 }
 
-func (baseMapper baseMapper) GenerateAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
+func (mapper mapper) GenerateAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
 	return assetID{chainID, maintainersID, classificationID, hashID}
 }
 
-func (baseMapper baseMapper) MakeAsset(id types.ID, properties types.Properties, lock types.Height, burn types.Height) types.Asset {
-	assetID := baseMapper.assetIDFromInterface(id)
-	return &baseAsset{assetID: assetID, properties: properties, lock: lock, burn: burn}
+func (mapper mapper) MakeAsset(id types.ID, properties types.Properties, lock types.Height, burn types.Height) types.InterNFT {
+	assetID := mapper.assetIDFromInterface(id)
+	return &asset{assetID: assetID, properties: properties, lock: lock, burn: burn}
 }
 
-func (baseMapper baseMapper) New(context sdkTypes.Context) types.Assets {
-	return &baseAssets{baseMapper: baseMapper, context: context}
+func (mapper mapper) New(context sdkTypes.Context) types.InterNFTs {
+	return &assets{mapper: mapper, context: context}
 }
 
-func (baseMapper baseMapper) Assets(context sdkTypes.Context, id types.ID) types.Assets {
-	var baseAssetList []baseAsset
+func (mapper mapper) Assets(context sdkTypes.Context, id types.ID) types.InterNFTs {
+	var assetList []asset
 
-	appendBaseAssetList := func(baseAsset baseAsset) bool {
-		baseAssetList = append(baseAssetList, baseAsset)
+	appendAssetList := func(asset asset) bool {
+		assetList = append(assetList, asset)
 		return false
 	}
-	assetID := baseMapper.assetIDFromInterface(id)
-	baseMapper.iterate(context, assetID, appendBaseAssetList)
+	assetID := mapper.assetIDFromInterface(id)
+	mapper.iterate(context, assetID, appendAssetList)
 
-	return &baseAssets{assetID, baseAssetList, baseMapper, context}
+	return &assets{assetID, assetList, mapper, context}
 }

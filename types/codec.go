@@ -5,8 +5,8 @@ import (
 )
 
 func RegisterCodec(codec *codec.Codec) {
-	codec.RegisterInterface((*Asset)(nil), nil)
-	codec.RegisterInterface((*Assets)(nil), nil)
+	codec.RegisterInterface((*InterNFT)(nil), nil)
+	codec.RegisterInterface((*InterNFTs)(nil), nil)
 	codec.RegisterInterface((*Classification)(nil), nil)
 	codec.RegisterInterface((*Fact)(nil), nil)
 	codec.RegisterInterface((*Height)(nil), nil)

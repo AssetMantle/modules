@@ -1,7 +1,6 @@
 package constants
 
 const AssetID = "assetID"
-
 const ChainID = "chainID"
 const MaintainersID = "maintainersID"
 const ClassificationID = "classificationID"
