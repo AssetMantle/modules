@@ -5,7 +5,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/burn"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/mint"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/send"
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/mutate"
 )
 
 func RegisterCodec(codec *codec.Codec) {
@@ -13,5 +13,5 @@ func RegisterCodec(codec *codec.Codec) {
 
 	burn.RegisterCodec(codec)
 	mint.RegisterCodec(codec)
-	send.RegisterCodec(codec)
+	mutate.RegisterCodec(codec)
 }

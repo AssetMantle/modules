@@ -47,9 +47,9 @@ func NewMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) Mapper {
 var _ Mapper = (*baseMapper)(nil)
 
 func (baseMapper baseMapper) create(context sdkTypes.Context, baseAsset baseAsset) {
-	bytes, err := baseMapper.codec.MarshalBinaryBare(baseAsset)
-	if err != nil {
-		panic(err)
+	bytes, Error := baseMapper.codec.MarshalBinaryBare(baseAsset)
+	if Error != nil {
+		panic(Error)
 	}
 	kvStore := context.KVStore(baseMapper.storeKey)
 	kvStore.Set(storeKey(baseAsset.assetID), bytes)
@@ -61,25 +61,25 @@ func (baseMapper baseMapper) read(context sdkTypes.Context, assetID assetID) bas
 		return baseAsset{}
 	}
 	baseAsset := baseAsset{}
-	err := baseMapper.codec.UnmarshalBinaryBare(bytes, &baseAsset)
-	if err != nil {
-		panic(err)
+	Error := baseMapper.codec.UnmarshalBinaryBare(bytes, &baseAsset)
+	if Error != nil {
+		panic(Error)
 	}
 	return baseAsset
 }
 func (baseMapper baseMapper) update(context sdkTypes.Context, baseAsset baseAsset) {
-	bytes, err := baseMapper.codec.MarshalBinaryBare(baseAsset)
-	if err != nil {
-		panic(err)
+	bytes, Error := baseMapper.codec.MarshalBinaryBare(baseAsset)
+	if Error != nil {
+		panic(Error)
 	}
 	assetID := baseAsset.assetID
 	kvStore := context.KVStore(baseMapper.storeKey)
 	kvStore.Set(storeKey(assetID), bytes)
 }
 func (baseMapper baseMapper) delete(context sdkTypes.Context, assetID assetID) {
-	bytes, err := baseMapper.codec.MarshalBinaryBare(&baseAsset{})
-	if err != nil {
-		panic(err)
+	bytes, Error := baseMapper.codec.MarshalBinaryBare(&baseAsset{})
+	if Error != nil {
+		panic(Error)
 	}
 	kvStore := context.KVStore(baseMapper.storeKey)
 	kvStore.Set(storeKey(assetID), bytes)

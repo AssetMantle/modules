@@ -3,13 +3,11 @@ package assetFactory
 import (
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
-
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/burn"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/lock"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/mint"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/send"
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/mutate"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/burn"
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/mint"
 )
 
 func NewHandler(keeper Keeper) sdkTypes.Handler {
@@ -21,8 +19,8 @@ func NewHandler(keeper Keeper) sdkTypes.Handler {
 			return burn.HandleMessage(context, keeper.getBurnKeeper(), message)
 		case mint.Message:
 			return mint.HandleMessage(context, keeper.getMintKeeper(), message)
-		case send.Message:
-			return send.HandleMessage(context, keeper.getSendKeeper(), message)
+		case mutate.Message:
+			return mutate.HandleMessage(context, keeper.getMutateKeeper(), message)
 
 		default:
 			return nil, errors.Wrapf(constants.UnknownMessageCode, "%T", msg)

@@ -1,6 +1,8 @@
 package types
 
 type Asset interface {
+	NFT
+
 	String() string
 
 	ID() ID

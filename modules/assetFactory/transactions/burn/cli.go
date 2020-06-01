@@ -18,7 +18,7 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 
 	command := &cobra.Command{
 		Use:   constants.BurnTransaction,
-		Short: "Create and sign transaction to burn an assetFactory",
+		Short: "Create and sign a transaction to burn an asset",
 		Long:  "",
 		RunE: func(command *cobra.Command, args []string) error {
 			bufioReader := bufio.NewReader(command.InOrStdin())
@@ -30,8 +30,8 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 				assetID: types.BaseID{BaseString: viper.GetString(constants.AssetID)},
 			}
 
-			if err := message.ValidateBasic(); err != nil {
-				return err
+			if Error := message.ValidateBasic(); Error != nil {
+				return Error
 			}
 
 			return client.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{message})

@@ -1,4 +1,4 @@
-package mint
+package mutate
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -27,8 +27,8 @@ func (baseKeeper baseKeeper) transact(context sdkTypes.Context, message Message)
 	assetID := baseKeeper.mapper.GenerateAssetID(message.chainID, message.maintainersID, message.classificationID, hashID)
 	asset := baseKeeper.mapper.MakeAsset(assetID, &types.BaseProperties{PropertyList: message.propertyList}, message.lock, message.burn)
 	assets := baseKeeper.mapper.Assets(context, assetID)
-	if assets.Asset(assetID) != nil {
-		return constants.EntityAlreadyExistsCode
+	if assets.Asset(assetID) == nil {
+		return constants.EntityNotFoundCode
 	}
-	return assets.Add(asset)
+	return assets.Mutate(asset)
 }

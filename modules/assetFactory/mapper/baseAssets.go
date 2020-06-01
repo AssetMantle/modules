@@ -35,16 +35,17 @@ func (baseAssets baseAssets) Asset(id types.ID) types.Asset {
 }
 
 func (baseAssets *baseAssets) Add(asset types.Asset) error {
+	baseAssets.baseMapper.create(baseAssets.context, baseAssets.baseMapper.assetBaseImplementationFromInterface(asset))
 	for i, baseAsset := range baseAssets.baseAssetList {
 		if baseAsset.ID().Compare(asset.ID()) < 0 {
 			baseAssets.baseAssetList = append(append(baseAssets.baseAssetList[:i], baseAsset), baseAssets.baseAssetList[i+1:]...)
-			baseAssets.baseMapper.create(baseAssets.context, baseAssets.baseMapper.assetBaseImplementationFromInterface(asset))
 			break
 		}
 	}
 	return nil
 }
 func (baseAssets *baseAssets) Remove(asset types.Asset) error {
+	baseAssets.baseMapper.delete(baseAssets.context, baseAssets.baseMapper.assetBaseImplementationFromInterface(asset).assetID)
 	for i, baseAsset := range baseAssets.baseAssetList {
 		if baseAsset.ID().Compare(asset.ID()) == 0 {
 			baseAssets.baseAssetList = append(baseAssets.baseAssetList[:i], baseAssets.baseAssetList[i+1:]...)
@@ -55,10 +56,10 @@ func (baseAssets *baseAssets) Remove(asset types.Asset) error {
 	return nil
 }
 func (baseAssets *baseAssets) Mutate(asset types.Asset) error {
+	baseAssets.baseMapper.update(baseAssets.context, baseAssets.baseMapper.assetBaseImplementationFromInterface(asset))
 	for i, baseAsset := range baseAssets.baseAssetList {
 		if baseAsset.ID().Compare(asset.ID()) == 0 {
 			baseAssets.baseAssetList[i] = baseAssets.baseMapper.assetBaseImplementationFromInterface(asset)
-			baseAssets.baseMapper.update(baseAssets.context, baseAssets.baseMapper.assetBaseImplementationFromInterface(asset))
 			break
 		}
 	}
