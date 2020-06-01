@@ -1,7 +1,6 @@
 package mapper
 
 import (
-	"encoding/json"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
@@ -14,14 +13,6 @@ type assets struct {
 
 	mapper  mapper
 	context sdkTypes.Context
-}
-
-func (assets assets) String() string {
-	bytes, Error := json.Marshal(assets)
-	if Error != nil {
-		panic(Error)
-	}
-	return string(bytes)
 }
 
 func (assets assets) ID() types.ID { return assets.assetID }

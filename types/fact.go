@@ -12,8 +12,8 @@ type Fact interface {
 var _ Fact = (*BaseFact)(nil)
 
 type BaseFact struct {
-	BaseBytes      []byte
-	BaseSignatures BaseSignatures
+	FactBytes      []byte
+	FactSignatures Signatures
 }
 
 func (baseFact BaseFact) String() string {
@@ -23,5 +23,5 @@ func (baseFact BaseFact) String() string {
 	}
 	return string(bytes)
 }
-func (baseFact BaseFact) Bytes() []byte          { return baseFact.BaseBytes }
-func (baseFact BaseFact) Signatures() Signatures { return baseFact.BaseSignatures }
+func (baseFact BaseFact) Bytes() []byte          { return baseFact.FactBytes }
+func (baseFact BaseFact) Signatures() Signatures { return baseFact.FactSignatures }

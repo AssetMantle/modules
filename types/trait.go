@@ -1,7 +1,7 @@
 package types
 
 type Trait interface {
-	String() string
+	Name() string
 
 	ID() ID
 

@@ -4,7 +4,6 @@ import "encoding/json"
 
 type Property interface {
 	String() string
-
 	ID() ID
 	Fact() Fact
 }

@@ -1,8 +1,7 @@
 package types
 
 type Chain interface {
-	String() string
-
+	Name() string
 	ID() ID
 	Trust() Height
 }

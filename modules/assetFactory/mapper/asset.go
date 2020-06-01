@@ -1,7 +1,6 @@
 package mapper
 
 import (
-	"encoding/json"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
@@ -12,14 +11,6 @@ type asset struct {
 	properties types.Properties
 	lock       types.Height
 	burn       types.Height
-}
-
-func (asset asset) String() string {
-	bytes, Error := json.Marshal(asset)
-	if Error != nil {
-		panic(Error)
-	}
-	return string(bytes)
 }
 
 func (asset asset) ID() types.ID { return asset.assetID }

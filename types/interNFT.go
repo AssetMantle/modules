@@ -3,8 +3,6 @@ package types
 type InterNFT interface {
 	NFT
 
-	String() string
-
 	ID() ID
 
 	ChainID() ID
