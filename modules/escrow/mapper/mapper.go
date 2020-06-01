@@ -10,15 +10,15 @@ import (
 
 var storeKeyPrefix = []byte{0x11}
 
-func storeKey(assetAddress types.AssetAddress) []byte {
-	return append(storeKeyPrefix, assetAddress.Bytes()...)
+func storeKey(interNFTAddress types.InterNFTAddress) []byte {
+	return append(storeKeyPrefix, interNFTAddress.Bytes()...)
 }
 
 type Mapper interface {
-	Create(sdkTypes.Context, types.AssetAddress, sdkTypes.AccAddress, bool) error
-	Read(sdkTypes.Context, types.AssetAddress) (types.Asset, error)
-	Update(sdkTypes.Context, types.Asset) error
-	Delete(sdkTypes.Context, types.AssetAddress)
+	Create(sdkTypes.Context, types.InterNFTAddress, sdkTypes.AccAddress, bool) error
+	Read(sdkTypes.Context, types.InterNFTAddress) (types.InterNFT, error)
+	Update(sdkTypes.Context, types.InterNFT) error
+	Delete(sdkTypes.Context, types.InterNFTAddress)
 }
 
 type baseMapper struct {
@@ -35,41 +35,41 @@ func NewMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) Mapper {
 
 var _ Mapper = (*baseMapper)(nil)
 
-func (baseMapper baseMapper) Create(context sdkTypes.Context, address types.AssetAddress, owner sdkTypes.AccAddress, lock bool) error {
-	asset := newAsset(address, owner, lock)
-	bytes, err := baseMapper.codec.MarshalBinaryBare(asset)
+func (baseMapper baseMapper) Create(context sdkTypes.Context, address types.InterNFTAddress, owner sdkTypes.AccAddress, lock bool) error {
+	interNFT := newInterNFT(address, owner, lock)
+	bytes, err := baseMapper.codec.MarshalBinaryBare(interNFT)
 	if err != nil {
 		panic(err)
 	}
-	assetAddress := asset.GetAddress()
+	interNFTAddress := interNFT.GetAddress()
 	kvStore := context.KVStore(baseMapper.storeKey)
-	kvStore.Set(storeKey(assetAddress), bytes)
+	kvStore.Set(storeKey(interNFTAddress), bytes)
 	return nil
 }
-func (baseMapper baseMapper) Read(context sdkTypes.Context, address types.AssetAddress) (asset types.Asset, error error) {
+func (baseMapper baseMapper) Read(context sdkTypes.Context, address types.InterNFTAddress) (interNFT types.InterNFT, error error) {
 	kvStore := context.KVStore(baseMapper.storeKey)
 	bytes := kvStore.Get(storeKey(address))
 	if bytes == nil {
 		return nil, errors.Wrap(constants.EntityNotFoundCode, address.String())
 	}
-	err := baseMapper.codec.UnmarshalBinaryBare(bytes, &asset)
+	err := baseMapper.codec.UnmarshalBinaryBare(bytes, &interNFT)
 	if err != nil {
 		panic(err)
 	}
-	return asset, nil
+	return interNFT, nil
 }
-func (baseMapper baseMapper) Update(context sdkTypes.Context, asset types.Asset) error {
-	bytes, err := baseMapper.codec.MarshalBinaryBare(asset)
+func (baseMapper baseMapper) Update(context sdkTypes.Context, interNFT types.InterNFT) error {
+	bytes, err := baseMapper.codec.MarshalBinaryBare(interNFT)
 	if err != nil {
 		panic(err)
 	}
-	assetAddress := asset.GetAddress()
+	interNFTAddress := interNFT.GetAddress()
 	kvStore := context.KVStore(baseMapper.storeKey)
-	kvStore.Set(storeKey(assetAddress), bytes)
+	kvStore.Set(storeKey(interNFTAddress), bytes)
 	return nil
 }
-func (baseMapper baseMapper) Delete(context sdkTypes.Context, address types.AssetAddress) {
-	bytes, err := baseMapper.codec.MarshalBinaryBare(&baseAsset{})
+func (baseMapper baseMapper) Delete(context sdkTypes.Context, address types.InterNFTAddress) {
+	bytes, err := baseMapper.codec.MarshalBinaryBare(&baseInterNFT{})
 	if err != nil {
 		panic(err)
 	}

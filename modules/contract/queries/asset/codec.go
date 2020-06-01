@@ -1,4 +1,4 @@
-package asset
+package interNFT
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"

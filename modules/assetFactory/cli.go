@@ -4,9 +4,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/queries/asset"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/burn"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/lock"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/mint"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/send"
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/mutate"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -16,16 +15,15 @@ import (
 func GetCLIRootTransactionCommand(codec *codec.Codec) *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
 		Use:                        TransactionRoute,
-		Short:                      "Asset root transaction command.",
+		Short:                      "Get root transaction command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
 	rootTransactionCommand.AddCommand(flags.PostCommands(
 		burn.TransactionCommand(codec),
-		lock.TransactionCommand(codec),
 		mint.TransactionCommand(codec),
-		send.TransactionCommand(codec),
+		mutate.TransactionCommand(codec),
 	)...)
 	return rootTransactionCommand
 }
@@ -33,7 +31,7 @@ func GetCLIRootTransactionCommand(codec *codec.Codec) *cobra.Command {
 func GetCLIRootQueryCommand(codec *codec.Codec) *cobra.Command {
 	rootQueryCommand := &cobra.Command{
 		Use:                        QuerierRoute,
-		Short:                      "Asset root query command.",
+		Short:                      "Get root query command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,

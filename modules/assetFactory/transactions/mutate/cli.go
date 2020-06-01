@@ -1,4 +1,4 @@
-package mint
+package mutate
 
 import (
 	"bufio"
@@ -17,8 +17,8 @@ import (
 func TransactionCommand(codec *codec.Codec) *cobra.Command {
 
 	command := &cobra.Command{
-		Use:   constants.MintTransaction,
-		Short: "Create and sign a transaction to mint an asset",
+		Use:   constants.MutateTransaction,
+		Short: "Create and sign a transaction to mutate an asset",
 		Long:  "",
 		RunE: func(command *cobra.Command, args []string) error {
 			bufioReader := bufio.NewReader(command.InOrStdin())

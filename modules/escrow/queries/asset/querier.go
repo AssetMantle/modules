@@ -1,4 +1,4 @@
-package asset
+package interNFT
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -28,12 +28,12 @@ func (baseQuerier baseQuerier) Query(context sdkTypes.Context, requestQuery abci
 	if Error := packageCodec.UnmarshalJSON(requestQuery.Data, &query); Error != nil {
 		return nil, errors.Wrap(constants.IncorrectQueryCode, Error.Error())
 	}
-	asset, getAssetError := baseQuerier.mapper.Read(context, mapper.NewAssetAddress(query.Address))
-	if getAssetError != nil {
-		return nil, getAssetError
+	interNFT, getInterNFTError := baseQuerier.mapper.Read(context, mapper.NewInterNFTAddress(query.Address))
+	if getInterNFTError != nil {
+		return nil, getInterNFTError
 	}
 
-	bytes, marshalJSONIndentError := codec.MarshalJSONIndent(packageCodec, asset)
+	bytes, marshalJSONIndentError := codec.MarshalJSONIndent(packageCodec, interNFT)
 	if marshalJSONIndentError != nil {
 		panic(marshalJSONIndentError)
 	}

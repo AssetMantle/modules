@@ -3,6 +3,7 @@ package burn
 import (
 	"bufio"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
+	"github.com/persistenceOne/persistenceSDK/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -17,7 +18,7 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 
 	command := &cobra.Command{
 		Use:   constants.BurnTransaction,
-		Short: "Create and sign transaction to burn an assetFactory",
+		Short: "Create and sign a transaction to burn an asset",
 		Long:  "",
 		RunE: func(command *cobra.Command, args []string) error {
 			bufioReader := bufio.NewReader(command.InOrStdin())
@@ -25,18 +26,18 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 			cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
 
 			message := Message{
-				From:    cliContext.GetFromAddress(),
-				Address: viper.GetString(constants.AddressFlag),
+				from:    cliContext.GetFromAddress(),
+				assetID: types.BaseID{IDString: viper.GetString(constants.AssetID)},
 			}
 
-			if err := message.ValidateBasic(); err != nil {
-				return err
+			if Error := message.ValidateBasic(); Error != nil {
+				return Error
 			}
 
 			return client.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{message})
 		},
 	}
 
-	command.Flags().String(constants.AddressFlag, "", "address")
+	command.Flags().String(constants.AssetID, "", "assetID")
 	return command
 }

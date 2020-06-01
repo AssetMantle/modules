@@ -1,4 +1,4 @@
-package asset
+package interNFT
 
 type query struct {
 	Address string

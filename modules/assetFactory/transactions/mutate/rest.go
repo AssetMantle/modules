@@ -1,9 +1,8 @@
-package mint
+package mutate
 
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/x/auth/client"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 	"net/http"
 
@@ -44,13 +43,6 @@ func RestRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 		from, Error := sdkTypes.AccAddressFromBech32(request.baseReq.From)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
-			return
-		}
-
-		noOfPropertiesSent := len(request.properties)
-
-		if noOfPropertiesSent > constants.MaxTraitCount {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, constants.IncorrectMessageCode.Error())
 			return
 		}
 

@@ -1,4 +1,4 @@
-package asset
+package interNFT
 
 import (
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -12,30 +12,30 @@ import (
 
 func QueryCommand(codec *codec.Codec) *cobra.Command {
 	command := &cobra.Command{
-		Use:   constants.AssetQuery,
+		Use:   constants.InterNFTQuery,
 		Short: "Query an assetFactory.",
 		Long:  "",
 		RunE: func(command *cobra.Command, args []string) error {
 			cliContext := context.NewCLIContext().WithCodec(codec)
 
 			bytes := packageCodec.MustMarshalJSON(query{
-				Address: viper.GetString(constants.AddressFlag),
+				Address: viper.GetString(constants.InterNFTID),
 			})
 
-			response, _, queryWithDataError := cliContext.QueryWithData(strings.Join([]string{"", "custom", constants.QuerierRoute, constants.AssetQuery}, "/"), bytes)
+			response, _, queryWithDataError := cliContext.QueryWithData(strings.Join([]string{"", "custom", constants.QuerierRoute, constants.InterNFTQuery}, "/"), bytes)
 			if queryWithDataError != nil {
 				return queryWithDataError
 			}
 
-			var asset types.Asset
-			unmarshalJSONError := codec.UnmarshalJSON(response, &asset)
+			var interNFT types.InterNFT
+			unmarshalJSONError := codec.UnmarshalJSON(response, &interNFT)
 			if unmarshalJSONError != nil {
 				return unmarshalJSONError
 			}
-			return cliContext.PrintOutput(asset)
+			return cliContext.PrintOutput(interNFT)
 		},
 	}
 
-	command.Flags().String(constants.AddressFlag, "", "address")
+	command.Flags().String(constants.InterNFTID, "", "interNFTID")
 	return command
 }

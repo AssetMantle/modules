@@ -3,8 +3,7 @@ package assetFactory
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/queries/asset"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/burn"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/lock"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/send"
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/mutate"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -16,9 +15,8 @@ import (
 
 func RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
 	router.HandleFunc(strings.Join([]string{"", TransactionRoute, constants.MintTransaction}, "/"), burn.RestRequestHandler(cliContext)).Methods("POST")
-	router.HandleFunc(strings.Join([]string{"", TransactionRoute, constants.MintTransaction}, "/"), lock.RestRequestHandler(cliContext)).Methods("POST")
 	router.HandleFunc(strings.Join([]string{"", TransactionRoute, constants.MintTransaction}, "/"), mint.RestRequestHandler(cliContext)).Methods("POST")
-	router.HandleFunc(strings.Join([]string{"", TransactionRoute, constants.SendTransaction}, "/"), send.RestRequestHandler(cliContext)).Methods("POST")
+	router.HandleFunc(strings.Join([]string{"", TransactionRoute, constants.MutateTransaction}, "/"), mutate.RestRequestHandler(cliContext)).Methods("POST")
 
-	router.HandleFunc(strings.Join([]string{"", QuerierRoute, constants.AssetQuery, "{address}"}, "/"), asset.RestQueryHandler(cliContext)).Methods("GET")
+	router.HandleFunc(strings.Join([]string{"", QuerierRoute, constants.AssetQuery, "{id}"}, "/"), asset.RestQueryHandler(cliContext)).Methods("GET")
 }

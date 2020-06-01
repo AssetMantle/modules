@@ -2,23 +2,33 @@ package mint
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/mapper"
+	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 type Keeper interface {
 	transact(sdkTypes.Context, Message) error
 }
 
-type baseKeeper struct {
+type keeper struct {
 	mapper mapper.Mapper
 }
 
 func NewKeeper(mapper mapper.Mapper) Keeper {
-	return baseKeeper{mapper: mapper}
+	return keeper{mapper: mapper}
 }
 
-var _ Keeper = (*baseKeeper)(nil)
+var _ Keeper = (*keeper)(nil)
 
-func (baseKeeper baseKeeper) transact(context sdkTypes.Context, message Message) error {
-	return baseKeeper.mapper.Create(context, mapper.NewAssetAddress(message.Address), message.To, message.Lock)
+func (keeper keeper) transact(context sdkTypes.Context, message Message) error {
+	immutablePropertyList := message.propertyList
+	hashID := keeper.mapper.GenerateHashID(immutablePropertyList)
+	assetID := keeper.mapper.GenerateAssetID(message.chainID, message.maintainersID, message.classificationID, hashID)
+	asset := keeper.mapper.MakeAsset(assetID, &types.BaseProperties{PropertyList: message.propertyList}, message.lock, message.burn)
+	assets := keeper.mapper.Assets(context, assetID)
+	if assets.Get(assetID) != nil {
+		return constants.EntityAlreadyExistsCode
+	}
+	return assets.Add(asset)
 }

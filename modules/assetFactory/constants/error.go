@@ -7,3 +7,4 @@ var IncorrectMessageCode = errors.Register(ModuleName, 002, "IncorrectMessageCod
 var UnknownQueryCode = errors.Register(ModuleName, 101, "UnknownQueryCode")
 var IncorrectQueryCode = errors.Register(ModuleName, 102, "IncorrectQueryCode")
 var EntityNotFoundCode = errors.Register(ModuleName, 103, "EntityNotFoundCode")
+var EntityAlreadyExistsCode = errors.Register(ModuleName, 103, "EntityAlreadyExistsCode")

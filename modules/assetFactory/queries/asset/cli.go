@@ -13,21 +13,19 @@ import (
 func QueryCommand(codec *codec.Codec) *cobra.Command {
 	command := &cobra.Command{
 		Use:   constants.AssetQuery,
-		Short: "Query an assetFactory.",
+		Short: "Query one or multiple assets.",
 		Long:  "",
 		RunE: func(command *cobra.Command, args []string) error {
 			cliContext := context.NewCLIContext().WithCodec(codec)
 
-			bytes := packageCodec.MustMarshalJSON(query{
-				Address: viper.GetString(constants.AddressFlag),
-			})
+			bytes := packageCodec.MustMarshalJSON(query{id: types.BaseID{IDString: viper.GetString(constants.AssetID)}})
 
 			response, _, queryWithDataError := cliContext.QueryWithData(strings.Join([]string{"", "custom", constants.QuerierRoute, constants.AssetQuery}, "/"), bytes)
 			if queryWithDataError != nil {
 				return queryWithDataError
 			}
 
-			var asset types.Asset
+			var asset types.InterNFT
 			unmarshalJSONError := codec.UnmarshalJSON(response, &asset)
 			if unmarshalJSONError != nil {
 				return unmarshalJSONError
@@ -36,6 +34,6 @@ func QueryCommand(codec *codec.Codec) *cobra.Command {
 		},
 	}
 
-	command.Flags().String(constants.AddressFlag, "", "address")
+	command.Flags().String(constants.AssetID, "", "assetID")
 	return command
 }

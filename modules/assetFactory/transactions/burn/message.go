@@ -5,11 +5,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
+	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 type Message struct {
-	From    sdkTypes.AccAddress `json:"from" yaml:"from" valid:"required~from"`
-	Address string              `json:"address" yaml:"address" valid:"required~address"`
+	from    sdkTypes.AccAddress
+	assetID types.ID
 }
 
 var _ sdkTypes.Msg = Message{}
@@ -27,5 +28,5 @@ func (message Message) GetSignBytes() []byte {
 	return sdkTypes.MustSortJSON(packageCodec.MustMarshalJSON(message))
 }
 func (message Message) GetSigners() []sdkTypes.AccAddress {
-	return []sdkTypes.AccAddress{message.From}
+	return []sdkTypes.AccAddress{message.from}
 }
