@@ -1,9 +1,7 @@
 package types
 
 type Properties interface {
-	String() string
-
-	Property(ID) Property
+	Get(ID) Property
 
 	AddProperty(Property) error
 	RemoveProperty(Property) error
@@ -16,8 +14,7 @@ type BaseProperties struct {
 
 var _ Properties = (*BaseProperties)(nil)
 
-func (BaseProperties BaseProperties) String() string                 {}
-func (BaseProperties BaseProperties) Property(ID) Property           {}
+func (BaseProperties BaseProperties) Get(ID) Property                {}
 func (BaseProperties *BaseProperties) AddProperty(Property) error    {}
 func (BaseProperties *BaseProperties) RemoveProperty(Property) error {}
 func (BaseProperties *BaseProperties) MutateProperty(Property) error {}

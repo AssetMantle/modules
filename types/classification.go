@@ -1,7 +1,7 @@
 package types
 
 type Classification interface {
-	String() string
+	Name() string
 
 	ID() ID
 

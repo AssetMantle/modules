@@ -1,8 +1,7 @@
 package types
 
 type Height interface {
-	String() string
-
+	Count() int
 	IsGraterThat(Height) bool
 }
 
@@ -12,5 +11,5 @@ type BaseHeight struct {
 
 var _ Height = (*BaseHeight)(nil)
 
-func (baseHeight BaseHeight) String() string           {}
+func (baseHeight BaseHeight) Count() int               {}
 func (baseHeight BaseHeight) IsGraterThat(Height) bool {}

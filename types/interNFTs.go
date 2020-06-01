@@ -1,8 +1,6 @@
 package types
 
 type InterNFTs interface {
-	String() string
-
 	ID() ID
 	Get(ID) InterNFT
 

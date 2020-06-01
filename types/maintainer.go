@@ -1,7 +1,7 @@
 package types
 
 type Maintainer interface {
-	String() string
+	Name() string
 
 	ID() ID
 

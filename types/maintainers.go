@@ -1,8 +1,6 @@
 package types
 
 type Maintainers interface {
-	String() string
-
 	ID() ID
 	Traits() Traits
 	Properties() Properties
