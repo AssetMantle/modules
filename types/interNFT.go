@@ -3,10 +3,7 @@ package types
 type InterNFT interface {
 	NFT
 
-	ID() ID
-
 	ChainID() ID
-	ClassificationID() ID
 	MaintainersID() ID
 	HashID() ID
 
