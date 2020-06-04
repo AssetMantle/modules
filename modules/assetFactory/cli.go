@@ -1,8 +1,6 @@
 package assetFactory
 
 import (
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/queries/asset"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/burn"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/mint"
@@ -13,7 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
-func GetCLIRootTransactionCommand(codecMarshaler codec.Marshaler, txGenerator tx.Generator, accountRetriever tx.AccountRetriever) *cobra.Command {
+func GetCLIRootTransactionCommand(codec *codec.Codec) *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
 		Use:                        TransactionRoute,
 		Short:                      "Get root transaction command.",
@@ -22,9 +20,9 @@ func GetCLIRootTransactionCommand(codecMarshaler codec.Marshaler, txGenerator tx
 		RunE:                       client.ValidateCmd,
 	}
 	rootTransactionCommand.AddCommand(
-		burn.TransactionCommand(codecMarshaler, txGenerator, accountRetriever),
-		mint.TransactionCommand(codecMarshaler, txGenerator, accountRetriever),
-		mutate.TransactionCommand(codecMarshaler, txGenerator, accountRetriever),
+		burn.TransactionCommand(codec),
+		mint.TransactionCommand(codec),
+		mutate.TransactionCommand(codec),
 	)
 	return rootTransactionCommand
 }
@@ -37,8 +35,8 @@ func GetCLIRootQueryCommand(codec *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	rootQueryCommand.AddCommand(flags.GetCommands(
+	rootQueryCommand.AddCommand(
 		asset.QueryCommand(codec),
-	)...)
+	)
 	return rootQueryCommand
 }
