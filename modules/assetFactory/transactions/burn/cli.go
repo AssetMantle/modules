@@ -8,7 +8,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client"
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
@@ -36,12 +35,12 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 				return Error
 			}
 
-			return client.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{message})
+			return authClient.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{message})
 		},
 	}
 
 	command.Flags().String(constants.AssetID, "", "assetID")
-	return command
+	return flags.PostCommands(command)[0]
 }
 
 func NewTransactionCommand(codecMarshaler codec.Marshaler, txGenerator tx.Generator, accountRetriever tx.AccountRetriever) *cobra.Command {
