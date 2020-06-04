@@ -3,9 +3,9 @@ package types
 type Properties interface {
 	Get(ID) Property
 
-	AddProperty(Property) error
-	RemoveProperty(Property) error
-	MutateProperty(Property) error
+	Add(Property) error
+	Remove(Property) error
+	Mutate(Property) error
 }
 
 type BaseProperties struct {
@@ -22,7 +22,7 @@ func (baseProperties BaseProperties) Get(id ID) Property {
 	}
 	return nil
 }
-func (baseProperties *BaseProperties) AddProperty(property Property) error {
+func (baseProperties *BaseProperties) Add(property Property) error {
 	propertyList := baseProperties.PropertyList
 	for i, oldProperty := range propertyList {
 		if oldProperty.ID().Compare(property.ID()) < 0 {
@@ -31,7 +31,7 @@ func (baseProperties *BaseProperties) AddProperty(property Property) error {
 	}
 	return nil
 }
-func (baseProperties *BaseProperties) RemoveProperty(property Property) error {
+func (baseProperties *BaseProperties) Remove(property Property) error {
 	propertyList := baseProperties.PropertyList
 	for i, oldProperty := range propertyList {
 		if oldProperty.ID().Compare(property.ID()) == 0 {
@@ -40,7 +40,7 @@ func (baseProperties *BaseProperties) RemoveProperty(property Property) error {
 	}
 	return nil
 }
-func (baseProperties *BaseProperties) MutateProperty(property Property) error {
+func (baseProperties *BaseProperties) Mutate(property Property) error {
 	propertyList := baseProperties.PropertyList
 	for i, oldProperty := range propertyList {
 		if oldProperty.ID().Compare(property.ID()) == 0 {
