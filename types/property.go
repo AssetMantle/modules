@@ -3,7 +3,7 @@ package types
 import "encoding/json"
 
 type Property interface {
-	String() string
+	Name() string
 	ID() ID
 	Fact() Fact
 }
@@ -15,7 +15,7 @@ type BaseProperty struct {
 	BaseFact BaseFact
 }
 
-func (baseProperty BaseProperty) String() string {
+func (baseProperty BaseProperty) Name() string {
 	bytes, Error := json.Marshal(baseProperty)
 	if Error != nil {
 		panic(Error)

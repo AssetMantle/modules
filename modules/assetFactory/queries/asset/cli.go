@@ -2,6 +2,7 @@ package asset
 
 import (
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
@@ -35,5 +36,5 @@ func QueryCommand(codec *codec.Codec) *cobra.Command {
 	}
 
 	command.Flags().String(constants.AssetID, "", "assetID")
-	return command
+	return flags.GetCommands(command)[0]
 }

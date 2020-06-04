@@ -128,7 +128,7 @@ func (mapper mapper) assetIDFromInterface(id types.ID) assetID {
 func (mapper mapper) GenerateHashID(immutablePropertyList []types.Property) types.ID {
 	var facts []string
 	for _, immutableProperty := range immutablePropertyList {
-		facts = append(facts, immutableProperty.String())
+		facts = append(facts, immutableProperty.Fact().String())
 	}
 	sort.Strings(facts)
 	toDigest := strings.Join(facts, constants.PropertySeparator)

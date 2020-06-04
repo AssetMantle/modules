@@ -1,7 +1,6 @@
 package assetFactory
 
 import (
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/queries/asset"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/burn"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/mint"
@@ -20,11 +19,11 @@ func GetCLIRootTransactionCommand(codec *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	rootTransactionCommand.AddCommand(flags.PostCommands(
+	rootTransactionCommand.AddCommand(
 		burn.TransactionCommand(codec),
 		mint.TransactionCommand(codec),
 		mutate.TransactionCommand(codec),
-	)...)
+	)
 	return rootTransactionCommand
 }
 
@@ -36,8 +35,8 @@ func GetCLIRootQueryCommand(codec *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	rootQueryCommand.AddCommand(flags.GetCommands(
+	rootQueryCommand.AddCommand(
 		asset.QueryCommand(codec),
-	)...)
+	)
 	return rootQueryCommand
 }
