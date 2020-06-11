@@ -3,49 +3,86 @@ package types
 type Properties interface {
 	Get(ID) Property
 
-	Add(Property) error
-	Remove(Property) error
-	Mutate(Property) error
+	PropertyList() []Property
+	Add(Property) Properties
+	Remove(Property) Properties
+	Mutate(Property) Properties
 }
 
 type BaseProperties struct {
-	PropertyList []Property
+	BasePropertyList []BaseProperty
 }
 
 var _ Properties = (*BaseProperties)(nil)
 
 func (baseProperties BaseProperties) Get(id ID) Property {
-	for _, property := range baseProperties.PropertyList {
+	for _, property := range baseProperties.BasePropertyList {
 		if property.ID().Compare(id) == 0 {
 			return property
 		}
 	}
 	return nil
 }
-func (baseProperties *BaseProperties) Add(property Property) error {
-	propertyList := baseProperties.PropertyList
-	for i, oldProperty := range propertyList {
+func (baseProperties BaseProperties) PropertyList() []Property {
+	var propertyList []Property
+	for _, baseProperty := range baseProperties.BasePropertyList {
+		propertyList = append(propertyList, &baseProperty)
+	}
+	return propertyList
+}
+func (baseProperties BaseProperties) Add(property Property) Properties {
+	basePropertyList := baseProperties.BasePropertyList
+	for i, oldProperty := range basePropertyList {
 		if oldProperty.ID().Compare(property.ID()) < 0 {
-			propertyList = append(append(propertyList[:i], property), propertyList[i+1:]...)
+			basePropertyList = append(append(basePropertyList[:i], BaseProperty{
+				BaseID: BaseID{
+					IDString: property.ID().String(),
+				},
+				BaseFact: BaseFact{
+					BaseBytes:      property.Fact().Bytes(),
+					BaseSignatures: BaseSignaturesFromInterface(property.Fact().Signatures()),
+				},
+			}), basePropertyList[i+1:]...)
 		}
 	}
-	return nil
+	return BaseProperties{BasePropertyList: basePropertyList}
 }
-func (baseProperties *BaseProperties) Remove(property Property) error {
-	propertyList := baseProperties.PropertyList
-	for i, oldProperty := range propertyList {
+func (baseProperties BaseProperties) Remove(property Property) Properties {
+	basePropertyList := baseProperties.BasePropertyList
+	for i, oldProperty := range basePropertyList {
 		if oldProperty.ID().Compare(property.ID()) == 0 {
-			propertyList = append(propertyList[:i], propertyList[i+1:]...)
+			basePropertyList = append(basePropertyList[:i], basePropertyList[i+1:]...)
 		}
 	}
-	return nil
+	return BaseProperties{BasePropertyList: basePropertyList}
 }
-func (baseProperties *BaseProperties) Mutate(property Property) error {
-	propertyList := baseProperties.PropertyList
-	for i, oldProperty := range propertyList {
+func (baseProperties BaseProperties) Mutate(property Property) Properties {
+	basePropertyList := baseProperties.BasePropertyList
+	for i, oldProperty := range basePropertyList {
 		if oldProperty.ID().Compare(property.ID()) == 0 {
-			propertyList[i] = property
+			basePropertyList[i] = BaseProperty{
+				BaseID: BaseID{
+					IDString: property.ID().String(),
+				},
+				BaseFact: BaseFact{
+					BaseBytes:      property.Fact().Bytes(),
+					BaseSignatures: BaseSignaturesFromInterface(property.Fact().Signatures()),
+				},
+			}
 		}
 	}
-	return nil
+	return BaseProperties{BasePropertyList: basePropertyList}
+}
+func BasePropertiesFromInterface(properties Properties) BaseProperties {
+	var basePropertyList []BaseProperty
+	for _, property := range properties.PropertyList() {
+		basePropertyList = append(basePropertyList, BaseProperty{
+			BaseID: BaseID{IDString: property.ID().String()},
+			BaseFact: BaseFact{
+				BaseBytes:      property.Fact().Bytes(),
+				BaseSignatures: BaseSignaturesFromInterface(property.Fact().Signatures()),
+			},
+		})
+	}
+	return BaseProperties{BasePropertyList: basePropertyList}
 }

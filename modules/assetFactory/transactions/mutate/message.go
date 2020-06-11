@@ -13,7 +13,7 @@ type Message struct {
 	chainID          types.ID
 	maintainersID    types.ID
 	classificationID types.ID
-	propertyList     []types.Property
+	properties       types.Properties
 	lock             types.Height
 	burn             types.Height
 }

@@ -15,3 +15,6 @@ func (baseHeight BaseHeight) Count() int { return baseHeight.Height }
 func (baseHeight BaseHeight) IsGraterThat(height Height) bool {
 	return baseHeight.Count() > height.Count()
 }
+func BaseHeightFromInterface(height Height) BaseHeight {
+	return BaseHeight{Height: height.Count()}
+}

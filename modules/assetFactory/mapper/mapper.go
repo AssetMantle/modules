@@ -22,10 +22,8 @@ type Mapper interface {
 	delete(sdkTypes.Context, assetID)
 	iterate(sdkTypes.Context, assetID, func(asset) bool)
 
-	assetFromInterNFT(interNFT types.InterNFT) asset
-
-	GenerateHashID(immutablePropertyList []types.Property) types.ID
-	GenerateAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID
+	MakeHashID(immutablePropertyList []types.Property) types.ID
+	MakeAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID
 	MakeAsset(assetID types.ID, properties types.Properties, lock types.Height, burn types.Height) types.InterNFT
 
 	New(sdkTypes.Context) types.InterNFTs
@@ -52,7 +50,7 @@ func (mapper mapper) create(context sdkTypes.Context, asset asset) {
 		panic(Error)
 	}
 	kvStore := context.KVStore(mapper.storeKey)
-	kvStore.Set(storeKey(asset.assetID), bytes)
+	kvStore.Set(storeKey(asset.AssetID), bytes)
 }
 func (mapper mapper) read(context sdkTypes.Context, assetID assetID) asset {
 	kvStore := context.KVStore(mapper.storeKey)
@@ -72,7 +70,7 @@ func (mapper mapper) update(context sdkTypes.Context, asset asset) {
 	if Error != nil {
 		panic(Error)
 	}
-	assetID := asset.assetID
+	assetID := asset.AssetID
 	kvStore := context.KVStore(mapper.storeKey)
 	kvStore.Set(storeKey(assetID), bytes)
 }
@@ -101,31 +99,7 @@ func (mapper mapper) iterate(context sdkTypes.Context, assetID assetID, accumula
 	}
 }
 
-func (mapper mapper) assetFromInterNFT(interNFT types.InterNFT) asset {
-	return asset{
-		assetID{
-			interNFT.ChainID(),
-			interNFT.MaintainersID(),
-			interNFT.ClassificationID(),
-			interNFT.HashID(),
-		},
-		interNFT.Properties(),
-		interNFT.GetLock(),
-		interNFT.GetBurn(),
-	}
-}
-
-func (mapper mapper) assetIDFromInterface(id types.ID) assetID {
-	base64IDList := strings.Split(id.String(), constants.IDSeparator)
-	return assetID{
-		chainID:          types.BaseID{IDString: base64IDList[0]},
-		maintainersID:    types.BaseID{IDString: base64IDList[1]},
-		classificationID: types.BaseID{IDString: base64IDList[2]},
-		hashID:           types.BaseID{IDString: base64IDList[4]},
-	}
-}
-
-func (mapper mapper) GenerateHashID(immutablePropertyList []types.Property) types.ID {
+func (mapper mapper) MakeHashID(immutablePropertyList []types.Property) types.ID {
 	var facts []string
 	for _, immutableProperty := range immutablePropertyList {
 		facts = append(facts, immutableProperty.Fact().String())
@@ -137,13 +111,13 @@ func (mapper mapper) GenerateHashID(immutablePropertyList []types.Property) type
 	return types.BaseID{IDString: base64.URLEncoding.EncodeToString(h.Sum(nil))}
 }
 
-func (mapper mapper) GenerateAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
+func (mapper mapper) MakeAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
 	return assetID{chainID, maintainersID, classificationID, hashID}
 }
 
 func (mapper mapper) MakeAsset(id types.ID, properties types.Properties, lock types.Height, burn types.Height) types.InterNFT {
-	assetID := mapper.assetIDFromInterface(id)
-	return &asset{assetID: assetID, properties: properties, lock: lock, burn: burn}
+	assetID := assetIDFromInterface(id)
+	return &asset{AssetID: assetID, BaseProperties: types.BasePropertiesFromInterface(properties), Lock: types.BaseHeightFromInterface(lock), Burn: types.BaseHeightFromInterface(burn)}
 }
 
 func (mapper mapper) New(context sdkTypes.Context) types.InterNFTs {
@@ -157,7 +131,7 @@ func (mapper mapper) Assets(context sdkTypes.Context, id types.ID) types.InterNF
 		assetList = append(assetList, asset)
 		return false
 	}
-	assetID := mapper.assetIDFromInterface(id)
+	assetID := assetIDFromInterface(id)
 	mapper.iterate(context, assetID, appendAssetList)
 
 	return &assets{assetID, assetList, mapper, context}

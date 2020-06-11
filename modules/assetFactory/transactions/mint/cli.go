@@ -27,25 +27,28 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 			transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(authClient.GetTxEncoder(codec))
 			cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
 
-			var propertyList []types.Property
+			basePropertyList := make([]types.BaseProperty, 0)
 			for i := 0; i <= constants.MaxTraitCount; i++ {
-				if viper.GetString(viper.GetString(constants.TraitID+strconv.Itoa(i))) != "" {
-					var basePropertyList []types.BaseProperty
+				if viper.GetString(constants.TraitID+strconv.Itoa(i)) != "" {
 					basePropertyList = append(basePropertyList,
 						types.BaseProperty{
 							BaseID:   types.BaseID{IDString: viper.GetString(constants.TraitID + strconv.Itoa(i))},
-							BaseFact: types.BaseFact{FactBytes: []byte(viper.GetString(constants.Property + strconv.Itoa(i)))},
+							BaseFact: types.BaseFact{BaseBytes: []byte(viper.GetString(constants.Property + strconv.Itoa(i)))},
 						})
 				}
 			}
+			baseProperties := types.BaseProperties{
+				BasePropertyList: basePropertyList,
+			}
+
 			message := Message{
-				from:             cliContext.GetFromAddress(),
-				chainID:          types.BaseID{IDString: viper.GetString(constants.ChainID)},
-				maintainersID:    types.BaseID{IDString: viper.GetString(constants.MaintainersID)},
-				classificationID: types.BaseID{IDString: viper.GetString(constants.ClassificationID)},
-				propertyList:     propertyList,
-				lock:             types.BaseHeight{Height: viper.GetInt(constants.Lock)},
-				burn:             types.BaseHeight{Height: viper.GetInt(constants.Burn)},
+				From:             cliContext.GetFromAddress(),
+				ChainID:          types.BaseID{IDString: viper.GetString(constants.ChainID)},
+				MaintainersID:    types.BaseID{IDString: viper.GetString(constants.MaintainersID)},
+				ClassificationID: types.BaseID{IDString: viper.GetString(constants.ClassificationID)},
+				Properties:       &baseProperties,
+				Lock:             types.BaseHeight{Height: viper.GetInt(constants.Lock)},
+				Burn:             types.BaseHeight{Height: viper.GetInt(constants.Burn)},
 			}
 
 			if Error := message.ValidateBasic(); Error != nil {
@@ -55,15 +58,15 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 			return authClient.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{message})
 		},
 	}
-	command.Flags().String(constants.ChainID, "", "chainID")
-	command.Flags().String(constants.MaintainersID, "", "maintainersID")
-	command.Flags().String(constants.ClassificationID, "", "classificationID")
+	command.Flags().String(constants.ChainID, "", "ChainID")
+	command.Flags().String(constants.MaintainersID, "", "MaintainersID")
+	command.Flags().String(constants.ClassificationID, "", "ClassificationID")
 	for i := 0; i <= constants.MaxTraitCount; i++ {
 		command.Flags().String(constants.TraitID+strconv.Itoa(i), "", "traitID")
 		command.Flags().String(constants.Property+strconv.Itoa(i), "", "property")
 	}
-	command.Flags().Int(constants.Lock, -1, "lock")
-	command.Flags().Int(constants.Burn, -1, "burn")
+	command.Flags().Int(constants.Lock, -1, "Lock")
+	command.Flags().Int(constants.Burn, -1, "Burn")
 	return flags.PostCommands(command)[0]
 }
 
@@ -78,25 +81,25 @@ func NewTransactionCommand(codecMarshaler codec.Marshaler, txGenerator tx.Genera
 			cliContext := context.NewCLIContextWithInputAndFrom(bufioReader, args[0]).WithMarshaler(codecMarshaler)
 			txFactory := tx.NewFactoryFromCLI(bufioReader).WithTxGenerator(txGenerator).WithAccountRetriever(accountRetriever)
 
-			var propertyList []types.Property
+			var basePropertyList []types.BaseProperty
 			for i := 0; i <= constants.MaxTraitCount; i++ {
 				if viper.GetString(viper.GetString(constants.TraitID+strconv.Itoa(i))) != "" {
-					var basePropertyList []types.BaseProperty
 					basePropertyList = append(basePropertyList,
 						types.BaseProperty{
 							BaseID:   types.BaseID{IDString: viper.GetString(constants.TraitID + strconv.Itoa(i))},
-							BaseFact: types.BaseFact{FactBytes: []byte(viper.GetString(constants.Property + strconv.Itoa(i)))},
+							BaseFact: types.BaseFact{BaseBytes: []byte(viper.GetString(constants.Property + strconv.Itoa(i)))},
 						})
 				}
 			}
+			baseProperties := types.BaseProperties{BasePropertyList: basePropertyList}
 			message := Message{
-				from:             cliContext.GetFromAddress(),
-				chainID:          types.BaseID{IDString: viper.GetString(constants.ChainID)},
-				maintainersID:    types.BaseID{IDString: viper.GetString(constants.MaintainersID)},
-				classificationID: types.BaseID{IDString: viper.GetString(constants.ClassificationID)},
-				propertyList:     propertyList,
-				lock:             types.BaseHeight{Height: viper.GetInt(constants.Lock)},
-				burn:             types.BaseHeight{Height: viper.GetInt(constants.Burn)},
+				From:             cliContext.GetFromAddress(),
+				ChainID:          types.BaseID{IDString: viper.GetString(constants.ChainID)},
+				MaintainersID:    types.BaseID{IDString: viper.GetString(constants.MaintainersID)},
+				ClassificationID: types.BaseID{IDString: viper.GetString(constants.ClassificationID)},
+				Properties:       &baseProperties,
+				Lock:             types.BaseHeight{Height: viper.GetInt(constants.Lock)},
+				Burn:             types.BaseHeight{Height: viper.GetInt(constants.Burn)},
 			}
 
 			if Error := message.ValidateBasic(); Error != nil {
@@ -106,14 +109,14 @@ func NewTransactionCommand(codecMarshaler codec.Marshaler, txGenerator tx.Genera
 			return tx.GenerateOrBroadcastTx(cliContext, txFactory, message)
 		},
 	}
-	command.Flags().String(constants.ChainID, "", "chainID")
-	command.Flags().String(constants.MaintainersID, "", "maintainersID")
-	command.Flags().String(constants.ClassificationID, "", "classificationID")
+	command.Flags().String(constants.ChainID, "", "ChainID")
+	command.Flags().String(constants.MaintainersID, "", "MaintainersID")
+	command.Flags().String(constants.ClassificationID, "", "ClassificationID")
 	for i := 0; i <= constants.MaxTraitCount; i++ {
 		command.Flags().String(constants.TraitID+strconv.Itoa(i), "", "traitID")
 		command.Flags().String(constants.Property+strconv.Itoa(i), "", "property")
 	}
-	command.Flags().Int(constants.Lock, -1, "lock")
-	command.Flags().Int(constants.Burn, -1, "burn")
+	command.Flags().Int(constants.Lock, -1, "Lock")
+	command.Flags().Int(constants.Burn, -1, "Burn")
 	return flags.PostCommands(command)[0]
 }
