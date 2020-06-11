@@ -9,13 +9,13 @@ import (
 )
 
 type Message struct {
-	from             sdkTypes.AccAddress
-	chainID          types.ID
-	maintainersID    types.ID
-	classificationID types.ID
-	propertyList     []types.Property
-	lock             types.Height
-	burn             types.Height
+	From             sdkTypes.AccAddress
+	ChainID          types.ID
+	MaintainersID    types.ID
+	ClassificationID types.ID
+	Properties       types.Properties
+	Lock             types.Height
+	Burn             types.Height
 }
 
 var _ sdkTypes.Msg = Message{}
@@ -33,5 +33,5 @@ func (message Message) GetSignBytes() []byte {
 	return sdkTypes.MustSortJSON(packageCodec.MustMarshalJSON(message))
 }
 func (message Message) GetSigners() []sdkTypes.AccAddress {
-	return []sdkTypes.AccAddress{message.from}
+	return []sdkTypes.AccAddress{message.From}
 }

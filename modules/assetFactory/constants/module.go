@@ -6,7 +6,7 @@ const StoreKey = "assetFactory"
 
 var StoreKeyPrefix = []byte{0x11}
 var IDSeparator = "-"
-var PropertySeparator = "-"
+var PropertySeparator = "_"
 
 const MaxTraitCount = 22
 

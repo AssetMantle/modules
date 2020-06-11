@@ -24,7 +24,7 @@ func (keeper keeper) transact(context sdkTypes.Context, message Message) error {
 	immutablePropertyList := message.Properties.PropertyList()
 	hashID := keeper.mapper.MakeHashID(immutablePropertyList)
 	assetID := keeper.mapper.MakeAssetID(message.ChainID, message.MaintainersID, message.ClassificationID, hashID)
-	asset := keeper.mapper.MakeAsset(assetID, &message.Properties, message.Lock, message.Burn)
+	asset := keeper.mapper.MakeAsset(assetID, message.Properties, message.Lock, message.Burn)
 	assets := keeper.mapper.Assets(context, assetID)
 	if assets.Get(assetID) != nil {
 		return constants.EntityAlreadyExistsCode

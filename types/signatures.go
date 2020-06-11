@@ -8,9 +8,8 @@ type Signatures interface {
 	Remove(Signature) error
 	Mutate(Signature) error
 }
-type BaseSignatureList []BaseSignature
 type BaseSignatures struct {
-	BaseSignatureList BaseSignatureList
+	BaseSignatureList []BaseSignature
 }
 
 var _ Signatures = (*BaseSignatures)(nil)

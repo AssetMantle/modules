@@ -4,13 +4,13 @@ type Properties interface {
 	Get(ID) Property
 
 	PropertyList() []Property
-	Add(Property) error
-	Remove(Property) error
-	Mutate(Property) error
+	Add(Property) Properties
+	Remove(Property) Properties
+	Mutate(Property) Properties
 }
-type BasePropertyList []BaseProperty
+
 type BaseProperties struct {
-	BasePropertyList BasePropertyList
+	BasePropertyList []BaseProperty
 }
 
 var _ Properties = (*BaseProperties)(nil)
@@ -23,18 +23,18 @@ func (baseProperties BaseProperties) Get(id ID) Property {
 	}
 	return nil
 }
-func (baseProperties *BaseProperties) PropertyList() []Property {
+func (baseProperties BaseProperties) PropertyList() []Property {
 	var propertyList []Property
 	for _, baseProperty := range baseProperties.BasePropertyList {
 		propertyList = append(propertyList, &baseProperty)
 	}
 	return propertyList
 }
-func (baseProperties *BaseProperties) Add(property Property) error {
-	propertyList := baseProperties.BasePropertyList
-	for i, oldProperty := range propertyList {
+func (baseProperties BaseProperties) Add(property Property) Properties {
+	basePropertyList := baseProperties.BasePropertyList
+	for i, oldProperty := range basePropertyList {
 		if oldProperty.ID().Compare(property.ID()) < 0 {
-			propertyList = append(append(propertyList[:i], BaseProperty{
+			basePropertyList = append(append(basePropertyList[:i], BaseProperty{
 				BaseID: BaseID{
 					IDString: property.ID().String(),
 				},
@@ -42,21 +42,21 @@ func (baseProperties *BaseProperties) Add(property Property) error {
 					BaseBytes:      property.Fact().Bytes(),
 					BaseSignatures: BaseSignaturesFromInterface(property.Fact().Signatures()),
 				},
-			}), propertyList[i+1:]...)
+			}), basePropertyList[i+1:]...)
 		}
 	}
-	return nil
+	return BaseProperties{BasePropertyList: basePropertyList}
 }
-func (baseProperties *BaseProperties) Remove(property Property) error {
-	propertyList := baseProperties.BasePropertyList
-	for i, oldProperty := range propertyList {
+func (baseProperties BaseProperties) Remove(property Property) Properties {
+	basePropertyList := baseProperties.BasePropertyList
+	for i, oldProperty := range basePropertyList {
 		if oldProperty.ID().Compare(property.ID()) == 0 {
-			propertyList = append(propertyList[:i], propertyList[i+1:]...)
+			basePropertyList = append(basePropertyList[:i], basePropertyList[i+1:]...)
 		}
 	}
-	return nil
+	return BaseProperties{BasePropertyList: basePropertyList}
 }
-func (baseProperties *BaseProperties) Mutate(property Property) error {
+func (baseProperties BaseProperties) Mutate(property Property) Properties {
 	basePropertyList := baseProperties.BasePropertyList
 	for i, oldProperty := range basePropertyList {
 		if oldProperty.ID().Compare(property.ID()) == 0 {
@@ -71,7 +71,7 @@ func (baseProperties *BaseProperties) Mutate(property Property) error {
 			}
 		}
 	}
-	return nil
+	return BaseProperties{BasePropertyList: basePropertyList}
 }
 func BasePropertiesFromInterface(properties Properties) BaseProperties {
 	var basePropertyList []BaseProperty

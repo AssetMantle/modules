@@ -54,18 +54,19 @@ func RestRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		propertyList := make([]types.Property, len(request.properties))
-		for i, property := range request.properties {
-			propertyList[i] = &property
+		var basePropertyList []types.BaseProperty
+		for _, baseProperty := range request.properties {
+			basePropertyList = append(basePropertyList, baseProperty)
 		}
+		baseProperties := types.BaseProperties{BasePropertyList: basePropertyList}
 		message := Message{
-			from:             from,
-			chainID:          request.chainID,
-			maintainersID:    request.maintainersID,
-			classificationID: request.classificationID,
-			propertyList:     propertyList,
-			lock:             request.lock,
-			burn:             request.burn,
+			From:             from,
+			ChainID:          request.chainID,
+			MaintainersID:    request.maintainersID,
+			ClassificationID: request.classificationID,
+			Properties:       &baseProperties,
+			Lock:             request.lock,
+			Burn:             request.burn,
 		}
 		client.WriteGenerateStdTxResponse(responseWriter, cliContext, request.baseReq, []sdkTypes.Msg{message})
 	}
