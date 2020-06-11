@@ -18,7 +18,7 @@ type assets struct {
 func (assets assets) ID() types.ID { return assets.assetID }
 func (assets assets) Get(id types.ID) types.InterNFT {
 	for _, asset := range assets.assetList {
-		if asset.assetID.Compare(id) == 0 {
+		if asset.AssetID.Compare(id) == 0 {
 			return &asset
 		}
 	}
@@ -26,7 +26,7 @@ func (assets assets) Get(id types.ID) types.InterNFT {
 }
 
 func (assets *assets) Add(interNFT types.InterNFT) error {
-	asset := assets.mapper.assetFromInterNFT(interNFT)
+	asset := assetFromInterface(interNFT)
 	assets.mapper.create(assets.context, asset)
 	for i, oldAsset := range assets.assetList {
 		if oldAsset.ID().Compare(asset.ID()) < 0 {
@@ -37,7 +37,7 @@ func (assets *assets) Add(interNFT types.InterNFT) error {
 	return nil
 }
 func (assets *assets) Remove(interNFT types.InterNFT) error {
-	assetID := assets.mapper.assetFromInterNFT(interNFT).assetID
+	assetID := assetFromInterface(interNFT).AssetID
 	assets.mapper.delete(assets.context, assetID)
 	for i, asset := range assets.assetList {
 		if asset.ID().Compare(assetID) == 0 {
@@ -48,7 +48,7 @@ func (assets *assets) Remove(interNFT types.InterNFT) error {
 	return nil
 }
 func (assets *assets) Mutate(interNFT types.InterNFT) error {
-	asset := assets.mapper.assetFromInterNFT(interNFT)
+	asset := assetFromInterface(interNFT)
 	assets.mapper.update(assets.context, asset)
 	for i, oldAsset := range assets.assetList {
 		if oldAsset.ID().Compare(asset.ID()) == 0 {
