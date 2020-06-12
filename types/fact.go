@@ -1,7 +1,5 @@
 package types
 
-import "encoding/json"
-
 type Fact interface {
 	String() string
 	Bytes() []byte
@@ -12,16 +10,10 @@ type Fact interface {
 var _ Fact = (*BaseFact)(nil)
 
 type BaseFact struct {
-	BaseBytes      []byte
+	BaseString     string
 	BaseSignatures BaseSignatures
 }
 
-func (baseFact BaseFact) String() string {
-	bytes, Error := json.Marshal(baseFact)
-	if Error != nil {
-		panic(Error)
-	}
-	return string(bytes)
-}
-func (baseFact BaseFact) Bytes() []byte          { return baseFact.BaseBytes }
+func (baseFact BaseFact) String() string         { return baseFact.BaseString }
+func (baseFact BaseFact) Bytes() []byte          { return []byte(baseFact.BaseString) }
 func (baseFact BaseFact) Signatures() Signatures { return &baseFact.BaseSignatures }

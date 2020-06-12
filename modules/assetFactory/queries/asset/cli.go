@@ -7,7 +7,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"strings"
 )
 
@@ -19,7 +18,7 @@ func QueryCommand(codec *codec.Codec) *cobra.Command {
 		RunE: func(command *cobra.Command, args []string) error {
 			cliContext := context.NewCLIContext().WithCodec(codec)
 
-			bytes := packageCodec.MustMarshalJSON(query{id: types.BaseID{IDString: viper.GetString(constants.AssetID)}})
+			bytes := packageCodec.MustMarshalJSON(query{id: types.BaseID{IDString: constants.AssetID.ReadCLIValue().(string)}})
 
 			response, _, queryWithDataError := cliContext.QueryWithData(strings.Join([]string{"", "custom", constants.QuerierRoute, constants.AssetQuery}, "/"), bytes)
 			if queryWithDataError != nil {
@@ -35,6 +34,6 @@ func QueryCommand(codec *codec.Codec) *cobra.Command {
 		},
 	}
 
-	command.Flags().String(constants.AssetID, "", "assetID")
+	constants.AssetQueryCommand.RegisterFlags(command)
 	return flags.GetCommands(command)[0]
 }

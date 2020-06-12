@@ -26,7 +26,7 @@ func (baseProperties BaseProperties) Get(id ID) Property {
 func (baseProperties BaseProperties) PropertyList() []Property {
 	var propertyList []Property
 	for _, baseProperty := range baseProperties.BasePropertyList {
-		propertyList = append(propertyList, &baseProperty)
+		propertyList = append(propertyList, baseProperty)
 	}
 	return propertyList
 }
@@ -39,7 +39,7 @@ func (baseProperties BaseProperties) Add(property Property) Properties {
 					IDString: property.ID().String(),
 				},
 				BaseFact: BaseFact{
-					BaseBytes:      property.Fact().Bytes(),
+					BaseString:     property.Fact().String(),
 					BaseSignatures: BaseSignaturesFromInterface(property.Fact().Signatures()),
 				},
 			}), basePropertyList[i+1:]...)
@@ -65,7 +65,7 @@ func (baseProperties BaseProperties) Mutate(property Property) Properties {
 					IDString: property.ID().String(),
 				},
 				BaseFact: BaseFact{
-					BaseBytes:      property.Fact().Bytes(),
+					BaseString:     property.Fact().String(),
 					BaseSignatures: BaseSignaturesFromInterface(property.Fact().Signatures()),
 				},
 			}
@@ -79,7 +79,7 @@ func BasePropertiesFromInterface(properties Properties) BaseProperties {
 		basePropertyList = append(basePropertyList, BaseProperty{
 			BaseID: BaseID{IDString: property.ID().String()},
 			BaseFact: BaseFact{
-				BaseBytes:      property.Fact().Bytes(),
+				BaseString:     property.Fact().String(),
 				BaseSignatures: BaseSignaturesFromInterface(property.Fact().Signatures()),
 			},
 		})
