@@ -28,6 +28,7 @@ type Mapper interface {
 
 	New(sdkTypes.Context) types.InterNFTs
 	Assets(sdkTypes.Context, types.ID) types.InterNFTs
+	QueryAssets(sdkTypes.Context, types.ID) []byte
 }
 
 type mapper struct {
@@ -121,7 +122,7 @@ func (mapper mapper) MakeAsset(id types.ID, properties types.Properties, lock ty
 }
 
 func (mapper mapper) New(context sdkTypes.Context) types.InterNFTs {
-	return &assets{mapper: mapper, context: context}
+	return &assets{Mapper: mapper, Context: context}
 }
 
 func (mapper mapper) Assets(context sdkTypes.Context, id types.ID) types.InterNFTs {
@@ -135,4 +136,11 @@ func (mapper mapper) Assets(context sdkTypes.Context, id types.ID) types.InterNF
 	mapper.iterate(context, assetID, appendAssetList)
 
 	return &assets{assetID, assetList, mapper, context}
+}
+func (mapper mapper) QueryAssets(context sdkTypes.Context, id types.ID) []byte {
+	bz, err := codec.MarshalJSONIndent(mapper.codec, mapper.Assets(context, id))
+	if err != nil {
+		return nil
+	}
+	return bz
 }

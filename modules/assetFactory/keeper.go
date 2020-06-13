@@ -24,9 +24,7 @@ type keeper struct {
 func NewKeeper(codec *codec.Codec, storeKey sdkTypes.StoreKey, paramSpace params.Subspace) Keeper {
 	Mapper := mapper.NewMapper(codec, storeKey)
 	return keeper{
-
-		mintKeeper: mint.NewKeeper(Mapper),
-
+		mintKeeper:   mint.NewKeeper(Mapper),
 		assetQuerier: asset.NewQuerier(Mapper),
 	}
 }
