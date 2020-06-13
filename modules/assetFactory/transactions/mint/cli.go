@@ -47,5 +47,5 @@ func TransactionCommand(codec *codec.Codec) *cobra.Command {
 			constants.ClassificationID,
 			constants.Lock,
 			constants.Burn},
-	).CreateCommand(codec, makeMessage)
+	).CreateTransactionCommand(codec, makeMessage)
 }

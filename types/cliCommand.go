@@ -11,15 +11,18 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 type CLICommand interface {
 	Use() string
 	Short() string
 	Long() string
-	FromAddress() sdkTypes.AccAddress
-	CreateCommand(*codec.Codec, func(CLICommand) sdkTypes.Msg) *cobra.Command
 	RegisterFlags(*cobra.Command)
+
+	FromAddress() sdkTypes.AccAddress
+	CreateTransactionCommand(*codec.Codec, func(CLICommand) sdkTypes.Msg) *cobra.Command
+	CreateQueryCommand(*codec.Codec, string, func(CLICommand) []byte, func([]byte) interface{}) *cobra.Command
 	GetInt(CLIFlag) int
 	GetBool(CLIFlag) bool
 	GetString(CLIFlag) string
@@ -42,7 +45,7 @@ func (baseCLICommand BaseCLICommand) FromAddress() sdkTypes.AccAddress {
 	return baseCLICommand.fromAddress
 }
 
-func (baseCLICommand BaseCLICommand) CreateCommand(codec *codec.Codec, makeMessage func(CLICommand) sdkTypes.Msg) *cobra.Command {
+func (baseCLICommand BaseCLICommand) CreateTransactionCommand(codec *codec.Codec, makeMessage func(CLICommand) sdkTypes.Msg) *cobra.Command {
 	command := &cobra.Command{
 		Use:   baseCLICommand.Use(),
 		Short: baseCLICommand.Short(),
@@ -64,6 +67,27 @@ func (baseCLICommand BaseCLICommand) CreateCommand(codec *codec.Codec, makeMessa
 	return flags.PostCommands(command)[0]
 }
 
+func (baseCLICommand BaseCLICommand) CreateQueryCommand(codec *codec.Codec, queryRoute string, makeQueryBytes func(CLICommand) []byte, marshallResponse func([]byte) interface{}) *cobra.Command {
+	command := &cobra.Command{
+		Use:   baseCLICommand.Use(),
+		Short: baseCLICommand.Short(),
+		Long:  baseCLICommand.Long(),
+		RunE: func(command *cobra.Command, args []string) error {
+			cliContext := context.NewCLIContext().WithCodec(codec)
+
+			bytes := makeQueryBytes(baseCLICommand)
+			responseBytes, _, queryWithDataError := cliContext.QueryWithData(strings.Join([]string{"", "custom", queryRoute, baseCLICommand.Use()}, "/"), bytes)
+			if queryWithDataError != nil {
+				return queryWithDataError
+			}
+			response := marshallResponse(responseBytes)
+			return cliContext.PrintOutput(response)
+		},
+	}
+
+	baseCLICommand.RegisterFlags(command)
+	return flags.GetCommands(command)[0]
+}
 func (baseCLICommand BaseCLICommand) RegisterFlags(command *cobra.Command) {
 	for _, cliFlag := range baseCLICommand.cliFlagList {
 		switch value := cliFlag.Value().(type) {
