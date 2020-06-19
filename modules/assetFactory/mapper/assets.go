@@ -8,16 +8,16 @@ import (
 var _ types.InterNFTs = (*assets)(nil)
 
 type assets struct {
-	assetID   assetID
-	assetList []asset
+	AssetID   assetID
+	AssetList []asset
 
-	mapper  mapper
-	context sdkTypes.Context
+	Mapper  mapper
+	Context sdkTypes.Context
 }
 
-func (assets assets) ID() types.ID { return assets.assetID }
+func (assets assets) ID() types.ID { return assets.AssetID }
 func (assets assets) Get(id types.ID) types.InterNFT {
-	for _, asset := range assets.assetList {
+	for _, asset := range assets.AssetList {
 		if asset.AssetID.Compare(id) == 0 {
 			return &asset
 		}
@@ -27,10 +27,10 @@ func (assets assets) Get(id types.ID) types.InterNFT {
 
 func (assets *assets) Add(interNFT types.InterNFT) error {
 	asset := assetFromInterface(interNFT)
-	assets.mapper.create(assets.context, asset)
-	for i, oldAsset := range assets.assetList {
+	assets.Mapper.create(assets.Context, asset)
+	for i, oldAsset := range assets.AssetList {
 		if oldAsset.ID().Compare(asset.ID()) < 0 {
-			assets.assetList = append(append(assets.assetList[:i], asset), assets.assetList[i+1:]...)
+			assets.AssetList = append(append(assets.AssetList[:i], asset), assets.AssetList[i+1:]...)
 			break
 		}
 	}
@@ -38,10 +38,10 @@ func (assets *assets) Add(interNFT types.InterNFT) error {
 }
 func (assets *assets) Remove(interNFT types.InterNFT) error {
 	assetID := assetFromInterface(interNFT).AssetID
-	assets.mapper.delete(assets.context, assetID)
-	for i, asset := range assets.assetList {
+	assets.Mapper.delete(assets.Context, assetID)
+	for i, asset := range assets.AssetList {
 		if asset.ID().Compare(assetID) == 0 {
-			assets.assetList = append(assets.assetList[:i], assets.assetList[i+1:]...)
+			assets.AssetList = append(assets.AssetList[:i], assets.AssetList[i+1:]...)
 			break
 		}
 	}
@@ -49,10 +49,10 @@ func (assets *assets) Remove(interNFT types.InterNFT) error {
 }
 func (assets *assets) Mutate(interNFT types.InterNFT) error {
 	asset := assetFromInterface(interNFT)
-	assets.mapper.update(assets.context, asset)
-	for i, oldAsset := range assets.assetList {
+	assets.Mapper.update(assets.Context, asset)
+	for i, oldAsset := range assets.AssetList {
 		if oldAsset.ID().Compare(asset.ID()) == 0 {
-			assets.assetList[i] = asset
+			assets.AssetList[i] = asset
 			break
 		}
 	}

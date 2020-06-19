@@ -39,10 +39,13 @@ func (assetID assetID) Compare(id types.ID) int {
 
 func assetIDFromInterface(id types.ID) assetID {
 	idList := strings.Split(id.String(), constants.IDSeparator)
-	return assetID{
-		ChainID:          types.BaseID{IDString: idList[0]},
-		MaintainersID:    types.BaseID{IDString: idList[1]},
-		ClassificationID: types.BaseID{IDString: idList[2]},
-		HashID:           types.BaseID{IDString: idList[3]},
+	if len(idList) == 4 {
+		return assetID{
+			ChainID:          types.BaseID{IDString: idList[0]},
+			MaintainersID:    types.BaseID{IDString: idList[1]},
+			ClassificationID: types.BaseID{IDString: idList[2]},
+			HashID:           types.BaseID{IDString: idList[3]},
+		}
 	}
+	return assetID{ChainID: types.BaseID{}, MaintainersID: types.BaseID{}, ClassificationID: types.BaseID{}, HashID: types.BaseID{}}
 }

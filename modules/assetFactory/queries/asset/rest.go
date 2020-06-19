@@ -14,13 +14,13 @@ func RestQueryHandler(cliContext context.CLIContext) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		responseWriter.Header().Set("Content-Type", "application/json")
 		vars := mux.Vars(httpRequest)
-		id := types.BaseID{IDString: vars["id"]}
+		id := types.BaseID{IDString: vars["ID"]}
 
 		cliContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, cliContext, httpRequest)
 		if !ok {
 			return
 		}
-		bytes := packageCodec.MustMarshalJSON(query{id: id})
+		bytes := packageCodec.MustMarshalJSON(query{ID: id})
 		response, height, err := cliContext.QueryWithData(strings.Join([]string{"", "custom", constants.QuerierRoute, constants.AssetQuery}, "/"), bytes)
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
