@@ -1,73 +1,63 @@
 package mint
 
 import (
-	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/x/auth/client"
+	"errors"
+	"fmt"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
 type request struct {
-	baseReq          rest.BaseReq
-	chainID          types.BaseID
-	classificationID types.BaseID
-	maintainersID    types.BaseID
-	properties       []types.BaseProperty
-	lock             types.BaseHeight
-	burn             types.BaseHeight
+	BaseReq          rest.BaseReq         `json:"baseReq"`
+	ClassificationID types.BaseID         `json:"classificationID"`
+	MaintainersID    types.BaseID         `json:"maintainersID"`
+	Properties       []types.BaseProperty `json:"properties"`
+	Lock             types.BaseHeight     `json:"lock"`
+	Burn             types.BaseHeight     `json:"burn"`
 }
 
-func RestRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
-	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
-		var request request
-		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
-			return
-		}
+var _ types.Request = (*request)(nil)
 
-		request.baseReq = request.baseReq.Sanitize()
-		if !request.baseReq.ValidateBasic(responseWriter) {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
-			return
-		}
+func RESTRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 
-		_, Error := govalidator.ValidateStruct(request)
+	makeBaseReqAndMsg := func(xprtRequest types.Request) (rest.BaseReq, sdkTypes.Msg) {
+		request := xprtRequest.(request)
+
+		baseReq := request.BaseReq
+		from, Error := sdkTypes.AccAddressFromBech32(baseReq.From)
 		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
-			return
+			panic(errors.New(fmt.Sprintf("")))
 		}
 
-		from, Error := sdkTypes.AccAddressFromBech32(request.baseReq.From)
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
-			return
-		}
-
-		noOfPropertiesSent := len(request.properties)
+		noOfPropertiesSent := len(request.Properties)
 
 		if noOfPropertiesSent > constants.MaxTraitCount {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, constants.IncorrectMessageCode.Error())
-			return
+			panic(errors.New(fmt.Sprintf("")))
 		}
 
 		var basePropertyList []types.BaseProperty
-		for _, baseProperty := range request.properties {
+		for _, baseProperty := range request.Properties {
 			basePropertyList = append(basePropertyList, baseProperty)
 		}
 		baseProperties := types.BaseProperties{BasePropertyList: basePropertyList}
 		message := Message{
 			From:             from,
-			ChainID:          request.chainID,
-			MaintainersID:    request.maintainersID,
-			ClassificationID: request.classificationID,
+			ChainID:          types.BaseID{IDString: baseReq.ChainID},
+			MaintainersID:    request.MaintainersID,
+			ClassificationID: request.ClassificationID,
 			Properties:       &baseProperties,
-			Lock:             request.lock,
-			Burn:             request.burn,
+			Lock:             request.Lock,
+			Burn:             request.Burn,
 		}
-		client.WriteGenerateStdTxResponse(responseWriter, cliContext, request.baseReq, []sdkTypes.Msg{message})
+		return baseReq, message
 	}
+
+	var requestPrototype request
+
+	return types.NewRESTRequest(requestPrototype).CreateRequest(cliContext, makeBaseReqAndMsg)
 }
