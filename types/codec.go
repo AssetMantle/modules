@@ -20,6 +20,8 @@ func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*NFTWallet)(nil), nil)
 	codec.RegisterInterface((*Properties)(nil), nil)
 	codec.RegisterInterface((*Property)(nil), nil)
+	codec.RegisterInterface((*Query)(nil), nil)
+	codec.RegisterInterface((*Request)(nil), nil)
 	codec.RegisterInterface((*Share)(nil), nil)
 	codec.RegisterInterface((*Signature)(nil), nil)
 	codec.RegisterInterface((*Signatures)(nil), nil)
