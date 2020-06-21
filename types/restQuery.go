@@ -11,12 +11,10 @@ import (
 type RESTQuery interface {
 	CreateQuery(context.CLIContext, func(map[string]string) []byte) http.HandlerFunc
 }
-type Query interface{}
 
 type restQuery struct {
 	Route string
 	Path  string
-	Query Query
 }
 
 var _ RESTQuery = (*restQuery)(nil)
@@ -41,10 +39,9 @@ func (restQuery restQuery) CreateQuery(cliContext context.CLIContext, makeQueryB
 		rest.PostProcessResponse(responseWriter, cliContext, response)
 	}
 }
-func NewRESTQuery(route string, path string, query interface{}) RESTQuery {
+func NewRESTQuery(route string, path string) RESTQuery {
 	return &restQuery{
 		Route: route,
 		Path:  path,
-		Query: query,
 	}
 }
