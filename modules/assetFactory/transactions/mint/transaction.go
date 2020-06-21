@@ -12,6 +12,7 @@ var Transaction = types.NewTransaction(
 	constants.MintTransactionShort,
 	constants.MintTransactionLong,
 	requestPrototype,
+	registerCodec,
 	[]types.CLIFlag{
 		constants.Properties,
 		constants.ChainID,

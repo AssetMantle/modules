@@ -5,7 +5,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
-func RegisterCodec(codec *codec.Codec) {
+func registerCodec(codec *codec.Codec) {
 	codec.RegisterConcrete(Message{}, "assetFactory/mint", nil)
 	codec.RegisterConcrete(request{}, "assetFactory/request", nil)
 }
@@ -13,7 +13,7 @@ func RegisterCodec(codec *codec.Codec) {
 var packageCodec = codec.New()
 
 func init() {
-	RegisterCodec(packageCodec)
+	registerCodec(packageCodec)
 	types.RegisterCodec(packageCodec)
 	packageCodec.Seal()
 }
