@@ -1,10 +1,10 @@
 package types
 
 type InterNFTs interface {
-	ID() ID
+	GetID() ID
 	Get(ID) InterNFT
 
-	Add(InterNFT) error
-	Remove(InterNFT) error
-	Mutate(InterNFT) error
+	Add(InterNFT) InterNFTs
+	Remove(InterNFT) InterNFTs
+	Mutate(InterNFT) InterNFTs
 }

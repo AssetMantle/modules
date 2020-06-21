@@ -1,9 +1,9 @@
 package types
 
 type Chains interface {
-	ID() ID
+	GetID() ID
 	Get(ID) Chain
-	Add(Chain) error
-	Remove(Chain) error
-	Mutate(Chain) error
+	Add(Chain) Chains
+	Remove(Chain) Chains
+	Mutate(Chain) Chains
 }

@@ -28,11 +28,11 @@ func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*Trait)(nil), nil)
 	codec.RegisterInterface((*Traits)(nil), nil)
 
-	codec.RegisterConcrete(&BaseFact{}, "xprt/fact", nil)
-	codec.RegisterConcrete(&BaseHeight{}, "xprt/height", nil)
-	codec.RegisterConcrete(&BaseID{}, "xprt/id", nil)
-	codec.RegisterConcrete(&BaseProperties{}, "xprt/properties", nil)
-	codec.RegisterConcrete(&BaseProperty{}, "xprt/property", nil)
-	codec.RegisterConcrete(&BaseSignature{}, "xprt/signature", nil)
-	codec.RegisterConcrete(&BaseSignatures{}, "xprt/signatures", nil)
+	codec.RegisterConcrete(&fact{}, "xprt/fact", nil)
+	codec.RegisterConcrete(&height{}, "xprt/height", nil)
+	codec.RegisterConcrete(&id{}, "xprt/id", nil)
+	codec.RegisterConcrete(&properties{}, "xprt/properties", nil)
+	codec.RegisterConcrete(&property{}, "xprt/property", nil)
+	codec.RegisterConcrete(&signature{}, "xprt/signature", nil)
+	codec.RegisterConcrete(&signatures{}, "xprt/signatures", nil)
 }
