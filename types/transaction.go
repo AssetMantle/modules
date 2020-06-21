@@ -4,25 +4,30 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/spf13/cobra"
 	"net/http"
 )
 
 type Transaction interface {
-	GetTransactionCommand(*codec.Codec) *cobra.Command
+	TransactionCommand(*codec.Codec) *cobra.Command
 	HandleMessage(sdkTypes.Context, TransactionKeeper, sdkTypes.Msg) (*sdkTypes.Result, error)
-	GetRESTRequestHandler(context.CLIContext) http.HandlerFunc
+	RESTRequestHandler(context.CLIContext) http.HandlerFunc
+	RegisterCodec(*codec.Codec)
 }
 
 type transaction struct {
-	Module             string
-	TransactionCommand func(*codec.Codec) *cobra.Command
-	RESTRequestHandler func(context.CLIContext) http.HandlerFunc
+	Module           string
+	Command          func(*codec.Codec) *cobra.Command
+	Handler          func(context.CLIContext) http.HandlerFunc
+	Codec            func(*codec.Codec)
+	RequestPrototype func() Request
 }
 
 var _ Transaction = (*transaction)(nil)
 
-func (transaction transaction) GetTransactionCommand(codec *codec.Codec) *cobra.Command {
+func (transaction transaction) TransactionCommand(codec *codec.Codec) *cobra.Command {
 	return transaction.TransactionCommand(codec)
 }
 
@@ -42,14 +47,41 @@ func (transaction transaction) HandleMessage(context sdkTypes.Context, transacti
 	return &sdkTypes.Result{Events: context.EventManager().ABCIEvents()}, nil
 }
 
-func (transaction transaction) GetRESTRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
-	return transaction.RESTRequestHandler(cliContext)
+func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
+	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
+		request := transaction.RequestPrototype()
+		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
+			return
+		}
+
+		baseReq := request.GetBaseReq()
+		msg := request.MakeMsg()
+
+		baseReq = baseReq.Sanitize()
+		if !baseReq.ValidateBasic(responseWriter) {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
+			return
+		}
+
+		Error := msg.ValidateBasic()
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+			return
+		}
+		client.WriteGenerateStdTxResponse(responseWriter, cliContext, baseReq, []sdkTypes.Msg{msg})
+	}
 }
 
-func NewTransaction(module string, use string, short string, long string, requestPrototype func() Request, flagList []CLIFlag) Transaction {
+func (transaction transaction) RegisterCodec(codec *codec.Codec) {
+	transaction.RegisterCodec(codec)
+}
+
+func NewTransaction(module string, use string, short string, long string, requestPrototype func() Request, registerCodec func(*codec.Codec), flagList []CLIFlag) Transaction {
 	return &transaction{
-		Module:             module,
-		TransactionCommand: NewCLICommand(use, short, long, flagList).TransactionCommand(requestPrototype),
-		RESTRequestHandler: NewRESTRequest().RequestHandler(requestPrototype),
+		Module:           module,
+		Command:          NewCLICommand(use, short, long, flagList).TransactionCommand(requestPrototype),
+		Codec:            registerCodec,
+		RequestPrototype: requestPrototype,
 	}
 }
