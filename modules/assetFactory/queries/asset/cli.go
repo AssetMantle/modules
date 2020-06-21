@@ -10,7 +10,7 @@ import (
 func QueryCommand(Codec *codec.Codec) *cobra.Command {
 
 	makeQueryBytes := func(cliCommand types.CLICommand) []byte {
-		return packageCodec.MustMarshalJSON(query{ID: types.BaseID{IDString: cliCommand.GetString(constants.AssetID)}})
+		return packageCodec.MustMarshalJSON(query{ID: types.NewID(cliCommand.ReadString(constants.AssetID))})
 	}
 
 	marshallResponse := func(bytes []byte) interface{} {

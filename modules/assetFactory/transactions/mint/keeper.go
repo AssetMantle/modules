@@ -21,13 +21,14 @@ func NewKeeper(mapper mapper.Mapper) Keeper {
 var _ Keeper = (*keeper)(nil)
 
 func (keeper keeper) transact(context sdkTypes.Context, message Message) error {
-	immutablePropertyList := message.Properties.PropertyList()
+	immutablePropertyList := message.Properties.GetList()
 	hashID := keeper.mapper.MakeHashID(immutablePropertyList)
-	assetID := keeper.mapper.MakeAssetID(message.ChainID, message.MaintainersID, message.ClassificationID, hashID)
-	asset := keeper.mapper.MakeAsset(assetID, message.Properties, message.Lock, message.Burn)
+	assetID := mapper.NewAssetID(message.ChainID, message.MaintainersID, message.ClassificationID, hashID)
+	asset := mapper.NewAsset(assetID, message.Properties, message.Lock, message.Burn)
 	assets := keeper.mapper.Assets(context, assetID)
 	if assets.Get(assetID) != nil {
 		return constants.EntityAlreadyExistsCode
 	}
-	return assets.Add(asset)
+	assets.Add(asset)
+	return nil
 }

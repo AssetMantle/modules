@@ -7,18 +7,19 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 	"net/http"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
 type request struct {
-	BaseReq          rest.BaseReq         `json:"baseReq"`
-	ClassificationID types.BaseID         `json:"classificationID"`
-	MaintainersID    types.BaseID         `json:"maintainersID"`
-	Properties       []types.BaseProperty `json:"properties"`
-	Lock             types.BaseHeight     `json:"lock"`
-	Burn             types.BaseHeight     `json:"burn"`
+	BaseReq          rest.BaseReq `json:"baseReq"`
+	ClassificationID string       `json:"classificationID"`
+	MaintainersID    string       `json:"maintainersID"`
+	Properties       string       `json:"properties"`
+	Lock             int          `json:"lock"`
+	Burn             int          `json:"burn"`
 }
 
 var _ types.Request = (*request)(nil)
@@ -40,19 +41,23 @@ func RESTRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 			panic(errors.New(fmt.Sprintf("")))
 		}
 
-		var basePropertyList []types.BaseProperty
-		for _, baseProperty := range request.Properties {
-			basePropertyList = append(basePropertyList, baseProperty)
+		properties := strings.Split(request.Properties, constants.PropertiesSeparator)
+		basePropertyList := make([]types.Property, 0)
+		for _, property := range properties {
+			traitIDAndProperty := strings.Split(property, constants.TraitIDAndPropertySeparator)
+			if len(traitIDAndProperty) == 2 && traitIDAndProperty[0] != "" {
+				basePropertyList = append(basePropertyList, types.NewProperty(types.NewID(traitIDAndProperty[0]), types.NewFact(traitIDAndProperty[1], types.NewSignatures(nil))))
+			}
 		}
-		baseProperties := types.BaseProperties{BasePropertyList: basePropertyList}
+
 		message := Message{
 			From:             from,
-			ChainID:          types.BaseID{IDString: baseReq.ChainID},
-			MaintainersID:    request.MaintainersID,
-			ClassificationID: request.ClassificationID,
-			Properties:       &baseProperties,
-			Lock:             request.Lock,
-			Burn:             request.Burn,
+			ChainID:          types.NewID(request.BaseReq.ChainID),
+			MaintainersID:    types.NewID(request.MaintainersID),
+			ClassificationID: types.NewID(request.ClassificationID),
+			Properties:       types.NewProperties(basePropertyList),
+			Lock:             types.NewHeight(request.Lock),
+			Burn:             types.NewHeight(request.Burn),
 		}
 		return baseReq, message
 	}

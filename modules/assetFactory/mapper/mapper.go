@@ -11,20 +11,18 @@ import (
 	"strings"
 )
 
-func storeKey(assetID assetID) []byte {
-	return append(constants.StoreKeyPrefix, assetID.Bytes()...)
+func storeKey(id types.ID) []byte {
+	return append(constants.StoreKeyPrefix, id.Bytes()...)
 }
 
 type Mapper interface {
-	create(sdkTypes.Context, asset)
-	read(sdkTypes.Context, assetID) asset
-	update(sdkTypes.Context, asset)
-	delete(sdkTypes.Context, assetID)
-	iterate(sdkTypes.Context, assetID, func(asset) bool)
+	create(sdkTypes.Context, types.InterNFT)
+	read(sdkTypes.Context, types.ID) types.InterNFT
+	update(sdkTypes.Context, types.InterNFT)
+	delete(sdkTypes.Context, types.ID)
+	iterate(sdkTypes.Context, types.ID, func(types.InterNFT) bool)
 
 	MakeHashID(immutablePropertyList []types.Property) types.ID
-	MakeAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID
-	MakeAsset(assetID types.ID, properties types.Properties, lock types.Height, burn types.Height) types.InterNFT
 
 	New(sdkTypes.Context) types.InterNFTs
 	Assets(sdkTypes.Context, types.ID) types.InterNFTs
@@ -36,24 +34,17 @@ type mapper struct {
 	codec    *codec.Codec
 }
 
-func NewMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) Mapper {
-	return mapper{
-		storeKey: storeKey,
-		codec:    codec,
-	}
-}
-
 var _ Mapper = (*mapper)(nil)
 
-func (mapper mapper) create(context sdkTypes.Context, asset asset) {
+func (mapper mapper) create(context sdkTypes.Context, asset types.InterNFT) {
 	bytes, Error := mapper.codec.MarshalBinaryBare(asset)
 	if Error != nil {
 		panic(Error)
 	}
 	kvStore := context.KVStore(mapper.storeKey)
-	kvStore.Set(storeKey(asset.AssetID), bytes)
+	kvStore.Set(storeKey(asset.GetID()), bytes)
 }
-func (mapper mapper) read(context sdkTypes.Context, assetID assetID) asset {
+func (mapper mapper) read(context sdkTypes.Context, assetID types.ID) types.InterNFT {
 	kvStore := context.KVStore(mapper.storeKey)
 	bytes := kvStore.Get(storeKey(assetID))
 	if bytes == nil {
@@ -66,16 +57,16 @@ func (mapper mapper) read(context sdkTypes.Context, assetID assetID) asset {
 	}
 	return asset
 }
-func (mapper mapper) update(context sdkTypes.Context, asset asset) {
+func (mapper mapper) update(context sdkTypes.Context, asset types.InterNFT) {
 	bytes, Error := mapper.codec.MarshalBinaryBare(asset)
 	if Error != nil {
 		panic(Error)
 	}
-	assetID := asset.AssetID
+	assetID := asset.GetID()
 	kvStore := context.KVStore(mapper.storeKey)
 	kvStore.Set(storeKey(assetID), bytes)
 }
-func (mapper mapper) delete(context sdkTypes.Context, assetID assetID) {
+func (mapper mapper) delete(context sdkTypes.Context, assetID types.ID) {
 	bytes, Error := mapper.codec.MarshalBinaryBare(&asset{})
 	if Error != nil {
 		panic(Error)
@@ -83,7 +74,7 @@ func (mapper mapper) delete(context sdkTypes.Context, assetID assetID) {
 	kvStore := context.KVStore(mapper.storeKey)
 	kvStore.Set(storeKey(assetID), bytes)
 }
-func (mapper mapper) iterate(context sdkTypes.Context, assetID assetID, accumulator func(asset) bool) {
+func (mapper mapper) iterate(context sdkTypes.Context, assetID types.ID, accumulator func(types.InterNFT) bool) {
 	store := context.KVStore(mapper.storeKey)
 	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(store, storeKey(assetID))
 
@@ -103,22 +94,13 @@ func (mapper mapper) iterate(context sdkTypes.Context, assetID assetID, accumula
 func (mapper mapper) MakeHashID(immutablePropertyList []types.Property) types.ID {
 	var facts []string
 	for _, immutableProperty := range immutablePropertyList {
-		facts = append(facts, immutableProperty.Fact().String())
+		facts = append(facts, immutableProperty.GetFact().String())
 	}
 	sort.Strings(facts)
 	toDigest := strings.Join(facts, constants.PropertySeparator)
 	h := sha1.New()
 	h.Write([]byte(toDigest))
-	return types.BaseID{IDString: base64.URLEncoding.EncodeToString(h.Sum(nil))}
-}
-
-func (mapper mapper) MakeAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
-	return assetID{chainID, maintainersID, classificationID, hashID}
-}
-
-func (mapper mapper) MakeAsset(id types.ID, properties types.Properties, lock types.Height, burn types.Height) types.InterNFT {
-	assetID := assetIDFromInterface(id)
-	return &asset{AssetID: assetID, BaseProperties: types.BasePropertiesFromInterface(properties), Lock: types.BaseHeightFromInterface(lock), Burn: types.BaseHeightFromInterface(burn)}
+	return types.NewID(base64.URLEncoding.EncodeToString(h.Sum(nil)))
 }
 
 func (mapper mapper) New(context sdkTypes.Context) types.InterNFTs {
@@ -126,9 +108,9 @@ func (mapper mapper) New(context sdkTypes.Context) types.InterNFTs {
 }
 
 func (mapper mapper) Assets(context sdkTypes.Context, id types.ID) types.InterNFTs {
-	var assetList []asset
+	var assetList []types.InterNFT
 
-	appendAssetList := func(asset asset) bool {
+	appendAssetList := func(asset types.InterNFT) bool {
 		assetList = append(assetList, asset)
 		return false
 	}
@@ -143,4 +125,11 @@ func (mapper mapper) QueryAssets(context sdkTypes.Context, id types.ID) []byte {
 		return nil
 	}
 	return bz
+}
+
+func NewMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) Mapper {
+	return mapper{
+		storeKey: storeKey,
+		codec:    codec,
+	}
 }
