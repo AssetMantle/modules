@@ -2,12 +2,10 @@ package types
 
 type Maintainers interface {
 	ID() ID
-	Traits() Traits
-	Properties() Properties
 
-	Maintainer(ID) Maintainer
+	Get(ID) Maintainer
 
-	Add(Maintainer) error
-	Remove(Maintainer) error
-	Mutate(Maintainer) error
+	Add(Maintainer) Maintainers
+	Remove(Maintainer) Maintainers
+	Mutate(Maintainer) Maintainers
 }
