@@ -18,7 +18,7 @@ func GetCLIRootTransactionCommand(codec *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 	rootTransactionCommand.AddCommand(
-		mint.TransactionCommand(codec),
+		mint.Transaction.GetTransactionCommand(codec),
 	)
 	return rootTransactionCommand
 }
