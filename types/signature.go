@@ -9,30 +9,38 @@ type Signature interface {
 	String() string
 	Bytes() []byte
 
-	ID() ID
+	GetID() ID
 
 	Verify(crypto.PubKey, []byte) bool
-	ValidityHeight() Height
+	GetValidityHeight() Height
 	HasExpired(Height) bool
 }
 
-type BaseSignature struct {
-	BaseID             BaseID
-	BaseBytes          []byte
-	ValidityBaseHeight BaseHeight
+type signature struct {
+	ID             ID
+	SignatureBytes []byte
+	ValidityHeight Height
 }
 
-var _ Signature = (*BaseSignature)(nil)
+var _ Signature = (*signature)(nil)
 
-func (baseSignature BaseSignature) String() string {
+func (baseSignature signature) String() string {
 	return base64.URLEncoding.EncodeToString(baseSignature.Bytes())
 }
-func (baseSignature BaseSignature) Bytes() []byte { return baseSignature.BaseBytes }
-func (baseSignature BaseSignature) ID() ID        { return baseSignature.BaseID }
-func (baseSignature BaseSignature) Verify(pubKey crypto.PubKey, bytes []byte) bool {
+func (baseSignature signature) Bytes() []byte { return baseSignature.SignatureBytes }
+func (baseSignature signature) GetID() ID     { return baseSignature.ID }
+func (baseSignature signature) Verify(pubKey crypto.PubKey, bytes []byte) bool {
 	return pubKey.VerifyBytes(bytes, baseSignature.Bytes())
 }
-func (baseSignature BaseSignature) ValidityHeight() Height { return baseSignature.ValidityBaseHeight }
-func (baseSignature BaseSignature) HasExpired(height Height) bool {
-	return baseSignature.ValidityBaseHeight.IsGraterThat(height)
+func (baseSignature signature) GetValidityHeight() Height { return baseSignature.GetValidityHeight() }
+func (baseSignature signature) HasExpired(height Height) bool {
+	return baseSignature.GetValidityHeight().IsGraterThat(height)
+}
+
+func NewSignature(id ID, signatureBytes []byte, validityHeight Height) Signature {
+	return &signature{
+		ID:             id,
+		SignatureBytes: signatureBytes,
+		ValidityHeight: validityHeight,
+	}
 }

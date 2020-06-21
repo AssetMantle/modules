@@ -3,72 +3,60 @@ package types
 type Signatures interface {
 	Get(ID) Signature
 
-	SignatureList() []Signature
-	Add(Signature) error
-	Remove(Signature) error
-	Mutate(Signature) error
+	GetList() []Signature
+
+	Add(Signature) Signatures
+	Remove(Signature) Signatures
+	Mutate(Signature) Signatures
 }
-type BaseSignatures struct {
-	BaseSignatureList []BaseSignature
+type signatures struct {
+	SignatureList []Signature
 }
 
-var _ Signatures = (*BaseSignatures)(nil)
+var _ Signatures = (*signatures)(nil)
 
-func (baseSignatures BaseSignatures) Get(id ID) Signature {
-	for _, signature := range baseSignatures.BaseSignatureList {
-		if signature.ID().Compare(id) == 0 {
+func (signatures signatures) Get(id ID) Signature {
+	for _, signature := range signatures.SignatureList {
+		if signature.GetID().Compare(id) == 0 {
 			return signature
 		}
 	}
 	return nil
 }
-func (baseSignatures *BaseSignatures) SignatureList() []Signature {
-
+func (signatures signatures) GetList() []Signature {
 	var signatureList []Signature
-	for _, baseSignature := range baseSignatures.BaseSignatureList {
-		signatureList = append(signatureList, &baseSignature)
+	for _, signature := range signatures.SignatureList {
+		signatureList = append(signatureList, signature)
 	}
 	return signatureList
 }
-func (baseSignatures *BaseSignatures) Add(signature Signature) error {
-	signatureList := baseSignatures.BaseSignatureList
+func (signatures signatures) Add(signature Signature) Signatures {
+	signatureList := signatures.GetList()
 	for i, oldSignature := range signatureList {
-		if oldSignature.ID().Compare(signature.ID()) < 0 {
-			signatureList = append(append(signatureList[:i], BaseSignature{
-				BaseID:             BaseID{signature.ID().String()},
-				BaseBytes:          signature.Bytes(),
-				ValidityBaseHeight: BaseHeight{signature.ValidityHeight().Count()},
-			}), signatureList[i+1:]...)
+		if oldSignature.GetID().Compare(signature.GetID()) < 0 {
+			signatureList = append(append(signatureList[:i], signature), signatureList[i+1:]...)
 		}
 	}
-	return nil
+	return NewSignatures(signatureList)
 }
-func (baseSignatures *BaseSignatures) Remove(signature Signature) error {
-	signatureList := baseSignatures.BaseSignatureList
+func (signatures signatures) Remove(signature Signature) Signatures {
+	signatureList := signatures.SignatureList
 	for i, oldSignature := range signatureList {
-		if oldSignature.ID().Compare(signature.ID()) == 0 {
+		if oldSignature.GetID().Compare(signature.GetID()) == 0 {
 			signatureList = append(signatureList[:i], signatureList[i+1:]...)
 		}
 	}
-	return nil
+	return NewSignatures(signatureList)
 }
-func (baseSignatures *BaseSignatures) Mutate(signature Signature) error {
-	signatureList := baseSignatures.BaseSignatureList
+func (signatures signatures) Mutate(signature Signature) Signatures {
+	signatureList := signatures.GetList()
 	for i, oldSignature := range signatureList {
-		if oldSignature.ID().Compare(signature.ID()) == 0 {
-			signatureList[i] = BaseSignature{
-				BaseID:             BaseID{signature.ID().String()},
-				BaseBytes:          signature.Bytes(),
-				ValidityBaseHeight: BaseHeight{signature.ValidityHeight().Count()},
-			}
+		if oldSignature.GetID().Compare(signature.GetID()) == 0 {
+			signatureList[i] = signature
 		}
 	}
-	return nil
+	return NewSignatures(signatureList)
 }
-func BaseSignaturesFromInterface(signatures Signatures) BaseSignatures {
-	var baseSignatureList []BaseSignature
-	for _, signature := range signatures.SignatureList() {
-		baseSignatureList = append(baseSignatureList, BaseSignature{BaseID: BaseID{signature.String()}, BaseBytes: signature.Bytes(), ValidityBaseHeight: BaseHeight{signature.ValidityHeight().Count()}})
-	}
-	return BaseSignatures{BaseSignatureList: baseSignatureList}
+func NewSignatures(signatureList []Signature) Signatures {
+	return &signatures{SignatureList: signatureList}
 }

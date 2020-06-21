@@ -14,9 +14,9 @@ type RESTQuery interface {
 type Query interface{}
 
 type restQuery struct {
-	route string
-	path  string
-	query Query
+	Route string
+	Path  string
+	Query Query
 }
 
 var _ RESTQuery = (*restQuery)(nil)
@@ -31,7 +31,7 @@ func (restQuery restQuery) CreateQuery(cliContext context.CLIContext, makeQueryB
 
 		vars := mux.Vars(httpRequest)
 		bytes := makeQueryBytes(vars)
-		response, height, err := cliContext.QueryWithData(strings.Join([]string{"", "custom", restQuery.route, restQuery.path}, "/"), bytes)
+		response, height, err := cliContext.QueryWithData(strings.Join([]string{"", "custom", restQuery.Route, restQuery.Path}, "/"), bytes)
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
@@ -43,8 +43,8 @@ func (restQuery restQuery) CreateQuery(cliContext context.CLIContext, makeQueryB
 }
 func NewRESTQuery(route string, path string, query interface{}) RESTQuery {
 	return &restQuery{
-		route: route,
-		path:  path,
-		query: query,
+		Route: route,
+		Path:  path,
+		Query: query,
 	}
 }
