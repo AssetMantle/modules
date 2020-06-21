@@ -1,11 +1,14 @@
 package types
 
 import (
+	"bufio"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client"
+	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/spf13/cobra"
 	"net/http"
 )
@@ -19,7 +22,7 @@ type Transaction interface {
 
 type transaction struct {
 	Module           string
-	Command          func(*codec.Codec) *cobra.Command
+	CLICommand       CLICommand
 	Handler          func(context.CLIContext) http.HandlerFunc
 	Codec            func(*codec.Codec)
 	RequestPrototype func() Request
@@ -28,7 +31,22 @@ type transaction struct {
 var _ Transaction = (*transaction)(nil)
 
 func (transaction transaction) TransactionCommand(codec *codec.Codec) *cobra.Command {
-	return transaction.TransactionCommand(codec)
+	RunE := func(command *cobra.Command, args []string) error {
+		bufioReader := bufio.NewReader(command.InOrStdin())
+		transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(authClient.GetTxEncoder(codec))
+		cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
+
+		request := transaction.RequestPrototype()
+		request = request.ReadFromCLI(transaction.CLICommand, cliContext)
+
+		msg := request.MakeMsg()
+		if Error := msg.ValidateBasic(); Error != nil {
+			return Error
+		}
+
+		return authClient.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{msg})
+	}
+	return transaction.CLICommand.CreateCommand(RunE)
 }
 
 func (transaction transaction) HandleMessage(context sdkTypes.Context, transactionKeeper TransactionKeeper, message sdkTypes.Msg) (*sdkTypes.Result, error) {
@@ -74,13 +92,13 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 }
 
 func (transaction transaction) RegisterCodec(codec *codec.Codec) {
-	transaction.RegisterCodec(codec)
+	transaction.Codec(codec)
 }
 
 func NewTransaction(module string, use string, short string, long string, requestPrototype func() Request, registerCodec func(*codec.Codec), flagList []CLIFlag) Transaction {
 	return &transaction{
 		Module:           module,
-		Command:          NewCLICommand(use, short, long, flagList).TransactionCommand(requestPrototype),
+		CLICommand:       NewCLICommand(use, short, long, flagList),
 		Codec:            registerCodec,
 		RequestPrototype: requestPrototype,
 	}
