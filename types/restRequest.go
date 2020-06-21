@@ -9,38 +9,41 @@ import (
 )
 
 type RESTRequest interface {
-	CreateRequest(context.CLIContext, func(Request) (rest.BaseReq, sdkTypes.Msg)) http.HandlerFunc
+	RequestHandler(func() Request) func(context.CLIContext) http.HandlerFunc
 }
-type Request interface{}
 
 type restRequest struct {
-	Request Request
 }
 
 var _ RESTRequest = (*restRequest)(nil)
 
-func (restRequest restRequest) CreateRequest(cliContext context.CLIContext, makeBaseReqAndMsg func(Request) (rest.BaseReq, sdkTypes.Msg)) http.HandlerFunc {
-	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
+func (restRequest restRequest) RequestHandler(requestPrototype func() Request) func(cliContext context.CLIContext) http.HandlerFunc {
+	return func(cliContext context.CLIContext) http.HandlerFunc {
+		return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
+			request := requestPrototype()
+			if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
+				return
+			}
 
-		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &restRequest.Request) {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
-			return
+			baseReq := request.GetBaseReq()
+			msg := request.MakeMsg()
+
+			baseReq = baseReq.Sanitize()
+			if !baseReq.ValidateBasic(responseWriter) {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
+				return
+			}
+
+			Error := msg.ValidateBasic()
+			if Error != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+				return
+			}
+			client.WriteGenerateStdTxResponse(responseWriter, cliContext, baseReq, []sdkTypes.Msg{msg})
 		}
-
-		baseReq, msg := makeBaseReqAndMsg(restRequest.Request)
-
-		baseReq = baseReq.Sanitize()
-		if !baseReq.ValidateBasic(responseWriter) {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
-			return
-		}
-
-		Error := msg.ValidateBasic()
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
-			return
-		}
-		client.WriteGenerateStdTxResponse(responseWriter, cliContext, baseReq, []sdkTypes.Msg{msg})
 	}
 }
-func NewRESTRequest(request interface{}) RESTRequest { return &restRequest{Request: request} }
+func NewRESTRequest() RESTRequest {
+	return &restRequest{}
+}

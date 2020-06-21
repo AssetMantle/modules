@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/spf13/cobra"
@@ -17,12 +18,12 @@ import (
 type CLICommand interface {
 	registerFlags(*cobra.Command)
 
-	GetFromAddress() sdkTypes.AccAddress
 	ReadInt(CLIFlag) int
 	ReadBool(CLIFlag) bool
 	ReadString(CLIFlag) string
+	ReadBaseReq(context.CLIContext) rest.BaseReq
 
-	CreateTransactionCommand(*codec.Codec, func(CLICommand) sdkTypes.Msg) *cobra.Command
+	TransactionCommand(func() Request) func(*codec.Codec) *cobra.Command
 	CreateQueryCommand(*codec.Codec, string, func(CLICommand) []byte, func([]byte) interface{}) *cobra.Command
 }
 
@@ -30,15 +31,10 @@ type cliCommand struct {
 	Use         string
 	Short       string
 	Long        string
-	FromAddress sdkTypes.AccAddress
 	CLIFlagList []CLIFlag
 }
 
 var _ CLICommand = (*cliCommand)(nil)
-
-func (cliCommand cliCommand) GetFromAddress() sdkTypes.AccAddress {
-	return cliCommand.FromAddress
-}
 
 func (cliCommand cliCommand) registerFlags(command *cobra.Command) {
 	for _, cliFlag := range cliCommand.CLIFlagList {
@@ -88,26 +84,38 @@ func (cliCommand cliCommand) ReadString(cliFlag CLIFlag) string {
 	panic(errors.New(fmt.Sprintf("Uregistered flag %v type %T", cliFlag.GetName(), cliFlag.GetValue())))
 }
 
-func (cliCommand cliCommand) CreateTransactionCommand(codec *codec.Codec, makeMessage func(CLICommand) sdkTypes.Msg) *cobra.Command {
-	command := &cobra.Command{
-		Use:   cliCommand.Use,
-		Short: cliCommand.Short,
-		Long:  cliCommand.Long,
-		RunE: func(command *cobra.Command, args []string) error {
-			bufioReader := bufio.NewReader(command.InOrStdin())
-			transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(authClient.GetTxEncoder(codec))
-			cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
-			cliCommand.FromAddress = cliContext.GetFromAddress()
-			message := makeMessage(cliCommand)
-			if Error := message.ValidateBasic(); Error != nil {
-				return Error
-			}
-
-			return authClient.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{message})
-		},
+func (cliCommand cliCommand) ReadBaseReq(cliContext context.CLIContext) rest.BaseReq {
+	return rest.BaseReq{
+		From:     cliContext.GetFromAddress().String(),
+		ChainID:  cliContext.ChainID,
+		Simulate: cliContext.Simulate,
 	}
-	cliCommand.registerFlags(command)
-	return flags.PostCommands(command)[0]
+}
+
+func (cliCommand cliCommand) TransactionCommand(requestPrototype func() Request) func(*codec.Codec) *cobra.Command {
+
+	return func(codec *codec.Codec) *cobra.Command {
+		command := &cobra.Command{
+			Use:   cliCommand.Use,
+			Short: cliCommand.Short,
+			Long:  cliCommand.Long,
+			RunE: func(command *cobra.Command, args []string) error {
+				bufioReader := bufio.NewReader(command.InOrStdin())
+				transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(authClient.GetTxEncoder(codec))
+				cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
+				request := requestPrototype()
+				request = request.ReadFromCLI(cliCommand, cliContext)
+				msg := request.MakeMsg()
+				if Error := msg.ValidateBasic(); Error != nil {
+					return Error
+				}
+
+				return authClient.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{msg})
+			},
+		}
+		cliCommand.registerFlags(command)
+		return flags.PostCommands(command)[0]
+	}
 }
 
 func (cliCommand cliCommand) CreateQueryCommand(codec *codec.Codec, queryRoute string, makeQueryBytes func(CLICommand) []byte, marshallResponse func([]byte) interface{}) *cobra.Command {
