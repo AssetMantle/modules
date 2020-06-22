@@ -3,43 +3,58 @@ package types
 import (
 	"errors"
 	"fmt"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 type CLIFlag interface {
-	Name() string
-	Value() interface{}
-	Usage() string
+	GetName() string
+	GetValue() interface{}
+	Register(*cobra.Command)
 	ReadCLIValue() interface{}
 }
-type BaseCLIFlag struct {
-	name  string
-	value interface{}
-	usage string
+type cliFlag struct {
+	Name  string
+	Value interface{}
+	Usage string
 }
 
-var _ CLIFlag = (*BaseCLIFlag)(nil)
+var _ CLIFlag = (*cliFlag)(nil)
 
-func (baseCLIFlag BaseCLIFlag) Name() string       { return baseCLIFlag.name }
-func (baseCLIFlag BaseCLIFlag) Value() interface{} { return baseCLIFlag.value }
-func (baseCLIFlag BaseCLIFlag) Usage() string      { return baseCLIFlag.usage }
-func (baseCLIFlag BaseCLIFlag) ReadCLIValue() interface{} {
-	switch value := baseCLIFlag.value.(type) {
+func (cliFlag cliFlag) GetName() string { return cliFlag.Name }
+
+func (cliFlag cliFlag) GetValue() interface{} { return cliFlag.Value }
+
+func (cliFlag cliFlag) Register(command *cobra.Command) {
+	switch value := cliFlag.Value.(type) {
 	case int:
-		return viper.GetInt(baseCLIFlag.name)
+		command.Flags().Int(cliFlag.Name, value, cliFlag.Usage)
 	case bool:
-		return viper.GetBool(baseCLIFlag.name)
+		command.Flags().Bool(cliFlag.Name, value, cliFlag.Usage)
 	case string:
-		return viper.GetString(baseCLIFlag.name)
+		command.Flags().String(cliFlag.Name, value, cliFlag.Usage)
 	default:
-		panic(errors.New(fmt.Sprintf("Unhandled flag type %T for flag %v", value, baseCLIFlag.name)))
+		panic(value)
+	}
+}
+
+func (cliFlag cliFlag) ReadCLIValue() interface{} {
+	switch value := cliFlag.Value.(type) {
+	case int:
+		return viper.GetInt(cliFlag.Name)
+	case bool:
+		return viper.GetBool(cliFlag.Name)
+	case string:
+		return viper.GetString(cliFlag.Name)
+	default:
+		panic(errors.New(fmt.Sprintf("Unhandled flag type %T for flag %v", value, cliFlag.Name)))
 	}
 }
 
 func NewCLIFlag(name string, value interface{}, usage string) CLIFlag {
-	return &BaseCLIFlag{
-		name:  name,
-		value: value,
-		usage: usage,
+	return &cliFlag{
+		Name:  name,
+		Value: value,
+		Usage: usage,
 	}
 }

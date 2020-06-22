@@ -13,7 +13,7 @@ func NewHandler(keeper Keeper) sdkTypes.Handler {
 
 		switch message := msg.(type) {
 		case mint.Message:
-			return mint.HandleMessage(context, keeper.getMintKeeper(), message)
+			return mint.Transaction.HandleMessage(context, keeper.getMintKeeper(), message)
 
 		default:
 			return nil, errors.Wrapf(constants.UnknownMessageCode, "%T", msg)

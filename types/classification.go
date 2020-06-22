@@ -1,9 +1,9 @@
 package types
 
 type Classification interface {
-	Name() string
+	String() string
 
-	ID() ID
+	GetID() ID
 
-	Traits() Traits
+	GetTraits() Traits
 }

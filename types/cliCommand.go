@@ -1,15 +1,12 @@
 package types
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
+	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/cobra"
 	"strings"
 )
@@ -17,118 +14,100 @@ import (
 type CLICommand interface {
 	registerFlags(*cobra.Command)
 
-	FromAddress() sdkTypes.AccAddress
-	GetInt(CLIFlag) int
-	GetBool(CLIFlag) bool
-	GetString(CLIFlag) string
+	ReadInt(CLIFlag) int
+	ReadBool(CLIFlag) bool
+	ReadString(CLIFlag) string
+	ReadBaseReq(context.CLIContext) rest.BaseReq
 
-	CreateTransactionCommand(*codec.Codec, func(CLICommand) sdkTypes.Msg) *cobra.Command
+	CreateCommand(func(command *cobra.Command, args []string) error) *cobra.Command
+
 	CreateQueryCommand(*codec.Codec, string, func(CLICommand) []byte, func([]byte) interface{}) *cobra.Command
 }
 
-type BaseCLICommand struct {
-	use         string
-	short       string
-	long        string
-	fromAddress sdkTypes.AccAddress
-	cliFlagList []CLIFlag
+type cliCommand struct {
+	Use         string
+	Short       string
+	Long        string
+	CLIFlagList []CLIFlag
 }
 
-var _ CLICommand = (*BaseCLICommand)(nil)
+var _ CLICommand = (*cliCommand)(nil)
 
-func (baseCLICommand BaseCLICommand) FromAddress() sdkTypes.AccAddress {
-	return baseCLICommand.fromAddress
-}
-
-func (baseCLICommand BaseCLICommand) registerFlags(command *cobra.Command) {
-	for _, cliFlag := range baseCLICommand.cliFlagList {
-		switch value := cliFlag.Value().(type) {
-		case int:
-			command.Flags().Int(cliFlag.Name(), cliFlag.Value().(int), cliFlag.Usage())
-		case bool:
-			command.Flags().Bool(cliFlag.Name(), cliFlag.Value().(bool), cliFlag.Usage())
-		case string:
-			command.Flags().String(cliFlag.Name(), cliFlag.Value().(string), cliFlag.Usage())
-		default:
-			panic(value)
-		}
+func (cliCommand cliCommand) registerFlags(command *cobra.Command) {
+	for _, cliFlag := range cliCommand.CLIFlagList {
+		cliFlag.Register(command)
 	}
 }
 
-func (baseCLICommand BaseCLICommand) GetInt(cliFlag CLIFlag) int {
-	switch cliFlag.Value().(type) {
+func (cliCommand cliCommand) ReadInt(cliFlag CLIFlag) int {
+	switch cliFlag.GetValue().(type) {
 	case int:
-		for _, registeredCliFlag := range baseCLICommand.cliFlagList {
+		for _, registeredCliFlag := range cliCommand.CLIFlagList {
 			if registeredCliFlag == cliFlag {
 				return cliFlag.ReadCLIValue().(int)
 			}
 		}
 	default:
-		panic(errors.New(fmt.Sprintf("Falg %v not an int flag, Flag type: %T, ", cliFlag.Name(), cliFlag.Value())))
+		panic(errors.New(fmt.Sprintf("Flag %v not an int flag, Flag type: %T, ", cliFlag.GetName(), cliFlag.GetValue())))
 	}
-	panic(errors.New(fmt.Sprintf("Uregistered flag %v type %T", cliFlag.Name(), cliFlag.Value())))
+	panic(errors.New(fmt.Sprintf("Uregistered flag %v type %T", cliFlag.GetName(), cliFlag.GetValue())))
 }
 
-func (baseCLICommand BaseCLICommand) GetBool(cliFlag CLIFlag) bool {
-	switch cliFlag.Value().(type) {
+func (cliCommand cliCommand) ReadBool(cliFlag CLIFlag) bool {
+	switch cliFlag.GetValue().(type) {
 	case bool:
-		for _, registeredCliFlag := range baseCLICommand.cliFlagList {
+		for _, registeredCliFlag := range cliCommand.CLIFlagList {
 			if registeredCliFlag == cliFlag {
 				return cliFlag.ReadCLIValue().(bool)
 			}
 		}
 	default:
-		panic(errors.New(fmt.Sprintf("Falg %v not an bool flag, Flag type: %T, ", cliFlag.Name(), cliFlag.Value())))
+		panic(errors.New(fmt.Sprintf("Falg %v not an bool flag, Flag type: %T, ", cliFlag.GetName(), cliFlag.GetValue())))
 	}
-	panic(errors.New(fmt.Sprintf("Uregistered flag %v type %T", cliFlag.Name(), cliFlag.Value())))
+	panic(errors.New(fmt.Sprintf("Uregistered flag %v type %T", cliFlag.GetName(), cliFlag.GetValue())))
 }
 
-func (baseCLICommand BaseCLICommand) GetString(cliFlag CLIFlag) string {
-	switch cliFlag.Value().(type) {
+func (cliCommand cliCommand) ReadString(cliFlag CLIFlag) string {
+	switch cliFlag.GetValue().(type) {
 	case string:
-		for _, registeredCliFlag := range baseCLICommand.cliFlagList {
+		for _, registeredCliFlag := range cliCommand.CLIFlagList {
 			if registeredCliFlag == cliFlag {
 				return cliFlag.ReadCLIValue().(string)
 			}
 		}
 	default:
-		panic(errors.New(fmt.Sprintf("Falg %v not an string flag, Flag type: %T, ", cliFlag.Name(), cliFlag.Value())))
+		panic(errors.New(fmt.Sprintf("Falg %v not an string flag, Flag type: %T, ", cliFlag.GetName(), cliFlag.GetValue())))
 	}
-	panic(errors.New(fmt.Sprintf("Uregistered flag %v type %T", cliFlag.Name(), cliFlag.Value())))
+	panic(errors.New(fmt.Sprintf("Uregistered flag %v type %T", cliFlag.GetName(), cliFlag.GetValue())))
 }
 
-func (baseCLICommand BaseCLICommand) CreateTransactionCommand(codec *codec.Codec, makeMessage func(CLICommand) sdkTypes.Msg) *cobra.Command {
-	command := &cobra.Command{
-		Use:   baseCLICommand.use,
-		Short: baseCLICommand.short,
-		Long:  baseCLICommand.long,
-		RunE: func(command *cobra.Command, args []string) error {
-			bufioReader := bufio.NewReader(command.InOrStdin())
-			transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(authClient.GetTxEncoder(codec))
-			cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
-			baseCLICommand.fromAddress = cliContext.GetFromAddress()
-			message := makeMessage(baseCLICommand)
-			if Error := message.ValidateBasic(); Error != nil {
-				return Error
-			}
-
-			return authClient.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{message})
-		},
+func (cliCommand cliCommand) ReadBaseReq(cliContext context.CLIContext) rest.BaseReq {
+	return rest.BaseReq{
+		From:     cliContext.GetFromAddress().String(),
+		ChainID:  cliContext.ChainID,
+		Simulate: cliContext.Simulate,
 	}
-	baseCLICommand.registerFlags(command)
+}
+func (cliCommand cliCommand) CreateCommand(runE func(command *cobra.Command, args []string) error) *cobra.Command {
+	command := &cobra.Command{
+		Use:   cliCommand.Use,
+		Short: cliCommand.Short,
+		Long:  cliCommand.Long,
+		RunE:  runE,
+	}
+	cliCommand.registerFlags(command)
 	return flags.PostCommands(command)[0]
 }
-
-func (baseCLICommand BaseCLICommand) CreateQueryCommand(codec *codec.Codec, queryRoute string, makeQueryBytes func(CLICommand) []byte, marshallResponse func([]byte) interface{}) *cobra.Command {
+func (cliCommand cliCommand) CreateQueryCommand(codec *codec.Codec, queryRoute string, makeQueryBytes func(CLICommand) []byte, marshallResponse func([]byte) interface{}) *cobra.Command {
 	command := &cobra.Command{
-		Use:   baseCLICommand.use,
-		Short: baseCLICommand.short,
-		Long:  baseCLICommand.long,
+		Use:   cliCommand.Use,
+		Short: cliCommand.Short,
+		Long:  cliCommand.Long,
 		RunE: func(command *cobra.Command, args []string) error {
 			cliContext := context.NewCLIContext().WithCodec(codec)
 
-			bytes := makeQueryBytes(baseCLICommand)
-			responseBytes, _, queryWithDataError := cliContext.QueryWithData(strings.Join([]string{"", "custom", queryRoute, baseCLICommand.use}, "/"), bytes)
+			bytes := makeQueryBytes(cliCommand)
+			responseBytes, _, queryWithDataError := cliContext.QueryWithData(strings.Join([]string{"", "custom", queryRoute, cliCommand.Use}, "/"), bytes)
 			if queryWithDataError != nil {
 				return queryWithDataError
 			}
@@ -137,15 +116,15 @@ func (baseCLICommand BaseCLICommand) CreateQueryCommand(codec *codec.Codec, quer
 		},
 	}
 
-	baseCLICommand.registerFlags(command)
+	cliCommand.registerFlags(command)
 	return flags.GetCommands(command)[0]
 }
 
 func NewCLICommand(use string, short string, long string, cliFlagList []CLIFlag) CLICommand {
-	return &BaseCLICommand{
-		use:         use,
-		short:       short,
-		long:        long,
-		cliFlagList: cliFlagList,
+	return &cliCommand{
+		Use:         use,
+		Short:       short,
+		Long:        long,
+		CLIFlagList: cliFlagList,
 	}
 }

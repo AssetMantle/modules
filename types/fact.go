@@ -4,16 +4,22 @@ type Fact interface {
 	String() string
 	Bytes() []byte
 
-	Signatures() Signatures
+	GetSignatures() Signatures
 }
 
-var _ Fact = (*BaseFact)(nil)
+var _ Fact = (*fact)(nil)
 
-type BaseFact struct {
-	BaseString     string
-	BaseSignatures BaseSignatures
+type fact struct {
+	FactString string
+	Signatures Signatures
 }
 
-func (baseFact BaseFact) String() string         { return baseFact.BaseString }
-func (baseFact BaseFact) Bytes() []byte          { return []byte(baseFact.BaseString) }
-func (baseFact BaseFact) Signatures() Signatures { return &baseFact.BaseSignatures }
+func (fact fact) String() string            { return fact.FactString }
+func (fact fact) Bytes() []byte             { return []byte(fact.FactString) }
+func (fact fact) GetSignatures() Signatures { return fact.Signatures }
+func NewFact(factString string, signatures Signatures) Fact {
+	return &fact{
+		FactString: factString,
+		Signatures: signatures,
+	}
+}

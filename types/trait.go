@@ -1,9 +1,9 @@
 package types
 
 type Trait interface {
-	Name() string
+	String() string
 
-	ID() ID
+	GetID() ID
 
 	IsMutable() bool
 }

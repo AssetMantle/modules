@@ -3,11 +3,11 @@ package types
 type InterNFT interface {
 	NFT
 
-	ChainID() ID
-	MaintainersID() ID
-	HashID() ID
+	GetChainID() ID
+	GetMaintainersID() ID
+	GetHashID() ID
 
-	Properties() Properties
+	GetProperties() Properties
 
 	GetLock() Height
 	CanSend(Height) bool

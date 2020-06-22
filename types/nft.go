@@ -1,6 +1,6 @@
 package types
 
 type NFT interface {
-	ID() ID
-	ClassificationID() ID
+	GetID() ID
+	GetClassificationID() ID
 }

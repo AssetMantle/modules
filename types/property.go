@@ -3,25 +3,31 @@ package types
 import "encoding/json"
 
 type Property interface {
-	Name() string
-	ID() ID
-	Fact() Fact
+	String() string
+	GetID() ID
+	GetFact() Fact
 }
 
-var _ Property = (*BaseProperty)(nil)
+var _ Property = (*property)(nil)
 
-type BaseProperty struct {
-	BaseID   BaseID
-	BaseFact BaseFact
+type property struct {
+	ID   ID
+	Fact Fact
 }
 
-func (baseProperty BaseProperty) Name() string {
-	bytes, Error := json.Marshal(baseProperty)
+func (property property) String() string {
+	bytes, Error := json.Marshal(property)
 	if Error != nil {
 		panic(Error)
 	}
 	return string(bytes)
 }
 
-func (baseProperty BaseProperty) ID() ID     { return baseProperty.BaseID }
-func (baseProperty BaseProperty) Fact() Fact { return baseProperty.BaseFact }
+func (property property) GetID() ID     { return property.ID }
+func (property property) GetFact() Fact { return property.Fact }
+func NewProperty(id ID, fact Fact) Property {
+	return &property{
+		ID:   id,
+		Fact: fact,
+	}
+}

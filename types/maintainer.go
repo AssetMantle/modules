@@ -1,9 +1,12 @@
 package types
 
-type Maintainer interface {
-	Name() string
+import sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	ID() ID
+type Maintainer interface {
+	Sting() string
+
+	GetAddress() sdkTypes.AccAddress
+	GetID() ID
 
 	CanMutateMaintainersProperty(ID) bool
 

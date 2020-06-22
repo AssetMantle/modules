@@ -1,20 +1,18 @@
 package types
 
 type Height interface {
-	Count() int
+	Get() int
 	IsGraterThat(Height) bool
 }
 
-type BaseHeight struct {
+type height struct {
 	Height int
 }
 
-var _ Height = (*BaseHeight)(nil)
+var _ Height = (*height)(nil)
 
-func (baseHeight BaseHeight) Count() int { return baseHeight.Height }
-func (baseHeight BaseHeight) IsGraterThat(height Height) bool {
-	return baseHeight.Count() > height.Count()
+func (height height) Get() int { return height.Height }
+func (height height) IsGraterThat(Height Height) bool {
+	return height.Get() > Height.Get()
 }
-func BaseHeightFromInterface(height Height) BaseHeight {
-	return BaseHeight{Height: height.Count()}
-}
+func NewHeight(Height int) Height { return &height{Height: Height} }

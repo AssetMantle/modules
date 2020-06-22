@@ -9,5 +9,5 @@ import (
 func RegisterCodec(codec *codec.Codec) {
 	mapper.RegisterCodec(codec)
 
-	mint.RegisterCodec(codec)
+	mint.Transaction.RegisterCodec(codec)
 }

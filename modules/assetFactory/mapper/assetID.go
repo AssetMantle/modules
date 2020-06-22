@@ -41,11 +41,20 @@ func assetIDFromInterface(id types.ID) assetID {
 	idList := strings.Split(id.String(), constants.IDSeparator)
 	if len(idList) == 4 {
 		return assetID{
-			ChainID:          types.BaseID{IDString: idList[0]},
-			MaintainersID:    types.BaseID{IDString: idList[1]},
-			ClassificationID: types.BaseID{IDString: idList[2]},
-			HashID:           types.BaseID{IDString: idList[3]},
+			ChainID:          types.NewID(idList[0]),
+			MaintainersID:    types.NewID(idList[1]),
+			ClassificationID: types.NewID(idList[2]),
+			HashID:           types.NewID(idList[3]),
 		}
 	}
-	return assetID{ChainID: types.BaseID{}, MaintainersID: types.BaseID{}, ClassificationID: types.BaseID{}, HashID: types.BaseID{}}
+	return assetID{ChainID: types.NewID(""), MaintainersID: types.NewID(""), ClassificationID: types.NewID(""), HashID: types.NewID("")}
+}
+
+func NewAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
+	return &assetID{
+		ChainID:          chainID,
+		MaintainersID:    maintainersID,
+		ClassificationID: classificationID,
+		HashID:           hashID,
+	}
 }
