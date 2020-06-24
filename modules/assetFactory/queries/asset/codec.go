@@ -7,7 +7,7 @@ import (
 )
 
 func RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(query{}, "assetFactory/query", nil)
+	codec.RegisterConcrete(request{}, "assetFactory/request", nil)
 }
 
 var packageCodec = codec.New()

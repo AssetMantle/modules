@@ -20,9 +20,9 @@ type request struct {
 	Burn             int          `json:"burn"`
 }
 
-var _ types.Request = (*request)(nil)
+var _ types.TransactionRequest = (*request)(nil)
 
-func (request request) ReadFromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.Request {
+func (request request) ReadFromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.TransactionRequest {
 	request.BaseReq = cliCommand.ReadBaseReq(cliContext)
 	request.ClassificationID = cliCommand.ReadString(constants.ClassificationID)
 	request.MaintainersID = cliCommand.ReadString(constants.MaintainersID)
@@ -67,6 +67,6 @@ func (request request) MakeMsg() sdkTypes.Msg {
 	return message
 }
 
-func requestPrototype() types.Request {
+func requestPrototype() types.TransactionRequest {
 	return &request{}
 }

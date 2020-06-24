@@ -19,7 +19,7 @@ type querier struct {
 var _ Querier = (*querier)(nil)
 
 func (querier querier) Query(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
-	var query query
+	var query request
 	if Error := packageCodec.UnmarshalJSON(requestQuery.Data, &query); Error != nil {
 		return nil, errors.Wrap(constants.IncorrectQueryCode, Error.Error())
 	}

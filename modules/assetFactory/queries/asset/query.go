@@ -4,8 +4,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
-type query struct {
+type request struct {
 	ID types.ID
 }
 
-var _ types.Query = (*query)(nil)
+var _ types.QueryRequest = (*request)(nil)

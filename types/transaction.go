@@ -25,7 +25,7 @@ type transaction struct {
 	CLICommand       CLICommand
 	Handler          func(context.CLIContext) http.HandlerFunc
 	Codec            func(*codec.Codec)
-	RequestPrototype func() Request
+	RequestPrototype func() TransactionRequest
 }
 
 var _ Transaction = (*transaction)(nil)
@@ -95,7 +95,7 @@ func (transaction transaction) RegisterCodec(codec *codec.Codec) {
 	transaction.Codec(codec)
 }
 
-func NewTransaction(module string, use string, short string, long string, requestPrototype func() Request, registerCodec func(*codec.Codec), flagList []CLIFlag) Transaction {
+func NewTransaction(module string, use string, short string, long string, requestPrototype func() TransactionRequest, registerCodec func(*codec.Codec), flagList []CLIFlag) Transaction {
 	return &transaction{
 		Module:           module,
 		CLICommand:       NewCLICommand(use, short, long, flagList),
