@@ -1,15 +1,16 @@
 package asset
 
 import (
+	"fmt"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
-	"strings"
 )
 
 func registerCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(queryRequest{}, strings.Join([]string{Query.GetModuleName(), Query.GetName(), "request"}, "/"), nil)
-	codec.RegisterConcrete(queryRequest{}, strings.Join([]string{Query.GetModuleName(), Query.GetName(), "response"}, "/"), nil)
+	codec.RegisterConcrete(queryRequest{}, fmt.Sprintf("/%v/%v/%v", constants.ModuleName, constants.AssetQuery, "request"), nil)
+	codec.RegisterConcrete(queryResponse{}, fmt.Sprintf("/%v/%v/%v", constants.ModuleName, constants.AssetQuery, "response"), nil)
 }
 
 var packageCodec = codec.New()
