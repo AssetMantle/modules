@@ -22,11 +22,11 @@ type Mapper interface {
 	delete(sdkTypes.Context, types.ID)
 	iterate(sdkTypes.Context, types.ID, func(types.InterNFT) bool)
 
+	//Move to assetID
 	MakeHashID(immutablePropertyList []types.Property) types.ID
 
 	New(sdkTypes.Context) types.InterNFTs
 	Assets(sdkTypes.Context, types.ID) types.InterNFTs
-	QueryAssets(sdkTypes.Context, types.ID) []byte
 }
 
 type mapper struct {
@@ -118,13 +118,6 @@ func (mapper mapper) Assets(context sdkTypes.Context, id types.ID) types.InterNF
 	mapper.iterate(context, assetID, appendAssetList)
 
 	return &assets{assetID, assetList, mapper, context}
-}
-func (mapper mapper) QueryAssets(context sdkTypes.Context, id types.ID) []byte {
-	bz, err := codec.MarshalJSONIndent(mapper.codec, mapper.Assets(context, id))
-	if err != nil {
-		return nil
-	}
-	return bz
 }
 
 func NewMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) Mapper {
