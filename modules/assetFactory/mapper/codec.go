@@ -7,8 +7,7 @@ import (
 )
 
 func RegisterCodec(codec *codec.Codec) {
-	//TODO check to remove &
-	codec.RegisterConcrete(&asset{}, fmt.Sprintf("/%v/%v", constants.ModuleName, "asset"), nil)
-	codec.RegisterConcrete(&assetID{}, fmt.Sprintf("/%v/%v", constants.ModuleName, "assetID"), nil)
-	codec.RegisterConcrete(&assets{}, fmt.Sprintf("/%v/%v", constants.ModuleName, "assets"), nil)
+	codec.RegisterConcrete(asset{}, fmt.Sprintf("/%v/%v", constants.ModuleName, "asset"), nil)
+	codec.RegisterConcrete(assetID{}, fmt.Sprintf("/%v/%v", constants.ModuleName, "assetID"), nil)
+	codec.RegisterConcrete(assets{}, fmt.Sprintf("/%v/%v", constants.ModuleName, "assets"), nil)
 }
