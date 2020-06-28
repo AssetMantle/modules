@@ -21,8 +21,8 @@ type Message struct {
 
 var _ sdkTypes.Msg = Message{}
 
-func (message Message) Route() string { return constants.ModuleName }
-func (message Message) Type() string  { return constants.MintTransaction }
+func (message Message) Route() string { return Transaction.GetModuleName() }
+func (message Message) Type() string  { return Transaction.GetName() }
 func (message Message) ValidateBasic() error {
 	var _, Error = govalidator.ValidateStruct(message)
 	if Error != nil {
@@ -36,3 +36,5 @@ func (message Message) GetSignBytes() []byte {
 func (message Message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
+
+func msgPrototype() sdkTypes.Msg { return &Message{} }
