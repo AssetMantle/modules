@@ -8,7 +8,7 @@ import (
 
 type TransactionRequest interface {
 	Request
-	ReadFromCLI(CLICommand, context.CLIContext) TransactionRequest
+	FromCLI(CLICommand, context.CLIContext) TransactionRequest
 	GetBaseReq() rest.BaseReq
 	MakeMsg() sdkTypes.Msg
 }
