@@ -12,16 +12,8 @@ type queryRequest struct {
 
 var _ types.QueryRequest = (*queryRequest)(nil)
 
-func (QueryRequest queryRequest) Bytes() []byte {
-	return packageCodec.MustMarshalBinaryBare(QueryRequest)
-}
 func (QueryRequest queryRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.QueryRequest {
 	return &queryRequest{ID: types.NewID(cliCommand.ReadString(constants.AssetID))}
-}
-func (QueryRequest queryRequest) FromBytes(bytes []byte) types.QueryRequest {
-	var queryRequest queryRequest
-	packageCodec.MustUnmarshalJSON(bytes, &queryRequest)
-	return queryRequest
 }
 
 func (QueryRequest queryRequest) FromMap(vars map[string]string) types.QueryRequest {

@@ -42,13 +42,13 @@ func (query query) Command(codec *codec.Codec) *cobra.Command {
 		cliContext := context.NewCLIContext().WithCodec(codec)
 
 		queryRequest := query.QueryRequestPrototype().FromCLI(query.CLICommand, cliContext)
-		bytes := codec.MustMarshalJSON(queryRequest)
+		bytes := query.PackageCodec.MustMarshalJSON(queryRequest)
 		responseBytes, _, Error := cliContext.QueryWithData(strings.Join([]string{"", "custom", query.ModuleName, query.Name}, "/"), bytes)
 		if Error != nil {
 			return Error
 		}
 		response := query.QueryResponsePrototype()
-		if Error := codec.UnmarshalJSON(responseBytes, &response); Error != nil {
+		if Error := query.PackageCodec.UnmarshalJSON(responseBytes, &response); Error != nil {
 			return Error
 		}
 		return cliContext.PrintOutput(response)
@@ -90,11 +90,12 @@ func (query query) RESTQueryHandler(cliContext context.CLIContext) http.HandlerF
 func (query query) RegisterCodec(codec *codec.Codec) {
 	query.Codec(codec)
 }
-func NewQuery(module string, name string, short string, long string, queryRequestPrototype func() QueryRequest, queryResponsePrototype func() QueryResponse, registerCodec func(*codec.Codec), flagList []CLIFlag) Query {
+func NewQuery(module string, name string, short string, long string, queryRequestPrototype func() QueryRequest, queryResponsePrototype func() QueryResponse, packageCodec *codec.Codec, registerCodec func(*codec.Codec), flagList []CLIFlag) Query {
 	return &query{
 		ModuleName:             module,
 		Name:                   name,
 		CLICommand:             NewCLICommand(name, short, long, flagList),
+		PackageCodec:           packageCodec,
 		Codec:                  registerCodec,
 		QueryRequestPrototype:  queryRequestPrototype,
 		QueryResponsePrototype: queryResponsePrototype,

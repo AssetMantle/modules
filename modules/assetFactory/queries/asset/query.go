@@ -12,6 +12,7 @@ var Query = types.NewQuery(
 	constants.AssetQueryLong,
 	queryRequestPrototype,
 	queryResponsePrototype,
+	packageCodec,
 	registerCodec,
 	[]types.CLIFlag{constants.AssetID},
 )
