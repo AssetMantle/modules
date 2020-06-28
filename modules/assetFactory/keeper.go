@@ -13,20 +13,20 @@ import (
 type Keeper interface {
 	getMintKeeper() types.TransactionKeeper
 
-	getAssetQuerier() asset.Querier
+	getAssetQuerier() types.QueryKeeper
 }
 
 type keeper struct {
 	mintKeeper types.TransactionKeeper
 
-	assetQuerier asset.Querier
+	assetQuerier types.QueryKeeper
 }
 
 func NewKeeper(codec *codec.Codec, storeKey sdkTypes.StoreKey, paramSpace params.Subspace) Keeper {
 	Mapper := mapper.NewMapper(codec, storeKey)
 	return keeper{
 		mintKeeper:   mint.NewTransactionKeeper(Mapper),
-		assetQuerier: asset.NewQuerier(Mapper),
+		assetQuerier: asset.NewQueryKeeper(Mapper),
 	}
 }
 
@@ -34,4 +34,4 @@ var _ Keeper = (*keeper)(nil)
 
 func (keeper keeper) getMintKeeper() types.TransactionKeeper { return keeper.mintKeeper }
 
-func (keeper keeper) getAssetQuerier() asset.Querier { return keeper.assetQuerier }
+func (keeper keeper) getAssetQuerier() types.QueryKeeper { return keeper.assetQuerier }

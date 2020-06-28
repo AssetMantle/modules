@@ -18,7 +18,7 @@ func GetCLIRootTransactionCommand(codec *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 	rootTransactionCommand.AddCommand(
-		mint.Transaction.TransactionCommand(codec),
+		mint.Transaction.Command(codec),
 	)
 	return rootTransactionCommand
 }
@@ -32,7 +32,7 @@ func GetCLIRootQueryCommand(codec *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 	rootQueryCommand.AddCommand(
-		asset.QueryCommand(codec),
+		asset.Query.Command(codec),
 	)
 	return rootQueryCommand
 }

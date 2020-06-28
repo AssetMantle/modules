@@ -12,6 +12,7 @@ func NewHandler(keeper Keeper) sdkTypes.Handler {
 		context = context.WithEventManager(sdkTypes.NewEventManager())
 
 		switch message := msg.(type) {
+		//TODO check if prototype works
 		case mint.Message:
 			return mint.Transaction.HandleMessage(context, keeper.getMintKeeper(), message)
 

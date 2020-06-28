@@ -11,13 +11,10 @@ type transactionKeeper struct {
 	mapper mapper.Mapper
 }
 
-func NewTransactionKeeper(mapper mapper.Mapper) types.TransactionKeeper {
-	return transactionKeeper{mapper: mapper}
-}
-
 var _ types.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
+	//TODO check to see if prototype method works
 	message := msg.(Message)
 	immutablePropertyList := message.Properties.GetList()
 	hashID := transactionKeeper.mapper.MakeHashID(immutablePropertyList)
@@ -29,4 +26,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	assets.Add(asset)
 	return nil
+}
+
+func NewTransactionKeeper(mapper mapper.Mapper) types.TransactionKeeper {
+	return transactionKeeper{mapper: mapper}
 }
