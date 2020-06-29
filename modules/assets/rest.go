@@ -1,11 +1,11 @@
-package assetFactory
+package assets
 
 import (
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/queries/asset"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/mint"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/queries/asset"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mint"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 )

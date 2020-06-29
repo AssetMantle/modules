@@ -1,10 +1,10 @@
-package assetFactory
+package assets
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/mint"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mint"
 )
 
 func NewHandler(keeper Keeper) sdkTypes.Handler {

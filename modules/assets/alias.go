@@ -1,7 +1,7 @@
-package assetFactory
+package assets
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
 )
 
 const DefaultParamspace = constants.ModuleName

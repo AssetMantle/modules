@@ -3,8 +3,8 @@ package asset
 import (
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
