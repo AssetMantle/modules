@@ -13,7 +13,6 @@ type queryKeeper struct {
 var _ types.QueryKeeper = (*queryKeeper)(nil)
 
 func (queryKeeper queryKeeper) Query(context sdkTypes.Context, QueryRequest types.QueryRequest) ([]byte, error) {
-	//TODO check to see if prototype method works
 	query := QueryRequest.(queryRequest)
 	bytes, Error := packageCodec.MarshalJSON(queryResponse{Assets: queryKeeper.mapper.Assets(context, query.ID)})
 	if Error != nil {
