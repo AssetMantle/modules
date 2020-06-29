@@ -8,7 +8,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
-//TODO make private
 type Message struct {
 	From             sdkTypes.AccAddress
 	ChainID          types.ID
