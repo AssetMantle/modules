@@ -5,7 +5,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
-var Request request
 var Transaction = types.NewTransaction(
 	constants.ModuleName,
 	constants.MintTransaction,

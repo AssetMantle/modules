@@ -1,11 +1,18 @@
 package asset
 
 import (
+	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
-type query struct {
-	ID types.ID
-}
-
-var _ types.Query = (*query)(nil)
+var Query = types.NewQuery(
+	constants.ModuleName,
+	constants.AssetQuery,
+	constants.AssetQueryShort,
+	constants.AssetQueryLong,
+	queryRequestPrototype,
+	queryResponsePrototype,
+	packageCodec,
+	registerCodec,
+	[]types.CLIFlag{constants.AssetID},
+)

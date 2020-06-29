@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-type request struct {
+type transactionRequest struct {
 	BaseReq          rest.BaseReq `json:"baseReq"`
 	ClassificationID string       `json:"classificationID"`
 	MaintainersID    string       `json:"maintainersID"`
@@ -20,9 +20,9 @@ type request struct {
 	Burn             int          `json:"burn"`
 }
 
-var _ types.Request = (*request)(nil)
+var _ types.TransactionRequest = (*transactionRequest)(nil)
 
-func (request request) ReadFromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.Request {
+func (request transactionRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.TransactionRequest {
 	request.BaseReq = cliCommand.ReadBaseReq(cliContext)
 	request.ClassificationID = cliCommand.ReadString(constants.ClassificationID)
 	request.MaintainersID = cliCommand.ReadString(constants.MaintainersID)
@@ -32,11 +32,11 @@ func (request request) ReadFromCLI(cliCommand types.CLICommand, cliContext conte
 	return request
 }
 
-func (request request) GetBaseReq() rest.BaseReq {
+func (request transactionRequest) GetBaseReq() rest.BaseReq {
 	return request.BaseReq
 }
 
-func (request request) MakeMsg() sdkTypes.Msg {
+func (request transactionRequest) MakeMsg() sdkTypes.Msg {
 	from, Error := sdkTypes.AccAddressFromBech32(request.GetBaseReq().From)
 	if Error != nil {
 		panic(errors.New(fmt.Sprintf("")))
@@ -67,6 +67,6 @@ func (request request) MakeMsg() sdkTypes.Msg {
 	return message
 }
 
-func requestPrototype() types.Request {
-	return &request{}
+func requestPrototype() types.TransactionRequest {
+	return &transactionRequest{}
 }

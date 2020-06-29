@@ -14,30 +14,33 @@ import (
 )
 
 type Transaction interface {
-	TransactionCommand(*codec.Codec) *cobra.Command
+	GetModuleName() string
+	GetName() string
+	Command(*codec.Codec) *cobra.Command
 	HandleMessage(sdkTypes.Context, TransactionKeeper, sdkTypes.Msg) (*sdkTypes.Result, error)
 	RESTRequestHandler(context.CLIContext) http.HandlerFunc
 	RegisterCodec(*codec.Codec)
 }
 
 type transaction struct {
-	Module           string
-	CLICommand       CLICommand
-	Handler          func(context.CLIContext) http.HandlerFunc
-	Codec            func(*codec.Codec)
-	RequestPrototype func() Request
+	ModuleName                  string
+	Name                        string
+	CLICommand                  CLICommand
+	Codec                       func(*codec.Codec)
+	TransactionRequestPrototype func() TransactionRequest
 }
 
 var _ Transaction = (*transaction)(nil)
 
-func (transaction transaction) TransactionCommand(codec *codec.Codec) *cobra.Command {
-	RunE := func(command *cobra.Command, args []string) error {
+func (transaction transaction) GetModuleName() string { return transaction.ModuleName }
+func (transaction transaction) GetName() string       { return transaction.Name }
+func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
+	runE := func(command *cobra.Command, args []string) error {
 		bufioReader := bufio.NewReader(command.InOrStdin())
 		transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(authClient.GetTxEncoder(codec))
 		cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
 
-		request := transaction.RequestPrototype()
-		request = request.ReadFromCLI(transaction.CLICommand, cliContext)
+		request := transaction.TransactionRequestPrototype().FromCLI(transaction.CLICommand, cliContext)
 
 		msg := request.MakeMsg()
 		if Error := msg.ValidateBasic(); Error != nil {
@@ -46,7 +49,7 @@ func (transaction transaction) TransactionCommand(codec *codec.Codec) *cobra.Com
 
 		return authClient.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{msg})
 	}
-	return transaction.CLICommand.CreateCommand(RunE)
+	return transaction.CLICommand.CreateCommand(runE)
 }
 
 func (transaction transaction) HandleMessage(context sdkTypes.Context, transactionKeeper TransactionKeeper, message sdkTypes.Msg) (*sdkTypes.Result, error) {
@@ -58,7 +61,7 @@ func (transaction transaction) HandleMessage(context sdkTypes.Context, transacti
 	context.EventManager().EmitEvent(
 		sdkTypes.NewEvent(
 			sdkTypes.EventTypeMessage,
-			sdkTypes.NewAttribute(sdkTypes.AttributeKeyModule, transaction.Module),
+			sdkTypes.NewAttribute(sdkTypes.AttributeKeyModule, transaction.ModuleName),
 		),
 	)
 
@@ -67,7 +70,7 @@ func (transaction transaction) HandleMessage(context sdkTypes.Context, transacti
 
 func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
-		request := transaction.RequestPrototype()
+		request := transaction.TransactionRequestPrototype()
 		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
@@ -95,11 +98,12 @@ func (transaction transaction) RegisterCodec(codec *codec.Codec) {
 	transaction.Codec(codec)
 }
 
-func NewTransaction(module string, use string, short string, long string, requestPrototype func() Request, registerCodec func(*codec.Codec), flagList []CLIFlag) Transaction {
+func NewTransaction(module string, name string, short string, long string, transactionRequestPrototype func() TransactionRequest, registerCodec func(*codec.Codec), flagList []CLIFlag) Transaction {
 	return &transaction{
-		Module:           module,
-		CLICommand:       NewCLICommand(use, short, long, flagList),
-		Codec:            registerCodec,
-		RequestPrototype: requestPrototype,
+		ModuleName:                  module,
+		Name:                        name,
+		CLICommand:                  NewCLICommand(name, short, long, flagList),
+		Codec:                       registerCodec,
+		TransactionRequestPrototype: transactionRequestPrototype,
 	}
 }

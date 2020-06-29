@@ -5,10 +5,8 @@ import (
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 type CLICommand interface {
@@ -20,8 +18,6 @@ type CLICommand interface {
 	ReadBaseReq(context.CLIContext) rest.BaseReq
 
 	CreateCommand(func(command *cobra.Command, args []string) error) *cobra.Command
-
-	CreateQueryCommand(*codec.Codec, string, func(CLICommand) []byte, func([]byte) interface{}) *cobra.Command
 }
 
 type cliCommand struct {
@@ -97,27 +93,6 @@ func (cliCommand cliCommand) CreateCommand(runE func(command *cobra.Command, arg
 	}
 	cliCommand.registerFlags(command)
 	return flags.PostCommands(command)[0]
-}
-func (cliCommand cliCommand) CreateQueryCommand(codec *codec.Codec, queryRoute string, makeQueryBytes func(CLICommand) []byte, marshallResponse func([]byte) interface{}) *cobra.Command {
-	command := &cobra.Command{
-		Use:   cliCommand.Use,
-		Short: cliCommand.Short,
-		Long:  cliCommand.Long,
-		RunE: func(command *cobra.Command, args []string) error {
-			cliContext := context.NewCLIContext().WithCodec(codec)
-
-			bytes := makeQueryBytes(cliCommand)
-			responseBytes, _, queryWithDataError := cliContext.QueryWithData(strings.Join([]string{"", "custom", queryRoute, cliCommand.Use}, "/"), bytes)
-			if queryWithDataError != nil {
-				return queryWithDataError
-			}
-			response := marshallResponse(responseBytes)
-			return cliContext.PrintOutput(response)
-		},
-	}
-
-	cliCommand.registerFlags(command)
-	return flags.GetCommands(command)[0]
 }
 
 func NewCLICommand(use string, short string, long string, cliFlagList []CLIFlag) CLICommand {

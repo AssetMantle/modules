@@ -11,10 +11,6 @@ type transactionKeeper struct {
 	mapper mapper.Mapper
 }
 
-func NewTransactionKeeper(mapper mapper.Mapper) types.TransactionKeeper {
-	return transactionKeeper{mapper: mapper}
-}
-
 var _ types.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
@@ -29,4 +25,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	assets.Add(asset)
 	return nil
+}
+
+func NewTransactionKeeper(mapper mapper.Mapper) types.TransactionKeeper {
+	return transactionKeeper{mapper: mapper}
 }
