@@ -1,8 +1,8 @@
-package assetFactory
+package assets
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/queries/asset"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/transactions/mint"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/queries/asset"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mint"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"

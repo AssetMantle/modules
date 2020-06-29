@@ -1,4 +1,4 @@
-package assetFactory
+package assets
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"

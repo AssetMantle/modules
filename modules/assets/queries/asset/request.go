@@ -2,7 +2,7 @@ package asset
 
 import (
 	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 

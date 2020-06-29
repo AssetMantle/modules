@@ -1,10 +1,10 @@
-package assetFactory
+package assets
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/constants"
-	"github.com/persistenceOne/persistenceSDK/modules/assetFactory/queries/asset"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/queries/asset"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 )
 

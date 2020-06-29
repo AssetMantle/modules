@@ -1,8 +1,8 @@
 package constants
 
-const ModuleName = "assetFactory"
-const DefaultParamspace = "assetFactory"
-const StoreKey = "assetFactory"
+const ModuleName = "assets"
+const DefaultParamspace = "assets"
+const StoreKey = "assets"
 
 const IDSeparator = "-"
 const PropertySeparator = "_"
@@ -11,6 +11,6 @@ const TraitIDAndPropertySeparator = ":"
 
 const MaxTraitCount = 22
 
-const AttributeValueCategory = "assetFactory"
+const AttributeValueCategory = "assets"
 
 var StoreKeyPrefix = []byte{0x11}

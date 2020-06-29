@@ -1,4 +1,4 @@
-package assetFactory
+package assets
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
