@@ -19,6 +19,7 @@ type Query interface {
 	HandleMessage(sdkTypes.Context, QueryKeeper, abciTypes.RequestQuery) ([]byte, error)
 	RESTQueryHandler(context.CLIContext) http.HandlerFunc
 	RegisterCodec(*codec.Codec)
+	query(QueryRequest, context.CLIContext) ([]byte, int64, error)
 }
 
 type query struct {
@@ -42,8 +43,7 @@ func (query query) Command(codec *codec.Codec) *cobra.Command {
 		cliContext := context.NewCLIContext().WithCodec(codec)
 
 		queryRequest := query.QueryRequestPrototype().FromCLI(query.CLICommand, cliContext)
-		bytes := query.PackageCodec.MustMarshalJSON(queryRequest)
-		responseBytes, _, Error := cliContext.QueryWithData(strings.Join([]string{"", "custom", query.ModuleName, query.Name}, "/"), bytes)
+		responseBytes, _, Error := query.query(queryRequest, cliContext)
 		if Error != nil {
 			return Error
 		}
@@ -72,17 +72,12 @@ func (query query) RESTQueryHandler(cliContext context.CLIContext) http.HandlerF
 			return
 		}
 
-		bytes, Error := query.PackageCodec.MarshalBinaryBare(query.QueryRequestPrototype().FromMap(mux.Vars(httpRequest)))
+		queryRequest := query.QueryRequestPrototype().FromMap(mux.Vars(httpRequest))
+		response, height, Error := query.query(queryRequest, cliContext)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
 		}
-		response, height, Error := cliContext.QueryWithData(strings.Join([]string{"", "custom", query.ModuleName, query.Name}, "/"), bytes)
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
-			return
-		}
-
 		cliContext = cliContext.WithHeight(height)
 		rest.PostProcessResponse(responseWriter, cliContext, response)
 	}
@@ -90,6 +85,15 @@ func (query query) RESTQueryHandler(cliContext context.CLIContext) http.HandlerF
 func (query query) RegisterCodec(codec *codec.Codec) {
 	query.Codec(codec)
 }
+
+func (query query) query(queryRequest QueryRequest, cliContext context.CLIContext) ([]byte, int64, error) {
+	bytes, Error := query.PackageCodec.MarshalJSON(queryRequest)
+	if Error != nil {
+		return nil, 0, Error
+	}
+	return cliContext.QueryWithData(strings.Join([]string{"", "custom", query.ModuleName, query.Name}, "/"), bytes)
+}
+
 func NewQuery(module string, name string, short string, long string, queryRequestPrototype func() QueryRequest, queryResponsePrototype func() QueryResponse, packageCodec *codec.Codec, registerCodec func(*codec.Codec), flagList []CLIFlag) Query {
 	return &query{
 		ModuleName:             module,
