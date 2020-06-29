@@ -14,7 +14,6 @@ type transactionKeeper struct {
 var _ types.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
-	//TODO check to see if prototype method works
 	message := msg.(Message)
 	immutablePropertyList := message.Properties.GetList()
 	hashID := transactionKeeper.mapper.MakeHashID(immutablePropertyList)
