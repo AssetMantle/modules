@@ -38,7 +38,7 @@ func (mapper mapper) read(context sdkTypes.Context, assetID types.ID) types.Inte
 	kvStore := context.KVStore(mapper.storeKey)
 	bytes := kvStore.Get(storeKey(assetID))
 	if bytes == nil {
-		return asset{}
+		return nil
 	}
 	asset := asset{}
 	Error := mapper.codec.UnmarshalBinaryBare(bytes, &asset)
