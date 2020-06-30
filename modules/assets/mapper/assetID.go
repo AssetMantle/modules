@@ -2,8 +2,11 @@ package mapper
 
 import (
 	"bytes"
+	"crypto/sha1"
+	"encoding/base64"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
+	"sort"
 	"strings"
 )
 
@@ -57,4 +60,15 @@ func NewAssetID(chainID types.ID, maintainersID types.ID, classificationID types
 		ClassificationID: classificationID,
 		HashID:           hashID,
 	}
+}
+func GenerateHashID(immutablePropertyList []types.Property) types.ID {
+	var facts []string
+	for _, immutableProperty := range immutablePropertyList {
+		facts = append(facts, immutableProperty.GetFact().String())
+	}
+	sort.Strings(facts)
+	toDigest := strings.Join(facts, constants.PropertySeparator)
+	h := sha1.New()
+	h.Write([]byte(toDigest))
+	return types.NewID(base64.URLEncoding.EncodeToString(h.Sum(nil)))
 }
