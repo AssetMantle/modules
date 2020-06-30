@@ -1,14 +1,10 @@
 package mapper
 
 import (
-	"crypto/sha1"
-	"encoding/base64"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
-	"sort"
-	"strings"
 )
 
 func storeKey(id types.ID) []byte {
@@ -21,12 +17,6 @@ type Mapper interface {
 	update(sdkTypes.Context, types.InterNFT)
 	delete(sdkTypes.Context, types.ID)
 	iterate(sdkTypes.Context, types.ID, func(types.InterNFT) bool)
-
-	//Move to assetID
-	MakeHashID(immutablePropertyList []types.Property) types.ID
-
-	New(sdkTypes.Context) types.InterNFTs
-	Assets(sdkTypes.Context, types.ID) types.InterNFTs
 }
 
 type mapper struct {
@@ -89,35 +79,6 @@ func (mapper mapper) iterate(context sdkTypes.Context, assetID types.ID, accumul
 			break
 		}
 	}
-}
-
-func (mapper mapper) MakeHashID(immutablePropertyList []types.Property) types.ID {
-	var facts []string
-	for _, immutableProperty := range immutablePropertyList {
-		facts = append(facts, immutableProperty.GetFact().String())
-	}
-	sort.Strings(facts)
-	toDigest := strings.Join(facts, constants.PropertySeparator)
-	h := sha1.New()
-	h.Write([]byte(toDigest))
-	return types.NewID(base64.URLEncoding.EncodeToString(h.Sum(nil)))
-}
-
-func (mapper mapper) New(context sdkTypes.Context) types.InterNFTs {
-	return &assets{Mapper: mapper, Context: context}
-}
-
-func (mapper mapper) Assets(context sdkTypes.Context, id types.ID) types.InterNFTs {
-	var assetList []types.InterNFT
-
-	appendAssetList := func(asset types.InterNFT) bool {
-		assetList = append(assetList, asset)
-		return false
-	}
-	assetID := assetIDFromInterface(id)
-	mapper.iterate(context, assetID, appendAssetList)
-
-	return &assets{assetID, assetList, mapper, context}
 }
 
 func NewMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) Mapper {

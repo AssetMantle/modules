@@ -16,10 +16,10 @@ var _ types.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
 	message := msg.(Message)
 	immutablePropertyList := message.Properties.GetList()
-	hashID := transactionKeeper.mapper.MakeHashID(immutablePropertyList)
+	hashID := mapper.GenerateHashID(immutablePropertyList)
 	assetID := mapper.NewAssetID(message.ChainID, message.MaintainersID, message.ClassificationID, hashID)
 	asset := mapper.NewAsset(assetID, message.Properties, message.Lock, message.Burn)
-	assets := transactionKeeper.mapper.Assets(context, assetID)
+	assets := mapper.NewAssets(transactionKeeper.mapper, context).Read(assetID)
 	if assets.Get(assetID) != nil {
 		return constants.EntityAlreadyExistsCode
 	}

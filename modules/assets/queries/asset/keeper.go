@@ -14,7 +14,7 @@ var _ types.QueryKeeper = (*queryKeeper)(nil)
 
 func (queryKeeper queryKeeper) Query(context sdkTypes.Context, QueryRequest types.QueryRequest) ([]byte, error) {
 	query := QueryRequest.(queryRequest)
-	bytes, Error := packageCodec.MarshalJSON(queryResponse{Assets: queryKeeper.mapper.Assets(context, query.ID)})
+	bytes, Error := packageCodec.MarshalJSON(queryResponse{Assets: mapper.NewAssets(queryKeeper.mapper, context).Read(query.ID)})
 	if Error != nil {
 		return nil, Error
 	}
