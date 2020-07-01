@@ -11,8 +11,8 @@ type assets struct {
 	ID   types.ID
 	List []types.InterNFT
 
-	Mapper  Mapper
-	Context sdkTypes.Context
+	mapper  Mapper
+	context sdkTypes.Context
 }
 
 func (Assets assets) GetID() types.ID { return Assets.ID }
@@ -32,7 +32,7 @@ func (Assets assets) Read(id types.ID) types.InterNFTs {
 	var assetList []types.InterNFT
 	assetsID := assetIDFromInterface(id)
 	if assetsID.HashID != nil {
-		asset := Assets.Mapper.read(Assets.Context, assetsID)
+		asset := Assets.mapper.read(Assets.context, assetsID)
 		if asset != nil {
 			assetList = append(assetList, asset)
 		}
@@ -41,13 +41,13 @@ func (Assets assets) Read(id types.ID) types.InterNFTs {
 			assetList = append(assetList, asset)
 			return false
 		}
-		Assets.Mapper.iterate(Assets.Context, assetsID, appendAssetList)
+		Assets.mapper.iterate(Assets.context, assetsID, appendAssetList)
 	}
-	return &assets{id, assetList, Assets.Mapper, Assets.Context}
+	return &assets{id, assetList, Assets.mapper, Assets.context}
 }
 func (Assets assets) Add(asset types.InterNFT) types.InterNFTs {
 	Assets.ID = nil
-	Assets.Mapper.create(Assets.Context, asset)
+	Assets.mapper.create(Assets.context, asset)
 	for i, oldAsset := range Assets.List {
 		if oldAsset.GetID().Compare(asset.GetID()) < 0 {
 			Assets.List = append(append(Assets.List[:i], asset), Assets.List[i+1:]...)
@@ -57,7 +57,7 @@ func (Assets assets) Add(asset types.InterNFT) types.InterNFTs {
 	return Assets
 }
 func (Assets assets) Remove(asset types.InterNFT) types.InterNFTs {
-	Assets.Mapper.delete(Assets.Context, asset.GetID())
+	Assets.mapper.delete(Assets.context, asset.GetID())
 	for i, oldAsset := range Assets.List {
 		if oldAsset.GetID().Compare(asset.GetID()) == 0 {
 			Assets.List = append(Assets.List[:i], Assets.List[i+1:]...)
@@ -67,7 +67,7 @@ func (Assets assets) Remove(asset types.InterNFT) types.InterNFTs {
 	return Assets
 }
 func (Assets assets) Mutate(asset types.InterNFT) types.InterNFTs {
-	Assets.Mapper.update(Assets.Context, asset)
+	Assets.mapper.update(Assets.context, asset)
 	for i, oldAsset := range Assets.List {
 		if oldAsset.GetID().Compare(asset.GetID()) == 0 {
 			Assets.List[i] = asset
@@ -81,7 +81,7 @@ func NewAssets(mapper Mapper, context sdkTypes.Context) types.InterNFTs {
 	return &assets{
 		ID:      nil,
 		List:    nil,
-		Mapper:  mapper,
-		Context: context,
+		mapper:  mapper,
+		context: context,
 	}
 }
