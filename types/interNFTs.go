@@ -6,7 +6,7 @@ type InterNFTs interface {
 	Get(ID) InterNFT
 	GetList() []InterNFT
 
-	Read(ID) InterNFTs
+	Fetch(ID) InterNFTs
 	Add(InterNFT) InterNFTs
 	Remove(InterNFT) InterNFTs
 	Mutate(InterNFT) InterNFTs
