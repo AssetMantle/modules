@@ -7,8 +7,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
-func storeKey(id types.ID) []byte {
-	return append(constants.StoreKeyPrefix, id.Bytes()...)
+func storeKey(assetID types.ID) []byte {
+	return append(constants.StoreKeyPrefix, assetIDFromInterface(assetID).Bytes()...)
 }
 
 type Mapper interface {
