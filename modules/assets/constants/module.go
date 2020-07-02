@@ -5,7 +5,6 @@ const DefaultParamspace = "assets"
 const StoreKey = "assets"
 
 const IDSeparator = "-"
-const PropertySeparator = "_"
 const PropertiesSeparator = ","
 const TraitIDAndPropertySeparator = ":"
 
