@@ -22,27 +22,28 @@ type transactionRequest struct {
 
 var _ types.TransactionRequest = (*transactionRequest)(nil)
 
-func (request transactionRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.TransactionRequest {
-	request.BaseReq = cliCommand.ReadBaseReq(cliContext)
-	request.ClassificationID = cliCommand.ReadString(constants.ClassificationID)
-	request.MaintainersID = cliCommand.ReadString(constants.MaintainersID)
-	request.Properties = cliCommand.ReadString(constants.Properties)
-	request.Lock = cliCommand.ReadInt(constants.Lock)
-	request.Burn = cliCommand.ReadInt(constants.Burn)
-	return request
+func (transactionRequest transactionRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.TransactionRequest {
+	return NewTransactionRequest(
+		cliCommand.ReadBaseReq(cliContext),
+		cliCommand.ReadString(constants.ClassificationID),
+		cliCommand.ReadString(constants.MaintainersID),
+		cliCommand.ReadString(constants.Properties),
+		cliCommand.ReadInt(constants.Lock),
+		cliCommand.ReadInt(constants.Burn),
+	)
 }
 
-func (request transactionRequest) GetBaseReq() rest.BaseReq {
-	return request.BaseReq
+func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
+	return transactionRequest.BaseReq
 }
 
-func (request transactionRequest) MakeMsg() sdkTypes.Msg {
-	from, Error := sdkTypes.AccAddressFromBech32(request.GetBaseReq().From)
+func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
+	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
 	if Error != nil {
 		panic(errors.New(fmt.Sprintf("")))
 	}
 
-	properties := strings.Split(request.Properties, constants.PropertiesSeparator)
+	properties := strings.Split(transactionRequest.Properties, constants.PropertiesSeparator)
 	if len(properties) > constants.MaxTraitCount {
 		panic(errors.New(fmt.Sprintf("")))
 	}
@@ -55,18 +56,28 @@ func (request transactionRequest) MakeMsg() sdkTypes.Msg {
 		}
 	}
 
-	message := Message{
-		From:             from,
-		ChainID:          types.NewID(request.GetBaseReq().ChainID),
-		MaintainersID:    types.NewID(request.MaintainersID),
-		ClassificationID: types.NewID(request.ClassificationID),
-		Properties:       types.NewProperties(propertyList),
-		Lock:             types.NewHeight(request.Lock),
-		Burn:             types.NewHeight(request.Burn),
-	}
-	return message
+	return NewMessage(
+		from,
+		types.NewID(transactionRequest.GetBaseReq().ChainID),
+		types.NewID(transactionRequest.MaintainersID),
+		types.NewID(transactionRequest.ClassificationID),
+		types.NewProperties(propertyList),
+		types.NewHeight(transactionRequest.Lock),
+		types.NewHeight(transactionRequest.Burn),
+	)
 }
 
 func requestPrototype() types.TransactionRequest {
 	return &transactionRequest{}
+}
+
+func NewTransactionRequest(baseReq rest.BaseReq, classificationID string, maintainersID string, properties string, lock int, burn int) types.TransactionRequest {
+	return &transactionRequest{
+		BaseReq:          baseReq,
+		ClassificationID: classificationID,
+		MaintainersID:    maintainersID,
+		Properties:       properties,
+		Lock:             lock,
+		Burn:             burn,
+	}
 }
