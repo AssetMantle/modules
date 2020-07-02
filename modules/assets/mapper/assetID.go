@@ -41,7 +41,15 @@ func (assetID assetID) Compare(id types.ID) int {
 }
 
 func assetIDFromInterface(id types.ID) assetID {
-	idList := strings.Split(id.String(), constants.IDSeparator)
+	switch value := id.(type) {
+	case assetID:
+		return value
+	default:
+		return assetID{ChainID: types.NewID(""), MaintainersID: types.NewID(""), ClassificationID: types.NewID(""), HashID: types.NewID("")}
+	}
+}
+func ReadAssetID(assetIDString string) types.ID {
+	idList := strings.Split(assetIDString, constants.IDSeparator)
 	if len(idList) == 4 {
 		return assetID{
 			ChainID:          types.NewID(idList[0]),
@@ -53,17 +61,9 @@ func assetIDFromInterface(id types.ID) assetID {
 	return assetID{ChainID: types.NewID(""), MaintainersID: types.NewID(""), ClassificationID: types.NewID(""), HashID: types.NewID("")}
 }
 
-func NewAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
-	return &assetID{
-		ChainID:          chainID,
-		MaintainersID:    maintainersID,
-		ClassificationID: classificationID,
-		HashID:           hashID,
-	}
-}
-func GenerateHashID(immutablePropertyList []types.Property) types.ID {
+func GenerateHashID(propertyList []types.Property) types.ID {
 	var facts []string
-	for _, immutableProperty := range immutablePropertyList {
+	for _, immutableProperty := range propertyList {
 		facts = append(facts, immutableProperty.GetFact().String())
 	}
 	sort.Strings(facts)
@@ -71,4 +71,13 @@ func GenerateHashID(immutablePropertyList []types.Property) types.ID {
 	h := sha1.New()
 	h.Write([]byte(toDigest))
 	return types.NewID(base64.URLEncoding.EncodeToString(h.Sum(nil)))
+}
+
+func C(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
+	return &assetID{
+		ChainID:          chainID,
+		MaintainersID:    maintainersID,
+		ClassificationID: classificationID,
+		HashID:           hashID,
+	}
 }
