@@ -31,7 +31,7 @@ func (asset asset) GetMaintainersID() types.ID {
 }
 
 func (asset asset) GetHashID() types.ID {
-	return assetIDFromInterface(asset.ID).HashID
+	return asset.Immutables.GetHashID()
 }
 
 func (asset asset) GetMutables() types.Mutables {
