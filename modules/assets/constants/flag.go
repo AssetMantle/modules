@@ -2,7 +2,7 @@ package constants
 
 import "github.com/persistenceOne/persistenceSDK/types"
 
-var AssetID = types.NewCLIFlag("assetID", "", "ID")
+var AssetID = types.NewCLIFlag("assetID", "", "AssetID")
 var ChainID = types.NewCLIFlag("chainID", "", "GetChainID")
 var MaintainersID = types.NewCLIFlag("maintainersID", "", "GetMaintainersID")
 var ClassificationID = types.NewCLIFlag("classificationID", "", "GetClassificationID")
