@@ -36,4 +36,27 @@ func (message Message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
 
-func msgPrototype() sdkTypes.Msg { return &Message{} }
+func messagePrototype() sdkTypes.Msg {
+	return &Message{}
+}
+
+func messageFromInterface(msg sdkTypes.Msg) Message {
+	switch value := msg.(type) {
+	case Message:
+		return value
+	default:
+		return Message{}
+	}
+}
+
+func NewMessage(from sdkTypes.AccAddress, chainID types.ID, maintainersID types.ID, classificationID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
+	return &Message{
+		From:             from,
+		ChainID:          chainID,
+		MaintainersID:    maintainersID,
+		ClassificationID: classificationID,
+		Properties:       properties,
+		Lock:             lock,
+		Burn:             burn,
+	}
+}
