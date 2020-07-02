@@ -54,7 +54,7 @@ func (asset asset) CanBurn(currentHeight types.Height) bool {
 }
 
 func NewAsset(assetID types.ID, properties types.Properties, lock types.Height, burn types.Height) types.InterNFT {
-	return &asset{
+	return asset{
 		ID:         assetID,
 		Properties: properties,
 		Lock:       lock,

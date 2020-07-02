@@ -22,7 +22,7 @@ func (QueryRequest queryRequest) FromMap(vars map[string]string) types.QueryRequ
 }
 
 func queryRequestPrototype() types.QueryRequest {
-	return &queryRequest{}
+	return queryRequest{}
 }
 
 func queryRequestFromInterface(QueryRequest types.QueryRequest) queryRequest {
@@ -35,5 +35,5 @@ func queryRequestFromInterface(QueryRequest types.QueryRequest) queryRequest {
 }
 
 func NewQueryRequest(assetID types.ID) types.QueryRequest {
-	return &queryRequest{AssetID: assetID}
+	return queryRequest{AssetID: assetID}
 }

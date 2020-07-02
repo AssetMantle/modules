@@ -17,7 +17,7 @@ func (abcXyz abcXyz) GetC() interface{} { return abcXyz.C }
 func (abcXyz abcXyz) DoSomething() {}
 
 func NewAbcXyz(a interface{}, b interface{}, c interface{}) AbcXyz {
-	return &abcXyz{
+	return abcXyz{
 		A: a,
 		B: b,
 		C: c,

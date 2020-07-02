@@ -73,8 +73,8 @@ func GenerateHashID(propertyList []types.Property) types.ID {
 	return types.NewID(base64.URLEncoding.EncodeToString(h.Sum(nil)))
 }
 
-func C(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
-	return &assetID{
+func NewAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
+	return assetID{
 		ChainID:          chainID,
 		MaintainersID:    maintainersID,
 		ClassificationID: classificationID,

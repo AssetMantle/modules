@@ -43,7 +43,7 @@ func (Assets assets) Fetch(id types.ID) types.InterNFTs {
 		}
 		Assets.mapper.iterate(Assets.context, assetsID, appendAssetList)
 	}
-	return &assets{id, assetList, Assets.mapper, Assets.context}
+	return assets{id, assetList, Assets.mapper, Assets.context}
 }
 func (Assets assets) Add(asset types.InterNFT) types.InterNFTs {
 	Assets.ID = nil
@@ -78,7 +78,7 @@ func (Assets assets) Mutate(asset types.InterNFT) types.InterNFTs {
 }
 
 func NewAssets(mapper Mapper, context sdkTypes.Context) types.InterNFTs {
-	return &assets{
+	return assets{
 		ID:      nil,
 		List:    nil,
 		mapper:  mapper,

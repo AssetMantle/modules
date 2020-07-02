@@ -9,9 +9,9 @@ type queryResponse struct {
 var _ types.QueryResponse = (*queryResponse)(nil)
 
 func queryResponsePrototype() types.QueryResponse {
-	return &queryResponse{}
+	return queryResponse{}
 }
 
 func NewQueryResponse(assets types.InterNFTs) types.QueryResponse {
-	return &queryResponse{Assets: assets}
+	return queryResponse{Assets: assets}
 }

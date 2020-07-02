@@ -68,11 +68,11 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 }
 
 func requestPrototype() types.TransactionRequest {
-	return &transactionRequest{}
+	return transactionRequest{}
 }
 
 func NewTransactionRequest(baseReq rest.BaseReq, classificationID string, maintainersID string, properties string, lock int, burn int) types.TransactionRequest {
-	return &transactionRequest{
+	return transactionRequest{
 		BaseReq:          baseReq,
 		ClassificationID: classificationID,
 		MaintainersID:    maintainersID,

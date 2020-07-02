@@ -58,5 +58,5 @@ func (signatures signatures) Mutate(signature Signature) Signatures {
 	return NewSignatures(signatureList)
 }
 func NewSignatures(signatureList []Signature) Signatures {
-	return &signatures{SignatureList: signatureList}
+	return signatures{SignatureList: signatureList}
 }

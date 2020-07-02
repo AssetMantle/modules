@@ -37,7 +37,7 @@ func (message Message) GetSigners() []sdkTypes.AccAddress {
 }
 
 func messagePrototype() sdkTypes.Msg {
-	return &Message{}
+	return Message{}
 }
 
 func messageFromInterface(msg sdkTypes.Msg) Message {
@@ -50,7 +50,7 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 }
 
 func NewMessage(from sdkTypes.AccAddress, chainID types.ID, maintainersID types.ID, classificationID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
-	return &Message{
+	return Message{
 		From:             from,
 		ChainID:          chainID,
 		MaintainersID:    maintainersID,
