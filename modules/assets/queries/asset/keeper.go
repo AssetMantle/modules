@@ -12,12 +12,8 @@ type queryKeeper struct {
 
 var _ types.QueryKeeper = (*queryKeeper)(nil)
 
-func (queryKeeper queryKeeper) Query(context sdkTypes.Context, queryRequest types.QueryRequest) ([]byte, error) {
-	bytes, Error := packageCodec.MarshalJSON(NewQueryResponse(mapper.NewAssets(queryKeeper.mapper, context).Fetch(queryRequestFromInterface(queryRequest).AssetID)))
-	if Error != nil {
-		return nil, Error
-	}
-	return bytes, nil
+func (queryKeeper queryKeeper) Query(context sdkTypes.Context, queryRequest types.QueryRequest) types.QueryResponse {
+	return NewQueryResponse(mapper.NewAssets(queryKeeper.mapper, context).Fetch(queryRequestFromInterface(queryRequest).AssetID))
 }
 
 func NewQueryKeeper(mapper mapper.Mapper) types.QueryKeeper {
