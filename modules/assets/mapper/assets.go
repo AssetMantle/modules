@@ -28,10 +28,10 @@ func (Assets assets) GetList() []types.InterNFT {
 	return Assets.List
 }
 
-func (Assets assets) Read(id types.ID) types.InterNFTs {
+func (Assets assets) Fetch(id types.ID) types.InterNFTs {
 	var assetList []types.InterNFT
 	assetsID := assetIDFromInterface(id)
-	if assetsID.HashID != nil {
+	if len(assetsID.HashID.Bytes()) > 0 {
 		asset := Assets.mapper.read(Assets.context, assetsID)
 		if asset != nil {
 			assetList = append(assetList, asset)
