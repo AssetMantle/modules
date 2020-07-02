@@ -5,6 +5,6 @@ type InterNFT interface {
 	InterChain
 	Burnable
 	Lockable
-	Mutables
-	Immutables
+	HasMutables
+	HasImmutables
 }

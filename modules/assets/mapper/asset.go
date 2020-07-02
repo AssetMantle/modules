@@ -8,8 +8,8 @@ var _ types.InterNFT = (*asset)(nil)
 
 type asset struct {
 	ID         types.ID
-	Mutables   types.Properties
-	Immutables types.Properties
+	Mutables   types.Mutables
+	Immutables types.Immutables
 	Lock       types.Height
 	Burn       types.Height
 }
@@ -34,11 +34,11 @@ func (asset asset) GetHashID() types.ID {
 	return assetIDFromInterface(asset.ID).HashID
 }
 
-func (asset asset) GetMutables() types.Properties {
+func (asset asset) GetMutables() types.Mutables {
 	return asset.Mutables
 }
 
-func (asset asset) GetImmutables() types.Properties {
+func (asset asset) GetImmutables() types.Immutables {
 	return asset.Immutables
 }
 
@@ -58,7 +58,7 @@ func (asset asset) CanBurn(currentHeight types.Height) bool {
 	return currentHeight.IsGraterThat(asset.Burn)
 }
 
-func NewAsset(assetID types.ID, mutables types.Properties, immutables types.Properties, lock types.Height, burn types.Height) types.InterNFT {
+func NewAsset(assetID types.ID, mutables types.Mutables, immutables types.Immutables, lock types.Height, burn types.Height) types.InterNFT {
 	return asset{
 		ID:         assetID,
 		Mutables:   mutables,
