@@ -26,7 +26,7 @@ func (property property) String() string {
 func (property property) GetID() ID     { return property.ID }
 func (property property) GetFact() Fact { return property.Fact }
 func NewProperty(id ID, fact Fact) Property {
-	return &property{
+	return property{
 		ID:   id,
 		Fact: fact,
 	}

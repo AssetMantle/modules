@@ -96,7 +96,7 @@ func (cliCommand cliCommand) CreateCommand(runE func(command *cobra.Command, arg
 }
 
 func NewCLICommand(use string, short string, long string, cliFlagList []CLIFlag) CLICommand {
-	return &cliCommand{
+	return cliCommand{
 		Use:         use,
 		Short:       short,
 		Long:        long,

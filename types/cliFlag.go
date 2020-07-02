@@ -52,7 +52,7 @@ func (cliFlag cliFlag) ReadCLIValue() interface{} {
 }
 
 func NewCLIFlag(name string, value interface{}, usage string) CLIFlag {
-	return &cliFlag{
+	return cliFlag{
 		Name:  name,
 		Value: value,
 		Usage: usage,

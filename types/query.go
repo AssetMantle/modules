@@ -95,7 +95,7 @@ func (query query) query(queryRequest QueryRequest, cliContext context.CLIContex
 }
 
 func NewQuery(module string, name string, short string, long string, queryRequestPrototype func() QueryRequest, queryResponsePrototype func() QueryResponse, packageCodec *codec.Codec, registerCodec func(*codec.Codec), flagList []CLIFlag) Query {
-	return &query{
+	return query{
 		ModuleName:             module,
 		Name:                   name,
 		CLICommand:             NewCLICommand(name, short, long, flagList),

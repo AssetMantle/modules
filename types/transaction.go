@@ -99,7 +99,7 @@ func (transaction transaction) RegisterCodec(codec *codec.Codec) {
 }
 
 func NewTransaction(module string, name string, short string, long string, transactionRequestPrototype func() TransactionRequest, registerCodec func(*codec.Codec), flagList []CLIFlag) Transaction {
-	return &transaction{
+	return transaction{
 		ModuleName:                  module,
 		Name:                        name,
 		CLICommand:                  NewCLICommand(name, short, long, flagList),

@@ -3,29 +3,37 @@ package asset
 import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 type queryRequest struct {
-	ID types.ID
+	AssetID types.ID
 }
 
 var _ types.QueryRequest = (*queryRequest)(nil)
 
 func (QueryRequest queryRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.QueryRequest {
-	return &queryRequest{ID: types.NewID(cliCommand.ReadString(constants.AssetID))}
+	return NewQueryRequest(mapper.ReadAssetID(cliCommand.ReadString(constants.AssetID)))
 }
 
 func (QueryRequest queryRequest) FromMap(vars map[string]string) types.QueryRequest {
-	return &queryRequest{
-		ID: types.NewID(vars[constants.AssetID.GetName()]),
-	}
+	return NewQueryRequest(mapper.ReadAssetID(vars[constants.AssetID.GetName()]))
 }
 
 func queryRequestPrototype() types.QueryRequest {
-	return &queryRequest{}
+	return queryRequest{}
 }
 
-func NewQueryRequest(id types.ID) types.QueryRequest {
-	return &queryRequest{ID: id}
+func queryRequestFromInterface(QueryRequest types.QueryRequest) queryRequest {
+	switch value := QueryRequest.(type) {
+	case queryRequest:
+		return value
+	default:
+		return queryRequest{}
+	}
+}
+
+func NewQueryRequest(assetID types.ID) types.QueryRequest {
+	return queryRequest{AssetID: assetID}
 }
