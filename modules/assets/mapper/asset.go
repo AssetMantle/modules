@@ -47,7 +47,7 @@ func (asset asset) GetLock() types.Height {
 }
 
 func (asset asset) CanSend(currentHeight types.Height) bool {
-	return currentHeight.IsGraterThat(asset.Lock)
+	return currentHeight.IsGreaterThan(asset.Lock)
 }
 
 func (asset asset) GetBurn() types.Height {
@@ -55,7 +55,7 @@ func (asset asset) GetBurn() types.Height {
 }
 
 func (asset asset) CanBurn(currentHeight types.Height) bool {
-	return currentHeight.IsGraterThat(asset.Burn)
+	return currentHeight.IsGreaterThan(asset.Burn)
 }
 
 func NewAsset(assetID types.ID, mutables types.Mutables, immutables types.Immutables, lock types.Height, burn types.Height) types.InterNFT {
