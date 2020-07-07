@@ -18,7 +18,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	assetID := message.AssetID
 	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(assetID)
 	asset := assets.Get(assetID)
-	if assets.Get(assetID) == nil {
+	if asset == nil {
 		return constants.EntityNotFound
 	}
 	mutableProperties := asset.GetMutables().Get()
