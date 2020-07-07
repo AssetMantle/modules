@@ -6,32 +6,42 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/queries/asset"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/burn"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mint"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mutate"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 type Keeper interface {
-	getMintKeeper() types.TransactionKeeper
-
 	getAssetQuerier() types.QueryKeeper
+
+	getBurnKeeper() types.TransactionKeeper
+	getMintKeeper() types.TransactionKeeper
+	getMutateKeeper() types.TransactionKeeper
 }
 
 type keeper struct {
-	mintKeeper types.TransactionKeeper
+	AssetQuerier types.QueryKeeper
 
-	assetQuerier types.QueryKeeper
+	BurnKeeper   types.TransactionKeeper
+	MintKeeper   types.TransactionKeeper
+	MutateKeeper types.TransactionKeeper
 }
 
 func NewKeeper(codec *codec.Codec, storeKey sdkTypes.StoreKey, paramSpace params.Subspace) Keeper {
 	Mapper := mapper.NewMapper(codec, storeKey)
 	return keeper{
-		mintKeeper:   mint.NewTransactionKeeper(Mapper),
-		assetQuerier: asset.NewQueryKeeper(Mapper),
+		AssetQuerier: asset.NewQueryKeeper(Mapper),
+		BurnKeeper:   burn.NewTransactionKeeper(Mapper),
+		MintKeeper:   mint.NewTransactionKeeper(Mapper),
+		MutateKeeper: mutate.NewTransactionKeeper(Mapper),
 	}
 }
 
 var _ Keeper = (*keeper)(nil)
 
-func (keeper keeper) getMintKeeper() types.TransactionKeeper { return keeper.mintKeeper }
+func (keeper keeper) getAssetQuerier() types.QueryKeeper { return keeper.AssetQuerier }
 
-func (keeper keeper) getAssetQuerier() types.QueryKeeper { return keeper.assetQuerier }
+func (keeper keeper) getBurnKeeper() types.TransactionKeeper   { return keeper.BurnKeeper }
+func (keeper keeper) getMintKeeper() types.TransactionKeeper   { return keeper.MintKeeper }
+func (keeper keeper) getMutateKeeper() types.TransactionKeeper { return keeper.MutateKeeper }
