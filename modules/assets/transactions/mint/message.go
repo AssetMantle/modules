@@ -36,10 +36,6 @@ func (message Message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
 
-func messagePrototype() sdkTypes.Msg {
-	return Message{}
-}
-
 func messageFromInterface(msg sdkTypes.Msg) Message {
 	switch value := msg.(type) {
 	case Message:
