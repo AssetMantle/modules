@@ -37,7 +37,7 @@ func (assetID assetID) Compare(id types.ID) int {
 	return bytes.Compare(assetID.Bytes(), id.Bytes())
 }
 
-func ReadAssetID(assetIDString string) types.ID {
+func readAssetID(assetIDString string) types.ID {
 	idList := strings.Split(assetIDString, constants.IDSeparator)
 	if len(idList) == 4 {
 		return assetID{
@@ -55,7 +55,7 @@ func assetIDFromInterface(id types.ID) assetID {
 	case assetID:
 		return value
 	default:
-		return assetID{ChainID: types.NewID(""), MaintainersID: types.NewID(""), ClassificationID: types.NewID(""), HashID: types.NewID("")}
+		return assetIDFromInterface(readAssetID(id.String()))
 	}
 }
 
