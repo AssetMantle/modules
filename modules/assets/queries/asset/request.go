@@ -3,7 +3,6 @@ package asset
 import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
@@ -14,11 +13,11 @@ type queryRequest struct {
 var _ types.QueryRequest = (*queryRequest)(nil)
 
 func (QueryRequest queryRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.QueryRequest {
-	return NewQueryRequest(mapper.ReadAssetID(cliCommand.ReadString(constants.AssetID)))
+	return NewQueryRequest(types.NewID(cliCommand.ReadString(constants.AssetID)))
 }
 
 func (QueryRequest queryRequest) FromMap(vars map[string]string) types.QueryRequest {
-	return NewQueryRequest(mapper.ReadAssetID(vars[constants.AssetID.GetName()]))
+	return NewQueryRequest(types.NewID(vars[constants.AssetID.GetName()]))
 }
 
 func queryRequestPrototype() types.QueryRequest {

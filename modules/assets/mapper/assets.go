@@ -17,8 +17,9 @@ type assets struct {
 
 func (Assets assets) GetID() types.ID { return Assets.ID }
 func (Assets assets) Get(id types.ID) types.InterNFT {
+	assetID := assetIDFromInterface(id)
 	for _, oldAsset := range Assets.List {
-		if oldAsset.GetID().Compare(id) == 0 {
+		if oldAsset.GetID().Compare(assetID) == 0 {
 			return oldAsset
 		}
 	}
