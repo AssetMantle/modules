@@ -15,7 +15,7 @@ func NewQuerier(keeper Keeper) sdkTypes.Querier {
 			return asset.Query.HandleMessage(context, keeper.getAssetQuerier(), requestQuery)
 
 		default:
-			return nil, errors.Wrapf(constants.UnknownQueryCode, "%v", path[0])
+			return nil, errors.Wrapf(constants.UnknownQuery, "%v", path[0])
 		}
 	}
 }

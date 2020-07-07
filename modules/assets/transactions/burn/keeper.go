@@ -1,4 +1,4 @@
-package mint
+package burn
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -15,15 +15,15 @@ var _ types.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
 	message := messageFromInterface(msg)
-	mutables := types.NewMutables(message.Properties, message.MaintainersID)
-	immutables := types.NewImmutables(message.Properties)
-	assetID := mapper.NewAssetID(message.ChainID, message.MaintainersID, message.ClassificationID, immutables.GetHashID())
-	asset := mapper.NewAsset(assetID, mutables, immutables, message.Lock, message.Burn)
-	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(assetID)
-	if assets.Get(assetID) != nil {
-		return constants.EntityAlreadyExists
+	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(message.AssetID)
+	asset := assets.Get(message.AssetID)
+	if asset == nil {
+		return constants.EntityNotFound
 	}
-	assets.Add(asset)
+	if !asset.CanBurn(types.NewHeight(context.BlockHeight())) {
+		return constants.BurnNotAllowed
+	}
+	assets.Remove(asset)
 	return nil
 }
 

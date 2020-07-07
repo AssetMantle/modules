@@ -2,7 +2,9 @@ package assets
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/queries/asset"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/burn"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mint"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mutate"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -18,7 +20,9 @@ func GetCLIRootTransactionCommand(codec *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 	rootTransactionCommand.AddCommand(
+		burn.Transaction.Command(codec),
 		mint.Transaction.Command(codec),
+		mutate.Transaction.Command(codec),
 	)
 	return rootTransactionCommand
 }

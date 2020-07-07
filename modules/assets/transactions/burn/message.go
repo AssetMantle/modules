@@ -1,4 +1,4 @@
-package mint
+package burn
 
 import (
 	"github.com/asaskevich/govalidator"
@@ -9,13 +9,8 @@ import (
 )
 
 type Message struct {
-	From             sdkTypes.AccAddress
-	ChainID          types.ID
-	MaintainersID    types.ID
-	ClassificationID types.ID
-	Properties       types.Properties
-	Lock             types.Height
-	Burn             types.Height
+	From    sdkTypes.AccAddress
+	AssetID types.ID
 }
 
 var _ sdkTypes.Msg = Message{}
@@ -49,14 +44,9 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 	}
 }
 
-func NewMessage(from sdkTypes.AccAddress, chainID types.ID, maintainersID types.ID, classificationID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, assetID types.ID) sdkTypes.Msg {
 	return Message{
-		From:             from,
-		ChainID:          chainID,
-		MaintainersID:    maintainersID,
-		ClassificationID: classificationID,
-		Properties:       properties,
-		Lock:             lock,
-		Burn:             burn,
+		From:    from,
+		AssetID: assetID,
 	}
 }

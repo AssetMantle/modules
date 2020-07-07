@@ -1,4 +1,4 @@
-package mint
+package mutate
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -15,15 +15,21 @@ var _ types.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
 	message := messageFromInterface(msg)
-	mutables := types.NewMutables(message.Properties, message.MaintainersID)
-	immutables := types.NewImmutables(message.Properties)
-	assetID := mapper.NewAssetID(message.ChainID, message.MaintainersID, message.ClassificationID, immutables.GetHashID())
-	asset := mapper.NewAsset(assetID, mutables, immutables, message.Lock, message.Burn)
+	assetID := message.AssetID
 	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(assetID)
-	if assets.Get(assetID) != nil {
-		return constants.EntityAlreadyExists
+	asset := assets.Get(assetID)
+	if assets.Get(assetID) == nil {
+		return constants.EntityNotFound
 	}
-	assets.Add(asset)
+	mutableProperties := asset.GetMutables().Get()
+	for _, property := range message.Properties.GetList() {
+		if mutableProperties.Get(property.GetID()) == nil {
+			return constants.MutableNotFound
+		}
+		mutableProperties = mutableProperties.Mutate(property)
+	}
+	asset = mapper.NewAsset(asset.GetID(), types.NewMutables(mutableProperties, asset.GetMaintainersID()), asset.GetImmutables(), asset.GetLock(), asset.GetBurn())
+	assets = assets.Mutate(asset)
 	return nil
 }
 

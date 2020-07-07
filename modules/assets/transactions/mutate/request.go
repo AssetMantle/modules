@@ -1,4 +1,4 @@
-package mint
+package mutate
 
 import (
 	"errors"
@@ -12,12 +12,11 @@ import (
 )
 
 type transactionRequest struct {
-	BaseReq          rest.BaseReq `json:"baseReq"`
-	ClassificationID string       `json:"classificationID"`
-	MaintainersID    string       `json:"maintainersID"`
-	Properties       string       `json:"properties"`
-	Lock             int64        `json:"lock"`
-	Burn             int64        `json:"burn"`
+	BaseReq    rest.BaseReq `json:"baseReq"`
+	AssetID    string       `json:"classificationID"`
+	Properties string       `json:"properties"`
+	Lock       int64        `json:"lock"`
+	Burn       int64        `json:"burn"`
 }
 
 var _ types.TransactionRequest = (*transactionRequest)(nil)
@@ -25,8 +24,7 @@ var _ types.TransactionRequest = (*transactionRequest)(nil)
 func (transactionRequest transactionRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.TransactionRequest {
 	return NewTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
-		cliCommand.ReadString(constants.ClassificationID),
-		cliCommand.ReadString(constants.MaintainersID),
+		cliCommand.ReadString(constants.AssetID),
 		cliCommand.ReadString(constants.Properties),
 		cliCommand.ReadInt64(constants.Lock),
 		cliCommand.ReadInt64(constants.Burn),
@@ -58,9 +56,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 
 	return NewMessage(
 		from,
-		types.NewID(transactionRequest.GetBaseReq().ChainID),
-		types.NewID(transactionRequest.MaintainersID),
-		types.NewID(transactionRequest.ClassificationID),
+		types.NewID(transactionRequest.AssetID),
 		types.NewProperties(propertyList),
 		types.NewHeight(transactionRequest.Lock),
 		types.NewHeight(transactionRequest.Burn),
@@ -71,13 +67,12 @@ func requestPrototype() types.TransactionRequest {
 	return transactionRequest{}
 }
 
-func NewTransactionRequest(baseReq rest.BaseReq, classificationID string, maintainersID string, properties string, lock int64, burn int64) types.TransactionRequest {
+func NewTransactionRequest(baseReq rest.BaseReq, assetID string, properties string, lock int64, burn int64) types.TransactionRequest {
 	return transactionRequest{
-		BaseReq:          baseReq,
-		ClassificationID: classificationID,
-		MaintainersID:    maintainersID,
-		Properties:       properties,
-		Lock:             lock,
-		Burn:             burn,
+		BaseReq:    baseReq,
+		AssetID:    assetID,
+		Properties: properties,
+		Lock:       lock,
+		Burn:       burn,
 	}
 }
