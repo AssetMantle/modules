@@ -12,6 +12,7 @@ import (
 type CLICommand interface {
 	registerFlags(*cobra.Command)
 
+	ReadInt64(CLIFlag) int64
 	ReadInt(CLIFlag) int
 	ReadBool(CLIFlag) bool
 	ReadString(CLIFlag) string
@@ -33,6 +34,20 @@ func (cliCommand cliCommand) registerFlags(command *cobra.Command) {
 	for _, cliFlag := range cliCommand.CLIFlagList {
 		cliFlag.Register(command)
 	}
+}
+
+func (cliCommand cliCommand) ReadInt64(cliFlag CLIFlag) int64 {
+	switch cliFlag.GetValue().(type) {
+	case int64:
+		for _, registeredCliFlag := range cliCommand.CLIFlagList {
+			if registeredCliFlag == cliFlag {
+				return cliFlag.ReadCLIValue().(int64)
+			}
+		}
+	default:
+		panic(errors.New(fmt.Sprintf("Flag %v not an int64 flag, Flag type: %T, ", cliFlag.GetName(), cliFlag.GetValue())))
+	}
+	panic(errors.New(fmt.Sprintf("Uregistered flag %v type %T", cliFlag.GetName(), cliFlag.GetValue())))
 }
 
 func (cliCommand cliCommand) ReadInt(cliFlag CLIFlag) int {
