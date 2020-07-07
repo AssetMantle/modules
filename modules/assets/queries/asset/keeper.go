@@ -1,7 +1,10 @@
 package asset
 
 import (
+	"errors"
+	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
@@ -16,6 +19,11 @@ func (queryKeeper queryKeeper) Query(context sdkTypes.Context, queryRequest type
 	return NewQueryResponse(mapper.NewAssets(queryKeeper.mapper, context).Fetch(queryRequestFromInterface(queryRequest).AssetID))
 }
 
-func NewQueryKeeper(mapper mapper.Mapper) types.QueryKeeper {
-	return queryKeeper{mapper: mapper}
+func NewQueryKeeper(Mapper types.Mapper) types.QueryKeeper {
+	switch value := Mapper.(type) {
+	case mapper.Mapper:
+		return queryKeeper{mapper: value}
+	default:
+		panic(errors.New(fmt.Sprintf("incorrect mapper initialization, module %v", constants.ModuleName)))
+	}
 }
