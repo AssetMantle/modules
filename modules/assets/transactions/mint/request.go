@@ -16,8 +16,8 @@ type transactionRequest struct {
 	ClassificationID string       `json:"classificationID"`
 	MaintainersID    string       `json:"maintainersID"`
 	Properties       string       `json:"properties"`
-	Lock             int          `json:"lock"`
-	Burn             int          `json:"burn"`
+	Lock             int64        `json:"lock"`
+	Burn             int64        `json:"burn"`
 }
 
 var _ types.TransactionRequest = (*transactionRequest)(nil)
@@ -28,8 +28,8 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand types.CLICommand
 		cliCommand.ReadString(constants.ClassificationID),
 		cliCommand.ReadString(constants.MaintainersID),
 		cliCommand.ReadString(constants.Properties),
-		cliCommand.ReadInt(constants.Lock),
-		cliCommand.ReadInt(constants.Burn),
+		cliCommand.ReadInt64(constants.Lock),
+		cliCommand.ReadInt64(constants.Burn),
 	)
 }
 
@@ -71,7 +71,7 @@ func requestPrototype() types.TransactionRequest {
 	return transactionRequest{}
 }
 
-func NewTransactionRequest(baseReq rest.BaseReq, classificationID string, maintainersID string, properties string, lock int, burn int) types.TransactionRequest {
+func NewTransactionRequest(baseReq rest.BaseReq, classificationID string, maintainersID string, properties string, lock int64, burn int64) types.TransactionRequest {
 	return transactionRequest{
 		BaseReq:          baseReq,
 		ClassificationID: classificationID,
