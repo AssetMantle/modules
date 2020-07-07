@@ -9,6 +9,7 @@ func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*Chains)(nil), nil)
 	codec.RegisterInterface((*Classification)(nil), nil)
 	codec.RegisterInterface((*Fact)(nil), nil)
+	codec.RegisterInterface((*GenesisState)(nil), nil)
 	codec.RegisterInterface((*Height)(nil), nil)
 	codec.RegisterInterface((*ID)(nil), nil)
 	codec.RegisterInterface((*Immutables)(nil), nil)
