@@ -12,6 +12,7 @@ func storeKey(assetID types.ID) []byte {
 }
 
 type Mapper interface {
+	types.Mapper
 	create(sdkTypes.Context, types.InterNFT)
 	read(sdkTypes.Context, types.ID) types.InterNFT
 	update(sdkTypes.Context, types.InterNFT)
@@ -57,12 +58,8 @@ func (mapper mapper) update(context sdkTypes.Context, asset types.InterNFT) {
 	kvStore.Set(storeKey(assetID), bytes)
 }
 func (mapper mapper) delete(context sdkTypes.Context, assetID types.ID) {
-	bytes, Error := mapper.codec.MarshalBinaryBare(&asset{})
-	if Error != nil {
-		panic(Error)
-	}
 	kvStore := context.KVStore(mapper.storeKey)
-	kvStore.Set(storeKey(assetID), bytes)
+	kvStore.Delete(storeKey(assetID))
 }
 func (mapper mapper) iterate(context sdkTypes.Context, assetID types.ID, accumulator func(types.InterNFT) bool) {
 	store := context.KVStore(mapper.storeKey)
@@ -81,7 +78,7 @@ func (mapper mapper) iterate(context sdkTypes.Context, assetID types.ID, accumul
 	}
 }
 
-func NewMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) Mapper {
+func NewMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) types.Mapper {
 	return mapper{
 		storeKey: storeKey,
 		codec:    codec,
