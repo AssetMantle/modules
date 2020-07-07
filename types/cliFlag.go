@@ -27,6 +27,8 @@ func (cliFlag cliFlag) GetValue() interface{} { return cliFlag.Value }
 
 func (cliFlag cliFlag) Register(command *cobra.Command) {
 	switch value := cliFlag.Value.(type) {
+	case int64:
+		command.Flags().Int64(cliFlag.Name, value, cliFlag.Usage)
 	case int:
 		command.Flags().Int(cliFlag.Name, value, cliFlag.Usage)
 	case bool:
@@ -40,6 +42,8 @@ func (cliFlag cliFlag) Register(command *cobra.Command) {
 
 func (cliFlag cliFlag) ReadCLIValue() interface{} {
 	switch value := cliFlag.Value.(type) {
+	case int64:
+		return viper.GetInt64(cliFlag.Name)
 	case int:
 		return viper.GetInt(cliFlag.Name)
 	case bool:
