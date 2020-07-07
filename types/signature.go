@@ -34,7 +34,7 @@ func (baseSignature signature) Verify(pubKey crypto.PubKey, bytes []byte) bool {
 }
 func (baseSignature signature) GetValidityHeight() Height { return baseSignature.GetValidityHeight() }
 func (baseSignature signature) HasExpired(height Height) bool {
-	return baseSignature.GetValidityHeight().IsGraterThat(height)
+	return baseSignature.GetValidityHeight().IsGreaterThan(height)
 }
 
 func NewSignature(id ID, signatureBytes []byte, validityHeight Height) Signature {

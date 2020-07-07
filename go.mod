@@ -3,7 +3,6 @@ module github.com/persistenceOne/persistenceSDK
 go 1.14
 
 require (
-	github.com/99designs/keyring v1.1.5 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
 	github.com/cosmos/cosmos-sdk v0.34.4-0.20200530180557-ba70f4d4dc2e
 	github.com/gorilla/mux v1.7.4

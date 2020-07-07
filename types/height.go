@@ -2,7 +2,7 @@ package types
 
 type Height interface {
 	Get() int64
-	IsGraterThat(Height) bool
+	IsGreaterThan(Height) bool
 }
 
 type height struct {
@@ -12,7 +12,7 @@ type height struct {
 var _ Height = (*height)(nil)
 
 func (height height) Get() int64 { return height.Height }
-func (height height) IsGraterThat(Height Height) bool {
+func (height height) IsGreaterThan(Height Height) bool {
 	return height.Get() > Height.Get()
 }
 func NewHeight(Height int64) Height {
