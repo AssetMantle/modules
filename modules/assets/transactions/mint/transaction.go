@@ -8,6 +8,7 @@ import (
 var Transaction = types.NewTransaction(
 	constants.ModuleName,
 	constants.MintTransaction,
+	NewTransactionKeeper,
 	constants.MintTransactionShort,
 	constants.MintTransactionLong,
 	requestPrototype,
