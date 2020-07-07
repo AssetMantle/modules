@@ -25,7 +25,7 @@ func (message Message) Type() string  { return Transaction.GetName() }
 func (message Message) ValidateBasic() error {
 	var _, Error = govalidator.ValidateStruct(message)
 	if Error != nil {
-		return errors.Wrap(constants.IncorrectMessageCode, Error.Error())
+		return errors.Wrap(constants.IncorrectMessage, Error.Error())
 	}
 	return nil
 }

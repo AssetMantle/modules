@@ -21,7 +21,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	asset := mapper.NewAsset(assetID, mutables, immutables, message.Lock, message.Burn)
 	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(assetID)
 	if assets.Get(assetID) != nil {
-		return constants.EntityAlreadyExistsCode
+		return constants.EntityAlreadyExists
 	}
 	assets.Add(asset)
 	return nil

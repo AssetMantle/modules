@@ -2,9 +2,11 @@ package constants
 
 import "github.com/cosmos/cosmos-sdk/types/errors"
 
-var UnknownMessageCode = errors.Register(ModuleName, 001, "UnknownMessageCode")
-var IncorrectMessageCode = errors.Register(ModuleName, 002, "IncorrectMessageCode")
-var UnknownQueryCode = errors.Register(ModuleName, 101, "UnknownQueryCode")
-var IncorrectQueryCode = errors.Register(ModuleName, 102, "IncorrectQueryCode")
-var EntityNotFoundCode = errors.Register(ModuleName, 103, "EntityNotFoundCode")
-var EntityAlreadyExistsCode = errors.Register(ModuleName, 104, "EntityAlreadyExistsCode")
+var UnknownMessage = errors.Register(ModuleName, 001, "UnknownMessage")
+var IncorrectMessage = errors.Register(ModuleName, 002, "IncorrectMessage")
+var UnknownQuery = errors.Register(ModuleName, 101, "UnknownQuery")
+var IncorrectQuery = errors.Register(ModuleName, 102, "IncorrectQuery")
+var EntityNotFound = errors.Register(ModuleName, 103, "EntityNotFound")
+var EntityAlreadyExists = errors.Register(ModuleName, 104, "EntityAlreadyExists")
+var BurnNotAllowed = errors.Register(ModuleName, 105, "BurnNotAllowed")
+var MutableNotFound = errors.Register(ModuleName, 105, "MutableNotFound")
