@@ -10,6 +10,4 @@ const TraitIDAndPropertySeparator = ":"
 
 const MaxTraitCount = 22
 
-const AttributeValueCategory = "assets"
-
 var StoreKeyPrefix = []byte{0x11}

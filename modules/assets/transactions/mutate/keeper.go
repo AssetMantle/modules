@@ -1,6 +1,8 @@
 package mutate
 
 import (
+	"errors"
+	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
@@ -33,6 +35,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	return nil
 }
 
-func NewTransactionKeeper(mapper mapper.Mapper) types.TransactionKeeper {
-	return transactionKeeper{mapper: mapper}
+func NewTransactionKeeper(Mapper types.Mapper) types.TransactionKeeper {
+	switch value := Mapper.(type) {
+	case mapper.Mapper:
+		return transactionKeeper{mapper: value}
+	default:
+		panic(errors.New(fmt.Sprintf("incorrect mapper initialization, module %v", constants.ModuleName)))
+	}
 }

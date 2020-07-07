@@ -17,14 +17,17 @@ type Transaction interface {
 	GetModuleName() string
 	GetName() string
 	Command(*codec.Codec) *cobra.Command
-	HandleMessage(sdkTypes.Context, TransactionKeeper, sdkTypes.Msg) (*sdkTypes.Result, error)
+	HandleMessage(sdkTypes.Context, sdkTypes.Msg) (*sdkTypes.Result, error)
 	RESTRequestHandler(context.CLIContext) http.HandlerFunc
 	RegisterCodec(*codec.Codec)
+	InitializeKeeper(Mapper)
 }
 
 type transaction struct {
 	ModuleName                  string
 	Name                        string
+	Keeper                      func(Mapper) TransactionKeeper
+	TransactionKeeper           TransactionKeeper
 	CLICommand                  CLICommand
 	Codec                       func(*codec.Codec)
 	TransactionRequestPrototype func() TransactionRequest
@@ -52,9 +55,9 @@ func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
 	return transaction.CLICommand.CreateCommand(runE)
 }
 
-func (transaction transaction) HandleMessage(context sdkTypes.Context, transactionKeeper TransactionKeeper, message sdkTypes.Msg) (*sdkTypes.Result, error) {
+func (transaction transaction) HandleMessage(context sdkTypes.Context, message sdkTypes.Msg) (*sdkTypes.Result, error) {
 
-	if Error := transactionKeeper.Transact(context, message); Error != nil {
+	if Error := (transaction.TransactionKeeper).Transact(context, message); Error != nil {
 		return nil, Error
 	}
 
@@ -98,10 +101,15 @@ func (transaction transaction) RegisterCodec(codec *codec.Codec) {
 	transaction.Codec(codec)
 }
 
-func NewTransaction(module string, name string, short string, long string, transactionRequestPrototype func() TransactionRequest, registerCodec func(*codec.Codec), flagList []CLIFlag) Transaction {
-	return transaction{
+func (transaction *transaction) InitializeKeeper(mapper Mapper) {
+	transaction.TransactionKeeper = transaction.Keeper(mapper)
+}
+
+func NewTransaction(module string, name string, keeper func(Mapper) TransactionKeeper, short string, long string, transactionRequestPrototype func() TransactionRequest, registerCodec func(*codec.Codec), flagList []CLIFlag) Transaction {
+	return &transaction{
 		ModuleName:                  module,
 		Name:                        name,
+		Keeper:                      keeper,
 		CLICommand:                  NewCLICommand(name, short, long, flagList),
 		Codec:                       registerCodec,
 		TransactionRequestPrototype: transactionRequestPrototype,
