@@ -12,7 +12,7 @@ type queryRequest struct {
 
 var _ types.QueryRequest = (*queryRequest)(nil)
 
-func (QueryRequest queryRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.QueryRequest {
+func (QueryRequest queryRequest) FromCLI(cliCommand types.CLICommand, _ context.CLIContext) types.QueryRequest {
 	return NewQueryRequest(types.NewID(cliCommand.ReadString(constants.AssetID)))
 }
 
