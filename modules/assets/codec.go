@@ -9,11 +9,10 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mutate"
 )
 
-func RegisterCodec(codec *codec.Codec) {
+func registerCodec(codec *codec.Codec) {
 	mapper.RegisterCodec(codec)
 
 	asset.Query.RegisterCodec(codec)
-
 	burn.Transaction.RegisterCodec(codec)
 	mint.Transaction.RegisterCodec(codec)
 	mutate.Transaction.RegisterCodec(codec)
