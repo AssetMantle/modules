@@ -1,8 +1,6 @@
 package burn
 
 import (
-	"errors"
-	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
@@ -10,7 +8,7 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper mapper.Mapper
+	mapper types.Mapper
 }
 
 var _ types.TransactionKeeper = (*transactionKeeper)(nil)
@@ -29,11 +27,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	return nil
 }
 
-func NewTransactionKeeper(Mapper types.Mapper) types.TransactionKeeper {
-	switch value := Mapper.(type) {
-	case mapper.Mapper:
-		return transactionKeeper{mapper: value}
-	default:
-		panic(errors.New(fmt.Sprintf("incorrect mapper initialization, module %v", constants.ModuleName)))
-	}
+func initializeTransactionKeeper(mapper types.Mapper) types.TransactionKeeper {
+	return transactionKeeper{mapper: mapper}
 }

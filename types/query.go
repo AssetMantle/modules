@@ -24,47 +24,47 @@ type Query interface {
 }
 
 type query struct {
-	ModuleName             string
-	Name                   string
-	Keeper                 func(Mapper) QueryKeeper
-	QueryKeeper            QueryKeeper
-	CLICommand             CLICommand
-	PackageCodec           *codec.Codec
-	Codec                  func(*codec.Codec)
-	QueryRequestPrototype  func() QueryRequest
-	QueryResponsePrototype func() QueryResponse
+	moduleName             string
+	name                   string
+	queryKeeper            QueryKeeper
+	cliCommand             CLICommand
+	packageCodec           *codec.Codec
+	registerCodec          func(*codec.Codec)
+	initializeKeeper       func(Mapper) QueryKeeper
+	queryRequestPrototype  func() QueryRequest
+	queryResponsePrototype func() QueryResponse
 }
 
 var _ Query = (*query)(nil)
 
-func (query query) GetModuleName() string { return query.ModuleName }
+func (query query) GetModuleName() string { return query.moduleName }
 
-func (query query) GetName() string { return query.Name }
+func (query query) GetName() string { return query.name }
 
 func (query query) Command(codec *codec.Codec) *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
 		cliContext := context.NewCLIContext().WithCodec(codec)
 
-		queryRequest := query.QueryRequestPrototype().FromCLI(query.CLICommand, cliContext)
+		queryRequest := query.queryRequestPrototype().FromCLI(query.cliCommand, cliContext)
 		responseBytes, _, Error := query.query(queryRequest, cliContext)
 		if Error != nil {
 			return Error
 		}
-		response := query.QueryResponsePrototype()
-		if Error := query.PackageCodec.UnmarshalJSON(responseBytes, &response); Error != nil {
+		response := query.queryResponsePrototype()
+		if Error := query.packageCodec.UnmarshalJSON(responseBytes, &response); Error != nil {
 			return Error
 		}
 		return cliContext.PrintOutput(response)
 	}
-	return query.CLICommand.CreateCommand(runE)
+	return query.cliCommand.CreateCommand(runE)
 }
 func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
-	queryRequest := query.QueryRequestPrototype()
-	Error := query.PackageCodec.UnmarshalJSON(requestQuery.Data, &queryRequest)
+	queryRequest := query.queryRequestPrototype()
+	Error := query.packageCodec.UnmarshalJSON(requestQuery.Data, &queryRequest)
 	if Error != nil {
 		return nil, Error
 	}
-	return query.PackageCodec.MarshalJSON(query.QueryKeeper.Query(context, queryRequest))
+	return query.packageCodec.MarshalJSON(query.queryKeeper.Query(context, queryRequest))
 }
 
 func (query query) RESTQueryHandler(cliContext context.CLIContext) http.HandlerFunc {
@@ -75,7 +75,7 @@ func (query query) RESTQueryHandler(cliContext context.CLIContext) http.HandlerF
 			return
 		}
 
-		queryRequest := query.QueryRequestPrototype().FromMap(mux.Vars(httpRequest))
+		queryRequest := query.queryRequestPrototype().FromMap(mux.Vars(httpRequest))
 		response, height, Error := query.query(queryRequest, cliContext)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
@@ -86,30 +86,30 @@ func (query query) RESTQueryHandler(cliContext context.CLIContext) http.HandlerF
 	}
 }
 func (query query) RegisterCodec(codec *codec.Codec) {
-	query.Codec(codec)
+	query.registerCodec(codec)
 }
 
 func (query *query) InitializeKeeper(mapper Mapper) {
-	query.QueryKeeper = query.Keeper(mapper)
+	query.queryKeeper = query.initializeKeeper(mapper)
 }
 
 func (query query) query(queryRequest QueryRequest, cliContext context.CLIContext) ([]byte, int64, error) {
-	bytes, Error := query.PackageCodec.MarshalJSON(queryRequest)
+	bytes, Error := query.packageCodec.MarshalJSON(queryRequest)
 	if Error != nil {
 		return nil, 0, Error
 	}
-	return cliContext.QueryWithData(strings.Join([]string{"", "custom", query.ModuleName, query.Name}, "/"), bytes)
+	return cliContext.QueryWithData(strings.Join([]string{"", "custom", query.moduleName, query.name}, "/"), bytes)
 }
 
-func NewQuery(module string, name string, keeper func(Mapper) QueryKeeper, short string, long string, queryRequestPrototype func() QueryRequest, queryResponsePrototype func() QueryResponse, packageCodec *codec.Codec, registerCodec func(*codec.Codec), flagList []CLIFlag) Query {
+func NewQuery(module string, name string, short string, long string, packageCodec *codec.Codec, registerCodec func(*codec.Codec), initializeKeeper func(Mapper) QueryKeeper, queryRequestPrototype func() QueryRequest, queryResponsePrototype func() QueryResponse, flagList []CLIFlag) Query {
 	return &query{
-		ModuleName:             module,
-		Name:                   name,
-		Keeper:                 keeper,
-		CLICommand:             NewCLICommand(name, short, long, flagList),
-		PackageCodec:           packageCodec,
-		Codec:                  registerCodec,
-		QueryRequestPrototype:  queryRequestPrototype,
-		QueryResponsePrototype: queryResponsePrototype,
+		moduleName:             module,
+		name:                   name,
+		cliCommand:             NewCLICommand(name, short, long, flagList),
+		packageCodec:           packageCodec,
+		registerCodec:          registerCodec,
+		initializeKeeper:       initializeKeeper,
+		queryRequestPrototype:  queryRequestPrototype,
+		queryResponsePrototype: queryResponsePrototype,
 	}
 }
