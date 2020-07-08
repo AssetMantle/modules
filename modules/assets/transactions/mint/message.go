@@ -8,6 +8,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
+//TODO make private
 type Message struct {
 	From             sdkTypes.AccAddress
 	ChainID          types.ID
@@ -45,7 +46,7 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 	}
 }
 
-func NewMessage(from sdkTypes.AccAddress, chainID types.ID, maintainersID types.ID, classificationID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, chainID types.ID, maintainersID types.ID, classificationID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
 	return Message{
 		From:             from,
 		ChainID:          chainID,

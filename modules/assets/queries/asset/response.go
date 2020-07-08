@@ -12,6 +12,6 @@ func queryResponsePrototype() types.QueryResponse {
 	return queryResponse{}
 }
 
-func NewQueryResponse(assets types.InterNFTs) types.QueryResponse {
+func newQueryResponse(assets types.InterNFTs) types.QueryResponse {
 	return queryResponse{Assets: assets}
 }

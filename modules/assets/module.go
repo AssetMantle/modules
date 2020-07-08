@@ -17,9 +17,8 @@ var Module = types.NewModule(
 	constants.DefaultParamspace,
 	constants.QuerierRoute,
 	constants.TransactionRoute,
-	genesis.NewGenesisState(),
+	genesis.GenesisState,
+	mapper.Mapper,
 	[]types.Query{asset.Query},
 	[]types.Transaction{burn.Transaction, mint.Transaction, mutate.Transaction},
-	registerCodec,
-	mapper.NewMapper,
 )

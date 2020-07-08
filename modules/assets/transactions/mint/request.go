@@ -23,7 +23,7 @@ type transactionRequest struct {
 var _ types.TransactionRequest = (*transactionRequest)(nil)
 
 func (transactionRequest transactionRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.TransactionRequest {
-	return NewTransactionRequest(
+	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(constants.ClassificationID),
 		cliCommand.ReadString(constants.MaintainersID),
@@ -56,7 +56,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 		}
 	}
 
-	return NewMessage(
+	return newMessage(
 		from,
 		types.NewID(transactionRequest.GetBaseReq().ChainID),
 		types.NewID(transactionRequest.MaintainersID),
@@ -71,7 +71,7 @@ func requestPrototype() types.TransactionRequest {
 	return transactionRequest{}
 }
 
-func NewTransactionRequest(baseReq rest.BaseReq, classificationID string, maintainersID string, properties string, lock int64, burn int64) types.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, classificationID string, maintainersID string, properties string, lock int64, burn int64) types.TransactionRequest {
 	return transactionRequest{
 		BaseReq:          baseReq,
 		ClassificationID: classificationID,

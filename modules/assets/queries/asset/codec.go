@@ -17,7 +17,7 @@ var packageCodec = codec.New()
 
 func init() {
 	registerCodec(packageCodec)
-	mapper.RegisterCodec(packageCodec)
 	types.RegisterCodec(packageCodec)
+	mapper.Mapper.RegisterCodec(packageCodec)
 	packageCodec.Seal()
 }

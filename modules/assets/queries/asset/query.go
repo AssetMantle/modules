@@ -8,12 +8,12 @@ import (
 var Query = types.NewQuery(
 	constants.ModuleName,
 	constants.AssetQuery,
-	NewQueryKeeper,
 	constants.AssetQueryShort,
 	constants.AssetQueryLong,
-	queryRequestPrototype,
-	queryResponsePrototype,
 	packageCodec,
 	registerCodec,
+	initializeQueryKeeper,
+	queryRequestPrototype,
+	queryResponsePrototype,
 	[]types.CLIFlag{constants.AssetID},
 )

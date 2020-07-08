@@ -8,7 +8,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
-type Message struct {
+type message struct {
 	From       sdkTypes.AccAddress
 	AssetID    types.ID
 	Properties types.Properties
@@ -16,35 +16,35 @@ type Message struct {
 	Burn       types.Height
 }
 
-var _ sdkTypes.Msg = Message{}
+var _ sdkTypes.Msg = message{}
 
-func (message Message) Route() string { return Transaction.GetModuleName() }
-func (message Message) Type() string  { return Transaction.GetName() }
-func (message Message) ValidateBasic() error {
+func (message message) Route() string { return Transaction.GetModuleName() }
+func (message message) Type() string  { return Transaction.GetName() }
+func (message message) ValidateBasic() error {
 	var _, Error = govalidator.ValidateStruct(message)
 	if Error != nil {
 		return errors.Wrap(constants.IncorrectMessage, Error.Error())
 	}
 	return nil
 }
-func (message Message) GetSignBytes() []byte {
+func (message message) GetSignBytes() []byte {
 	return sdkTypes.MustSortJSON(packageCodec.MustMarshalJSON(message))
 }
-func (message Message) GetSigners() []sdkTypes.AccAddress {
+func (message message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
 
-func messageFromInterface(msg sdkTypes.Msg) Message {
+func messageFromInterface(msg sdkTypes.Msg) message {
 	switch value := msg.(type) {
-	case Message:
+	case message:
 		return value
 	default:
-		return Message{}
+		return message{}
 	}
 }
 
-func NewMessage(from sdkTypes.AccAddress, assetID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
-	return Message{
+func newMessage(from sdkTypes.AccAddress, assetID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
+	return message{
 		From:       from,
 		AssetID:    assetID,
 		Properties: properties,

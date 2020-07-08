@@ -1,7 +1,10 @@
 package mapper
 
 import (
+	"errors"
+	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
@@ -11,7 +14,7 @@ type assets struct {
 	ID   types.ID
 	List []types.InterNFT
 
-	mapper  Mapper
+	mapper  assetsMapper
 	context sdkTypes.Context
 }
 
@@ -78,11 +81,17 @@ func (Assets assets) Mutate(asset types.InterNFT) types.InterNFTs {
 	return Assets
 }
 
-func NewAssets(mapper Mapper, context sdkTypes.Context) types.InterNFTs {
-	return assets{
-		ID:      nil,
-		List:    nil,
-		mapper:  mapper,
-		context: context,
+func NewAssets(Mapper types.Mapper, context sdkTypes.Context) types.InterNFTs {
+	switch mapper := Mapper.(type) {
+	case assetsMapper:
+		return assets{
+			ID:      nil,
+			List:    nil,
+			mapper:  mapper,
+			context: context,
+		}
+	default:
+		panic(errors.New(fmt.Sprintf("incorrect mapper initialization for module, %v", constants.ModuleName)))
 	}
+
 }

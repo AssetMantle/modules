@@ -8,12 +8,10 @@ import (
 var Transaction = types.NewTransaction(
 	constants.ModuleName,
 	constants.BurnTransaction,
-	NewTransactionKeeper,
 	constants.BurnTransactionShort,
 	constants.BurnTransactionLong,
-	requestPrototype,
 	registerCodec,
-	[]types.CLIFlag{
-		constants.AssetID,
-	},
+	initializeTransactionKeeper,
+	requestPrototype,
+	[]types.CLIFlag{constants.AssetID},
 )

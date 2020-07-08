@@ -24,26 +24,26 @@ type Transaction interface {
 }
 
 type transaction struct {
-	ModuleName                  string
-	Name                        string
-	Keeper                      func(Mapper) TransactionKeeper
-	TransactionKeeper           TransactionKeeper
-	CLICommand                  CLICommand
-	Codec                       func(*codec.Codec)
-	TransactionRequestPrototype func() TransactionRequest
+	moduleName                  string
+	name                        string
+	transactionKeeper           TransactionKeeper
+	cliCommand                  CLICommand
+	registerCodec               func(*codec.Codec)
+	initializeKeeper            func(Mapper) TransactionKeeper
+	transactionRequestPrototype func() TransactionRequest
 }
 
 var _ Transaction = (*transaction)(nil)
 
-func (transaction transaction) GetModuleName() string { return transaction.ModuleName }
-func (transaction transaction) GetName() string       { return transaction.Name }
+func (transaction transaction) GetModuleName() string { return transaction.moduleName }
+func (transaction transaction) GetName() string       { return transaction.name }
 func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
 		bufioReader := bufio.NewReader(command.InOrStdin())
 		transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(authClient.GetTxEncoder(codec))
 		cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
 
-		request := transaction.TransactionRequestPrototype().FromCLI(transaction.CLICommand, cliContext)
+		request := transaction.transactionRequestPrototype().FromCLI(transaction.cliCommand, cliContext)
 
 		msg := request.MakeMsg()
 		if Error := msg.ValidateBasic(); Error != nil {
@@ -52,19 +52,19 @@ func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
 
 		return authClient.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{msg})
 	}
-	return transaction.CLICommand.CreateCommand(runE)
+	return transaction.cliCommand.CreateCommand(runE)
 }
 
 func (transaction transaction) HandleMessage(context sdkTypes.Context, message sdkTypes.Msg) (*sdkTypes.Result, error) {
 
-	if Error := (transaction.TransactionKeeper).Transact(context, message); Error != nil {
+	if Error := (transaction.transactionKeeper).Transact(context, message); Error != nil {
 		return nil, Error
 	}
 
 	context.EventManager().EmitEvent(
 		sdkTypes.NewEvent(
 			sdkTypes.EventTypeMessage,
-			sdkTypes.NewAttribute(sdkTypes.AttributeKeyModule, transaction.ModuleName),
+			sdkTypes.NewAttribute(sdkTypes.AttributeKeyModule, transaction.moduleName),
 		),
 	)
 
@@ -73,7 +73,7 @@ func (transaction transaction) HandleMessage(context sdkTypes.Context, message s
 
 func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
-		request := transaction.TransactionRequestPrototype()
+		request := transaction.transactionRequestPrototype()
 		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
@@ -98,20 +98,20 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 }
 
 func (transaction transaction) RegisterCodec(codec *codec.Codec) {
-	transaction.Codec(codec)
+	transaction.registerCodec(codec)
 }
 
 func (transaction *transaction) InitializeKeeper(mapper Mapper) {
-	transaction.TransactionKeeper = transaction.Keeper(mapper)
+	transaction.transactionKeeper = transaction.initializeKeeper(mapper)
 }
 
-func NewTransaction(module string, name string, keeper func(Mapper) TransactionKeeper, short string, long string, transactionRequestPrototype func() TransactionRequest, registerCodec func(*codec.Codec), flagList []CLIFlag) Transaction {
+func NewTransaction(module string, name string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(Mapper) TransactionKeeper, transactionRequestPrototype func() TransactionRequest, flagList []CLIFlag) Transaction {
 	return &transaction{
-		ModuleName:                  module,
-		Name:                        name,
-		Keeper:                      keeper,
-		CLICommand:                  NewCLICommand(name, short, long, flagList),
-		Codec:                       registerCodec,
-		TransactionRequestPrototype: transactionRequestPrototype,
+		moduleName:                  module,
+		name:                        name,
+		cliCommand:                  NewCLICommand(name, short, long, flagList),
+		registerCodec:               registerCodec,
+		initializeKeeper:            initializeKeeper,
+		transactionRequestPrototype: transactionRequestPrototype,
 	}
 }

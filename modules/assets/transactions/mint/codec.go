@@ -8,7 +8,7 @@ import (
 )
 
 func registerCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(Message{}, fmt.Sprintf("/%v/%v/%v", constants.ModuleName, constants.MintTransaction, "message"), nil)
+	codec.RegisterConcrete(Message{}, fmt.Sprintf("/%v/%v/%v", constants.ModuleName, constants.MintTransaction, "Message"), nil)
 	codec.RegisterConcrete(transactionRequest{}, fmt.Sprintf("/%v/%v/%v", constants.ModuleName, constants.MintTransaction, "request"), nil)
 }
 

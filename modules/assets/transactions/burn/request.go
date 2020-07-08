@@ -18,7 +18,7 @@ type transactionRequest struct {
 var _ types.TransactionRequest = (*transactionRequest)(nil)
 
 func (transactionRequest transactionRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.TransactionRequest {
-	return NewTransactionRequest(
+	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(constants.AssetID),
 	)
@@ -33,7 +33,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	if Error != nil {
 		panic(errors.New(fmt.Sprintf("")))
 	}
-	return NewMessage(
+	return newMessage(
 		from,
 		types.NewID(transactionRequest.AssetID),
 	)
@@ -43,7 +43,7 @@ func requestPrototype() types.TransactionRequest {
 	return transactionRequest{}
 }
 
-func NewTransactionRequest(baseReq rest.BaseReq, assetID string) types.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, assetID string) types.TransactionRequest {
 	return transactionRequest{
 		BaseReq: baseReq,
 		AssetID: assetID,

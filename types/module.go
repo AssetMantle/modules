@@ -25,52 +25,58 @@ type Module interface {
 	InitializeKeepers(*codec.Codec, sdkTypes.StoreKey, params.Subspace)
 }
 type module struct {
-	ModuleName        string
-	StoreKey          string
-	DefaultParamspace string
-	QueryRoute        string
-	TransactionRoute  string
-	GenesisState      GenesisState
-	QueryList         []Query
-	TransactionList   []Transaction
-	Codec             func(*codec.Codec)
-	Mapper            func(*codec.Codec, sdkTypes.StoreKey) Mapper
+	moduleName        string
+	storeKey          string
+	defaultParamspace string
+	querierRoute      string
+	transactionRoute  string
+	genesisState      GenesisState
+	mapper            Mapper
+	queryList         []Query
+	transactionList   []Transaction
 }
 
 var _ Module = (*module)(nil)
 
 func (module module) Name() string {
-	return module.ModuleName
+	return module.moduleName
 }
 func (module module) RegisterCodec(codec *codec.Codec) {
-	module.Codec(codec)
+	module.mapper.RegisterCodec(codec)
+	module.genesisState.RegisterCodec(codec)
+	for _, transaction := range module.transactionList {
+		transaction.RegisterCodec(codec)
+	}
+	for _, query := range module.queryList {
+		query.RegisterCodec(codec)
+	}
 }
 func (module module) DefaultGenesis(jsonMarshaler codec.JSONMarshaler) json.RawMessage {
-	return jsonMarshaler.MustMarshalJSON(module.GenesisState.Default())
+	return jsonMarshaler.MustMarshalJSON(module.genesisState.Default())
 }
 func (module module) ValidateGenesis(_ codec.JSONMarshaler, rawMessage json.RawMessage) error {
-	module.GenesisState.Unmarshall(rawMessage)
-	return module.GenesisState.Validate()
+	genesisState := module.genesisState.Unmarshall(rawMessage)
+	return genesisState.Validate()
 }
 func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
-	for _, query := range module.QueryList {
+	for _, query := range module.queryList {
 		router.HandleFunc(fmt.Sprintf("/%v/%v/{%v}", query.GetModuleName(), query.GetName(), "id"), query.RESTQueryHandler(cliContext)).Methods("GET")
 	}
 
-	for _, transaction := range module.TransactionList {
+	for _, transaction := range module.transactionList {
 		router.HandleFunc(fmt.Sprintf("/%v/%v", transaction.GetModuleName(), transaction.GetName()), transaction.RESTRequestHandler(cliContext)).Methods("POST")
 	}
 }
 func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
-		Use:                        module.TransactionRoute,
+		Use:                        module.transactionRoute,
 		Short:                      "Get root transaction command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
 	var commandList []*cobra.Command
-	for _, transaction := range module.TransactionList {
+	for _, transaction := range module.transactionList {
 		commandList = append(commandList, transaction.Command(codec))
 	}
 	rootTransactionCommand.AddCommand(
@@ -80,14 +86,14 @@ func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 }
 func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 	rootQueryCommand := &cobra.Command{
-		Use:                        module.QueryRoute,
+		Use:                        module.querierRoute,
 		Short:                      "Get root query command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
 	var commandList []*cobra.Command
-	for _, query := range module.QueryList {
+	for _, query := range module.queryList {
 		commandList = append(commandList, query.Command(codec))
 	}
 	rootQueryCommand.AddCommand(
@@ -97,13 +103,13 @@ func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 }
 func (module module) RegisterInvariants(_ sdkTypes.InvariantRegistry) {}
 func (module module) Route() string {
-	return module.TransactionRoute
+	return module.transactionRoute
 }
 func (module module) NewHandler() sdkTypes.Handler {
 	return func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
 		context = context.WithEventManager(sdkTypes.NewEventManager())
 
-		for _, transaction := range module.TransactionList {
+		for _, transaction := range module.transactionList {
 			if msg.Type() == transaction.GetName() {
 				return transaction.HandleMessage(context, msg)
 			}
@@ -112,11 +118,11 @@ func (module module) NewHandler() sdkTypes.Handler {
 	}
 }
 func (module module) QuerierRoute() string {
-	return module.QueryRoute
+	return module.querierRoute
 }
 func (module module) NewQuerierHandler() sdkTypes.Querier {
 	return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
-		for _, query := range module.QueryList {
+		for _, query := range module.queryList {
 			if query.GetName() == path[0] {
 				return query.HandleMessage(context, requestQuery)
 			}
@@ -125,12 +131,12 @@ func (module module) NewQuerierHandler() sdkTypes.Querier {
 	}
 }
 func (module module) InitGenesis(context sdkTypes.Context, _ codec.JSONMarshaler, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
-	module.GenesisState.Unmarshall(rawMessage)
-	module.GenesisState.Initialize(context)
+	genesisState := module.genesisState.Unmarshall(rawMessage)
+	genesisState.Initialize(context)
 	return []abciTypes.ValidatorUpdate{}
 }
 func (module module) ExportGenesis(context sdkTypes.Context, _ codec.JSONMarshaler) json.RawMessage {
-	return module.GenesisState.Export(context).Marshall()
+	return module.genesisState.Export(context).Marshall()
 }
 func (module module) BeginBlock(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {}
 
@@ -138,35 +144,34 @@ func (module module) EndBlock(_ sdkTypes.Context, _ abciTypes.RequestEndBlock) [
 	return []abciTypes.ValidatorUpdate{}
 }
 func (module module) GetStoreKey() string {
-	return module.StoreKey
+	return module.storeKey
 }
 func (module module) GetDefaultParamspace() string {
-	return module.DefaultParamspace
+	return module.defaultParamspace
 }
 func (module module) InitializeKeepers(codec *codec.Codec, storeKey sdkTypes.StoreKey, _ params.Subspace) {
-	mapper := module.Mapper(codec, storeKey)
+	mapper := module.mapper.InitializeMapper(codec, storeKey)
 
-	for _, transaction := range module.TransactionList {
+	for _, transaction := range module.transactionList {
 		transaction.InitializeKeeper(mapper)
 	}
 
-	for _, query := range module.QueryList {
+	for _, query := range module.queryList {
 		query.InitializeKeeper(mapper)
 	}
 
 	return
 }
-func NewModule(moduleName string, storeKey string, defaultParamspace string, queryRoute string, transactionRoute string, genesisState GenesisState, queryList []Query, transactionList []Transaction, codec func(*codec.Codec), mapper func(*codec.Codec, sdkTypes.StoreKey) Mapper) Module {
+func NewModule(moduleName string, storeKey string, defaultParamspace string, queryRoute string, transactionRoute string, genesisState GenesisState, mapper Mapper, queryList []Query, transactionList []Transaction) Module {
 	return module{
-		ModuleName:        moduleName,
-		StoreKey:          storeKey,
-		DefaultParamspace: defaultParamspace,
-		QueryRoute:        queryRoute,
-		TransactionRoute:  transactionRoute,
-		GenesisState:      genesisState,
-		QueryList:         queryList,
-		TransactionList:   transactionList,
-		Codec:             codec,
-		Mapper:            mapper,
+		moduleName:        moduleName,
+		storeKey:          storeKey,
+		defaultParamspace: defaultParamspace,
+		querierRoute:      queryRoute,
+		transactionRoute:  transactionRoute,
+		genesisState:      genesisState,
+		mapper:            mapper,
+		queryList:         queryList,
+		transactionList:   transactionList,
 	}
 }

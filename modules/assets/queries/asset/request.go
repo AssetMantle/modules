@@ -13,11 +13,11 @@ type queryRequest struct {
 var _ types.QueryRequest = (*queryRequest)(nil)
 
 func (QueryRequest queryRequest) FromCLI(cliCommand types.CLICommand, _ context.CLIContext) types.QueryRequest {
-	return NewQueryRequest(types.NewID(cliCommand.ReadString(constants.AssetID)))
+	return newQueryRequest(types.NewID(cliCommand.ReadString(constants.AssetID)))
 }
 
 func (QueryRequest queryRequest) FromMap(vars map[string]string) types.QueryRequest {
-	return NewQueryRequest(types.NewID(vars[constants.AssetID.GetName()]))
+	return newQueryRequest(types.NewID(vars[constants.AssetID.GetName()]))
 }
 
 func queryRequestPrototype() types.QueryRequest {
@@ -33,6 +33,6 @@ func queryRequestFromInterface(QueryRequest types.QueryRequest) queryRequest {
 	}
 }
 
-func NewQueryRequest(assetID types.ID) types.QueryRequest {
+func newQueryRequest(assetID types.ID) types.QueryRequest {
 	return queryRequest{AssetID: assetID}
 }
