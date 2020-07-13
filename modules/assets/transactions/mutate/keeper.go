@@ -28,7 +28,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		}
 		mutableProperties = mutableProperties.Mutate(property)
 	}
-	asset = mapper.NewAsset(asset.GetID(), types.NewMutables(mutableProperties, asset.GetMaintainersID()), asset.GetImmutables(), asset.GetLock(), asset.GetBurn())
+	asset = mapper.NewAsset(asset.GetID(), asset.GetBurn(), asset.GetLock(), asset.GetImmutables(), types.NewMutables(mutableProperties, asset.GetMutables().GetMaintainersID()))
 	assets = assets.Mutate(asset)
 	return nil
 }
