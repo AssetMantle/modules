@@ -2,14 +2,14 @@ package constants
 
 const TransactionRoute = ModuleName
 
-const MintTransaction = "omint"
+const MintTransaction = "mint"
 const MintTransactionShort = ""
 const MintTransactionLong = ""
 
-const BurnTransaction = "oburn"
+const BurnTransaction = "burn"
 const BurnTransactionShort = ""
 const BurnTransactionLong = ""
 
-const MutateTransaction = "omutate"
+const MutateTransaction = "mutate"
 const MutateTransactionShort = ""
 const MutateTransactionLong = ""
