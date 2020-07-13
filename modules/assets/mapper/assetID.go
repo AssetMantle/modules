@@ -7,14 +7,14 @@ import (
 	"strings"
 )
 
-var _ types.ID = (*assetID)(nil)
-
 type assetID struct {
 	ChainID          types.ID
 	MaintainersID    types.ID
 	ClassificationID types.ID
 	HashID           types.ID
 }
+
+var _ types.ID = (*assetID)(nil)
 
 func (assetID assetID) Bytes() []byte {
 	return append(append(append(

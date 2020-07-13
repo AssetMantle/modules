@@ -8,8 +8,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
-var _ types.InterNFTs = (*assets)(nil)
-
 type assets struct {
 	ID   types.ID
 	List []types.InterNFT
@@ -17,6 +15,8 @@ type assets struct {
 	mapper  assetsMapper
 	context sdkTypes.Context
 }
+
+var _ types.InterNFTs = (*assets)(nil)
 
 func (Assets assets) GetID() types.ID { return Assets.ID }
 func (Assets assets) Get(id types.ID) types.InterNFT {

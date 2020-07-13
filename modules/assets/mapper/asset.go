@@ -4,8 +4,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
-var _ types.InterNFT = (*asset)(nil)
-
 type asset struct {
 	ID         types.ID
 	Burn       types.Height
@@ -13,6 +11,8 @@ type asset struct {
 	Immutables types.Immutables
 	Mutables   types.Mutables
 }
+
+var _ types.InterNFT = (*asset)(nil)
 
 func (asset asset) GetID() types.ID {
 	return asset.ID
@@ -26,20 +26,12 @@ func (asset asset) GetClassificationID() types.ID {
 	return assetIDFromInterface(asset.ID).ClassificationID
 }
 
-func (asset asset) GetMaintainersID() types.ID {
-	return assetIDFromInterface(asset.ID).MaintainersID
-}
-
 func (asset asset) GetBurn() types.Height {
 	return asset.Burn
 }
 
 func (asset asset) CanBurn(currentHeight types.Height) bool {
 	return currentHeight.IsGreaterThan(asset.Burn)
-}
-
-func (asset asset) GetHashID() types.ID {
-	return asset.Immutables.GetHashID()
 }
 
 func (asset asset) GetLock() types.Height {
