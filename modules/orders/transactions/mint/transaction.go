@@ -13,5 +13,5 @@ var Transaction = types.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]types.CLIFlag{constants.BuyCoinDenom, constants.BuyCoinDenom, constants.SellCoinDenom, constants.SellCoinAmount, constants.Properties},
+	[]types.CLIFlag{constants.BuyCoinDenom, constants.BuyCoinAmount, constants.SellCoinDenom, constants.SellCoinAmount, constants.Properties},
 )
