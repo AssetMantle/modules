@@ -11,12 +11,17 @@ type Identity interface {
 	DeleteAddress(sdkTypes.AccAddress) Identity
 
 	IsActive(sdkTypes.AccAddress) bool
+
+	HasImmutables
+	HasMutables
 }
 
 type identity struct {
 	ID                 ID
 	AddressList        []sdkTypes.AccAddress
 	DeletedAddressList []sdkTypes.AccAddress
+	Immutables         Immutables
+	Mutables           Mutables
 }
 
 var _ Identity = (*identity)(nil)
@@ -40,7 +45,8 @@ func (identity identity) DeleteAddress(accAddress sdkTypes.AccAddress) Identity 
 	}
 	return identity
 }
-
+func (identity identity) GetImmutables() Immutables { return identity.Immutables }
+func (identity identity) GetMutables() Mutables     { return identity.Mutables }
 func (identity identity) IsActive(accAddress sdkTypes.AccAddress) bool {
 	for _, activeAddress := range identity.AddressList {
 		if activeAddress.Equals(accAddress) {
@@ -48,4 +54,13 @@ func (identity identity) IsActive(accAddress sdkTypes.AccAddress) bool {
 		}
 	}
 	return false
+}
+func NewIdentity(id ID, addressList []sdkTypes.AccAddress, deletedAddressList []sdkTypes.AccAddress, immutables Immutables, mutables Mutables) Identity {
+	return identity{
+		ID:                 id,
+		AddressList:        addressList,
+		DeletedAddressList: deletedAddressList,
+		Immutables:         immutables,
+		Mutables:           mutables,
+	}
 }
