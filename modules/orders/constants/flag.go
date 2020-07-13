@@ -9,3 +9,8 @@ var ClassificationID = types.NewCLIFlag("classificationID", "", "GetClassificati
 var Properties = types.NewCLIFlag("properties", "", "GetProperties")
 var Lock = types.NewCLIFlag("lock", int64(-1), "Lock")
 var Burn = types.NewCLIFlag("burn", int64(-1), "Burn")
+
+var BuyCoinDenom = types.NewCLIFlag("buyD", "commit", "")
+var BuyCoinAmount = types.NewCLIFlag("buyA", int64(1), "")
+var SellCoinDenom = types.NewCLIFlag("sellD", "atom", "")
+var SellCoinAmount = types.NewCLIFlag("sellA", int64(2), "")

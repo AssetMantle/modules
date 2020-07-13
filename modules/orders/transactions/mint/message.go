@@ -5,6 +5,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/constants"
+	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 //TODO make private
@@ -12,8 +13,9 @@ type Message struct {
 	From sdkTypes.AccAddress
 	//SellEntity types.InterNFT
 	//BuyEntity  types.InterNFT
-	SellCoins sdkTypes.Coin
-	BuyCoins  sdkTypes.Coin
+	Properties types.Properties
+	SellCoins  sdkTypes.Coin
+	BuyCoins   sdkTypes.Coin
 }
 
 var _ sdkTypes.Msg = Message{}
@@ -43,10 +45,11 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, sellCoinDenom string, sellCoinAmount sdkTypes.Int, buyCoinDenom string, buyCoinAmount sdkTypes.Int) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, properties types.Properties, sellCoinDenom string, sellCoinAmount sdkTypes.Int, buyCoinDenom string, buyCoinAmount sdkTypes.Int) sdkTypes.Msg {
 	return Message{
-		From:      from,
-		SellCoins: sdkTypes.NewCoin(sellCoinDenom, sellCoinAmount),
-		BuyCoins:  sdkTypes.NewCoin(buyCoinDenom, buyCoinAmount),
+		From:       from,
+		SellCoins:  sdkTypes.NewCoin(sellCoinDenom, sellCoinAmount),
+		BuyCoins:   sdkTypes.NewCoin(buyCoinDenom, buyCoinAmount),
+		Properties: properties,
 	}
 }

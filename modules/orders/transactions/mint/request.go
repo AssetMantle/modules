@@ -8,15 +8,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
+	"strings"
 )
 
 type transactionRequest struct {
-	BaseReq          rest.BaseReq `json:"baseReq"`
-	ClassificationID string       `json:"classificationID"`
-	MaintainersID    string       `json:"maintainersID"`
-	Properties       string       `json:"properties"`
-	Lock             int64        `json:"lock"`
-	Burn             int64        `json:"burn"`
+	BaseReq        rest.BaseReq `json:"baseReq"`
+	BuyCoinDenom   string       `json:"buyCoinDenom"`
+	SellCoinDenom  string       `json:"sellCoinDenom"`
+	Properties     string       `json:"properties"`
+	BuyCoinAmount  int64        `json:"buyCoinAmount"`
+	SellCoinAmount int64        `json:"sellCoinAmount"`
 }
 
 var _ types.TransactionRequest = (*transactionRequest)(nil)
@@ -24,11 +25,11 @@ var _ types.TransactionRequest = (*transactionRequest)(nil)
 func (transactionRequest transactionRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
-		cliCommand.ReadString(constants.ClassificationID),
-		cliCommand.ReadString(constants.MaintainersID),
+		cliCommand.ReadString(constants.BuyCoinDenom),
+		cliCommand.ReadString(constants.SellCoinDenom),
 		cliCommand.ReadString(constants.Properties),
-		cliCommand.ReadInt64(constants.Lock),
-		cliCommand.ReadInt64(constants.Burn),
+		cliCommand.ReadInt64(constants.BuyCoinAmount),
+		cliCommand.ReadInt64(constants.SellCoinAmount),
 	)
 }
 
@@ -41,9 +42,19 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	if Error != nil {
 		panic(errors.New(fmt.Sprintf("")))
 	}
+	properties := strings.Split(transactionRequest.Properties, constants.PropertiesSeparator)
+	if len(properties) > constants.MaxTraitCount {
+		panic(errors.New(fmt.Sprintf("")))
+	}
 
-	return newMessage(
-		from, "atom", sdkTypes.NewInt(1), "commit", sdkTypes.NewInt(2))
+	var propertyList []types.Property
+	for _, property := range properties {
+		traitIDAndProperty := strings.Split(property, constants.TraitIDAndPropertySeparator)
+		if len(traitIDAndProperty) == 2 && traitIDAndProperty[0] != "" {
+			propertyList = append(propertyList, types.NewProperty(types.NewID(traitIDAndProperty[0]), types.NewFact(traitIDAndProperty[1], types.NewSignatures(nil))))
+		}
+	}
+	return newMessage(from, types.NewProperties(propertyList), transactionRequest.BuyCoinDenom, sdkTypes.NewInt(transactionRequest.SellCoinAmount), transactionRequest.BuyCoinDenom, sdkTypes.NewInt(transactionRequest.BuyCoinAmount))
 
 }
 
@@ -51,13 +62,13 @@ func requestPrototype() types.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, classificationID string, maintainersID string, properties string, lock int64, burn int64) types.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, properties string, buyCoinDenom string, sellCoinDenom string, buyCoinAmount int64, sellCoinAmount int64) types.TransactionRequest {
 	return transactionRequest{
-		BaseReq:          baseReq,
-		ClassificationID: classificationID,
-		MaintainersID:    maintainersID,
-		Properties:       properties,
-		Lock:             lock,
-		Burn:             burn,
+		BaseReq:        baseReq,
+		BuyCoinDenom:   buyCoinDenom,
+		SellCoinDenom:  sellCoinDenom,
+		Properties:     properties,
+		BuyCoinAmount:  buyCoinAmount,
+		SellCoinAmount: sellCoinAmount,
 	}
 }

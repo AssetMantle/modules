@@ -1,11 +1,13 @@
 package mapper
 
 import (
+	"fmt"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/constants"
 )
 
 func (mapper mapper) RegisterCodec(codec *codec.Codec) {
-	//codec.RegisterConcrete(asset{}, fmt.Sprintf("/%v/%v", constants.ModuleName, "asset"), nil)
-	//codec.RegisterConcrete(assetID{}, fmt.Sprintf("/%v/%v", constants.ModuleName, "assetID"), nil)
-	//codec.RegisterConcrete(assets{}, fmt.Sprintf("/%v/%v", constants.ModuleName, "assets"), nil)
+	codec.RegisterConcrete(Order{}, fmt.Sprintf("/%v/%v", constants.ModuleName, "Order"), nil)
+	codec.RegisterConcrete(orderID{}, fmt.Sprintf("/%v/%v", constants.ModuleName, "orderID"), nil)
+	codec.RegisterConcrete(orders{}, fmt.Sprintf("/%v/%v", constants.ModuleName, "orders"), nil)
 }
