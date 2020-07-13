@@ -20,7 +20,7 @@ var _ types.TransactionRequest = (*transactionRequest)(nil)
 func (transactionRequest transactionRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
-		cliCommand.ReadString(constants.AssetID),
+		cliCommand.ReadString(constants.OrderID),
 	)
 }
 

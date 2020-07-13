@@ -15,5 +15,5 @@ var Query = types.NewQuery(
 	initializeQueryKeeper,
 	queryRequestPrototype,
 	queryResponsePrototype,
-	[]types.CLIFlag{constants.AssetID},
+	[]types.CLIFlag{constants.OrderID},
 )

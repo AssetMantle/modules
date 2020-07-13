@@ -13,5 +13,5 @@ var Transaction = types.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]types.CLIFlag{constants.AssetID},
+	[]types.CLIFlag{constants.OrderID},
 )
