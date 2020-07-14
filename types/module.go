@@ -77,7 +77,6 @@ func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 	}
 	var commandList []*cobra.Command
 	for _, transaction := range module.transactionList {
-		fmt.Println(transaction.GetModuleName(), transaction.GetName())
 		commandList = append(commandList, transaction.Command(codec))
 	}
 	rootTransactionCommand.AddCommand(
