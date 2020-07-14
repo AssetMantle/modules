@@ -4,14 +4,13 @@ import (
 	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 //TODO make private
 type Message struct {
 	From             sdkTypes.AccAddress
-	ChainID          types.ID
 	MaintainersID    types.ID
 	ClassificationID types.ID
 	Properties       types.Properties
@@ -46,10 +45,9 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, chainID types.ID, maintainersID types.ID, classificationID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, maintainersID types.ID, classificationID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
 	return Message{
 		From:             from,
-		ChainID:          chainID,
 		MaintainersID:    maintainersID,
 		ClassificationID: classificationID,
 		Properties:       properties,

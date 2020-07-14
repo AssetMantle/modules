@@ -1,7 +1,6 @@
 package identities
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/identities/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/queries/identity"
@@ -10,11 +9,11 @@ import (
 )
 
 var Module = types.NewModule(
-	constants.ModuleName,
-	constants.StoreKey,
-	constants.DefaultParamspace,
-	constants.QuerierRoute,
-	constants.TransactionRoute,
+	mapper.ModuleName,
+	mapper.StoreKey,
+	mapper.DefaultParamspace,
+	mapper.QueryRoute,
+	mapper.TransactionRoute,
 	genesis.GenesisState,
 	mapper.Mapper,
 	[]types.Query{identity.Query},

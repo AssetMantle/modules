@@ -3,12 +3,11 @@ package mapper
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 func storeKey(assetID types.ID) []byte {
-	return append(constants.StoreKeyPrefix, assetIDFromInterface(assetID).Bytes()...)
+	return append(StoreKeyPrefix, assetIDFromInterface(assetID).Bytes()...)
 }
 
 type assetsMapper interface {

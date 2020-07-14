@@ -2,7 +2,7 @@ package identity
 
 import (
 	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/constants"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 

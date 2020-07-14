@@ -1,17 +1,20 @@
 package issue
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/identities/constants"
+	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 var Transaction = types.NewTransaction(
-	constants.ModuleName,
-	constants.IssueTransaction,
-	constants.IssueTransactionShort,
-	constants.IssueTransactionLong,
+	mapper.ModuleName,
+	TransactionName,
+	TransactionRoute,
+	TransactionShort,
+	TransactionLong,
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]types.CLIFlag{constants.IdentityID},
+	//TODO check flags
+	[]types.CLIFlag{constants.ChainID, constants.MaintainersID, constants.ClassificationID, constants.Properties},
 )

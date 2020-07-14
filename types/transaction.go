@@ -16,6 +16,7 @@ import (
 type Transaction interface {
 	GetModuleName() string
 	GetName() string
+	GetRoute() string
 	Command(*codec.Codec) *cobra.Command
 	HandleMessage(sdkTypes.Context, sdkTypes.Msg) (*sdkTypes.Result, error)
 	RESTRequestHandler(context.CLIContext) http.HandlerFunc
@@ -26,6 +27,7 @@ type Transaction interface {
 type transaction struct {
 	moduleName                  string
 	name                        string
+	route                       string
 	transactionKeeper           TransactionKeeper
 	cliCommand                  CLICommand
 	registerCodec               func(*codec.Codec)
@@ -37,6 +39,7 @@ var _ Transaction = (*transaction)(nil)
 
 func (transaction transaction) GetModuleName() string { return transaction.moduleName }
 func (transaction transaction) GetName() string       { return transaction.name }
+func (transaction transaction) GetRoute() string      { return transaction.route }
 func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
 		bufioReader := bufio.NewReader(command.InOrStdin())
@@ -105,10 +108,11 @@ func (transaction *transaction) InitializeKeeper(mapper Mapper) {
 	transaction.transactionKeeper = transaction.initializeKeeper(mapper)
 }
 
-func NewTransaction(module string, name string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(Mapper) TransactionKeeper, transactionRequestPrototype func() TransactionRequest, flagList []CLIFlag) Transaction {
+func NewTransaction(module string, name string, route string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(Mapper) TransactionKeeper, transactionRequestPrototype func() TransactionRequest, flagList []CLIFlag) Transaction {
 	return &transaction{
 		moduleName:                  module,
 		name:                        name,
+		route:                       route,
 		cliCommand:                  NewCLICommand(name, short, long, flagList),
 		registerCodec:               registerCodec,
 		initializeKeeper:            initializeKeeper,

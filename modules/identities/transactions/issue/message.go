@@ -4,13 +4,16 @@ import (
 	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/constants"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 type message struct {
-	From       sdkTypes.AccAddress
-	IdentityID types.ID
+	From             sdkTypes.AccAddress
+	To               sdkTypes.AccAddress
+	MaintainersID    types.ID
+	ClassificationID types.ID
+	Properties       types.Properties
 }
 
 var _ sdkTypes.Msg = message{}
@@ -40,9 +43,12 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, identityID types.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, maintainersID types.ID, classificationID types.ID, properties types.Properties) sdkTypes.Msg {
 	return message{
-		From:       from,
-		IdentityID: identityID,
+		From:             from,
+		To:               to,
+		MaintainersID:    maintainersID,
+		ClassificationID: classificationID,
+		Properties:       properties,
 	}
 }

@@ -1,15 +1,13 @@
 package issue
 
 import (
-	"fmt"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 func registerCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(message{}, fmt.Sprintf("/%v/%v/%v", constants.ModuleName, constants.IssueTransaction, "message"), nil)
-	codec.RegisterConcrete(transactionRequest{}, fmt.Sprintf("/%v/%v/%v", constants.ModuleName, constants.IssueTransaction, "request"), nil)
+	codec.RegisterConcrete(message{}, TransactionRoute+"/"+"message", nil)
+	codec.RegisterConcrete(transactionRequest{}, TransactionRoute+"/"+"request", nil)
 }
 
 var packageCodec = codec.New()

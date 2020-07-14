@@ -3,12 +3,11 @@ package mapper
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 func storeKey(identityID types.ID) []byte {
-	return append(constants.StoreKeyPrefix, identityIDFromInterface(identityID).Bytes()...)
+	return append(StoreKeyPrefix, identityIDFromInterface(identityID).Bytes()...)
 }
 
 type identitiesMapper interface {
