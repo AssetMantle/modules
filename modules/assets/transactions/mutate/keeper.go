@@ -2,7 +2,7 @@ package mutate
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
@@ -28,11 +28,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		}
 		mutableProperties = mutableProperties.Mutate(property)
 	}
-	asset = mapper.NewAsset(asset.GetID(), types.NewMutables(mutableProperties, asset.GetMaintainersID()), asset.GetImmutables(), asset.GetLock(), asset.GetBurn())
+	asset = mapper.NewAsset(asset.GetID(), asset.GetBurn(), asset.GetLock(), asset.GetImmutables(), types.NewMutables(mutableProperties, asset.GetMutables().GetMaintainersID()))
 	assets = assets.Mutate(asset)
 	return nil
 }
 
-func initializeTransactionKeeper(mapper types.Mapper) types.TransactionKeeper {
+func initializeTransactionKeeper(mapper types.Mapper, externalKeepers ...interface{}) types.TransactionKeeper {
 	return transactionKeeper{mapper: mapper}
 }

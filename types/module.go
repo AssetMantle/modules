@@ -22,13 +22,13 @@ type Module interface {
 	GetStoreKey() string
 	GetDefaultParamspace() string
 
-	InitializeKeepers(*codec.Codec, sdkTypes.StoreKey, params.Subspace)
+	InitializeKeepers(*codec.Codec, sdkTypes.StoreKey, params.Subspace, ...interface{})
 }
 type module struct {
 	moduleName        string
 	storeKey          string
 	defaultParamspace string
-	querierRoute      string
+	queryRoute        string
 	transactionRoute  string
 	genesisState      GenesisState
 	mapper            Mapper
@@ -60,16 +60,17 @@ func (module module) ValidateGenesis(_ codec.JSONMarshaler, rawMessage json.RawM
 }
 func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
 	for _, query := range module.queryList {
+		//TODO pick from query flags
 		router.HandleFunc(fmt.Sprintf("/%v/%v/{%v}", query.GetModuleName(), query.GetName(), "id"), query.RESTQueryHandler(cliContext)).Methods("GET")
 	}
 
 	for _, transaction := range module.transactionList {
-		router.HandleFunc(fmt.Sprintf("/%v/%v", transaction.GetModuleName(), transaction.GetName()), transaction.RESTRequestHandler(cliContext)).Methods("POST")
+		router.HandleFunc(transaction.GetRoute(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
 	}
 }
 func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
-		Use:                        module.transactionRoute,
+		Use:                        module.moduleName,
 		Short:                      "Get root transaction command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
@@ -86,7 +87,7 @@ func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 }
 func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 	rootQueryCommand := &cobra.Command{
-		Use:                        module.querierRoute,
+		Use:                        module.moduleName,
 		Short:                      "Get root query command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
@@ -103,7 +104,7 @@ func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 }
 func (module module) RegisterInvariants(_ sdkTypes.InvariantRegistry) {}
 func (module module) Route() string {
-	return module.transactionRoute
+	return module.moduleName
 }
 func (module module) NewHandler() sdkTypes.Handler {
 	return func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
@@ -118,7 +119,7 @@ func (module module) NewHandler() sdkTypes.Handler {
 	}
 }
 func (module module) QuerierRoute() string {
-	return module.querierRoute
+	return module.moduleName
 }
 func (module module) NewQuerierHandler() sdkTypes.Querier {
 	return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
@@ -149,11 +150,11 @@ func (module module) GetStoreKey() string {
 func (module module) GetDefaultParamspace() string {
 	return module.defaultParamspace
 }
-func (module module) InitializeKeepers(codec *codec.Codec, storeKey sdkTypes.StoreKey, _ params.Subspace) {
+func (module module) InitializeKeepers(codec *codec.Codec, storeKey sdkTypes.StoreKey, _ params.Subspace, externalKeepers ...interface{}) {
 	mapper := module.mapper.InitializeMapper(codec, storeKey)
 
 	for _, transaction := range module.transactionList {
-		transaction.InitializeKeeper(mapper)
+		transaction.InitializeKeeper(mapper, externalKeepers)
 	}
 
 	for _, query := range module.queryList {
@@ -167,7 +168,7 @@ func NewModule(moduleName string, storeKey string, defaultParamspace string, que
 		moduleName:        moduleName,
 		storeKey:          storeKey,
 		defaultParamspace: defaultParamspace,
-		querierRoute:      queryRoute,
+		queryRoute:        queryRoute,
 		transactionRoute:  transactionRoute,
 		genesisState:      genesisState,
 		mapper:            mapper,

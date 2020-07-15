@@ -2,12 +2,11 @@ package mapper
 
 import (
 	"bytes"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
+	"github.com/persistenceOne/persistenceSDK/constants"
+
 	"github.com/persistenceOne/persistenceSDK/types"
 	"strings"
 )
-
-var _ types.ID = (*assetID)(nil)
 
 type assetID struct {
 	ChainID          types.ID
@@ -15,6 +14,8 @@ type assetID struct {
 	ClassificationID types.ID
 	HashID           types.ID
 }
+
+var _ types.ID = (*assetID)(nil)
 
 func (assetID assetID) Bytes() []byte {
 	return append(append(append(
