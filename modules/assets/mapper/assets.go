@@ -49,7 +49,7 @@ func (Assets assets) Fetch(id types.ID) types.InterNFTs {
 	return assets{id, assetList, Assets.mapper, Assets.context}
 }
 func (Assets assets) Add(asset types.InterNFT) types.InterNFTs {
-	Assets.ID = nil
+	Assets.ID = readAssetID("")
 	Assets.mapper.create(Assets.context, asset)
 	for i, oldAsset := range Assets.List {
 		if oldAsset.GetID().Compare(asset.GetID()) < 0 {
@@ -84,8 +84,8 @@ func NewAssets(Mapper types.Mapper, context sdkTypes.Context) types.InterNFTs {
 	switch mapper := Mapper.(type) {
 	case assetsMapper:
 		return assets{
-			ID:      nil,
-			List:    nil,
+			ID:      readAssetID(""),
+			List:    []types.InterNFT{},
 			mapper:  mapper,
 			context: context,
 		}

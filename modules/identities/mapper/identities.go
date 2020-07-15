@@ -49,7 +49,7 @@ func (Identities identities) Fetch(id types.ID) types.InterIdentities {
 	return identities{id, identityList, Identities.mapper, Identities.context}
 }
 func (Identities identities) Add(identity types.InterIdentity) types.InterIdentities {
-	Identities.ID = nil
+	Identities.ID = readIdentityID("")
 	Identities.mapper.create(Identities.context, identity)
 	for i, oldIdentity := range Identities.List {
 		if oldIdentity.GetID().Compare(identity.GetID()) < 0 {
@@ -84,8 +84,8 @@ func NewIdentities(Mapper types.Mapper, context sdkTypes.Context) types.InterIde
 	switch mapper := Mapper.(type) {
 	case identitiesMapper:
 		return identities{
-			ID:      nil,
-			List:    nil,
+			ID:      readIdentityID(""),
+			List:    []types.InterIdentity{},
 			mapper:  mapper,
 			context: context,
 		}
