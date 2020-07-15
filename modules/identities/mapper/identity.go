@@ -51,9 +51,9 @@ func (identity identity) IsActive(accAddress sdkTypes.AccAddress) bool {
 	}
 	return false
 }
-func NewIdentity(id types.ID, addressList []sdkTypes.AccAddress, deletedAddressList []sdkTypes.AccAddress, immutables types.Immutables, mutables types.Mutables) types.InterIdentity {
+func NewIdentity(identityID types.ID, addressList []sdkTypes.AccAddress, deletedAddressList []sdkTypes.AccAddress, immutables types.Immutables, mutables types.Mutables) types.InterIdentity {
 	return identity{
-		ID:                 id,
+		ID:                 identityID,
 		AddressList:        addressList,
 		DeletedAddressList: deletedAddressList,
 		Immutables:         immutables,

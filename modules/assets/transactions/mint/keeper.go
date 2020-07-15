@@ -18,12 +18,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	mutables := types.NewMutables(message.Properties, message.MaintainersID)
 	immutables := types.NewImmutables(message.Properties)
 	assetID := mapper.NewAssetID(types.NewID(context.ChainID()), mutables.GetMaintainersID(), message.ClassificationID, immutables.GetHashID())
-	asset := mapper.NewAsset(assetID, message.Burn, message.Lock, immutables, mutables)
 	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(assetID)
 	if assets.Get(assetID) != nil {
 		return constants.EntityAlreadyExists
 	}
-	assets.Add(asset)
+	assets.Add(mapper.NewAsset(assetID, message.Burn, message.Lock, immutables, mutables))
 	return nil
 }
 

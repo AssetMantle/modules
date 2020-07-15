@@ -3,7 +3,7 @@ package identity
 import "github.com/persistenceOne/persistenceSDK/types"
 
 type queryResponse struct {
-	identities types.InterIdentities
+	Identities types.InterIdentities
 }
 
 var _ types.QueryResponse = (*queryResponse)(nil)
@@ -13,5 +13,5 @@ func queryResponsePrototype() types.QueryResponse {
 }
 
 func newQueryResponse(identities types.InterIdentities) types.QueryResponse {
-	return queryResponse{identities: identities}
+	return queryResponse{Identities: identities}
 }
