@@ -70,7 +70,7 @@ func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *m
 }
 func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
-		Use:                        module.transactionRoute,
+		Use:                        module.moduleName,
 		Short:                      "Get root transaction command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
@@ -87,7 +87,7 @@ func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 }
 func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 	rootQueryCommand := &cobra.Command{
-		Use:                        module.queryRoute,
+		Use:                        module.moduleName,
 		Short:                      "Get root query command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
@@ -104,7 +104,7 @@ func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 }
 func (module module) RegisterInvariants(_ sdkTypes.InvariantRegistry) {}
 func (module module) Route() string {
-	return module.transactionRoute
+	return module.moduleName
 }
 func (module module) NewHandler() sdkTypes.Handler {
 	return func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
@@ -119,7 +119,7 @@ func (module module) NewHandler() sdkTypes.Handler {
 	}
 }
 func (module module) QuerierRoute() string {
-	return module.queryRoute
+	return module.moduleName
 }
 func (module module) NewQuerierHandler() sdkTypes.Querier {
 	return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
