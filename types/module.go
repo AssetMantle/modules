@@ -22,7 +22,7 @@ type Module interface {
 	GetStoreKey() string
 	GetDefaultParamspace() string
 
-	InitializeKeepers(*codec.Codec, sdkTypes.StoreKey, params.Subspace)
+	InitializeKeepers(*codec.Codec, sdkTypes.StoreKey, params.Subspace, ...interface{})
 }
 type module struct {
 	moduleName        string
@@ -150,11 +150,11 @@ func (module module) GetStoreKey() string {
 func (module module) GetDefaultParamspace() string {
 	return module.defaultParamspace
 }
-func (module module) InitializeKeepers(codec *codec.Codec, storeKey sdkTypes.StoreKey, _ params.Subspace) {
+func (module module) InitializeKeepers(codec *codec.Codec, storeKey sdkTypes.StoreKey, _ params.Subspace, externalKeepers ...interface{}) {
 	mapper := module.mapper.InitializeMapper(codec, storeKey)
 
 	for _, transaction := range module.transactionList {
-		transaction.InitializeKeeper(mapper)
+		transaction.InitializeKeeper(mapper, externalKeepers)
 	}
 
 	for _, query := range module.queryList {
