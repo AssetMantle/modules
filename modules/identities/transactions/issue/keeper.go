@@ -15,12 +15,15 @@ var _ types.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
 	message := messageFromInterface(msg)
-	identities := mapper.NewIdentities(transactionKeeper.mapper, context).Fetch(message.IdentityID)
-	identity := identities.Get(message.IdentityID)
-	if identity == nil {
-		return constants.EntityNotFound
+	mutables := types.NewMutables(message.Properties, message.MaintainersID)
+	immutables := types.NewImmutables(message.Properties)
+	identityID := mapper.NewIdentityID(types.NewID(context.ChainID()), mutables.GetMaintainersID(), message.ClassificationID, immutables.GetHashID())
+	identities := mapper.NewIdentities(transactionKeeper.mapper, context).Fetch(identityID)
+	identity := identities.Get(identityID)
+	if identity != nil {
+		return constants.EntityAlreadyExists
 	}
-	identities.Remove(identity)
+	identities.Add(identity)
 	return nil
 }
 
