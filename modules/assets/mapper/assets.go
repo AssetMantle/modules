@@ -4,11 +4,8 @@ import (
 	"errors"
 	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
-
-var _ types.InterNFTs = (*assets)(nil)
 
 type assets struct {
 	ID   types.ID
@@ -17,6 +14,8 @@ type assets struct {
 	mapper  assetsMapper
 	context sdkTypes.Context
 }
+
+var _ types.InterNFTs = (*assets)(nil)
 
 func (Assets assets) GetID() types.ID { return Assets.ID }
 func (Assets assets) Get(id types.ID) types.InterNFT {
@@ -91,7 +90,7 @@ func NewAssets(Mapper types.Mapper, context sdkTypes.Context) types.InterNFTs {
 			context: context,
 		}
 	default:
-		panic(errors.New(fmt.Sprintf("incorrect mapper initialization for module, %v", constants.ModuleName)))
+		panic(errors.New(fmt.Sprintf("incorrect mapper initialization for module, %v", ModuleName)))
 	}
 
 }

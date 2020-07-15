@@ -2,7 +2,7 @@ package mint
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
@@ -17,8 +17,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	message := messageFromInterface(msg)
 	mutables := types.NewMutables(message.Properties, message.MaintainersID)
 	immutables := types.NewImmutables(message.Properties)
-	assetID := mapper.NewAssetID(message.ChainID, message.MaintainersID, message.ClassificationID, immutables.GetHashID())
-	asset := mapper.NewAsset(assetID, mutables, immutables, message.Lock, message.Burn)
+	assetID := mapper.NewAssetID(types.NewID(context.ChainID()), mutables.GetMaintainersID(), message.ClassificationID, immutables.GetHashID())
+	asset := mapper.NewAsset(assetID, message.Burn, message.Lock, immutables, mutables)
 	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(assetID)
 	if assets.Get(assetID) != nil {
 		return constants.EntityAlreadyExists
@@ -27,6 +27,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	return nil
 }
 
-func initializeTransactionKeeper(mapper types.Mapper) types.TransactionKeeper {
+func initializeTransactionKeeper(mapper types.Mapper, externalKeepers ...interface{}) types.TransactionKeeper {
 	return transactionKeeper{mapper: mapper}
 }

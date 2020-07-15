@@ -1,15 +1,13 @@
 package mint
 
 import (
-	"fmt"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 func registerCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(Message{}, fmt.Sprintf("/%v/%v/%v", constants.ModuleName, constants.MintTransaction, "Message"), nil)
-	codec.RegisterConcrete(transactionRequest{}, fmt.Sprintf("/%v/%v/%v", constants.ModuleName, constants.MintTransaction, "request"), nil)
+	codec.RegisterConcrete(Message{}, TransactionRoute+"/"+"message", nil)
+	codec.RegisterConcrete(transactionRequest{}, TransactionRoute+"/"+"request", nil)
 }
 
 var packageCodec = codec.New()

@@ -2,7 +2,7 @@ package burn
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/constants"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
@@ -27,6 +27,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	return nil
 }
 
-func initializeTransactionKeeper(mapper types.Mapper) types.TransactionKeeper {
+func initializeTransactionKeeper(mapper types.Mapper, externalKeepers ...interface{}) types.TransactionKeeper {
 	return transactionKeeper{mapper: mapper}
 }

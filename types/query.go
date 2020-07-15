@@ -15,6 +15,7 @@ import (
 type Query interface {
 	GetModuleName() string
 	GetName() string
+	GetRoute() string
 	Command(*codec.Codec) *cobra.Command
 	HandleMessage(sdkTypes.Context, abciTypes.RequestQuery) ([]byte, error)
 	RESTQueryHandler(context.CLIContext) http.HandlerFunc
@@ -26,6 +27,7 @@ type Query interface {
 type query struct {
 	moduleName             string
 	name                   string
+	route                  string
 	queryKeeper            QueryKeeper
 	cliCommand             CLICommand
 	packageCodec           *codec.Codec
@@ -38,9 +40,8 @@ type query struct {
 var _ Query = (*query)(nil)
 
 func (query query) GetModuleName() string { return query.moduleName }
-
-func (query query) GetName() string { return query.name }
-
+func (query query) GetName() string       { return query.name }
+func (query query) GetRoute() string      { return query.route }
 func (query query) Command(codec *codec.Codec) *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
 		cliContext := context.NewCLIContext().WithCodec(codec)
@@ -101,10 +102,11 @@ func (query query) query(queryRequest QueryRequest, cliContext context.CLIContex
 	return cliContext.QueryWithData(strings.Join([]string{"", "custom", query.moduleName, query.name}, "/"), bytes)
 }
 
-func NewQuery(module string, name string, short string, long string, packageCodec *codec.Codec, registerCodec func(*codec.Codec), initializeKeeper func(Mapper) QueryKeeper, queryRequestPrototype func() QueryRequest, queryResponsePrototype func() QueryResponse, flagList []CLIFlag) Query {
+func NewQuery(module string, name string, route string, short string, long string, packageCodec *codec.Codec, registerCodec func(*codec.Codec), initializeKeeper func(Mapper) QueryKeeper, queryRequestPrototype func() QueryRequest, queryResponsePrototype func() QueryResponse, flagList []CLIFlag) Query {
 	return &query{
 		moduleName:             module,
 		name:                   name,
+		route:                  route,
 		cliCommand:             NewCLICommand(name, short, long, flagList),
 		packageCodec:           packageCodec,
 		registerCodec:          registerCodec,
