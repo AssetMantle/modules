@@ -15,6 +15,5 @@ var Transaction = types.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	//TODO check flags
-	[]types.CLIFlag{constants.ChainID, constants.MaintainersID, constants.ClassificationID, constants.Properties},
+	[]types.CLIFlag{constants.To, constants.MaintainersID, constants.ClassificationID, constants.Properties},
 )
