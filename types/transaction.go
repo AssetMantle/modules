@@ -21,7 +21,7 @@ type Transaction interface {
 	HandleMessage(sdkTypes.Context, sdkTypes.Msg) (*sdkTypes.Result, error)
 	RESTRequestHandler(context.CLIContext) http.HandlerFunc
 	RegisterCodec(*codec.Codec)
-	InitializeKeeper(Mapper)
+	InitializeKeeper(Mapper, ...interface{})
 }
 
 type transaction struct {
@@ -31,7 +31,7 @@ type transaction struct {
 	transactionKeeper           TransactionKeeper
 	cliCommand                  CLICommand
 	registerCodec               func(*codec.Codec)
-	initializeKeeper            func(Mapper) TransactionKeeper
+	initializeKeeper            func(Mapper, ...interface{}) TransactionKeeper
 	transactionRequestPrototype func() TransactionRequest
 }
 
@@ -104,11 +104,11 @@ func (transaction transaction) RegisterCodec(codec *codec.Codec) {
 	transaction.registerCodec(codec)
 }
 
-func (transaction *transaction) InitializeKeeper(mapper Mapper) {
-	transaction.transactionKeeper = transaction.initializeKeeper(mapper)
+func (transaction *transaction) InitializeKeeper(mapper Mapper, externalKeepers ...interface{}) {
+	transaction.transactionKeeper = transaction.initializeKeeper(mapper, externalKeepers)
 }
 
-func NewTransaction(module string, name string, route string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(Mapper) TransactionKeeper, transactionRequestPrototype func() TransactionRequest, flagList []CLIFlag) Transaction {
+func NewTransaction(module string, name string, route string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(Mapper, ...interface{}) TransactionKeeper, transactionRequestPrototype func() TransactionRequest, flagList []CLIFlag) Transaction {
 	return &transaction{
 		moduleName:                  module,
 		name:                        name,
