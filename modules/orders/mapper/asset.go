@@ -9,6 +9,7 @@ var _ types.InterNFT = (*Order)(nil)
 
 type Order struct {
 	ID         types.ID
+	From       sdkTypes.AccAddress
 	SellOrder  sdkTypes.Coin
 	BuyOrder   sdkTypes.Coin
 	Mutables   types.Mutables
@@ -68,9 +69,10 @@ func (order Order) CanBurn(currentHeight types.Height) bool {
 	return currentHeight.IsGreaterThan(order.Burn)
 }
 
-func NewOrder(orderID types.ID, buyOrder sdkTypes.Coin, sellOrder sdkTypes.Coin, mutables types.Mutables, immutables types.Immutables, lock types.Height, burn types.Height) types.InterNFT {
+func NewOrder(orderID types.ID, from sdkTypes.AccAddress, buyOrder sdkTypes.Coin, sellOrder sdkTypes.Coin, mutables types.Mutables, immutables types.Immutables, lock types.Height, burn types.Height) types.InterNFT {
 	return Order{
 		ID:         orderID,
+		From:       from,
 		BuyOrder:   buyOrder,
 		SellOrder:  sellOrder,
 		Mutables:   mutables,

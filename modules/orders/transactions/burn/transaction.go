@@ -7,6 +7,7 @@ import (
 
 var Transaction = types.NewTransaction(
 	constants.ModuleName,
+	constants.ModuleName,
 	constants.BurnTransaction,
 	constants.BurnTransactionShort,
 	constants.BurnTransactionLong,

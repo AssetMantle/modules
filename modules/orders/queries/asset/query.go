@@ -7,6 +7,7 @@ import (
 
 var Query = types.NewQuery(
 	constants.ModuleName,
+	constants.ModuleName,
 	constants.AssetQuery,
 	constants.AssetQueryShort,
 	constants.AssetQueryLong,

@@ -8,7 +8,7 @@ import (
 )
 
 func storeKey(assetID types.ID) []byte {
-	return append(constants.StoreKeyPrefix, []byte("uncommentAftermakingThatFunction")...) //assetIDFromInterface(orderID).Bytes()...)
+	return append(constants.StoreKeyPrefix, orderIDFromInterface(assetID).Bytes()...)
 }
 
 type ordersMapper interface {
