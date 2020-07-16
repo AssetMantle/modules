@@ -1,4 +1,4 @@
-package add
+package provision
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -21,7 +21,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if identity == nil {
 		return constants.EntityNotFound
 	}
-	identities.Mutate(identity.AddAddress(message.To))
+	if identity.IsProvisioned(message.To) {
+		return constants.EntityAlreadyExists
+	}
+	if identity.IsUnprovisioned(message.To) {
+		return constants.DeletionNotAllowed
+	}
+	identities.Mutate(identity.ProvisionAddress(message.To))
 	return nil
 }
 
