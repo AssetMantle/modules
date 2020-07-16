@@ -153,7 +153,7 @@ func (module module) GetDefaultParamspace() string {
 func (module module) InitializeKeepers(codec *codec.Codec, storeKey sdkTypes.StoreKey, _ params.Subspace, externalKeepers ...interface{}) {
 	mapper := module.mapper.InitializeMapper(codec, storeKey)
 	for _, transaction := range module.transactionList {
-		transaction.InitializeKeeper(mapper, externalKeepers)
+		transaction.InitializeKeeper(mapper, externalKeepers...)
 	}
 
 	for _, query := range module.queryList {

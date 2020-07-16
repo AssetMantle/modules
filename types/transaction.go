@@ -31,7 +31,7 @@ type transaction struct {
 	transactionKeeper           TransactionKeeper
 	cliCommand                  CLICommand
 	registerCodec               func(*codec.Codec)
-	initializeKeeper            func(Mapper, ...interface{}) TransactionKeeper
+	initializeKeeper            func(Mapper, []interface{}) TransactionKeeper
 	transactionRequestPrototype func() TransactionRequest
 }
 
@@ -107,7 +107,7 @@ func (transaction *transaction) InitializeKeeper(mapper Mapper, externalKeepers 
 	transaction.transactionKeeper = transaction.initializeKeeper(mapper, externalKeepers)
 }
 
-func NewTransaction(module string, name string, route string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(Mapper, ...interface{}) TransactionKeeper, transactionRequestPrototype func() TransactionRequest, flagList []CLIFlag) Transaction {
+func NewTransaction(module string, name string, route string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(Mapper, []interface{}) TransactionKeeper, transactionRequestPrototype func() TransactionRequest, flagList []CLIFlag) Transaction {
 	return &transaction{
 		moduleName:                  module,
 		name:                        name,
