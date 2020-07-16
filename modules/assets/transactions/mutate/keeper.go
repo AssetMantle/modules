@@ -24,7 +24,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	mutableProperties := asset.GetMutables().Get()
 	for _, property := range message.Properties.GetList() {
 		if mutableProperties.Get(property.GetID()) == nil {
-			return constants.MutableNotFound
+			return constants.EntityNotFound
 		}
 		mutableProperties = mutableProperties.Mutate(property)
 	}

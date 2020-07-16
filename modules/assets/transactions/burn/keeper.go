@@ -21,7 +21,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return constants.EntityNotFound
 	}
 	if !asset.CanBurn(types.NewHeight(context.BlockHeight())) {
-		return constants.BurnNotAllowed
+		return constants.DeletionNotAllowed
 	}
 	assets.Remove(asset)
 	return nil
