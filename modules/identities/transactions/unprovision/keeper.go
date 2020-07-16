@@ -21,6 +21,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if identity == nil {
 		return constants.EntityNotFound
 	}
+	if !identity.IsProvisioned(message.To) {
+		return constants.EntityNotFound
+	}
+	if identity.IsUnprovisioned(message.To) {
+		return constants.DeletionNotAllowed
+	}
 	identities.Mutate(identity.UnprovisionAddress(message.To))
 	return nil
 }
