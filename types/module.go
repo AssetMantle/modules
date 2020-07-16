@@ -110,7 +110,6 @@ func (module module) NewHandler() sdkTypes.Handler {
 	return func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
 		context = context.WithEventManager(sdkTypes.NewEventManager())
 
-		fmt.Println(msg)
 		for _, transaction := range module.transactionList {
 			if msg.Type() == transaction.GetName() {
 				return transaction.HandleMessage(context, msg)
