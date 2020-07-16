@@ -4,8 +4,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/queries/identity"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/transactions/add"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/transactions/issue"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/transactions/provision"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/transactions/unprovision"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
@@ -18,5 +19,5 @@ var Module = types.NewModule(
 	genesis.GenesisState,
 	mapper.Mapper,
 	[]types.Query{identity.Query},
-	[]types.Transaction{issue.Transaction, add.Transaction},
+	[]types.Transaction{issue.Transaction, provision.Transaction, unprovision.Transaction},
 )
