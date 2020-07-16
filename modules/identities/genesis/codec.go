@@ -2,7 +2,7 @@ package genesis
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
 )
 
 func (genesisState) RegisterCodec(codec *codec.Codec) {
