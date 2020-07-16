@@ -28,10 +28,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	mutableProperties := asset.GetMutables().Get()
 
 	assetStruct, _ := asset.(mapper.Order)
-	transactionKeeper.bankKeeper.SubtractCoins(context, assetStruct.From, sdkTypes.Coins{assetStruct.SellOrder})
-	transactionKeeper.bankKeeper.AddCoins(context, assetStruct.From, sdkTypes.Coins{assetStruct.BuyOrder})
-	transactionKeeper.bankKeeper.SubtractCoins(context, message.From, sdkTypes.Coins{assetStruct.BuyOrder})
-	transactionKeeper.bankKeeper.AddCoins(context, message.From, sdkTypes.Coins{assetStruct.SellOrder})
+	transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(context, constants.ModuleName, message.From, sdkTypes.Coins{assetStruct.SellOrder})
+	transactionKeeper.bankKeeper.SendCoins(context, message.From, assetStruct.From, sdkTypes.Coins{assetStruct.BuyOrder})
+
 	asset = mapper.NewOrder(asset.GetID(), message.From, assetStruct.BuyOrder, assetStruct.SellOrder, types.NewMutables(mutableProperties, asset.GetMutables().GetMaintainersID()), asset.GetImmutables(), types.NewHeight(5), asset.GetBurn())
 	assets = assets.Mutate(asset)
 	return nil
