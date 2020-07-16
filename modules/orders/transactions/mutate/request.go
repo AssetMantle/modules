@@ -54,6 +54,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 		}
 	}
 
+	fmt.Println("make msg mutate", transactionRequest.AssetID)
 	return newMessage(
 		from,
 		types.NewID(transactionRequest.AssetID),

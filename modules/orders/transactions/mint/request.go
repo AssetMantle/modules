@@ -25,9 +25,9 @@ var _ types.TransactionRequest = (*transactionRequest)(nil)
 func (transactionRequest transactionRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
+		cliCommand.ReadString(constants.Properties),
 		cliCommand.ReadString(constants.BuyCoinDenom),
 		cliCommand.ReadString(constants.SellCoinDenom),
-		cliCommand.ReadString(constants.Properties),
 		cliCommand.ReadInt64(constants.BuyCoinAmount),
 		cliCommand.ReadInt64(constants.SellCoinAmount),
 	)
@@ -54,7 +54,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 			propertyList = append(propertyList, types.NewProperty(types.NewID(traitIDAndProperty[0]), types.NewFact(traitIDAndProperty[1], types.NewSignatures(nil))))
 		}
 	}
-	return newMessage(from, types.NewProperties(propertyList), transactionRequest.BuyCoinDenom, sdkTypes.NewInt(transactionRequest.SellCoinAmount), transactionRequest.BuyCoinDenom, sdkTypes.NewInt(transactionRequest.BuyCoinAmount))
+	return newMessage(from, types.NewProperties(propertyList), transactionRequest.SellCoinDenom, sdkTypes.NewInt(transactionRequest.SellCoinAmount), transactionRequest.BuyCoinDenom, sdkTypes.NewInt(transactionRequest.BuyCoinAmount))
 
 }
 

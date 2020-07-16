@@ -2,6 +2,7 @@ package types
 
 import (
 	"bufio"
+	"fmt"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -61,6 +62,7 @@ func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
 func (transaction transaction) HandleMessage(context sdkTypes.Context, message sdkTypes.Msg) (*sdkTypes.Result, error) {
 
 	if Error := (transaction.transactionKeeper).Transact(context, message); Error != nil {
+		fmt.Println("transact")
 		return nil, Error
 	}
 
