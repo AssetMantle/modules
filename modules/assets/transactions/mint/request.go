@@ -6,7 +6,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 	"strings"
@@ -56,8 +55,6 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 			propertyList = append(propertyList, types.NewProperty(types.NewID(traitIDAndProperty[0]), types.NewFact(traitIDAndProperty[1], types.NewSignatures(nil))))
 		}
 	}
-
-	fmt.Println("HELLO", auth.NewEmptyModuleAccount("distribution"), auth.NewEmptyModuleAccount("bonded_tokens_pool"))
 
 	return newMessage(
 		from,
