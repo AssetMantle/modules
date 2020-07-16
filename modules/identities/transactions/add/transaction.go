@@ -1,4 +1,4 @@
-package issue
+package add
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
@@ -15,5 +15,5 @@ var Transaction = types.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]types.CLIFlag{constants.To, constants.MaintainersID, constants.ClassificationID, constants.Properties},
+	[]types.CLIFlag{constants.To, constants.IdentityID},
 )

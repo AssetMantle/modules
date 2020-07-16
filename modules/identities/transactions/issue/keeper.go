@@ -19,11 +19,10 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	immutables := types.NewImmutables(message.Properties)
 	identityID := mapper.NewIdentityID(types.NewID(context.ChainID()), mutables.GetMaintainersID(), message.ClassificationID, immutables.GetHashID())
 	identities := mapper.NewIdentities(transactionKeeper.mapper, context).Fetch(identityID)
-	identity := identities.Get(identityID)
-	if identity != nil {
+	if identities.Get(identityID) != nil {
 		return constants.EntityAlreadyExists
 	}
-	identities.Add(identity)
+	identities.Add(mapper.NewIdentity(identityID, []sdkTypes.AccAddress{message.To}, []sdkTypes.AccAddress{}, immutables, mutables))
 	return nil
 }
 
