@@ -27,8 +27,12 @@ func (identity identity) GetAddressList() []sdkTypes.AccAddress { return identit
 func (identity identity) GetDeletedAddressList() []sdkTypes.AccAddress {
 	return identity.DeletedAddressList
 }
-
 func (identity identity) AddAddress(accAddress sdkTypes.AccAddress) types.InterIdentity {
+	for _, oldAccAddress := range identity.GetAddressList() {
+		if oldAccAddress.Equals(accAddress) {
+			return identity
+		}
+	}
 	identity.AddressList = append(identity.AddressList, accAddress)
 	return identity
 }
