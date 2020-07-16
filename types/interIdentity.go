@@ -4,13 +4,14 @@ import sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 type InterIdentity interface {
 	GetID() ID
-	GetAddressList() []sdkTypes.AccAddress
-	GetDeletedAddressList() []sdkTypes.AccAddress
+	GetProvisionedAddressList() []sdkTypes.AccAddress
+	GetUnprovisionedAddressList() []sdkTypes.AccAddress
 
-	AddAddress(sdkTypes.AccAddress) InterIdentity
-	DeleteAddress(sdkTypes.AccAddress) InterIdentity
+	ProvisionAddress(sdkTypes.AccAddress) InterIdentity
+	UnprovisionAddress(sdkTypes.AccAddress) InterIdentity
 
-	IsActive(sdkTypes.AccAddress) bool
+	IsProvisioned(sdkTypes.AccAddress) bool
+	IsUnprovisioned(sdkTypes.AccAddress) bool
 
 	InterChain
 	HasImmutables
