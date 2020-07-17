@@ -2,8 +2,8 @@ package constants
 
 import "github.com/cosmos/cosmos-sdk/types/errors"
 
-var BurnNotAllowed = errors.Register(ProjectRoute, 101, "BurnNotAllowed")
+var DeletionNotAllowed = errors.Register(ProjectRoute, 101, "DeletionNotAllowed")
 var EntityAlreadyExists = errors.Register(ProjectRoute, 102, "EntityAlreadyExists")
 var EntityNotFound = errors.Register(ProjectRoute, 103, "EntityNotFound")
 var IncorrectMessage = errors.Register(ProjectRoute, 104, "IncorrectMessage")
-var MutableNotFound = errors.Register(ProjectRoute, 105, "MutableNotFound")
+var MutationNotAllowed = errors.Register(ProjectRoute, 105, "MutationNotAllowed")

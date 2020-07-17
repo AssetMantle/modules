@@ -1,4 +1,4 @@
-package add
+package provision
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"

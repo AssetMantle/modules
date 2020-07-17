@@ -1,9 +1,9 @@
-package burn
+package provision
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
@@ -15,15 +15,19 @@ var _ types.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
 	message := messageFromInterface(msg)
-	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(message.AssetID)
-	asset := assets.Get(message.AssetID)
-	if asset == nil {
+	identityID := message.IdentityID
+	identities := mapper.NewIdentities(transactionKeeper.mapper, context).Fetch(identityID)
+	identity := identities.Get(identityID)
+	if identity == nil {
 		return constants.EntityNotFound
 	}
-	if !asset.CanBurn(types.NewHeight(context.BlockHeight())) {
+	if identity.IsProvisioned(message.To) {
+		return constants.EntityAlreadyExists
+	}
+	if identity.IsUnprovisioned(message.To) {
 		return constants.DeletionNotAllowed
 	}
-	assets.Remove(asset)
+	identities.Mutate(identity.ProvisionAddress(message.To))
 	return nil
 }
 
