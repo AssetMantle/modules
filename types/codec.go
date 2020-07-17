@@ -31,6 +31,8 @@ func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*Share)(nil), nil)
 	codec.RegisterInterface((*Signature)(nil), nil)
 	codec.RegisterInterface((*Signatures)(nil), nil)
+	codec.RegisterInterface((*Split)(nil), nil)
+	codec.RegisterInterface((*Splits)(nil), nil)
 	codec.RegisterInterface((*Trait)(nil), nil)
 	codec.RegisterInterface((*Traits)(nil), nil)
 	codec.RegisterInterface((*TransactionRequest)(nil), nil)
