@@ -2,6 +2,8 @@ package burn
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/order/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
@@ -12,16 +14,16 @@ type transactionKeeper struct {
 var _ types.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
-	//message := messageFromInterface(msg)
-	//assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(message.OrderID)
-	//order := assets.Get(message.OrderID)
-	//if order == nil {
-	//	return constants.EntityNotFound
-	//}
-	//if !order.CanBurn(types.NewHeight(context.BlockHeight())) {
-	//	return constants.BurnNotAllowed
-	//}
-	//assets.Remove(order)
+	message := messageFromInterface(msg)
+	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(message.OrderID)
+	order := orders.Get(message.OrderID)
+	if order == nil {
+		return constants.EntityNotFound
+	}
+	if !order.CanBurn(types.NewHeight(context.BlockHeight())) {
+		return constants.DeletionNotAllowed
+	}
+	orders.Remove(order)
 	return nil
 }
 

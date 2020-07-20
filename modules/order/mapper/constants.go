@@ -9,4 +9,4 @@ const StoreKey = "orders"
 const QueryRoute = ModuleRoute
 const TransactionRoute = ModuleRoute
 
-var StoreKeyPrefix = []byte{0x13}
+var StoreKeyPrefix = []byte{0x11}
