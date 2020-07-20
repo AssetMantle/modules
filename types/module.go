@@ -66,6 +66,8 @@ func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *m
 
 	for _, transaction := range module.transactionList {
 		router.HandleFunc(transaction.GetRoute(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
+		router.HandleFunc("/keys/add", RESTKeysHandler(cliContext)).Methods("POST")
+		router.HandleFunc("/recover/keys", RESTKeysRecoverHandler(cliContext)).Methods("POST")
 	}
 }
 func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {

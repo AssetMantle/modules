@@ -2,15 +2,22 @@ package types
 
 import (
 	"bufio"
+	"fmt"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client"
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
+	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/spf13/cobra"
+	"log"
 	"net/http"
+	"strings"
 )
 
 type Transaction interface {
@@ -95,7 +102,89 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
-		client.WriteGenerateStdTxResponse(responseWriter, cliContext, baseReq, []sdkTypes.Msg{msg})
+		//client.WriteGenerateStdTxResponse(responseWriter, cliContext, baseReq, []sdkTypes.Msg{msg})
+		//adding below commands to REST to have signed txs
+		gasAdj, ok := rest.ParseFloat64OrReturnBadRequest(responseWriter, baseReq.GasAdjustment, flags.DefaultGasAdjustment)
+		if !ok {
+			return
+		}
+
+		simAndExec, gas, err := flags.ParseGas(baseReq.Gas)
+		if rest.CheckBadRequestError(responseWriter, err) {
+			return
+		}
+
+		txBldr := types.NewTxBuilder(
+			authClient.GetTxEncoder(cliContext.Codec), baseReq.AccountNumber, baseReq.Sequence, gas, gasAdj,
+			baseReq.Simulate, baseReq.ChainID, baseReq.Memo, baseReq.Fees, baseReq.GasPrices,
+		)
+
+		msgs := []sdkTypes.Msg{msg}
+		fromName := cliContext.GetFromName()
+
+		if baseReq.Simulate || simAndExec {
+			if gasAdj < 0 {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, errors.ErrorInvalidGasAdjustment.Error())
+				return
+			}
+
+			txBldr, err = authClient.EnrichWithGas(txBldr, cliContext, msgs)
+			if rest.CheckInternalServerError(responseWriter, err) {
+				return
+			}
+
+			if baseReq.Simulate {
+				rest.WriteSimulationResponse(responseWriter, cliContext.Codec, txBldr.Gas())
+				return
+			}
+		}
+
+		//using DefaultKeyPass as an input
+		keyring, err := keyring.New(sdkTypes.KeyringServiceName(), "os", "home", strings.NewReader(keys.DefaultKeyPass))
+		if err != nil {
+			panic(fmt.Errorf("couldn't acquire keyring: %v", err))
+		}
+
+		fromAddress, fromName, err := context.GetFromFields(keyring, baseReq.From, false)
+		if err != nil {
+			fmt.Printf("failed to get from fields: %v\n", err)
+			return
+		}
+
+		cliContext = cliContext.WithFromAddress(fromAddress)
+		cliContext = cliContext.WithFromName(fromName)
+		cliContext = cliContext.WithBroadcastMode("block")
+
+		//adding account sequence
+		num, seq, err := types.NewAccountRetriever(authClient.Codec, cliContext).GetAccountNumberSequence(fromAddress)
+		if err != nil {
+			fmt.Printf("Error in NewAccountRetriever: %s\n", err)
+			return
+		}
+
+		txBldr = txBldr.WithAccountNumber(num)
+		txBldr = txBldr.WithSequence(seq)
+
+		//build and sign
+		stdMsg, err := txBldr.BuildAndSign(fromName, keys.DefaultKeyPass, msgs)
+		if rest.CheckBadRequestError(responseWriter, err) {
+			return
+		}
+
+		// broadcast to a node
+		res, err := cliContext.BroadcastTx(stdMsg)
+		if err != nil {
+			fmt.Printf("Error in broadcast: %s\n", err)
+			return
+		}
+
+		output, err := cliContext.Codec.MarshalJSON(res)
+
+		responseWriter.Header().Set("Content-Type", "application/json")
+		if _, err := responseWriter.Write(output); err != nil {
+			log.Printf("could not write response: %v", err)
+		}
+
 	}
 }
 
