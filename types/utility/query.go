@@ -65,7 +65,7 @@ func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciType
 	if Error != nil {
 		return nil, Error
 	}
-	return query.packageCodec.MarshalJSON(query.queryKeeper.Query(context, queryRequest))
+	return query.packageCodec.MarshalJSON(query.queryKeeper.Enquire(context, queryRequest))
 }
 
 func (query query) RESTQueryHandler(cliContext context.CLIContext) http.HandlerFunc {

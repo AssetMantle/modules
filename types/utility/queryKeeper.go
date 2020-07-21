@@ -5,5 +5,5 @@ import (
 )
 
 type QueryKeeper interface {
-	Query(sdkTypes.Context, QueryRequest) QueryResponse
+	Enquire(sdkTypes.Context, QueryRequest) QueryResponse
 }
