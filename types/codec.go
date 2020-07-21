@@ -38,14 +38,4 @@ func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*schema.Trait)(nil), nil)
 	codec.RegisterInterface((*schema.Traits)(nil), nil)
 	codec.RegisterInterface((*utility.TransactionRequest)(nil), nil)
-
-	codec.RegisterConcrete(schema.fact{}, "xprt/fact", nil)
-	codec.RegisterConcrete(schema.height{}, "xprt/height", nil)
-	codec.RegisterConcrete(schema.id{}, "xprt/id", nil)
-	codec.RegisterConcrete(schema.immutables{}, "xprt/immutables", nil)
-	codec.RegisterConcrete(schema.mutables{}, "xprt/mutables", nil)
-	codec.RegisterConcrete(schema.properties{}, "xprt/properties", nil)
-	codec.RegisterConcrete(schema.property{}, "xprt/property", nil)
-	codec.RegisterConcrete(schema.signature{}, "xprt/signature", nil)
-	codec.RegisterConcrete(schema.signatures{}, "xprt/signatures", nil)
 }
