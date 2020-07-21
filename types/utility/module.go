@@ -21,8 +21,8 @@ type Module interface {
 
 	GetStoreKey() string
 	GetDefaultParamspace() string
-
-	InitializeKeepers(*codec.Codec, sdkTypes.StoreKey, params.Subspace, ...interface{})
+	GetAuxiliaryKeepers(...string) []AuxiliaryKeeper
+	InitializeKeepers(*codec.Codec, sdkTypes.StoreKey, params.Subspace)
 }
 type module struct {
 	moduleName        string
@@ -32,6 +32,7 @@ type module struct {
 	transactionRoute  string
 	genesisState      GenesisState
 	mapper            Mapper
+	auxiliaryList     []Auxiliary
 	queryList         []Query
 	transactionList   []Transaction
 }
@@ -150,8 +151,23 @@ func (module module) GetStoreKey() string {
 func (module module) GetDefaultParamspace() string {
 	return module.defaultParamspace
 }
+func (module module) GetAuxiliaryKeepers(auxiliaryNames ...string) []AuxiliaryKeeper {
+	var auxiliaryKeeperList []AuxiliaryKeeper
+	for _, auxiliaryName := range auxiliaryNames {
+		for _, auxiliary := range module.auxiliaryList {
+			if auxiliary.GetName() == auxiliaryName {
+				auxiliaryKeeperList = append(auxiliaryKeeperList, auxiliary.GetKeeper())
+			}
+		}
+	}
+	return auxiliaryKeeperList
+}
 func (module module) InitializeKeepers(codec *codec.Codec, storeKey sdkTypes.StoreKey, _ params.Subspace, externalKeepers ...interface{}) {
 	mapper := module.mapper.InitializeMapper(codec, storeKey)
+
+	for _, auxiliary := range module.auxiliaryList {
+		auxiliary.InitializeKeeper(mapper, externalKeepers...)
+	}
 
 	for _, transaction := range module.transactionList {
 		transaction.InitializeKeeper(mapper, externalKeepers...)
@@ -163,7 +179,7 @@ func (module module) InitializeKeepers(codec *codec.Codec, storeKey sdkTypes.Sto
 
 	return
 }
-func NewModule(moduleName string, storeKey string, defaultParamspace string, queryRoute string, transactionRoute string, genesisState GenesisState, mapper Mapper, queryList []Query, transactionList []Transaction) Module {
+func NewModule(moduleName string, storeKey string, defaultParamspace string, queryRoute string, transactionRoute string, genesisState GenesisState, mapper Mapper, auxiliaryList []Auxiliary, queryList []Query, transactionList []Transaction) Module {
 	return module{
 		moduleName:        moduleName,
 		storeKey:          storeKey,
@@ -172,6 +188,7 @@ func NewModule(moduleName string, storeKey string, defaultParamspace string, que
 		transactionRoute:  transactionRoute,
 		genesisState:      genesisState,
 		mapper:            mapper,
+		auxiliaryList:     auxiliaryList,
 		queryList:         queryList,
 		transactionList:   transactionList,
 	}
