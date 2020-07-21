@@ -3,20 +3,21 @@ package mapper
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/types"
+	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/types/utility"
 )
 
-func storeKey(identityID types.ID) []byte {
+func storeKey(identityID schema.ID) []byte {
 	return append(StoreKeyPrefix, identityIDFromInterface(identityID).Bytes()...)
 }
 
 type identitiesMapper interface {
-	types.Mapper
-	create(sdkTypes.Context, types.InterIdentity)
-	read(sdkTypes.Context, types.ID) types.InterIdentity
-	update(sdkTypes.Context, types.InterIdentity)
-	delete(sdkTypes.Context, types.ID)
-	iterate(sdkTypes.Context, types.ID, func(types.InterIdentity) bool)
+	utility.Mapper
+	create(sdkTypes.Context, schema.InterIdentity)
+	read(sdkTypes.Context, schema.ID) schema.InterIdentity
+	update(sdkTypes.Context, schema.InterIdentity)
+	delete(sdkTypes.Context, schema.ID)
+	iterate(sdkTypes.Context, schema.ID, func(schema.InterIdentity) bool)
 }
 
 type mapper struct {
@@ -26,12 +27,12 @@ type mapper struct {
 
 var _ identitiesMapper = (*mapper)(nil)
 
-func (mapper mapper) InitializeMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) types.Mapper {
+func (mapper mapper) InitializeMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) utility.Mapper {
 	mapper.StoreKey = storeKey
 	mapper.Codec = codec
 	return mapper
 }
-func (mapper mapper) create(context sdkTypes.Context, identity types.InterIdentity) {
+func (mapper mapper) create(context sdkTypes.Context, identity schema.InterIdentity) {
 	bytes, Error := mapper.Codec.MarshalBinaryBare(identity)
 	if Error != nil {
 		panic(Error)
@@ -39,7 +40,7 @@ func (mapper mapper) create(context sdkTypes.Context, identity types.InterIdenti
 	kvStore := context.KVStore(mapper.StoreKey)
 	kvStore.Set(storeKey(identity.GetID()), bytes)
 }
-func (mapper mapper) read(context sdkTypes.Context, identityID types.ID) types.InterIdentity {
+func (mapper mapper) read(context sdkTypes.Context, identityID schema.ID) schema.InterIdentity {
 	kvStore := context.KVStore(mapper.StoreKey)
 	bytes := kvStore.Get(storeKey(identityID))
 	if bytes == nil {
@@ -52,7 +53,7 @@ func (mapper mapper) read(context sdkTypes.Context, identityID types.ID) types.I
 	}
 	return identity
 }
-func (mapper mapper) update(context sdkTypes.Context, identity types.InterIdentity) {
+func (mapper mapper) update(context sdkTypes.Context, identity schema.InterIdentity) {
 	bytes, Error := mapper.Codec.MarshalBinaryBare(identity)
 	if Error != nil {
 		panic(Error)
@@ -61,11 +62,11 @@ func (mapper mapper) update(context sdkTypes.Context, identity types.InterIdenti
 	kvStore := context.KVStore(mapper.StoreKey)
 	kvStore.Set(storeKey(identityID), bytes)
 }
-func (mapper mapper) delete(context sdkTypes.Context, identityID types.ID) {
+func (mapper mapper) delete(context sdkTypes.Context, identityID schema.ID) {
 	kvStore := context.KVStore(mapper.StoreKey)
 	kvStore.Delete(storeKey(identityID))
 }
-func (mapper mapper) iterate(context sdkTypes.Context, identityID types.ID, accumulator func(types.InterIdentity) bool) {
+func (mapper mapper) iterate(context sdkTypes.Context, identityID schema.ID, accumulator func(schema.InterIdentity) bool) {
 	store := context.KVStore(mapper.StoreKey)
 	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(store, storeKey(identityID))
 
@@ -82,7 +83,7 @@ func (mapper mapper) iterate(context sdkTypes.Context, identityID types.ID, accu
 	}
 }
 
-func newMapper() types.Mapper {
+func newMapper() utility.Mapper {
 	return mapper{}
 }
 

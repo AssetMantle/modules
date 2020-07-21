@@ -7,10 +7,10 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/burn"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mutate"
-	"github.com/persistenceOne/persistenceSDK/types"
+	"github.com/persistenceOne/persistenceSDK/types/utility"
 )
 
-var Module = types.NewModule(
+var Module = utility.NewModule(
 	mapper.ModuleName,
 	mapper.StoreKey,
 	mapper.DefaultParamspace,
@@ -18,6 +18,7 @@ var Module = types.NewModule(
 	mapper.TransactionRoute,
 	genesis.GenesisState,
 	mapper.Mapper,
-	[]types.Query{asset.Query},
-	[]types.Transaction{burn.Transaction, mint.Transaction, mutate.Transaction},
+	[]utility.Auxiliary{},
+	[]utility.Query{asset.Query},
+	[]utility.Transaction{burn.Transaction, mint.Transaction, mutate.Transaction},
 )

@@ -4,21 +4,22 @@ import (
 	"errors"
 	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/types"
+	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/types/utility"
 )
 
 type assets struct {
-	ID   types.ID
-	List []types.InterNFT
+	ID   schema.ID
+	List []schema.InterNFT
 
 	mapper  assetsMapper
 	context sdkTypes.Context
 }
 
-var _ types.InterNFTs = (*assets)(nil)
+var _ schema.InterNFTs = (*assets)(nil)
 
-func (assets assets) GetID() types.ID { return assets.ID }
-func (assets assets) Get(id types.ID) types.InterNFT {
+func (assets assets) GetID() schema.ID { return assets.ID }
+func (assets assets) Get(id schema.ID) schema.InterNFT {
 	assetID := assetIDFromInterface(id)
 	for _, oldAsset := range assets.List {
 		if oldAsset.GetID().Compare(assetID) == 0 {
@@ -27,12 +28,12 @@ func (assets assets) Get(id types.ID) types.InterNFT {
 	}
 	return nil
 }
-func (assets assets) GetList() []types.InterNFT {
+func (assets assets) GetList() []schema.InterNFT {
 	return assets.List
 }
 
-func (assets assets) Fetch(id types.ID) types.InterNFTs {
-	var assetList []types.InterNFT
+func (assets assets) Fetch(id schema.ID) schema.InterNFTs {
+	var assetList []schema.InterNFT
 	assetsID := assetIDFromInterface(id)
 	if len(assetsID.HashID.Bytes()) > 0 {
 		asset := assets.mapper.read(assets.context, assetsID)
@@ -40,7 +41,7 @@ func (assets assets) Fetch(id types.ID) types.InterNFTs {
 			assetList = append(assetList, asset)
 		}
 	} else {
-		appendAssetList := func(asset types.InterNFT) bool {
+		appendAssetList := func(asset schema.InterNFT) bool {
 			assetList = append(assetList, asset)
 			return false
 		}
@@ -49,7 +50,7 @@ func (assets assets) Fetch(id types.ID) types.InterNFTs {
 	assets.ID, assets.List = id, assetList
 	return assets
 }
-func (assets assets) Add(asset types.InterNFT) types.InterNFTs {
+func (assets assets) Add(asset schema.InterNFT) schema.InterNFTs {
 	assets.ID = readAssetID("")
 	assets.mapper.create(assets.context, asset)
 	for i, oldAsset := range assets.List {
@@ -60,7 +61,7 @@ func (assets assets) Add(asset types.InterNFT) types.InterNFTs {
 	}
 	return assets
 }
-func (assets assets) Remove(asset types.InterNFT) types.InterNFTs {
+func (assets assets) Remove(asset schema.InterNFT) schema.InterNFTs {
 	assets.mapper.delete(assets.context, asset.GetID())
 	for i, oldAsset := range assets.List {
 		if oldAsset.GetID().Compare(asset.GetID()) == 0 {
@@ -70,7 +71,7 @@ func (assets assets) Remove(asset types.InterNFT) types.InterNFTs {
 	}
 	return assets
 }
-func (assets assets) Mutate(asset types.InterNFT) types.InterNFTs {
+func (assets assets) Mutate(asset schema.InterNFT) schema.InterNFTs {
 	assets.mapper.update(assets.context, asset)
 	for i, oldAsset := range assets.List {
 		if oldAsset.GetID().Compare(asset.GetID()) == 0 {
@@ -81,12 +82,12 @@ func (assets assets) Mutate(asset types.InterNFT) types.InterNFTs {
 	return assets
 }
 
-func NewAssets(Mapper types.Mapper, context sdkTypes.Context) types.InterNFTs {
+func NewAssets(Mapper utility.Mapper, context sdkTypes.Context) schema.InterNFTs {
 	switch mapper := Mapper.(type) {
 	case assetsMapper:
 		return assets{
 			ID:      readAssetID(""),
-			List:    []types.InterNFT{},
+			List:    []schema.InterNFT{},
 			mapper:  mapper,
 			context: context,
 		}
