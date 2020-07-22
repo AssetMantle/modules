@@ -53,12 +53,7 @@ func (splits splits) Fetch(id schema.ID) schema.Splits {
 func (splits splits) Add(split schema.Split) schema.Splits {
 	splits.ID = readSplitID("")
 	splits.mapper.create(splits.context, split)
-	for i, oldSplit := range splits.List {
-		if oldSplit.GetID().Compare(split.GetID()) < 0 {
-			splits.List = append(append(splits.List[:i], split), splits.List[i+1:]...)
-			break
-		}
-	}
+	splits.List = append(splits.List, split)
 	return splits
 }
 func (splits splits) Remove(split schema.Split) schema.Splits {
