@@ -23,9 +23,10 @@ func auxiliaryRequestFromInterface(AuxiliaryRequest utility.AuxiliaryRequest) au
 	}
 }
 
-func NewAuxiliaryRequest(toID schema.ID, split sdkTypes.Dec) utility.AuxiliaryRequest {
-	return auxiliaryRequest{
-		ToID:  toID,
-		Split: split,
+func NewAuxiliaryRequest(ownerID schema.ID, ownableID schema.ID, split sdkTypes.Dec) utility.AuxiliaryRequest {
+	return &auxiliaryRequest{
+		OwnerID:   ownerID,
+		OwnableID: ownableID,
+		Split:     split,
 	}
 }
