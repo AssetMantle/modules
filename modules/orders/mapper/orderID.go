@@ -3,19 +3,20 @@ package mapper
 import (
 	"bytes"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/types/schema"
 
 	"github.com/persistenceOne/persistenceSDK/types"
 	"strings"
 )
 
 type orderID struct {
-	ChainID          types.ID
-	MaintainersID    types.ID
-	ClassificationID types.ID
-	HashID           types.ID
+	ChainID          schema.ID
+	MaintainersID    schema.ID
+	ClassificationID schema.ID
+	HashID           schema.ID
 }
 
-var _ types.ID = (*orderID)(nil)
+var _ schema.ID = (*orderID)(nil)
 
 func (orderID orderID) Bytes() []byte {
 	return append(append(append(
@@ -34,24 +35,24 @@ func (orderID orderID) String() string {
 	return strings.Join(values, constants.IDSeparator)
 }
 
-func (orderID orderID) Compare(id types.ID) int {
+func (orderID orderID) Compare(id schema.ID) int {
 	return bytes.Compare(orderID.Bytes(), id.Bytes())
 }
 
-func readOrderID(orderIDString string) types.ID {
+func readOrderID(orderIDString string) schema.ID {
 	idList := strings.Split(orderIDString, constants.IDSeparator)
 	if len(idList) == 4 {
 		return orderID{
-			ChainID:          types.NewID(idList[0]),
-			MaintainersID:    types.NewID(idList[1]),
-			ClassificationID: types.NewID(idList[2]),
-			HashID:           types.NewID(idList[3]),
+			ChainID:          schema.NewID(idList[0]),
+			MaintainersID:    schema.NewID(idList[1]),
+			ClassificationID: schema.NewID(idList[2]),
+			HashID:           schema.NewID(idList[3]),
 		}
 	}
-	return orderID{ChainID: types.NewID(""), MaintainersID: types.NewID(""), ClassificationID: types.NewID(""), HashID: types.NewID("")}
+	return orderID{ChainID: schema.NewID(""), MaintainersID: schema.NewID(""), ClassificationID: schema.NewID(""), HashID: schema.NewID("")}
 }
 
-func orderIDFromInterface(id types.ID) orderID {
+func orderIDFromInterface(id schema.ID) orderID {
 	switch value := id.(type) {
 	case orderID:
 		return value
@@ -60,7 +61,7 @@ func orderIDFromInterface(id types.ID) orderID {
 	}
 }
 
-func NewOrderID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
+func NewOrderID(chainID schema.ID, maintainersID schema.ID, classificationID schema.ID, hashID schema.ID) schema.ID {
 	return orderID{
 		ChainID:          chainID,
 		MaintainersID:    maintainersID,

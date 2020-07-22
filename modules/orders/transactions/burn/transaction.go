@@ -3,10 +3,10 @@ package burn
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
-	"github.com/persistenceOne/persistenceSDK/types"
+	"github.com/persistenceOne/persistenceSDK/types/utility"
 )
 
-var Transaction = types.NewTransaction(
+var Transaction = utility.NewTransaction(
 	mapper.ModuleName,
 	TransactionName,
 	TransactionRoute,
@@ -15,5 +15,5 @@ var Transaction = types.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]types.CLIFlag{constants.OrderID},
+	[]utility.CLIFlag{constants.OrderID},
 )

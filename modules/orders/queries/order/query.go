@@ -3,10 +3,10 @@ package order
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
-	"github.com/persistenceOne/persistenceSDK/types"
+	"github.com/persistenceOne/persistenceSDK/types/utility"
 )
 
-var Query = types.NewQuery(
+var Query = utility.NewQuery(
 	mapper.ModuleName,
 	QueryName,
 	QueryRoute,
@@ -17,5 +17,5 @@ var Query = types.NewQuery(
 	initializeQueryKeeper,
 	queryRequestPrototype,
 	queryResponsePrototype,
-	[]types.CLIFlag{constants.OrderID},
+	[]utility.CLIFlag{constants.OrderID},
 )

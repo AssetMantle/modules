@@ -7,7 +7,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types"
+	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/types/utility"
 	"strings"
 )
 
@@ -33,9 +34,9 @@ type transactionRequest struct {
 	Salt                int64        `json:"salt"`
 }
 
-var _ types.TransactionRequest = (*transactionRequest)(nil)
+var _ utility.TransactionRequest = (*transactionRequest)(nil)
 
-func (transactionRequest transactionRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.TransactionRequest {
+func (transactionRequest transactionRequest) FromCLI(cliCommand utility.CLICommand, cliContext context.CLIContext) utility.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(constants.ClassificationID),
@@ -89,38 +90,38 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 		panic(errors.New(fmt.Sprintf("")))
 	}
 
-	var propertyList []types.Property
+	var propertyList []schema.Property
 	for _, property := range properties {
 		traitIDAndProperty := strings.Split(property, constants.TraitIDAndPropertySeparator)
 		if len(traitIDAndProperty) == 2 && traitIDAndProperty[0] != "" {
-			propertyList = append(propertyList, types.NewProperty(types.NewID(traitIDAndProperty[0]), types.NewFact(traitIDAndProperty[1], types.NewSignatures(nil))))
+			propertyList = append(propertyList, schema.NewProperty(schema.NewID(traitIDAndProperty[0]), schema.NewFact(traitIDAndProperty[1], schema.NewSignatures(nil))))
 		}
 	}
 
 	return newMessage(
 		from,
-		types.NewID(transactionRequest.MaintainersID),
-		types.NewID(transactionRequest.ClassificationID),
-		types.NewProperties(propertyList),
-		types.NewHeight(transactionRequest.Lock),
-		types.NewHeight(transactionRequest.Burn),
+		schema.NewID(transactionRequest.MaintainersID),
+		schema.NewID(transactionRequest.ClassificationID),
+		schema.NewProperties(propertyList),
+		schema.NewHeight(transactionRequest.Lock),
+		schema.NewHeight(transactionRequest.Burn),
 		takerAddress,
 		senderAddress,
 		feeRecipientAddress,
 		sdkTypes.NewDec(transactionRequest.MakerAssetAmount),
-		types.NewID(transactionRequest.MakerAssetData),
+		schema.NewID(transactionRequest.MakerAssetData),
 		sdkTypes.NewDec(transactionRequest.MakerFee),
-		types.NewID(transactionRequest.MakerFeeAssetData),
+		schema.NewID(transactionRequest.MakerFeeAssetData),
 		sdkTypes.NewDec(transactionRequest.TakerAssetAmount),
-		types.NewID(transactionRequest.TakerAssetData),
+		schema.NewID(transactionRequest.TakerAssetData),
 		sdkTypes.NewDec(transactionRequest.TakerFee),
-		types.NewID(transactionRequest.TakerFeeAssetData),
-		types.NewHeight(transactionRequest.ExpirationTime),
-		types.NewHeight(transactionRequest.Salt),
+		schema.NewID(transactionRequest.TakerFeeAssetData),
+		schema.NewHeight(transactionRequest.ExpirationTime),
+		schema.NewHeight(transactionRequest.Salt),
 	)
 }
 
-func requestPrototype() types.TransactionRequest {
+func requestPrototype() utility.TransactionRequest {
 	return transactionRequest{}
 }
 
@@ -138,7 +139,7 @@ func newTransactionRequest(baseReq rest.BaseReq, classificationID string, mainta
 	takerFeeAssetData string,
 	expirationTime int64,
 	salt int64,
-) types.TransactionRequest {
+) utility.TransactionRequest {
 	return transactionRequest{
 		BaseReq:             baseReq,
 		ClassificationID:    classificationID,

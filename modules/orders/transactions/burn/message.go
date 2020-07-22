@@ -5,12 +5,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types"
+	"github.com/persistenceOne/persistenceSDK/types/schema"
 )
 
 type message struct {
 	From    sdkTypes.AccAddress
-	OrderID types.ID
+	OrderID schema.ID
 }
 
 var _ sdkTypes.Msg = message{}
@@ -40,7 +40,7 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, orderID types.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, orderID schema.ID) sdkTypes.Msg {
 	return message{
 		From:    from,
 		OrderID: orderID,

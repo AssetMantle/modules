@@ -1,19 +1,20 @@
 package order
 
 import (
-	"github.com/persistenceOne/persistenceSDK/types"
+	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/types/utility"
 )
 
 type queryResponse struct {
-	Orders types.Orders
+	Orders schema.Orders
 }
 
-var _ types.QueryResponse = (*queryResponse)(nil)
+var _ utility.QueryResponse = (*queryResponse)(nil)
 
-func queryResponsePrototype() types.QueryResponse {
+func queryResponsePrototype() utility.QueryResponse {
 	return queryResponse{}
 }
 
-func newQueryResponse(orders types.Orders) types.QueryResponse {
+func newQueryResponse(orders schema.Orders) utility.QueryResponse {
 	return queryResponse{Orders: orders}
 }

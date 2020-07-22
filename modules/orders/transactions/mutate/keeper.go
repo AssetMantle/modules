@@ -5,13 +5,15 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
+	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/types/utility"
 )
 
 type transactionKeeper struct {
-	mapper types.Mapper
+	mapper utility.Mapper
 }
 
-var _ types.TransactionKeeper = (*transactionKeeper)(nil)
+var _ utility.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
 	message := messageFromInterface(msg)
@@ -28,13 +30,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		}
 		mutableProperties = mutableProperties.Mutate(property)
 	}
-	order = mapper.NewOrder(order.GetID(), order.GetBurn(), order.GetLock(), order.GetImmutables(), types.NewMutables(mutableProperties, order.GetMutables().GetMaintainersID()),
+	order = mapper.NewOrder(order.GetID(), order.GetBurn(), order.GetLock(), order.GetImmutables(), schema.NewMutables(mutableProperties, order.GetMutables().GetMaintainersID()),
 		order.GetMakerAddress(), order.GetTakerAddress(), order.GetMakerAssetAmount(), order.GetMakerAssetData(), order.GetTakerAssetAmount(),
 		order.GetTakerAssetData(), order.GetSalt())
 	orders = orders.Mutate(order)
 	return nil
 }
 
-func initializeTransactionKeeper(mapper types.Mapper, externalKeepers []interface{}) types.TransactionKeeper {
+func initializeTransactionKeeper(mapper utility.Mapper, externalKeepers []interface{}) utility.TransactionKeeper {
 	return transactionKeeper{mapper: mapper}
 }

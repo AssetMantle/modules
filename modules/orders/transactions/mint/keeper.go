@@ -5,27 +5,28 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
-	"github.com/persistenceOne/persistenceSDK/types"
+	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/types/utility"
 )
 
 type transactionKeeper struct {
-	mapper types.Mapper
+	mapper utility.Mapper
 }
 
-var _ types.TransactionKeeper = (*transactionKeeper)(nil)
+var _ utility.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
 	message := messageFromInterface(msg)
-	message.Salt = types.NewHeight(context.BlockHeight())
+	message.Salt = schema.NewHeight(context.BlockHeight())
 
 	orderHash := message.GenerateHash()
 
-	makerSignature := types.NewSignature(types.NewID("makerAddress"), message.From.Bytes(), types.NewHeight(context.BlockHeight()))
-	orderHashProperty := types.NewProperty(types.NewID("orderHash"), types.NewFact(orderHash.String(), types.NewSignatures([]types.Signature{makerSignature})))
+	makerSignature := schema.NewSignature(schema.NewID("makerAddress"), message.From.Bytes(), schema.NewHeight(context.BlockHeight()))
+	orderHashProperty := schema.NewProperty(schema.NewID("orderHash"), schema.NewFact(orderHash.String(), schema.NewSignatures([]schema.Signature{makerSignature})))
 	properties := message.Properties.Add(orderHashProperty)
-	mutables := types.NewMutables(properties, message.MaintainersID)
-	immutables := types.NewImmutables(properties)
-	orderID := mapper.NewOrderID(types.NewID(context.ChainID()), mutables.GetMaintainersID(), message.ClassificationID, immutables.GetHashID())
+	mutables := schema.NewMutables(properties, message.MaintainersID)
+	immutables := schema.NewImmutables(properties)
+	orderID := mapper.NewOrderID(schema.NewID(context.ChainID()), mutables.GetMaintainersID(), message.ClassificationID, immutables.GetHashID())
 	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(orderID)
 	if orders.Get(orderID) != nil {
 		return constants.EntityAlreadyExists
@@ -37,6 +38,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	return nil
 }
 
-func initializeTransactionKeeper(mapper types.Mapper, externalKeepers []interface{}) types.TransactionKeeper {
+func initializeTransactionKeeper(mapper utility.Mapper, externalKeepers []interface{}) utility.TransactionKeeper {
 	return transactionKeeper{mapper: mapper}
 }

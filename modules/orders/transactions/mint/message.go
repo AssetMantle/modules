@@ -7,30 +7,30 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types"
+	"github.com/persistenceOne/persistenceSDK/types/schema"
 )
 
 //TODO make private
 type Message struct {
 	From                sdkTypes.AccAddress
-	MaintainersID       types.ID
-	ClassificationID    types.ID
-	Properties          types.Properties
-	Lock                types.Height
-	Burn                types.Height
+	MaintainersID       schema.ID
+	ClassificationID    schema.ID
+	Properties          schema.Properties
+	Lock                schema.Height
+	Burn                schema.Height
 	TakerAddress        sdkTypes.AccAddress
 	SenderAddress       sdkTypes.AccAddress
 	FeeRecipientAddress sdkTypes.AccAddress
 	MakerAssetAmount    sdkTypes.Dec
-	MakerAssetData      types.ID
+	MakerAssetData      schema.ID
 	MakerFee            sdkTypes.Dec
-	MakerFeeAssetData   types.ID
+	MakerFeeAssetData   schema.ID
 	TakerAssetAmount    sdkTypes.Dec
-	TakerAssetData      types.ID
+	TakerAssetData      schema.ID
 	TakerFee            sdkTypes.Dec
-	TakerFeeAssetData   types.ID
-	ExpirationTime      types.Height
-	Salt                types.Height
+	TakerFeeAssetData   schema.ID
+	ExpirationTime      schema.Height
+	Salt                schema.Height
 }
 
 var _ sdkTypes.Msg = Message{}
@@ -60,7 +60,7 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 	}
 }
 
-func (message Message) GenerateHash() types.ID {
+func (message Message) GenerateHash() schema.ID {
 	hasher := sha512.New()
 	//bz := []byte(message.MakerAddress.String() + message.TakerAddress.String() + message.SenderAddress.String() +
 	//	message.FeeRecipientAddress.String() + message.MakerAssetAmount.String() + message.MakerAssetData.String() +
@@ -73,14 +73,14 @@ func (message Message) GenerateHash() types.ID {
 	hasher.Write(bz)
 
 	sha := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
-	return types.NewID(sha)
+	return schema.NewID(sha)
 }
 
-func newMessage(from sdkTypes.AccAddress, maintainersID types.ID, classificationID types.ID, properties types.Properties, lock types.Height, burn types.Height,
+func newMessage(from sdkTypes.AccAddress, maintainersID schema.ID, classificationID schema.ID, properties schema.Properties, lock schema.Height, burn schema.Height,
 	takerAddress sdkTypes.AccAddress, senderAddress sdkTypes.AccAddress, feeRecipientAddress sdkTypes.AccAddress,
-	makerAssetAmount sdkTypes.Dec, makerAssetData types.ID, makerFee sdkTypes.Dec, makerFeeAssetData types.ID,
-	takerAssetAmount sdkTypes.Dec, takerAssetData types.ID, takerFee sdkTypes.Dec, takerFeeAssetData types.ID,
-	expirationTime types.Height, salt types.Height) sdkTypes.Msg {
+	makerAssetAmount sdkTypes.Dec, makerAssetData schema.ID, makerFee sdkTypes.Dec, makerFeeAssetData schema.ID,
+	takerAssetAmount sdkTypes.Dec, takerAssetData schema.ID, takerFee sdkTypes.Dec, takerFeeAssetData schema.ID,
+	expirationTime schema.Height, salt schema.Height) sdkTypes.Msg {
 	return Message{
 		From:                from,
 		MaintainersID:       maintainersID,

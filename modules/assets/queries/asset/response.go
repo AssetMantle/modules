@@ -1,17 +1,20 @@
 package asset
 
-import "github.com/persistenceOne/persistenceSDK/types"
+import (
+	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/types/utility"
+)
 
 type queryResponse struct {
-	Assets types.InterNFTs
+	Assets schema.InterNFTs
 }
 
-var _ types.QueryResponse = (*queryResponse)(nil)
+var _ utility.QueryResponse = (*queryResponse)(nil)
 
-func queryResponsePrototype() types.QueryResponse {
+func queryResponsePrototype() utility.QueryResponse {
 	return queryResponse{}
 }
 
-func newQueryResponse(assets types.InterNFTs) types.QueryResponse {
+func newQueryResponse(assets schema.InterNFTs) utility.QueryResponse {
 	return queryResponse{Assets: assets}
 }
