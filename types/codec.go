@@ -38,4 +38,5 @@ func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*schema.Trait)(nil), nil)
 	codec.RegisterInterface((*schema.Traits)(nil), nil)
 	codec.RegisterInterface((*utility.TransactionRequest)(nil), nil)
+	schema.RegisterCodec(codec)
 }

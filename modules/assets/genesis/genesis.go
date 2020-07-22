@@ -25,7 +25,9 @@ func (genesisState genesisState) Marshall() []byte {
 	return packageCodec.MustMarshalJSON(genesisState)
 }
 func (genesisState genesisState) Unmarshall(byte []byte) utility.GenesisState {
-	packageCodec.UnmarshalJSON(byte, &genesisState)
+	if Error := packageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
+		return nil
+	}
 	return genesisState
 }
 
