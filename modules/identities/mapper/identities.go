@@ -4,21 +4,22 @@ import (
 	"errors"
 	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/types"
+	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/types/utility"
 )
 
 type identities struct {
-	ID   types.ID
-	List []types.InterIdentity
+	ID   schema.ID
+	List []schema.InterIdentity
 
 	mapper  identitiesMapper
 	context sdkTypes.Context
 }
 
-var _ types.InterIdentities = (*identities)(nil)
+var _ schema.InterIdentities = (*identities)(nil)
 
-func (identities identities) GetID() types.ID { return identities.ID }
-func (identities identities) Get(id types.ID) types.InterIdentity {
+func (identities identities) GetID() schema.ID { return identities.ID }
+func (identities identities) Get(id schema.ID) schema.InterIdentity {
 	identityID := identityIDFromInterface(id)
 	for _, oldIdentity := range identities.List {
 		if oldIdentity.GetID().Compare(identityID) == 0 {
@@ -27,12 +28,12 @@ func (identities identities) Get(id types.ID) types.InterIdentity {
 	}
 	return nil
 }
-func (identities identities) GetList() []types.InterIdentity {
+func (identities identities) GetList() []schema.InterIdentity {
 	return identities.List
 }
 
-func (identities identities) Fetch(id types.ID) types.InterIdentities {
-	var identityList []types.InterIdentity
+func (identities identities) Fetch(id schema.ID) schema.InterIdentities {
+	var identityList []schema.InterIdentity
 	identitiesID := identityIDFromInterface(id)
 	if len(identitiesID.HashID.Bytes()) > 0 {
 		identity := identities.mapper.read(identities.context, identitiesID)
@@ -40,7 +41,7 @@ func (identities identities) Fetch(id types.ID) types.InterIdentities {
 			identityList = append(identityList, identity)
 		}
 	} else {
-		appendIdentityList := func(identity types.InterIdentity) bool {
+		appendIdentityList := func(identity schema.InterIdentity) bool {
 			identityList = append(identityList, identity)
 			return false
 		}
@@ -49,18 +50,13 @@ func (identities identities) Fetch(id types.ID) types.InterIdentities {
 	identities.ID, identities.List = id, identityList
 	return identities
 }
-func (identities identities) Add(identity types.InterIdentity) types.InterIdentities {
+func (identities identities) Add(identity schema.InterIdentity) schema.InterIdentities {
 	identities.ID = readIdentityID("")
 	identities.mapper.create(identities.context, identity)
-	for i, oldIdentity := range identities.List {
-		if oldIdentity.GetID().Compare(identity.GetID()) < 0 {
-			identities.List = append(append(identities.List[:i], identity), identities.List[i+1:]...)
-			break
-		}
-	}
+	identities.List = append(identities.List, identity)
 	return identities
 }
-func (identities identities) Remove(identity types.InterIdentity) types.InterIdentities {
+func (identities identities) Remove(identity schema.InterIdentity) schema.InterIdentities {
 	identities.mapper.delete(identities.context, identity.GetID())
 	for i, oldIdentity := range identities.List {
 		if oldIdentity.GetID().Compare(identity.GetID()) == 0 {
@@ -70,7 +66,7 @@ func (identities identities) Remove(identity types.InterIdentity) types.InterIde
 	}
 	return identities
 }
-func (identities identities) Mutate(identity types.InterIdentity) types.InterIdentities {
+func (identities identities) Mutate(identity schema.InterIdentity) schema.InterIdentities {
 	identities.mapper.update(identities.context, identity)
 	for i, oldIdentity := range identities.List {
 		if oldIdentity.GetID().Compare(identity.GetID()) == 0 {
@@ -81,12 +77,12 @@ func (identities identities) Mutate(identity types.InterIdentity) types.InterIde
 	return identities
 }
 
-func NewIdentities(Mapper types.Mapper, context sdkTypes.Context) types.InterIdentities {
+func NewIdentities(Mapper utility.Mapper, context sdkTypes.Context) schema.InterIdentities {
 	switch mapper := Mapper.(type) {
 	case identitiesMapper:
 		return identities{
 			ID:      readIdentityID(""),
-			List:    []types.InterIdentity{},
+			List:    []schema.InterIdentity{},
 			mapper:  mapper,
 			context: context,
 		}

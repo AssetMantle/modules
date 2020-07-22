@@ -1,14 +1,20 @@
 package constants
 
-import "github.com/persistenceOne/persistenceSDK/types"
+import (
+	"github.com/persistenceOne/persistenceSDK/types/utility"
+)
 
 var (
-	AssetID          = types.NewCLIFlag("assetID", "", "AssetID")
-	Burn             = types.NewCLIFlag("burn", int64(-1), "Burn")
-	ClassificationID = types.NewCLIFlag("classificationID", "", "GetClassificationID")
-	IdentityID       = types.NewCLIFlag("identityID", "", "IdentityID")
-	Lock             = types.NewCLIFlag("lock", int64(-1), "Lock")
-	MaintainersID    = types.NewCLIFlag("maintainersID", "", "GetMaintainersID")
-	Properties       = types.NewCLIFlag("properties", "", "GetProperties")
-	To               = types.NewCLIFlag("to", "", "To")
+	AssetID          = utility.NewCLIFlag("assetID", "", "OwnableID")
+	Burn             = utility.NewCLIFlag("burn", int64(-1), "Burn")
+	ClassificationID = utility.NewCLIFlag("classificationID", "", "GetClassificationID")
+	IdentityID       = utility.NewCLIFlag("identityID", "", "OwnerID")
+	Lock             = utility.NewCLIFlag("lock", int64(-1), "Lock")
+	MaintainersID    = utility.NewCLIFlag("maintainersID", "", "GetMaintainersID")
+	OwnableID        = utility.NewCLIFlag("ownableID", "", "OwnableID")
+	Properties       = utility.NewCLIFlag("properties", "", "GetProperties")
+	Split            = utility.NewCLIFlag("split", "", "Split")
+	SplitID          = utility.NewCLIFlag("splitID", "", "SplitID")
+	To               = utility.NewCLIFlag("to", "", "To")
+	ToID             = utility.NewCLIFlag("toID", "", "ToID")
 )

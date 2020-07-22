@@ -1,17 +1,20 @@
 package identity
 
-import "github.com/persistenceOne/persistenceSDK/types"
+import (
+	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/types/utility"
+)
 
 type queryResponse struct {
-	Identities types.InterIdentities
+	Identities schema.InterIdentities
 }
 
-var _ types.QueryResponse = (*queryResponse)(nil)
+var _ utility.QueryResponse = (*queryResponse)(nil)
 
-func queryResponsePrototype() types.QueryResponse {
+func queryResponsePrototype() utility.QueryResponse {
 	return queryResponse{}
 }
 
-func newQueryResponse(identities types.InterIdentities) types.QueryResponse {
+func newQueryResponse(identities schema.InterIdentities) utility.QueryResponse {
 	return queryResponse{Identities: identities}
 }
