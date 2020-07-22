@@ -33,11 +33,7 @@ func (properties properties) GetList() []Property {
 }
 func (properties properties) Add(property Property) Properties {
 	propertyList := properties.GetList()
-	for i, oldProperty := range propertyList {
-		if oldProperty.GetID().Compare(property.GetID()) < 0 {
-			propertyList = append(append(propertyList[:i], property), propertyList[i+1:]...)
-		}
-	}
+	propertyList = append(propertyList, property)
 	return NewProperties(propertyList)
 }
 func (properties properties) Remove(property Property) Properties {
