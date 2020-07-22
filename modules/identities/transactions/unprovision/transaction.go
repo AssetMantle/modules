@@ -4,9 +4,10 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
 	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/types/utility/base"
 )
 
-var Transaction = utility.NewTransaction(
+var Transaction = base.NewTransaction(
 	mapper.ModuleName,
 	TransactionName,
 	TransactionRoute,

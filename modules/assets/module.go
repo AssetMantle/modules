@@ -8,9 +8,10 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mutate"
 	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/types/utility/base"
 )
 
-var Module = utility.NewModule(
+var Module = base.NewModule(
 	mapper.ModuleName,
 	mapper.StoreKey,
 	mapper.DefaultParamspace,

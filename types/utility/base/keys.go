@@ -1,4 +1,4 @@
-package utility
+package base
 
 import (
 	"encoding/json"
