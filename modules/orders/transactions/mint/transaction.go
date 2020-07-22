@@ -1,18 +1,22 @@
 package mint
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/orders/constants"
+	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 var Transaction = types.NewTransaction(
-	constants.ModuleName,
-	constants.MintTransaction,
-	constants.MintTransaction,
-	constants.MintTransactionShort,
-	constants.MintTransactionLong,
+	mapper.ModuleName,
+	TransactionName,
+	TransactionRoute,
+	TransactionShort,
+	TransactionLong,
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]types.CLIFlag{constants.BuyCoinDenom, constants.BuyCoinAmount, constants.SellCoinDenom, constants.SellCoinAmount, constants.Properties},
+	[]types.CLIFlag{constants.ClassificationID, constants.MaintainersID, constants.Properties, constants.Lock, constants.Burn,
+		constants.TakerAddress, constants.SenderAddress, constants.FeeRecipientAddress, constants.MakerAssetAmount, constants.MakerAssetData,
+		constants.MakerFee, constants.MakerFeeAssetData, constants.TakerAssetAmount, constants.TakerAssetData, constants.TakerFee,
+		constants.TakerFeeAssetData, constants.ExpirationTime, constants.Salt},
 )

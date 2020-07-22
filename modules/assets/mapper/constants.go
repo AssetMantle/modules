@@ -2,11 +2,11 @@ package mapper
 
 import "github.com/persistenceOne/persistenceSDK/constants"
 
-const ModuleName = "orders"
+const ModuleName = "assets"
 const ModuleRoute = constants.ProjectRoute + "/" + ModuleName
-const DefaultParamspace = "orders"
-const StoreKey = "orders"
+const DefaultParamspace = "assets"
+const StoreKey = "assets"
 const QueryRoute = ModuleRoute
 const TransactionRoute = ModuleRoute
 
-var StoreKeyPrefix = []byte{0x13}
+var StoreKeyPrefix = []byte{0x11}

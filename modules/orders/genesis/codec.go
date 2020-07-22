@@ -1,13 +1,12 @@
 package genesis
 
 import (
-	"fmt"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
 )
 
 func (genesisState) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(genesisState{}, fmt.Sprintf("/%v/%v", constants.ModuleName, "genesisState"), nil)
+	codec.RegisterConcrete(genesisState{}, mapper.ModuleRoute+"/"+"genesisState", nil)
 }
 
 var packageCodec = codec.New()

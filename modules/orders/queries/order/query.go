@@ -1,16 +1,17 @@
-package asset
+package order
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/orders/constants"
+	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 var Query = types.NewQuery(
-	constants.ModuleName,
-	constants.ModuleName,
-	constants.AssetQuery,
-	constants.AssetQueryShort,
-	constants.AssetQueryLong,
+	mapper.ModuleName,
+	QueryName,
+	QueryRoute,
+	QueryShort,
+	QueryLong,
 	packageCodec,
 	registerCodec,
 	initializeQueryKeeper,

@@ -23,6 +23,8 @@ func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*Mutables)(nil), nil)
 	codec.RegisterInterface((*NFT)(nil), nil)
 	codec.RegisterInterface((*NFTWallet)(nil), nil)
+	codec.RegisterInterface((*Order)(nil), nil)
+	codec.RegisterInterface((*Orders)(nil), nil)
 	codec.RegisterInterface((*Properties)(nil), nil)
 	codec.RegisterInterface((*Property)(nil), nil)
 	codec.RegisterInterface((*QueryRequest)(nil), nil)

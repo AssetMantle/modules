@@ -1,16 +1,17 @@
 package burn
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/orders/constants"
+	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 var Transaction = types.NewTransaction(
-	constants.ModuleName,
-	constants.ModuleName,
-	constants.BurnTransaction,
-	constants.BurnTransactionShort,
-	constants.BurnTransactionLong,
+	mapper.ModuleName,
+	TransactionName,
+	TransactionRoute,
+	TransactionShort,
+	TransactionLong,
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,

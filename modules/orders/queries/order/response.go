@@ -1,9 +1,11 @@
 package order
 
-import "github.com/persistenceOne/persistenceSDK/types"
+import (
+	"github.com/persistenceOne/persistenceSDK/types"
+)
 
 type queryResponse struct {
-	Orders types.InterNFTs
+	Orders types.Orders
 }
 
 var _ types.QueryResponse = (*queryResponse)(nil)
@@ -12,6 +14,6 @@ func queryResponsePrototype() types.QueryResponse {
 	return queryResponse{}
 }
 
-func newQueryResponse(orders types.InterNFTs) types.QueryResponse {
+func newQueryResponse(orders types.Orders) types.QueryResponse {
 	return queryResponse{Orders: orders}
 }

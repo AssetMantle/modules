@@ -6,18 +6,31 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/constants"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 	"strings"
 )
 
 type transactionRequest struct {
-	BaseReq        rest.BaseReq `json:"baseReq"`
-	BuyCoinDenom   string       `json:"buyCoinDenom"`
-	SellCoinDenom  string       `json:"sellCoinDenom"`
-	Properties     string       `json:"properties"`
-	BuyCoinAmount  int64        `json:"buyCoinAmount"`
-	SellCoinAmount int64        `json:"sellCoinAmount"`
+	BaseReq             rest.BaseReq `json:"baseReq"`
+	ClassificationID    string       `json:"classificationID"`
+	MaintainersID       string       `json:"maintainersID"`
+	Properties          string       `json:"properties"`
+	Lock                int64        `json:"lock"`
+	Burn                int64        `json:"burn"`
+	TakerAddress        string       `json:"takerAddress"`
+	SenderAddress       string       `json:"senderAddress"`
+	FeeRecipientAddress string       `json:"feeRecipientAddress"`
+	MakerAssetAmount    int64        `json:"makerAssetAmount"`
+	MakerAssetData      string       `json:"makerAssetData"`
+	MakerFee            int64        `json:"makerFee"`
+	MakerFeeAssetData   string       `json:"makerFeeAssetData"`
+	TakerAssetAmount    int64        `json:"takerAssetAmount"`
+	TakerAssetData      string       `json:"takerAssetData"`
+	TakerFee            int64        `json:"takerFee"`
+	TakerFeeAssetData   string       `json:"takerFeeAssetData"`
+	ExpirationTime      int64        `json:"expirationTime"`
+	Salt                int64        `json:"salt"`
 }
 
 var _ types.TransactionRequest = (*transactionRequest)(nil)
@@ -25,11 +38,24 @@ var _ types.TransactionRequest = (*transactionRequest)(nil)
 func (transactionRequest transactionRequest) FromCLI(cliCommand types.CLICommand, cliContext context.CLIContext) types.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
+		cliCommand.ReadString(constants.ClassificationID),
+		cliCommand.ReadString(constants.MaintainersID),
 		cliCommand.ReadString(constants.Properties),
-		cliCommand.ReadString(constants.BuyCoinDenom),
-		cliCommand.ReadString(constants.SellCoinDenom),
-		cliCommand.ReadInt64(constants.BuyCoinAmount),
-		cliCommand.ReadInt64(constants.SellCoinAmount),
+		cliCommand.ReadInt64(constants.Lock),
+		cliCommand.ReadInt64(constants.Burn),
+		cliCommand.ReadString(constants.TakerAddress),
+		cliCommand.ReadString(constants.SenderAddress),
+		cliCommand.ReadString(constants.FeeRecipientAddress),
+		cliCommand.ReadInt64(constants.MakerAssetAmount),
+		cliCommand.ReadString(constants.MakerAssetData),
+		cliCommand.ReadInt64(constants.MakerFee),
+		cliCommand.ReadString(constants.MakerFeeAssetData),
+		cliCommand.ReadInt64(constants.TakerAssetAmount),
+		cliCommand.ReadString(constants.TakerAssetData),
+		cliCommand.ReadInt64(constants.TakerFee),
+		cliCommand.ReadString(constants.TakerFeeAssetData),
+		cliCommand.ReadInt64(constants.ExpirationTime),
+		cliCommand.ReadInt64(constants.Salt),
 	)
 }
 
@@ -42,6 +68,22 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	if Error != nil {
 		panic(errors.New(fmt.Sprintf("")))
 	}
+
+	takerAddress, Error := sdkTypes.AccAddressFromBech32(transactionRequest.TakerAddress)
+	if Error != nil {
+		panic(errors.New(fmt.Sprintf("")))
+	}
+
+	senderAddress, Error := sdkTypes.AccAddressFromBech32(transactionRequest.SenderAddress)
+	if Error != nil {
+		panic(errors.New(fmt.Sprintf("")))
+	}
+
+	feeRecipientAddress, Error := sdkTypes.AccAddressFromBech32(transactionRequest.FeeRecipientAddress)
+	if Error != nil {
+		panic(errors.New(fmt.Sprintf("")))
+	}
+
 	properties := strings.Split(transactionRequest.Properties, constants.PropertiesSeparator)
 	if len(properties) > constants.MaxTraitCount {
 		panic(errors.New(fmt.Sprintf("")))
@@ -54,21 +96,68 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 			propertyList = append(propertyList, types.NewProperty(types.NewID(traitIDAndProperty[0]), types.NewFact(traitIDAndProperty[1], types.NewSignatures(nil))))
 		}
 	}
-	return newMessage(from, types.NewProperties(propertyList), transactionRequest.SellCoinDenom, sdkTypes.NewInt(transactionRequest.SellCoinAmount), transactionRequest.BuyCoinDenom, sdkTypes.NewInt(transactionRequest.BuyCoinAmount))
 
+	return newMessage(
+		from,
+		types.NewID(transactionRequest.MaintainersID),
+		types.NewID(transactionRequest.ClassificationID),
+		types.NewProperties(propertyList),
+		types.NewHeight(transactionRequest.Lock),
+		types.NewHeight(transactionRequest.Burn),
+		takerAddress,
+		senderAddress,
+		feeRecipientAddress,
+		sdkTypes.NewDec(transactionRequest.MakerAssetAmount),
+		types.NewID(transactionRequest.MakerAssetData),
+		sdkTypes.NewDec(transactionRequest.MakerFee),
+		types.NewID(transactionRequest.MakerFeeAssetData),
+		sdkTypes.NewDec(transactionRequest.TakerAssetAmount),
+		types.NewID(transactionRequest.TakerAssetData),
+		sdkTypes.NewDec(transactionRequest.TakerFee),
+		types.NewID(transactionRequest.TakerFeeAssetData),
+		types.NewHeight(transactionRequest.ExpirationTime),
+		types.NewHeight(transactionRequest.Salt),
+	)
 }
 
 func requestPrototype() types.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, properties string, buyCoinDenom string, sellCoinDenom string, buyCoinAmount int64, sellCoinAmount int64) types.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, classificationID string, maintainersID string, properties string, lock int64, burn int64,
+	takerAddress string,
+	senderAddress string,
+	feeRecipientAddress string,
+	makerAssetAmount int64,
+	makerAssetData string,
+	makerFee int64,
+	makerFeeAssetData string,
+	takerAssetAmount int64,
+	takerAssetData string,
+	takerFee int64,
+	takerFeeAssetData string,
+	expirationTime int64,
+	salt int64,
+) types.TransactionRequest {
 	return transactionRequest{
-		BaseReq:        baseReq,
-		BuyCoinDenom:   buyCoinDenom,
-		SellCoinDenom:  sellCoinDenom,
-		Properties:     properties,
-		BuyCoinAmount:  buyCoinAmount,
-		SellCoinAmount: sellCoinAmount,
+		BaseReq:             baseReq,
+		ClassificationID:    classificationID,
+		MaintainersID:       maintainersID,
+		Properties:          properties,
+		Lock:                lock,
+		Burn:                burn,
+		TakerAddress:        takerAddress,
+		SenderAddress:       senderAddress,
+		FeeRecipientAddress: feeRecipientAddress,
+		MakerAssetAmount:    makerAssetAmount,
+		MakerAssetData:      makerAssetData,
+		MakerFee:            makerFee,
+		MakerFeeAssetData:   makerFeeAssetData,
+		TakerAssetAmount:    takerAssetAmount,
+		TakerAssetData:      takerAssetData,
+		TakerFee:            takerFee,
+		TakerFeeAssetData:   takerFeeAssetData,
+		ExpirationTime:      expirationTime,
+		Salt:                salt,
 	}
 }

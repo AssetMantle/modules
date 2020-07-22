@@ -9,16 +9,16 @@ import (
 
 type orders struct {
 	ID   types.ID
-	List []types.InterNFT
+	List []types.Order
 
 	mapper  ordersMapper
 	context sdkTypes.Context
 }
 
-var _ types.InterNFTs = (*orders)(nil)
+var _ types.Orders = (*orders)(nil)
 
 func (orders orders) GetID() types.ID { return orders.ID }
-func (orders orders) Get(id types.ID) types.InterNFT {
+func (orders orders) Get(id types.ID) types.Order {
 	orderID := orderIDFromInterface(id)
 	for _, oldOrder := range orders.List {
 		if oldOrder.GetID().Compare(orderID) == 0 {
@@ -27,29 +27,29 @@ func (orders orders) Get(id types.ID) types.InterNFT {
 	}
 	return nil
 }
-func (orders orders) GetList() []types.InterNFT {
+func (orders orders) GetList() []types.Order {
 	return orders.List
 }
 
-func (orders orders) Fetch(id types.ID) types.InterNFTs {
-	var orderList []types.InterNFT
-	ordersID := orderIDFromInterface(id)
-	if len(ordersID.HashID.Bytes()) > 0 {
-		order := orders.mapper.read(orders.context, ordersID)
+func (orders orders) Fetch(id types.ID) types.Orders {
+	var orderList []types.Order
+	orderID := orderIDFromInterface(id)
+	if len(orderID.HashID.Bytes()) > 0 {
+		order := orders.mapper.read(orders.context, orderID)
 		if order != nil {
 			orderList = append(orderList, order)
 		}
 	} else {
-		appendOrderList := func(order types.InterNFT) bool {
+		appendOrderList := func(order types.Order) bool {
 			orderList = append(orderList, order)
 			return false
 		}
-		orders.mapper.iterate(orders.context, ordersID, appendOrderList)
+		orders.mapper.iterate(orders.context, orderID, appendOrderList)
 	}
 	orders.ID, orders.List = id, orderList
 	return orders
 }
-func (orders orders) Add(order types.InterNFT) types.InterNFTs {
+func (orders orders) Add(order types.Order) types.Orders {
 	orders.ID = readOrderID("")
 	orders.mapper.create(orders.context, order)
 	for i, oldOrder := range orders.List {
@@ -60,7 +60,7 @@ func (orders orders) Add(order types.InterNFT) types.InterNFTs {
 	}
 	return orders
 }
-func (orders orders) Remove(order types.InterNFT) types.InterNFTs {
+func (orders orders) Remove(order types.Order) types.Orders {
 	orders.mapper.delete(orders.context, order.GetID())
 	for i, oldOrder := range orders.List {
 		if oldOrder.GetID().Compare(order.GetID()) == 0 {
@@ -70,7 +70,7 @@ func (orders orders) Remove(order types.InterNFT) types.InterNFTs {
 	}
 	return orders
 }
-func (orders orders) Mutate(order types.InterNFT) types.InterNFTs {
+func (orders orders) Mutate(order types.Order) types.Orders {
 	orders.mapper.update(orders.context, order)
 	for i, oldOrder := range orders.List {
 		if oldOrder.GetID().Compare(order.GetID()) == 0 {
@@ -81,12 +81,12 @@ func (orders orders) Mutate(order types.InterNFT) types.InterNFTs {
 	return orders
 }
 
-func NewOrders(Mapper types.Mapper, context sdkTypes.Context) types.InterNFTs {
+func NewOrders(Mapper types.Mapper, context sdkTypes.Context) types.Orders {
 	switch mapper := Mapper.(type) {
 	case ordersMapper:
 		return orders{
 			ID:      readOrderID(""),
-			List:    []types.InterNFT{},
+			List:    []types.Order{},
 			mapper:  mapper,
 			context: context,
 		}

@@ -6,13 +6,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/constants"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/types"
 )
 
 type transactionRequest struct {
 	BaseReq rest.BaseReq `json:"baseReq"`
-	AssetID string       `json:"assetID"`
+	OrderID string       `json:"orderID"`
 }
 
 var _ types.TransactionRequest = (*transactionRequest)(nil)
@@ -35,7 +35,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	}
 	return newMessage(
 		from,
-		types.NewID(transactionRequest.AssetID),
+		types.NewID(transactionRequest.OrderID),
 	)
 }
 
@@ -43,9 +43,9 @@ func requestPrototype() types.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, assetID string) types.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, orderID string) types.TransactionRequest {
 	return transactionRequest{
 		BaseReq: baseReq,
-		AssetID: assetID,
+		OrderID: orderID,
 	}
 }
