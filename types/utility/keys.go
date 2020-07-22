@@ -1,4 +1,4 @@
-package types
+package utility
 
 import (
 	"encoding/json"
@@ -15,16 +15,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
-type NewKeyBody struct{
-	Name     string `json:"name"`
+type NewKeyBody struct {
+	Name string `json:"name"`
 }
 
-type NewKeyRecoverBody struct{
+type NewKeyRecoverBody struct {
 	Name     string `json:"name"`
-	Mnemonic     string `json:"mnemonic"`
+	Mnemonic string `json:"mnemonic"`
 }
 
-func  RESTKeysHandler(cliContext context.CLIContext) http.HandlerFunc {
+func RESTKeysHandler(cliContext context.CLIContext) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		var newKey NewKeyBody
 
@@ -52,7 +52,7 @@ func  RESTKeysHandler(cliContext context.CLIContext) http.HandlerFunc {
 	}
 }
 
-func  RESTKeysRecoverHandler(cliContext context.CLIContext) http.HandlerFunc {
+func RESTKeysRecoverHandler(cliContext context.CLIContext) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		var newKeyRecover NewKeyRecoverBody
 
