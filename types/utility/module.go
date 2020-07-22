@@ -22,8 +22,9 @@ type Module interface {
 	GetStoreKey() string
 	GetDefaultParamspace() string
 	GetAuxiliaryKeepers(...string) []AuxiliaryKeeper
-	InitializeKeepers(*codec.Codec, sdkTypes.StoreKey, params.Subspace)
+	InitializeKeepers(*codec.Codec, sdkTypes.StoreKey, params.Subspace, ...interface{})
 }
+
 type module struct {
 	moduleName        string
 	storeKey          string
@@ -162,15 +163,15 @@ func (module module) GetAuxiliaryKeepers(auxiliaryNames ...string) []AuxiliaryKe
 	}
 	return auxiliaryKeeperList
 }
-func (module module) InitializeKeepers(codec *codec.Codec, storeKey sdkTypes.StoreKey, _ params.Subspace, externalKeepers ...interface{}) {
+func (module module) InitializeKeepers(codec *codec.Codec, storeKey sdkTypes.StoreKey, _ params.Subspace, auxiliaryKeepers ...interface{}) {
 	mapper := module.mapper.InitializeMapper(codec, storeKey)
 
 	for _, auxiliary := range module.auxiliaryList {
-		auxiliary.InitializeKeeper(mapper, externalKeepers...)
+		auxiliary.InitializeKeeper(mapper)
 	}
 
 	for _, transaction := range module.transactionList {
-		transaction.InitializeKeeper(mapper, externalKeepers...)
+		transaction.InitializeKeeper(mapper, auxiliaryKeepers...)
 	}
 
 	for _, query := range module.queryList {

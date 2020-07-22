@@ -104,8 +104,8 @@ func (transaction transaction) RegisterCodec(codec *codec.Codec) {
 	transaction.registerCodec(codec)
 }
 
-func (transaction *transaction) InitializeKeeper(mapper Mapper, externalKeepers ...interface{}) {
-	transaction.transactionKeeper = transaction.initializeKeeper(mapper, externalKeepers)
+func (transaction *transaction) InitializeKeeper(mapper Mapper, auxiliaryKeepers ...interface{}) {
+	transaction.transactionKeeper = transaction.initializeKeeper(mapper, auxiliaryKeepers)
 }
 
 func NewTransaction(module string, name string, route string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(Mapper, []interface{}) TransactionKeeper, transactionRequestPrototype func() TransactionRequest, flagList []CLIFlag) Transaction {
