@@ -53,12 +53,7 @@ func (identities identities) Fetch(id schema.ID) schema.InterIdentities {
 func (identities identities) Add(identity schema.InterIdentity) schema.InterIdentities {
 	identities.ID = readIdentityID("")
 	identities.mapper.create(identities.context, identity)
-	for i, oldIdentity := range identities.List {
-		if oldIdentity.GetID().Compare(identity.GetID()) < 0 {
-			identities.List = append(append(identities.List[:i], identity), identities.List[i+1:]...)
-			break
-		}
-	}
+	identities.List = append(identities.List, identity)
 	return identities
 }
 func (identities identities) Remove(identity schema.InterIdentity) schema.InterIdentities {

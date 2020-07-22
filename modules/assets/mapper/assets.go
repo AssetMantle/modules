@@ -53,12 +53,7 @@ func (assets assets) Fetch(id schema.ID) schema.InterNFTs {
 func (assets assets) Add(asset schema.InterNFT) schema.InterNFTs {
 	assets.ID = readAssetID("")
 	assets.mapper.create(assets.context, asset)
-	for i, oldAsset := range assets.List {
-		if oldAsset.GetID().Compare(asset.GetID()) < 0 {
-			assets.List = append(append(assets.List[:i], asset), assets.List[i+1:]...)
-			break
-		}
-	}
+	assets.List = append(assets.List, asset)
 	return assets
 }
 func (assets assets) Remove(asset schema.InterNFT) schema.InterNFTs {
