@@ -6,3 +6,4 @@ const TransactionName = "make"
 const TransactionRoute = mapper.TransactionRoute + "/" + TransactionName
 const TransactionShort = ""
 const TransactionLong = ""
+const ORDER_HASH = "ORDER_HASH"

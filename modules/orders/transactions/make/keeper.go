@@ -4,7 +4,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
@@ -19,8 +18,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	message := messageFromInterface(msg)
 	message.Salt = base.NewHeight(context.BlockHeight())
 	orderHash := message.GenerateHash()
-	makerSignature := base.NewSignature(base.NewID("makerAddress"), message.From.Bytes(), base.NewHeight(context.BlockHeight()))
-	orderHashProperty := base.NewProperty(base.NewID("orderHash"), base.NewFact(orderHash.String(), base.NewSignatures([]types.Signature{makerSignature})))
+	orderHashProperty := base.NewProperty(base.NewID(ORDER_HASH), base.NewFact(orderHash.String(), nil))
 	properties := message.Properties.Add(orderHashProperty)
 	immutables := base.NewImmutables(properties)
 	orderID := mapper.NewOrderID(base.NewID(context.ChainID()), immutables.GetHashID())
