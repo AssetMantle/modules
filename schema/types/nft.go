@@ -1,4 +1,4 @@
-package schema
+package types
 
 type NFT interface {
 	GetID() ID

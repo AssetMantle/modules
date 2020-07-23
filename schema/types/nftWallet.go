@@ -1,4 +1,4 @@
-package schema
+package types
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"

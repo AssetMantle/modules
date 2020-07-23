@@ -1,4 +1,4 @@
-package schema
+package types
 
 type Traits interface {
 	Get(ID) Trait
