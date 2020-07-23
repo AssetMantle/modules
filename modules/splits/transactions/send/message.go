@@ -9,9 +9,9 @@ import (
 )
 
 type message struct {
-	From      sdkTypes.AccAddress
-	ToID      schema.ID
-	OwnableID schema.ID
+	From      sdkTypes.AccAddress `json:"from" valid:"required~Enter the FromAddress,matches(^commit[a-z0-9]{39}$)~FromAddress is Invalid"`
+	ToID      schema.ID           `json:"toID" valid:"required~Enter the ToID"`
+	OwnableID schema.ID           `json:"ownableID" valid:"required~Enter the OwnableID"`
 	Split     sdkTypes.Dec
 }
 

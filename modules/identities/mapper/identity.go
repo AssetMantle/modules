@@ -7,10 +7,10 @@ import (
 
 type identity struct {
 	ID                       schema.ID
-	ProvisionedAddressList   []sdkTypes.AccAddress
-	UnprovisionedAddressList []sdkTypes.AccAddress
-	Immutables               schema.Immutables
-	Mutables                 schema.Mutables
+	ProvisionedAddressList   []sdkTypes.AccAddress `json:"provisionedAddress list" valid:"required~Enter the ProvisionedAddressList"`
+	UnprovisionedAddressList []sdkTypes.AccAddress `json:"unprovisionedaddress list" valid:"required~Enter the UnprovisionedAddressList"`
+	Immutables               schema.Immutables     `json:"immutables" valid:"required~Enter the Immutables"`
+	Mutables                 schema.Mutables       `json:"mutables" valid:"required~Enter the Mutables"`
 }
 
 var _ schema.InterIdentity = (*identity)(nil)

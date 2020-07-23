@@ -6,7 +6,7 @@ import (
 )
 
 type queryResponse struct {
-	Splits schema.Splits
+	Splits schema.Splits `json:"splits" valid:"required~Enter the Splits"`
 }
 
 var _ utility.QueryResponse = (*queryResponse)(nil)

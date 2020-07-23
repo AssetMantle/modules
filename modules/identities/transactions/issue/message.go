@@ -9,11 +9,11 @@ import (
 )
 
 type message struct {
-	From             sdkTypes.AccAddress
-	To               sdkTypes.AccAddress
-	MaintainersID    schema.ID
-	ClassificationID schema.ID
-	Properties       schema.Properties
+	From             sdkTypes.AccAddress `json:"from" valid:"required~Enter the FromAddress,matches(^commit[a-z0-9]{39}$)~FromAddress is Invalid"`
+	To               sdkTypes.AccAddress `json:"to" valid:"required~Enter the ToAddress,matches(^commit[a-z0-9]{39}$)~ToAddress is Invalid"`
+	MaintainersID    schema.ID           `json:"maintainers id" valid:"required~Enter the MaintainersID,matches(^[A-Za-z]$)~MaintainersID is Invalid"`
+	ClassificationID schema.ID           `json:"classification id" valid:"required~Enter the ClassificationID,matches(^[A-Za-z]$)~ClassificationID is Invalid"`
+	Properties       schema.Properties   `json:"properties" valid:"required~Enter the Properties"`
 }
 
 var _ sdkTypes.Msg = message{}

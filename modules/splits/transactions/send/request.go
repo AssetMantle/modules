@@ -13,9 +13,9 @@ import (
 
 type transactionRequest struct {
 	BaseReq   rest.BaseReq `json:"baseReq"`
-	ToID      string
-	OwnableID string
-	Split     string
+	ToID      string       `json:"toID" valid:"required~Enter the ToID,matches(^[A-Za-z]$)~ToID is Invalid"`
+	OwnableID string       `json:"ownableID" valid:"required~Enter the OwnableID,matches(^[A-Za-z]$)~OwnableID is Invalid"`
+	Split     string       `json:"split" valid:"required~Enter the Split,matches(^[A-Za-z]$)~Split is Invalid"`
 }
 
 var _ utility.TransactionRequest = (*transactionRequest)(nil)

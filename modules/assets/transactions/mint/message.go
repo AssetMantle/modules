@@ -10,12 +10,12 @@ import (
 
 //TODO make private
 type Message struct {
-	From             sdkTypes.AccAddress
-	MaintainersID    schema.ID
-	ClassificationID schema.ID
-	Properties       schema.Properties
-	Lock             schema.Height
-	Burn             schema.Height
+	From             sdkTypes.AccAddress `json:"from" valid:"required~Enter the FromAddress,matches(^commit[a-z0-9]{39}$)~FromAddress is Invalid"`
+	MaintainersID    schema.ID           `json:"maintainers id" valid:"required~Enter the MaintainersID"`
+	ClassificationID schema.ID           `json:"classification id" valid:"required~Enter the ClassificationID"`
+	Properties       schema.Properties   `json:"properties" valid:"required~Enter the Properties"`
+	Lock             schema.Height       `json:"lock" valid:"required~Enter the Lock"`
+	Burn             schema.Height       `json:"burn" valid:"required~Enter the Burn"`
 }
 
 var _ sdkTypes.Msg = Message{}

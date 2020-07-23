@@ -7,8 +7,8 @@ import (
 )
 
 type split struct {
-	ID    schema.ID
-	Split sdkTypes.Dec
+	ID    schema.ID    `json:"id" valid:"required~Enter the ID"`
+	Split sdkTypes.Dec `json:"split" valid:"required~Enter the Split,matches(^[0-9]$)~Split is Invalid"`
 }
 
 var _ schema.Split = (*split)(nil)

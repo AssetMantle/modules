@@ -6,7 +6,7 @@ import (
 )
 
 type queryResponse struct {
-	Identities schema.InterIdentities
+	Identities schema.InterIdentities `json:"identities" valid:"required~Enter the Identities"`
 }
 
 var _ utility.QueryResponse = (*queryResponse)(nil)
