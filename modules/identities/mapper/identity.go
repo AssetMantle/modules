@@ -2,7 +2,8 @@ package mapper
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -14,7 +15,7 @@ type identity struct {
 	Mutables                 types.Mutables
 }
 
-var _ entities.InterIdentity = (*identity)(nil)
+var _ mappables.InterIdentity = (*identity)(nil)
 
 func (identity identity) GetID() types.ID { return identity.ID }
 func (identity identity) GetChainID() types.ID {
@@ -30,11 +31,11 @@ func (identity identity) GetProvisionedAddressList() []sdkTypes.AccAddress {
 func (identity identity) GetUnprovisionedAddressList() []sdkTypes.AccAddress {
 	return identity.UnprovisionedAddressList
 }
-func (identity identity) ProvisionAddress(accAddress sdkTypes.AccAddress) entities.InterIdentity {
+func (identity identity) ProvisionAddress(accAddress sdkTypes.AccAddress) mappables.InterIdentity {
 	identity.ProvisionedAddressList = append(identity.ProvisionedAddressList, accAddress)
 	return identity
 }
-func (identity identity) UnprovisionAddress(accAddress sdkTypes.AccAddress) entities.InterIdentity {
+func (identity identity) UnprovisionAddress(accAddress sdkTypes.AccAddress) mappables.InterIdentity {
 	for i, provisionedAddress := range identity.ProvisionedAddressList {
 		if provisionedAddress.Equals(accAddress) {
 			identity.ProvisionedAddressList = append(identity.ProvisionedAddressList[:i], identity.ProvisionedAddressList[i+1:]...)
@@ -62,7 +63,10 @@ func (identity identity) IsUnprovisioned(accAddress sdkTypes.AccAddress) bool {
 	}
 	return false
 }
-func NewIdentity(identityID types.ID, provisionedAddressList []sdkTypes.AccAddress, unprovisionedAddressList []sdkTypes.AccAddress, immutables types.Immutables, mutables types.Mutables) entities.InterIdentity {
+func identityPrototype() traits.Mappable {
+	return identity{}
+}
+func NewIdentity(identityID types.ID, provisionedAddressList []sdkTypes.AccAddress, unprovisionedAddressList []sdkTypes.AccAddress, immutables types.Immutables, mutables types.Mutables) mappables.InterIdentity {
 	return identity{
 		ID:                       identityID,
 		ProvisionedAddressList:   provisionedAddressList,
