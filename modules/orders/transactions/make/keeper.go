@@ -1,7 +1,6 @@
 package make
 
 import (
-	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
@@ -26,7 +25,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	immutables := base.NewImmutables(properties)
 	orderID := mapper.NewOrderID(base.NewID(context.ChainID()), immutables.GetHashID())
 	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(orderID)
-	fmt.Println(orderID.String(), "\n\n")
 	if orders.Get(orderID) != nil {
 		return constants.EntityAlreadyExists
 	}
