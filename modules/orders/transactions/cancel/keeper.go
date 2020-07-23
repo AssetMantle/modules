@@ -4,15 +4,15 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type transactionKeeper struct {
-	mapper utility.Mapper
+	mapper utilities.Mapper
 }
 
-var _ utility.TransactionKeeper = (*transactionKeeper)(nil)
+var _ utilities.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
 	message := messageFromInterface(msg)
@@ -24,13 +24,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if !order.GetMakerAddress().Equals(message.From) {
 		return constants.NotAuthorized
 	}
-	if !order.CanBurn(schema.NewHeight(context.BlockHeight())) {
+	if !order.CanBurn(base.NewHeight(context.BlockHeight())) {
 		return constants.DeletionNotAllowed
 	}
 	orders.Remove(order)
 	return nil
 }
 
-func initializeTransactionKeeper(mapper utility.Mapper, externalKeepers []interface{}) utility.TransactionKeeper {
+func initializeTransactionKeeper(mapper utilities.Mapper, externalKeepers []interface{}) utilities.TransactionKeeper {
 	return transactionKeeper{mapper: mapper}
 }

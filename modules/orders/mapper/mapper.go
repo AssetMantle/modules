@@ -3,21 +3,22 @@ package mapper
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
-func storeKey(orderID schema.ID) []byte {
+func storeKey(orderID types.ID) []byte {
 	return append(StoreKeyPrefix, orderIDFromInterface(orderID).Bytes()...)
 }
 
 type ordersMapper interface {
-	utility.Mapper
-	create(sdkTypes.Context, schema.Order)
-	read(sdkTypes.Context, schema.ID) schema.Order
-	update(sdkTypes.Context, schema.Order)
-	delete(sdkTypes.Context, schema.ID)
-	iterate(sdkTypes.Context, schema.ID, func(schema.Order) bool)
+	utilities.Mapper
+	create(sdkTypes.Context, entities.Order)
+	read(sdkTypes.Context, types.ID) entities.Order
+	update(sdkTypes.Context, entities.Order)
+	delete(sdkTypes.Context, types.ID)
+	iterate(sdkTypes.Context, types.ID, func(entities.Order) bool)
 }
 
 type mapper struct {
@@ -27,12 +28,12 @@ type mapper struct {
 
 var _ ordersMapper = (*mapper)(nil)
 
-func (mapper mapper) InitializeMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) utility.Mapper {
+func (mapper mapper) InitializeMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) utilities.Mapper {
 	mapper.StoreKey = storeKey
 	mapper.Codec = codec
 	return mapper
 }
-func (mapper mapper) create(context sdkTypes.Context, order schema.Order) {
+func (mapper mapper) create(context sdkTypes.Context, order entities.Order) {
 	bytes, Error := mapper.Codec.MarshalBinaryBare(order)
 	if Error != nil {
 		panic(Error)
@@ -40,7 +41,7 @@ func (mapper mapper) create(context sdkTypes.Context, order schema.Order) {
 	kvStore := context.KVStore(mapper.StoreKey)
 	kvStore.Set(storeKey(order.GetID()), bytes)
 }
-func (mapper mapper) read(context sdkTypes.Context, orderID schema.ID) schema.Order {
+func (mapper mapper) read(context sdkTypes.Context, orderID types.ID) entities.Order {
 	kvStore := context.KVStore(mapper.StoreKey)
 	bytes := kvStore.Get(storeKey(orderID))
 	if bytes == nil {
@@ -53,7 +54,7 @@ func (mapper mapper) read(context sdkTypes.Context, orderID schema.ID) schema.Or
 	}
 	return order
 }
-func (mapper mapper) update(context sdkTypes.Context, order schema.Order) {
+func (mapper mapper) update(context sdkTypes.Context, order entities.Order) {
 	bytes, Error := mapper.Codec.MarshalBinaryBare(order)
 	if Error != nil {
 		panic(Error)
@@ -62,11 +63,11 @@ func (mapper mapper) update(context sdkTypes.Context, order schema.Order) {
 	kvStore := context.KVStore(mapper.StoreKey)
 	kvStore.Set(storeKey(assetID), bytes)
 }
-func (mapper mapper) delete(context sdkTypes.Context, orderID schema.ID) {
+func (mapper mapper) delete(context sdkTypes.Context, orderID types.ID) {
 	kvStore := context.KVStore(mapper.StoreKey)
 	kvStore.Delete(storeKey(orderID))
 }
-func (mapper mapper) iterate(context sdkTypes.Context, orderID schema.ID, accumulator func(schema.Order) bool) {
+func (mapper mapper) iterate(context sdkTypes.Context, orderID types.ID, accumulator func(entities.Order) bool) {
 	store := context.KVStore(mapper.StoreKey)
 	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(store, storeKey(orderID))
 
@@ -83,7 +84,7 @@ func (mapper mapper) iterate(context sdkTypes.Context, orderID schema.ID, accumu
 	}
 }
 
-func newMapper() utility.Mapper {
+func newMapper() utilities.Mapper {
 	return mapper{}
 }
 

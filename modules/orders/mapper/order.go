@@ -2,66 +2,60 @@ package mapper
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type order struct {
-	ID           schema.ID
-	Burn         schema.Height
-	Lock         schema.Height
-	Immutables   schema.Immutables
-	Mutables     schema.Mutables
-	MakerAddress sdkTypes.AccAddress
-	TakerAddress sdkTypes.AccAddress
-	//SenderAddress       sdkTypes.AccAddress
-	//FeeRecipientAddress sdkTypes.AccAddress
+	ID               types.ID
+	Burn             types.Height
+	Lock             types.Height
+	Immutables       types.Immutables
+	Mutables         types.Mutables
+	MakerAddress     sdkTypes.AccAddress
+	TakerAddress     sdkTypes.AccAddress
 	MakerAssetAmount sdkTypes.Dec
-	MakerAssetData   schema.ID
-	//MakerFee            sdkTypes.Dec
-	//MakerFeeAssetData   ID
+	MakerAssetData   types.ID
 	TakerAssetAmount sdkTypes.Dec
-	TakerAssetData   schema.ID
-	//TakerFee            sdkTypes.Dec
-	//TakerFeeAssetData   ID
-	//ExpirationTime      Height
-	Salt schema.Height
+	TakerAssetData   types.ID
+	Salt             types.Height
 }
 
-var _ schema.Order = (*order)(nil)
+var _ entities.Order = (*order)(nil)
 
-func (order order) GetID() schema.ID {
+func (order order) GetID() types.ID {
 	return order.ID
 }
 
-func (order order) GetChainID() schema.ID {
+func (order order) GetChainID() types.ID {
 	return orderIDFromInterface(order.ID).ChainID
 }
 
-func (order order) GetClassificationID() schema.ID {
+func (order order) GetClassificationID() types.ID {
 	return orderIDFromInterface(order.ID).ClassificationID
 }
 
-func (order order) GetBurn() schema.Height {
+func (order order) GetBurn() types.Height {
 	return order.Burn
 }
 
-func (order order) CanBurn(currentHeight schema.Height) bool {
+func (order order) CanBurn(currentHeight types.Height) bool {
 	return currentHeight.IsGreaterThan(order.Burn)
 }
 
-func (order order) GetLock() schema.Height {
+func (order order) GetLock() types.Height {
 	return order.Lock
 }
 
-func (order order) CanSend(currentHeight schema.Height) bool {
+func (order order) CanSend(currentHeight types.Height) bool {
 	return currentHeight.IsGreaterThan(order.Lock)
 }
 
-func (order order) GetImmutables() schema.Immutables {
+func (order order) GetImmutables() types.Immutables {
 	return order.Immutables
 }
 
-func (order order) GetMutables() schema.Mutables {
+func (order order) GetMutables() types.Mutables {
 	return order.Mutables
 }
 
@@ -75,30 +69,30 @@ func (order order) GetTakerAddress() sdkTypes.AccAddress {
 func (order order) GetMakerAssetAmount() sdkTypes.Dec {
 	return order.MakerAssetAmount
 }
-func (order order) GetMakerAssetData() schema.ID {
+func (order order) GetMakerAssetData() types.ID {
 	return order.MakerAssetData
 }
 
 func (order order) GetTakerAssetAmount() sdkTypes.Dec {
 	return order.TakerAssetAmount
 }
-func (order order) GetTakerAssetData() schema.ID {
+func (order order) GetTakerAssetData() types.ID {
 	return order.TakerAssetData
 }
-func (order order) GetSalt() schema.Height {
+func (order order) GetSalt() types.Height {
 	return order.Salt
 }
 
-func (order order) SetTakerAddress(takerAddress sdkTypes.AccAddress) schema.Order {
+func (order order) SetTakerAddress(takerAddress sdkTypes.AccAddress) entities.Order {
 	order.TakerAddress = takerAddress
 	return order
 
 }
 
-func NewOrder(orderID schema.ID, burn schema.Height, lock schema.Height, immutables schema.Immutables, mutables schema.Mutables,
+func NewOrder(orderID types.ID, burn types.Height, lock types.Height, immutables types.Immutables, mutables types.Mutables,
 	makerAddess sdkTypes.AccAddress, takerAddress sdkTypes.AccAddress,
-	makerAssetAmount sdkTypes.Dec, makerAssetData schema.ID,
-	takerAssetAmount sdkTypes.Dec, takerAssetData schema.ID, salt schema.Height) order {
+	makerAssetAmount sdkTypes.Dec, makerAssetData types.ID,
+	takerAssetAmount sdkTypes.Dec, takerAssetData types.ID, salt types.Height) order {
 	return order{
 		ID:               orderID,
 		Burn:             burn,

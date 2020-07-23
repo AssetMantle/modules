@@ -3,22 +3,23 @@ package mapper
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
-func storeKey(splitID schema.ID) []byte {
+func storeKey(splitID types.ID) []byte {
 	return append(StoreKeyPrefix, splitIDFromInterface(splitID).Bytes()...)
 }
 
 //TODO make DAO interface
 type splitsMapper interface {
-	utility.Mapper
-	create(sdkTypes.Context, schema.Split)
-	read(sdkTypes.Context, schema.ID) schema.Split
-	update(sdkTypes.Context, schema.Split)
-	delete(sdkTypes.Context, schema.ID)
-	iterate(sdkTypes.Context, schema.ID, func(schema.Split) bool)
+	utilities.Mapper
+	create(sdkTypes.Context, entities.Split)
+	read(sdkTypes.Context, types.ID) entities.Split
+	update(sdkTypes.Context, entities.Split)
+	delete(sdkTypes.Context, types.ID)
+	iterate(sdkTypes.Context, types.ID, func(entities.Split) bool)
 }
 
 type mapper struct {
@@ -28,12 +29,12 @@ type mapper struct {
 
 var _ splitsMapper = (*mapper)(nil)
 
-func (mapper mapper) InitializeMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) utility.Mapper {
+func (mapper mapper) InitializeMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) utilities.Mapper {
 	mapper.StoreKey = storeKey
 	mapper.Codec = codec
 	return mapper
 }
-func (mapper mapper) create(context sdkTypes.Context, split schema.Split) {
+func (mapper mapper) create(context sdkTypes.Context, split entities.Split) {
 	bytes, Error := mapper.Codec.MarshalBinaryBare(split)
 	if Error != nil {
 		panic(Error)
@@ -41,7 +42,7 @@ func (mapper mapper) create(context sdkTypes.Context, split schema.Split) {
 	kvStore := context.KVStore(mapper.StoreKey)
 	kvStore.Set(storeKey(split.GetID()), bytes)
 }
-func (mapper mapper) read(context sdkTypes.Context, splitID schema.ID) schema.Split {
+func (mapper mapper) read(context sdkTypes.Context, splitID types.ID) entities.Split {
 	kvStore := context.KVStore(mapper.StoreKey)
 	bytes := kvStore.Get(storeKey(splitID))
 	if bytes == nil {
@@ -54,7 +55,7 @@ func (mapper mapper) read(context sdkTypes.Context, splitID schema.ID) schema.Sp
 	}
 	return split
 }
-func (mapper mapper) update(context sdkTypes.Context, split schema.Split) {
+func (mapper mapper) update(context sdkTypes.Context, split entities.Split) {
 	bytes, Error := mapper.Codec.MarshalBinaryBare(split)
 	if Error != nil {
 		panic(Error)
@@ -63,11 +64,11 @@ func (mapper mapper) update(context sdkTypes.Context, split schema.Split) {
 	kvStore := context.KVStore(mapper.StoreKey)
 	kvStore.Set(storeKey(splitID), bytes)
 }
-func (mapper mapper) delete(context sdkTypes.Context, splitID schema.ID) {
+func (mapper mapper) delete(context sdkTypes.Context, splitID types.ID) {
 	kvStore := context.KVStore(mapper.StoreKey)
 	kvStore.Delete(storeKey(splitID))
 }
-func (mapper mapper) iterate(context sdkTypes.Context, splitID schema.ID, accumulator func(schema.Split) bool) {
+func (mapper mapper) iterate(context sdkTypes.Context, splitID types.ID, accumulator func(entities.Split) bool) {
 	store := context.KVStore(mapper.StoreKey)
 	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(store, storeKey(splitID))
 
@@ -84,7 +85,7 @@ func (mapper mapper) iterate(context sdkTypes.Context, splitID schema.ID, accumu
 	}
 }
 
-func newMapper() utility.Mapper {
+func newMapper() utilities.Mapper {
 	return mapper{}
 }
 

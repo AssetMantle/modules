@@ -3,10 +3,11 @@ package make
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
 )
 
-var Transaction = utility.NewTransaction(
+var Transaction = base.NewTransaction(
 	mapper.ModuleName,
 	TransactionName,
 	TransactionRoute,
@@ -15,7 +16,7 @@ var Transaction = utility.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]utility.CLIFlag{constants.ClassificationID, constants.MaintainersID, constants.Properties, constants.Lock, constants.Burn,
+	[]utilities.CLIFlag{constants.ClassificationID, constants.MaintainersID, constants.Properties, constants.Lock, constants.Burn,
 		constants.TakerAddress, constants.SenderAddress, constants.FeeRecipientAddress, constants.MakerAssetAmount, constants.MakerAssetData,
 		constants.MakerFee, constants.MakerFeeAssetData, constants.TakerAssetAmount, constants.TakerAssetData, constants.TakerFee,
 		constants.TakerFeeAssetData, constants.ExpirationTime, constants.Salt},

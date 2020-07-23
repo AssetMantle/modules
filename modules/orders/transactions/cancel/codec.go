@@ -2,7 +2,7 @@ package cancel
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/types"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 func registerCodec(codec *codec.Codec) {
@@ -14,6 +14,6 @@ var packageCodec = codec.New()
 
 func init() {
 	registerCodec(packageCodec)
-	types.RegisterCodec(packageCodec)
+	utilities.RegisterCodec(packageCodec)
 	packageCodec.Seal()
 }

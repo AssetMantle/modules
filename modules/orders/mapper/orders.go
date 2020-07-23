@@ -4,22 +4,24 @@ import (
 	"errors"
 	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/mappers"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type orders struct {
-	ID   schema.ID
-	List []schema.Order
+	ID   types.ID
+	List []entities.Order
 
 	mapper  ordersMapper
 	context sdkTypes.Context
 }
 
-var _ schema.Orders = (*orders)(nil)
+var _ mappers.Orders = (*orders)(nil)
 
-func (orders orders) GetID() schema.ID { return orders.ID }
-func (orders orders) Get(id schema.ID) schema.Order {
+func (orders orders) GetID() types.ID { return orders.ID }
+func (orders orders) Get(id types.ID) entities.Order {
 	orderID := orderIDFromInterface(id)
 	for _, oldOrder := range orders.List {
 		if oldOrder.GetID().Compare(orderID) == 0 {
@@ -28,12 +30,12 @@ func (orders orders) Get(id schema.ID) schema.Order {
 	}
 	return nil
 }
-func (orders orders) GetList() []schema.Order {
+func (orders orders) GetList() []entities.Order {
 	return orders.List
 }
 
-func (orders orders) Fetch(id schema.ID) schema.Orders {
-	var orderList []schema.Order
+func (orders orders) Fetch(id types.ID) mappers.Orders {
+	var orderList []entities.Order
 	orderID := orderIDFromInterface(id)
 	if len(orderID.HashID.Bytes()) > 0 {
 		order := orders.mapper.read(orders.context, orderID)
@@ -41,7 +43,7 @@ func (orders orders) Fetch(id schema.ID) schema.Orders {
 			orderList = append(orderList, order)
 		}
 	} else {
-		appendOrderList := func(order schema.Order) bool {
+		appendOrderList := func(order entities.Order) bool {
 			orderList = append(orderList, order)
 			return false
 		}
@@ -50,7 +52,7 @@ func (orders orders) Fetch(id schema.ID) schema.Orders {
 	orders.ID, orders.List = id, orderList
 	return orders
 }
-func (orders orders) Add(order schema.Order) schema.Orders {
+func (orders orders) Add(order entities.Order) mappers.Orders {
 	orders.ID = readOrderID("")
 	orders.mapper.create(orders.context, order)
 	for i, oldOrder := range orders.List {
@@ -61,7 +63,7 @@ func (orders orders) Add(order schema.Order) schema.Orders {
 	}
 	return orders
 }
-func (orders orders) Remove(order schema.Order) schema.Orders {
+func (orders orders) Remove(order entities.Order) mappers.Orders {
 	orders.mapper.delete(orders.context, order.GetID())
 	for i, oldOrder := range orders.List {
 		if oldOrder.GetID().Compare(order.GetID()) == 0 {
@@ -71,7 +73,7 @@ func (orders orders) Remove(order schema.Order) schema.Orders {
 	}
 	return orders
 }
-func (orders orders) Mutate(order schema.Order) schema.Orders {
+func (orders orders) Mutate(order entities.Order) mappers.Orders {
 	orders.mapper.update(orders.context, order)
 	for i, oldOrder := range orders.List {
 		if oldOrder.GetID().Compare(order.GetID()) == 0 {
@@ -82,12 +84,12 @@ func (orders orders) Mutate(order schema.Order) schema.Orders {
 	return orders
 }
 
-func NewOrders(Mapper utility.Mapper, context sdkTypes.Context) schema.Orders {
+func NewOrders(Mapper utilities.Mapper, context sdkTypes.Context) mappers.Orders {
 	switch mapper := Mapper.(type) {
 	case ordersMapper:
 		return orders{
 			ID:      readOrderID(""),
-			List:    []schema.Order{},
+			List:    []entities.Order{},
 			mapper:  mapper,
 			context: context,
 		}

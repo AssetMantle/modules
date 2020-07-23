@@ -1,20 +1,20 @@
 package split
 
 import (
-	"github.com/persistenceOne/persistenceSDK/types/schema"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/mappers"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type queryResponse struct {
-	Splits schema.Splits
+	Splits mappers.Splits
 }
 
-var _ utility.QueryResponse = (*queryResponse)(nil)
+var _ utilities.QueryResponse = (*queryResponse)(nil)
 
-func queryResponsePrototype() utility.QueryResponse {
+func queryResponsePrototype() utilities.QueryResponse {
 	return queryResponse{}
 }
 
-func newQueryResponse(splits schema.Splits) utility.QueryResponse {
+func newQueryResponse(splits mappers.Splits) utilities.QueryResponse {
 	return queryResponse{Splits: splits}
 }

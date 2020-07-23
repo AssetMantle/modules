@@ -7,30 +7,31 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 //TODO make private
 type Message struct {
 	From                sdkTypes.AccAddress
-	MaintainersID       schema.ID
-	ClassificationID    schema.ID
-	Properties          schema.Properties
-	Lock                schema.Height
-	Burn                schema.Height
+	MaintainersID       types.ID
+	ClassificationID    types.ID
+	Properties          types.Properties
+	Lock                types.Height
+	Burn                types.Height
 	TakerAddress        sdkTypes.AccAddress
 	SenderAddress       sdkTypes.AccAddress
 	FeeRecipientAddress sdkTypes.AccAddress
 	MakerAssetAmount    sdkTypes.Dec
-	MakerAssetData      schema.ID
+	MakerAssetData      types.ID
 	MakerFee            sdkTypes.Dec
-	MakerFeeAssetData   schema.ID
+	MakerFeeAssetData   types.ID
 	TakerAssetAmount    sdkTypes.Dec
-	TakerAssetData      schema.ID
+	TakerAssetData      types.ID
 	TakerFee            sdkTypes.Dec
-	TakerFeeAssetData   schema.ID
-	ExpirationTime      schema.Height
-	Salt                schema.Height
+	TakerFeeAssetData   types.ID
+	ExpirationTime      types.Height
+	Salt                types.Height
 }
 
 var _ sdkTypes.Msg = Message{}
@@ -60,7 +61,7 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 	}
 }
 
-func (message Message) GenerateHash() schema.ID {
+func (message Message) GenerateHash() types.ID {
 	hasher := sha512.New()
 	//bz := []byte(message.MakerAddress.String() + message.TakerAddress.String() + message.SenderAddress.String() +
 	//	message.FeeRecipientAddress.String() + message.MakerAssetAmount.String() + message.MakerAssetData.String() +
@@ -73,14 +74,14 @@ func (message Message) GenerateHash() schema.ID {
 	hasher.Write(bz)
 
 	sha := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
-	return schema.NewID(sha)
+	return base.NewID(sha)
 }
 
-func newMessage(from sdkTypes.AccAddress, maintainersID schema.ID, classificationID schema.ID, properties schema.Properties, lock schema.Height, burn schema.Height,
+func newMessage(from sdkTypes.AccAddress, maintainersID types.ID, classificationID types.ID, properties types.Properties, lock types.Height, burn types.Height,
 	takerAddress sdkTypes.AccAddress, senderAddress sdkTypes.AccAddress, feeRecipientAddress sdkTypes.AccAddress,
-	makerAssetAmount sdkTypes.Dec, makerAssetData schema.ID, makerFee sdkTypes.Dec, makerFeeAssetData schema.ID,
-	takerAssetAmount sdkTypes.Dec, takerAssetData schema.ID, takerFee sdkTypes.Dec, takerFeeAssetData schema.ID,
-	expirationTime schema.Height, salt schema.Height) sdkTypes.Msg {
+	makerAssetAmount sdkTypes.Dec, makerAssetData types.ID, makerFee sdkTypes.Dec, makerFeeAssetData types.ID,
+	takerAssetAmount sdkTypes.Dec, takerAssetData types.ID, takerFee sdkTypes.Dec, takerFeeAssetData types.ID,
+	expirationTime types.Height, salt types.Height) sdkTypes.Msg {
 	return Message{
 		From:                from,
 		MaintainersID:       maintainersID,
