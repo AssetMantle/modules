@@ -1,4 +1,4 @@
-package trait
+package traits
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
