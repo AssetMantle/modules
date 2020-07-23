@@ -3,29 +3,30 @@ package asset
 import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type queryRequest struct {
-	AssetID schema.ID `json:"assetID" valid:"required~Enter the AssetID"`
+	AssetID types.ID `json:"assetID" valid:"required~Enter the AssetID"`
 }
 
-var _ utility.QueryRequest = (*queryRequest)(nil)
+var _ utilities.QueryRequest = (*queryRequest)(nil)
 
-func (QueryRequest queryRequest) FromCLI(cliCommand utility.CLICommand, _ context.CLIContext) utility.QueryRequest {
-	return newQueryRequest(schema.NewID(cliCommand.ReadString(constants.AssetID)))
+func (QueryRequest queryRequest) FromCLI(cliCommand utilities.CLICommand, _ context.CLIContext) utilities.QueryRequest {
+	return newQueryRequest(base.NewID(cliCommand.ReadString(constants.AssetID)))
 }
 
-func (QueryRequest queryRequest) FromMap(vars map[string]string) utility.QueryRequest {
-	return newQueryRequest(schema.NewID(vars[constants.AssetID.GetName()]))
+func (QueryRequest queryRequest) FromMap(vars map[string]string) utilities.QueryRequest {
+	return newQueryRequest(base.NewID(vars[constants.AssetID.GetName()]))
 }
 
-func queryRequestPrototype() utility.QueryRequest {
+func queryRequestPrototype() utilities.QueryRequest {
 	return queryRequest{}
 }
 
-func queryRequestFromInterface(QueryRequest utility.QueryRequest) queryRequest {
+func queryRequestFromInterface(QueryRequest utilities.QueryRequest) queryRequest {
 	switch value := QueryRequest.(type) {
 	case queryRequest:
 		return value
@@ -34,6 +35,6 @@ func queryRequestFromInterface(QueryRequest utility.QueryRequest) queryRequest {
 	}
 }
 
-func newQueryRequest(assetID schema.ID) utility.QueryRequest {
+func newQueryRequest(assetID types.ID) utilities.QueryRequest {
 	return queryRequest{AssetID: assetID}
 }

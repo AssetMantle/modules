@@ -2,10 +2,10 @@ package mint
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
 )
 
-var Auxiliary = utility.NewAuxiliary(
+var Auxiliary = base.NewAuxiliary(
 	mapper.ModuleName,
 	AuxiliaryName,
 	AuxiliaryRoute,

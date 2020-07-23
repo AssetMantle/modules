@@ -7,10 +7,11 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/transactions/issue"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/transactions/provision"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/transactions/unprovision"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
 )
 
-var Module = utility.NewModule(
+var Module = base.NewModule(
 	mapper.ModuleName,
 	mapper.StoreKey,
 	mapper.DefaultParamspace,
@@ -18,7 +19,7 @@ var Module = utility.NewModule(
 	mapper.TransactionRoute,
 	genesis.GenesisState,
 	mapper.Mapper,
-	[]utility.Auxiliary{},
-	[]utility.Query{identity.Query},
-	[]utility.Transaction{issue.Transaction, provision.Transaction, unprovision.Transaction},
+	[]utilities.Auxiliary{},
+	[]utilities.Query{identity.Query},
+	[]utilities.Transaction{issue.Transaction, provision.Transaction, unprovision.Transaction},
 )

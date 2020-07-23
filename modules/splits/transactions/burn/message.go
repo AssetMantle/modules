@@ -5,12 +5,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type message struct {
 	From    sdkTypes.AccAddress `json:"from" valid:"required~Enter the FromAddress,matches(^commit[a-z0-9]{39}$)~FromAddress is Invalid"`
-	SplitID schema.ID           `json:"splitID" valid:"required~Enter the SplitID"`
+	SplitID types.ID            `json:"splitID" valid:"required~Enter the SplitID"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -40,7 +40,7 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, splitID schema.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, splitID types.ID) sdkTypes.Msg {
 	return message{
 		From:    from,
 		SplitID: splitID,

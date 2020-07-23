@@ -5,15 +5,15 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type message struct {
 	From       sdkTypes.AccAddress `json:"from" valid:"required~Enter the FromAddress,matches(^commit[a-z0-9]{39}$)~FromAddress is Invalid"`
-	AssetID    schema.ID           `json:"asset id" valid:"required~Enter the AssetID"`
-	Properties schema.Properties   `json:"properties" valid:"required~Enter the Properties"`
-	Lock       schema.Height       `json:"lock" valid:"required~Enter the Lock"`
-	Burn       schema.Height       `json:"burn" valid:"required~Enter the Burn"`
+	AssetID    types.ID            `json:"asset id" valid:"required~Enter the AssetID"`
+	Properties types.Properties    `json:"properties" valid:"required~Enter the Properties"`
+	Lock       types.Height        `json:"lock" valid:"required~Enter the Lock"`
+	Burn       types.Height        `json:"burn" valid:"required~Enter the Burn"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -43,7 +43,7 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, assetID schema.ID, properties schema.Properties, lock schema.Height, burn schema.Height) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, assetID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
 	return message{
 		From:       from,
 		AssetID:    assetID,

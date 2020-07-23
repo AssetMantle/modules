@@ -3,10 +3,11 @@ package identity
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
 )
 
-var Query = utility.NewQuery(
+var Query = base.NewQuery(
 	mapper.ModuleName,
 	QueryName,
 	QueryRoute,
@@ -17,5 +18,5 @@ var Query = utility.NewQuery(
 	initializeQueryKeeper,
 	queryRequestPrototype,
 	queryResponsePrototype,
-	[]utility.CLIFlag{constants.IdentityID},
+	[]utilities.CLIFlag{constants.IdentityID},
 )

@@ -4,14 +4,14 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type transactionKeeper struct {
-	mapper utility.Mapper `json:"mapper" valid:"required~Enter the Mapper"`
+	mapper utilities.Mapper `json:"mapper" valid:"required~Enter the Mapper"`
 }
 
-var _ utility.TransactionKeeper = (*transactionKeeper)(nil)
+var _ utilities.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
 	message := messageFromInterface(msg)
@@ -31,6 +31,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	return nil
 }
 
-func initializeTransactionKeeper(mapper utility.Mapper, _ []interface{}) utility.TransactionKeeper {
+func initializeTransactionKeeper(mapper utilities.Mapper, _ []interface{}) utilities.TransactionKeeper {
 	return transactionKeeper{mapper: mapper}
 }

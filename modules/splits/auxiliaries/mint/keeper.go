@@ -3,17 +3,17 @@ package mint
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type auxiliaryKeeper struct {
-	mapper utility.Mapper `json:"mapper" valid:"required~Enter the Mapper"`
+	mapper utilities.Mapper `json:"assetID" valid:"required~Enter the AssetID"`
 }
 
-var _ utility.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
+var _ utilities.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest utility.AuxiliaryRequest) error {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest utilities.AuxiliaryRequest) error {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	splitID := mapper.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
 	splits := mapper.NewSplits(auxiliaryKeeper.mapper, context).Fetch(splitID)
@@ -21,11 +21,11 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	if split == nil {
 		splits.Add(mapper.NewSplit(splitID, auxiliaryRequest.Split))
 	} else {
-		splits.Mutate(split.Receive(auxiliaryRequest.Split).(schema.Split))
+		splits.Mutate(split.Receive(auxiliaryRequest.Split).(entities.Split))
 	}
 	return nil
 }
 
-func initializeAuxiliaryKeeper(mapper utility.Mapper) utility.AuxiliaryKeeper {
+func initializeAuxiliaryKeeper(mapper utilities.Mapper) utilities.AuxiliaryKeeper {
 	return auxiliaryKeeper{mapper: mapper}
 }

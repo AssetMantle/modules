@@ -4,22 +4,24 @@ import (
 	"errors"
 	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/mappers"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type splits struct {
-	ID   schema.ID      `json:"id" valid:"required~Enter the ID"`
-	List []schema.Split `json:"list" valid:"required~Enter the List"`
+	ID   types.ID         `json:"id" valid:"required~Enter the ID"`
+	List []entities.Split `json:"list" valid:"required~Enter the List"`
 
 	mapper  splitsMapper     `json:"mapper" valid:"required~Enter the Mapper"`
 	context sdkTypes.Context `json:"context" valid:"required~Enter the Context"`
 }
 
-var _ schema.Splits = (*splits)(nil)
+var _ mappers.Splits = (*splits)(nil)
 
-func (splits splits) GetID() schema.ID { return splits.ID }
-func (splits splits) Get(id schema.ID) schema.Split {
+func (splits splits) GetID() types.ID { return splits.ID }
+func (splits splits) Get(id types.ID) entities.Split {
 	splitID := splitIDFromInterface(id)
 	for _, oldSplit := range splits.List {
 		if oldSplit.GetID().Compare(splitID) == 0 {
@@ -28,12 +30,12 @@ func (splits splits) Get(id schema.ID) schema.Split {
 	}
 	return nil
 }
-func (splits splits) GetList() []schema.Split {
+func (splits splits) GetList() []entities.Split {
 	return splits.List
 }
 
-func (splits splits) Fetch(id schema.ID) schema.Splits {
-	var splitList []schema.Split
+func (splits splits) Fetch(id types.ID) mappers.Splits {
+	var splitList []entities.Split
 	splitsID := splitIDFromInterface(id)
 	if len(splitsID.OwnableID.Bytes()) > 0 {
 		split := splits.mapper.read(splits.context, splitsID)
@@ -41,7 +43,7 @@ func (splits splits) Fetch(id schema.ID) schema.Splits {
 			splitList = append(splitList, split)
 		}
 	} else {
-		appendSplitList := func(split schema.Split) bool {
+		appendSplitList := func(split entities.Split) bool {
 			splitList = append(splitList, split)
 			return false
 		}
@@ -50,13 +52,13 @@ func (splits splits) Fetch(id schema.ID) schema.Splits {
 	splits.ID, splits.List = id, splitList
 	return splits
 }
-func (splits splits) Add(split schema.Split) schema.Splits {
+func (splits splits) Add(split entities.Split) mappers.Splits {
 	splits.ID = readSplitID("")
 	splits.mapper.create(splits.context, split)
 	splits.List = append(splits.List, split)
 	return splits
 }
-func (splits splits) Remove(split schema.Split) schema.Splits {
+func (splits splits) Remove(split entities.Split) mappers.Splits {
 	splits.mapper.delete(splits.context, split.GetID())
 	for i, oldSplit := range splits.List {
 		if oldSplit.GetID().Compare(split.GetID()) == 0 {
@@ -66,7 +68,7 @@ func (splits splits) Remove(split schema.Split) schema.Splits {
 	}
 	return splits
 }
-func (splits splits) Mutate(split schema.Split) schema.Splits {
+func (splits splits) Mutate(split entities.Split) mappers.Splits {
 	splits.mapper.update(splits.context, split)
 	for i, oldSplit := range splits.List {
 		if oldSplit.GetID().Compare(split.GetID()) == 0 {
@@ -77,12 +79,12 @@ func (splits splits) Mutate(split schema.Split) schema.Splits {
 	return splits
 }
 
-func NewSplits(Mapper utility.Mapper, context sdkTypes.Context) schema.Splits {
+func NewSplits(Mapper utilities.Mapper, context sdkTypes.Context) mappers.Splits {
 	switch mapper := Mapper.(type) {
 	case splitsMapper:
 		return splits{
 			ID:      readSplitID(""),
-			List:    []schema.Split{},
+			List:    []entities.Split{},
 			mapper:  mapper,
 			context: context,
 		}

@@ -7,8 +7,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type transactionRequest struct {
@@ -16,9 +16,9 @@ type transactionRequest struct {
 	SplitID string       `json:"splitID" valid:"required~Enter the SplitID,matches(^[A-Za-z]$)~SplitID is Invalid"`
 }
 
-var _ utility.TransactionRequest = (*transactionRequest)(nil)
+var _ utilities.TransactionRequest = (*transactionRequest)(nil)
 
-func (transactionRequest transactionRequest) FromCLI(cliCommand utility.CLICommand, cliContext context.CLIContext) utility.TransactionRequest {
+func (transactionRequest transactionRequest) FromCLI(cliCommand utilities.CLICommand, cliContext context.CLIContext) utilities.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(constants.SplitID),
@@ -36,15 +36,15 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	}
 	return newMessage(
 		from,
-		schema.NewID(transactionRequest.SplitID),
+		base.NewID(transactionRequest.SplitID),
 	)
 }
 
-func requestPrototype() utility.TransactionRequest {
+func requestPrototype() utilities.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, splitID string) utility.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, splitID string) utilities.TransactionRequest {
 	return transactionRequest{
 		BaseReq: baseReq,
 		SplitID: splitID,

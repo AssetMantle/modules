@@ -5,15 +5,15 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type message struct {
 	From             sdkTypes.AccAddress `json:"from" valid:"required~Enter the FromAddress,matches(^commit[a-z0-9]{39}$)~FromAddress is Invalid"`
 	To               sdkTypes.AccAddress `json:"to" valid:"required~Enter the ToAddress,matches(^commit[a-z0-9]{39}$)~ToAddress is Invalid"`
-	MaintainersID    schema.ID           `json:"maintainersId" valid:"required~Enter the MaintainersID,matches(^[A-Za-z]$)~MaintainersID is Invalid"`
-	ClassificationID schema.ID           `json:"classificationId" valid:"required~Enter the ClassificationID,matches(^[A-Za-z]$)~ClassificationID is Invalid"`
-	Properties       schema.Properties   `json:"properties" valid:"required~Enter the Properties"`
+	MaintainersID    types.ID            `json:"maintainersId" valid:"required~Enter the MaintainersID,matches(^[A-Za-z]$)~MaintainersID is Invalid"`
+	ClassificationID types.ID            `json:"classificationId" valid:"required~Enter the ClassificationID,matches(^[A-Za-z]$)~ClassificationID is Invalid"`
+	Properties       types.Properties    `json:"properties" valid:"required~Enter the Properties"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -43,7 +43,7 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, maintainersID schema.ID, classificationID schema.ID, properties schema.Properties) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, maintainersID types.ID, classificationID types.ID, properties types.Properties) sdkTypes.Msg {
 	return message{
 		From:             from,
 		To:               to,

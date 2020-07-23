@@ -5,17 +5,17 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 //TODO make private
 type Message struct {
 	From             sdkTypes.AccAddress `json:"from" valid:"required~Enter the FromAddress,matches(^commit[a-z0-9]{39}$)~FromAddress is Invalid"`
-	MaintainersID    schema.ID           `json:"maintainers id" valid:"required~Enter the MaintainersID"`
-	ClassificationID schema.ID           `json:"classification id" valid:"required~Enter the ClassificationID"`
-	Properties       schema.Properties   `json:"properties" valid:"required~Enter the Properties"`
-	Lock             schema.Height       `json:"lock" valid:"required~Enter the Lock"`
-	Burn             schema.Height       `json:"burn" valid:"required~Enter the Burn"`
+	MaintainersID    types.ID            `json:"maintainers id" valid:"required~Enter the MaintainersID"`
+	ClassificationID types.ID            `json:"classification id" valid:"required~Enter the ClassificationID"`
+	Properties       types.Properties    `json:"properties" valid:"required~Enter the Properties"`
+	Lock             types.Height        `json:"lock" valid:"required~Enter the Lock"`
+	Burn             types.Height        `json:"burn" valid:"required~Enter the Burn"`
 }
 
 var _ sdkTypes.Msg = Message{}
@@ -45,7 +45,7 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, maintainersID schema.ID, classificationID schema.ID, properties schema.Properties, lock schema.Height, burn schema.Height) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, maintainersID types.ID, classificationID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
 	return Message{
 		From:             from,
 		MaintainersID:    maintainersID,
