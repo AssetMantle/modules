@@ -7,12 +7,11 @@ import (
 )
 
 type Order interface {
-	types.NFT
+	GetID() types.ID
 	traits.InterChain
 	traits.Burnable
 	traits.Lockable
 	traits.HasImmutables
-	traits.HasMutables
 	GetMakerAddress() sdkTypes.AccAddress
 	GetTakerAddress() sdkTypes.AccAddress
 	GetMakerAssetAmount() sdkTypes.Dec

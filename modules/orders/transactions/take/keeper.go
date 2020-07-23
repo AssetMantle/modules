@@ -22,7 +22,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return constants.EntityNotFound
 	}
 
-	order = mapper.NewOrder(order.GetID(), order.GetBurn(), order.GetLock(), order.GetImmutables(), order.GetMutables(),
+	order = mapper.NewOrder(order.GetID(), order.GetBurn(), order.GetLock(), order.GetImmutables(),
 		order.GetMakerAddress(), message.From, order.GetMakerAssetAmount(), order.GetMakerAssetData(), order.GetTakerAssetAmount(),
 		order.GetTakerAssetData(), order.GetSalt())
 	orders = orders.Mutate(order)

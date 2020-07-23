@@ -78,6 +78,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
+
 		baseReq := request.GetBaseReq()
 		msg := request.MakeMsg()
 

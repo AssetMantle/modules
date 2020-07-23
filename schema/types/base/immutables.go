@@ -26,7 +26,7 @@ func (immutables immutables) GetHashID() types.ID {
 	toDigest := strings.Join(facts, "_")
 	h := sha1.New()
 	h.Write([]byte(toDigest))
-	return NewID(base64.RawURLEncoding.EncodeToString(h.Sum(nil)))
+	return NewID(base64.URLEncoding.EncodeToString(h.Sum(nil)))
 }
 func NewImmutables(properties types.Properties) types.Immutables {
 	return immutables{Properties: properties}

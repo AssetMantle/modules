@@ -11,7 +11,6 @@ type order struct {
 	Burn             types.Height
 	Lock             types.Height
 	Immutables       types.Immutables
-	Mutables         types.Mutables
 	MakerAddress     sdkTypes.AccAddress
 	TakerAddress     sdkTypes.AccAddress
 	MakerAssetAmount sdkTypes.Dec
@@ -29,10 +28,6 @@ func (order order) GetID() types.ID {
 
 func (order order) GetChainID() types.ID {
 	return orderIDFromInterface(order.ID).ChainID
-}
-
-func (order order) GetClassificationID() types.ID {
-	return orderIDFromInterface(order.ID).ClassificationID
 }
 
 func (order order) GetBurn() types.Height {
@@ -53,10 +48,6 @@ func (order order) CanSend(currentHeight types.Height) bool {
 
 func (order order) GetImmutables() types.Immutables {
 	return order.Immutables
-}
-
-func (order order) GetMutables() types.Mutables {
-	return order.Mutables
 }
 
 func (order order) GetMakerAddress() sdkTypes.AccAddress {
@@ -89,7 +80,7 @@ func (order order) SetTakerAddress(takerAddress sdkTypes.AccAddress) entities.Or
 
 }
 
-func NewOrder(orderID types.ID, burn types.Height, lock types.Height, immutables types.Immutables, mutables types.Mutables,
+func NewOrder(orderID types.ID, burn types.Height, lock types.Height, immutables types.Immutables,
 	makerAddess sdkTypes.AccAddress, takerAddress sdkTypes.AccAddress,
 	makerAssetAmount sdkTypes.Dec, makerAssetData types.ID,
 	takerAssetAmount sdkTypes.Dec, takerAssetData types.ID, salt types.Height) order {
@@ -98,7 +89,6 @@ func NewOrder(orderID types.ID, burn types.Height, lock types.Height, immutables
 		Burn:             burn,
 		Lock:             lock,
 		Immutables:       immutables,
-		Mutables:         mutables,
 		MakerAddress:     makerAddess,
 		TakerAddress:     takerAddress,
 		MakerAssetAmount: makerAssetAmount,
@@ -108,25 +98,3 @@ func NewOrder(orderID types.ID, burn types.Height, lock types.Height, immutables
 		Salt:             salt,
 	}
 }
-
-//func NewOrder(makerAddess sdkTypes.AccAddress, takerAddress sdkTypes.AccAddress, senderAddress sdkTypes.AccAddress, feeRecipientAddress sdkTypes.AccAddress,
-//	makerAssetAmount sdkTypes.Dec, makerAssetData ID, makerFee sdkTypes.Dec, makerFeeAssetData ID,
-//	takerAssetAmount sdkTypes.Dec, takerAssetData ID, takerFee sdkTypes.Dec, takerFeeAssetData ID,
-//	expirationTime Height, salt Height) Order {
-//	return order{
-//		MakerAddress:        makerAddess,
-//		TakerAddress:        takerAddress,
-//		SenderAddress:       senderAddress,
-//		FeeRecipientAddress: feeRecipientAddress,
-//		MakerAssetAmount:    makerAssetAmount,
-//		MakerAssetData:      makerAssetData,
-//		MakerFee:            makerFee,
-//		MakerFeeAssetData:   makerFeeAssetData,
-//		TakerAssetAmount:    takerAssetAmount,
-//		TakerAssetData:      takerAssetData,
-//		TakerFee:            takerFee,
-//		TakerFeeAssetData:   takerFeeAssetData,
-//		ExpirationTime:      expirationTime,
-//		Salt:                salt,
-//	}
-//}

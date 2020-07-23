@@ -14,25 +14,18 @@ import (
 )
 
 type transactionRequest struct {
-	BaseReq             rest.BaseReq `json:"baseReq"`
-	ClassificationID    string       `json:"classificationID"`
-	MaintainersID       string       `json:"maintainersID"`
-	Properties          string       `json:"properties"`
-	Lock                int64        `json:"lock"`
-	Burn                int64        `json:"burn"`
-	TakerAddress        string       `json:"takerAddress"`
-	SenderAddress       string       `json:"senderAddress"`
-	FeeRecipientAddress string       `json:"feeRecipientAddress"`
-	MakerAssetAmount    int64        `json:"makerAssetAmount"`
-	MakerAssetData      string       `json:"makerAssetData"`
-	MakerFee            int64        `json:"makerFee"`
-	MakerFeeAssetData   string       `json:"makerFeeAssetData"`
-	TakerAssetAmount    int64        `json:"takerAssetAmount"`
-	TakerAssetData      string       `json:"takerAssetData"`
-	TakerFee            int64        `json:"takerFee"`
-	TakerFeeAssetData   string       `json:"takerFeeAssetData"`
-	ExpirationTime      int64        `json:"expirationTime"`
-	Salt                int64        `json:"salt"`
+	BaseReq          rest.BaseReq `json:"baseReq"`
+	ClassificationID string       `json:"classificationID"`
+	MaintainersID    string       `json:"maintainersID"`
+	Properties       string       `json:"properties"`
+	Lock             int64        `json:"lock"`
+	Burn             int64        `json:"burn"`
+	TakerAddress     string       `json:"takerAddress"`
+	MakerAssetAmount int64        `json:"makerAssetAmount"`
+	MakerAssetData   string       `json:"makerAssetData"`
+	TakerAssetAmount int64        `json:"takerAssetAmount"`
+	TakerAssetData   string       `json:"takerAssetData"`
+	Salt             int64        `json:"salt"`
 }
 
 var _ utilities.TransactionRequest = (*transactionRequest)(nil)
