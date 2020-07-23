@@ -1,16 +1,17 @@
-package schema
+package entities
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type Maintainer interface {
 	Sting() string
 
 	GetAddress() sdkTypes.AccAddress
-	GetID() ID
+	GetID() types.ID
 
-	CanMutateMaintainersProperty(ID) bool
+	CanMutateMaintainersProperty(types.ID) bool
 
 	CanAddMaintainer() bool
 	CanRemoveMaintainer() bool
@@ -18,5 +19,5 @@ type Maintainer interface {
 
 	CanMutateLock() bool
 	CanMutateBurn() bool
-	CanMutateTrait(ID) bool
+	CanMutateTrait(types.ID) bool
 }

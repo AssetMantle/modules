@@ -1,12 +1,13 @@
-package schema
+package entities
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/types/trait"
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type InterIdentity interface {
-	GetID() ID
+	GetID() types.ID
 	GetProvisionedAddressList() []sdkTypes.AccAddress
 	GetUnprovisionedAddressList() []sdkTypes.AccAddress
 
@@ -16,7 +17,7 @@ type InterIdentity interface {
 	IsProvisioned(sdkTypes.AccAddress) bool
 	IsUnprovisioned(sdkTypes.AccAddress) bool
 
-	trait.InterChain
-	trait.HasImmutables
-	trait.HasMutables
+	traits.InterChain
+	traits.HasImmutables
+	traits.HasMutables
 }
