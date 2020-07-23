@@ -6,7 +6,7 @@ import (
 )
 
 type queryResponse struct {
-	Assets schema.InterNFTs
+	Assets schema.InterNFTs `json:"assets" valid:"required~Enter the Assets"`
 }
 
 var _ utility.QueryResponse = (*queryResponse)(nil)

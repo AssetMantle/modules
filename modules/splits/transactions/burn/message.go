@@ -10,7 +10,7 @@ import (
 
 type message struct {
 	From    sdkTypes.AccAddress `json:"from" valid:"required~Enter the FromAddress,matches(^commit[a-z0-9]{39}$)~FromAddress is Invalid"`
-	SplitID schema.ID           `json:"properties" valid:"required~Enter the Properties"`
+	SplitID schema.ID           `json:"splitID" valid:"required~Enter the SplitID"`
 }
 
 var _ sdkTypes.Msg = message{}

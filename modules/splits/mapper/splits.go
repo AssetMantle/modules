@@ -9,11 +9,11 @@ import (
 )
 
 type splits struct {
-	ID   schema.ID
-	List []schema.Split
+	ID   schema.ID      `json:"id" valid:"required~Enter the ID"`
+	List []schema.Split `json:"list" valid:"required~Enter the List"`
 
-	mapper  splitsMapper
-	context sdkTypes.Context
+	mapper  splitsMapper     `json:"mapper" valid:"required~Enter the Mapper"`
+	context sdkTypes.Context `json:"context" valid:"required~Enter the Context"`
 }
 
 var _ schema.Splits = (*splits)(nil)

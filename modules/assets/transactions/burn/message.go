@@ -9,7 +9,7 @@ import (
 )
 
 type message struct {
-	From    sdkTypes.AccAddress `json:"from" valid:"required~Enter the to Address,matches(^commit[a-z0-9]{39}$)~from Address is Invalid"`
+	From    sdkTypes.AccAddress `json:"from" valid:"required~Enter the to Address,matches(^commit[a-z0-9]{39}$)~FromAddress is Invalid"`
 	AssetID schema.ID           `json:"assetID" valid:"required~Enter the AssetID"`
 }
 

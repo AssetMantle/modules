@@ -9,11 +9,11 @@ import (
 )
 
 type assets struct {
-	ID   schema.ID
-	List []schema.InterNFT
+	ID   schema.ID         `json:"id" valid:"required~Enter the ID"`
+	List []schema.InterNFT `json:"list" valid:"required~Enter the List"`
 
-	mapper  assetsMapper
-	context sdkTypes.Context
+	mapper  assetsMapper     `json:"mapper" valid:"required~Enter the Mapper"`
+	context sdkTypes.Context `json:"context" valid:"required~Enter the Context"`
 }
 
 var _ schema.InterNFTs = (*assets)(nil)

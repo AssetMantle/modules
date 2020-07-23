@@ -8,7 +8,7 @@ import (
 )
 
 type queryRequest struct {
-	IdentityID schema.ID `json:"identity id" valid:"required~Enter the IdentityID"`
+	IdentityID schema.ID `json:"identityId" valid:"required~Enter the IdentityID"`
 }
 
 var _ utility.QueryRequest = (*queryRequest)(nil)

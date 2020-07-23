@@ -8,7 +8,7 @@ import (
 )
 
 type queryRequest struct {
-	AssetID schema.ID
+	AssetID schema.ID `json:"assetID" valid:"required~Enter the AssetID"`
 }
 
 var _ utility.QueryRequest = (*queryRequest)(nil)

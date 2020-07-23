@@ -9,10 +9,10 @@ import (
 )
 
 type assetID struct {
-	ChainID          schema.ID
-	MaintainersID    schema.ID
-	ClassificationID schema.ID
-	HashID           schema.ID
+	ChainID          schema.ID `json:"chainID" valid:"required~Enter the ChainID"`
+	MaintainersID    schema.ID `json:"maintainersID" valid:"required~Enter the MaintainersID"`
+	ClassificationID schema.ID `json:"classificationID" valid:"required~Enter the ClassificationID"`
+	HashID           schema.ID `json:"hashID" valid:"required~Enter the HashID"`
 }
 
 var _ schema.ID = (*assetID)(nil)

@@ -5,11 +5,11 @@ import (
 )
 
 type asset struct {
-	ID         schema.ID
-	Burn       schema.Height
-	Lock       schema.Height
-	Immutables schema.Immutables
-	Mutables   schema.Mutables
+	ID         schema.ID         `json:"id" valid:"required~Enter the ID"`
+	Burn       schema.Height     `json:"burn" valid:"required~Enter the Burn"`
+	Lock       schema.Height     `json:"lock" valid:"required~Enter the Lock"`
+	Immutables schema.Immutables `json:"immutables" valid:"required~Enter the Immutables"`
+	Mutables   schema.Mutables   `json:"mutables" valid:"required~Enter the Mutables"`
 }
 
 var _ schema.InterNFT = (*asset)(nil)

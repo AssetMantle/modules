@@ -8,8 +8,8 @@ import (
 )
 
 type splitID struct {
-	OwnerID   schema.ID `json:"Owner id" valid:"required~Enter the OwnerID"`
-	OwnableID schema.ID `json:"Ownableid" valid:"required~Enter the OwnableID"`
+	OwnerID   schema.ID `json:"OwnerId" valid:"required~Enter the OwnerID"`
+	OwnableID schema.ID `json:"OwnableId" valid:"required~Enter the OwnableID"`
 }
 
 var _ schema.ID = (*splitID)(nil)

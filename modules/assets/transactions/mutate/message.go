@@ -11,9 +11,9 @@ import (
 type message struct {
 	From       sdkTypes.AccAddress `json:"from" valid:"required~Enter the FromAddress,matches(^commit[a-z0-9]{39}$)~FromAddress is Invalid"`
 	AssetID    schema.ID           `json:"asset id" valid:"required~Enter the AssetID"`
-	Properties schema.Properties
-	Lock       schema.Height `json:"lock" valid:"required~Enter the Lock"`
-	Burn       schema.Height `json:"burn" valid:"required~Enter the Burn"`
+	Properties schema.Properties   `json:"properties" valid:"required~Enter the Properties"`
+	Lock       schema.Height       `json:"lock" valid:"required~Enter the Lock"`
+	Burn       schema.Height       `json:"burn" valid:"required~Enter the Burn"`
 }
 
 var _ sdkTypes.Msg = message{}

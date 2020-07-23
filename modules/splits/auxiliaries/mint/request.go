@@ -7,8 +7,8 @@ import (
 )
 
 type auxiliaryRequest struct {
-	OwnerID   schema.ID    `json:"Owner id" valid:"required~Enter the OwnerID"`
-	OwnableID schema.ID    `json:"Ownableid" valid:"required~Enter the OwnableID"`
+	OwnerID   schema.ID    `json:"OwnerId" valid:"required~Enter the OwnerID"`
+	OwnableID schema.ID    `json:"OwnableId" valid:"required~Enter the OwnableID"`
 	Split     sdkTypes.Dec `json:"split" valid:"required~Enter the Split,matches(^[0-9]$)~Split is Invalid"`
 }
 

@@ -9,11 +9,11 @@ import (
 )
 
 type identities struct {
-	ID   schema.ID
-	List []schema.InterIdentity
+	ID   schema.ID              `json:"id" valid:"required~Enter the ID"`
+	List []schema.InterIdentity `json:"list" valid:"required~Enter the List"`
 
-	mapper  identitiesMapper
-	context sdkTypes.Context
+	mapper  identitiesMapper `json:"mapper" valid:"required~Enter the Mapper"`
+	context sdkTypes.Context `json:"context" valid:"required~Enter the Context"`
 }
 
 var _ schema.InterIdentities = (*identities)(nil)

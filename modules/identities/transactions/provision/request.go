@@ -14,7 +14,7 @@ import (
 type transactionRequest struct {
 	BaseReq    rest.BaseReq `json:"baseReq"`
 	To         string       `json:"to" valid:"required~Enter the ToAddress,matches(^commit[a-z0-9]{39}$)~ToAddress is Invalid"`
-	IdentityID string       `json:"identity id" valid:"required~Enter the IdentityID,matches(^[A-Za-z]$)~IdentityID is Invalid, use only characters"`
+	IdentityID string       `json:"identityId" valid:"required~Enter the IdentityID,matches(^[A-Za-z]$)~IdentityID is Invalid, use only characters"`
 }
 
 var _ utility.TransactionRequest = (*transactionRequest)(nil)

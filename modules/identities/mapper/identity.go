@@ -6,9 +6,9 @@ import (
 )
 
 type identity struct {
-	ID                       schema.ID
-	ProvisionedAddressList   []sdkTypes.AccAddress `json:"provisionedAddress list" valid:"required~Enter the ProvisionedAddressList"`
-	UnprovisionedAddressList []sdkTypes.AccAddress `json:"unprovisionedaddress list" valid:"required~Enter the UnprovisionedAddressList"`
+	ID                       schema.ID             `json:"id" valid:"required~Enter the ID"`
+	ProvisionedAddressList   []sdkTypes.AccAddress `json:"provisionedAddressList" valid:"required~Enter the ProvisionedAddressList"`
+	UnprovisionedAddressList []sdkTypes.AccAddress `json:"unprovisionedaddressList" valid:"required~Enter the UnprovisionedAddressList"`
 	Immutables               schema.Immutables     `json:"immutables" valid:"required~Enter the Immutables"`
 	Mutables                 schema.Mutables       `json:"mutables" valid:"required~Enter the Mutables"`
 }

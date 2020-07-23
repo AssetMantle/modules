@@ -15,8 +15,8 @@ import (
 type transactionRequest struct {
 	BaseReq          rest.BaseReq `json:"baseReq"`
 	To               string       `json:"to" valid:"required~Enter the ToAddress,matches(^commit[a-z0-9]{39}$)~ToAddress is Invalid"`
-	MaintainersID    string       `json:"maintainers id" valid:"required~Enter the MaintainersID,matches(^[A-Za-z]$)~MaintainersID is Invalid"`
-	ClassificationID string       `json:"classification id" valid:"required~Enter the ClassificationID,matches(^[A-Za-z]$)~ClassificationID is Invalid"`
+	MaintainersID    string       `json:"maintainersId" valid:"required~Enter the MaintainersID,matches(^[A-Za-z]$)~MaintainersID is Invalid"`
+	ClassificationID string       `json:"classificationId" valid:"required~Enter the ClassificationID,matches(^[A-Za-z]$)~ClassificationID is Invalid"`
 	Properties       string       `json:"properties" valid:"required~Enter the Properties,matches(^[A-Za-z]$)~Properties is Invalid, use only characters"`
 }
 
