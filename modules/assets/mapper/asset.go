@@ -1,7 +1,8 @@
 package mapper
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -13,7 +14,7 @@ type asset struct {
 	Mutables   types.Mutables
 }
 
-var _ entities.InterNFT = (*asset)(nil)
+var _ mappables.InterNFT = (*asset)(nil)
 
 func (asset asset) GetID() types.ID {
 	return asset.ID
@@ -50,8 +51,10 @@ func (asset asset) GetImmutables() types.Immutables {
 func (asset asset) GetMutables() types.Mutables {
 	return asset.Mutables
 }
-
-func NewAsset(assetID types.ID, burn types.Height, lock types.Height, immutables types.Immutables, mutables types.Mutables) entities.InterNFT {
+func assetPrototype() traits.Mappable {
+	return asset{}
+}
+func NewAsset(assetID types.ID, burn types.Height, lock types.Height, immutables types.Immutables, mutables types.Mutables) mappables.InterNFT {
 	return asset{
 		ID:         assetID,
 		Burn:       burn,

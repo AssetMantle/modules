@@ -3,7 +3,7 @@ package mint
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
@@ -21,7 +21,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	if split == nil {
 		splits.Add(mapper.NewSplit(splitID, auxiliaryRequest.Split))
 	} else {
-		splits.Mutate(split.Receive(auxiliaryRequest.Split).(entities.Split))
+		splits.Mutate(split.Receive(auxiliaryRequest.Split).(mappables.Split))
 	}
 	return nil
 }

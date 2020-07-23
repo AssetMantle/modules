@@ -60,7 +60,9 @@ func assetIDFromInterface(id types.ID) assetID {
 		return assetIDFromInterface(readAssetID(id.String()))
 	}
 }
-
+func generateKey(assetID types.ID) []byte {
+	return append(StoreKeyPrefix, assetIDFromInterface(assetID).Bytes()...)
+}
 func NewAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
 	return assetID{
 		ChainID:          chainID,

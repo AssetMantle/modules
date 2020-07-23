@@ -1,4 +1,4 @@
-package entities
+package mappables
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -20,4 +20,5 @@ type InterIdentity interface {
 	traits.InterChain
 	traits.HasImmutables
 	traits.HasMutables
+	traits.Mappable
 }

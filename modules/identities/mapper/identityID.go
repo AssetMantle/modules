@@ -59,7 +59,9 @@ func identityIDFromInterface(id types.ID) identityID {
 		return identityIDFromInterface(readIdentityID(id.String()))
 	}
 }
-
+func generateKey(identityID types.ID) []byte {
+	return append(StoreKeyPrefix, identityIDFromInterface(identityID).Bytes()...)
+}
 func NewIdentityID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
 	return identityID{
 		ChainID:          chainID,
