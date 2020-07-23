@@ -21,7 +21,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	message.Salt = base.NewHeight(context.BlockHeight())
 
 	orderHash := message.GenerateHash()
-
+	fmt.Println(orderHash)
 	makerSignature := base.NewSignature(base.NewID("makerAddress"), message.From.Bytes(), base.NewHeight(context.BlockHeight()))
 	orderHashProperty := base.NewProperty(base.NewID("orderHash"), base.NewFact(orderHash.String(), base.NewSignatures([]types.Signature{makerSignature})))
 	properties := message.Properties.Add(orderHashProperty)
@@ -32,10 +32,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if orders.Get(orderID) != nil {
 		return constants.EntityAlreadyExists
 	}
-	fmt.Println("1")
 	orders.Add(mapper.NewOrder(orderID, message.Burn, message.Lock, immutables, mutables, message.From, message.TakerAddress,
 		message.MakerAssetAmount, message.MakerAssetData, message.TakerAssetAmount, message.TakerAssetData, message.Salt))
-	fmt.Println("2")
 	return nil
 }
 

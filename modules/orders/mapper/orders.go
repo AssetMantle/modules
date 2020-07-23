@@ -36,9 +36,9 @@ func (orders orders) GetList() []entities.Order {
 
 func (orders orders) Fetch(id types.ID) mappers.Orders {
 	var orderList []entities.Order
-	orderID := orderIDFromInterface(id)
-	if len(orderID.HashID.Bytes()) > 0 {
-		order := orders.mapper.read(orders.context, orderID)
+	ordersID := orderIDFromInterface(id)
+	if len(ordersID.HashID.Bytes()) > 0 {
+		order := orders.mapper.read(orders.context, ordersID)
 		if order != nil {
 			orderList = append(orderList, order)
 		}
@@ -47,7 +47,7 @@ func (orders orders) Fetch(id types.ID) mappers.Orders {
 			orderList = append(orderList, order)
 			return false
 		}
-		orders.mapper.iterate(orders.context, orderID, appendOrderList)
+		orders.mapper.iterate(orders.context, ordersID, appendOrderList)
 	}
 	orders.ID, orders.List = id, orderList
 	return orders

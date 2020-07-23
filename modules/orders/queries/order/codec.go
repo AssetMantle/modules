@@ -3,7 +3,7 @@ package order
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
+	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
 func registerCodec(codec *codec.Codec) {
@@ -15,7 +15,7 @@ var packageCodec = codec.New()
 
 func init() {
 	registerCodec(packageCodec)
-	utilities.RegisterCodec(packageCodec)
+	schema.RegisterCodec(packageCodec)
 	mapper.Mapper.RegisterCodec(packageCodec)
 	packageCodec.Seal()
 }

@@ -45,7 +45,7 @@ func (mapper mapper) read(context sdkTypes.Context, orderID types.ID) entities.O
 	kvStore := context.KVStore(mapper.StoreKey)
 	bytes := kvStore.Get(storeKey(orderID))
 	if bytes == nil {
-		return order{}
+		return nil
 	}
 	order := order{}
 	Error := mapper.Codec.UnmarshalBinaryBare(bytes, &order)

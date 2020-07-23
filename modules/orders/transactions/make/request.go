@@ -46,17 +46,10 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand utilities.CLICom
 		cliCommand.ReadInt64(constants.Lock),
 		cliCommand.ReadInt64(constants.Burn),
 		cliCommand.ReadString(constants.TakerAddress),
-		cliCommand.ReadString(constants.SenderAddress),
-		cliCommand.ReadString(constants.FeeRecipientAddress),
 		cliCommand.ReadInt64(constants.MakerAssetAmount),
 		cliCommand.ReadString(constants.MakerAssetData),
-		cliCommand.ReadInt64(constants.MakerFee),
-		cliCommand.ReadString(constants.MakerFeeAssetData),
 		cliCommand.ReadInt64(constants.TakerAssetAmount),
 		cliCommand.ReadString(constants.TakerAssetData),
-		cliCommand.ReadInt64(constants.TakerFee),
-		cliCommand.ReadString(constants.TakerFeeAssetData),
-		cliCommand.ReadInt64(constants.ExpirationTime),
 		cliCommand.ReadInt64(constants.Salt),
 	)
 }
@@ -72,16 +65,6 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	}
 
 	takerAddress, Error := sdkTypes.AccAddressFromBech32(transactionRequest.TakerAddress)
-	if Error != nil {
-		panic(errors.New(fmt.Sprintf("")))
-	}
-
-	senderAddress, Error := sdkTypes.AccAddressFromBech32(transactionRequest.SenderAddress)
-	if Error != nil {
-		panic(errors.New(fmt.Sprintf("")))
-	}
-
-	feeRecipientAddress, Error := sdkTypes.AccAddressFromBech32(transactionRequest.FeeRecipientAddress)
 	if Error != nil {
 		panic(errors.New(fmt.Sprintf("")))
 	}
@@ -107,17 +90,10 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 		base.NewHeight(transactionRequest.Lock),
 		base.NewHeight(transactionRequest.Burn),
 		takerAddress,
-		senderAddress,
-		feeRecipientAddress,
 		sdkTypes.NewDec(transactionRequest.MakerAssetAmount),
 		base.NewID(transactionRequest.MakerAssetData),
-		sdkTypes.NewDec(transactionRequest.MakerFee),
-		base.NewID(transactionRequest.MakerFeeAssetData),
 		sdkTypes.NewDec(transactionRequest.TakerAssetAmount),
 		base.NewID(transactionRequest.TakerAssetData),
-		sdkTypes.NewDec(transactionRequest.TakerFee),
-		base.NewID(transactionRequest.TakerFeeAssetData),
-		base.NewHeight(transactionRequest.ExpirationTime),
 		base.NewHeight(transactionRequest.Salt),
 	)
 }
@@ -127,39 +103,20 @@ func requestPrototype() utilities.TransactionRequest {
 }
 
 func newTransactionRequest(baseReq rest.BaseReq, classificationID string, maintainersID string, properties string, lock int64, burn int64,
-	takerAddress string,
-	senderAddress string,
-	feeRecipientAddress string,
-	makerAssetAmount int64,
-	makerAssetData string,
-	makerFee int64,
-	makerFeeAssetData string,
-	takerAssetAmount int64,
-	takerAssetData string,
-	takerFee int64,
-	takerFeeAssetData string,
-	expirationTime int64,
-	salt int64,
+	takerAddress string, makerAssetAmount int64, makerAssetData string, takerAssetAmount int64, takerAssetData string, salt int64,
 ) utilities.TransactionRequest {
 	return transactionRequest{
-		BaseReq:             baseReq,
-		ClassificationID:    classificationID,
-		MaintainersID:       maintainersID,
-		Properties:          properties,
-		Lock:                lock,
-		Burn:                burn,
-		TakerAddress:        takerAddress,
-		SenderAddress:       senderAddress,
-		FeeRecipientAddress: feeRecipientAddress,
-		MakerAssetAmount:    makerAssetAmount,
-		MakerAssetData:      makerAssetData,
-		MakerFee:            makerFee,
-		MakerFeeAssetData:   makerFeeAssetData,
-		TakerAssetAmount:    takerAssetAmount,
-		TakerAssetData:      takerAssetData,
-		TakerFee:            takerFee,
-		TakerFeeAssetData:   takerFeeAssetData,
-		ExpirationTime:      expirationTime,
-		Salt:                salt,
+		BaseReq:          baseReq,
+		ClassificationID: classificationID,
+		MaintainersID:    maintainersID,
+		Properties:       properties,
+		Lock:             lock,
+		Burn:             burn,
+		TakerAddress:     takerAddress,
+		MakerAssetAmount: makerAssetAmount,
+		MakerAssetData:   makerAssetData,
+		TakerAssetAmount: takerAssetAmount,
+		TakerAssetData:   takerAssetData,
+		Salt:             salt,
 	}
 }

@@ -2,7 +2,7 @@ package make
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
+	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
 func registerCodec(codec *codec.Codec) {
@@ -14,6 +14,6 @@ var packageCodec = codec.New()
 
 func init() {
 	registerCodec(packageCodec)
-	utilities.RegisterCodec(packageCodec)
+	schema.RegisterCodec(packageCodec)
 	packageCodec.Seal()
 }
