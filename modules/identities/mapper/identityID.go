@@ -3,18 +3,19 @@ package mapper
 import (
 	"bytes"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"strings"
 )
 
 type identityID struct {
-	ChainID          schema.ID
-	MaintainersID    schema.ID
-	ClassificationID schema.ID
-	HashID           schema.ID
+	ChainID          types.ID
+	MaintainersID    types.ID
+	ClassificationID types.ID
+	HashID           types.ID
 }
 
-var _ schema.ID = (*identityID)(nil)
+var _ types.ID = (*identityID)(nil)
 
 func (identityID identityID) Bytes() []byte {
 	return append(append(append(
@@ -33,24 +34,24 @@ func (identityID identityID) String() string {
 	return strings.Join(values, constants.IDSeparator)
 }
 
-func (identityID identityID) Compare(id schema.ID) int {
+func (identityID identityID) Compare(id types.ID) int {
 	return bytes.Compare(identityID.Bytes(), id.Bytes())
 }
 
-func readIdentityID(identityIDString string) schema.ID {
+func readIdentityID(identityIDString string) types.ID {
 	idList := strings.Split(identityIDString, constants.IDSeparator)
 	if len(idList) == 4 {
 		return identityID{
-			ChainID:          schema.NewID(idList[0]),
-			MaintainersID:    schema.NewID(idList[1]),
-			ClassificationID: schema.NewID(idList[2]),
-			HashID:           schema.NewID(idList[3]),
+			ChainID:          base.NewID(idList[0]),
+			MaintainersID:    base.NewID(idList[1]),
+			ClassificationID: base.NewID(idList[2]),
+			HashID:           base.NewID(idList[3]),
 		}
 	}
-	return identityID{ChainID: schema.NewID(""), MaintainersID: schema.NewID(""), ClassificationID: schema.NewID(""), HashID: schema.NewID("")}
+	return identityID{ChainID: base.NewID(""), MaintainersID: base.NewID(""), ClassificationID: base.NewID(""), HashID: base.NewID("")}
 }
 
-func identityIDFromInterface(id schema.ID) identityID {
+func identityIDFromInterface(id types.ID) identityID {
 	switch value := id.(type) {
 	case identityID:
 		return value
@@ -59,7 +60,7 @@ func identityIDFromInterface(id schema.ID) identityID {
 	}
 }
 
-func NewIdentityID(chainID schema.ID, maintainersID schema.ID, classificationID schema.ID, hashID schema.ID) schema.ID {
+func NewIdentityID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
 	return identityID{
 		ChainID:          chainID,
 		MaintainersID:    maintainersID,

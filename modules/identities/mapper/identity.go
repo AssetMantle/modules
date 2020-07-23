@@ -2,25 +2,26 @@ package mapper
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type identity struct {
-	ID                       schema.ID
+	ID                       types.ID
 	ProvisionedAddressList   []sdkTypes.AccAddress
 	UnprovisionedAddressList []sdkTypes.AccAddress
-	Immutables               schema.Immutables
-	Mutables                 schema.Mutables
+	Immutables               types.Immutables
+	Mutables                 types.Mutables
 }
 
-var _ schema.InterIdentity = (*identity)(nil)
+var _ entities.InterIdentity = (*identity)(nil)
 
-func (identity identity) GetID() schema.ID { return identity.ID }
-func (identity identity) GetChainID() schema.ID {
+func (identity identity) GetID() types.ID { return identity.ID }
+func (identity identity) GetChainID() types.ID {
 	return identityIDFromInterface(identity.ID).ChainID
 }
 
-func (identity identity) GetClassificationID() schema.ID {
+func (identity identity) GetClassificationID() types.ID {
 	return identityIDFromInterface(identity.ID).ClassificationID
 }
 func (identity identity) GetProvisionedAddressList() []sdkTypes.AccAddress {
@@ -29,11 +30,11 @@ func (identity identity) GetProvisionedAddressList() []sdkTypes.AccAddress {
 func (identity identity) GetUnprovisionedAddressList() []sdkTypes.AccAddress {
 	return identity.UnprovisionedAddressList
 }
-func (identity identity) ProvisionAddress(accAddress sdkTypes.AccAddress) schema.InterIdentity {
+func (identity identity) ProvisionAddress(accAddress sdkTypes.AccAddress) entities.InterIdentity {
 	identity.ProvisionedAddressList = append(identity.ProvisionedAddressList, accAddress)
 	return identity
 }
-func (identity identity) UnprovisionAddress(accAddress sdkTypes.AccAddress) schema.InterIdentity {
+func (identity identity) UnprovisionAddress(accAddress sdkTypes.AccAddress) entities.InterIdentity {
 	for i, provisionedAddress := range identity.ProvisionedAddressList {
 		if provisionedAddress.Equals(accAddress) {
 			identity.ProvisionedAddressList = append(identity.ProvisionedAddressList[:i], identity.ProvisionedAddressList[i+1:]...)
@@ -43,8 +44,8 @@ func (identity identity) UnprovisionAddress(accAddress sdkTypes.AccAddress) sche
 	}
 	return identity
 }
-func (identity identity) GetImmutables() schema.Immutables { return identity.Immutables }
-func (identity identity) GetMutables() schema.Mutables     { return identity.Mutables }
+func (identity identity) GetImmutables() types.Immutables { return identity.Immutables }
+func (identity identity) GetMutables() types.Mutables     { return identity.Mutables }
 func (identity identity) IsProvisioned(accAddress sdkTypes.AccAddress) bool {
 	for _, provisionedAddress := range identity.ProvisionedAddressList {
 		if provisionedAddress.Equals(accAddress) {
@@ -61,7 +62,7 @@ func (identity identity) IsUnprovisioned(accAddress sdkTypes.AccAddress) bool {
 	}
 	return false
 }
-func NewIdentity(identityID schema.ID, provisionedAddressList []sdkTypes.AccAddress, unprovisionedAddressList []sdkTypes.AccAddress, immutables schema.Immutables, mutables schema.Mutables) schema.InterIdentity {
+func NewIdentity(identityID types.ID, provisionedAddressList []sdkTypes.AccAddress, unprovisionedAddressList []sdkTypes.AccAddress, immutables types.Immutables, mutables types.Mutables) entities.InterIdentity {
 	return identity{
 		ID:                       identityID,
 		ProvisionedAddressList:   provisionedAddressList,

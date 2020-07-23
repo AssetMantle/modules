@@ -1,56 +1,57 @@
 package mapper
 
 import (
-	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type asset struct {
-	ID         schema.ID
-	Burn       schema.Height
-	Lock       schema.Height
-	Immutables schema.Immutables
-	Mutables   schema.Mutables
+	ID         types.ID
+	Burn       types.Height
+	Lock       types.Height
+	Immutables types.Immutables
+	Mutables   types.Mutables
 }
 
-var _ schema.InterNFT = (*asset)(nil)
+var _ entities.InterNFT = (*asset)(nil)
 
-func (asset asset) GetID() schema.ID {
+func (asset asset) GetID() types.ID {
 	return asset.ID
 }
 
-func (asset asset) GetChainID() schema.ID {
+func (asset asset) GetChainID() types.ID {
 	return assetIDFromInterface(asset.ID).ChainID
 }
 
-func (asset asset) GetClassificationID() schema.ID {
+func (asset asset) GetClassificationID() types.ID {
 	return assetIDFromInterface(asset.ID).ClassificationID
 }
 
-func (asset asset) GetBurn() schema.Height {
+func (asset asset) GetBurn() types.Height {
 	return asset.Burn
 }
 
-func (asset asset) CanBurn(currentHeight schema.Height) bool {
+func (asset asset) CanBurn(currentHeight types.Height) bool {
 	return currentHeight.IsGreaterThan(asset.Burn)
 }
 
-func (asset asset) GetLock() schema.Height {
+func (asset asset) GetLock() types.Height {
 	return asset.Lock
 }
 
-func (asset asset) CanSend(currentHeight schema.Height) bool {
+func (asset asset) CanSend(currentHeight types.Height) bool {
 	return currentHeight.IsGreaterThan(asset.Lock)
 }
 
-func (asset asset) GetImmutables() schema.Immutables {
+func (asset asset) GetImmutables() types.Immutables {
 	return asset.Immutables
 }
 
-func (asset asset) GetMutables() schema.Mutables {
+func (asset asset) GetMutables() types.Mutables {
 	return asset.Mutables
 }
 
-func NewAsset(assetID schema.ID, burn schema.Height, lock schema.Height, immutables schema.Immutables, mutables schema.Mutables) schema.InterNFT {
+func NewAsset(assetID types.ID, burn types.Height, lock types.Height, immutables types.Immutables, mutables types.Mutables) entities.InterNFT {
 	return asset{
 		ID:         assetID,
 		Burn:       burn,

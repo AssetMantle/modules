@@ -3,8 +3,8 @@ package issue
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
-	"github.com/persistenceOne/persistenceSDK/types/utility/base"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
 )
 
 var Transaction = base.NewTransaction(
@@ -16,5 +16,5 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]utility.CLIFlag{constants.To, constants.MaintainersID, constants.ClassificationID, constants.Properties},
+	[]utilities.CLIFlag{constants.To, constants.MaintainersID, constants.ClassificationID, constants.Properties},
 )

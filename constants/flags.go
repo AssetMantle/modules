@@ -1,7 +1,7 @@
 package constants
 
 import (
-	"github.com/persistenceOne/persistenceSDK/types/utility/base"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
 )
 
 var (

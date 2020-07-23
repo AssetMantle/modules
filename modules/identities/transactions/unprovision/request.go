@@ -7,8 +7,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type transactionRequest struct {
@@ -17,9 +17,9 @@ type transactionRequest struct {
 	IdentityID string
 }
 
-var _ utility.TransactionRequest = (*transactionRequest)(nil)
+var _ utilities.TransactionRequest = (*transactionRequest)(nil)
 
-func (transactionRequest transactionRequest) FromCLI(cliCommand utility.CLICommand, cliContext context.CLIContext) utility.TransactionRequest {
+func (transactionRequest transactionRequest) FromCLI(cliCommand utilities.CLICommand, cliContext context.CLIContext) utilities.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(constants.To),
@@ -45,15 +45,15 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	return newMessage(
 		from,
 		to,
-		schema.NewID(transactionRequest.IdentityID),
+		base.NewID(transactionRequest.IdentityID),
 	)
 }
 
-func requestPrototype() utility.TransactionRequest {
+func requestPrototype() utilities.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, to string, identityID string) utility.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, to string, identityID string) utilities.TransactionRequest {
 	return transactionRequest{
 		BaseReq:    baseReq,
 		To:         to,

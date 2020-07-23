@@ -3,8 +3,8 @@ package burn
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
-	"github.com/persistenceOne/persistenceSDK/types/utility/base"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
 )
 
 var Transaction = base.NewTransaction(
@@ -16,5 +16,5 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]utility.CLIFlag{constants.AssetID},
+	[]utilities.CLIFlag{constants.AssetID},
 )

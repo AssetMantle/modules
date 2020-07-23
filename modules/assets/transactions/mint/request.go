@@ -7,8 +7,9 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 	"strings"
 )
 
@@ -21,9 +22,9 @@ type transactionRequest struct {
 	Burn             int64        `json:"burn"`
 }
 
-var _ utility.TransactionRequest = (*transactionRequest)(nil)
+var _ utilities.TransactionRequest = (*transactionRequest)(nil)
 
-func (transactionRequest transactionRequest) FromCLI(cliCommand utility.CLICommand, cliContext context.CLIContext) utility.TransactionRequest {
+func (transactionRequest transactionRequest) FromCLI(cliCommand utilities.CLICommand, cliContext context.CLIContext) utilities.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(constants.ClassificationID),
@@ -49,29 +50,29 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 		panic(errors.New(fmt.Sprintf("")))
 	}
 
-	var propertyList []schema.Property
+	var propertyList []types.Property
 	for _, property := range properties {
 		traitIDAndProperty := strings.Split(property, constants.TraitIDAndPropertySeparator)
 		if len(traitIDAndProperty) == 2 && traitIDAndProperty[0] != "" {
-			propertyList = append(propertyList, schema.NewProperty(schema.NewID(traitIDAndProperty[0]), schema.NewFact(traitIDAndProperty[1], schema.NewSignatures(nil))))
+			propertyList = append(propertyList, base.NewProperty(base.NewID(traitIDAndProperty[0]), base.NewFact(traitIDAndProperty[1], base.NewSignatures(nil))))
 		}
 	}
 
 	return newMessage(
 		from,
-		schema.NewID(transactionRequest.MaintainersID),
-		schema.NewID(transactionRequest.ClassificationID),
-		schema.NewProperties(propertyList),
-		schema.NewHeight(transactionRequest.Lock),
-		schema.NewHeight(transactionRequest.Burn),
+		base.NewID(transactionRequest.MaintainersID),
+		base.NewID(transactionRequest.ClassificationID),
+		base.NewProperties(propertyList),
+		base.NewHeight(transactionRequest.Lock),
+		base.NewHeight(transactionRequest.Burn),
 	)
 }
 
-func requestPrototype() utility.TransactionRequest {
+func requestPrototype() utilities.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, classificationID string, maintainersID string, properties string, lock int64, burn int64) utility.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, classificationID string, maintainersID string, properties string, lock int64, burn int64) utilities.TransactionRequest {
 	return transactionRequest{
 		BaseReq:          baseReq,
 		ClassificationID: classificationID,
