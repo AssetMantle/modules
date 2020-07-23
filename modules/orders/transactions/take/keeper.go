@@ -26,6 +26,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		order.GetMakerAddress(), message.From, order.GetMakerAssetAmount(), order.GetMakerAssetData(), order.GetTakerAssetAmount(),
 		order.GetTakerAssetData(), order.GetSalt())
 	orders = orders.Mutate(order)
+	orders.Remove(order)
 	return nil
 }
 
