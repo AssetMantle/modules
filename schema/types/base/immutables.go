@@ -1,27 +1,23 @@
-package schema
+package base
 
 import (
 	"crypto/sha1"
 	"encoding/base64"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"sort"
 	"strings"
 )
 
-type Immutables interface {
-	Get() Properties
-	GetHashID() ID
-}
-
 type immutables struct {
-	Properties Properties
+	Properties types.Properties
 }
 
-var _ Immutables = (*immutables)(nil)
+var _ types.Immutables = (*immutables)(nil)
 
-func (immutables immutables) Get() Properties {
+func (immutables immutables) Get() types.Properties {
 	return immutables.Properties
 }
-func (immutables immutables) GetHashID() ID {
+func (immutables immutables) GetHashID() types.ID {
 	var facts []string
 	for _, immutableProperty := range immutables.Properties.GetList() {
 		facts = append(facts, immutableProperty.GetFact().String())
@@ -32,6 +28,6 @@ func (immutables immutables) GetHashID() ID {
 	h.Write([]byte(toDigest))
 	return NewID(base64.URLEncoding.EncodeToString(h.Sum(nil)))
 }
-func NewImmutables(properties Properties) Immutables {
+func NewImmutables(properties types.Properties) types.Immutables {
 	return immutables{Properties: properties}
 }
