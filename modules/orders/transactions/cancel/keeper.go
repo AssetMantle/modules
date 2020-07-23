@@ -1,4 +1,4 @@
-package burn
+package cancel
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -20,6 +20,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	order := orders.Get(message.OrderID)
 	if order == nil {
 		return constants.EntityNotFound
+	}
+	if !order.GetMakerAddress().Equals(message.From) {
+		return constants.NotAuthorized
 	}
 	if !order.CanBurn(schema.NewHeight(context.BlockHeight())) {
 		return constants.DeletionNotAllowed

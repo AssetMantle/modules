@@ -1,4 +1,4 @@
-package burn
+package make
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -6,7 +6,7 @@ import (
 )
 
 func registerCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(message{}, TransactionRoute+"/"+"message", nil)
+	codec.RegisterConcrete(Message{}, TransactionRoute+"/"+"message", nil)
 	codec.RegisterConcrete(transactionRequest{}, TransactionRoute+"/"+"request", nil)
 }
 

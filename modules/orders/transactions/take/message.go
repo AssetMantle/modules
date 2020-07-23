@@ -1,4 +1,4 @@
-package mutate
+package take
 
 import (
 	"github.com/asaskevich/govalidator"
@@ -9,11 +9,8 @@ import (
 )
 
 type message struct {
-	From       sdkTypes.AccAddress
-	OrderID    schema.ID
-	Properties schema.Properties
-	Lock       schema.Height
-	Burn       schema.Height
+	From    sdkTypes.AccAddress
+	OrderID schema.ID
 }
 
 var _ sdkTypes.Msg = message{}
@@ -43,12 +40,9 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, orderID schema.ID, properties schema.Properties, lock schema.Height, burn schema.Height) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, orderID schema.ID) sdkTypes.Msg {
 	return message{
-		From:       from,
-		OrderID:    orderID,
-		Properties: properties,
-		Lock:       lock,
-		Burn:       burn,
+		From:    from,
+		OrderID: orderID,
 	}
 }

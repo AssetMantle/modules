@@ -1,4 +1,4 @@
-package burn
+package cancel
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"

@@ -1,4 +1,4 @@
-package mutate
+package take
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"

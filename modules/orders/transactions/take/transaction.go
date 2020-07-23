@@ -1,4 +1,4 @@
-package mutate
+package take
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
@@ -15,5 +15,5 @@ var Transaction = utility.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]utility.CLIFlag{constants.AssetID, constants.Properties, constants.Lock, constants.Burn},
+	[]utility.CLIFlag{constants.OrderID},
 )

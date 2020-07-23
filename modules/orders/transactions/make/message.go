@@ -1,4 +1,4 @@
-package mint
+package make
 
 import (
 	"crypto/sha512"
