@@ -1,4 +1,4 @@
-package entities
+package mappables
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
@@ -9,4 +9,5 @@ type Split interface {
 	GetID() types.ID
 	traits.Ownable
 	traits.Transactional
+	traits.Mappable
 }
