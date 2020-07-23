@@ -1,4 +1,4 @@
-package schema
+package base
 
 import "github.com/cosmos/cosmos-sdk/codec"
 
