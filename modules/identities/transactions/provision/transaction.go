@@ -3,10 +3,11 @@ package provision
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
 )
 
-var Transaction = utility.NewTransaction(
+var Transaction = base.NewTransaction(
 	mapper.ModuleName,
 	TransactionName,
 	TransactionRoute,
@@ -15,5 +16,5 @@ var Transaction = utility.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]utility.CLIFlag{constants.To, constants.IdentityID},
+	[]utilities.CLIFlag{constants.To, constants.IdentityID},
 )

@@ -3,21 +3,22 @@ package mapper
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
-func storeKey(assetID schema.ID) []byte {
+func storeKey(assetID types.ID) []byte {
 	return append(StoreKeyPrefix, assetIDFromInterface(assetID).Bytes()...)
 }
 
 type assetsMapper interface {
-	utility.Mapper
-	create(sdkTypes.Context, schema.InterNFT)
-	read(sdkTypes.Context, schema.ID) schema.InterNFT
-	update(sdkTypes.Context, schema.InterNFT)
-	delete(sdkTypes.Context, schema.ID)
-	iterate(sdkTypes.Context, schema.ID, func(schema.InterNFT) bool)
+	utilities.Mapper
+	create(sdkTypes.Context, entities.InterNFT)
+	read(sdkTypes.Context, types.ID) entities.InterNFT
+	update(sdkTypes.Context, entities.InterNFT)
+	delete(sdkTypes.Context, types.ID)
+	iterate(sdkTypes.Context, types.ID, func(entities.InterNFT) bool)
 }
 
 type mapper struct {
@@ -27,12 +28,12 @@ type mapper struct {
 
 var _ assetsMapper = (*mapper)(nil)
 
-func (mapper mapper) InitializeMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) utility.Mapper {
+func (mapper mapper) InitializeMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) utilities.Mapper {
 	mapper.StoreKey = storeKey
 	mapper.Codec = codec
 	return mapper
 }
-func (mapper mapper) create(context sdkTypes.Context, asset schema.InterNFT) {
+func (mapper mapper) create(context sdkTypes.Context, asset entities.InterNFT) {
 	bytes, Error := mapper.Codec.MarshalBinaryBare(asset)
 	if Error != nil {
 		panic(Error)
@@ -40,7 +41,7 @@ func (mapper mapper) create(context sdkTypes.Context, asset schema.InterNFT) {
 	kvStore := context.KVStore(mapper.StoreKey)
 	kvStore.Set(storeKey(asset.GetID()), bytes)
 }
-func (mapper mapper) read(context sdkTypes.Context, assetID schema.ID) schema.InterNFT {
+func (mapper mapper) read(context sdkTypes.Context, assetID types.ID) entities.InterNFT {
 	kvStore := context.KVStore(mapper.StoreKey)
 	bytes := kvStore.Get(storeKey(assetID))
 	if bytes == nil {
@@ -53,7 +54,7 @@ func (mapper mapper) read(context sdkTypes.Context, assetID schema.ID) schema.In
 	}
 	return asset
 }
-func (mapper mapper) update(context sdkTypes.Context, asset schema.InterNFT) {
+func (mapper mapper) update(context sdkTypes.Context, asset entities.InterNFT) {
 	bytes, Error := mapper.Codec.MarshalBinaryBare(asset)
 	if Error != nil {
 		panic(Error)
@@ -62,11 +63,11 @@ func (mapper mapper) update(context sdkTypes.Context, asset schema.InterNFT) {
 	kvStore := context.KVStore(mapper.StoreKey)
 	kvStore.Set(storeKey(assetID), bytes)
 }
-func (mapper mapper) delete(context sdkTypes.Context, assetID schema.ID) {
+func (mapper mapper) delete(context sdkTypes.Context, assetID types.ID) {
 	kvStore := context.KVStore(mapper.StoreKey)
 	kvStore.Delete(storeKey(assetID))
 }
-func (mapper mapper) iterate(context sdkTypes.Context, assetID schema.ID, accumulator func(schema.InterNFT) bool) {
+func (mapper mapper) iterate(context sdkTypes.Context, assetID types.ID, accumulator func(entities.InterNFT) bool) {
 	store := context.KVStore(mapper.StoreKey)
 	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(store, storeKey(assetID))
 
@@ -83,7 +84,7 @@ func (mapper mapper) iterate(context sdkTypes.Context, assetID schema.ID, accumu
 	}
 }
 
-func newMapper() utility.Mapper {
+func newMapper() utilities.Mapper {
 	return mapper{}
 }
 

@@ -4,22 +4,24 @@ import (
 	"errors"
 	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/mappers"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type identities struct {
-	ID   schema.ID
-	List []schema.InterIdentity
+	ID   types.ID
+	List []entities.InterIdentity
 
 	mapper  identitiesMapper
 	context sdkTypes.Context
 }
 
-var _ schema.InterIdentities = (*identities)(nil)
+var _ mappers.InterIdentities = (*identities)(nil)
 
-func (identities identities) GetID() schema.ID { return identities.ID }
-func (identities identities) Get(id schema.ID) schema.InterIdentity {
+func (identities identities) GetID() types.ID { return identities.ID }
+func (identities identities) Get(id types.ID) entities.InterIdentity {
 	identityID := identityIDFromInterface(id)
 	for _, oldIdentity := range identities.List {
 		if oldIdentity.GetID().Compare(identityID) == 0 {
@@ -28,12 +30,12 @@ func (identities identities) Get(id schema.ID) schema.InterIdentity {
 	}
 	return nil
 }
-func (identities identities) GetList() []schema.InterIdentity {
+func (identities identities) GetList() []entities.InterIdentity {
 	return identities.List
 }
 
-func (identities identities) Fetch(id schema.ID) schema.InterIdentities {
-	var identityList []schema.InterIdentity
+func (identities identities) Fetch(id types.ID) mappers.InterIdentities {
+	var identityList []entities.InterIdentity
 	identitiesID := identityIDFromInterface(id)
 	if len(identitiesID.HashID.Bytes()) > 0 {
 		identity := identities.mapper.read(identities.context, identitiesID)
@@ -41,7 +43,7 @@ func (identities identities) Fetch(id schema.ID) schema.InterIdentities {
 			identityList = append(identityList, identity)
 		}
 	} else {
-		appendIdentityList := func(identity schema.InterIdentity) bool {
+		appendIdentityList := func(identity entities.InterIdentity) bool {
 			identityList = append(identityList, identity)
 			return false
 		}
@@ -50,13 +52,13 @@ func (identities identities) Fetch(id schema.ID) schema.InterIdentities {
 	identities.ID, identities.List = id, identityList
 	return identities
 }
-func (identities identities) Add(identity schema.InterIdentity) schema.InterIdentities {
+func (identities identities) Add(identity entities.InterIdentity) mappers.InterIdentities {
 	identities.ID = readIdentityID("")
 	identities.mapper.create(identities.context, identity)
 	identities.List = append(identities.List, identity)
 	return identities
 }
-func (identities identities) Remove(identity schema.InterIdentity) schema.InterIdentities {
+func (identities identities) Remove(identity entities.InterIdentity) mappers.InterIdentities {
 	identities.mapper.delete(identities.context, identity.GetID())
 	for i, oldIdentity := range identities.List {
 		if oldIdentity.GetID().Compare(identity.GetID()) == 0 {
@@ -66,7 +68,7 @@ func (identities identities) Remove(identity schema.InterIdentity) schema.InterI
 	}
 	return identities
 }
-func (identities identities) Mutate(identity schema.InterIdentity) schema.InterIdentities {
+func (identities identities) Mutate(identity entities.InterIdentity) mappers.InterIdentities {
 	identities.mapper.update(identities.context, identity)
 	for i, oldIdentity := range identities.List {
 		if oldIdentity.GetID().Compare(identity.GetID()) == 0 {
@@ -77,12 +79,12 @@ func (identities identities) Mutate(identity schema.InterIdentity) schema.InterI
 	return identities
 }
 
-func NewIdentities(Mapper utility.Mapper, context sdkTypes.Context) schema.InterIdentities {
+func NewIdentities(Mapper utilities.Mapper, context sdkTypes.Context) mappers.InterIdentities {
 	switch mapper := Mapper.(type) {
 	case identitiesMapper:
 		return identities{
 			ID:      readIdentityID(""),
-			List:    []schema.InterIdentity{},
+			List:    []entities.InterIdentity{},
 			mapper:  mapper,
 			context: context,
 		}

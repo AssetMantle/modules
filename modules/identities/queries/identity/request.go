@@ -3,29 +3,30 @@ package identity
 import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type queryRequest struct {
-	IdentityID schema.ID
+	IdentityID types.ID
 }
 
-var _ utility.QueryRequest = (*queryRequest)(nil)
+var _ utilities.QueryRequest = (*queryRequest)(nil)
 
-func (QueryRequest queryRequest) FromCLI(cliCommand utility.CLICommand, _ context.CLIContext) utility.QueryRequest {
-	return newQueryRequest(schema.NewID(cliCommand.ReadString(constants.IdentityID)))
+func (QueryRequest queryRequest) FromCLI(cliCommand utilities.CLICommand, _ context.CLIContext) utilities.QueryRequest {
+	return newQueryRequest(base.NewID(cliCommand.ReadString(constants.IdentityID)))
 }
 
-func (QueryRequest queryRequest) FromMap(vars map[string]string) utility.QueryRequest {
-	return newQueryRequest(schema.NewID(vars[constants.IdentityID.GetName()]))
+func (QueryRequest queryRequest) FromMap(vars map[string]string) utilities.QueryRequest {
+	return newQueryRequest(base.NewID(vars[constants.IdentityID.GetName()]))
 }
 
-func queryRequestPrototype() utility.QueryRequest {
+func queryRequestPrototype() utilities.QueryRequest {
 	return queryRequest{}
 }
 
-func queryRequestFromInterface(QueryRequest utility.QueryRequest) queryRequest {
+func queryRequestFromInterface(QueryRequest utilities.QueryRequest) queryRequest {
 	switch value := QueryRequest.(type) {
 	case queryRequest:
 		return value
@@ -34,6 +35,6 @@ func queryRequestFromInterface(QueryRequest utility.QueryRequest) queryRequest {
 	}
 }
 
-func newQueryRequest(identityID schema.ID) utility.QueryRequest {
+func newQueryRequest(identityID types.ID) utilities.QueryRequest {
 	return queryRequest{IdentityID: identityID}
 }

@@ -1,20 +1,20 @@
 package constants
 
 import (
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
 )
 
 var (
-	AssetID          = utility.NewCLIFlag("assetID", "", "OwnableID")
-	Burn             = utility.NewCLIFlag("burn", int64(-1), "Burn")
-	ClassificationID = utility.NewCLIFlag("classificationID", "", "GetClassificationID")
-	IdentityID       = utility.NewCLIFlag("identityID", "", "OwnerID")
-	Lock             = utility.NewCLIFlag("lock", int64(-1), "Lock")
-	MaintainersID    = utility.NewCLIFlag("maintainersID", "", "GetMaintainersID")
-	OwnableID        = utility.NewCLIFlag("ownableID", "", "OwnableID")
-	Properties       = utility.NewCLIFlag("properties", "", "GetProperties")
-	Split            = utility.NewCLIFlag("split", "", "Split")
-	SplitID          = utility.NewCLIFlag("splitID", "", "SplitID")
-	To               = utility.NewCLIFlag("to", "", "To")
-	ToID             = utility.NewCLIFlag("toID", "", "ToID")
+	AssetID          = base.NewCLIFlag("assetID", "", "OwnableID")
+	Burn             = base.NewCLIFlag("burn", int64(-1), "Burn")
+	ClassificationID = base.NewCLIFlag("classificationID", "", "GetClassificationID")
+	IdentityID       = base.NewCLIFlag("identityID", "", "OwnerID")
+	Lock             = base.NewCLIFlag("lock", int64(-1), "Lock")
+	MaintainersID    = base.NewCLIFlag("maintainersID", "", "GetMaintainersID")
+	OwnableID        = base.NewCLIFlag("ownableID", "", "OwnableID")
+	Properties       = base.NewCLIFlag("properties", "", "GetProperties")
+	Split            = base.NewCLIFlag("split", "", "Split")
+	SplitID          = base.NewCLIFlag("splitID", "", "SplitID")
+	To               = base.NewCLIFlag("to", "", "To")
+	ToID             = base.NewCLIFlag("toID", "", "ToID")
 )

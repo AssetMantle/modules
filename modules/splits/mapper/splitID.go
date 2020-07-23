@@ -3,16 +3,17 @@ package mapper
 import (
 	"bytes"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/types/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"strings"
 )
 
 type splitID struct {
-	OwnerID   schema.ID
-	OwnableID schema.ID
+	OwnerID   types.ID
+	OwnableID types.ID
 }
 
-var _ schema.ID = (*splitID)(nil)
+var _ types.ID = (*splitID)(nil)
 
 func (splitID splitID) Bytes() []byte {
 	return append(
@@ -28,22 +29,22 @@ func (splitID splitID) String() string {
 	return strings.Join(values, constants.IDSeparator)
 }
 
-func (splitID splitID) Compare(id schema.ID) int {
+func (splitID splitID) Compare(id types.ID) int {
 	return bytes.Compare(splitID.Bytes(), id.Bytes())
 }
 
-func readSplitID(splitIDString string) schema.ID {
+func readSplitID(splitIDString string) types.ID {
 	idList := strings.Split(splitIDString, constants.IDSeparator)
 	if len(idList) == 2 {
 		return splitID{
-			OwnerID:   schema.NewID(idList[0]),
-			OwnableID: schema.NewID(idList[1]),
+			OwnerID:   base.NewID(idList[0]),
+			OwnableID: base.NewID(idList[1]),
 		}
 	}
-	return splitID{OwnerID: schema.NewID(""), OwnableID: schema.NewID("")}
+	return splitID{OwnerID: base.NewID(""), OwnableID: base.NewID("")}
 }
 
-func splitIDFromInterface(id schema.ID) splitID {
+func splitIDFromInterface(id types.ID) splitID {
 	switch value := id.(type) {
 	case splitID:
 		return value
@@ -52,7 +53,7 @@ func splitIDFromInterface(id schema.ID) splitID {
 	}
 }
 
-func NewSplitID(ownerID schema.ID, ownableID schema.ID) schema.ID {
+func NewSplitID(ownerID types.ID, ownableID types.ID) types.ID {
 	return splitID{
 		OwnerID:   ownerID,
 		OwnableID: ownableID,
