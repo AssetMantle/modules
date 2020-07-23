@@ -52,7 +52,9 @@ func splitIDFromInterface(id types.ID) splitID {
 		return splitIDFromInterface(readSplitID(id.String()))
 	}
 }
-
+func generateKey(splitID types.ID) []byte {
+	return append(StoreKeyPrefix, splitIDFromInterface(splitID).Bytes()...)
+}
 func NewSplitID(ownerID types.ID, ownableID types.ID) types.ID {
 	return splitID{
 		OwnerID:   ownerID,

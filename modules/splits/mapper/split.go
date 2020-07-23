@@ -2,7 +2,7 @@ package mapper
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
@@ -12,7 +12,7 @@ type split struct {
 	Split sdkTypes.Dec
 }
 
-var _ entities.Split = (*split)(nil)
+var _ mappables.Split = (*split)(nil)
 
 func (split split) GetID() types.ID { return split.ID }
 func (split split) GetOwnerID() types.ID {
@@ -35,7 +35,10 @@ func (split split) Receive(Split sdkTypes.Dec) traits.Transactional {
 func (split split) CanSend(Split sdkTypes.Dec) bool {
 	return split.Split.GTE(Split)
 }
-func NewSplit(splitID types.ID, Split sdkTypes.Dec) entities.Split {
+func splitPrototype() traits.Mappable {
+	return split{}
+}
+func NewSplit(splitID types.ID, Split sdkTypes.Dec) mappables.Split {
 	return split{
 		ID:    splitID,
 		Split: Split,
