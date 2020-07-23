@@ -1,4 +1,4 @@
-package utility
+package utilities
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"

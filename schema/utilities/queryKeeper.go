@@ -1,4 +1,4 @@
-package utility
+package utilities
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"

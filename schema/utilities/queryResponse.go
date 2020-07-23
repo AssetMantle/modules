@@ -1,4 +1,4 @@
-package utility
+package utilities
 
 type QueryResponse interface {
 }
