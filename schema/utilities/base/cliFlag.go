@@ -3,7 +3,7 @@ package base
 import (
 	"errors"
 	"fmt"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -14,7 +14,7 @@ type cliFlag struct {
 	Usage string
 }
 
-var _ utility.CLIFlag = (*cliFlag)(nil)
+var _ utilities.CLIFlag = (*cliFlag)(nil)
 
 func (cliFlag cliFlag) GetName() string { return cliFlag.Name }
 
@@ -50,7 +50,7 @@ func (cliFlag cliFlag) ReadCLIValue() interface{} {
 	}
 }
 
-func NewCLIFlag(name string, value interface{}, usage string) utility.CLIFlag {
+func NewCLIFlag(name string, value interface{}, usage string) utilities.CLIFlag {
 	return cliFlag{
 		Name:  name,
 		Value: value,

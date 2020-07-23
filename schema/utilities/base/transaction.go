@@ -14,7 +14,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 	"github.com/spf13/cobra"
 	"log"
 	"net/http"
@@ -25,14 +25,14 @@ type transaction struct {
 	moduleName                  string
 	name                        string
 	route                       string
-	transactionKeeper           utility.TransactionKeeper
-	cliCommand                  utility.CLICommand
+	transactionKeeper           utilities.TransactionKeeper
+	cliCommand                  utilities.CLICommand
 	registerCodec               func(*codec.Codec)
-	initializeKeeper            func(utility.Mapper, []interface{}) utility.TransactionKeeper
-	transactionRequestPrototype func() utility.TransactionRequest
+	initializeKeeper            func(utilities.Mapper, []interface{}) utilities.TransactionKeeper
+	transactionRequestPrototype func() utilities.TransactionRequest
 }
 
-var _ utility.Transaction = (*transaction)(nil)
+var _ utilities.Transaction = (*transaction)(nil)
 
 func (transaction transaction) GetModuleName() string { return transaction.moduleName }
 func (transaction transaction) GetName() string       { return transaction.name }
@@ -183,11 +183,11 @@ func (transaction transaction) RegisterCodec(codec *codec.Codec) {
 	transaction.registerCodec(codec)
 }
 
-func (transaction *transaction) InitializeKeeper(mapper utility.Mapper, auxiliaryKeepers ...interface{}) {
+func (transaction *transaction) InitializeKeeper(mapper utilities.Mapper, auxiliaryKeepers ...interface{}) {
 	transaction.transactionKeeper = transaction.initializeKeeper(mapper, auxiliaryKeepers)
 }
 
-func NewTransaction(module string, name string, route string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(utility.Mapper, []interface{}) utility.TransactionKeeper, transactionRequestPrototype func() utility.TransactionRequest, flagList []utility.CLIFlag) utility.Transaction {
+func NewTransaction(module string, name string, route string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(utilities.Mapper, []interface{}) utilities.TransactionKeeper, transactionRequestPrototype func() utilities.TransactionRequest, flagList []utilities.CLIFlag) utilities.Transaction {
 	return &transaction{
 		moduleName:                  module,
 		name:                        name,

@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 	"github.com/spf13/cobra"
 )
 
@@ -14,10 +14,10 @@ type cliCommand struct {
 	Use         string
 	Short       string
 	Long        string
-	CLIFlagList []utility.CLIFlag
+	CLIFlagList []utilities.CLIFlag
 }
 
-var _ utility.CLICommand = (*cliCommand)(nil)
+var _ utilities.CLICommand = (*cliCommand)(nil)
 
 func (cliCommand cliCommand) registerFlags(command *cobra.Command) {
 	for _, cliFlag := range cliCommand.CLIFlagList {
@@ -25,7 +25,7 @@ func (cliCommand cliCommand) registerFlags(command *cobra.Command) {
 	}
 }
 
-func (cliCommand cliCommand) ReadInt64(cliFlag utility.CLIFlag) int64 {
+func (cliCommand cliCommand) ReadInt64(cliFlag utilities.CLIFlag) int64 {
 	switch cliFlag.GetValue().(type) {
 	case int64:
 		for _, registeredCliFlag := range cliCommand.CLIFlagList {
@@ -39,7 +39,7 @@ func (cliCommand cliCommand) ReadInt64(cliFlag utility.CLIFlag) int64 {
 	panic(errors.New(fmt.Sprintf("Uregistered flag %v type %T", cliFlag.GetName(), cliFlag.GetValue())))
 }
 
-func (cliCommand cliCommand) ReadInt(cliFlag utility.CLIFlag) int {
+func (cliCommand cliCommand) ReadInt(cliFlag utilities.CLIFlag) int {
 	switch cliFlag.GetValue().(type) {
 	case int:
 		for _, registeredCliFlag := range cliCommand.CLIFlagList {
@@ -53,7 +53,7 @@ func (cliCommand cliCommand) ReadInt(cliFlag utility.CLIFlag) int {
 	panic(errors.New(fmt.Sprintf("Uregistered flag %v type %T", cliFlag.GetName(), cliFlag.GetValue())))
 }
 
-func (cliCommand cliCommand) ReadBool(cliFlag utility.CLIFlag) bool {
+func (cliCommand cliCommand) ReadBool(cliFlag utilities.CLIFlag) bool {
 	switch cliFlag.GetValue().(type) {
 	case bool:
 		for _, registeredCliFlag := range cliCommand.CLIFlagList {
@@ -67,7 +67,7 @@ func (cliCommand cliCommand) ReadBool(cliFlag utility.CLIFlag) bool {
 	panic(errors.New(fmt.Sprintf("Uregistered flag %v type %T", cliFlag.GetName(), cliFlag.GetValue())))
 }
 
-func (cliCommand cliCommand) ReadString(cliFlag utility.CLIFlag) string {
+func (cliCommand cliCommand) ReadString(cliFlag utilities.CLIFlag) string {
 	switch cliFlag.GetValue().(type) {
 	case string:
 		for _, registeredCliFlag := range cliCommand.CLIFlagList {
@@ -99,7 +99,7 @@ func (cliCommand cliCommand) CreateCommand(runE func(command *cobra.Command, arg
 	return flags.PostCommands(command)[0]
 }
 
-func NewCLICommand(use string, short string, long string, cliFlagList []utility.CLIFlag) utility.CLICommand {
+func NewCLICommand(use string, short string, long string, cliFlagList []utilities.CLIFlag) utilities.CLICommand {
 	return cliCommand{
 		Use:         use,
 		Short:       short,

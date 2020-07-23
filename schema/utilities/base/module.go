@@ -9,7 +9,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/gorilla/mux"
-	"github.com/persistenceOne/persistenceSDK/types/utility"
+	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
@@ -21,14 +21,14 @@ type module struct {
 	defaultParamspace string
 	queryRoute        string
 	transactionRoute  string
-	genesisState      utility.GenesisState
-	mapper            utility.Mapper
-	auxiliaryList     []utility.Auxiliary
-	queryList         []utility.Query
-	transactionList   []utility.Transaction
+	genesisState      utilities.GenesisState
+	mapper            utilities.Mapper
+	auxiliaryList     []utilities.Auxiliary
+	queryList         []utilities.Query
+	transactionList   []utilities.Transaction
 }
 
-var _ utility.Module = (*module)(nil)
+var _ utilities.Module = (*module)(nil)
 
 func (module module) Name() string {
 	return module.moduleName
@@ -144,8 +144,8 @@ func (module module) GetStoreKey() string {
 func (module module) GetDefaultParamspace() string {
 	return module.defaultParamspace
 }
-func (module module) GetAuxiliaryKeepers(auxiliaryNames ...string) []utility.AuxiliaryKeeper {
-	var auxiliaryKeeperList []utility.AuxiliaryKeeper
+func (module module) GetAuxiliaryKeepers(auxiliaryNames ...string) []utilities.AuxiliaryKeeper {
+	var auxiliaryKeeperList []utilities.AuxiliaryKeeper
 	for _, auxiliaryName := range auxiliaryNames {
 		for _, auxiliary := range module.auxiliaryList {
 			if auxiliary.GetName() == auxiliaryName {
@@ -172,7 +172,7 @@ func (module module) InitializeKeepers(codec *codec.Codec, storeKey sdkTypes.Sto
 
 	return
 }
-func NewModule(moduleName string, storeKey string, defaultParamspace string, queryRoute string, transactionRoute string, genesisState utility.GenesisState, mapper utility.Mapper, auxiliaryList []utility.Auxiliary, queryList []utility.Query, transactionList []utility.Transaction) utility.Module {
+func NewModule(moduleName string, storeKey string, defaultParamspace string, queryRoute string, transactionRoute string, genesisState utilities.GenesisState, mapper utilities.Mapper, auxiliaryList []utilities.Auxiliary, queryList []utilities.Query, transactionList []utilities.Transaction) utilities.Module {
 	return module{
 		moduleName:        moduleName,
 		storeKey:          storeKey,
