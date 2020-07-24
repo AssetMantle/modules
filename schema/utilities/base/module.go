@@ -155,8 +155,8 @@ func (module module) GetAuxiliaryKeepers(auxiliaryNames ...string) []utilities.A
 	}
 	return auxiliaryKeeperList
 }
-func (module module) InitializeKeepers(codec *codec.Codec, storeKey sdkTypes.StoreKey, _ params.Subspace, auxiliaryKeepers ...interface{}) {
-	mapper := module.mapper.InitializeMapper(codec, storeKey)
+func (module module) InitializeKeepers(storeKey sdkTypes.StoreKey, _ params.Subspace, auxiliaryKeepers ...interface{}) {
+	mapper := module.mapper.InitializeMapper(storeKey)
 
 	for _, auxiliary := range module.auxiliaryList {
 		auxiliary.InitializeKeeper(mapper)
