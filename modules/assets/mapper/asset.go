@@ -51,6 +51,13 @@ func (asset asset) GetImmutables() types.Immutables {
 func (asset asset) GetMutables() types.Mutables {
 	return asset.Mutables
 }
+func (asset asset) Encode() []byte {
+	return packageCodec.MustMarshalBinaryBare(asset)
+}
+func (asset asset) Decode(bytes []byte) traits.Mappable {
+	packageCodec.MustUnmarshalBinaryBare(bytes, &asset)
+	return asset
+}
 func assetPrototype() traits.Mappable {
 	return asset{}
 }
