@@ -2,7 +2,8 @@ package mapper
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -20,7 +21,7 @@ type order struct {
 	Salt             types.Height
 }
 
-var _ entities.Order = (*order)(nil)
+var _ mappables.Order = (*order)(nil)
 
 func (order order) GetID() types.ID {
 	return order.ID
@@ -49,7 +50,6 @@ func (order order) CanSend(currentHeight types.Height) bool {
 func (order order) GetImmutables() types.Immutables {
 	return order.Immutables
 }
-
 func (order order) GetMakerAddress() sdkTypes.AccAddress {
 	return order.MakerAddress
 }
@@ -73,13 +73,13 @@ func (order order) GetTakerAssetData() types.ID {
 func (order order) GetSalt() types.Height {
 	return order.Salt
 }
-
-func (order order) SetTakerAddress(takerAddress sdkTypes.AccAddress) entities.Order {
+func (order order) SetTakerAddress(takerAddress sdkTypes.AccAddress) mappables.Order {
 	order.TakerAddress = takerAddress
 	return order
-
 }
-
+func orderPrototype() traits.Mappable {
+	return order{}
+}
 func NewOrder(orderID types.ID, burn types.Height, lock types.Height, immutables types.Immutables,
 	makerAddess sdkTypes.AccAddress, takerAddress sdkTypes.AccAddress,
 	makerAssetAmount sdkTypes.Dec, makerAssetData types.ID,

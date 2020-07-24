@@ -50,7 +50,9 @@ func orderIDFromInterface(id types.ID) orderID {
 		return orderIDFromInterface(readOrderID(id.String()))
 	}
 }
-
+func generateKey(orderID types.ID) []byte {
+	return append(StoreKeyPrefix, orderIDFromInterface(orderID).Bytes()...)
+}
 func NewOrderID(chainID types.ID, hashID types.ID) types.ID {
 	return orderID{
 		ChainID: chainID,
