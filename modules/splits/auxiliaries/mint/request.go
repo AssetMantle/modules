@@ -7,9 +7,9 @@ import (
 )
 
 type auxiliaryRequest struct {
-	OwnerID   types.ID
-	OwnableID types.ID
-	Split     sdkTypes.Dec
+	OwnerID   types.ID     `json:"ownerid" valid:"required~required field ownerid missing"`
+	OwnableID types.ID     `json:"ownableid" valid:"required~required field ownableid missing"`
+	Split     sdkTypes.Dec `json:"split" valid:"required~required field assetID missing matches(^[0-9]$)~invalid field split"`
 }
 
 var _ utilities.AuxiliaryRequest = (*auxiliaryRequest)(nil)

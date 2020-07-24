@@ -9,8 +9,8 @@ import (
 )
 
 type message struct {
-	From    sdkTypes.AccAddress
-	AssetID types.ID
+	From    sdkTypes.AccAddress `json:"from" valid:"required~required field fromaddress missing matches(^commit[a-z0-9]{39}$)~invalid field fromaddress"`
+	AssetID types.ID            `json:"assetid" valid:"required~required field assetid missing"`
 }
 
 var _ sdkTypes.Msg = message{}

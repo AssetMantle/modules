@@ -6,7 +6,7 @@ import (
 )
 
 type queryResponse struct {
-	Assets mappers.InterNFTs
+	Assets mappers.InterNFTs `json:"assets" valid:"required~required field assets missing"`
 }
 
 var _ utilities.QueryResponse = (*queryResponse)(nil)

@@ -9,11 +9,11 @@ import (
 )
 
 type message struct {
-	From       sdkTypes.AccAddress
-	AssetID    types.ID
-	Properties types.Properties
-	Lock       types.Height
-	Burn       types.Height
+	From       sdkTypes.AccAddress `json:"from" valid:"required~required field fromaddress missing,matches(^commit[a-z0-9]{39}$)~invalid field fromaddress"`
+	AssetID    types.ID            `json:"assetid" valid:"required~required field assestid missing"`
+	Properties types.Properties    `json:"properties" valid:"required~required field properties missing"`
+	Lock       types.Height        `json:"lock" valid:"required~required field lock missing"`
+	Burn       types.Height        `json:"burn" valid:"required~required field burn missing"`
 }
 
 var _ sdkTypes.Msg = message{}

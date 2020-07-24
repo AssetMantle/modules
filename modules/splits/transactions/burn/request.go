@@ -13,7 +13,7 @@ import (
 
 type transactionRequest struct {
 	BaseReq rest.BaseReq `json:"baseReq"`
-	SplitID string       `json:"splitID"`
+	SplitID string       `json:"splitid" valid:"required~required field splitid missing"`
 }
 
 var _ utilities.TransactionRequest = (*transactionRequest)(nil)

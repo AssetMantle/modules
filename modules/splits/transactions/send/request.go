@@ -13,9 +13,9 @@ import (
 
 type transactionRequest struct {
 	BaseReq   rest.BaseReq `json:"baseReq"`
-	ToID      string
-	OwnableID string
-	Split     string
+	ToID      string       `json:"toid" valid:"required~required field toid missing matches(^[A-Za-z]$)~invalid field toid"`
+	OwnableID string       `json:"ownableid" valid:"required~required field ownableid missing matches(^[A-Za-z]$)~invalid field ownableid"`
+	Split     string       `json:"split" valid:"required~required field split missing matches(^[A-Za-z]$)~invalid field split"`
 }
 
 var _ utilities.TransactionRequest = (*transactionRequest)(nil)

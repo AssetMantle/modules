@@ -6,7 +6,7 @@ import (
 )
 
 type queryResponse struct {
-	Splits mappers.Splits
+	Splits mappers.Splits `json:"splits" valid:"required~required field splits missing"`
 }
 
 var _ utilities.QueryResponse = (*queryResponse)(nil)

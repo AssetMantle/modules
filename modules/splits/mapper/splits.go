@@ -10,11 +10,11 @@ import (
 )
 
 type splits struct {
-	ID   types.ID
-	List []mappables.Split
+	ID   types.ID          `json:"id" valid:"required~required field id missing"`
+	List []mappables.Split `json:"list" valid:"required~required field list missing"`
 
-	mapper  utilities.Mapper
-	context sdkTypes.Context
+	mapper  utilities.Mapper `json:"mapper" valid:"required~required field mapper missing"`
+	context sdkTypes.Context `json:"context" valid:"required~required field context missing"`
 }
 
 var _ mappers.Splits = (*splits)(nil)

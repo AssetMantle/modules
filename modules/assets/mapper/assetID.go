@@ -10,10 +10,10 @@ import (
 )
 
 type assetID struct {
-	ChainID          types.ID
-	MaintainersID    types.ID
-	ClassificationID types.ID
-	HashID           types.ID
+	ChainID          types.ID `json:"chainid" valid:"required~required field chainid missing"`
+	MaintainersID    types.ID `json:"maintainersid" valid:"required~required field maintainersid missing"`
+	ClassificationID types.ID `json:"classificationid" valid:"required~required field classificationid missing"`
+	HashID           types.ID `json:"hashid" valid:"required~required field hashid missing"`
 }
 
 var _ types.ID = (*assetID)(nil)

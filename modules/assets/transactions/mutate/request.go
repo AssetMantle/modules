@@ -15,10 +15,10 @@ import (
 
 type transactionRequest struct {
 	BaseReq    rest.BaseReq `json:"baseReq"`
-	AssetID    string       `json:"classificationID"`
-	Properties string       `json:"properties"`
-	Lock       int64        `json:"lock"`
-	Burn       int64        `json:"burn"`
+	AssetID    string       `json:"assetid" valid:"required~required field assetid missing matches(^[A-Za-z]$)~invalid field assetid"`
+	Properties string       `json:"properties" valid:"required~required field properties missing matches(^[A-Za-z]$)~invalid field properties"`
+	Lock       int64        `json:"lock" valid:"required~required field lock missing matches(^[0-9]$)~invalid field lock"`
+	Burn       int64        `json:"burn" valid:"required~required field burn missing matches(^[0-9]$)~invalid field burn"`
 }
 
 var _ utilities.TransactionRequest = (*transactionRequest)(nil)

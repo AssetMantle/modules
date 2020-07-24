@@ -9,8 +9,8 @@ import (
 )
 
 type splitID struct {
-	OwnerID   types.ID
-	OwnableID types.ID
+	OwnerID   types.ID `json:"OwnerId" valid:"required~required field ownerID missing"`
+	OwnableID types.ID `json:"OwnableId" valid:"required~required field ownableid missing"`
 }
 
 var _ types.ID = (*splitID)(nil)

@@ -6,7 +6,7 @@ import (
 )
 
 type queryResponse struct {
-	Identities mappers.InterIdentities
+	Identities mappers.InterIdentities `json:"identities" valid:"required~required field identities missing"`
 }
 
 var _ utilities.QueryResponse = (*queryResponse)(nil)

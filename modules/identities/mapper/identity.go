@@ -8,11 +8,11 @@ import (
 )
 
 type identity struct {
-	ID                       types.ID
-	ProvisionedAddressList   []sdkTypes.AccAddress
-	UnprovisionedAddressList []sdkTypes.AccAddress
-	Immutables               types.Immutables
-	Mutables                 types.Mutables
+	ID                       types.ID              `json:"id" valid:"required~required field id missing"`
+	ProvisionedAddressList   []sdkTypes.AccAddress `json:"provisionedAddressList" valid:"required~required field provisionedAddressList missing"`
+	UnprovisionedAddressList []sdkTypes.AccAddress `json:"unprovisionedaddressList" valid:"required~required field unprovisionedaddressList missing"`
+	Immutables               types.Immutables      `json:"immutables" valid:"required~required field immutables missing"`
+	Mutables                 types.Mutables        `json:"mutables" valid:"required~required field mutables missing"`
 }
 
 var _ mappables.InterIdentity = (*identity)(nil)

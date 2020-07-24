@@ -9,7 +9,7 @@ import (
 )
 
 type queryRequest struct {
-	AssetID types.ID
+	AssetID types.ID `json:"assetid" valid:"required field assetid missing"`
 }
 
 var _ utilities.QueryRequest = (*queryRequest)(nil)

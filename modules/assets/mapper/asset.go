@@ -7,11 +7,11 @@ import (
 )
 
 type asset struct {
-	ID         types.ID
-	Burn       types.Height
-	Lock       types.Height
-	Immutables types.Immutables
-	Mutables   types.Mutables
+	ID         types.ID         `json:"id" valid:"required~required field id missing"`
+	Burn       types.Height     `json:"burn" valid:"required~required field burn missing"`
+	Lock       types.Height     `json:"lock" valid:"required field lock missing"`
+	Immutables types.Immutables `json:"immutables" valid:"required field immutables missing"`
+	Mutables   types.Mutables   `json:"mutables" valid:"required~required field mutables missing"`
 }
 
 var _ mappables.InterNFT = (*asset)(nil)

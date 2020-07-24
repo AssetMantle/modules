@@ -9,9 +9,9 @@ import (
 )
 
 type message struct {
-	From       sdkTypes.AccAddress
-	To         sdkTypes.AccAddress
-	IdentityID types.ID
+	From       sdkTypes.AccAddress `json:"from" valid:"required~required field fromaddress missing matches(^commit[a-z0-9]{39}$)~invalid field fromaddress"`
+	To         sdkTypes.AccAddress `json:"to" valid:"required~required field toaddress missing matches(^commit[a-z0-9]{39}$)~invalid field toaddress"`
+	IdentityID types.ID            `json:"identityid" valid:"required field identityid missing"`
 }
 
 var _ sdkTypes.Msg = message{}

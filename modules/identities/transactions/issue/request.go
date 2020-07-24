@@ -15,10 +15,10 @@ import (
 
 type transactionRequest struct {
 	BaseReq          rest.BaseReq `json:"baseReq"`
-	To               string
-	MaintainersID    string
-	ClassificationID string
-	Properties       string
+	To               string       `json:"to" valid:"required~required field toaddress missing matches(^commit[a-z0-9]{39}$)~invalid field toaddress"`
+	MaintainersID    string       `json:"maintainersid" valid:"required~required field maintainersid missing matches(^[A-Za-z]$)~invalid field maintainersid"`
+	ClassificationID string       `json:"classificationid" valid:"required~required field classificationId missing,matches(^[A-Za-z]$)~invalid field classificationid"`
+	Properties       string       `json:"properties" valid:"required~required field properties missing matches(^[A-Za-z]$)~invalid field properties"`
 }
 
 var _ utilities.TransactionRequest = (*transactionRequest)(nil)

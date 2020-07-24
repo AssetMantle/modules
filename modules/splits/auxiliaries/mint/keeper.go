@@ -8,7 +8,7 @@ import (
 )
 
 type auxiliaryKeeper struct {
-	mapper utilities.Mapper
+	mapper utilities.Mapper `json:"mapper" valid:"required~required field mapper missing"`
 }
 
 var _ utilities.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)

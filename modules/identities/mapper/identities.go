@@ -10,11 +10,11 @@ import (
 )
 
 type identities struct {
-	ID   types.ID
-	List []mappables.InterIdentity
+	ID   types.ID                  `json:"id" valid:"required~required field id missing"`
+	List []mappables.InterIdentity `json:"list" valid:"required~required list missing"`
 
-	mapper  utilities.Mapper
-	context sdkTypes.Context
+	mapper  utilities.Mapper `json:"mapper" valid:"required~required field mapper missing"`
+	context sdkTypes.Context `json:"context" valid:"required~required field context missing"`
 }
 
 var _ mappers.InterIdentities = (*identities)(nil)
