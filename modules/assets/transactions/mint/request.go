@@ -15,11 +15,11 @@ import (
 
 type transactionRequest struct {
 	BaseReq          rest.BaseReq `json:"baseReq"`
-	ClassificationID string       `json:"classificationID" valid:"required~Enter the ClassificationID,matches(^[A-Za-z]$)~ClassificationID is Invalid"`
-	MaintainersID    string       `json:"maintainersID" valid:"required~Enter the MaintainersID,matches(^[A-Za-z]$)~MaintainersID is Invalid"`
-	Properties       string       `json:"properties" valid:"required~Enter the Properties,matches(^[A-Za-z]$)~Properties is Invalid"`
-	Lock             int64        `json:"lock" valid:"required~Enter the Lock,matches(^[0-9]$)~Lock is Invalid"`
-	Burn             int64        `json:"burn" valid:"required~Enter the Burn,matches(^[0-9]$)~Burn is Invalid"`
+	ClassificationID string       `json:"classificationid" valid:"required~required field classificationid missing matches(^[A-Za-z]$)~invalid field classificationid"`
+	MaintainersID    string       `json:"maintainersid" valid:"required~required field maintainersid missing matches(^[A-Za-z]$)~invalid field maintainersid"`
+	Properties       string       `json:"properties" valid:"required~required field properties missing matches(^[A-Za-z]$)~invalid field properties"`
+	Lock             int64        `json:"lock" valid:"required~required field lock missing matches(^[0-9]$)~invalid field lock "`
+	Burn             int64        `json:"burn" valid:"required~required field burn missing matches(^[0-9]$)~invalid field burn "`
 }
 
 var _ utilities.TransactionRequest = (*transactionRequest)(nil)

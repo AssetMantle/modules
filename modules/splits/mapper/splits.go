@@ -1,27 +1,26 @@
 package mapper
 
 import (
-	"errors"
-	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type splits struct {
-	ID   types.ID         `json:"id" valid:"required~Enter the ID"`
-	List []entities.Split `json:"list" valid:"required~Enter the List"`
+	ID   types.ID          `json:"id" valid:"required~required field id missing"`
+	List []mappables.Split `json:"list" valid:"required~required field list missing"`
 
-	mapper  splitsMapper     `json:"mapper" valid:"required~Enter the Mapper"`
-	context sdkTypes.Context `json:"context" valid:"required~Enter the Context"`
+	mapper  utilities.Mapper `json:"mapper" valid:"required~required field mapper missing"`
+	context sdkTypes.Context `json:"context" valid:"required~required field context missing"`
 }
 
 var _ mappers.Splits = (*splits)(nil)
 
 func (splits splits) GetID() types.ID { return splits.ID }
-func (splits splits) Get(id types.ID) entities.Split {
+func (splits splits) Get(id types.ID) mappables.Split {
 	splitID := splitIDFromInterface(id)
 	for _, oldSplit := range splits.List {
 		if oldSplit.GetID().Compare(splitID) == 0 {
@@ -30,36 +29,36 @@ func (splits splits) Get(id types.ID) entities.Split {
 	}
 	return nil
 }
-func (splits splits) GetList() []entities.Split {
+func (splits splits) GetList() []mappables.Split {
 	return splits.List
 }
 
 func (splits splits) Fetch(id types.ID) mappers.Splits {
-	var splitList []entities.Split
+	var splitList []mappables.Split
 	splitsID := splitIDFromInterface(id)
 	if len(splitsID.OwnableID.Bytes()) > 0 {
-		split := splits.mapper.read(splits.context, splitsID)
-		if split != nil {
-			splitList = append(splitList, split)
+		mappable := splits.mapper.Read(splits.context, splitsID)
+		if mappable != nil {
+			splitList = append(splitList, mappable.(split))
 		}
 	} else {
-		appendSplitList := func(split entities.Split) bool {
-			splitList = append(splitList, split)
+		appendSplitList := func(mappable traits.Mappable) bool {
+			splitList = append(splitList, mappable.(split))
 			return false
 		}
-		splits.mapper.iterate(splits.context, splitsID, appendSplitList)
+		splits.mapper.Iterate(splits.context, splitsID, appendSplitList)
 	}
 	splits.ID, splits.List = id, splitList
 	return splits
 }
-func (splits splits) Add(split entities.Split) mappers.Splits {
+func (splits splits) Add(split mappables.Split) mappers.Splits {
 	splits.ID = readSplitID("")
-	splits.mapper.create(splits.context, split)
+	splits.mapper.Create(splits.context, split)
 	splits.List = append(splits.List, split)
 	return splits
 }
-func (splits splits) Remove(split entities.Split) mappers.Splits {
-	splits.mapper.delete(splits.context, split.GetID())
+func (splits splits) Remove(split mappables.Split) mappers.Splits {
+	splits.mapper.Delete(splits.context, split.GetID())
 	for i, oldSplit := range splits.List {
 		if oldSplit.GetID().Compare(split.GetID()) == 0 {
 			splits.List = append(splits.List[:i], splits.List[i+1:]...)
@@ -68,8 +67,8 @@ func (splits splits) Remove(split entities.Split) mappers.Splits {
 	}
 	return splits
 }
-func (splits splits) Mutate(split entities.Split) mappers.Splits {
-	splits.mapper.update(splits.context, split)
+func (splits splits) Mutate(split mappables.Split) mappers.Splits {
+	splits.mapper.Update(splits.context, split)
 	for i, oldSplit := range splits.List {
 		if oldSplit.GetID().Compare(split.GetID()) == 0 {
 			splits.List[i] = split
@@ -79,17 +78,11 @@ func (splits splits) Mutate(split entities.Split) mappers.Splits {
 	return splits
 }
 
-func NewSplits(Mapper utilities.Mapper, context sdkTypes.Context) mappers.Splits {
-	switch mapper := Mapper.(type) {
-	case splitsMapper:
-		return splits{
-			ID:      readSplitID(""),
-			List:    []entities.Split{},
-			mapper:  mapper,
-			context: context,
-		}
-	default:
-		panic(errors.New(fmt.Sprintf("incorrect mapper initialization for module, %v", ModuleRoute)))
+func NewSplits(mapper utilities.Mapper, context sdkTypes.Context) mappers.Splits {
+	return splits{
+		ID:      readSplitID(""),
+		List:    []mappables.Split{},
+		mapper:  mapper,
+		context: context,
 	}
-
 }

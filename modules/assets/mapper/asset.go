@@ -1,19 +1,20 @@
 package mapper
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type asset struct {
-	ID         types.ID         `json:"id" valid:"required~Enter the ID"`
-	Burn       types.Height     `json:"burn" valid:"required~Enter the Burn"`
-	Lock       types.Height     `json:"lock" valid:"required~Enter the Lock"`
-	Immutables types.Immutables `json:"immutables" valid:"required~Enter the Immutables"`
-	Mutables   types.Mutables   `json:"mutables" valid:"required~Enter the Mutables"`
+	ID         types.ID         `json:"id" valid:"required~required field id missing"`
+	Burn       types.Height     `json:"burn" valid:"required~required field burn missing"`
+	Lock       types.Height     `json:"lock" valid:"required field lock missing"`
+	Immutables types.Immutables `json:"immutables" valid:"required field immutables missing"`
+	Mutables   types.Mutables   `json:"mutables" valid:"required~required field mutables missing"`
 }
 
-var _ entities.InterNFT = (*asset)(nil)
+var _ mappables.InterNFT = (*asset)(nil)
 
 func (asset asset) GetID() types.ID {
 	return asset.ID
@@ -50,8 +51,10 @@ func (asset asset) GetImmutables() types.Immutables {
 func (asset asset) GetMutables() types.Mutables {
 	return asset.Mutables
 }
-
-func NewAsset(assetID types.ID, burn types.Height, lock types.Height, immutables types.Immutables, mutables types.Mutables) entities.InterNFT {
+func assetPrototype() traits.Mappable {
+	return asset{}
+}
+func NewAsset(assetID types.ID, burn types.Height, lock types.Height, immutables types.Immutables, mutables types.Mutables) mappables.InterNFT {
 	return asset{
 		ID:         assetID,
 		Burn:       burn,

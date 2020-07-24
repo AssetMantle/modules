@@ -9,10 +9,10 @@ import (
 )
 
 type message struct {
-	From      sdkTypes.AccAddress `json:"from" valid:"required~Enter the FromAddress,matches(^commit[a-z0-9]{39}$)~FromAddress is Invalid"`
-	ToID      types.ID            `json:"toID" valid:"required~Enter the ToID"`
-	OwnableID types.ID            `json:"ownableID" valid:"required~Enter the OwnableID"`
-	Split     sdkTypes.Dec
+	From      sdkTypes.AccAddress `json:"from" valid:"required~required field fromaddress missing matches(^commit[a-z0-9]{39}$)~invalid field fromaddress"`
+	ToID      types.ID            `json:"toid" valid:"required~required field toid missing"`
+	OwnableID types.ID            `json:"ownableid" valid:"required~required field ownableid missing"`
+	Split     sdkTypes.Dec        `json:"split" valid:"required~required field split missing"`
 }
 
 var _ sdkTypes.Msg = message{}

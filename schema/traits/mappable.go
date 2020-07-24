@@ -1,7 +1,7 @@
-package entities
+package traits
 
 import "github.com/persistenceOne/persistenceSDK/schema/types"
 
-type InterNFTWallet interface {
-	types.NFTWallet
+type Mappable interface {
+	GetID() types.ID
 }

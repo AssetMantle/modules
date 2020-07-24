@@ -9,8 +9,8 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper                    utilities.Mapper          `json:"mapper" valid:"required~Enter the mapper"`
-	splitsMintAuxiliaryKeeper utilities.AuxiliaryKeeper `json:"splitsMintAuxiliaryKeeper" valid:"required~Enter the splitsMintAuxiliaryKeeper"`
+	mapper                    utilities.Mapper          `json:"mapper" valid:"required~required field mapper missing"`
+	splitsMintAuxiliaryKeeper utilities.AuxiliaryKeeper `json:"splitsMintAuxiliaryKeeper" valid:"required~required field splitsMintAuxiliaryKeeper missing"`
 }
 
 var _ utilities.TransactionKeeper = (*transactionKeeper)(nil)

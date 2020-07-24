@@ -7,7 +7,7 @@ import (
 )
 
 type queryKeeper struct {
-	mapper utilities.Mapper `json:"mapper" valid:"required~Enter the Mapper"`
+	mapper utilities.Mapper `json:"mapper" valid:"required~required field mapper missing"`
 }
 
 var _ utilities.QueryKeeper = (*queryKeeper)(nil)

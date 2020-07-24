@@ -6,7 +6,7 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper utilities.Mapper `json:"mapper" valid:"required~Enter the mapper"`
+	mapper utilities.Mapper `json:"mapper" valid:"required~required field mapper missing"`
 }
 
 var _ utilities.TransactionKeeper = (*transactionKeeper)(nil)

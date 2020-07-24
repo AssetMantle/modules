@@ -1,27 +1,26 @@
 package mapper
 
 import (
-	"errors"
-	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type assets struct {
-	ID   types.ID            `json:"id" valid:"required~Enter the ID"`
-	List []entities.InterNFT `json:"list" valid:"required~Enter the List"`
+	ID   types.ID             `json:"id" valid:"required~required field id missing"`
+	List []mappables.InterNFT `json:"list" valid:"required~required field list missing"`
 
-	mapper  assetsMapper     `json:"mapper" valid:"required~Enter the Mapper"`
-	context sdkTypes.Context `json:"context" valid:"required~Enter the Context"`
+	mapper  utilities.Mapper `json:"mapper" valid:"required~required field mapper missing"`
+	context sdkTypes.Context `json:"context" valid:"required~required field context missing"`
 }
 
 var _ mappers.InterNFTs = (*assets)(nil)
 
 func (assets assets) GetID() types.ID { return assets.ID }
-func (assets assets) Get(id types.ID) entities.InterNFT {
+func (assets assets) Get(id types.ID) mappables.InterNFT {
 	assetID := assetIDFromInterface(id)
 	for _, oldAsset := range assets.List {
 		if oldAsset.GetID().Compare(assetID) == 0 {
@@ -30,36 +29,36 @@ func (assets assets) Get(id types.ID) entities.InterNFT {
 	}
 	return nil
 }
-func (assets assets) GetList() []entities.InterNFT {
+func (assets assets) GetList() []mappables.InterNFT {
 	return assets.List
 }
 
 func (assets assets) Fetch(id types.ID) mappers.InterNFTs {
-	var assetList []entities.InterNFT
+	var assetList []mappables.InterNFT
 	assetsID := assetIDFromInterface(id)
 	if len(assetsID.HashID.Bytes()) > 0 {
-		asset := assets.mapper.read(assets.context, assetsID)
-		if asset != nil {
-			assetList = append(assetList, asset)
+		mappable := assets.mapper.Read(assets.context, assetsID)
+		if mappable != nil {
+			assetList = append(assetList, mappable.(asset))
 		}
 	} else {
-		appendAssetList := func(asset entities.InterNFT) bool {
-			assetList = append(assetList, asset)
+		appendMappableList := func(mappable traits.Mappable) bool {
+			assetList = append(assetList, mappable.(asset))
 			return false
 		}
-		assets.mapper.iterate(assets.context, assetsID, appendAssetList)
+		assets.mapper.Iterate(assets.context, assetsID, appendMappableList)
 	}
 	assets.ID, assets.List = id, assetList
 	return assets
 }
-func (assets assets) Add(asset entities.InterNFT) mappers.InterNFTs {
+func (assets assets) Add(asset mappables.InterNFT) mappers.InterNFTs {
 	assets.ID = readAssetID("")
-	assets.mapper.create(assets.context, asset)
+	assets.mapper.Create(assets.context, asset)
 	assets.List = append(assets.List, asset)
 	return assets
 }
-func (assets assets) Remove(asset entities.InterNFT) mappers.InterNFTs {
-	assets.mapper.delete(assets.context, asset.GetID())
+func (assets assets) Remove(asset mappables.InterNFT) mappers.InterNFTs {
+	assets.mapper.Delete(assets.context, asset.GetID())
 	for i, oldAsset := range assets.List {
 		if oldAsset.GetID().Compare(asset.GetID()) == 0 {
 			assets.List = append(assets.List[:i], assets.List[i+1:]...)
@@ -68,8 +67,8 @@ func (assets assets) Remove(asset entities.InterNFT) mappers.InterNFTs {
 	}
 	return assets
 }
-func (assets assets) Mutate(asset entities.InterNFT) mappers.InterNFTs {
-	assets.mapper.update(assets.context, asset)
+func (assets assets) Mutate(asset mappables.InterNFT) mappers.InterNFTs {
+	assets.mapper.Update(assets.context, asset)
 	for i, oldAsset := range assets.List {
 		if oldAsset.GetID().Compare(asset.GetID()) == 0 {
 			assets.List[i] = asset
@@ -79,17 +78,11 @@ func (assets assets) Mutate(asset entities.InterNFT) mappers.InterNFTs {
 	return assets
 }
 
-func NewAssets(Mapper utilities.Mapper, context sdkTypes.Context) mappers.InterNFTs {
-	switch mapper := Mapper.(type) {
-	case assetsMapper:
-		return assets{
-			ID:      readAssetID(""),
-			List:    []entities.InterNFT{},
-			mapper:  mapper,
-			context: context,
-		}
-	default:
-		panic(errors.New(fmt.Sprintf("incorrect mapper initialization for module, %v", ModuleName)))
+func NewAssets(mapper utilities.Mapper, context sdkTypes.Context) mappers.InterNFTs {
+	return assets{
+		ID:      readAssetID(""),
+		List:    []mappables.InterNFT{},
+		mapper:  mapper,
+		context: context,
 	}
-
 }

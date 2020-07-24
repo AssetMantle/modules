@@ -13,8 +13,8 @@ import (
 
 type transactionRequest struct {
 	BaseReq    rest.BaseReq `json:"baseReq"`
-	To         string       `json:"to" valid:"required~Enter the ToAddress,matches(^commit[a-z0-9]{39}$)~ToAddress is Invalid"`
-	IdentityID string       `json:"identityId" valid:"required~Enter the IdentityID,matches(^[A-Za-z]$)~IdentityID is Invalid, use only characters"`
+	To         string       `json:"to" valid:"required~required field toaddress missing matches(^commit[a-z0-9]{39}$)~invalid field toaddress"`
+	IdentityID string       `json:"identityid" valid:"required~required field identityid missing matches(^[A-Za-z]$)~invalid field identityid"`
 }
 
 var _ utilities.TransactionRequest = (*transactionRequest)(nil)

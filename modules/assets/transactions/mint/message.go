@@ -10,12 +10,12 @@ import (
 
 //TODO make private
 type Message struct {
-	From             sdkTypes.AccAddress `json:"from" valid:"required~Enter the FromAddress,matches(^commit[a-z0-9]{39}$)~FromAddress is Invalid"`
-	MaintainersID    types.ID            `json:"maintainers id" valid:"required~Enter the MaintainersID"`
-	ClassificationID types.ID            `json:"classification id" valid:"required~Enter the ClassificationID"`
-	Properties       types.Properties    `json:"properties" valid:"required~Enter the Properties"`
-	Lock             types.Height        `json:"lock" valid:"required~Enter the Lock"`
-	Burn             types.Height        `json:"burn" valid:"required~Enter the Burn"`
+	From             sdkTypes.AccAddress `json:"from" valid:"required~required field fromaddress missing matches(^commit[a-z0-9]{39}$)~invalid field fromaddress"`
+	MaintainersID    types.ID            `json:"maintainersid" valid:"required~required field maintainersid missing"`
+	ClassificationID types.ID            `json:"classificationid" valid:"required~required field classificationid missing"`
+	Properties       types.Properties    `json:"properties" valid:"required~required field properties missing"`
+	Lock             types.Height        `json:"lock" valid:"required~required field lock missing"`
+	Burn             types.Height        `json:"burn" valid:"required~required field burn missing"`
 }
 
 var _ sdkTypes.Msg = Message{}

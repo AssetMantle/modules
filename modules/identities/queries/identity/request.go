@@ -9,7 +9,7 @@ import (
 )
 
 type queryRequest struct {
-	IdentityID types.ID `json:"identityId" valid:"required~Enter the IdentityID"`
+	IdentityID types.ID `json:"identityid" valid:"required~required field identityid missing"`
 }
 
 var _ utilities.QueryRequest = (*queryRequest)(nil)

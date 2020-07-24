@@ -11,16 +11,16 @@ import (
 )
 
 type cliCommand struct {
-	Use         string
-	Short       string
-	Long        string
-	CLIFlagList []utilities.CLIFlag
+	use         string
+	short       string
+	long        string
+	cliFlagList []utilities.CLIFlag
 }
 
 var _ utilities.CLICommand = (*cliCommand)(nil)
 
 func (cliCommand cliCommand) registerFlags(command *cobra.Command) {
-	for _, cliFlag := range cliCommand.CLIFlagList {
+	for _, cliFlag := range cliCommand.cliFlagList {
 		cliFlag.Register(command)
 	}
 }
@@ -28,7 +28,7 @@ func (cliCommand cliCommand) registerFlags(command *cobra.Command) {
 func (cliCommand cliCommand) ReadInt64(cliFlag utilities.CLIFlag) int64 {
 	switch cliFlag.GetValue().(type) {
 	case int64:
-		for _, registeredCliFlag := range cliCommand.CLIFlagList {
+		for _, registeredCliFlag := range cliCommand.cliFlagList {
 			if registeredCliFlag == cliFlag {
 				return cliFlag.ReadCLIValue().(int64)
 			}
@@ -42,7 +42,7 @@ func (cliCommand cliCommand) ReadInt64(cliFlag utilities.CLIFlag) int64 {
 func (cliCommand cliCommand) ReadInt(cliFlag utilities.CLIFlag) int {
 	switch cliFlag.GetValue().(type) {
 	case int:
-		for _, registeredCliFlag := range cliCommand.CLIFlagList {
+		for _, registeredCliFlag := range cliCommand.cliFlagList {
 			if registeredCliFlag == cliFlag {
 				return cliFlag.ReadCLIValue().(int)
 			}
@@ -56,7 +56,7 @@ func (cliCommand cliCommand) ReadInt(cliFlag utilities.CLIFlag) int {
 func (cliCommand cliCommand) ReadBool(cliFlag utilities.CLIFlag) bool {
 	switch cliFlag.GetValue().(type) {
 	case bool:
-		for _, registeredCliFlag := range cliCommand.CLIFlagList {
+		for _, registeredCliFlag := range cliCommand.cliFlagList {
 			if registeredCliFlag == cliFlag {
 				return cliFlag.ReadCLIValue().(bool)
 			}
@@ -70,7 +70,7 @@ func (cliCommand cliCommand) ReadBool(cliFlag utilities.CLIFlag) bool {
 func (cliCommand cliCommand) ReadString(cliFlag utilities.CLIFlag) string {
 	switch cliFlag.GetValue().(type) {
 	case string:
-		for _, registeredCliFlag := range cliCommand.CLIFlagList {
+		for _, registeredCliFlag := range cliCommand.cliFlagList {
 			if registeredCliFlag == cliFlag {
 				return cliFlag.ReadCLIValue().(string)
 			}
@@ -90,9 +90,9 @@ func (cliCommand cliCommand) ReadBaseReq(cliContext context.CLIContext) rest.Bas
 }
 func (cliCommand cliCommand) CreateCommand(runE func(command *cobra.Command, args []string) error) *cobra.Command {
 	command := &cobra.Command{
-		Use:   cliCommand.Use,
-		Short: cliCommand.Short,
-		Long:  cliCommand.Long,
+		Use:   cliCommand.use,
+		Short: cliCommand.short,
+		Long:  cliCommand.long,
 		RunE:  runE,
 	}
 	cliCommand.registerFlags(command)
@@ -101,9 +101,9 @@ func (cliCommand cliCommand) CreateCommand(runE func(command *cobra.Command, arg
 
 func NewCLICommand(use string, short string, long string, cliFlagList []utilities.CLIFlag) utilities.CLICommand {
 	return cliCommand{
-		Use:         use,
-		Short:       short,
-		Long:        long,
-		CLIFlagList: cliFlagList,
+		use:         use,
+		short:       short,
+		long:        long,
+		cliFlagList: cliFlagList,
 	}
 }

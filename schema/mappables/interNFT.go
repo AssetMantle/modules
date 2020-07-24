@@ -1,4 +1,4 @@
-package entities
+package mappables
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
@@ -12,4 +12,5 @@ type InterNFT interface {
 	traits.Lockable
 	traits.HasImmutables
 	traits.HasMutables
+	traits.Mappable
 }

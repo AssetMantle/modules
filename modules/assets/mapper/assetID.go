@@ -10,10 +10,10 @@ import (
 )
 
 type assetID struct {
-	ChainID          types.ID `json:"chainID" valid:"required~Enter the ChainID"`
-	MaintainersID    types.ID `json:"maintainersID" valid:"required~Enter the MaintainersID"`
-	ClassificationID types.ID `json:"classificationID" valid:"required~Enter the ClassificationID"`
-	HashID           types.ID `json:"hashID" valid:"required~Enter the HashID"`
+	ChainID          types.ID `json:"chainid" valid:"required~required field chainid missing"`
+	MaintainersID    types.ID `json:"maintainersid" valid:"required~required field maintainersid missing"`
+	ClassificationID types.ID `json:"classificationid" valid:"required~required field classificationid missing"`
+	HashID           types.ID `json:"hashid" valid:"required~required field hashid missing"`
 }
 
 var _ types.ID = (*assetID)(nil)
@@ -60,7 +60,9 @@ func assetIDFromInterface(id types.ID) assetID {
 		return assetIDFromInterface(readAssetID(id.String()))
 	}
 }
-
+func generateKey(assetID types.ID) []byte {
+	return append(StoreKeyPrefix, assetIDFromInterface(assetID).Bytes()...)
+}
 func NewAssetID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
 	return assetID{
 		ChainID:          chainID,

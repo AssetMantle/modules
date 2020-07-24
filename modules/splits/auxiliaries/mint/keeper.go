@@ -3,12 +3,12 @@ package mint
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema/entities"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type auxiliaryKeeper struct {
-	mapper utilities.Mapper `json:"assetID" valid:"required~Enter the AssetID"`
+	mapper utilities.Mapper `json:"mapper" valid:"required~required field mapper missing"`
 }
 
 var _ utilities.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
@@ -21,7 +21,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	if split == nil {
 		splits.Add(mapper.NewSplit(splitID, auxiliaryRequest.Split))
 	} else {
-		splits.Mutate(split.Receive(auxiliaryRequest.Split).(entities.Split))
+		splits.Mutate(split.Receive(auxiliaryRequest.Split).(mappables.Split))
 	}
 	return nil
 }

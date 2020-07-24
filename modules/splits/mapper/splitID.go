@@ -9,8 +9,8 @@ import (
 )
 
 type splitID struct {
-	OwnerID   types.ID `json:"OwnerId" valid:"required~Enter the OwnerID"`
-	OwnableID types.ID `json:"OwnableId" valid:"required~Enter the OwnableID"`
+	OwnerID   types.ID `json:"OwnerId" valid:"required~required field ownerID missing"`
+	OwnableID types.ID `json:"OwnableId" valid:"required~required field ownableid missing"`
 }
 
 var _ types.ID = (*splitID)(nil)
@@ -52,7 +52,9 @@ func splitIDFromInterface(id types.ID) splitID {
 		return splitIDFromInterface(readSplitID(id.String()))
 	}
 }
-
+func generateKey(splitID types.ID) []byte {
+	return append(StoreKeyPrefix, splitIDFromInterface(splitID).Bytes()...)
+}
 func NewSplitID(ownerID types.ID, ownableID types.ID) types.ID {
 	return splitID{
 		OwnerID:   ownerID,
