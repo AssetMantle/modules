@@ -2,19 +2,19 @@ package mapper
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type identities struct {
 	ID   types.ID                  `json:"id" valid:"required~required field id missing"`
 	List []mappables.InterIdentity `json:"list" valid:"required~required list missing"`
 
-	mapper  utilities.Mapper `json:"mapper" valid:"required~required field mapper missing"`
-	context sdkTypes.Context `json:"context" valid:"required~required field context missing"`
+	mapper  helpers.Mapper
+	context sdkTypes.Context
 }
 
 var _ mappers.InterIdentities = (*identities)(nil)
@@ -78,7 +78,7 @@ func (identities identities) Mutate(identity mappables.InterIdentity) mappers.In
 	return identities
 }
 
-func NewIdentities(mapper utilities.Mapper, context sdkTypes.Context) mappers.InterIdentities {
+func NewIdentities(mapper helpers.Mapper, context sdkTypes.Context) mappers.InterIdentities {
 	return identities{
 		ID:      readIdentityID(""),
 		List:    []mappables.InterIdentity{},

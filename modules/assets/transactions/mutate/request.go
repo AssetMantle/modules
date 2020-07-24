@@ -7,23 +7,23 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 	"strings"
 )
 
 type transactionRequest struct {
 	BaseReq    rest.BaseReq `json:"baseReq"`
-	AssetID    string       `json:"assetid" valid:"required~required field assetid missing matches(^[A-Za-z]$)~invalid field assetid"`
+	AssetID    string       `json:"assetID" valid:"required~required field assetID missing matches(^[A-Za-z]$)~invalid field assetID"`
 	Properties string       `json:"properties" valid:"required~required field properties missing matches(^[A-Za-z]$)~invalid field properties"`
 	Lock       int64        `json:"lock" valid:"required~required field lock missing matches(^[0-9]$)~invalid field lock"`
 	Burn       int64        `json:"burn" valid:"required~required field burn missing matches(^[0-9]$)~invalid field burn"`
 }
 
-var _ utilities.TransactionRequest = (*transactionRequest)(nil)
+var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
-func (transactionRequest transactionRequest) FromCLI(cliCommand utilities.CLICommand, cliContext context.CLIContext) utilities.TransactionRequest {
+func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(constants.AssetID),
@@ -65,11 +65,11 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	)
 }
 
-func requestPrototype() utilities.TransactionRequest {
+func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, assetID string, properties string, lock int64, burn int64) utilities.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, assetID string, properties string, lock int64, burn int64) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:    baseReq,
 		AssetID:    assetID,

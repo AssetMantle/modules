@@ -34,16 +34,24 @@ func RESTKeysHandler(cliContext context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		info, mnemonic, err := keyring.NewInMemory().NewMnemonic(newKey.Name, keyring.English, sdk.FullFundraiserPath, hd.Secp256k1)
-		if err != nil {
+		info, mnemonic, Error := keyring.NewInMemory().NewMnemonic(newKey.Name, keyring.English, sdk.FullFundraiserPath, hd.Secp256k1)
+		if Error != nil {
 			fmt.Printf("Error in generating mnemonic: %s\n", err)
 			return
 		}
 
-		keyOutput, err := cryptoKeys.Bech32KeyOutput(info)
+		keyOutput, Error := cryptoKeys.Bech32KeyOutput(info)
+		if Error != nil {
+			fmt.Printf("Error in generating mnemonic: %s\n", err)
+			return
+		}
 
 		keyOutput.Mnemonic = mnemonic
-		bz, err := json.Marshal(keyOutput)
+		bz, Error := json.Marshal(keyOutput)
+		if Error != nil {
+			fmt.Printf("Error in generating mnemonic: %s\n", err)
+			return
+		}
 
 		responseWriter.Header().Set("Content-Type", "application/json")
 		if _, err := responseWriter.Write(bz); err != nil {
@@ -71,6 +79,9 @@ func RESTKeysRecoverHandler(cliContext context.CLIContext) http.HandlerFunc {
 		}
 
 		keyOutput, err := cryptoKeys.Bech32KeyOutput(info)
+		if err != nil {
+			return
+		}
 
 		keyOutput.Mnemonic = seed
 		bz, err := json.Marshal(keyOutput)

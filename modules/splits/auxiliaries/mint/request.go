@@ -2,19 +2,19 @@ package mint
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type auxiliaryRequest struct {
-	OwnerID   types.ID     `json:"ownerid" valid:"required~required field ownerid missing"`
-	OwnableID types.ID     `json:"ownableid" valid:"required~required field ownableid missing"`
+	OwnerID   types.ID     `json:"ownerID" valid:"required~required field ownerID missing"`
+	OwnableID types.ID     `json:"ownableID" valid:"required~required field ownableID missing"`
 	Split     sdkTypes.Dec `json:"split" valid:"required~required field assetID missing matches(^[0-9]$)~invalid field split"`
 }
 
-var _ utilities.AuxiliaryRequest = (*auxiliaryRequest)(nil)
+var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
-func auxiliaryRequestFromInterface(AuxiliaryRequest utilities.AuxiliaryRequest) auxiliaryRequest {
+func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) auxiliaryRequest {
 	switch value := AuxiliaryRequest.(type) {
 	case auxiliaryRequest:
 		return value
@@ -23,7 +23,7 @@ func auxiliaryRequestFromInterface(AuxiliaryRequest utilities.AuxiliaryRequest) 
 	}
 }
 
-func NewAuxiliaryRequest(ownerID types.ID, ownableID types.ID, split sdkTypes.Dec) utilities.AuxiliaryRequest {
+func NewAuxiliaryRequest(ownerID types.ID, ownableID types.ID, split sdkTypes.Dec) helpers.AuxiliaryRequest {
 	return &auxiliaryRequest{
 		OwnerID:   ownerID,
 		OwnableID: ownableID,

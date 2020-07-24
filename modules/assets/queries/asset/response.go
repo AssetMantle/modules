@@ -1,20 +1,20 @@
 package asset
 
 import (
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type queryResponse struct {
 	Assets mappers.InterNFTs `json:"assets" valid:"required~required field assets missing"`
 }
 
-var _ utilities.QueryResponse = (*queryResponse)(nil)
+var _ helpers.QueryResponse = (*queryResponse)(nil)
 
-func queryResponsePrototype() utilities.QueryResponse {
+func queryResponsePrototype() helpers.QueryResponse {
 	return queryResponse{}
 }
 
-func newQueryResponse(assets mappers.InterNFTs) utilities.QueryResponse {
+func newQueryResponse(assets mappers.InterNFTs) helpers.QueryResponse {
 	return queryResponse{Assets: assets}
 }

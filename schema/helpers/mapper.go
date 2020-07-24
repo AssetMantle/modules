@@ -1,4 +1,4 @@
-package utilities
+package helpers
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -14,6 +14,5 @@ type Mapper interface {
 	Delete(sdkTypes.Context, types.ID)
 	Iterate(sdkTypes.Context, types.ID, func(traits.Mappable) bool)
 
-	InitializeMapper(sdkTypes.StoreKey) Mapper
 	RegisterCodec(*codec.Codec)
 }

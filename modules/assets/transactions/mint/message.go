@@ -10,9 +10,9 @@ import (
 
 //TODO make private
 type Message struct {
-	From             sdkTypes.AccAddress `json:"from" valid:"required~required field fromaddress missing matches(^commit[a-z0-9]{39}$)~invalid field fromaddress"`
-	MaintainersID    types.ID            `json:"maintainersid" valid:"required~required field maintainersid missing"`
-	ClassificationID types.ID            `json:"classificationid" valid:"required~required field classificationid missing"`
+	From             sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
+	MaintainersID    types.ID            `json:"maintainersID" valid:"required~required field maintainersID missing"`
+	ClassificationID types.ID            `json:"classificationID" valid:"required~required field classificationID missing"`
 	Properties       types.Properties    `json:"properties" valid:"required~required field properties missing"`
 	Lock             types.Height        `json:"lock" valid:"required~required field lock missing"`
 	Burn             types.Height        `json:"burn" valid:"required~required field burn missing"`

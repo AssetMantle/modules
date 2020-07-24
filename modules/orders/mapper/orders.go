@@ -2,18 +2,18 @@ package mapper
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type orders struct {
 	ID   types.ID
 	List []mappables.Order
 
-	mapper  utilities.Mapper
+	mapper  helpers.Mapper
 	context sdkTypes.Context
 }
 
@@ -83,7 +83,7 @@ func (orders orders) Mutate(order mappables.Order) mappers.Orders {
 	return orders
 }
 
-func NewOrders(mapper utilities.Mapper, context sdkTypes.Context) mappers.Orders {
+func NewOrders(mapper helpers.Mapper, context sdkTypes.Context) mappers.Orders {
 	return orders{
 		ID:      readOrderID(""),
 		List:    []mappables.Order{},

@@ -14,7 +14,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
 	"log"
 	"net/http"
@@ -25,14 +25,14 @@ type transaction struct {
 	moduleName                  string
 	name                        string
 	route                       string
-	transactionKeeper           utilities.TransactionKeeper
-	cliCommand                  utilities.CLICommand
+	transactionKeeper           helpers.TransactionKeeper
+	cliCommand                  helpers.CLICommand
 	registerCodec               func(*codec.Codec)
-	initializeKeeper            func(utilities.Mapper, []interface{}) utilities.TransactionKeeper
-	transactionRequestPrototype func() utilities.TransactionRequest
+	initializeKeeper            func(helpers.Mapper, []interface{}) helpers.TransactionKeeper
+	transactionRequestPrototype func() helpers.TransactionRequest
 }
 
-var _ utilities.Transaction = (*transaction)(nil)
+var _ helpers.Transaction = (*transaction)(nil)
 
 func (transaction transaction) GetModuleName() string { return transaction.moduleName }
 func (transaction transaction) GetName() string       { return transaction.name }
@@ -105,12 +105,12 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			return
 		}
 
-		txBldr := types.NewTxBuilder(
+		txBuilder := types.NewTxBuilder(
 			authClient.GetTxEncoder(cliContext.Codec), baseReq.AccountNumber, baseReq.Sequence, gas, gasAdj,
 			baseReq.Simulate, baseReq.ChainID, baseReq.Memo, baseReq.Fees, baseReq.GasPrices,
 		)
 
-		msgs := []sdkTypes.Msg{msg}
+		msgList := []sdkTypes.Msg{msg}
 		fromName := cliContext.GetFromName()
 
 		if baseReq.Simulate || simAndExec {
@@ -119,24 +119,24 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 				return
 			}
 
-			txBldr, err = authClient.EnrichWithGas(txBldr, cliContext, msgs)
+			txBuilder, err = authClient.EnrichWithGas(txBuilder, cliContext, msgList)
 			if rest.CheckInternalServerError(responseWriter, err) {
 				return
 			}
 
 			if baseReq.Simulate {
-				rest.WriteSimulationResponse(responseWriter, cliContext.Codec, txBldr.Gas())
+				rest.WriteSimulationResponse(responseWriter, cliContext.Codec, txBuilder.Gas())
 				return
 			}
 		}
 
 		//using DefaultKeyPass as an input
-		keyring, err := keyring.New(sdkTypes.KeyringServiceName(), "os", "home", strings.NewReader(keys.DefaultKeyPass))
+		Keyring, err := keyring.New(sdkTypes.KeyringServiceName(), "os", "home", strings.NewReader(keys.DefaultKeyPass))
 		if err != nil {
 			panic(fmt.Errorf("couldn't acquire keyring: %v", err))
 		}
 
-		fromAddress, fromName, err := context.GetFromFields(keyring, baseReq.From, false)
+		fromAddress, fromName, err := context.GetFromFields(Keyring, baseReq.From, false)
 		if err != nil {
 			fmt.Printf("failed to get from fields: %v\n", err)
 			return
@@ -153,11 +153,11 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			return
 		}
 
-		txBldr = txBldr.WithAccountNumber(num)
-		txBldr = txBldr.WithSequence(seq)
+		txBuilder = txBuilder.WithAccountNumber(num)
+		txBuilder = txBuilder.WithSequence(seq)
 
 		//build and sign
-		stdMsg, err := txBldr.BuildAndSign(fromName, keys.DefaultKeyPass, msgs)
+		stdMsg, err := txBuilder.BuildAndSign(fromName, keys.DefaultKeyPass, msgList)
 		if rest.CheckBadRequestError(responseWriter, err) {
 			return
 		}
@@ -183,11 +183,11 @@ func (transaction transaction) RegisterCodec(codec *codec.Codec) {
 	transaction.registerCodec(codec)
 }
 
-func (transaction *transaction) InitializeKeeper(mapper utilities.Mapper, auxiliaryKeepers ...interface{}) {
+func (transaction *transaction) InitializeKeeper(mapper helpers.Mapper, auxiliaryKeepers ...interface{}) {
 	transaction.transactionKeeper = transaction.initializeKeeper(mapper, auxiliaryKeepers)
 }
 
-func NewTransaction(module string, name string, route string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(utilities.Mapper, []interface{}) utilities.TransactionKeeper, transactionRequestPrototype func() utilities.TransactionRequest, flagList []utilities.CLIFlag) utilities.Transaction {
+func NewTransaction(module string, name string, route string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(helpers.Mapper, []interface{}) helpers.TransactionKeeper, transactionRequestPrototype func() helpers.TransactionRequest, flagList []helpers.CLIFlag) helpers.Transaction {
 	return &transaction{
 		moduleName:                  module,
 		name:                        name,

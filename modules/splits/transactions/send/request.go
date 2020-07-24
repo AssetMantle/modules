@@ -7,20 +7,20 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type transactionRequest struct {
 	BaseReq   rest.BaseReq `json:"baseReq"`
-	ToID      string       `json:"toid" valid:"required~required field toid missing matches(^[A-Za-z]$)~invalid field toid"`
-	OwnableID string       `json:"ownableid" valid:"required~required field ownableid missing matches(^[A-Za-z]$)~invalid field ownableid"`
+	ToID      string       `json:"toID" valid:"required~required field toID missing matches(^[A-Za-z]$)~invalid field toID"`
+	OwnableID string       `json:"ownableID" valid:"required~required field ownableID missing matches(^[A-Za-z]$)~invalid field ownableID"`
 	Split     string       `json:"split" valid:"required~required field split missing matches(^[A-Za-z]$)~invalid field split"`
 }
 
-var _ utilities.TransactionRequest = (*transactionRequest)(nil)
+var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
-func (transactionRequest transactionRequest) FromCLI(cliCommand utilities.CLICommand, cliContext context.CLIContext) utilities.TransactionRequest {
+func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(constants.ToID),
@@ -51,11 +51,11 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	)
 }
 
-func requestPrototype() utilities.TransactionRequest {
+func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, toID string, ownableID string, split string) utilities.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, toID string, ownableID string, split string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:   baseReq,
 		ToID:      toID,

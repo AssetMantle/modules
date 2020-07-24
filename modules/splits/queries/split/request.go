@@ -3,30 +3,30 @@ package split
 import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type queryRequest struct {
-	SplitID types.ID `json:"splitid" valid:"required~required field splitid missing"`
+	SplitID types.ID `json:"splitID" valid:"required~required field splitID missing"`
 }
 
-var _ utilities.QueryRequest = (*queryRequest)(nil)
+var _ helpers.QueryRequest = (*queryRequest)(nil)
 
-func (QueryRequest queryRequest) FromCLI(cliCommand utilities.CLICommand, _ context.CLIContext) utilities.QueryRequest {
+func (QueryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(cliCommand.ReadString(constants.SplitID)))
 }
 
-func (QueryRequest queryRequest) FromMap(vars map[string]string) utilities.QueryRequest {
+func (QueryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(vars[constants.SplitID.GetName()]))
 }
 
-func queryRequestPrototype() utilities.QueryRequest {
+func queryRequestPrototype() helpers.QueryRequest {
 	return queryRequest{}
 }
 
-func queryRequestFromInterface(QueryRequest utilities.QueryRequest) queryRequest {
+func queryRequestFromInterface(QueryRequest helpers.QueryRequest) queryRequest {
 	switch value := QueryRequest.(type) {
 	case queryRequest:
 		return value
@@ -35,6 +35,6 @@ func queryRequestFromInterface(QueryRequest utilities.QueryRequest) queryRequest
 	}
 }
 
-func newQueryRequest(splitID types.ID) utilities.QueryRequest {
+func newQueryRequest(splitID types.ID) helpers.QueryRequest {
 	return queryRequest{SplitID: splitID}
 }

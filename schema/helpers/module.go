@@ -1,9 +1,7 @@
-package utilities
+package helpers
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/params"
 )
 
 type Module interface {
@@ -13,5 +11,5 @@ type Module interface {
 	GetStoreKey() string
 	GetDefaultParamspace() string
 	GetAuxiliaryKeepers(...string) []AuxiliaryKeeper
-	InitializeKeepers(sdkTypes.StoreKey, params.Subspace, ...interface{})
+	InitializeKeepers(...interface{})
 }

@@ -55,13 +55,13 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 }
 
 func (message Message) GenerateHash() types.ID {
-	hasher := sha512.New()
+	hash := sha512.New()
 	bz := []byte(message.From.String() + message.TakerAddress.String() +
 		message.MakerAssetAmount.String() + message.MakerAssetData.String() +
 		message.TakerAssetAmount.String() + message.TakerAssetData.String() + string(message.Salt.Get()))
-	hasher.Write(bz)
+	hash.Write(bz)
 
-	sha := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
+	sha := base64.URLEncoding.EncodeToString(hash.Sum(nil))
 	return base.NewID(sha)
 }
 

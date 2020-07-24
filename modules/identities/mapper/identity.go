@@ -10,7 +10,7 @@ import (
 type identity struct {
 	ID                       types.ID              `json:"id" valid:"required~required field id missing"`
 	ProvisionedAddressList   []sdkTypes.AccAddress `json:"provisionedAddressList" valid:"required~required field provisionedAddressList missing"`
-	UnprovisionedAddressList []sdkTypes.AccAddress `json:"unprovisionedaddressList" valid:"required~required field unprovisionedaddressList missing"`
+	UnprovisionedAddressList []sdkTypes.AccAddress `json:"unprovisionedAddressList" valid:"required~required field unprovisionedAddressList missing"`
 	Immutables               types.Immutables      `json:"immutables" valid:"required~required field immutables missing"`
 	Mutables                 types.Mutables        `json:"mutables" valid:"required~required field mutables missing"`
 }

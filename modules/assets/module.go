@@ -7,8 +7,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/burn"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mutate"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Module = base.NewModule(
@@ -19,7 +19,7 @@ var Module = base.NewModule(
 	mapper.TransactionRoute,
 	genesis.GenesisState,
 	mapper.Mapper,
-	[]utilities.Auxiliary{},
-	[]utilities.Query{asset.Query},
-	[]utilities.Transaction{burn.Transaction, mint.Transaction, mutate.Transaction},
+	[]helpers.Auxiliary{},
+	[]helpers.Query{asset.Query},
+	[]helpers.Transaction{burn.Transaction, mint.Transaction, mutate.Transaction},
 )

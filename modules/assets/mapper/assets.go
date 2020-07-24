@@ -2,19 +2,19 @@ package mapper
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type assets struct {
 	ID   types.ID             `json:"id" valid:"required~required field id missing"`
 	List []mappables.InterNFT `json:"list" valid:"required~required field list missing"`
 
-	mapper  utilities.Mapper `json:"mapper" valid:"required~required field mapper missing"`
-	context sdkTypes.Context `json:"context" valid:"required~required field context missing"`
+	mapper  helpers.Mapper
+	context sdkTypes.Context
 }
 
 var _ mappers.InterNFTs = (*assets)(nil)
@@ -78,7 +78,7 @@ func (assets assets) Mutate(asset mappables.InterNFT) mappers.InterNFTs {
 	return assets
 }
 
-func NewAssets(mapper utilities.Mapper, context sdkTypes.Context) mappers.InterNFTs {
+func NewAssets(mapper helpers.Mapper, context sdkTypes.Context) mappers.InterNFTs {
 	return assets{
 		ID:      readAssetID(""),
 		List:    []mappables.InterNFT{},

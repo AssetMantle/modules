@@ -9,10 +9,10 @@ import (
 )
 
 type identityID struct {
-	ChainID          types.ID `json:"chainid" valid:"required~required field chainid missing"`
-	MaintainersID    types.ID `json:"maintainersid" valid:"required~required field maintainersid missing"`
-	ClassificationID types.ID `json:"classificationid" valid:"required~required field classificationid missing"`
-	HashID           types.ID `json:"hashid" valid:"required~required field hashid missing"`
+	ChainID          types.ID `json:"chainID" valid:"required~required field chainID missing"`
+	MaintainersID    types.ID `json:"maintainersID" valid:"required~required field maintainersID missing"`
+	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID missing"`
+	HashID           types.ID `json:"hashID" valid:"required~required field hashID missing"`
 }
 
 var _ types.ID = (*identityID)(nil)

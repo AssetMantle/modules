@@ -1,20 +1,20 @@
 package identity
 
 import (
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type queryResponse struct {
 	Identities mappers.InterIdentities `json:"identities" valid:"required~required field identities missing"`
 }
 
-var _ utilities.QueryResponse = (*queryResponse)(nil)
+var _ helpers.QueryResponse = (*queryResponse)(nil)
 
-func queryResponsePrototype() utilities.QueryResponse {
+func queryResponsePrototype() helpers.QueryResponse {
 	return queryResponse{}
 }
 
-func newQueryResponse(identities mappers.InterIdentities) utilities.QueryResponse {
+func newQueryResponse(identities mappers.InterIdentities) helpers.QueryResponse {
 	return queryResponse{Identities: identities}
 }
