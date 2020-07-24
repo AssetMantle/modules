@@ -77,11 +77,18 @@ func (order order) SetTakerAddress(takerAddress sdkTypes.AccAddress) mappables.O
 	order.TakerAddress = takerAddress
 	return order
 }
+func (order order) Encode() []byte {
+	return packageCodec.MustMarshalBinaryBare(order)
+}
+func (order order) Decode(bytes []byte) traits.Mappable {
+	packageCodec.MustUnmarshalBinaryBare(bytes, &order)
+	return order
+}
 func orderPrototype() traits.Mappable {
 	return order{}
 }
 func NewOrder(orderID types.ID, burn types.Height, lock types.Height, immutables types.Immutables,
-	makerAddess sdkTypes.AccAddress, takerAddress sdkTypes.AccAddress,
+	makerAddress sdkTypes.AccAddress, takerAddress sdkTypes.AccAddress,
 	makerAssetAmount sdkTypes.Dec, makerAssetData types.ID,
 	takerAssetAmount sdkTypes.Dec, takerAssetData types.ID, salt types.Height) order {
 	return order{
@@ -89,7 +96,7 @@ func NewOrder(orderID types.ID, burn types.Height, lock types.Height, immutables
 		Burn:             burn,
 		Lock:             lock,
 		Immutables:       immutables,
-		MakerAddress:     makerAddess,
+		MakerAddress:     makerAddress,
 		TakerAddress:     takerAddress,
 		MakerAssetAmount: makerAssetAmount,
 		MakerAssetData:   makerAssetData,

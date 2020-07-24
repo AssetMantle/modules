@@ -12,6 +12,7 @@ type Order interface {
 	traits.Burnable
 	traits.Lockable
 	traits.HasImmutables
+	traits.Mappable
 	GetMakerAddress() sdkTypes.AccAddress
 	GetTakerAddress() sdkTypes.AccAddress
 	GetMakerAssetAmount() sdkTypes.Dec
