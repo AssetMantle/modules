@@ -14,6 +14,6 @@ type Mapper interface {
 	Delete(sdkTypes.Context, types.ID)
 	Iterate(sdkTypes.Context, types.ID, func(traits.Mappable) bool)
 
-	InitializeMapper(*codec.Codec, sdkTypes.StoreKey) Mapper
+	InitializeMapper(sdkTypes.StoreKey) Mapper
 	RegisterCodec(*codec.Codec)
 }
