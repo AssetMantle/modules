@@ -35,6 +35,13 @@ func (split split) Receive(Split sdkTypes.Dec) traits.Transactional {
 func (split split) CanSend(Split sdkTypes.Dec) bool {
 	return split.Split.GTE(Split)
 }
+func (split split) Encode() []byte {
+	return packageCodec.MustMarshalBinaryBare(split)
+}
+func (split split) Decode(bytes []byte) traits.Mappable {
+	packageCodec.MustUnmarshalBinaryBare(bytes, &split)
+	return split
+}
 func splitPrototype() traits.Mappable {
 	return split{}
 }

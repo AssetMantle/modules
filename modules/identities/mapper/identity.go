@@ -63,6 +63,13 @@ func (identity identity) IsUnprovisioned(accAddress sdkTypes.AccAddress) bool {
 	}
 	return false
 }
+func (identity identity) Encode() []byte {
+	return packageCodec.MustMarshalBinaryBare(identity)
+}
+func (identity identity) Decode(bytes []byte) traits.Mappable {
+	packageCodec.MustUnmarshalBinaryBare(bytes, &identity)
+	return identity
+}
 func identityPrototype() traits.Mappable {
 	return identity{}
 }

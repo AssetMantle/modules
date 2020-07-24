@@ -10,7 +10,6 @@ import (
 
 type mapper struct {
 	storeKey          sdkTypes.StoreKey
-	codec             *codec.Codec
 	keyGenerator      func(types.ID) []byte
 	mappablePrototype func() traits.Mappable
 	registerCodec     func(*codec.Codec)
@@ -19,10 +18,7 @@ type mapper struct {
 var _ utilities.Mapper = (*mapper)(nil)
 
 func (mapper mapper) Create(context sdkTypes.Context, mappable traits.Mappable) {
-	bytes, Error := mapper.codec.MarshalBinaryBare(mappable)
-	if Error != nil {
-		panic(Error)
-	}
+	bytes := mappable.Encode()
 	kvStore := context.KVStore(mapper.storeKey)
 	kvStore.Set(mapper.keyGenerator(mappable.GetID()), bytes)
 }
@@ -32,18 +28,10 @@ func (mapper mapper) Read(context sdkTypes.Context, id types.ID) traits.Mappable
 	if bytes == nil {
 		return nil
 	}
-	mappable := mapper.mappablePrototype()
-	Error := mapper.codec.UnmarshalBinaryBare(bytes, &mappable)
-	if Error != nil {
-		panic(Error)
-	}
-	return mappable
+	return mapper.mappablePrototype().Decode(bytes)
 }
 func (mapper mapper) Update(context sdkTypes.Context, mappable traits.Mappable) {
-	bytes, Error := mapper.codec.MarshalBinaryBare(mappable)
-	if Error != nil {
-		panic(Error)
-	}
+	bytes := mappable.Encode()
 	id := mappable.GetID()
 	kvStore := context.KVStore(mapper.storeKey)
 	kvStore.Set(mapper.keyGenerator(id), bytes)
@@ -58,19 +46,14 @@ func (mapper mapper) Iterate(context sdkTypes.Context, id types.ID, accumulator 
 
 	defer kvStorePrefixIterator.Close()
 	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {
-		mappable := mapper.mappablePrototype()
-		Error := mapper.codec.UnmarshalBinaryBare(kvStorePrefixIterator.Value(), &mappable)
-		if Error != nil {
-			panic(Error)
-		}
+		mappable := mapper.mappablePrototype().Decode(kvStorePrefixIterator.Value())
 		if accumulator(mappable) {
 			break
 		}
 	}
 }
-func (mapper mapper) InitializeMapper(codec *codec.Codec, storeKey sdkTypes.StoreKey) utilities.Mapper {
+func (mapper mapper) InitializeMapper(storeKey sdkTypes.StoreKey) utilities.Mapper {
 	mapper.storeKey = storeKey
-	mapper.codec = codec
 	return mapper
 }
 func (mapper mapper) RegisterCodec(codec *codec.Codec) {
