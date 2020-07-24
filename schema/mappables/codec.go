@@ -11,5 +11,6 @@ func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*InterNFT)(nil), nil)
 	codec.RegisterInterface((*InterNFTWallet)(nil), nil)
 	codec.RegisterInterface((*Maintainer)(nil), nil)
+	codec.RegisterInterface((*Order)(nil), nil)
 	codec.RegisterInterface((*Split)(nil), nil)
 }

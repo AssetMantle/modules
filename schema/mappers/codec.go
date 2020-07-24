@@ -9,5 +9,6 @@ func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*InterIdentities)(nil), nil)
 	codec.RegisterInterface((*InterNFTs)(nil), nil)
 	codec.RegisterInterface((*Maintainers)(nil), nil)
+	codec.RegisterInterface((*Orders)(nil), nil)
 	codec.RegisterInterface((*Splits)(nil), nil)
 }
