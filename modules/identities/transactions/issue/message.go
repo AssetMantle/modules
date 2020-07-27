@@ -9,10 +9,10 @@ import (
 )
 
 type message struct {
-	From             sdkTypes.AccAddress `json:"from" valid:"required~required field fromaddress missing matches(^commit[a-z0-9]{39}$)~invalid field fromaddress"`
-	To               sdkTypes.AccAddress `json:"to" valid:"required~required field toaddress missing matches(^commit[a-z0-9]{39}$)~invalid field toaddress"`
-	MaintainersID    types.ID            `json:"maintainersid" valid:"required~required field maintainersid missing"`
-	ClassificationID types.ID            `json:"classificationid" valid:"required~required field classificationid missing"`
+	From             sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
+	To               sdkTypes.AccAddress `json:"to" valid:"required~required field to missing matches(^commit[a-z0-9]{39}$)~invalid field to"`
+	MaintainersID    types.ID            `json:"maintainersID" valid:"required~required field maintainersID missing"`
+	ClassificationID types.ID            `json:"classificationID" valid:"required~required field classificationID missing"`
 	Properties       types.Properties    `json:"properties" valid:"required~required field properties missing"`
 }
 

@@ -3,19 +3,19 @@ package asset
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
 type queryKeeper struct {
-	mapper utilities.Mapper `json:"mapper" valid:"required~required field mapper missing"`
+	mapper helpers.Mapper
 }
 
-var _ utilities.QueryKeeper = (*queryKeeper)(nil)
+var _ helpers.QueryKeeper = (*queryKeeper)(nil)
 
-func (queryKeeper queryKeeper) Enquire(context sdkTypes.Context, queryRequest utilities.QueryRequest) utilities.QueryResponse {
+func (queryKeeper queryKeeper) Enquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
 	return newQueryResponse(mapper.NewAssets(queryKeeper.mapper, context).Fetch(queryRequestFromInterface(queryRequest).AssetID))
 }
 
-func initializeQueryKeeper(mapper utilities.Mapper) utilities.QueryKeeper {
+func initializeQueryKeeper(mapper helpers.Mapper) helpers.QueryKeeper {
 	return queryKeeper{mapper: mapper}
 }

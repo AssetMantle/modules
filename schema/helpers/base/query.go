@@ -6,7 +6,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"net/http"
@@ -17,16 +17,16 @@ type query struct {
 	moduleName             string
 	name                   string
 	route                  string
-	queryKeeper            utilities.QueryKeeper
-	cliCommand             utilities.CLICommand
+	queryKeeper            helpers.QueryKeeper
+	cliCommand             helpers.CLICommand
 	packageCodec           *codec.Codec
 	registerCodec          func(*codec.Codec)
-	initializeKeeper       func(utilities.Mapper) utilities.QueryKeeper
-	queryRequestPrototype  func() utilities.QueryRequest
-	queryResponsePrototype func() utilities.QueryResponse
+	initializeKeeper       func(helpers.Mapper) helpers.QueryKeeper
+	queryRequestPrototype  func() helpers.QueryRequest
+	queryResponsePrototype func() helpers.QueryResponse
 }
 
-var _ utilities.Query = (*query)(nil)
+var _ helpers.Query = (*query)(nil)
 
 func (query query) GetModuleName() string { return query.moduleName }
 func (query query) GetName() string       { return query.name }
@@ -79,11 +79,11 @@ func (query query) RegisterCodec(codec *codec.Codec) {
 	query.registerCodec(codec)
 }
 
-func (query *query) InitializeKeeper(mapper utilities.Mapper) {
+func (query *query) InitializeKeeper(mapper helpers.Mapper) {
 	query.queryKeeper = query.initializeKeeper(mapper)
 }
 
-func (query query) query(queryRequest utilities.QueryRequest, cliContext context.CLIContext) ([]byte, int64, error) {
+func (query query) query(queryRequest helpers.QueryRequest, cliContext context.CLIContext) ([]byte, int64, error) {
 	bytes, Error := query.packageCodec.MarshalJSON(queryRequest)
 	if Error != nil {
 		return nil, 0, Error
@@ -91,7 +91,7 @@ func (query query) query(queryRequest utilities.QueryRequest, cliContext context
 	return cliContext.QueryWithData(strings.Join([]string{"", "custom", query.moduleName, query.name}, "/"), bytes)
 }
 
-func NewQuery(module string, name string, route string, short string, long string, packageCodec *codec.Codec, registerCodec func(*codec.Codec), initializeKeeper func(utilities.Mapper) utilities.QueryKeeper, queryRequestPrototype func() utilities.QueryRequest, queryResponsePrototype func() utilities.QueryResponse, flagList []utilities.CLIFlag) utilities.Query {
+func NewQuery(module string, name string, route string, short string, long string, packageCodec *codec.Codec, registerCodec func(*codec.Codec), initializeKeeper func(helpers.Mapper) helpers.QueryKeeper, queryRequestPrototype func() helpers.QueryRequest, queryResponsePrototype func() helpers.QueryResponse, flagList []helpers.CLIFlag) helpers.Query {
 	return &query{
 		moduleName:             module,
 		name:                   name,

@@ -3,8 +3,8 @@ package cancel
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Transaction = base.NewTransaction(
@@ -16,5 +16,5 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]utilities.CLIFlag{constants.OrderID},
+	[]helpers.CLIFlag{constants.OrderID},
 )

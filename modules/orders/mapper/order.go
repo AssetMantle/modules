@@ -87,10 +87,7 @@ func (order order) Decode(bytes []byte) traits.Mappable {
 func orderPrototype() traits.Mappable {
 	return order{}
 }
-func NewOrder(orderID types.ID, burn types.Height, lock types.Height, immutables types.Immutables,
-	makerAddress sdkTypes.AccAddress, takerAddress sdkTypes.AccAddress,
-	makerAssetAmount sdkTypes.Dec, makerAssetData types.ID,
-	takerAssetAmount sdkTypes.Dec, takerAssetData types.ID, salt types.Height) order {
+func NewOrder(orderID types.ID, burn types.Height, lock types.Height, immutables types.Immutables, makerAddress sdkTypes.AccAddress, takerAddress sdkTypes.AccAddress, makerAssetAmount sdkTypes.Dec, makerAssetData types.ID, takerAssetAmount sdkTypes.Dec, takerAssetData types.ID, salt types.Height) mappables.Order {
 	return order{
 		ID:               orderID,
 		Burn:             burn,

@@ -7,23 +7,23 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 	"strings"
 )
 
 type transactionRequest struct {
 	BaseReq          rest.BaseReq `json:"baseReq"`
-	To               string       `json:"to" valid:"required~required field toaddress missing matches(^commit[a-z0-9]{39}$)~invalid field toaddress"`
-	MaintainersID    string       `json:"maintainersid" valid:"required~required field maintainersid missing matches(^[A-Za-z]$)~invalid field maintainersid"`
-	ClassificationID string       `json:"classificationid" valid:"required~required field classificationId missing,matches(^[A-Za-z]$)~invalid field classificationid"`
+	To               string       `json:"to" valid:"required~required field to missing matches(^commit[a-z0-9]{39}$)~invalid field to"`
+	MaintainersID    string       `json:"maintainersID" valid:"required~required field maintainersID missing matches(^[A-Za-z]$)~invalid field maintainersID"`
+	ClassificationID string       `json:"classificationID" valid:"required~required field classificationId missing,matches(^[A-Za-z]$)~invalid field classificationID"`
 	Properties       string       `json:"properties" valid:"required~required field properties missing matches(^[A-Za-z]$)~invalid field properties"`
 }
 
-var _ utilities.TransactionRequest = (*transactionRequest)(nil)
+var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
-func (transactionRequest transactionRequest) FromCLI(cliCommand utilities.CLICommand, cliContext context.CLIContext) utilities.TransactionRequest {
+func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(constants.To),
@@ -71,11 +71,11 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	)
 }
 
-func requestPrototype() utilities.TransactionRequest {
+func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, to string, maintainersID string, classificationID string, properties string) utilities.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, to string, maintainersID string, classificationID string, properties string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:          baseReq,
 		To:               to,

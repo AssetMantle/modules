@@ -7,8 +7,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/orders/transactions/cancel"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/transactions/make"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/transactions/take"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Module = base.NewModule(
@@ -19,7 +19,7 @@ var Module = base.NewModule(
 	mapper.TransactionRoute,
 	genesis.GenesisState,
 	mapper.Mapper,
-	[]utilities.Auxiliary{},
-	[]utilities.Query{order.Query},
-	[]utilities.Transaction{cancel.Transaction, make.Transaction, take.Transaction},
+	[]helpers.Auxiliary{},
+	[]helpers.Query{order.Query},
+	[]helpers.Transaction{cancel.Transaction, make.Transaction, take.Transaction},
 )

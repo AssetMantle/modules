@@ -1,7 +1,12 @@
 package mapper
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Mapper = base.NewMapper(generateKey, assetPrototype, registerCodec)
+var Mapper = base.NewMapper(
+	ModuleName,
+	generateKey,
+	assetPrototype,
+	registerCodec,
+)

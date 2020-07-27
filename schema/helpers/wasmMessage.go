@@ -1,4 +1,4 @@
-package utilities
+package helpers
 
 type WasmMessage interface {
 	Type() string

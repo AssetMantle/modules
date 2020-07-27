@@ -7,18 +7,18 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type transactionRequest struct {
 	BaseReq rest.BaseReq `json:"baseReq"`
-	AssetID string       `json:"assetid" valid:"required~required field assetid missing matches(^[a-z]$)~invalid field assetid "`
+	AssetID string       `json:"assetID" valid:"required~required field assetID missing matches(^[a-z]$)~invalid field assetID "`
 }
 
-var _ utilities.TransactionRequest = (*transactionRequest)(nil)
+var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
-func (transactionRequest transactionRequest) FromCLI(cliCommand utilities.CLICommand, cliContext context.CLIContext) utilities.TransactionRequest {
+func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(constants.AssetID),
@@ -40,11 +40,11 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	)
 }
 
-func requestPrototype() utilities.TransactionRequest {
+func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, assetID string) utilities.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, assetID string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq: baseReq,
 		AssetID: assetID,

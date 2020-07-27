@@ -3,9 +3,9 @@ package base
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type mapper struct {
@@ -15,7 +15,7 @@ type mapper struct {
 	registerCodec     func(*codec.Codec)
 }
 
-var _ utilities.Mapper = (*mapper)(nil)
+var _ helpers.Mapper = (*mapper)(nil)
 
 func (mapper mapper) Create(context sdkTypes.Context, mappable traits.Mappable) {
 	bytes := mappable.Encode()
@@ -52,14 +52,15 @@ func (mapper mapper) Iterate(context sdkTypes.Context, id types.ID, accumulator 
 		}
 	}
 }
-func (mapper mapper) InitializeMapper(storeKey sdkTypes.StoreKey) utilities.Mapper {
-	mapper.storeKey = storeKey
-	return mapper
-}
 func (mapper mapper) RegisterCodec(codec *codec.Codec) {
 	mapper.registerCodec(codec)
 }
 
-func NewMapper(keyGenerator func(types.ID) []byte, mappablePrototype func() traits.Mappable, registerCodec func(*codec.Codec)) *mapper {
-	return &mapper{keyGenerator: keyGenerator, mappablePrototype: mappablePrototype, registerCodec: registerCodec}
+func NewMapper(module string, keyGenerator func(types.ID) []byte, mappablePrototype func() traits.Mappable, registerCodec func(*codec.Codec)) helpers.Mapper {
+	return mapper{
+		storeKey:          sdkTypes.NewKVStoreKey(module),
+		keyGenerator:      keyGenerator,
+		mappablePrototype: mappablePrototype,
+		registerCodec:     registerCodec,
+	}
 }

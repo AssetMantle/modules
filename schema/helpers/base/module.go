@@ -7,9 +7,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/gorilla/mux"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
@@ -21,14 +20,14 @@ type module struct {
 	defaultParamspace string
 	queryRoute        string
 	transactionRoute  string
-	genesisState      utilities.GenesisState
-	mapper            utilities.Mapper
-	auxiliaryList     []utilities.Auxiliary
-	queryList         []utilities.Query
-	transactionList   []utilities.Transaction
+	genesisState      helpers.GenesisState
+	mapper            helpers.Mapper
+	auxiliaryList     []helpers.Auxiliary
+	queryList         []helpers.Query
+	transactionList   []helpers.Transaction
 }
 
-var _ utilities.Module = (*module)(nil)
+var _ helpers.Module = (*module)(nil)
 
 func (module module) Name() string {
 	return module.moduleName
@@ -144,8 +143,8 @@ func (module module) GetStoreKey() string {
 func (module module) GetDefaultParamspace() string {
 	return module.defaultParamspace
 }
-func (module module) GetAuxiliaryKeepers(auxiliaryNames ...string) []utilities.AuxiliaryKeeper {
-	var auxiliaryKeeperList []utilities.AuxiliaryKeeper
+func (module module) GetAuxiliaryKeepers(auxiliaryNames ...string) []helpers.AuxiliaryKeeper {
+	var auxiliaryKeeperList []helpers.AuxiliaryKeeper
 	for _, auxiliaryName := range auxiliaryNames {
 		for _, auxiliary := range module.auxiliaryList {
 			if auxiliary.GetName() == auxiliaryName {
@@ -155,24 +154,23 @@ func (module module) GetAuxiliaryKeepers(auxiliaryNames ...string) []utilities.A
 	}
 	return auxiliaryKeeperList
 }
-func (module module) InitializeKeepers(storeKey sdkTypes.StoreKey, _ params.Subspace, auxiliaryKeepers ...interface{}) {
-	mapper := module.mapper.InitializeMapper(storeKey)
+func (module module) InitializeKeepers(auxiliaryKeepers ...interface{}) {
 
 	for _, auxiliary := range module.auxiliaryList {
-		auxiliary.InitializeKeeper(mapper)
+		auxiliary.InitializeKeeper(module.mapper)
 	}
 
 	for _, transaction := range module.transactionList {
-		transaction.InitializeKeeper(mapper, auxiliaryKeepers...)
+		transaction.InitializeKeeper(module.mapper, auxiliaryKeepers...)
 	}
 
 	for _, query := range module.queryList {
-		query.InitializeKeeper(mapper)
+		query.InitializeKeeper(module.mapper)
 	}
 
 	return
 }
-func NewModule(moduleName string, storeKey string, defaultParamspace string, queryRoute string, transactionRoute string, genesisState utilities.GenesisState, mapper utilities.Mapper, auxiliaryList []utilities.Auxiliary, queryList []utilities.Query, transactionList []utilities.Transaction) utilities.Module {
+func NewModule(moduleName string, storeKey string, defaultParamspace string, queryRoute string, transactionRoute string, genesisState helpers.GenesisState, mapper helpers.Mapper, auxiliaryList []helpers.Auxiliary, queryList []helpers.Query, transactionList []helpers.Transaction) helpers.Module {
 	return module{
 		moduleName:        moduleName,
 		storeKey:          storeKey,

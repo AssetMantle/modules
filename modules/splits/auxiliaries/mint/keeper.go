@@ -3,17 +3,17 @@ package mint
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type auxiliaryKeeper struct {
-	mapper utilities.Mapper `json:"mapper" valid:"required~required field mapper missing"`
+	mapper helpers.Mapper
 }
 
-var _ utilities.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
+var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest utilities.AuxiliaryRequest) error {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) error {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	splitID := mapper.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
 	splits := mapper.NewSplits(auxiliaryKeeper.mapper, context).Fetch(splitID)
@@ -26,6 +26,6 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	return nil
 }
 
-func initializeAuxiliaryKeeper(mapper utilities.Mapper) utilities.AuxiliaryKeeper {
+func initializeAuxiliaryKeeper(mapper helpers.Mapper) helpers.AuxiliaryKeeper {
 	return auxiliaryKeeper{mapper: mapper}
 }

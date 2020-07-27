@@ -2,19 +2,19 @@ package mapper
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
 )
 
 type splits struct {
 	ID   types.ID          `json:"id" valid:"required~required field id missing"`
 	List []mappables.Split `json:"list" valid:"required~required field list missing"`
 
-	mapper  utilities.Mapper `json:"mapper" valid:"required~required field mapper missing"`
-	context sdkTypes.Context `json:"context" valid:"required~required field context missing"`
+	mapper  helpers.Mapper
+	context sdkTypes.Context
 }
 
 var _ mappers.Splits = (*splits)(nil)
@@ -78,7 +78,7 @@ func (splits splits) Mutate(split mappables.Split) mappers.Splits {
 	return splits
 }
 
-func NewSplits(mapper utilities.Mapper, context sdkTypes.Context) mappers.Splits {
+func NewSplits(mapper helpers.Mapper, context sdkTypes.Context) mappers.Splits {
 	return splits{
 		ID:      readSplitID(""),
 		List:    []mappables.Split{},

@@ -3,8 +3,8 @@ package split
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Query = base.NewQuery(
@@ -18,5 +18,5 @@ var Query = base.NewQuery(
 	initializeQueryKeeper,
 	queryRequestPrototype,
 	queryResponsePrototype,
-	[]utilities.CLIFlag{constants.SplitID},
+	[]helpers.CLIFlag{constants.SplitID},
 )

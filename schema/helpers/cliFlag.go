@@ -1,4 +1,4 @@
-package utilities
+package helpers
 
 import (
 	"github.com/spf13/cobra"

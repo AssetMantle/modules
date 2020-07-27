@@ -3,8 +3,8 @@ package asset
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities"
-	"github.com/persistenceOne/persistenceSDK/schema/utilities/base"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Query = base.NewQuery(
@@ -18,5 +18,5 @@ var Query = base.NewQuery(
 	initializeQueryKeeper,
 	queryRequestPrototype,
 	queryResponsePrototype,
-	[]utilities.CLIFlag{constants.AssetID},
+	[]helpers.CLIFlag{constants.AssetID},
 )

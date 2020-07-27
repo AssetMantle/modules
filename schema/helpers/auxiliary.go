@@ -1,4 +1,4 @@
-package utilities
+package helpers
 
 type Auxiliary interface {
 	GetName() string
