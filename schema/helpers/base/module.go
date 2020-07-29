@@ -16,7 +16,6 @@ import (
 
 type module struct {
 	moduleName        string
-	storeKey          string
 	defaultParamspace string
 	queryRoute        string
 	transactionRoute  string
@@ -57,8 +56,6 @@ func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *m
 
 	for _, transaction := range module.transactionList {
 		router.HandleFunc(transaction.GetRoute(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
-		router.HandleFunc("/keys/add", RESTKeysHandler(cliContext)).Methods("POST")
-		router.HandleFunc("/recover/keys", RESTKeysRecoverHandler(cliContext)).Methods("POST")
 	}
 }
 func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
@@ -137,8 +134,8 @@ func (module module) BeginBlock(_ sdkTypes.Context, _ abciTypes.RequestBeginBloc
 func (module module) EndBlock(_ sdkTypes.Context, _ abciTypes.RequestEndBlock) []abciTypes.ValidatorUpdate {
 	return []abciTypes.ValidatorUpdate{}
 }
-func (module module) GetStoreKey() string {
-	return module.storeKey
+func (module module) GetKVStoreKey() *sdkTypes.KVStoreKey {
+	return module.mapper.GetKVStoreKey()
 }
 func (module module) GetDefaultParamspace() string {
 	return module.defaultParamspace
@@ -170,10 +167,9 @@ func (module module) InitializeKeepers(auxiliaryKeepers ...interface{}) {
 
 	return
 }
-func NewModule(moduleName string, storeKey string, defaultParamspace string, queryRoute string, transactionRoute string, genesisState helpers.GenesisState, mapper helpers.Mapper, auxiliaryList []helpers.Auxiliary, queryList []helpers.Query, transactionList []helpers.Transaction) helpers.Module {
+func NewModule(moduleName string, defaultParamspace string, queryRoute string, transactionRoute string, genesisState helpers.GenesisState, mapper helpers.Mapper, auxiliaryList []helpers.Auxiliary, queryList []helpers.Query, transactionList []helpers.Transaction) helpers.Module {
 	return module{
 		moduleName:        moduleName,
-		storeKey:          storeKey,
 		defaultParamspace: defaultParamspace,
 		queryRoute:        queryRoute,
 		transactionRoute:  transactionRoute,

@@ -8,6 +8,8 @@ import (
 )
 
 type Mapper interface {
+	GetKVStoreKey() *sdkTypes.KVStoreKey
+
 	Create(sdkTypes.Context, traits.Mappable)
 	Read(sdkTypes.Context, types.ID) traits.Mappable
 	Update(sdkTypes.Context, traits.Mappable)
