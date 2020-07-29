@@ -13,7 +13,6 @@ import (
 
 var Module = base.NewModule(
 	mapper.ModuleName,
-	mapper.StoreKey,
 	mapper.DefaultParamspace,
 	mapper.QueryRoute,
 	mapper.TransactionRoute,

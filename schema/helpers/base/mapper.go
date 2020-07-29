@@ -9,7 +9,7 @@ import (
 )
 
 type mapper struct {
-	storeKey          sdkTypes.StoreKey
+	kvStoreKey        *sdkTypes.KVStoreKey
 	keyGenerator      func(types.ID) []byte
 	mappablePrototype func() traits.Mappable
 	registerCodec     func(*codec.Codec)
@@ -17,13 +17,16 @@ type mapper struct {
 
 var _ helpers.Mapper = (*mapper)(nil)
 
+func (mapper mapper) GetKVStoreKey() *sdkTypes.KVStoreKey {
+	return mapper.kvStoreKey
+}
 func (mapper mapper) Create(context sdkTypes.Context, mappable traits.Mappable) {
 	bytes := mappable.Encode()
-	kvStore := context.KVStore(mapper.storeKey)
+	kvStore := context.KVStore(mapper.kvStoreKey)
 	kvStore.Set(mapper.keyGenerator(mappable.GetID()), bytes)
 }
 func (mapper mapper) Read(context sdkTypes.Context, id types.ID) traits.Mappable {
-	kvStore := context.KVStore(mapper.storeKey)
+	kvStore := context.KVStore(mapper.kvStoreKey)
 	bytes := kvStore.Get(mapper.keyGenerator(id))
 	if bytes == nil {
 		return nil
@@ -33,15 +36,15 @@ func (mapper mapper) Read(context sdkTypes.Context, id types.ID) traits.Mappable
 func (mapper mapper) Update(context sdkTypes.Context, mappable traits.Mappable) {
 	bytes := mappable.Encode()
 	id := mappable.GetID()
-	kvStore := context.KVStore(mapper.storeKey)
+	kvStore := context.KVStore(mapper.kvStoreKey)
 	kvStore.Set(mapper.keyGenerator(id), bytes)
 }
 func (mapper mapper) Delete(context sdkTypes.Context, id types.ID) {
-	kvStore := context.KVStore(mapper.storeKey)
+	kvStore := context.KVStore(mapper.kvStoreKey)
 	kvStore.Delete(mapper.keyGenerator(id))
 }
 func (mapper mapper) Iterate(context sdkTypes.Context, id types.ID, accumulator func(traits.Mappable) bool) {
-	store := context.KVStore(mapper.storeKey)
+	store := context.KVStore(mapper.kvStoreKey)
 	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(store, mapper.keyGenerator(id))
 
 	defer kvStorePrefixIterator.Close()
@@ -58,7 +61,7 @@ func (mapper mapper) RegisterCodec(codec *codec.Codec) {
 
 func NewMapper(module string, keyGenerator func(types.ID) []byte, mappablePrototype func() traits.Mappable, registerCodec func(*codec.Codec)) helpers.Mapper {
 	return mapper{
-		storeKey:          sdkTypes.NewKVStoreKey(module),
+		kvStoreKey:        sdkTypes.NewKVStoreKey(module),
 		keyGenerator:      keyGenerator,
 		mappablePrototype: mappablePrototype,
 		registerCodec:     registerCodec,
