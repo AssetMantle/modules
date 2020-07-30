@@ -14,6 +14,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/persistenceOne/persistenceSDK/kafka"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
 	"log"
@@ -31,6 +32,9 @@ type transaction struct {
 	initializeKeeper            func(helpers.Mapper, []interface{}) helpers.TransactionKeeper
 	transactionRequestPrototype func() helpers.TransactionRequest
 }
+//declaring global variable
+var KafkaBool = false
+var KafkaState kafka.KafkaState
 
 var _ helpers.Transaction = (*transaction)(nil)
 
@@ -162,18 +166,25 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			return
 		}
 
-		// broadcast to a node
-		res, err := cliContext.BroadcastTx(stdMsg)
-		if err != nil {
-			fmt.Printf("Error in broadcast: %s\n", err)
-			return
-		}
+		if KafkaBool == true {
+			ticketID := kafka.TicketIDGenerator("assetM")
+			jsonResponse := kafka.SendToKafka(kafka.NewKafkaMsgFromRest(msg, ticketID, baseReq, cliContext), KafkaState, cliContext.Codec)
+			responseWriter.WriteHeader(http.StatusAccepted)
+			_, _ = responseWriter.Write(jsonResponse)
+		} else {
+			// broadcast to a node
+			res, err := cliContext.BroadcastTx(stdMsg)
+			if err != nil {
+				fmt.Printf("Error in broadcast: %s\n", err)
+				return
+			}
 
-		output, err := cliContext.Codec.MarshalJSON(res)
+			output, err := cliContext.Codec.MarshalJSON(res)
 
-		responseWriter.Header().Set("Content-Type", "application/json")
-		if _, err := responseWriter.Write(output); err != nil {
-			log.Printf("could not write response: %v", err)
+			responseWriter.Header().Set("Content-Type", "application/json")
+			if _, err := responseWriter.Write(output); err != nil {
+				log.Printf("could not write response: %v", err)
+			}
 		}
 
 	}
