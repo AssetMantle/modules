@@ -15,9 +15,9 @@ type order struct {
 	MakerAddress     sdkTypes.AccAddress
 	TakerAddress     sdkTypes.AccAddress
 	MakerAssetAmount sdkTypes.Dec
-	MakerAssetData   types.ID
+	MakerAssetData   interface{}
 	TakerAssetAmount sdkTypes.Dec
-	TakerAssetData   types.ID
+	TakerAssetData   interface{}
 	Salt             types.Height
 }
 
@@ -60,14 +60,14 @@ func (order order) GetTakerAddress() sdkTypes.AccAddress {
 func (order order) GetMakerAssetAmount() sdkTypes.Dec {
 	return order.MakerAssetAmount
 }
-func (order order) GetMakerAssetData() types.ID {
+func (order order) GetMakerAssetData() interface{} {
 	return order.MakerAssetData
 }
 
 func (order order) GetTakerAssetAmount() sdkTypes.Dec {
 	return order.TakerAssetAmount
 }
-func (order order) GetTakerAssetData() types.ID {
+func (order order) GetTakerAssetData() interface{} {
 	return order.TakerAssetData
 }
 func (order order) GetSalt() types.Height {

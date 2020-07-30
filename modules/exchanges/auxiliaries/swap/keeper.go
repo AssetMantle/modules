@@ -1,6 +1,8 @@
 package swap
 
 import (
+	"errors"
+	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
@@ -14,8 +16,24 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) error {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	order := auxiliaryRequest.Order
-	makeOrderCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(order.GetMakerAssetData().String(), order.GetMakerAssetAmount().TruncateInt()))
-	takeOrderCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(order.GetTakerAssetData().String(), order.GetTakerAssetAmount().TruncateInt()))
+
+	var makerAssetData string
+	switch value := order.GetMakerAssetData().(type) {
+	case sdkTypes.Coin:
+		makerAssetData = value.Denom
+	default:
+		return errors.New(fmt.Sprintf("Unknown message type, %v, not supported", value))
+	}
+	var takerAssetData string
+	switch value := order.GetMakerAssetData().(type) {
+	case sdkTypes.Coin:
+		takerAssetData = value.Denom
+	default:
+		return errors.New(fmt.Sprintf("Unknown message type, %v, not supported", value))
+	}
+
+	makeOrderCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(makerAssetData, order.GetMakerAssetAmount().TruncateInt()))
+	takeOrderCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(takerAssetData, order.GetTakerAssetAmount().TruncateInt()))
 	if Error := auxiliaryRequest.BankKeeper.SendCoins(context, order.GetMakerAddress(), order.GetTakerAddress(), makeOrderCoins); Error != nil {
 		return Error
 	}

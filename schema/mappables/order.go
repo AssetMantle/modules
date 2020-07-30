@@ -16,9 +16,9 @@ type Order interface {
 	GetMakerAddress() sdkTypes.AccAddress
 	GetTakerAddress() sdkTypes.AccAddress
 	GetMakerAssetAmount() sdkTypes.Dec
-	GetMakerAssetData() types.ID
+	GetMakerAssetData() interface{}
 	GetTakerAssetAmount() sdkTypes.Dec
-	GetTakerAssetData() types.ID
+	GetTakerAssetData() interface{}
 	GetSalt() types.Height
 	SetTakerAddress(sdkTypes.AccAddress) Order
 }
