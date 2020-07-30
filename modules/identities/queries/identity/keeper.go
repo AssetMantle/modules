@@ -16,6 +16,6 @@ func (queryKeeper queryKeeper) Enquire(context sdkTypes.Context, queryRequest he
 	return newQueryResponse(mapper.NewIdentities(queryKeeper.mapper, context).Fetch(queryRequestFromInterface(queryRequest).IdentityID))
 }
 
-func initializeQueryKeeper(mapper helpers.Mapper) helpers.QueryKeeper {
+func initializeQueryKeeper(mapper helpers.Mapper, _ []interface{}) helpers.QueryKeeper {
 	return queryKeeper{mapper: mapper}
 }
