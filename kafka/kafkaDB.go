@@ -19,7 +19,10 @@ func SetTicketIDtoDB(ticketID Ticket, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec, 
 		panic(err)
 	}
 
-	kafkaDB.Set(ticketid, msg)
+	err = kafkaDB.Set(ticketid, msg)
+	if err != nil {
+		panic(err)
+	}
 	return
 }
 
@@ -29,7 +32,10 @@ func AddResponseToDB(ticketID Ticket, response []byte, kafkaDB *dbm.GoLevelDB, c
 	if err != nil {
 		panic(err)
 	}
-	kafkaDB.SetSync(ticketid, response)
+	err = kafkaDB.SetSync(ticketid, response)
+	if err != nil {
+		panic(err)
+	}
 	return
 }
 
@@ -46,7 +52,7 @@ func GetResponseFromDB(ticketID Ticket, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec
 }
 
 // QueryDB : REST outputs info from DB
-func QueryDB(cdc *codec.Codec, r *mux.Router, kafkaDB *dbm.GoLevelDB) http.HandlerFunc {
+func QueryDB(cdc *codec.Codec, kafkaDB *dbm.GoLevelDB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		vars := mux.Vars(r)
@@ -63,16 +69,16 @@ func QueryDB(cdc *codec.Codec, r *mux.Router, kafkaDB *dbm.GoLevelDB) http.Handl
 			output, err := cdc.MarshalJSON("The ticket ID does not exist, it must have been deleted, Query the chain to know")
 			if err != nil {
 				w.WriteHeader(http.StatusNotFound)
-				w.Write([]byte(fmt.Sprintf("ticket ID does not exist. Error: %s", err.Error())))
+				_, _ = w.Write([]byte(fmt.Sprintf("ticket ID does not exist. Error: %s", err.Error())))
 				return
 			}
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write(output)
+			_, _ = w.Write(output)
 			return
 		}
 
 		w.WriteHeader(http.StatusAccepted)
-		w.Write(response)
+		_, _ = w.Write(response)
 		return
 	}
 }

@@ -129,7 +129,7 @@ func SignAndBroadcastMultiples(brs []rest.BaseReq, cliCtxs []context.CLIContext,
 
 		if brs[i].Simulate || simAndExec {
 			if gasAdj < 0 {
-				return nil, errors.New(err.Error())
+				return nil, errors.New("Error invalid gas adjustment")
 			}
 
 			txBldr, err = tx.EnrichWithGas(txBldr, cliCtxs[i], []cTypes.Msg{msgs[i]})
@@ -232,7 +232,7 @@ func SignAndBroadcastMultiple(brs []rest.BaseReq, cliCtxs []context.CLIContext,
 
 		if brs[i].Simulate || simAndExec {
 			if gasAdj < 0 {
-				return nil, errors.New(err.Error())
+				return nil, errors.New("Error invalid gas adjustment")
 			}
 
 			txBldr, err = tx.EnrichWithGas(txBldr, cliCtxs[i], []cTypes.Msg{msgs[i]})
