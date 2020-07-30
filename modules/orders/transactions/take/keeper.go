@@ -30,7 +30,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		order.GetMakerAddress(), message.From, order.GetMakerAssetAmount(), order.GetMakerAssetData(), order.GetTakerAssetAmount(),
 		order.GetTakerAssetData(), order.GetSalt())
 	orders = orders.Mutate(order)
-	transactionKeeper.exchangeKeeper.Help(context, swap.NewAuxiliaryRequest(order, transactionKeeper.bankKeeper))
+	if Error := transactionKeeper.exchangeKeeper.Help(context, swap.NewAuxiliaryRequest(order, transactionKeeper.bankKeeper)); Error != nil {
+		return Error
+	}
 	orders.Remove(order)
 	return nil
 }

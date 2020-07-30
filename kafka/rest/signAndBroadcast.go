@@ -32,7 +32,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-
 func SignAndBroadcast(br rest.BaseReq, cliCtx context.CLIContext,
 	mode, password string, msgs []cTypes.Msg) ([]byte, error) {
 
@@ -206,7 +205,6 @@ func SignAndBroadcastMultiple(brs []rest.BaseReq, cliCtxs []context.CLIContext,
 		if err != nil {
 			return nil, errors.New(err.Error())
 		}
-
 
 		keyBase, err := keyring.New(sdkTypes.KeyringServiceName(), "os", "home", strings.NewReader(keys.DefaultKeyPass))
 		if err != nil {

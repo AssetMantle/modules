@@ -8,7 +8,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
-
 )
 
 // KafkaConsumerMsgs : msgs to consume 5 second delay

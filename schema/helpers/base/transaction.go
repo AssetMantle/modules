@@ -32,6 +32,7 @@ type transaction struct {
 	initializeKeeper            func(helpers.Mapper, []interface{}) helpers.TransactionKeeper
 	transactionRequestPrototype func() helpers.TransactionRequest
 }
+
 //declaring global variable
 var KafkaBool = false
 var KafkaState kafka.KafkaState

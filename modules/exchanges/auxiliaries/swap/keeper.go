@@ -16,18 +16,15 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	order := auxiliaryRequest.Order
 	makeOrderCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(order.GetMakerAssetData().String(), order.GetMakerAssetAmount().TruncateInt()))
 	takeOrderCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(order.GetTakerAssetData().String(), order.GetTakerAssetAmount().TruncateInt()))
-	error := auxiliaryRequest.BankKeeper.SendCoins(context, order.GetMakerAddress(), order.GetTakerAddress(), makeOrderCoins)
-	if error != nil {
-		return error
+	if Error := auxiliaryRequest.BankKeeper.SendCoins(context, order.GetMakerAddress(), order.GetTakerAddress(), makeOrderCoins); Error != nil {
+		return Error
 	}
-	error = auxiliaryRequest.BankKeeper.SendCoins(context, order.GetTakerAddress(), order.GetMakerAddress(), takeOrderCoins)
-	if error != nil {
-		return error
+	if Error := auxiliaryRequest.BankKeeper.SendCoins(context, order.GetTakerAddress(), order.GetMakerAddress(), takeOrderCoins); Error != nil {
+		return Error
 	}
-
 	return nil
 }
 
-func initializeAuxiliaryKeeper(mapper helpers.Mapper) helpers.AuxiliaryKeeper {
+func initializeAuxiliaryKeeper(mapper helpers.Mapper, _ []interface{}) helpers.AuxiliaryKeeper {
 	return auxiliaryKeeper{mapper: mapper}
 }

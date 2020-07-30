@@ -26,6 +26,6 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	return nil
 }
 
-func initializeAuxiliaryKeeper(mapper helpers.Mapper) helpers.AuxiliaryKeeper {
+func initializeAuxiliaryKeeper(mapper helpers.Mapper, _ []interface{}) helpers.AuxiliaryKeeper {
 	return auxiliaryKeeper{mapper: mapper}
 }

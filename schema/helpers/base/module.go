@@ -154,7 +154,7 @@ func (module module) GetAuxiliaryKeepers(auxiliaryNames ...string) []helpers.Aux
 func (module module) InitializeKeepers(auxiliaryKeepers ...interface{}) {
 
 	for _, auxiliary := range module.auxiliaryList {
-		auxiliary.InitializeKeeper(module.mapper)
+		auxiliary.InitializeKeeper(module.mapper, auxiliaryKeepers...)
 	}
 
 	for _, transaction := range module.transactionList {
@@ -162,7 +162,7 @@ func (module module) InitializeKeepers(auxiliaryKeepers ...interface{}) {
 	}
 
 	for _, query := range module.queryList {
-		query.InitializeKeeper(module.mapper)
+		query.InitializeKeeper(module.mapper, auxiliaryKeepers...)
 	}
 
 	return
