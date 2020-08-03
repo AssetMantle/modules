@@ -15,6 +15,7 @@ import (
 
 type transactionRequest struct {
 	BaseReq          rest.BaseReq `json:"baseReq"`
+	ToID             string       `json:"toID" valid:"required~required field toID missing"`
 	ClassificationID string       `json:"classificationID" valid:"required~required field classificationID missing matches(^[A-Za-z]$)~invalid field classificationID"`
 	MaintainersID    string       `json:"maintainersID" valid:"required~required field maintainersID missing matches(^[A-Za-z]$)~invalid field maintainersID"`
 	Properties       string       `json:"properties" valid:"required~required field properties missing matches(^[A-Za-z]$)~invalid field properties"`
@@ -27,6 +28,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
+		cliCommand.ReadString(constants.ToID),
 		cliCommand.ReadString(constants.ClassificationID),
 		cliCommand.ReadString(constants.MaintainersID),
 		cliCommand.ReadString(constants.Properties),
@@ -60,6 +62,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 
 	return newMessage(
 		from,
+		base.NewID(transactionRequest.ToID),
 		base.NewID(transactionRequest.MaintainersID),
 		base.NewID(transactionRequest.ClassificationID),
 		base.NewProperties(propertyList),
@@ -72,9 +75,10 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, classificationID string, maintainersID string, properties string, lock int64, burn int64) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, toID string, classificationID string, maintainersID string, properties string, lock int64, burn int64) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:          baseReq,
+		ToID:             toID,
 		ClassificationID: classificationID,
 		MaintainersID:    maintainersID,
 		Properties:       properties,
