@@ -4,6 +4,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type auxiliaryRequest struct {
@@ -25,8 +26,8 @@ func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) au
 
 func NewAuxiliaryRequest(ownerID types.ID, ownableID types.ID, split sdkTypes.Dec) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		OwnerID:   ownerID,
-		OwnableID: ownableID,
+		OwnerID:   base.NewID(ownerID.String()),
+		OwnableID: base.NewID(ownableID.String()),
 		Split:     split,
 	}
 }
