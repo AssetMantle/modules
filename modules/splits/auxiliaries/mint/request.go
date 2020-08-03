@@ -24,7 +24,7 @@ func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) au
 }
 
 func NewAuxiliaryRequest(ownerID types.ID, ownableID types.ID, split sdkTypes.Dec) helpers.AuxiliaryRequest {
-	return &auxiliaryRequest{
+	return auxiliaryRequest{
 		OwnerID:   ownerID,
 		OwnableID: ownableID,
 		Split:     split,
