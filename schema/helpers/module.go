@@ -11,6 +11,6 @@ type Module interface {
 
 	GetKVStoreKey() *sdkTypes.KVStoreKey
 	GetDefaultParamspace() string
-	GetAuxiliaryKeepers(...string) []AuxiliaryKeeper
+	GetAuxiliary(string) Auxiliary
 	InitializeKeepers(...interface{})
 }
