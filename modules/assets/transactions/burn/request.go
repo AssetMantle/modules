@@ -13,6 +13,7 @@ import (
 
 type transactionRequest struct {
 	BaseReq rest.BaseReq `json:"baseReq"`
+	FromID  string       `json:"fromID" valid:"required~required field fromID missing matches(^[a-z]$)~invalid field fromID "`
 	AssetID string       `json:"assetID" valid:"required~required field assetID missing matches(^[a-z]$)~invalid field assetID "`
 }
 
@@ -21,6 +22,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
+		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.AssetID),
 	)
 }
@@ -36,6 +38,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	}
 	return newMessage(
 		from,
+		base.NewID(transactionRequest.FromID),
 		base.NewID(transactionRequest.AssetID),
 	)
 }
@@ -44,9 +47,10 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, assetID string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, assetID string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq: baseReq,
+		FromID:  fromID,
 		AssetID: assetID,
 	}
 }
