@@ -10,6 +10,7 @@ import (
 
 type message struct {
 	From      sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
+	FromID    types.ID            `json:"fromID" valid:"required~required field fromID missing"`
 	ToID      types.ID            `json:"toID" valid:"required~required field toID missing"`
 	OwnableID types.ID            `json:"ownableID" valid:"required~required field ownableID missing"`
 	Split     sdkTypes.Dec        `json:"split" valid:"required~required field split missing"`
@@ -42,9 +43,10 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, toID types.ID, ownableID types.ID, split sdkTypes.Dec) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, toID types.ID, ownableID types.ID, split sdkTypes.Dec) sdkTypes.Msg {
 	return message{
 		From:      from,
+		FromID:    fromID,
 		ToID:      toID,
 		OwnableID: ownableID,
 		Split:     split,

@@ -16,5 +16,5 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]helpers.CLIFlag{constants.AssetID},
+	[]helpers.CLIFlag{constants.FromID, constants.AssetID},
 )
