@@ -14,17 +14,16 @@ import (
 //TODO make private
 type Message struct {
 	From             sdkTypes.AccAddress
-	MaintainersID    types.ID
-	ClassificationID types.ID
 	Properties       types.Properties
 	Lock             types.Height
 	Burn             types.Height
 	TakerAddress     sdkTypes.AccAddress
 	MakerAssetAmount sdkTypes.Dec
 	MakerAssetData   types.ID
+	MakerAssetType   types.ID
 	TakerAssetAmount sdkTypes.Dec
 	TakerAssetData   types.ID
-	Salt             types.Height
+	TakerAssetType   types.ID
 }
 
 var _ sdkTypes.Msg = Message{}
@@ -54,32 +53,31 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 	}
 }
 
-func (message Message) GenerateHash() types.ID {
+func (message Message) GenerateHash(salt types.Height) types.ID {
 	hash := sha512.New()
 	bz := []byte(message.From.String() + message.TakerAddress.String() +
 		message.MakerAssetAmount.String() + message.MakerAssetData.String() +
-		message.TakerAssetAmount.String() + message.TakerAssetData.String() + string(message.Salt.Get()))
+		message.TakerAssetAmount.String() + message.TakerAssetData.String() + string(salt.Get()))
 	hash.Write(bz)
 
 	sha := base64.URLEncoding.EncodeToString(hash.Sum(nil))
 	return base.NewID(sha)
 }
 
-func newMessage(from sdkTypes.AccAddress, maintainersID types.ID, classificationID types.ID, properties types.Properties, lock types.Height, burn types.Height,
-	takerAddress sdkTypes.AccAddress, makerAssetAmount sdkTypes.Dec, makerAssetData types.ID,
-	takerAssetAmount sdkTypes.Dec, takerAssetData types.ID, salt types.Height) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, properties types.Properties, lock types.Height, burn types.Height,
+	takerAddress sdkTypes.AccAddress, makerAssetAmount sdkTypes.Dec, makerAssetData types.ID, makerAssetType types.ID,
+	takerAssetAmount sdkTypes.Dec, takerAssetData types.ID, takerAssetType types.ID) sdkTypes.Msg {
 	return Message{
 		From:             from,
-		MaintainersID:    maintainersID,
-		ClassificationID: classificationID,
 		Properties:       properties,
 		Lock:             lock,
 		Burn:             burn,
 		TakerAddress:     takerAddress,
 		MakerAssetAmount: makerAssetAmount,
 		MakerAssetData:   makerAssetData,
+		MakerAssetType:   makerAssetType,
 		TakerAssetAmount: takerAssetAmount,
 		TakerAssetData:   takerAssetData,
-		Salt:             salt,
+		TakerAssetType:   takerAssetType,
 	}
 }

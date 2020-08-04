@@ -4,7 +4,7 @@ const ProjectName = "xprt"
 const ProjectRoute = "/" + ProjectName
 
 const IDSeparator = "-"
-const CompositeIDSeperator = "|"
+const CompositeIDSeparator = "|"
 const PropertiesSeparator = ","
 const TraitIDAndPropertySeparator = ":"
 
