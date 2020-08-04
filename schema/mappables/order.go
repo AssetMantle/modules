@@ -13,12 +13,12 @@ type Order interface {
 	traits.Lockable
 	traits.HasImmutables
 	traits.Mappable
-	GetMakerAddress() sdkTypes.AccAddress
-	GetTakerAddress() sdkTypes.AccAddress
+	GetMakerID() types.ID
+	GetTakerID() types.ID
 	GetMakerAssetAmount() sdkTypes.Dec
-	GetMakerAssetData() traits.Exchangeable
+	GetMakerAssetData() types.ID
 	GetTakerAssetAmount() sdkTypes.Dec
-	GetTakerAssetData() traits.Exchangeable
+	GetTakerAssetData() types.ID
 	GetSalt() types.Height
-	SetTakerAddress(sdkTypes.AccAddress) Order
+	SetTakerID(types.ID) Order
 }
