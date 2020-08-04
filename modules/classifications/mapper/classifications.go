@@ -22,9 +22,9 @@ var _ mappers.Classifications = (*classifications)(nil)
 func (classifications classifications) GetID() types.ID { return classifications.ID }
 func (classifications classifications) Get(id types.ID) mappables.Classification {
 	classificationID := classificationIDFromInterface(id)
-	for _, oldIdentity := range classifications.List {
-		if oldIdentity.GetID().Compare(classificationID) == 0 {
-			return oldIdentity
+	for _, oldClassification := range classifications.List {
+		if oldClassification.GetID().Compare(classificationID) == 0 {
+			return oldClassification
 		}
 	}
 	return nil
@@ -42,11 +42,11 @@ func (classifications classifications) Fetch(id types.ID) mappers.Classification
 			classificationList = append(classificationList, mappable.(classification))
 		}
 	} else {
-		appendIdentityList := func(mappable traits.Mappable) bool {
+		appendClassificationList := func(mappable traits.Mappable) bool {
 			classificationList = append(classificationList, mappable.(classification))
 			return false
 		}
-		classifications.mapper.Iterate(classifications.context, classificationsID, appendIdentityList)
+		classifications.mapper.Iterate(classifications.context, classificationsID, appendClassificationList)
 	}
 	classifications.ID, classifications.List = id, classificationList
 	return classifications
@@ -59,8 +59,8 @@ func (classifications classifications) Add(classification mappables.Classificati
 }
 func (classifications classifications) Remove(classification mappables.Classification) mappers.Classifications {
 	classifications.mapper.Delete(classifications.context, classification.GetID())
-	for i, oldIdentity := range classifications.List {
-		if oldIdentity.GetID().Compare(classification.GetID()) == 0 {
+	for i, oldClassification := range classifications.List {
+		if oldClassification.GetID().Compare(classification.GetID()) == 0 {
 			classifications.List = append(classifications.List[:i], classifications.List[i+1:]...)
 			break
 		}
@@ -69,8 +69,8 @@ func (classifications classifications) Remove(classification mappables.Classific
 }
 func (classifications classifications) Mutate(classification mappables.Classification) mappers.Classifications {
 	classifications.mapper.Update(classifications.context, classification)
-	for i, oldIdentity := range classifications.List {
-		if oldIdentity.GetID().Compare(classification.GetID()) == 0 {
+	for i, oldClassification := range classifications.List {
+		if oldClassification.GetID().Compare(classification.GetID()) == 0 {
 			classifications.List[i] = classification
 			break
 		}

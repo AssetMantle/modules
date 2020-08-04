@@ -32,9 +32,9 @@ func classificationPrototype() traits.Mappable {
 	return classification{}
 }
 
-func NewClassification(identityID types.ID, traits types.Traits) mappables.Classification {
+func NewClassification(classificationID types.ID, traits types.Traits) mappables.Classification {
 	return classification{
-		ID:     identityID,
+		ID:     classificationID,
 		Traits: traits,
 	}
 }

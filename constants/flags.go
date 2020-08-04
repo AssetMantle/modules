@@ -17,6 +17,7 @@ var (
 	Properties       = base.NewCLIFlag("properties", "", "GetProperties")
 	Split            = base.NewCLIFlag("split", "", "Split")
 	SplitID          = base.NewCLIFlag("splitID", "", "SplitID")
+	Traits           = base.NewCLIFlag("traits", "", "Traits")
 	To               = base.NewCLIFlag("to", "", "To")
 	ToID             = base.NewCLIFlag("toID", "", "ToID")
 	OrderID          = base.NewCLIFlag("orderID", "", "OrderID")

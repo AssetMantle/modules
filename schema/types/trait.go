@@ -5,5 +5,7 @@ type Trait interface {
 
 	GetID() ID
 
+	GetProperty() Property
+
 	IsMutable() bool
 }
