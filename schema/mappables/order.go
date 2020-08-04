@@ -16,9 +16,9 @@ type Order interface {
 	GetMakerAddress() sdkTypes.AccAddress
 	GetTakerAddress() sdkTypes.AccAddress
 	GetMakerAssetAmount() sdkTypes.Dec
-	GetMakerAssetData() types.ID
+	GetMakerAssetData() traits.Exchangeable
 	GetTakerAssetAmount() sdkTypes.Dec
-	GetTakerAssetData() types.ID
+	GetTakerAssetData() traits.Exchangeable
 	GetSalt() types.Height
 	SetTakerAddress(sdkTypes.AccAddress) Order
 }

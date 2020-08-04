@@ -1,14 +1,12 @@
 package swap
 
 import (
-	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 )
 
 type auxiliaryRequest struct {
-	Order      mappables.Order
-	BankKeeper bank.Keeper
+	Order mappables.Order
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -22,9 +20,8 @@ func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) au
 	}
 }
 
-func NewAuxiliaryRequest(order mappables.Order, bankKeeper bank.Keeper) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(order mappables.Order) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		Order:      order,
-		BankKeeper: bankKeeper,
+		Order: order,
 	}
 }

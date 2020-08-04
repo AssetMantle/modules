@@ -15,17 +15,16 @@ import (
 
 type transactionRequest struct {
 	BaseReq          rest.BaseReq `json:"baseReq"`
-	ClassificationID string       `json:"classificationID"`
-	MaintainersID    string       `json:"maintainersID"`
 	Properties       string       `json:"properties"`
 	Lock             int64        `json:"lock"`
 	Burn             int64        `json:"burn"`
 	TakerAddress     string       `json:"takerAddress"`
 	MakerAssetAmount int64        `json:"makerAssetAmount"`
 	MakerAssetData   string       `json:"makerAssetData"`
+	MakerAssetType   string       `json:"makerAssetDataType"`
 	TakerAssetAmount int64        `json:"takerAssetAmount"`
 	TakerAssetData   string       `json:"takerAssetData"`
-	Salt             int64        `json:"salt"`
+	TakerAssetType   string       `json:"takerAssetDataType"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -33,17 +32,16 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
-		cliCommand.ReadString(constants.ClassificationID),
-		cliCommand.ReadString(constants.MaintainersID),
 		cliCommand.ReadString(constants.Properties),
 		cliCommand.ReadInt64(constants.Lock),
 		cliCommand.ReadInt64(constants.Burn),
 		cliCommand.ReadString(constants.TakerAddress),
 		cliCommand.ReadInt64(constants.MakerAssetAmount),
 		cliCommand.ReadString(constants.MakerAssetData),
+		cliCommand.ReadString(constants.MakerAssetType),
 		cliCommand.ReadInt64(constants.TakerAssetAmount),
 		cliCommand.ReadString(constants.TakerAssetData),
-		cliCommand.ReadInt64(constants.Salt),
+		cliCommand.ReadString(constants.TakerAssetType),
 	)
 }
 
@@ -77,17 +75,16 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 
 	return newMessage(
 		from,
-		base.NewID(transactionRequest.MaintainersID),
-		base.NewID(transactionRequest.ClassificationID),
 		base.NewProperties(propertyList),
 		base.NewHeight(transactionRequest.Lock),
 		base.NewHeight(transactionRequest.Burn),
 		takerAddress,
 		sdkTypes.NewDec(transactionRequest.MakerAssetAmount),
 		base.NewID(transactionRequest.MakerAssetData),
+		base.NewID(transactionRequest.MakerAssetType),
 		sdkTypes.NewDec(transactionRequest.TakerAssetAmount),
 		base.NewID(transactionRequest.TakerAssetData),
-		base.NewHeight(transactionRequest.Salt),
+		base.NewID(transactionRequest.TakerAssetType),
 	)
 }
 
@@ -95,21 +92,20 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, classificationID string, maintainersID string, properties string, lock int64, burn int64,
-	takerAddress string, makerAssetAmount int64, makerAssetData string, takerAssetAmount int64, takerAssetData string, salt int64,
-) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, properties string, lock int64, burn int64, takerAddress string,
+	makerAssetAmount int64, makerAssetData string, makerAssetType string, takerAssetAmount int64,
+	takerAssetData string, takerAssetType string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:          baseReq,
-		ClassificationID: classificationID,
-		MaintainersID:    maintainersID,
 		Properties:       properties,
 		Lock:             lock,
 		Burn:             burn,
 		TakerAddress:     takerAddress,
 		MakerAssetAmount: makerAssetAmount,
 		MakerAssetData:   makerAssetData,
+		MakerAssetType:   makerAssetType,
 		TakerAssetAmount: takerAssetAmount,
 		TakerAssetData:   takerAssetData,
-		Salt:             salt,
+		TakerAssetType:   takerAssetType,
 	}
 }
