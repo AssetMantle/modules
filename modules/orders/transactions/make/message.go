@@ -17,13 +17,12 @@ type Message struct {
 	Properties       types.Properties
 	Lock             types.Height
 	Burn             types.Height
-	TakerAddress     sdkTypes.AccAddress
+	FromID           types.ID
+	ToID             types.ID
 	MakerAssetAmount sdkTypes.Dec
 	MakerAssetData   types.ID
-	MakerAssetType   types.ID
 	TakerAssetAmount sdkTypes.Dec
 	TakerAssetData   types.ID
-	TakerAssetType   types.ID
 }
 
 var _ sdkTypes.Msg = Message{}
@@ -55,7 +54,7 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 
 func (message Message) GenerateHash(salt types.Height) types.ID {
 	hash := sha512.New()
-	bz := []byte(message.From.String() + message.TakerAddress.String() +
+	bz := []byte(message.FromID.String() + message.ToID.String() +
 		message.MakerAssetAmount.String() + message.MakerAssetData.String() +
 		message.TakerAssetAmount.String() + message.TakerAssetData.String() + string(salt.Get()))
 	hash.Write(bz)
@@ -65,19 +64,18 @@ func (message Message) GenerateHash(salt types.Height) types.ID {
 }
 
 func newMessage(from sdkTypes.AccAddress, properties types.Properties, lock types.Height, burn types.Height,
-	takerAddress sdkTypes.AccAddress, makerAssetAmount sdkTypes.Dec, makerAssetData types.ID, makerAssetType types.ID,
-	takerAssetAmount sdkTypes.Dec, takerAssetData types.ID, takerAssetType types.ID) sdkTypes.Msg {
+	fromID types.ID, toID types.ID, makerAssetAmount sdkTypes.Dec, makerAssetData types.ID,
+	takerAssetAmount sdkTypes.Dec, takerAssetData types.ID) sdkTypes.Msg {
 	return Message{
 		From:             from,
 		Properties:       properties,
 		Lock:             lock,
 		Burn:             burn,
-		TakerAddress:     takerAddress,
+		FromID:           fromID,
+		ToID:             toID,
 		MakerAssetAmount: makerAssetAmount,
 		MakerAssetData:   makerAssetData,
-		MakerAssetType:   makerAssetType,
 		TakerAssetAmount: takerAssetAmount,
 		TakerAssetData:   takerAssetData,
-		TakerAssetType:   takerAssetType,
 	}
 }

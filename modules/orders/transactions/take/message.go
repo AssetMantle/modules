@@ -10,6 +10,7 @@ import (
 
 type message struct {
 	From    sdkTypes.AccAddress
+	FromID  types.ID
 	OrderID types.ID
 }
 
@@ -40,9 +41,10 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, orderID types.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, orderID types.ID) sdkTypes.Msg {
 	return message{
 		From:    from,
+		FromID:  fromID,
 		OrderID: orderID,
 	}
 }

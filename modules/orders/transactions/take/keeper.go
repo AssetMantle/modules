@@ -23,11 +23,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if order == nil {
 		return constants.EntityNotFound
 	}
-	if order.GetTakerAddress() != nil && !message.From.Equals(order.GetTakerAddress()) {
-		return constants.NotAuthorized
-	}
+	//	check for from address is provisioned in FromID
+	//if order.GetTakerAddress() != nil && !message.From.Equals(order.GetTakerAddress()) {
+	//	return constants.NotAuthorized
+	//}
+
+	// get identity of taker
 	order = mapper.NewOrder(order.GetID(), order.GetBurn(), order.GetLock(), order.GetImmutables(),
-		order.GetMakerAddress(), message.From, order.GetMakerAssetAmount(), order.GetMakerAssetData(), order.GetTakerAssetAmount(),
+		order.GetMakerID(), message.FromID, order.GetMakerAssetAmount(), order.GetMakerAssetData(), order.GetTakerAssetAmount(),
 		order.GetTakerAssetData(), order.GetSalt())
 	orders = orders.Mutate(order)
 	if Error := transactionKeeper.exchangeAuxiliary.GetKeeper().Help(context, swap.NewAuxiliaryRequest(order)); Error != nil {

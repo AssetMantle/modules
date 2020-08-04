@@ -12,12 +12,12 @@ type order struct {
 	Burn             types.Height
 	Lock             types.Height
 	Immutables       types.Immutables
-	MakerAddress     sdkTypes.AccAddress
-	TakerAddress     sdkTypes.AccAddress
+	MakerID          types.ID
+	TakerID          types.ID
 	MakerAssetAmount sdkTypes.Dec
-	MakerAssetData   traits.Exchangeable
+	MakerAssetData   types.ID
 	TakerAssetAmount sdkTypes.Dec
-	TakerAssetData   traits.Exchangeable
+	TakerAssetData   types.ID
 	Salt             types.Height
 }
 
@@ -50,31 +50,31 @@ func (order order) CanSend(currentHeight types.Height) bool {
 func (order order) GetImmutables() types.Immutables {
 	return order.Immutables
 }
-func (order order) GetMakerAddress() sdkTypes.AccAddress {
-	return order.MakerAddress
+func (order order) GetMakerID() types.ID {
+	return order.MakerID
 }
-func (order order) GetTakerAddress() sdkTypes.AccAddress {
-	return order.TakerAddress
+func (order order) GetTakerID() types.ID {
+	return order.TakerID
 }
 
 func (order order) GetMakerAssetAmount() sdkTypes.Dec {
 	return order.MakerAssetAmount
 }
-func (order order) GetMakerAssetData() traits.Exchangeable {
+func (order order) GetMakerAssetData() types.ID {
 	return order.MakerAssetData
 }
 
 func (order order) GetTakerAssetAmount() sdkTypes.Dec {
 	return order.TakerAssetAmount
 }
-func (order order) GetTakerAssetData() traits.Exchangeable {
+func (order order) GetTakerAssetData() types.ID {
 	return order.TakerAssetData
 }
 func (order order) GetSalt() types.Height {
 	return order.Salt
 }
-func (order order) SetTakerAddress(takerAddress sdkTypes.AccAddress) mappables.Order {
-	order.TakerAddress = takerAddress
+func (order order) SetTakerID(takerAddress types.ID) mappables.Order {
+	order.TakerID = takerAddress
 	return order
 }
 func (order order) Encode() []byte {
@@ -88,15 +88,15 @@ func orderPrototype() traits.Mappable {
 	return order{}
 }
 func NewOrder(orderID types.ID, burn types.Height, lock types.Height, immutables types.Immutables,
-	makerAddress sdkTypes.AccAddress, takerAddress sdkTypes.AccAddress, makerAssetAmount sdkTypes.Dec,
-	makerAssetData traits.Exchangeable, takerAssetAmount sdkTypes.Dec, takerAssetData traits.Exchangeable, salt types.Height) mappables.Order {
+	makerID types.ID, takerID types.ID, makerAssetAmount sdkTypes.Dec, makerAssetData types.ID,
+	takerAssetAmount sdkTypes.Dec, takerAssetData types.ID, salt types.Height) mappables.Order {
 	return order{
 		ID:               orderID,
 		Burn:             burn,
 		Lock:             lock,
 		Immutables:       immutables,
-		MakerAddress:     makerAddress,
-		TakerAddress:     takerAddress,
+		MakerID:          makerID,
+		TakerID:          takerID,
 		MakerAssetAmount: makerAssetAmount,
 		MakerAssetData:   makerAssetData,
 		TakerAssetAmount: takerAssetAmount,

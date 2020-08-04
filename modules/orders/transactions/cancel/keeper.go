@@ -21,9 +21,10 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if order == nil {
 		return constants.EntityNotFound
 	}
-	if !order.GetMakerAddress().Equals(message.From) {
-		return constants.NotAuthorized
-	}
+	//check if from address is provisioned in makerID
+	//if !order.GetMakerID().Equals(message.From) {
+	//	return constants.NotAuthorized
+	//}
 	if !order.CanBurn(base.NewHeight(context.BlockHeight())) {
 		return constants.DeletionNotAllowed
 	}
