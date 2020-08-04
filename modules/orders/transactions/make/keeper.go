@@ -53,7 +53,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 func configureAssetData(assetType types.ID, assetData types.ID, assetAmount sdkTypes.Dec) (traits.Exchangeable, error) {
 
 	switch assetType.String() {
-	case "coin":
+	case Coin:
 		return sdkTypes.NewCoin(assetData.String(), assetAmount.TruncateInt()), nil
 	default:
 		return nil, errors.New(fmt.Sprintf("type %v not supported", assetType.String()))
