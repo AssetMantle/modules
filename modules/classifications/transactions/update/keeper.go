@@ -1,4 +1,4 @@
-package create
+package update
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"

@@ -1,4 +1,4 @@
-package create
+package delete
 
 import "github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
 

@@ -1,4 +1,4 @@
-package create
+package update
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
