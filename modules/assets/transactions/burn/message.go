@@ -10,6 +10,7 @@ import (
 
 type message struct {
 	From    sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
+	FromID  types.ID            `json:"fromID" valid:"required~required field fromID missing"`
 	AssetID types.ID            `json:"assetID" valid:"required~required field assetID missing"`
 }
 
@@ -40,9 +41,10 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, assetID types.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, assetID types.ID) sdkTypes.Msg {
 	return message{
 		From:    from,
+		FromID:  fromID,
 		AssetID: assetID,
 	}
 }

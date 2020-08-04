@@ -4,10 +4,12 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
+//Note: Arranged alphabetically
 var (
 	AssetID          = base.NewCLIFlag("assetID", "", "OwnableID")
 	Burn             = base.NewCLIFlag("burn", int64(-1), "Burn")
-	ClassificationID = base.NewCLIFlag("classificationID", "", "GetClassificationID")
+	ClassificationID = base.NewCLIFlag("classificationID", "", "ClassificationID")
+	FromID           = base.NewCLIFlag("fromID", "", "FromID")
 	IdentityID       = base.NewCLIFlag("identityID", "", "OwnerID")
 	Lock             = base.NewCLIFlag("lock", int64(-1), "Lock")
 	MaintainersID    = base.NewCLIFlag("maintainersID", "", "GetMaintainersID")

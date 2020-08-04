@@ -140,16 +140,13 @@ func (module module) GetKVStoreKey() *sdkTypes.KVStoreKey {
 func (module module) GetDefaultParamspace() string {
 	return module.defaultParamspace
 }
-func (module module) GetAuxiliaryKeepers(auxiliaryNames ...string) []helpers.AuxiliaryKeeper {
-	var auxiliaryKeeperList []helpers.AuxiliaryKeeper
-	for _, auxiliaryName := range auxiliaryNames {
-		for _, auxiliary := range module.auxiliaryList {
-			if auxiliary.GetName() == auxiliaryName {
-				auxiliaryKeeperList = append(auxiliaryKeeperList, auxiliary.GetKeeper())
-			}
+func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
+	for _, auxiliary := range module.auxiliaryList {
+		if auxiliary.GetName() == auxiliaryName {
+			return auxiliary
 		}
 	}
-	return auxiliaryKeeperList
+	panic(fmt.Sprintf("auxiliary %v not found/initialized", auxiliaryName))
 }
 func (module module) InitializeKeepers(auxiliaryKeepers ...interface{}) {
 
