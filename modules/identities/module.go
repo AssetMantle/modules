@@ -1,6 +1,7 @@
 package identities
 
 import (
+	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/queries/identity"
@@ -18,7 +19,7 @@ var Module = base.NewModule(
 	mapper.TransactionRoute,
 	genesis.GenesisState,
 	mapper.Mapper,
-	[]helpers.Auxiliary{},
+	[]helpers.Auxiliary{verify.Auxiliary},
 	[]helpers.Query{identity.Query},
 	[]helpers.Transaction{issue.Transaction, provision.Transaction, unprovision.Transaction},
 )
