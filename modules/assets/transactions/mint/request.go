@@ -15,6 +15,7 @@ import (
 
 type transactionRequest struct {
 	BaseReq          rest.BaseReq `json:"baseReq"`
+	FromID           string       `json:"fromID" valid:"required~required field fromID missing"`
 	ToID             string       `json:"toID" valid:"required~required field toID missing"`
 	ClassificationID string       `json:"classificationID" valid:"required~required field classificationID missing matches(^[A-Za-z]$)~invalid field classificationID"`
 	MaintainersID    string       `json:"maintainersID" valid:"required~required field maintainersID missing matches(^[A-Za-z]$)~invalid field maintainersID"`
@@ -28,6 +29,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
+		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.ToID),
 		cliCommand.ReadString(constants.ClassificationID),
 		cliCommand.ReadString(constants.MaintainersID),
@@ -62,6 +64,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 
 	return newMessage(
 		from,
+		base.NewID(transactionRequest.FromID),
 		base.NewID(transactionRequest.ToID),
 		base.NewID(transactionRequest.MaintainersID),
 		base.NewID(transactionRequest.ClassificationID),
@@ -75,9 +78,10 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, toID string, classificationID string, maintainersID string, properties string, lock int64, burn int64) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainersID string, properties string, lock int64, burn int64) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:          baseReq,
+		FromID:           fromID,
 		ToID:             toID,
 		ClassificationID: classificationID,
 		MaintainersID:    maintainersID,

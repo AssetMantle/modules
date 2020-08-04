@@ -4,20 +4,25 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
-	mapper        helpers.Mapper
-	mintAuxiliary helpers.Auxiliary
+	mapper                    helpers.Mapper
+	splitsMintAuxiliary       helpers.Auxiliary
+	identitiesVerifyAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
 	message := messageFromInterface(msg)
+	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
+		return Error
+	}
 	mutables := base.NewMutables(message.Properties, message.MaintainersID)
 	immutables := base.NewImmutables(message.Properties)
 	assetID := mapper.NewAssetID(base.NewID(context.ChainID()), mutables.GetMaintainersID(), message.ClassificationID, immutables.GetHashID())
@@ -25,7 +30,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if assets.Get(assetID) != nil {
 		return constants.EntityAlreadyExists
 	}
-	if Error := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.ToID, assetID, sdkTypes.OneDec())); Error != nil {
+	if Error := transactionKeeper.splitsMintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.ToID, assetID, sdkTypes.OneDec())); Error != nil {
 		return Error
 	}
 	assets.Add(mapper.NewAsset(assetID, message.Burn, message.Lock, immutables, mutables))
@@ -39,7 +44,9 @@ func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case mint.Auxiliary.GetName():
-				transactionKeeper.mintAuxiliary = value
+				transactionKeeper.splitsMintAuxiliary = value
+			case verify.Auxiliary.GetName():
+				transactionKeeper.identitiesVerifyAuxiliary = value
 			}
 		}
 	}
