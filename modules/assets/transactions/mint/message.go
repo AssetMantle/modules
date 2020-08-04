@@ -11,6 +11,7 @@ import (
 //TODO make private
 type Message struct {
 	From             sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
+	FromID           types.ID            `json:"fromID" valid:"required~required field fromID missing"`
 	ToID             types.ID            `json:"toID" valid:"required~required field toID missing"`
 	MaintainersID    types.ID            `json:"maintainersID" valid:"required~required field maintainersID missing"`
 	ClassificationID types.ID            `json:"classificationID" valid:"required~required field classificationID missing"`
@@ -46,9 +47,10 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, toID types.ID, maintainersID types.ID, classificationID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, toID types.ID, maintainersID types.ID, classificationID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
 	return Message{
 		From:             from,
+		FromID:           fromID,
 		ToID:             toID,
 		MaintainersID:    maintainersID,
 		ClassificationID: classificationID,

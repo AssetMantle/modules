@@ -4,14 +4,16 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
-	mapper        helpers.Mapper
-	burnAuxiliary helpers.Auxiliary
+	mapper          helpers.Mapper
+	burnAuxiliary   helpers.Auxiliary
+	verifyAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -41,6 +43,8 @@ func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{
 			switch value.GetName() {
 			case burn.Auxiliary.GetName():
 				transactionKeeper.burnAuxiliary = value
+			case verify.Auxiliary.GetName():
+				transactionKeeper.verifyAuxiliary = value
 			}
 		}
 	}
