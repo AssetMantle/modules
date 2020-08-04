@@ -60,12 +60,25 @@ func configureAssetData(assetType types.ID, assetData types.ID, assetAmount sdkT
 	}
 }
 
+//TODO use takeCustody instead of checkExists
 func checkExists(context sdkTypes.Context, bankKeeper bank.Keeper, makerAddress sdkTypes.AccAddress, asset traits.Exchangeable) error {
 	switch value := asset.(type) {
 	case sdkTypes.Coin:
 		{
 			if !bankKeeper.HasBalance(context, makerAddress, value) {
 				return errors.New(fmt.Sprintf("insufficient amount to place order"))
+			}
+		}
+	}
+	return nil
+}
+
+func takeCustody(context sdkTypes.Context, bankKeeper bank.Keeper, makerAddress sdkTypes.AccAddress, asset traits.Exchangeable) error {
+	switch value := asset.(type) {
+	case sdkTypes.Coin:
+		{
+			if Error := bankKeeper.SendCoinsFromAccountToModule(context, makerAddress, mapper.ModuleName, sdkTypes.NewCoins(value)); Error != nil {
+				return Error
 			}
 		}
 	}
