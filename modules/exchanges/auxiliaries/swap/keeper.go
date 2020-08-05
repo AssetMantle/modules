@@ -2,10 +2,11 @@ package swap
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/bank"
+	"github.com/persistenceOne/persistenceSDK/modules/exchanges/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
@@ -17,12 +18,25 @@ type auxiliaryKeeper struct {
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) error {
-	//auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
-	return nil
-}
+	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
+	order := auxiliaryRequest.Order
 
-func swapSplits(context sdkTypes.Context, bankKeeper bank.Keeper, makerAddress sdkTypes.AccAddress, makeOrderCoins sdkTypes.Coins,
-	takerAddress sdkTypes.AccAddress, takeOrderCoins sdkTypes.Coins) error {
+	if Error := auxiliaryKeeper.splitsBurnAuxiliary.GetKeeper().Help(context,
+		burn.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), order.GetMakerAssetData(), order.GetMakerAssetAmount())); Error != nil {
+		return Error
+	}
+	if Error := auxiliaryKeeper.splitsBurnAuxiliary.GetKeeper().Help(context,
+		burn.NewAuxiliaryRequest(order.GetTakerID(), order.GetTakerAssetData(), order.GetTakerAssetAmount())); Error != nil {
+		return Error
+	}
+	if Error := auxiliaryKeeper.splitsMintAuxiliary.GetKeeper().Help(context,
+		mint.NewAuxiliaryRequest(order.GetMakerID(), order.GetTakerAssetData(), order.GetTakerAssetAmount())); Error != nil {
+		return Error
+	}
+	if Error := auxiliaryKeeper.splitsMintAuxiliary.GetKeeper().Help(context,
+		mint.NewAuxiliaryRequest(order.GetTakerID(), order.GetMakerAssetData(), order.GetMakerAssetAmount())); Error != nil {
+		return Error
+	}
 	return nil
 }
 

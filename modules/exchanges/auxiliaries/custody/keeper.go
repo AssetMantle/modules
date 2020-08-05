@@ -2,9 +2,11 @@ package custody
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/modules/exchanges/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
@@ -16,8 +18,28 @@ type auxiliaryKeeper struct {
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) error {
-	//auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
+	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
+	order := auxiliaryRequest.Order
+	if auxiliaryRequest.Reverse {
+		if Error := auxiliaryKeeper.splitsBurnAuxiliary.GetKeeper().Help(context,
+			burn.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), order.GetMakerAssetData(), order.GetMakerAssetAmount())); Error != nil {
+			return Error
+		}
+		if Error := auxiliaryKeeper.splitsMintAuxiliary.GetKeeper().Help(context,
+			mint.NewAuxiliaryRequest(order.GetMakerID(), order.GetMakerAssetData(), order.GetMakerAssetAmount())); Error != nil {
+			return Error
+		}
+	} else {
+		if Error := auxiliaryKeeper.splitsBurnAuxiliary.GetKeeper().Help(context,
+			burn.NewAuxiliaryRequest(order.GetMakerID(), order.GetMakerAssetData(), order.GetMakerAssetAmount())); Error != nil {
+			return Error
+		}
+		if Error := auxiliaryKeeper.splitsMintAuxiliary.GetKeeper().Help(context,
+			mint.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), order.GetMakerAssetData(), order.GetMakerAssetAmount())); Error != nil {
+			return Error
+		}
 
+	}
 	return nil
 }
 
