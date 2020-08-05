@@ -25,12 +25,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if order == nil {
 		return constants.EntityNotFound
 	}
-	//	check for from address is provisioned in FromID
 	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
 		return Error
 	}
-	// check takerID is same as fromID
-	if order.GetTakerID() != nil && message.FromID.Compare(order.GetTakerID()) != 0 {
+
+	if order.GetTakerID().String() != "" && message.FromID.Compare(order.GetTakerID()) != 0 {
 		return constants.NotAuthorized
 	}
 
