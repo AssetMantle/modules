@@ -123,11 +123,11 @@ func (module module) NewQuerierHandler() sdkTypes.Querier {
 }
 func (module module) InitGenesis(context sdkTypes.Context, _ codec.JSONMarshaler, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
 	genesisState := module.genesisState.Unmarshall(rawMessage)
-	genesisState.Initialize(context)
+	genesisState.Initialize(context, module.mapper)
 	return []abciTypes.ValidatorUpdate{}
 }
 func (module module) ExportGenesis(context sdkTypes.Context, _ codec.JSONMarshaler) json.RawMessage {
-	return module.genesisState.Export(context).Marshall()
+	return module.genesisState.Export(context, module.mapper).Marshall()
 }
 func (module module) BeginBlock(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {}
 

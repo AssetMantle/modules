@@ -7,7 +7,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type order struct {
+type Order struct {
 	ID               types.ID
 	Burn             types.Height
 	Lock             types.Height
@@ -21,76 +21,76 @@ type order struct {
 	Salt             types.Height
 }
 
-var _ mappables.Order = (*order)(nil)
+var _ mappables.Order = (*Order)(nil)
 
-func (order order) GetID() types.ID {
+func (order Order) GetID() types.ID {
 	return order.ID
 }
 
-func (order order) GetChainID() types.ID {
+func (order Order) GetChainID() types.ID {
 	return orderIDFromInterface(order.ID).ChainID
 }
 
-func (order order) GetBurn() types.Height {
+func (order Order) GetBurn() types.Height {
 	return order.Burn
 }
 
-func (order order) CanBurn(currentHeight types.Height) bool {
+func (order Order) CanBurn(currentHeight types.Height) bool {
 	return currentHeight.IsGreaterThan(order.Burn)
 }
 
-func (order order) GetLock() types.Height {
+func (order Order) GetLock() types.Height {
 	return order.Lock
 }
 
-func (order order) CanSend(currentHeight types.Height) bool {
+func (order Order) CanSend(currentHeight types.Height) bool {
 	return currentHeight.IsGreaterThan(order.Lock)
 }
 
-func (order order) GetImmutables() types.Immutables {
+func (order Order) GetImmutables() types.Immutables {
 	return order.Immutables
 }
-func (order order) GetMakerAddress() sdkTypes.AccAddress {
+func (order Order) GetMakerAddress() sdkTypes.AccAddress {
 	return order.MakerAddress
 }
-func (order order) GetTakerAddress() sdkTypes.AccAddress {
+func (order Order) GetTakerAddress() sdkTypes.AccAddress {
 	return order.TakerAddress
 }
 
-func (order order) GetMakerAssetAmount() sdkTypes.Dec {
+func (order Order) GetMakerAssetAmount() sdkTypes.Dec {
 	return order.MakerAssetAmount
 }
-func (order order) GetMakerAssetData() traits.Exchangeable {
+func (order Order) GetMakerAssetData() traits.Exchangeable {
 	return order.MakerAssetData
 }
 
-func (order order) GetTakerAssetAmount() sdkTypes.Dec {
+func (order Order) GetTakerAssetAmount() sdkTypes.Dec {
 	return order.TakerAssetAmount
 }
-func (order order) GetTakerAssetData() traits.Exchangeable {
+func (order Order) GetTakerAssetData() traits.Exchangeable {
 	return order.TakerAssetData
 }
-func (order order) GetSalt() types.Height {
+func (order Order) GetSalt() types.Height {
 	return order.Salt
 }
-func (order order) SetTakerAddress(takerAddress sdkTypes.AccAddress) mappables.Order {
+func (order Order) SetTakerAddress(takerAddress sdkTypes.AccAddress) mappables.Order {
 	order.TakerAddress = takerAddress
 	return order
 }
-func (order order) Encode() []byte {
+func (order Order) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(order)
 }
-func (order order) Decode(bytes []byte) traits.Mappable {
+func (order Order) Decode(bytes []byte) traits.Mappable {
 	packageCodec.MustUnmarshalBinaryBare(bytes, &order)
 	return order
 }
 func orderPrototype() traits.Mappable {
-	return order{}
+	return Order{}
 }
 func NewOrder(orderID types.ID, burn types.Height, lock types.Height, immutables types.Immutables,
 	makerAddress sdkTypes.AccAddress, takerAddress sdkTypes.AccAddress, makerAssetAmount sdkTypes.Dec,
 	makerAssetData traits.Exchangeable, takerAssetAmount sdkTypes.Dec, takerAssetData traits.Exchangeable, salt types.Height) mappables.Order {
-	return order{
+	return Order{
 		ID:               orderID,
 		Burn:             burn,
 		Lock:             lock,

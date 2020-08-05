@@ -7,7 +7,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type identity struct {
+type Identity struct {
 	ID                       types.ID              `json:"id" valid:"required~required field id missing"`
 	ProvisionedAddressList   []sdkTypes.AccAddress `json:"provisionedAddressList" valid:"required~required field provisionedAddressList missing"`
 	UnprovisionedAddressList []sdkTypes.AccAddress `json:"unprovisionedAddressList" valid:"required~required field unprovisionedAddressList missing"`
@@ -15,27 +15,27 @@ type identity struct {
 	Mutables                 types.Mutables        `json:"mutables" valid:"required~required field mutables missing"`
 }
 
-var _ mappables.InterIdentity = (*identity)(nil)
+var _ mappables.InterIdentity = (*Identity)(nil)
 
-func (identity identity) GetID() types.ID { return identity.ID }
-func (identity identity) GetChainID() types.ID {
+func (identity Identity) GetID() types.ID { return identity.ID }
+func (identity Identity) GetChainID() types.ID {
 	return identityIDFromInterface(identity.ID).ChainID
 }
 
-func (identity identity) GetClassificationID() types.ID {
+func (identity Identity) GetClassificationID() types.ID {
 	return identityIDFromInterface(identity.ID).ClassificationID
 }
-func (identity identity) GetProvisionedAddressList() []sdkTypes.AccAddress {
+func (identity Identity) GetProvisionedAddressList() []sdkTypes.AccAddress {
 	return identity.ProvisionedAddressList
 }
-func (identity identity) GetUnprovisionedAddressList() []sdkTypes.AccAddress {
+func (identity Identity) GetUnprovisionedAddressList() []sdkTypes.AccAddress {
 	return identity.UnprovisionedAddressList
 }
-func (identity identity) ProvisionAddress(accAddress sdkTypes.AccAddress) mappables.InterIdentity {
+func (identity Identity) ProvisionAddress(accAddress sdkTypes.AccAddress) mappables.InterIdentity {
 	identity.ProvisionedAddressList = append(identity.ProvisionedAddressList, accAddress)
 	return identity
 }
-func (identity identity) UnprovisionAddress(accAddress sdkTypes.AccAddress) mappables.InterIdentity {
+func (identity Identity) UnprovisionAddress(accAddress sdkTypes.AccAddress) mappables.InterIdentity {
 	for i, provisionedAddress := range identity.ProvisionedAddressList {
 		if provisionedAddress.Equals(accAddress) {
 			identity.ProvisionedAddressList = append(identity.ProvisionedAddressList[:i], identity.ProvisionedAddressList[i+1:]...)
@@ -45,9 +45,9 @@ func (identity identity) UnprovisionAddress(accAddress sdkTypes.AccAddress) mapp
 	}
 	return identity
 }
-func (identity identity) GetImmutables() types.Immutables { return identity.Immutables }
-func (identity identity) GetMutables() types.Mutables     { return identity.Mutables }
-func (identity identity) IsProvisioned(accAddress sdkTypes.AccAddress) bool {
+func (identity Identity) GetImmutables() types.Immutables { return identity.Immutables }
+func (identity Identity) GetMutables() types.Mutables     { return identity.Mutables }
+func (identity Identity) IsProvisioned(accAddress sdkTypes.AccAddress) bool {
 	for _, provisionedAddress := range identity.ProvisionedAddressList {
 		if provisionedAddress.Equals(accAddress) {
 			return true
@@ -55,7 +55,7 @@ func (identity identity) IsProvisioned(accAddress sdkTypes.AccAddress) bool {
 	}
 	return false
 }
-func (identity identity) IsUnprovisioned(accAddress sdkTypes.AccAddress) bool {
+func (identity Identity) IsUnprovisioned(accAddress sdkTypes.AccAddress) bool {
 	for _, unprovisionedAddress := range identity.UnprovisionedAddressList {
 		if unprovisionedAddress.Equals(accAddress) {
 			return true
@@ -63,18 +63,18 @@ func (identity identity) IsUnprovisioned(accAddress sdkTypes.AccAddress) bool {
 	}
 	return false
 }
-func (identity identity) Encode() []byte {
+func (identity Identity) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(identity)
 }
-func (identity identity) Decode(bytes []byte) traits.Mappable {
+func (identity Identity) Decode(bytes []byte) traits.Mappable {
 	packageCodec.MustUnmarshalBinaryBare(bytes, &identity)
 	return identity
 }
 func identityPrototype() traits.Mappable {
-	return identity{}
+	return Identity{}
 }
 func NewIdentity(identityID types.ID, provisionedAddressList []sdkTypes.AccAddress, unprovisionedAddressList []sdkTypes.AccAddress, immutables types.Immutables, mutables types.Mutables) mappables.InterIdentity {
-	return identity{
+	return Identity{
 		ID:                       identityID,
 		ProvisionedAddressList:   provisionedAddressList,
 		UnprovisionedAddressList: unprovisionedAddressList,

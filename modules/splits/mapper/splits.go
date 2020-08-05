@@ -39,11 +39,11 @@ func (splits splits) Fetch(id types.ID) mappers.Splits {
 	if len(splitsID.OwnableID.Bytes()) > 0 {
 		mappable := splits.mapper.Read(splits.context, splitsID)
 		if mappable != nil {
-			splitList = append(splitList, mappable.(split))
+			splitList = append(splitList, mappable.(Split))
 		}
 	} else {
 		appendSplitList := func(mappable traits.Mappable) bool {
-			splitList = append(splitList, mappable.(split))
+			splitList = append(splitList, mappable.(Split))
 			return false
 		}
 		splits.mapper.Iterate(splits.context, splitsID, appendSplitList)

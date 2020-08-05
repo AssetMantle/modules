@@ -39,11 +39,11 @@ func (classifications classifications) Fetch(id types.ID) mappers.Classification
 	if len(classificationsID.HashID.Bytes()) > 0 {
 		mappable := classifications.mapper.Read(classifications.context, classificationsID)
 		if mappable != nil {
-			classificationList = append(classificationList, mappable.(classification))
+			classificationList = append(classificationList, mappable.(Classification))
 		}
 	} else {
 		appendClassificationList := func(mappable traits.Mappable) bool {
-			classificationList = append(classificationList, mappable.(classification))
+			classificationList = append(classificationList, mappable.(Classification))
 			return false
 		}
 		classifications.mapper.Iterate(classifications.context, classificationsID, appendClassificationList)

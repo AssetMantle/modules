@@ -39,11 +39,11 @@ func (orders orders) Fetch(id types.ID) mappers.Orders {
 	if len(ordersID.HashID.Bytes()) > 0 {
 		mappable := orders.mapper.Read(orders.context, ordersID)
 		if mappable != nil {
-			orderList = append(orderList, mappable.(order))
+			orderList = append(orderList, mappable.(Order))
 		}
 	} else {
 		appendOrderList := func(mappable traits.Mappable) bool {
-			orderList = append(orderList, mappable.(order))
+			orderList = append(orderList, mappable.(Order))
 			return false
 		}
 		orders.mapper.Iterate(orders.context, ordersID, appendOrderList)

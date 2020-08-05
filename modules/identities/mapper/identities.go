@@ -39,11 +39,11 @@ func (identities identities) Fetch(id types.ID) mappers.InterIdentities {
 	if len(identitiesID.HashID.Bytes()) > 0 {
 		mappable := identities.mapper.Read(identities.context, identitiesID)
 		if mappable != nil {
-			identityList = append(identityList, mappable.(identity))
+			identityList = append(identityList, mappable.(Identity))
 		}
 	} else {
 		appendIdentityList := func(mappable traits.Mappable) bool {
-			identityList = append(identityList, mappable.(identity))
+			identityList = append(identityList, mappable.(Identity))
 			return false
 		}
 		identities.mapper.Iterate(identities.context, identitiesID, appendIdentityList)

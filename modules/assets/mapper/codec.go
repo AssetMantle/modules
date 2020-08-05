@@ -6,7 +6,7 @@ import (
 )
 
 func registerCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(asset{}, ModuleRoute+"/"+"asset", nil)
+	codec.RegisterConcrete(Asset{}, ModuleRoute+"/"+"asset", nil)
 	codec.RegisterConcrete(assetID{}, ModuleRoute+"/"+"assetID", nil)
 	codec.RegisterConcrete(assets{}, ModuleRoute+"/"+"assets", nil)
 }

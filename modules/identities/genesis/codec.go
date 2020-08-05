@@ -9,9 +9,9 @@ func (genesisState) RegisterCodec(codec *codec.Codec) {
 	codec.RegisterConcrete(genesisState{}, mapper.ModuleRoute+"/"+"genesisState", nil)
 }
 
-var packageCodec = codec.New()
+var PackageCodec = codec.New()
 
 func init() {
-	GenesisState.RegisterCodec(packageCodec)
-	packageCodec.Seal()
+	GenesisState.RegisterCodec(PackageCodec)
+	PackageCodec.Seal()
 }

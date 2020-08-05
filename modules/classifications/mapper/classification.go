@@ -6,34 +6,34 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type classification struct {
+type Classification struct {
 	ID     types.ID     `json:"id" valid:"required~required field id missing"`
 	Traits types.Traits `json:"traits" valid:"required~required field traits missing"`
 }
 
-var _ mappables.Classification = (*classification)(nil)
+var _ mappables.Classification = (*Classification)(nil)
 
-func (classification classification) GetID() types.ID { return classification.ID }
+func (classification Classification) GetID() types.ID { return classification.ID }
 
-func (classification classification) GetTraits() types.Traits { return classification.Traits }
+func (classification Classification) GetTraits() types.Traits { return classification.Traits }
 
 //TODO
-func (classification classification) String() string { return "" }
+func (classification Classification) String() string { return "" }
 
-func (classification classification) Encode() []byte {
+func (classification Classification) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(classification)
 }
-func (classification classification) Decode(bytes []byte) traits.Mappable {
+func (classification Classification) Decode(bytes []byte) traits.Mappable {
 	packageCodec.MustUnmarshalBinaryBare(bytes, &classification)
 	return classification
 }
 
 func classificationPrototype() traits.Mappable {
-	return classification{}
+	return Classification{}
 }
 
 func NewClassification(classificationID types.ID, traits types.Traits) mappables.Classification {
-	return classification{
+	return Classification{
 		ID:     classificationID,
 		Traits: traits,
 	}

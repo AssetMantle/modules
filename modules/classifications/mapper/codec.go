@@ -7,7 +7,7 @@ import (
 
 func registerCodec(codec *codec.Codec) {
 	codec.RegisterConcrete(classifications{}, ModuleRoute+"/"+"classifications", nil)
-	codec.RegisterConcrete(classification{}, ModuleRoute+"/"+"classification", nil)
+	codec.RegisterConcrete(Classification{}, ModuleRoute+"/"+"classification", nil)
 	codec.RegisterConcrete(classificationID{}, ModuleRoute+"/"+"classificationID", nil)
 }
 

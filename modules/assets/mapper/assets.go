@@ -39,11 +39,11 @@ func (assets assets) Fetch(id types.ID) mappers.InterNFTs {
 	if len(assetsID.HashID.Bytes()) > 0 {
 		mappable := assets.mapper.Read(assets.context, assetsID)
 		if mappable != nil {
-			assetList = append(assetList, mappable.(asset))
+			assetList = append(assetList, mappable.(Asset))
 		}
 	} else {
 		appendMappableList := func(mappable traits.Mappable) bool {
-			assetList = append(assetList, mappable.(asset))
+			assetList = append(assetList, mappable.(Asset))
 			return false
 		}
 		assets.mapper.Iterate(assets.context, assetsID, appendMappableList)

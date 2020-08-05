@@ -16,21 +16,20 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 
 func (genesisState genesisState) Validate() error { return nil }
 
-func (genesisState genesisState) Initialize(sdkTypes.Context) {
+func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
 }
-func (genesisState genesisState) Export(sdkTypes.Context) helpers.GenesisState {
+func (genesisState genesisState) Export(sdkTypes.Context, helpers.Mapper) helpers.GenesisState {
 	return newGenesisState()
 }
 func (genesisState genesisState) Marshall() []byte {
-	return packageCodec.MustMarshalJSON(genesisState)
+	return PackageCodec.MustMarshalJSON(genesisState)
 }
 func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
-	if Error := packageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
+	if Error := PackageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
 		return nil
 	}
 	return genesisState
 }
-
 func newGenesisState() helpers.GenesisState {
 	return genesisState{}
 }
