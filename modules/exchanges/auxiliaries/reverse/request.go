@@ -1,4 +1,4 @@
-package custody
+package reverse
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"

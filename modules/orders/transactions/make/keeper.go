@@ -32,7 +32,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	order := mapper.NewOrder(orderID, message.Burn, message.Lock, immutables, message.FromID, message.ToID,
 		message.MakerAssetAmount, message.MakerAssetData, message.TakerAssetAmount, message.TakerAssetData, salt)
-	if Error := transactionKeeper.exchangesCustodyAuxiliary.GetKeeper().Help(context, custody.NewAuxiliaryRequest(order, false)); Error != nil {
+	if Error := transactionKeeper.exchangesCustodyAuxiliary.GetKeeper().Help(context, custody.NewAuxiliaryRequest(order)); Error != nil {
 		return Error
 	}
 	orders.Add(order)

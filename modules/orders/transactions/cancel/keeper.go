@@ -3,7 +3,7 @@ package cancel
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/modules/exchanges/auxiliaries/custody"
+	"github.com/persistenceOne/persistenceSDK/modules/exchanges/auxiliaries/reverse"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -13,7 +13,7 @@ import (
 type transactionKeeper struct {
 	mapper                    helpers.Mapper
 	identitiesVerifyAuxiliary helpers.Auxiliary
-	exchangesCustodyAuxiliary helpers.Auxiliary
+	exchangesReverseAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -32,7 +32,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return constants.DeletionNotAllowed
 	}
 
-	if Error := transactionKeeper.exchangesCustodyAuxiliary.GetKeeper().Help(context, custody.NewAuxiliaryRequest(order, true)); Error != nil {
+	if Error := transactionKeeper.exchangesReverseAuxiliary.GetKeeper().Help(context, reverse.NewAuxiliaryRequest(order)); Error != nil {
 		return Error
 	}
 	orders.Remove(order)
@@ -47,8 +47,8 @@ func initializeTransactionKeeper(mapper helpers.Mapper, externalKeepers []interf
 			switch value.GetName() {
 			case verify.Auxiliary.GetName():
 				transactionKeeper.identitiesVerifyAuxiliary = value
-			case custody.Auxiliary.GetName():
-				transactionKeeper.exchangesCustodyAuxiliary = value
+			case reverse.Auxiliary.GetName():
+				transactionKeeper.exchangesReverseAuxiliary = value
 			}
 		}
 	}
