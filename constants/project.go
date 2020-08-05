@@ -3,7 +3,7 @@ package constants
 const ProjectName = "xprt"
 const ProjectRoute = "/" + ProjectName
 
-const IDSeparator = "-"
+const IDSeparator = "."
 const CompositeIDSeparator = "|"
 const PropertiesSeparator = ","
 const TraitIDAndPropertySeparator = ":"
