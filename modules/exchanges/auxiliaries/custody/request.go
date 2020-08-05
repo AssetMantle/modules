@@ -1,4 +1,4 @@
-package swap
+package custody
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -6,7 +6,8 @@ import (
 )
 
 type auxiliaryRequest struct {
-	Order mappables.Order
+	Order   mappables.Order
+	Reverse bool
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -20,8 +21,9 @@ func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) au
 	}
 }
 
-func NewAuxiliaryRequest(order mappables.Order) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(order mappables.Order, reverse bool) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		Order: order,
+		Order:   order,
+		Reverse: reverse,
 	}
 }

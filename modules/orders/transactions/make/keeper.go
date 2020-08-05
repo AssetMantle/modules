@@ -2,17 +2,18 @@ package make
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/exchanges/auxiliaries/custody"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
-	mapper     helpers.Mapper
-	BankKeeper bank.Keeper
+	mapper                    helpers.Mapper
+	identitiesVerifyAuxiliary helpers.Auxiliary
+	exchangesCustodyAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -29,20 +30,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if orders.Get(orderID) != nil {
 		return constants.EntityAlreadyExists
 	}
-
-	orders.Add(mapper.NewOrder(orderID, message.Burn, message.Lock, immutables, message.FromID, message.ToID,
-		message.MakerAssetAmount, message.MakerAssetData, message.TakerAssetAmount, message.TakerAssetData, salt))
-	return nil
-}
-
-func checkAndWrapCoin(assetType types.ID, assetData types.ID, assetAmount sdkTypes.Dec) (types.ID, error) {
-	// check if id is in assets/ splits, if not wrap coin.
-	return nil, nil
-}
-
-func takeCustody(context sdkTypes.Context, bankKeeper bank.Keeper, makerAddress sdkTypes.AccAddress, asset types.ID) error {
-	//convert to split, put in orderdb
-	// if coin -> send to module, if split -> create identity, send to module identity
+	order := mapper.NewOrder(orderID, message.Burn, message.Lock, immutables, message.FromID, message.ToID,
+		message.MakerAssetAmount, message.MakerAssetData, message.TakerAssetAmount, message.TakerAssetData, salt)
+	if Error := transactionKeeper.exchangesCustodyAuxiliary.GetKeeper().Help(context, custody.NewAuxiliaryRequest(order, false)); Error != nil {
+		return Error
+	}
+	orders.Add(order)
 	return nil
 }
 
@@ -50,8 +43,13 @@ func initializeTransactionKeeper(mapper helpers.Mapper, externalKeepers []interf
 	transactionKeeper := transactionKeeper{mapper: mapper}
 	for _, externalKeeper := range externalKeepers {
 		switch value := externalKeeper.(type) {
-		case bank.Keeper:
-			transactionKeeper.BankKeeper = value
+		case helpers.Auxiliary:
+			switch value.GetName() {
+			case verify.Auxiliary.GetName():
+				transactionKeeper.identitiesVerifyAuxiliary = value
+			case custody.Auxiliary.GetName():
+				transactionKeeper.exchangesCustodyAuxiliary = value
+			}
 		}
 	}
 	return transactionKeeper

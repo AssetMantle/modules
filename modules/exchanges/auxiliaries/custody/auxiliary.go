@@ -1,4 +1,4 @@
-package swap
+package custody
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/exchanges/mapper"

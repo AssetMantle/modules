@@ -4,13 +4,15 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/exchanges/auxiliaries/swap"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
 type transactionKeeper struct {
-	mapper            helpers.Mapper
-	exchangeAuxiliary helpers.Auxiliary
+	mapper                    helpers.Mapper
+	exchangesSwapAuxiliary    helpers.Auxiliary
+	identitiesVerifyAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -24,16 +26,19 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return constants.EntityNotFound
 	}
 	//	check for from address is provisioned in FromID
-	//if order.GetTakerAddress() != nil && !message.From.Equals(order.GetTakerAddress()) {
-	//	return constants.NotAuthorized
-	//}
+	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
+		return Error
+	}
+	// check takerID is same as fromID
+	if order.GetTakerID() != nil && message.FromID.Compare(order.GetTakerID()) != 0 {
+		return constants.NotAuthorized
+	}
 
-	// get identity of taker
 	order = mapper.NewOrder(order.GetID(), order.GetBurn(), order.GetLock(), order.GetImmutables(),
 		order.GetMakerID(), message.FromID, order.GetMakerAssetAmount(), order.GetMakerAssetData(), order.GetTakerAssetAmount(),
 		order.GetTakerAssetData(), order.GetSalt())
 	orders = orders.Mutate(order)
-	if Error := transactionKeeper.exchangeAuxiliary.GetKeeper().Help(context, swap.NewAuxiliaryRequest(order)); Error != nil {
+	if Error := transactionKeeper.exchangesSwapAuxiliary.GetKeeper().Help(context, swap.NewAuxiliaryRequest(order)); Error != nil {
 		return Error
 	}
 	orders.Remove(order)
@@ -47,7 +52,9 @@ func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case swap.Auxiliary.GetName():
-				transactionKeeper.exchangeAuxiliary = value
+				transactionKeeper.exchangesSwapAuxiliary = value
+			case verify.Auxiliary.GetName():
+				transactionKeeper.identitiesVerifyAuxiliary = value
 			}
 		}
 	}
