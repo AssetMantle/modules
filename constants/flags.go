@@ -24,8 +24,6 @@ var (
 	TakerAddress     = base.NewCLIFlag("takerAddress", "", "TakerAddress")
 	MakerAssetAmount = base.NewCLIFlag("makerAssetAmount", int64(0), "MakerAssetAmount")
 	MakerAssetData   = base.NewCLIFlag("makerAssetData", "", "MakerAssetData")
-	MakerAssetType   = base.NewCLIFlag("makerAssetType", "coin", "MakerAssetType")
 	TakerAssetAmount = base.NewCLIFlag("takerAssetAmount", int64(0), "TakerAssetAmount")
 	TakerAssetData   = base.NewCLIFlag("takerAssetData", "", "TakerAssetData")
-	TakerAssetType   = base.NewCLIFlag("takerAssetType", "coin", "TakerAssetType")
 )
