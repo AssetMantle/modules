@@ -10,14 +10,14 @@ import (
 
 //TODO make private
 type Message struct {
-	From          sdkTypes.AccAddress
-	MaintainersID types.ID
-	MakerID       types.ID
-	TakerID       types.ID
-	MakerSplit    sdkTypes.Dec
-	MakerSplitID  types.ID
-	ExchangeRate  sdkTypes.Dec
-	TakerSplitID  types.ID
+	From          sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^cosmos[a-z0-9]{39}$)~invalid field from"`
+	MaintainersID types.ID            `json:"maintainersID" valid:"required~required field maintainersID missing"`
+	MakerID       types.ID            `json:"makerID" valid:"required~required field makerID missing"`
+	TakerID       types.ID            `json:"takerID"`
+	MakerSplit    sdkTypes.Dec        `json:"makerSplit" valid:"required~required field makerSplit missing"`
+	MakerSplitID  types.ID            `json:"makerSplitID" valid:"required~required field makerSplitID missing"`
+	ExchangeRate  sdkTypes.Dec        `json:"exchangeRate" valid:"required~required field exchangeRate missing"`
+	TakerSplitID  types.ID            `json:"takerSplitID" valid:"required~required field takerSplitID missing"`
 }
 
 var _ sdkTypes.Msg = Message{}

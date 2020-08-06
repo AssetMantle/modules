@@ -9,9 +9,9 @@ import (
 )
 
 type orderID struct {
-	ChainID       types.ID
-	MaintainersID types.ID
-	HashID        types.ID
+	ChainID       types.ID `json:"chainID" valid:"required~required field chainID missing"`
+	MaintainersID types.ID `json:"maintainersID" valid:"required~required field maintainersID missing"`
+	HashID        types.ID `json:"hashID" valid:"required~required field hashID missing"`
 }
 
 var _ types.ID = (*orderID)(nil)

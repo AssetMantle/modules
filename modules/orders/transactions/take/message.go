@@ -9,10 +9,10 @@ import (
 )
 
 type message struct {
-	From       sdkTypes.AccAddress
-	FromID     types.ID
-	TakerSplit sdkTypes.Dec
-	OrderID    types.ID
+	From       sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^cosmos[a-z0-9]{39}$)~invalid field from"`
+	FromID     types.ID            `json:"fromID" valid:"required~required field fromID missing"`
+	TakerSplit sdkTypes.Dec        `json:"takerSplit" valid:"required~required field takerSplit missing"`
+	OrderID    types.ID            `json:"orderID" valid:"required~required field orderID missing"`
 }
 
 var _ sdkTypes.Msg = message{}

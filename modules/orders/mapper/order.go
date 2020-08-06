@@ -7,9 +7,9 @@ import (
 )
 
 type order struct {
-	ID         types.ID
-	Immutables types.Immutables
-	Mutables   types.Mutables
+	ID         types.ID         `json:"id" valid:"required~required field id missing"`
+	Immutables types.Immutables `json:"immutables" valid:"required field immutables missing"`
+	Mutables   types.Mutables   `json:"mutables" valid:"required~required field mutables missing"`
 }
 
 var _ mappables.Order = (*order)(nil)

@@ -13,13 +13,13 @@ import (
 
 type transactionRequest struct {
 	BaseReq       rest.BaseReq `json:"baseReq"`
-	FromID        string       `json:"fromID"`
+	FromID        string       `json:"fromID" valid:"required~required field fromID missing"`
 	ToID          string       `json:"toID"`
-	MaintainersID string       `json:"maintainersID"`
-	MakerSplit    int64        `json:"makerSplit"`
-	MakerSplitID  string       `json:"makerSplitID"`
-	ExchangeRate  string       `json:"exchangeRate"`
-	TakerSplitID  string       `json:"takerSplitID"`
+	MaintainersID string       `json:"maintainersID" valid:"required~required field maintainersID missing matches(^[A-Za-z]$)~invalid field maintainersID"`
+	MakerSplit    int64        `json:"makerSplit" valid:"required~required field makerSplit missing"`
+	MakerSplitID  string       `json:"makerSplitID" valid:"required~required field makerSplitID missing"`
+	ExchangeRate  string       `json:"exchangeRate" valid:"required~required field exchangeRate missing"`
+	TakerSplitID  string       `json:"takerSplitID" valid:"required~required field takerSplitID missing"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)

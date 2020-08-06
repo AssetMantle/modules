@@ -13,9 +13,9 @@ import (
 
 type transactionRequest struct {
 	BaseReq    rest.BaseReq `json:"baseReq"`
-	FromID     string       `json:"fromID"`
-	TakerSplit int64        `json:"takerSplit"`
-	OrderID    string       `json:"orderID"`
+	FromID     string       `json:"fromID" valid:"required~required field fromID missing"`
+	TakerSplit int64        `json:"takerSplit" valid:"required~required field takerSplit missing"`
+	OrderID    string       `json:"orderID" valid:"required~required field orderID missing"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
