@@ -15,6 +15,7 @@ import (
 
 type transactionRequest struct {
 	BaseReq       rest.BaseReq `json:"baseReq"`
+	FromID        string       `json:"fromID" valid:"required~required field fromID missing"`
 	MaintainersID string       `json:"maintainersID" valid:"required~required field maintainersID missing matches(^[A-Za-z]$)~invalid field maintainersID"`
 	Traits        string       `json:"traits" valid:"required~required field traits missing matches(^[A-Za-z]$)~invalid field traits"`
 }
@@ -24,6 +25,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
+		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.MaintainersID),
 		cliCommand.ReadString(constants.Traits),
 	)
@@ -56,6 +58,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 
 	return newMessage(
 		from,
+		base.NewID(transactionRequest.FromID),
 		base.NewID(transactionRequest.MaintainersID),
 		base.NewTraits(traitList),
 	)
@@ -65,9 +68,10 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, maintainersID string, traits string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, maintainersID string, traits string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:       baseReq,
+		FromID:        fromID,
 		MaintainersID: maintainersID,
 		Traits:        traits,
 	}
