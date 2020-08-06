@@ -8,7 +8,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-//TODO define genesis state
 type genesisState struct {
 	AssetList []mappables.InterNFT
 }
