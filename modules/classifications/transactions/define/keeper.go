@@ -1,22 +1,27 @@
-package create
+package define
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
-	mapper helpers.Mapper
+	mapper                    helpers.Mapper
+	identitiesVerifyAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
 	message := messageFromInterface(msg)
+	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
+		return Error
+	}
 	var properties types.Properties
 	for _, trait := range message.Traits.GetList() {
 		properties.Add(trait.GetProperty())
@@ -32,6 +37,16 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	return nil
 }
 
-func initializeTransactionKeeper(mapper helpers.Mapper, _ []interface{}) helpers.TransactionKeeper {
-	return transactionKeeper{mapper: mapper}
+func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{}) helpers.TransactionKeeper {
+	transactionKeeper := transactionKeeper{mapper: mapper}
+	for _, auxiliary := range auxiliaries {
+		switch value := auxiliary.(type) {
+		case helpers.Auxiliary:
+			switch value.GetName() {
+			case verify.Auxiliary.GetName():
+				transactionKeeper.identitiesVerifyAuxiliary = value
+			}
+		}
+	}
+	return transactionKeeper
 }
