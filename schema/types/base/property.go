@@ -8,8 +8,8 @@ import (
 var _ types.Property = (*property)(nil)
 
 type property struct {
-	ID   types.ID
-	Fact types.Fact
+	ID   types.ID   `json:"id"`
+	Fact types.Fact `json:"fact"`
 }
 
 func (property property) String() string {

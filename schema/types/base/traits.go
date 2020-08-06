@@ -5,7 +5,7 @@ import (
 )
 
 type traits struct {
-	TraitList []types.Trait
+	TraitList []types.Trait `json:"traitList"`
 }
 
 var _ types.Traits = (*traits)(nil)

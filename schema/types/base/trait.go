@@ -8,9 +8,9 @@ import (
 var _ types.Trait = (*trait)(nil)
 
 type trait struct {
-	ID       types.ID
-	Property types.Property
-	mutable  bool
+	ID       types.ID       `json:"id"`
+	Property types.Property `json:"property"`
+	Mutable  bool           `json:"mutable"`
 }
 
 func (trait trait) String() string {
@@ -23,10 +23,12 @@ func (trait trait) String() string {
 
 func (trait trait) GetID() types.ID             { return trait.ID }
 func (trait trait) GetProperty() types.Property { return trait.Property }
-func (trait trait) IsMutable() bool             { return trait.mutable }
-func NewTrait(id types.ID, property types.Property) types.Trait {
+func (trait trait) IsMutable() bool             { return trait.Mutable }
+
+func NewTrait(ID types.ID, property types.Property, mutable bool) types.Trait {
 	return trait{
-		ID:       id,
+		ID:       ID,
 		Property: property,
+		Mutable:  mutable,
 	}
 }
