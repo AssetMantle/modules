@@ -14,8 +14,8 @@ import (
 )
 
 type message struct {
-	From    sdkTypes.AccAddress
-	OrderID types.ID
+	From    sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^cosmos[a-z0-9]{39}$)~invalid field from"`
+	OrderID types.ID            `json:"orderID" valid:"required~required field orderID missing"`
 }
 
 var _ sdkTypes.Msg = message{}
