@@ -10,7 +10,7 @@ import (
 
 //TODO define genesis state
 type genesisState struct{
-	SplitList []mappables.InterNFT
+	SplitList []mappables.Split
 }
 
 var _ helpers.GenesisState = (*genesisState)(nil)
@@ -34,7 +34,7 @@ func (genesisState genesisState) Export(context sdkTypes.Context, mapper helpers
 	assetsID := base.NewID("")
 
 	appendableAssetList := func(mappable traits.Mappable) bool {
-		genesisState.SplitList = append(genesisState.SplitList, mappable.(mappables.InterNFT))
+		genesisState.SplitList = append(genesisState.SplitList, mappable.(mappables.Split))
 		return false
 	}
 	mapper.Iterate(context, assetsID, appendableAssetList)
@@ -51,10 +51,10 @@ func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
 	return genesisState
 }
 
-func newGenesisState(splitList []mappables.InterNFT) helpers.GenesisState {
+func newGenesisState(splitList []mappables.Split) helpers.GenesisState {
 	return genesisState{
 		SplitList: splitList,
 	}
 }
 
-var GenesisState = newGenesisState([]mappables.InterNFT{})
+var GenesisState = newGenesisState([]mappables.Split{})
