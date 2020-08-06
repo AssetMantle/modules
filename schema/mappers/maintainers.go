@@ -11,10 +11,12 @@ import (
 )
 
 type Maintainers interface {
-	ID() types.ID
+	GetID() types.ID
 
 	Get(types.ID) mappables.Maintainer
+	GetList() []mappables.Maintainer
 
+	Fetch(types.ID) Maintainers
 	Add(mappables.Maintainer) Maintainers
 	Remove(mappables.Maintainer) Maintainers
 	Mutate(mappables.Maintainer) Maintainers
