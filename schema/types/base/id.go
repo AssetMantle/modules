@@ -6,7 +6,7 @@ import (
 )
 
 type id struct {
-	IDString string
+	IDString string `json:"idString"`
 }
 
 var _ types.ID = (*id)(nil)

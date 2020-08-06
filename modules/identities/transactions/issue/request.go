@@ -27,8 +27,8 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
-		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.To),
+		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.MaintainersID),
 		cliCommand.ReadString(constants.ClassificationID),
 		cliCommand.ReadString(constants.Properties),

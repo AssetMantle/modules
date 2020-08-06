@@ -5,7 +5,7 @@ import (
 )
 
 type signatures struct {
-	SignatureList []types.Signature
+	SignatureList []types.Signature `json:"signatureList"`
 }
 
 var _ types.Signatures = (*signatures)(nil)

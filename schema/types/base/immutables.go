@@ -9,7 +9,7 @@ import (
 )
 
 type immutables struct {
-	Properties types.Properties
+	Properties types.Properties `json:"properties"`
 }
 
 var _ types.Immutables = (*immutables)(nil)
