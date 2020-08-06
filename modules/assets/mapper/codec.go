@@ -5,8 +5,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
-func registerCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(Asset{}, ModuleRoute+"/"+"asset", nil)
+func RegisterCodec(codec *codec.Codec) {
+	codec.RegisterConcrete(asset{}, ModuleRoute+"/"+"asset", nil)
 	codec.RegisterConcrete(assetID{}, ModuleRoute+"/"+"assetID", nil)
 	codec.RegisterConcrete(assets{}, ModuleRoute+"/"+"assets", nil)
 }
@@ -14,7 +14,7 @@ func registerCodec(codec *codec.Codec) {
 var packageCodec = codec.New()
 
 func init() {
-	registerCodec(packageCodec)
+	RegisterCodec(packageCodec)
 	schema.RegisterCodec(packageCodec)
 	packageCodec.Seal()
 }
