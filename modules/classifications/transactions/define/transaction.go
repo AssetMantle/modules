@@ -1,4 +1,4 @@
-package delete
+package define
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
@@ -16,5 +16,5 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]helpers.CLIFlag{constants.MaintainersID, constants.Traits},
+	[]helpers.CLIFlag{constants.FromID, constants.MaintainersID, constants.Traits},
 )

@@ -3,13 +3,15 @@ package issue
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
-	mapper helpers.Mapper
+	mapper          helpers.Mapper
+	verifyAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -27,6 +29,16 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	return nil
 }
 
-func initializeTransactionKeeper(mapper helpers.Mapper, _ []interface{}) helpers.TransactionKeeper {
-	return transactionKeeper{mapper: mapper}
+func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{}) helpers.TransactionKeeper {
+	transactionKeeper := transactionKeeper{mapper: mapper}
+	for _, auxiliary := range auxiliaries {
+		switch value := auxiliary.(type) {
+		case helpers.Auxiliary:
+			switch value.GetName() {
+			case verify.Auxiliary.GetName():
+				transactionKeeper.verifyAuxiliary = value
+			}
+		}
+	}
+	return transactionKeeper
 }

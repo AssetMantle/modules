@@ -10,6 +10,7 @@ import (
 
 type message struct {
 	From       sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
+	FromID     types.ID            `json:"fromID" valid:"required~required field fromID missing"`
 	AssetID    types.ID            `json:"assetID" valid:"required~required field assetID missing"`
 	Properties types.Properties    `json:"properties" valid:"required~required field properties missing"`
 	Lock       types.Height        `json:"lock" valid:"required~required field lock missing"`
@@ -43,9 +44,10 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, assetID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, assetID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
 	return message{
 		From:       from,
+		FromID:     fromID,
 		AssetID:    assetID,
 		Properties: properties,
 		Lock:       lock,

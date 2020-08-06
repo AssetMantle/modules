@@ -3,7 +3,7 @@ package base
 import "github.com/persistenceOne/persistenceSDK/schema/types"
 
 type height struct {
-	Height int64
+	Height int64 `json:"height"`
 }
 
 var _ types.Height = (*height)(nil)

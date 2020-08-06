@@ -1,4 +1,4 @@
-package update
+package define
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"

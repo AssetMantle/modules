@@ -7,8 +7,8 @@ import (
 var _ types.Fact = (*fact)(nil)
 
 type fact struct {
-	FactString string
-	Signatures types.Signatures
+	FactString string           `json:"factString"`
+	Signatures types.Signatures `json:"signatures"`
 }
 
 func (fact fact) String() string                  { return fact.FactString }

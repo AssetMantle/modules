@@ -5,8 +5,8 @@ import (
 )
 
 type mutables struct {
-	Properties    types.Properties
-	MaintainersID types.ID
+	Properties    types.Properties `json:"properties"`
+	MaintainersID types.ID         `json:"maintainersID"`
 }
 
 var _ types.Mutables = (*mutables)(nil)
