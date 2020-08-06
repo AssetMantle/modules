@@ -6,7 +6,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type Asset struct {
+type asset struct {
 	ID         types.ID         `json:"id" valid:"required~required field id missing"`
 	Burn       types.Height     `json:"burn" valid:"required~required field burn missing"`
 	Lock       types.Height     `json:"lock" valid:"required field lock missing"`
@@ -14,55 +14,55 @@ type Asset struct {
 	Mutables   types.Mutables   `json:"mutables" valid:"required~required field mutables missing"`
 }
 
-var _ mappables.InterNFT = (*Asset)(nil)
+var _ mappables.InterNFT = (*asset)(nil)
 
-func (asset Asset) GetID() types.ID {
+func (asset asset) GetID() types.ID {
 	return asset.ID
 }
 
-func (asset Asset) GetChainID() types.ID {
+func (asset asset) GetChainID() types.ID {
 	return assetIDFromInterface(asset.ID).ChainID
 }
 
-func (asset Asset) GetClassificationID() types.ID {
+func (asset asset) GetClassificationID() types.ID {
 	return assetIDFromInterface(asset.ID).ClassificationID
 }
 
-func (asset Asset) GetBurn() types.Height {
+func (asset asset) GetBurn() types.Height {
 	return asset.Burn
 }
 
-func (asset Asset) CanBurn(currentHeight types.Height) bool {
+func (asset asset) CanBurn(currentHeight types.Height) bool {
 	return currentHeight.IsGreaterThan(asset.Burn)
 }
 
-func (asset Asset) GetLock() types.Height {
+func (asset asset) GetLock() types.Height {
 	return asset.Lock
 }
 
-func (asset Asset) CanSend(currentHeight types.Height) bool {
+func (asset asset) CanSend(currentHeight types.Height) bool {
 	return currentHeight.IsGreaterThan(asset.Lock)
 }
 
-func (asset Asset) GetImmutables() types.Immutables {
+func (asset asset) GetImmutables() types.Immutables {
 	return asset.Immutables
 }
 
-func (asset Asset) GetMutables() types.Mutables {
+func (asset asset) GetMutables() types.Mutables {
 	return asset.Mutables
 }
-func (asset Asset) Encode() []byte {
+func (asset asset) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(asset)
 }
-func (asset Asset) Decode(bytes []byte) traits.Mappable {
+func (asset asset) Decode(bytes []byte) traits.Mappable {
 	packageCodec.MustUnmarshalBinaryBare(bytes, &asset)
 	return asset
 }
 func assetPrototype() traits.Mappable {
-	return Asset{}
+	return asset{}
 }
 func NewAsset(assetID types.ID, burn types.Height, lock types.Height, immutables types.Immutables, mutables types.Mutables) mappables.InterNFT {
-	return Asset{
+	return asset{
 		ID:         assetID,
 		Burn:       burn,
 		Lock:       lock,

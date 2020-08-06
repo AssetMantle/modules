@@ -2,7 +2,6 @@ package genesis
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	im "github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
@@ -11,7 +10,7 @@ import (
 
 //TODO define genesis state
 type genesisState struct{
-	identityList []mappables.InterNFT
+	IdentityList []mappables.InterNFT
 }
 
 var _ helpers.GenesisState = (*genesisState)(nil)
@@ -27,22 +26,22 @@ func (genesisState genesisState) Validate() error {
 
 func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
 
-	for _, identity := range genesisState.identityList {
+	for _, identity := range genesisState.IdentityList {
 		mapper.Create(ctx, identity)
 	}
 }
 
 func (genesisState genesisState) Export(context sdkTypes.Context, mapper helpers.Mapper) helpers.GenesisState {
-	identityID := base.NewID("")
+	assetsID := base.NewID("")
 
-	var identityList []mappables.InterIdentity
-	appendableIdentityList := func(mappable traits.Mappable) bool {
-		identityList = append(identityList, mappable.(im.Identity))
+	appendableAssetList := func(mappable traits.Mappable) bool {
+		genesisState.IdentityList = append(genesisState.IdentityList, mappable.(mappables.InterNFT))
 		return false
 	}
-	mapper.Iterate(context, identityID, appendableIdentityList)
+	mapper.Iterate(context, assetsID, appendableAssetList)
 	return genesisState
 }
+
 
 func (genesisState genesisState) Marshall() []byte {
 	return PackageCodec.MustMarshalJSON(genesisState)
@@ -56,7 +55,7 @@ func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
 
 func newGenesisState(identityList []mappables.InterNFT) helpers.GenesisState {
 	return genesisState{
-		identityList: identityList,
+		IdentityList: identityList,
 	}
 }
 

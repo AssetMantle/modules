@@ -8,5 +8,5 @@ var Mapper = base.NewMapper(
 	ModuleName,
 	generateKey,
 	splitPrototype,
-	registerCodec,
+	RegisterCodec,
 )

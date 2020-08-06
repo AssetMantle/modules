@@ -7,46 +7,46 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type Split struct {
+type split struct {
 	ID    types.ID     `json:"id" valid:"required field id missing"`
 	Split sdkTypes.Dec `json:"split" valid:"required~required field split missing matches(^[0-9]$)~invalid field split"`
 }
 
-var _ mappables.Split = (*Split)(nil)
+var _ mappables.Split = (*split)(nil)
 
-func (split Split) GetID() types.ID { return split.ID }
-func (split Split) GetOwnerID() types.ID {
+func (split split) GetID() types.ID { return split.ID }
+func (split split) GetOwnerID() types.ID {
 	return splitIDFromInterface(split.ID).OwnerID
 }
-func (split Split) GetOwnableID() types.ID {
+func (split split) GetOwnableID() types.ID {
 	return splitIDFromInterface(split.ID).OwnableID
 }
-func (split Split) GetSplit() sdkTypes.Dec {
+func (split split) GetSplit() sdkTypes.Dec {
 	return split.Split
 }
-func (split Split) Send(Split sdkTypes.Dec) traits.Transactional {
+func (split split) Send(Split sdkTypes.Dec) traits.Transactional {
 	split.Split = split.Split.Sub(Split)
 	return split
 }
-func (split Split) Receive(Split sdkTypes.Dec) traits.Transactional {
+func (split split) Receive(Split sdkTypes.Dec) traits.Transactional {
 	split.Split = split.Split.Add(Split)
 	return split
 }
-func (split Split) CanSend(Split sdkTypes.Dec) bool {
+func (split split) CanSend(Split sdkTypes.Dec) bool {
 	return split.Split.GTE(Split)
 }
-func (split Split) Encode() []byte {
+func (split split) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(split)
 }
-func (split Split) Decode(bytes []byte) traits.Mappable {
+func (split split) Decode(bytes []byte) traits.Mappable {
 	packageCodec.MustUnmarshalBinaryBare(bytes, &split)
 	return split
 }
 func splitPrototype() traits.Mappable {
-	return Split{}
+	return split{}
 }
 func NewSplit(splitID types.ID, spl sdkTypes.Dec) mappables.Split {
-	return Split{
+	return split{
 		ID:    splitID,
 		Split: spl,
 	}

@@ -2,7 +2,6 @@ package genesis
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	sm "github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
@@ -11,7 +10,7 @@ import (
 
 //TODO define genesis state
 type genesisState struct{
-	splitList []mappables.InterNFT
+	SplitList []mappables.InterNFT
 }
 
 var _ helpers.GenesisState = (*genesisState)(nil)
@@ -26,20 +25,19 @@ func (genesisState genesisState) Validate() error {
 }
 
 func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
-	for _, split := range genesisState.splitList {
+	for _, split := range genesisState.SplitList {
 		mapper.Create(ctx, split)
 	}
 }
 
 func (genesisState genesisState) Export(context sdkTypes.Context, mapper helpers.Mapper) helpers.GenesisState {
-	splitID := base.NewID("")
+	assetsID := base.NewID("")
 
-	var splitList []mappables.Split
-	appendableSplitList := func(mappable traits.Mappable) bool {
-		splitList = append(splitList, mappable.(sm.Split))
+	appendableAssetList := func(mappable traits.Mappable) bool {
+		genesisState.SplitList = append(genesisState.SplitList, mappable.(mappables.InterNFT))
 		return false
 	}
-	mapper.Iterate(context, splitID, appendableSplitList)
+	mapper.Iterate(context, assetsID, appendableAssetList)
 	return genesisState
 }
 
@@ -55,7 +53,7 @@ func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
 
 func newGenesisState(splitList []mappables.InterNFT) helpers.GenesisState {
 	return genesisState{
-		splitList: splitList,
+		SplitList: splitList,
 	}
 }
 
