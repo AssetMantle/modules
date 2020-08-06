@@ -3,10 +3,12 @@ package take
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	assetsMapper "github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/exchanges/auxiliaries/swap"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -29,18 +31,52 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return Error
 	}
 
-	if order.GetTakerID().String() != "" && message.FromID.Compare(order.GetTakerID()) != 0 {
-		return constants.NotAuthorized
-	}
-
-	order = mapper.NewOrder(order.GetID(), order.GetBurn(), order.GetLock(), order.GetImmutables(),
-		order.GetMakerID(), message.FromID, order.GetMakerAssetAmount(), order.GetMakerAssetData(), order.GetTakerAssetAmount(),
-		order.GetTakerAssetData(), order.GetSalt())
-	orders = orders.Mutate(order)
-	if Error := transactionKeeper.exchangesSwapAuxiliary.GetKeeper().Help(context, swap.NewAuxiliaryRequest(order)); Error != nil {
+	makerID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerIDProperty)).GetFact().String())
+	makerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerSplitIDProperty)).GetFact().String())
+	makerSplit, Error := sdkTypes.NewDecFromStr(order.GetMutables().Get().Get(base.NewID(constants.MakerSplitProperty)).GetFact().String())
+	takerID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.TakerIDProperty)).GetFact().String())
+	takerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.TakerSplitIDProperty)).GetFact().String())
+	exchangeRate, Error := sdkTypes.NewDecFromStr(order.GetImmutables().Get().Get(base.NewID(constants.ExchangeRateProperty)).GetFact().String())
+	if Error != nil {
 		return Error
 	}
-	orders.Remove(order)
+
+	makerIsAsset := assetsMapper.NewAssets(assetsMapper.Mapper, context).Fetch(makerSplitID).Get(makerSplitID) != nil
+	takerIsAsset := assetsMapper.NewAssets(assetsMapper.Mapper, context).Fetch(takerSplitID).Get(takerSplitID) != nil
+
+	if makerIsAsset && takerIsAsset {
+		if !sdkTypes.OneDec().Equal(message.TakerSplit) || !sdkTypes.OneDec().Equal(makerSplit) {
+			return constants.IncorrectMessage
+		}
+	} else if !makerIsAsset && takerIsAsset {
+		if !sdkTypes.OneDec().Equal(message.TakerSplit) {
+			return constants.IncorrectMessage
+		}
+	} else if makerIsAsset && !takerIsAsset {
+		if !makerSplit.Mul(exchangeRate).Equal(message.TakerSplit) {
+			return constants.IncorrectMessage
+		}
+	}
+
+	makerSplitDeduction := message.TakerSplit.Quo(exchangeRate)
+
+	if takerID.String() != "" && message.FromID.Compare(takerID) != 0 {
+		return constants.NotAuthorized
+	}
+	if Error := transactionKeeper.exchangesSwapAuxiliary.GetKeeper().Help(context, swap.NewAuxiliaryRequest(makerID,
+		makerSplitDeduction, makerSplitID, message.FromID, message.TakerSplit, takerSplitID)); Error != nil {
+		return Error
+	}
+
+	makerSplit = makerSplit.Sub(makerSplitDeduction)
+	mutables := base.NewMutables(order.GetMutables().Get().Mutate(base.NewProperty(base.NewID(constants.MakerSplitProperty),
+		base.NewFact(makerSplit.String(), nil))), order.GetMutables().GetMaintainersID())
+	order = mapper.NewOrder(order.GetID(), mutables, order.GetImmutables())
+	orders = orders.Mutate(order)
+	if makerSplit.IsZero() {
+		orders.Remove(order)
+	}
+
 	return nil
 }
 

@@ -9,9 +9,10 @@ import (
 )
 
 type message struct {
-	From    sdkTypes.AccAddress
-	FromID  types.ID
-	OrderID types.ID
+	From       sdkTypes.AccAddress
+	FromID     types.ID
+	TakerSplit sdkTypes.Dec
+	OrderID    types.ID
 }
 
 var _ sdkTypes.Msg = message{}
@@ -41,10 +42,11 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, orderID types.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, takerSplit sdkTypes.Dec, orderID types.ID) sdkTypes.Msg {
 	return message{
-		From:    from,
-		FromID:  fromID,
-		OrderID: orderID,
+		From:       from,
+		FromID:     fromID,
+		TakerSplit: takerSplit,
+		OrderID:    orderID,
 	}
 }

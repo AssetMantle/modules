@@ -3,11 +3,14 @@ package make
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	assetsMapper "github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/exchanges/auxiliaries/custody"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"strconv"
 )
 
 type transactionKeeper struct {
@@ -20,22 +23,68 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
 	message := messageFromInterface(msg)
-	salt := base.NewHeight(context.BlockHeight())
-	orderHash := message.GenerateHash(salt)
-	orderHashProperty := base.NewProperty(base.NewID(OrderHash), base.NewFact(orderHash.String(), nil))
-	properties := message.Properties.Add(orderHashProperty)
-	immutables := base.NewImmutables(properties)
-	orderID := mapper.NewOrderID(base.NewID(context.ChainID()), immutables.GetHashID())
-	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(orderID)
-	if orders.Get(orderID) != nil {
-		return constants.EntityAlreadyExists
-	}
-	order := mapper.NewOrder(orderID, message.Burn, message.Lock, immutables, message.FromID, message.ToID,
-		message.MakerAssetAmount, message.MakerAssetData, message.TakerAssetAmount, message.TakerAssetData, salt)
-	if Error := transactionKeeper.exchangesCustodyAuxiliary.GetKeeper().Help(context, custody.NewAuxiliaryRequest(order)); Error != nil {
+
+	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context,
+		verify.NewAuxiliaryRequest(message.From, message.MakerID)); Error != nil {
 		return Error
 	}
-	orders.Add(order)
+
+	makerIsAsset := assetsMapper.NewAssets(assetsMapper.Mapper, context).Fetch(message.MakerSplitID).Get(message.MakerSplitID) != nil
+	takerIsAsset := assetsMapper.NewAssets(assetsMapper.Mapper, context).Fetch(message.TakerSplitID).Get(message.TakerSplitID) != nil
+
+	if makerIsAsset && takerIsAsset {
+		if !sdkTypes.OneDec().Equal(message.ExchangeRate) {
+			return constants.IncorrectMessage
+		}
+	} else if !makerIsAsset && takerIsAsset {
+		if !message.MakerSplit.Quo(message.ExchangeRate).Equal(sdkTypes.OneDec()) {
+			return constants.IncorrectMessage
+		}
+	}
+
+	var immutablePropertyList []types.Property
+	immutablePropertyList = append(immutablePropertyList,
+		base.NewProperty(base.NewID(constants.MakerIDProperty), base.NewFact(message.MakerID.String(), nil)),
+		base.NewProperty(base.NewID(constants.TakerIDProperty), base.NewFact(message.TakerID.String(), nil)),
+		base.NewProperty(base.NewID(constants.MakerSplitIDProperty), base.NewFact(message.MakerSplitID.String(), nil)),
+		base.NewProperty(base.NewID(constants.ExchangeRateProperty), base.NewFact(message.ExchangeRate.String(), nil)),
+		base.NewProperty(base.NewID(constants.TakerSplitIDProperty), base.NewFact(message.TakerSplitID.String(), nil)),
+		base.NewProperty(base.NewID(constants.HeightProperty), base.NewFact(strconv.FormatInt(context.BlockHeight(), 10), nil)))
+	immutableProperties := base.NewProperties(immutablePropertyList)
+	immutables := base.NewImmutables(immutableProperties)
+
+	orderID := mapper.NewOrderID(base.NewID(context.ChainID()), message.MaintainersID, immutables.GetHashID())
+	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(orderID)
+
+	var makerSplit sdkTypes.Dec
+	if orders.Get(orderID) != nil {
+		oldMakerSplitFact := orders.Get(orderID).GetMutables().Get().Get(base.NewID(constants.MakerSplitProperty)).GetFact()
+		oldMakerSplit, Error := sdkTypes.NewDecFromStr(oldMakerSplitFact.String())
+		if Error != nil {
+			return Error
+		}
+		makerSplit = oldMakerSplit.Add(message.MakerSplit)
+	} else {
+		makerSplit = message.MakerSplit
+	}
+
+	var mutablePropertyList []types.Property
+	mutablePropertyList = append(mutablePropertyList,
+		base.NewProperty(base.NewID(constants.MakerSplitProperty), base.NewFact(makerSplit.String(), nil)))
+	mutableProperties := base.NewProperties(mutablePropertyList)
+	mutables := base.NewMutables(mutableProperties, message.MaintainersID)
+
+	order := mapper.NewOrder(orderID, mutables, immutables)
+	if Error := transactionKeeper.exchangesCustodyAuxiliary.GetKeeper().Help(context,
+		custody.NewAuxiliaryRequest(message.MakerID, message.MakerSplit, message.MakerSplitID)); Error != nil {
+		return Error
+	}
+
+	if orders.Get(orderID) != nil {
+		orders.Mutate(order)
+	} else {
+		orders.Add(order)
+	}
 	return nil
 }
 

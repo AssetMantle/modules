@@ -1,12 +1,15 @@
 package reverse
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type auxiliaryRequest struct {
-	Order mappables.Order
+	MakerID      types.ID
+	MakerSplit   sdkTypes.Dec
+	MakerSplitID types.ID
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -20,8 +23,10 @@ func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) au
 	}
 }
 
-func NewAuxiliaryRequest(order mappables.Order) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(makerID types.ID, makerSplit sdkTypes.Dec, makerSplitID types.ID) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		Order: order,
+		MakerID:      makerID,
+		MakerSplit:   makerSplit,
+		MakerSplitID: makerSplitID,
 	}
 }

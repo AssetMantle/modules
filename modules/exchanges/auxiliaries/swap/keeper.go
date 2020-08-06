@@ -19,22 +19,21 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) error {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
-	order := auxiliaryRequest.Order
 
 	if Error := auxiliaryKeeper.splitsBurnAuxiliary.GetKeeper().Help(context,
-		burn.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), order.GetMakerAssetData(), order.GetMakerAssetAmount())); Error != nil {
+		burn.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), auxiliaryRequest.MakerSplitID, auxiliaryRequest.MakerSplit)); Error != nil {
 		return Error
 	}
 	if Error := auxiliaryKeeper.splitsBurnAuxiliary.GetKeeper().Help(context,
-		burn.NewAuxiliaryRequest(order.GetTakerID(), order.GetTakerAssetData(), order.GetTakerAssetAmount())); Error != nil {
+		burn.NewAuxiliaryRequest(auxiliaryRequest.TakerID, auxiliaryRequest.TakerSplitID, auxiliaryRequest.TakerSplit)); Error != nil {
 		return Error
 	}
 	if Error := auxiliaryKeeper.splitsMintAuxiliary.GetKeeper().Help(context,
-		mint.NewAuxiliaryRequest(order.GetMakerID(), order.GetTakerAssetData(), order.GetTakerAssetAmount())); Error != nil {
+		mint.NewAuxiliaryRequest(auxiliaryRequest.MakerID, auxiliaryRequest.TakerSplitID, auxiliaryRequest.TakerSplit)); Error != nil {
 		return Error
 	}
 	if Error := auxiliaryKeeper.splitsMintAuxiliary.GetKeeper().Help(context,
-		mint.NewAuxiliaryRequest(order.GetTakerID(), order.GetMakerAssetData(), order.GetMakerAssetAmount())); Error != nil {
+		mint.NewAuxiliaryRequest(auxiliaryRequest.TakerID, auxiliaryRequest.MakerSplitID, auxiliaryRequest.MakerSplit)); Error != nil {
 		return Error
 	}
 	return nil

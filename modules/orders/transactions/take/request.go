@@ -12,9 +12,10 @@ import (
 )
 
 type transactionRequest struct {
-	BaseReq rest.BaseReq `json:"baseReq"`
-	FromID  string       `json:"FromID"`
-	OrderID string       `json:"orderID"`
+	BaseReq    rest.BaseReq `json:"baseReq"`
+	FromID     string       `json:"fromID"`
+	TakerSplit int64        `json:"takerSplit"`
+	OrderID    string       `json:"orderID"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -23,6 +24,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(constants.FromID),
+		cliCommand.ReadInt64(constants.TakerSplit),
 		cliCommand.ReadString(constants.OrderID),
 	)
 }
@@ -40,6 +42,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	return newMessage(
 		from,
 		base.NewID(transactionRequest.FromID),
+		sdkTypes.NewDec(transactionRequest.TakerSplit),
 		base.NewID(transactionRequest.OrderID),
 	)
 }
@@ -48,10 +51,11 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, orderID string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, takerSplit int64, orderID string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq: baseReq,
-		FromID:  fromID,
-		OrderID: orderID,
+		BaseReq:    baseReq,
+		FromID:     fromID,
+		TakerSplit: takerSplit,
+		OrderID:    orderID,
 	}
 }

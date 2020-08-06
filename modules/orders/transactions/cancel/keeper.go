@@ -25,14 +25,20 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if order == nil {
 		return constants.EntityNotFound
 	}
-	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, order.GetMakerID())); Error != nil {
+
+	makerID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerIDProperty)).GetFact().String())
+	makerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerSplitIDProperty)).GetFact().String())
+	makerSplit, Error := sdkTypes.NewDecFromStr(order.GetMutables().Get().Get(base.NewID(constants.MakerSplitProperty)).GetFact().String())
+	if Error != nil {
 		return Error
 	}
-	if !order.CanBurn(base.NewHeight(context.BlockHeight())) {
-		return constants.DeletionNotAllowed
+	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context,
+		verify.NewAuxiliaryRequest(message.From, makerID)); Error != nil {
+		return Error
 	}
 
-	if Error := transactionKeeper.exchangesReverseAuxiliary.GetKeeper().Help(context, reverse.NewAuxiliaryRequest(order)); Error != nil {
+	if Error := transactionKeeper.exchangesReverseAuxiliary.GetKeeper().Help(context,
+		reverse.NewAuxiliaryRequest(makerID, makerSplit, makerSplitID)); Error != nil {
 		return Error
 	}
 	orders.Remove(order)
