@@ -6,7 +6,7 @@
 package rest
 
 import (
-	"github.com/persistenceOne/persistenceSDK/kafka"
+	"github.com/persistenceOne/persistenceSDK/utilities/rest/kafka"
 	"time"
 
 	cTypes "github.com/cosmos/cosmos-sdk/types"
