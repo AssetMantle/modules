@@ -18,6 +18,7 @@ import (
 	"strings"
 )
 
+//TODO add mutable flag to traits
 type transactionRequest struct {
 	BaseReq       rest.BaseReq `json:"baseReq"`
 	FromID        string       `json:"fromID" valid:"required~required field fromID missing"`
@@ -57,7 +58,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 		traitIDAndProperty := strings.Split(trait, constants.TraitIDAndPropertySeparator)
 		if len(traitIDAndProperty) == 2 && traitIDAndProperty[0] != "" {
 			traitID := base.NewID(traitIDAndProperty[0])
-			traitList = append(traitList, base.NewTrait(traitID, base.NewProperty(traitID, base.NewFact(traitIDAndProperty[1], base.NewSignatures(nil)))))
+			traitList = append(traitList, base.NewTrait(traitID, base.NewProperty(traitID, base.NewFact(traitIDAndProperty[1], base.NewSignatures(nil))), true))
 		}
 	}
 
