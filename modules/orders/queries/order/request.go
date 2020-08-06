@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package order
 
 import (
@@ -9,7 +14,7 @@ import (
 )
 
 type queryRequest struct {
-	OrderID types.ID
+	OrderID types.ID `json:"orderID" valid:"required field orderID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)

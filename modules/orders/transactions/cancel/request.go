@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package cancel
 
 import (
@@ -13,7 +18,7 @@ import (
 
 type transactionRequest struct {
 	BaseReq rest.BaseReq `json:"baseReq"`
-	OrderID string       `json:"orderID"`
+	OrderID string       `json:"orderID" valid:"required~required field orderID missing"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)

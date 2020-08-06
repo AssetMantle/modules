@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package provision
 
 import (
@@ -20,6 +25,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	identity := identities.Get(identityID)
 	if identity == nil {
 		return constants.EntityNotFound
+	}
+	if !identity.IsProvisioned(message.From) {
+		return constants.NotAuthorized
 	}
 	if identity.IsProvisioned(message.To) {
 		return constants.EntityAlreadyExists

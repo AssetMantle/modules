@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package mutate
 
 import (
@@ -16,5 +21,5 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]helpers.CLIFlag{constants.AssetID, constants.Properties, constants.Lock, constants.Burn},
+	[]helpers.CLIFlag{constants.AssetID, constants.FromID, constants.Properties, constants.Lock, constants.Burn},
 )

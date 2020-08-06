@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package base
 
 import (
@@ -9,7 +14,7 @@ import (
 )
 
 type immutables struct {
-	Properties types.Properties
+	Properties types.Properties `json:"properties"`
 }
 
 var _ types.Immutables = (*immutables)(nil)

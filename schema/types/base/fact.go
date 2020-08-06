@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package base
 
 import (
@@ -7,8 +12,8 @@ import (
 var _ types.Fact = (*fact)(nil)
 
 type fact struct {
-	FactString string
-	Signatures types.Signatures
+	FactString string           `json:"factString"`
+	Signatures types.Signatures `json:"signatures"`
 }
 
 func (fact fact) String() string                  { return fact.FactString }

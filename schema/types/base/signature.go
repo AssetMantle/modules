@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package base
 
 import (
@@ -7,9 +12,9 @@ import (
 )
 
 type signature struct {
-	ID             types.ID
-	SignatureBytes []byte
-	ValidityHeight types.Height
+	ID             types.ID     `json:"id"`
+	SignatureBytes []byte       `json:"signatureBytes"`
+	ValidityHeight types.Height `json:"validityHeight"`
 }
 
 var _ types.Signature = (*signature)(nil)

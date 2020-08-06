@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package base
 
 import (
@@ -6,7 +11,7 @@ import (
 )
 
 type id struct {
-	IDString string
+	IDString string `json:"idString"`
 }
 
 var _ types.ID = (*id)(nil)

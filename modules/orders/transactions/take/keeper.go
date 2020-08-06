@@ -1,16 +1,25 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package take
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	assetsMapper "github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/exchanges/auxiliaries/swap"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
-	mapper            helpers.Mapper
-	exchangeAuxiliary helpers.Auxiliary
+	mapper                    helpers.Mapper
+	exchangesSwapAuxiliary    helpers.Auxiliary
+	identitiesVerifyAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -23,17 +32,56 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if order == nil {
 		return constants.EntityNotFound
 	}
-	if order.GetTakerAddress() != nil && !message.From.Equals(order.GetTakerAddress()) {
-		return constants.NotAuthorized
-	}
-	order = mapper.NewOrder(order.GetID(), order.GetBurn(), order.GetLock(), order.GetImmutables(),
-		order.GetMakerAddress(), message.From, order.GetMakerAssetAmount(), order.GetMakerAssetData(), order.GetTakerAssetAmount(),
-		order.GetTakerAssetData(), order.GetSalt())
-	orders = orders.Mutate(order)
-	if Error := transactionKeeper.exchangeAuxiliary.GetKeeper().Help(context, swap.NewAuxiliaryRequest(order)); Error != nil {
+	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
 		return Error
 	}
-	orders.Remove(order)
+
+	makerID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerIDProperty)).GetFact().String())
+	makerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerSplitIDProperty)).GetFact().String())
+	makerSplit, Error := sdkTypes.NewDecFromStr(order.GetMutables().Get().Get(base.NewID(constants.MakerSplitProperty)).GetFact().String())
+	takerID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.TakerIDProperty)).GetFact().String())
+	takerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.TakerSplitIDProperty)).GetFact().String())
+	exchangeRate, Error := sdkTypes.NewDecFromStr(order.GetImmutables().Get().Get(base.NewID(constants.ExchangeRateProperty)).GetFact().String())
+	if Error != nil {
+		return Error
+	}
+
+	makerIsAsset := assetsMapper.NewAssets(assetsMapper.Mapper, context).Fetch(makerSplitID).Get(makerSplitID) != nil
+	takerIsAsset := assetsMapper.NewAssets(assetsMapper.Mapper, context).Fetch(takerSplitID).Get(takerSplitID) != nil
+
+	if makerIsAsset && takerIsAsset {
+		if !sdkTypes.OneDec().Equal(message.TakerSplit) || !sdkTypes.OneDec().Equal(makerSplit) {
+			return constants.IncorrectMessage
+		}
+	} else if !makerIsAsset && takerIsAsset {
+		if !sdkTypes.OneDec().Equal(message.TakerSplit) {
+			return constants.IncorrectMessage
+		}
+	} else if makerIsAsset && !takerIsAsset {
+		if !makerSplit.Mul(exchangeRate).Equal(message.TakerSplit) {
+			return constants.IncorrectMessage
+		}
+	}
+
+	makerSplitDeduction := message.TakerSplit.Quo(exchangeRate)
+
+	if takerID.String() != "" && message.FromID.Compare(takerID) != 0 {
+		return constants.NotAuthorized
+	}
+	if Error := transactionKeeper.exchangesSwapAuxiliary.GetKeeper().Help(context, swap.NewAuxiliaryRequest(makerID,
+		makerSplitDeduction, makerSplitID, message.FromID, message.TakerSplit, takerSplitID)); Error != nil {
+		return Error
+	}
+
+	makerSplit = makerSplit.Sub(makerSplitDeduction)
+	mutables := base.NewMutables(order.GetMutables().Get().Mutate(base.NewProperty(base.NewID(constants.MakerSplitProperty),
+		base.NewFact(makerSplit.String(), nil))), order.GetMutables().GetMaintainersID())
+	order = mapper.NewOrder(order.GetID(), mutables, order.GetImmutables())
+	orders = orders.Mutate(order)
+	if makerSplit.IsZero() {
+		orders.Remove(order)
+	}
+
 	return nil
 }
 
@@ -44,7 +92,9 @@ func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case swap.Auxiliary.GetName():
-				transactionKeeper.exchangeAuxiliary = value
+				transactionKeeper.exchangesSwapAuxiliary = value
+			case verify.Auxiliary.GetName():
+				transactionKeeper.identitiesVerifyAuxiliary = value
 			}
 		}
 	}

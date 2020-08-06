@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package mutate
 
 import (
@@ -15,6 +20,7 @@ import (
 
 type transactionRequest struct {
 	BaseReq    rest.BaseReq `json:"baseReq"`
+	FromID     string       `json:"fromID" valid:"required~required field fromID missing"`
 	AssetID    string       `json:"assetID" valid:"required~required field assetID missing matches(^[A-Za-z]$)~invalid field assetID"`
 	Properties string       `json:"properties" valid:"required~required field properties missing matches(^[A-Za-z]$)~invalid field properties"`
 	Lock       int64        `json:"lock" valid:"required~required field lock missing matches(^[0-9]$)~invalid field lock"`
@@ -26,6 +32,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
+		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.AssetID),
 		cliCommand.ReadString(constants.Properties),
 		cliCommand.ReadInt64(constants.Lock),
@@ -58,6 +65,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 
 	return newMessage(
 		from,
+		base.NewID(transactionRequest.FromID),
 		base.NewID(transactionRequest.AssetID),
 		base.NewProperties(propertyList),
 		base.NewHeight(transactionRequest.Lock),
@@ -69,9 +77,10 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, assetID string, properties string, lock int64, burn int64) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, assetID string, properties string, lock int64, burn int64) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:    baseReq,
+		FromID:     fromID,
 		AssetID:    assetID,
 		Properties: properties,
 		Lock:       lock,

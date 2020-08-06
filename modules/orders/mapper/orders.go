@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package mapper
 
 import (
@@ -10,8 +15,8 @@ import (
 )
 
 type orders struct {
-	ID   types.ID
-	List []mappables.Order
+	ID   types.ID          `json:"id" valid:"required~required field id missing"`
+	List []mappables.Order `json:"list" valid:"required~required field list missing"`
 
 	mapper  helpers.Mapper
 	context sdkTypes.Context

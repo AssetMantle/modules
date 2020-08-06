@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package base
 
 import (
@@ -5,8 +10,8 @@ import (
 )
 
 type mutables struct {
-	Properties    types.Properties
-	MaintainersID types.ID
+	Properties    types.Properties `json:"properties"`
+	MaintainersID types.ID         `json:"maintainersID"`
 }
 
 var _ types.Mutables = (*mutables)(nil)

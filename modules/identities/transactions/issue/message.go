@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package issue
 
 import (
@@ -11,6 +16,7 @@ import (
 type message struct {
 	From             sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
 	To               sdkTypes.AccAddress `json:"to" valid:"required~required field to missing matches(^commit[a-z0-9]{39}$)~invalid field to"`
+	FromID           types.ID            `json:"fromID" valid:"required~required field fromID missing"`
 	MaintainersID    types.ID            `json:"maintainersID" valid:"required~required field maintainersID missing"`
 	ClassificationID types.ID            `json:"classificationID" valid:"required~required field classificationID missing"`
 	Properties       types.Properties    `json:"properties" valid:"required~required field properties missing"`
@@ -43,10 +49,11 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, maintainersID types.ID, classificationID types.ID, properties types.Properties) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, fromID types.ID, maintainersID types.ID, classificationID types.ID, properties types.Properties) sdkTypes.Msg {
 	return message{
 		From:             from,
 		To:               to,
+		FromID:           fromID,
 		MaintainersID:    maintainersID,
 		ClassificationID: classificationID,
 		Properties:       properties,

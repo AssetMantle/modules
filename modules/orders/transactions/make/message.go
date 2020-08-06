@@ -1,29 +1,28 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package make
 
 import (
-	"crypto/sha512"
-	"encoding/base64"
 	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 //TODO make private
 type Message struct {
-	From             sdkTypes.AccAddress
-	Properties       types.Properties
-	Lock             types.Height
-	Burn             types.Height
-	TakerAddress     sdkTypes.AccAddress
-	MakerAssetAmount sdkTypes.Dec
-	MakerAssetData   types.ID
-	MakerAssetType   types.ID
-	TakerAssetAmount sdkTypes.Dec
-	TakerAssetData   types.ID
-	TakerAssetType   types.ID
+	From          sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^cosmos[a-z0-9]{39}$)~invalid field from"`
+	MaintainersID types.ID            `json:"maintainersID" valid:"required~required field maintainersID missing"`
+	MakerID       types.ID            `json:"makerID" valid:"required~required field makerID missing"`
+	TakerID       types.ID            `json:"takerID"`
+	MakerSplit    sdkTypes.Dec        `json:"makerSplit" valid:"required~required field makerSplit missing"`
+	MakerSplitID  types.ID            `json:"makerSplitID" valid:"required~required field makerSplitID missing"`
+	ExchangeRate  sdkTypes.Dec        `json:"exchangeRate" valid:"required~required field exchangeRate missing"`
+	TakerSplitID  types.ID            `json:"takerSplitID" valid:"required~required field takerSplitID missing"`
 }
 
 var _ sdkTypes.Msg = Message{}
@@ -53,31 +52,17 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 	}
 }
 
-func (message Message) GenerateHash(salt types.Height) types.ID {
-	hash := sha512.New()
-	bz := []byte(message.From.String() + message.TakerAddress.String() +
-		message.MakerAssetAmount.String() + message.MakerAssetData.String() +
-		message.TakerAssetAmount.String() + message.TakerAssetData.String() + string(salt.Get()))
-	hash.Write(bz)
-
-	sha := base64.URLEncoding.EncodeToString(hash.Sum(nil))
-	return base.NewID(sha)
-}
-
-func newMessage(from sdkTypes.AccAddress, properties types.Properties, lock types.Height, burn types.Height,
-	takerAddress sdkTypes.AccAddress, makerAssetAmount sdkTypes.Dec, makerAssetData types.ID, makerAssetType types.ID,
-	takerAssetAmount sdkTypes.Dec, takerAssetData types.ID, takerAssetType types.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, maintainersID types.ID,
+	fromID types.ID, toID types.ID, makerSplit sdkTypes.Dec, makerSplitID types.ID,
+	exchangeRate sdkTypes.Dec, takerSplitID types.ID) sdkTypes.Msg {
 	return Message{
-		From:             from,
-		Properties:       properties,
-		Lock:             lock,
-		Burn:             burn,
-		TakerAddress:     takerAddress,
-		MakerAssetAmount: makerAssetAmount,
-		MakerAssetData:   makerAssetData,
-		MakerAssetType:   makerAssetType,
-		TakerAssetAmount: takerAssetAmount,
-		TakerAssetData:   takerAssetData,
-		TakerAssetType:   takerAssetType,
+		From:          from,
+		MaintainersID: maintainersID,
+		MakerID:       fromID,
+		TakerID:       toID,
+		MakerSplit:    makerSplit,
+		MakerSplitID:  makerSplitID,
+		ExchangeRate:  exchangeRate,
+		TakerSplitID:  takerSplitID,
 	}
 }

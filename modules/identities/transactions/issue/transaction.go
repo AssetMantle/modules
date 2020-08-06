@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package issue
 
 import (
@@ -16,5 +21,5 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]helpers.CLIFlag{constants.To, constants.MaintainersID, constants.ClassificationID, constants.Properties},
+	[]helpers.CLIFlag{constants.To, constants.FromID, constants.MaintainersID, constants.ClassificationID, constants.Properties},
 )

@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package constants
 
 import (
@@ -6,15 +11,15 @@ import (
 
 //Note: Arranged alphabetically
 var (
-	AssetID          = base.NewCLIFlag("assetID", "", "OwnableID")
+	AssetID          = base.NewCLIFlag("assetID", "", "AssetID")
 	Burn             = base.NewCLIFlag("burn", int64(-1), "Burn")
 	ClassificationID = base.NewCLIFlag("classificationID", "", "ClassificationID")
 	FromID           = base.NewCLIFlag("fromID", "", "FromID")
-	IdentityID       = base.NewCLIFlag("identityID", "", "OwnerID")
+	IdentityID       = base.NewCLIFlag("identityID", "", "IdentityID")
 	Lock             = base.NewCLIFlag("lock", int64(-1), "Lock")
-	MaintainersID    = base.NewCLIFlag("maintainersID", "", "GetMaintainersID")
+	MaintainersID    = base.NewCLIFlag("maintainersID", "", "MaintainersID")
 	OwnableID        = base.NewCLIFlag("ownableID", "", "OwnableID")
-	Properties       = base.NewCLIFlag("properties", "", "GetProperties")
+	Properties       = base.NewCLIFlag("properties", "", "Properties")
 	Split            = base.NewCLIFlag("split", "", "Split")
 	SplitID          = base.NewCLIFlag("splitID", "", "SplitID")
 	Traits           = base.NewCLIFlag("traits", "", "Traits")
@@ -22,10 +27,9 @@ var (
 	ToID             = base.NewCLIFlag("toID", "", "ToID")
 	OrderID          = base.NewCLIFlag("orderID", "", "OrderID")
 	TakerAddress     = base.NewCLIFlag("takerAddress", "", "TakerAddress")
-	MakerAssetAmount = base.NewCLIFlag("makerAssetAmount", int64(0), "MakerAssetAmount")
-	MakerAssetData   = base.NewCLIFlag("makerAssetData", "", "MakerAssetData")
-	MakerAssetType   = base.NewCLIFlag("makerAssetType", "coin", "MakerAssetType")
-	TakerAssetAmount = base.NewCLIFlag("takerAssetAmount", int64(0), "TakerAssetAmount")
-	TakerAssetData   = base.NewCLIFlag("takerAssetData", "", "TakerAssetData")
-	TakerAssetType   = base.NewCLIFlag("takerAssetType", "coin", "TakerAssetType")
+	MakerSplit       = base.NewCLIFlag("makerSplit", int64(0), "MakerSplit")
+	MakerSplitID     = base.NewCLIFlag("makerSplitID", "", "MakerSplitID")
+	ExchangeRate     = base.NewCLIFlag("exchangeRate", "1", "ExchangeRate")
+	TakerSplit       = base.NewCLIFlag("takerSplit", int64(0), "TakerSplit")
+	TakerSplitID     = base.NewCLIFlag("takerSplitID", "", "TakerSplitID")
 )

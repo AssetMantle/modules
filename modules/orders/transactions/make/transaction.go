@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package make
 
 import (
@@ -16,7 +21,7 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]helpers.CLIFlag{constants.Properties, constants.Lock, constants.Burn,
-		constants.TakerAddress, constants.MakerAssetAmount, constants.MakerAssetData, constants.MakerAssetType, constants.TakerAssetAmount,
-		constants.TakerAssetData, constants.TakerAssetType},
+	[]helpers.CLIFlag{constants.MaintainersID, constants.FromID, constants.ToID,
+		constants.TakerAddress, constants.MakerSplit, constants.MakerSplitID, constants.ExchangeRate,
+		constants.TakerSplitID},
 )
