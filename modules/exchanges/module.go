@@ -1,6 +1,8 @@
 package exchanges
 
 import (
+	"github.com/persistenceOne/persistenceSDK/modules/exchanges/auxiliaries/custody"
+	"github.com/persistenceOne/persistenceSDK/modules/exchanges/auxiliaries/reverse"
 	"github.com/persistenceOne/persistenceSDK/modules/exchanges/auxiliaries/swap"
 	"github.com/persistenceOne/persistenceSDK/modules/exchanges/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/exchanges/mapper"
@@ -15,7 +17,7 @@ var Module = base.NewModule(
 	mapper.TransactionRoute,
 	genesis.GenesisState,
 	mapper.Mapper,
-	[]helpers.Auxiliary{swap.Auxiliary},
+	[]helpers.Auxiliary{swap.Auxiliary, custody.Auxiliary, reverse.Auxiliary},
 	[]helpers.Query{},
 	[]helpers.Transaction{},
 )

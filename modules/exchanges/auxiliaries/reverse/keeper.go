@@ -1,4 +1,4 @@
-package swap
+package reverse
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -19,23 +19,15 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) error {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
-
 	if Error := auxiliaryKeeper.splitsBurnAuxiliary.GetKeeper().Help(context,
 		burn.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), auxiliaryRequest.MakerSplitID, auxiliaryRequest.MakerSplit)); Error != nil {
 		return Error
 	}
-	if Error := auxiliaryKeeper.splitsBurnAuxiliary.GetKeeper().Help(context,
-		burn.NewAuxiliaryRequest(auxiliaryRequest.TakerID, auxiliaryRequest.TakerSplitID, auxiliaryRequest.TakerSplit)); Error != nil {
-		return Error
-	}
 	if Error := auxiliaryKeeper.splitsMintAuxiliary.GetKeeper().Help(context,
-		mint.NewAuxiliaryRequest(auxiliaryRequest.MakerID, auxiliaryRequest.TakerSplitID, auxiliaryRequest.TakerSplit)); Error != nil {
+		mint.NewAuxiliaryRequest(auxiliaryRequest.MakerID, auxiliaryRequest.MakerSplitID, auxiliaryRequest.MakerSplit)); Error != nil {
 		return Error
 	}
-	if Error := auxiliaryKeeper.splitsMintAuxiliary.GetKeeper().Help(context,
-		mint.NewAuxiliaryRequest(auxiliaryRequest.TakerID, auxiliaryRequest.MakerSplitID, auxiliaryRequest.MakerSplit)); Error != nil {
-		return Error
-	}
+
 	return nil
 }
 

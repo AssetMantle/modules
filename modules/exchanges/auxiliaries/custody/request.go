@@ -1,4 +1,4 @@
-package swap
+package custody
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -10,9 +10,6 @@ type auxiliaryRequest struct {
 	MakerID      types.ID
 	MakerSplit   sdkTypes.Dec
 	MakerSplitID types.ID
-	TakerID      types.ID
-	TakerSplit   sdkTypes.Dec
-	TakerSplitID types.ID
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -26,14 +23,10 @@ func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) au
 	}
 }
 
-func NewAuxiliaryRequest(makerID types.ID, makerSplit sdkTypes.Dec, makerSplitID types.ID,
-	takerID types.ID, takerSplit sdkTypes.Dec, takerSplitID types.ID) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(makerID types.ID, makerSplit sdkTypes.Dec, makerSplitID types.ID) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		MakerID:      makerID,
 		MakerSplit:   makerSplit,
 		MakerSplitID: makerSplitID,
-		TakerID:      takerID,
-		TakerSplit:   takerSplit,
-		TakerSplitID: takerSplitID,
 	}
 }
