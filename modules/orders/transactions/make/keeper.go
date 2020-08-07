@@ -42,7 +42,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return constants.IncorrectMessage
 		}
 	} else if !makerIsAsset && takerIsAsset {
-		if !message.MakerSplit.Quo(message.ExchangeRate).Equal(sdkTypes.OneDec()) {
+		if !message.MakerSplit.Mul(message.ExchangeRate).Equal(sdkTypes.OneDec()) {
 			return constants.IncorrectMessage
 		}
 	}
