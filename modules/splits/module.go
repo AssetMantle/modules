@@ -12,6 +12,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/queries/split"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/transactions/send"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/transactions/wrap"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
@@ -25,5 +26,5 @@ var Module = base.NewModule(
 	mapper.Mapper,
 	[]helpers.Auxiliary{mint.Auxiliary, burn.Auxiliary},
 	[]helpers.Query{split.Query},
-	[]helpers.Transaction{send.Transaction},
+	[]helpers.Transaction{send.Transaction, wrap.Transaction},
 )
