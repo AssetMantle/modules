@@ -58,8 +58,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return constants.IncorrectMessage
 		}
 	} else if makerIsAsset && !takerIsAsset {
-		if !makerSplit.Mul(exchangeRate).Equal(message.TakerSplit) {
+		if makerSplit.Mul(exchangeRate).GT(message.TakerSplit) {
 			return constants.IncorrectMessage
+		} else {
+			message.TakerSplit = makerSplit.Mul(exchangeRate)
+		}
+	} else {
+		if makerSplit.Mul(exchangeRate).LTE(message.TakerSplit) {
+			message.TakerSplit = makerSplit.Mul(exchangeRate)
 		}
 	}
 
