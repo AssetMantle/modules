@@ -11,4 +11,5 @@ var DeletionNotAllowed = errors.Register(ProjectRoute, 101, "DeletionNotAllowed"
 var EntityAlreadyExists = errors.Register(ProjectRoute, 102, "EntityAlreadyExists")
 var EntityNotFound = errors.Register(ProjectRoute, 103, "EntityNotFound")
 var IncorrectMessage = errors.Register(ProjectRoute, 104, "IncorrectMessage")
+var InsufficientBalance = errors.Register(ProjectRoute, 105, "InsufficientBalance")
 var NotAuthorized = errors.Register(ProjectRoute, 106, "NotAuthorized")
