@@ -29,7 +29,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	}
 	split = split.Send(auxiliaryRequest.Split).(mappables.Split)
 	if split.GetSplit().LT(sdkTypes.ZeroDec()) {
-		return constants.NotAuthorized
+		return constants.InsufficientBalance
 	} else if split.GetSplit().Equal(sdkTypes.ZeroDec()) {
 		splits.Remove(split)
 	} else {
