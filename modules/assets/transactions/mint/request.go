@@ -63,7 +63,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	for _, property := range properties {
 		traitIDAndProperty := strings.Split(property, constants.TraitIDAndPropertySeparator)
 		if len(traitIDAndProperty) == 2 && traitIDAndProperty[0] != "" {
-			propertyList = append(propertyList, base.NewProperty(base.NewID(traitIDAndProperty[0]), base.NewFact(traitIDAndProperty[1], base.NewSignatures(nil))))
+			propertyList = append(propertyList, base.NewProperty(base.NewID(traitIDAndProperty[0]), base.NewFact(traitIDAndProperty[1], true)))
 		}
 	}
 

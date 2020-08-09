@@ -22,9 +22,6 @@ func (classification classification) GetID() types.ID { return classification.ID
 
 func (classification classification) GetTraits() types.Traits { return classification.Traits }
 
-//TODO
-func (classification classification) String() string { return "" }
-
 func (classification classification) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(classification)
 }
