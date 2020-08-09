@@ -31,6 +31,7 @@ var (
 	MaintainerID     = base.NewCLIFlag("makerSplit", int64(0), "MaintainerID")
 	MakerSplit       = base.NewCLIFlag("makerSplit", int64(0), "MakerSplit")
 	MakerSplitID     = base.NewCLIFlag("makerSplitID", "", "MakerSplitID")
+	Meta             = base.NewCLIFlag("meta", "", "Meta")
 	ExchangeRate     = base.NewCLIFlag("exchangeRate", "1", "ExchangeRate")
 	TakerSplit       = base.NewCLIFlag("takerSplit", int64(0), "TakerSplit")
 	TakerSplitID     = base.NewCLIFlag("takerSplitID", "", "TakerSplitID")

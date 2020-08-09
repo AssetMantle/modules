@@ -13,6 +13,7 @@ const CompositeIDSeparator = "|"
 const PropertiesSeparator = ","
 const TraitIDAndPropertySeparator = ":"
 const TraitsSeparator = ","
+const ToHashSeparator = "_"
 
 const MaxTraitCount = 22
 
