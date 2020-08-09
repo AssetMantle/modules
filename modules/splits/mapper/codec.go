@@ -7,7 +7,6 @@ package mapper
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	assetsMapper "github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
@@ -21,7 +20,6 @@ var packageCodec = codec.New()
 
 func init() {
 	registerCodec(packageCodec)
-	assetsMapper.Mapper.RegisterCodec(packageCodec)
 	schema.RegisterCodec(packageCodec)
 	packageCodec.Seal()
 }

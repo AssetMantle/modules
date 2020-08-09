@@ -36,12 +36,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return Error
 	}
 
-	makerID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerIDProperty)).GetFact().String())
-	makerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerSplitIDProperty)).GetFact().String())
-	makerSplit, Error := sdkTypes.NewDecFromStr(order.GetMutables().Get().Get(base.NewID(constants.MakerSplitProperty)).GetFact().String())
-	takerID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.TakerIDProperty)).GetFact().String())
-	takerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.TakerSplitIDProperty)).GetFact().String())
-	exchangeRate, Error := sdkTypes.NewDecFromStr(order.GetImmutables().Get().Get(base.NewID(constants.ExchangeRateProperty)).GetFact().String())
+	makerID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerIDProperty)).GetFact().GetHash())
+	makerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerSplitIDProperty)).GetFact().GetHash())
+	makerSplit, Error := sdkTypes.NewDecFromStr(order.GetMutables().Get().Get(base.NewID(constants.MakerSplitProperty)).GetFact().GetHash())
+	takerID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.TakerIDProperty)).GetFact().GetHash())
+	takerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.TakerSplitIDProperty)).GetFact().GetHash())
+	exchangeRate, Error := sdkTypes.NewDecFromStr(order.GetImmutables().Get().Get(base.NewID(constants.ExchangeRateProperty)).GetFact().GetHash())
 	if Error != nil {
 		return Error
 	}
@@ -81,7 +81,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	makerSplit = makerSplit.Sub(makerSplitDeduction)
 	mutables := base.NewMutables(order.GetMutables().Get().Mutate(base.NewProperty(base.NewID(constants.MakerSplitProperty),
-		base.NewFact(makerSplit.String(), nil))), order.GetMutables().GetMaintainersID())
+		base.NewFact(makerSplit.String(), true))), order.GetMutables().GetMaintainersID())
 	order = mapper.NewOrder(order.GetID(), mutables, order.GetImmutables())
 	orders = orders.Mutate(order)
 	if makerSplit.IsZero() {

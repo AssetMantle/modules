@@ -49,12 +49,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	var immutablePropertyList []types.Property
 	immutablePropertyList = append(immutablePropertyList,
-		base.NewProperty(base.NewID(constants.MakerIDProperty), base.NewFact(message.MakerID.String(), nil)),
-		base.NewProperty(base.NewID(constants.TakerIDProperty), base.NewFact(message.TakerID.String(), nil)),
-		base.NewProperty(base.NewID(constants.MakerSplitIDProperty), base.NewFact(message.MakerSplitID.String(), nil)),
-		base.NewProperty(base.NewID(constants.ExchangeRateProperty), base.NewFact(message.ExchangeRate.String(), nil)),
-		base.NewProperty(base.NewID(constants.TakerSplitIDProperty), base.NewFact(message.TakerSplitID.String(), nil)),
-		base.NewProperty(base.NewID(constants.HeightProperty), base.NewFact(strconv.FormatInt(context.BlockHeight(), 10), nil)))
+		base.NewProperty(base.NewID(constants.MakerIDProperty), base.NewFact(message.MakerID.String(), true)),
+		base.NewProperty(base.NewID(constants.TakerIDProperty), base.NewFact(message.TakerID.String(), true)),
+		base.NewProperty(base.NewID(constants.MakerSplitIDProperty), base.NewFact(message.MakerSplitID.String(), true)),
+		base.NewProperty(base.NewID(constants.ExchangeRateProperty), base.NewFact(message.ExchangeRate.String(), true)),
+		base.NewProperty(base.NewID(constants.TakerSplitIDProperty), base.NewFact(message.TakerSplitID.String(), true)),
+		base.NewProperty(base.NewID(constants.HeightProperty), base.NewFact(strconv.FormatInt(context.BlockHeight(), 10), true)))
 	immutableProperties := base.NewProperties(immutablePropertyList)
 	immutables := base.NewImmutables(immutableProperties)
 
@@ -64,7 +64,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	var makerSplit sdkTypes.Dec
 	if orders.Get(orderID) != nil {
 		oldMakerSplitFact := orders.Get(orderID).GetMutables().Get().Get(base.NewID(constants.MakerSplitProperty)).GetFact()
-		oldMakerSplit, Error := sdkTypes.NewDecFromStr(oldMakerSplitFact.String())
+		oldMakerSplit, Error := sdkTypes.NewDecFromStr(oldMakerSplitFact.GetHash())
 		if Error != nil {
 			return Error
 		}
@@ -75,7 +75,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	var mutablePropertyList []types.Property
 	mutablePropertyList = append(mutablePropertyList,
-		base.NewProperty(base.NewID(constants.MakerSplitProperty), base.NewFact(makerSplit.String(), nil)))
+		base.NewProperty(base.NewID(constants.MakerSplitProperty), base.NewFact(makerSplit.String(), true)))
 	mutableProperties := base.NewProperties(mutablePropertyList)
 	mutables := base.NewMutables(mutableProperties, message.MaintainersID)
 
