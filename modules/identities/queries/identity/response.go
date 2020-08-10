@@ -20,6 +20,6 @@ func queryResponsePrototype() helpers.QueryResponse {
 	return queryResponse{}
 }
 
-func newQueryResponse(identities mappers.InterIdentities) helpers.QueryResponse {
+func NewQueryResponse(identities mappers.InterIdentities) helpers.QueryResponse {
 	return queryResponse{Identities: identities}
 }

@@ -50,9 +50,9 @@ func (split split) Decode(bytes []byte) traits.Mappable {
 func splitPrototype() traits.Mappable {
 	return split{}
 }
-func NewSplit(splitID types.ID, Split sdkTypes.Dec) mappables.Split {
+func NewSplit(splitID types.ID, spl sdkTypes.Dec) mappables.Split {
 	return split{
 		ID:    splitID,
-		Split: Split,
+		Split: spl,
 	}
 }

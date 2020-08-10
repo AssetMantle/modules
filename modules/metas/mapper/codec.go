@@ -10,7 +10,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
-func registerCodec(codec *codec.Codec) {
+func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterConcrete(metas{}, ModuleRoute+"/"+"metas", nil)
 	codec.RegisterConcrete(text{}, ModuleRoute+"/"+"text", nil)
 	codec.RegisterConcrete(metaID{}, ModuleRoute+"/"+"metaID", nil)
@@ -19,7 +19,7 @@ func registerCodec(codec *codec.Codec) {
 var packageCodec = codec.New()
 
 func init() {
-	registerCodec(packageCodec)
+	RegisterCodec(packageCodec)
 	schema.RegisterCodec(packageCodec)
 	packageCodec.Seal()
 }

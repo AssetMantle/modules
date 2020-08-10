@@ -13,8 +13,8 @@ import (
 type GenesisState interface {
 	Default() GenesisState
 	Validate() error
-	Initialize(sdkTypes.Context)
-	Export(sdkTypes.Context) GenesisState
+	Initialize(sdkTypes.Context, Mapper)
+	Export(sdkTypes.Context, Mapper) GenesisState
 	RegisterCodec(*codec.Codec)
 	Marshall() []byte
 	Unmarshall([]byte) GenesisState

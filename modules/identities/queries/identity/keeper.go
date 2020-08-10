@@ -11,16 +11,16 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
-type queryKeeper struct {
+type QueryKeeper struct {
 	mapper helpers.Mapper
 }
 
-var _ helpers.QueryKeeper = (*queryKeeper)(nil)
+var _ helpers.QueryKeeper = (*QueryKeeper)(nil)
 
-func (queryKeeper queryKeeper) Enquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
-	return newQueryResponse(mapper.NewIdentities(queryKeeper.mapper, context).Fetch(queryRequestFromInterface(queryRequest).IdentityID))
+func (queryKeeper QueryKeeper) Enquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
+	return NewQueryResponse(mapper.NewIdentities(queryKeeper.mapper, context).Fetch(queryRequestFromInterface(queryRequest).IdentityID))
 }
 
 func initializeQueryKeeper(mapper helpers.Mapper, _ []interface{}) helpers.QueryKeeper {
-	return queryKeeper{mapper: mapper}
+	return QueryKeeper{mapper: mapper}
 }

@@ -26,7 +26,7 @@ var _ mappers.InterIdentities = (*identities)(nil)
 
 func (identities identities) GetID() types.ID { return identities.ID }
 func (identities identities) Get(id types.ID) mappables.InterIdentity {
-	identityID := identityIDFromInterface(id)
+	identityID := IdentityIDFromInterface(id)
 	for _, oldIdentity := range identities.List {
 		if oldIdentity.GetID().Compare(identityID) == 0 {
 			return oldIdentity
@@ -40,7 +40,7 @@ func (identities identities) GetList() []mappables.InterIdentity {
 
 func (identities identities) Fetch(id types.ID) mappers.InterIdentities {
 	var identityList []mappables.InterIdentity
-	identitiesID := identityIDFromInterface(id)
+	identitiesID := IdentityIDFromInterface(id)
 	if len(identitiesID.HashID.Bytes()) > 0 {
 		mappable := identities.mapper.Read(identities.context, identitiesID)
 		if mappable != nil {
