@@ -17,4 +17,6 @@ func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterConcrete(property{}, "xprt/property", nil)
 	codec.RegisterConcrete(signature{}, "xprt/signature", nil)
 	codec.RegisterConcrete(signatures{}, "xprt/signatures", nil)
+	codec.RegisterConcrete(trait{}, "xprt/trait", nil)
+	codec.RegisterConcrete(traits{}, "xprt/traits", nil)
 }
