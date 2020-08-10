@@ -25,6 +25,7 @@ type transactionRequest struct {
 	ClassificationID string       `json:"classificationID" valid:"required~required field classificationID missing matches(^[A-Za-z]$)~invalid field classificationID"`
 	MaintainersID    string       `json:"maintainersID" valid:"required~required field maintainersID missing matches(^[A-Za-z]$)~invalid field maintainersID"`
 	Properties       string       `json:"properties" valid:"required~required field properties missing matches(^[A-Za-z]$)~invalid field properties"`
+	MetaProperties   string       `json:"metaProperties" valid:"required~required field metaProperties missing matches(^[A-Za-z]$)~invalid field metaProperties"`
 	Lock             int64        `json:"lock" valid:"required~required field lock missing matches(^[0-9]$)~invalid field lock "`
 	Burn             int64        `json:"burn" valid:"required~required field burn missing matches(^[0-9]$)~invalid field burn "`
 }
@@ -55,15 +56,22 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	}
 
 	properties := strings.Split(transactionRequest.Properties, constants.PropertiesSeparator)
-	if len(properties) > constants.MaxTraitCount {
+	metaProperties := strings.Split(transactionRequest.MetaProperties, constants.PropertiesSeparator)
+	if len(properties)+len(metaProperties) > constants.MaxTraitCount {
 		panic(errors.New(fmt.Sprintf("")))
 	}
 
 	var propertyList []types.Property
 	for _, property := range properties {
-		traitIDAndProperty := strings.Split(property, constants.TraitIDAndPropertySeparator)
-		if len(traitIDAndProperty) == 2 && traitIDAndProperty[0] != "" {
-			propertyList = append(propertyList, base.NewProperty(base.NewID(traitIDAndProperty[0]), base.NewFact(traitIDAndProperty[1], true)))
+		propertyIDAndFact := strings.Split(property, constants.PropertyIDAndFactSeparator)
+		if len(propertyIDAndFact) == 2 && propertyIDAndFact[0] != "" {
+			propertyList = append(propertyList, base.NewProperty(base.NewID(propertyIDAndFact[0]), base.NewFact(propertyIDAndFact[1])))
+		}
+	}
+	for _, metaProperty := range metaProperties {
+		propertyIDAndFact := strings.Split(metaProperty, constants.PropertyIDAndFactSeparator)
+		if len(propertyIDAndFact) == 2 && propertyIDAndFact[0] != "" {
+			propertyList = append(propertyList, base.NewProperty(base.NewID(propertyIDAndFact[0]), base.NewMetaFact(propertyIDAndFact[1])))
 		}
 	}
 

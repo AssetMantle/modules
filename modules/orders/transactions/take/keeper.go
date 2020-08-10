@@ -81,7 +81,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	makerSplit = makerSplit.Sub(makerSplitDeduction)
 	mutables := base.NewMutables(order.GetMutables().Get().Mutate(base.NewProperty(base.NewID(constants.MakerSplitProperty),
-		base.NewFact(makerSplit.String(), true))), order.GetMutables().GetMaintainersID())
+		base.NewFact(makerSplit.String()))), order.GetMutables().GetMaintainersID())
 	order = mapper.NewOrder(order.GetID(), mutables, order.GetImmutables())
 	orders = orders.Mutate(order)
 	if makerSplit.IsZero() {
