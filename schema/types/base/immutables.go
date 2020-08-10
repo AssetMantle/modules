@@ -6,11 +6,8 @@
 package base
 
 import (
-	"crypto/sha1"
-	"encoding/base64"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"sort"
-	"strings"
+	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
 type immutables struct {
@@ -25,13 +22,9 @@ func (immutables immutables) Get() types.Properties {
 func (immutables immutables) GetHashID() types.ID {
 	var facts []string
 	for _, immutableProperty := range immutables.Properties.GetList() {
-		facts = append(facts, immutableProperty.GetFact().String())
+		facts = append(facts, immutableProperty.GetFact().GetHash())
 	}
-	sort.Strings(facts)
-	toDigest := strings.Join(facts, "_")
-	h := sha1.New()
-	h.Write([]byte(toDigest))
-	return NewID(base64.URLEncoding.EncodeToString(h.Sum(nil)))
+	return NewID(metaUtilities.Hash(facts...))
 }
 func NewImmutables(properties types.Properties) types.Immutables {
 	return immutables{Properties: properties}

@@ -20,7 +20,7 @@ var (
 	MaintainersID    = base.NewCLIFlag("maintainersID", "", "MaintainersID")
 	OwnableID        = base.NewCLIFlag("ownableID", "", "OwnableID")
 	Properties       = base.NewCLIFlag("properties", "", "Properties")
-	Split            = base.NewCLIFlag("split", "", "Split")
+	Split            = base.NewCLIFlag("split", "0", "Split")
 	SplitID          = base.NewCLIFlag("splitID", "", "SplitID")
 	Coins            = base.NewCLIFlag("coins", "", "Coins")
 	Traits           = base.NewCLIFlag("traits", "", "Traits")

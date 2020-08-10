@@ -11,7 +11,7 @@ import (
 )
 
 type queryResponse struct {
-	Orders mappers.Orders
+	Orders mappers.Orders `json:"orders" valid:"required~required field orders missing"`
 }
 
 var _ helpers.QueryResponse = (*queryResponse)(nil)
