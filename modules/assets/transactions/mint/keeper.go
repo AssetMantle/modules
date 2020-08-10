@@ -10,8 +10,10 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/initialize"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -19,6 +21,7 @@ type transactionKeeper struct {
 	mapper                    helpers.Mapper
 	splitsMintAuxiliary       helpers.Auxiliary
 	identitiesVerifyAuxiliary helpers.Auxiliary
+	metasInitializeAuxiliary  helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -28,8 +31,20 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
 		return Error
 	}
-	mutables := base.NewMutables(message.Properties, message.MaintainersID)
-	immutables := base.NewImmutables(message.Properties)
+	var propertyList []types.Property
+	for _, property := range message.Properties.GetList() {
+		if property.GetFact().IsMeta() {
+			if Error := transactionKeeper.metasInitializeAuxiliary.GetKeeper().Help(context, initialize.NewAuxiliaryRequest(property.GetFact().Get())); Error != nil {
+				return Error
+			}
+		}
+		propertyList = append(propertyList, property)
+	}
+	// TODO segregate immutables for mutables
+	mutableProperties := base.NewProperties(propertyList)
+	immutableProperties := base.NewProperties(propertyList)
+	mutables := base.NewMutables(mutableProperties, message.MaintainersID)
+	immutables := base.NewImmutables(immutableProperties)
 	assetID := mapper.NewAssetID(base.NewID(context.ChainID()), mutables.GetMaintainersID(), message.ClassificationID, immutables.GetHashID())
 	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(assetID)
 	if assets.Get(assetID) != nil {
@@ -52,6 +67,8 @@ func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{
 				transactionKeeper.splitsMintAuxiliary = value
 			case verify.Auxiliary.GetName():
 				transactionKeeper.identitiesVerifyAuxiliary = value
+			case initialize.Auxiliary.GetName():
+				transactionKeeper.metasInitializeAuxiliary = value
 			}
 		}
 	}

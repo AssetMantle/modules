@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package mapper
+package reveal
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -11,9 +11,8 @@ import (
 )
 
 func registerCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(splits{}, ModuleRoute+"/"+"splits", nil)
-	codec.RegisterConcrete(split{}, ModuleRoute+"/"+"split", nil)
-	codec.RegisterConcrete(splitID{}, ModuleRoute+"/"+"splitID", nil)
+	codec.RegisterConcrete(message{}, TransactionRoute+"/"+"message", nil)
+	codec.RegisterConcrete(transactionRequest{}, TransactionRoute+"/"+"request", nil)
 }
 
 var packageCodec = codec.New()

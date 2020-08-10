@@ -55,10 +55,11 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 
 	var traitList []types.Trait
 	for _, trait := range traits {
-		traitIDAndProperty := strings.Split(trait, constants.TraitIDAndPropertySeparator)
+		traitIDAndProperty := strings.Split(trait, constants.PropertyIDAndFactSeparator)
 		if len(traitIDAndProperty) == 2 && traitIDAndProperty[0] != "" {
 			traitID := base.NewID(traitIDAndProperty[0])
-			traitList = append(traitList, base.NewTrait(traitID, base.NewProperty(traitID, base.NewFact(traitIDAndProperty[1], base.NewSignatures(nil))), true))
+			//TODO check proper working
+			traitList = append(traitList, base.NewTrait(base.NewProperty(traitID, base.NewFact(traitIDAndProperty[1])), true))
 		}
 	}
 

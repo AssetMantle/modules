@@ -5,9 +5,13 @@
 
 package types
 
-type Fact interface {
-	String() string
-	Bytes() []byte
+import "github.com/cosmos/cosmos-sdk/crypto/keyring"
 
+type Fact interface {
+	Get() string
+	GetHash() string
 	GetSignatures() Signatures
+	IsMeta() bool
+
+	Sign(keyring.Keyring) Fact
 }

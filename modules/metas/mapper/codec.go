@@ -11,9 +11,9 @@ import (
 )
 
 func registerCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(splits{}, ModuleRoute+"/"+"splits", nil)
-	codec.RegisterConcrete(split{}, ModuleRoute+"/"+"split", nil)
-	codec.RegisterConcrete(splitID{}, ModuleRoute+"/"+"splitID", nil)
+	codec.RegisterConcrete(metas{}, ModuleRoute+"/"+"metas", nil)
+	codec.RegisterConcrete(text{}, ModuleRoute+"/"+"text", nil)
+	codec.RegisterConcrete(metaID{}, ModuleRoute+"/"+"metaID", nil)
 }
 
 var packageCodec = codec.New()
