@@ -6,7 +6,6 @@
 package base
 
 import (
-	"encoding/json"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -15,14 +14,6 @@ var _ types.Property = (*property)(nil)
 type property struct {
 	ID   types.ID   `json:"id"`
 	Fact types.Fact `json:"fact"`
-}
-
-func (property property) String() string {
-	bytes, Error := json.Marshal(property)
-	if Error != nil {
-		panic(Error)
-	}
-	return string(bytes)
 }
 
 func (property property) GetID() types.ID     { return property.ID }

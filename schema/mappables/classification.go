@@ -11,8 +11,6 @@ import (
 )
 
 type Classification interface {
-	String() string
-	GetID() types.ID
 	GetTraits() types.Traits
 	traits.Mappable
 }

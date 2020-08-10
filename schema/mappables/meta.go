@@ -5,13 +5,10 @@
 
 package mappables
 
-import (
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
-)
+import "github.com/persistenceOne/persistenceSDK/schema/traits"
 
-type Order interface {
-	traits.InterChain
-	traits.HasMutables
-	traits.HasImmutables
+type Meta interface {
+	//TODO return to interface
+	Get() string
 	traits.Mappable
 }
