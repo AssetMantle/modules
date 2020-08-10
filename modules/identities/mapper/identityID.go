@@ -56,16 +56,16 @@ func readIdentityID(identityIDString string) types.ID {
 	return identityID{ChainID: base.NewID(""), MaintainersID: base.NewID(""), ClassificationID: base.NewID(""), HashID: base.NewID("")}
 }
 
-func identityIDFromInterface(id types.ID) identityID {
+func IdentityIDFromInterface(id types.ID) identityID {
 	switch value := id.(type) {
 	case identityID:
 		return value
 	default:
-		return identityIDFromInterface(readIdentityID(id.String()))
+		return IdentityIDFromInterface(readIdentityID(id.String()))
 	}
 }
 func generateKey(identityID types.ID) []byte {
-	return append(StoreKeyPrefix, identityIDFromInterface(identityID).Bytes()...)
+	return append(StoreKeyPrefix, IdentityIDFromInterface(identityID).Bytes()...)
 }
 func NewIdentityID(chainID types.ID, maintainersID types.ID, classificationID types.ID, hashID types.ID) types.ID {
 	return identityID{

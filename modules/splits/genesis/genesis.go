@@ -23,10 +23,7 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
 }
 
-func (genesisState genesisState) Validate() error {
-
-	return nil
-}
+func (genesisState genesisState) Validate() error {	return nil}
 
 func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
 	for _, split := range genesisState.SplitList {
