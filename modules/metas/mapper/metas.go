@@ -10,7 +10,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
 type metas struct {
@@ -40,9 +42,17 @@ func (metas metas) GetList() []mappables.Meta {
 func (metas metas) Fetch(id types.ID) mappers.Metas {
 	var metaList []mappables.Meta
 	metasID := metaIDFromInterface(id)
-	mappable := metas.mapper.Read(metas.context, metasID)
-	if mappable != nil {
-		metaList = append(metaList, mappable.(text))
+	if len(metaUtilities.Hash(""))-len(metasID.HashID.String()) == 0 {
+		mappable := metas.mapper.Read(metas.context, metasID)
+		if mappable != nil {
+			metaList = append(metaList, mappable.(text))
+		}
+	} else {
+		appendMappableList := func(mappable traits.Mappable) bool {
+			metaList = append(metaList, mappable.(text))
+			return false
+		}
+		metas.mapper.Iterate(metas.context, metasID, appendMappableList)
 	}
 	metas.ID, metas.List = id, metaList
 	return metas
