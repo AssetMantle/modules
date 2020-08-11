@@ -6,13 +6,14 @@
 package genesis
 
 import (
+	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"gopkg.in/validator.v2"
 )
 
 type genesisState struct {
@@ -27,12 +28,10 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 
 func (genesisState genesisState) Validate() error {
 	for _, maintainers := range genesisState.MaintainersList {
-		if errs := validator.Validate(maintainers); errs != nil {
-			return errs
+		var _, Error = govalidator.ValidateStruct(maintainers)
+		if Error != nil {
+			return errors.Wrap(constants.IncorrectMessage, Error.Error())
 		}
-		if maintainers.GetID() == nil { return constants.EntityNotFound}
-		if maintainers.GetMaintainedID() == nil || maintainers.GetMaintainedID().String() == "" { return constants.EntityNotFound}
-		if maintainers.GetIdentityID() == nil || maintainers.GetIdentityID().String() == "" { return constants.EntityNotFound}
 	}
 	return nil
 }

@@ -6,13 +6,14 @@
 package genesis
 
 import (
+	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"gopkg.in/validator.v2"
 )
 
 type genesisState struct {
@@ -27,13 +28,10 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 
 func (genesisState genesisState) Validate() error {
 	for _, split := range genesisState.SplitList {
-		if errs := validator.Validate(split); errs != nil {
-			return errs
+		var _, Error = govalidator.ValidateStruct(split)
+		if Error != nil {
+			return errors.Wrap(constants.IncorrectMessage, Error.Error())
 		}
-
-		if split.GetID() == nil { return constants.EntityNotFound }
-		if split.GetOwnerID() == nil || split.GetOwnerID().String() == "" { return constants.EntityNotFound }
-		if split.GetOwnableID() == nil || split.GetOwnableID().String() == "" { return constants.EntityNotFound }
 		if split.GetSplit().LT(sdkTypes.ZeroDec()) {
 			return constants.InsufficientBalance
 		}

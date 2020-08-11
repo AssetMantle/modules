@@ -6,13 +6,14 @@
 package genesis
 
 import (
+	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"gopkg.in/validator.v2"
 )
 
 type genesisState struct {
@@ -29,11 +30,11 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 func (genesisState genesisState) Validate() error {
 
 	for _, classification := range genesisState.ClassificationList {
-		if errs := validator.Validate(classification); errs != nil {
-			return errs
+		var _, Error = govalidator.ValidateStruct(classification)
+		if Error != nil {
+			return errors.Wrap(constants.IncorrectMessage, Error.Error())
 		}
 
-		if classification.GetID() == nil { return constants.EntityNotFound}
 		traits := classification.GetTraits().GetList()
 		for _, trait := range traits{
 			if trait.GetID() != trait.GetProperty().GetID() {

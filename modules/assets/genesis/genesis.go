@@ -6,23 +6,21 @@
 package genesis
 
 import (
+	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"gopkg.in/validator.v2"
 )
 
 type genesisState struct {
 	AssetList []mappables.InterNFT
 }
 
-//MapList := map[genesisState.AssetList]bool{}
-
 var _ helpers.GenesisState = (*genesisState)(nil)
-
 
 func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
@@ -30,13 +28,10 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 
 func (genesisState genesisState) Validate() error {
 	for _, asset := range genesisState.AssetList {
-		if errs := validator.Validate(asset); errs != nil {
-			return errs
+		var _, Error = govalidator.ValidateStruct(asset)
+		if Error != nil {
+			return errors.Wrap(constants.IncorrectMessage, Error.Error())
 		}
-
-		if asset.GetID() == nil || asset.GetID().String() == ""{ return constants.EntityNotFound }
-		if asset.GetClassificationID() == nil || asset.GetClassificationID().String() == ""{ return constants.EntityNotFound }
-		if asset.GetChainID() == nil || asset.GetChainID().String() == ""{ return constants.EntityNotFound }
 	}
 	return nil
 }
