@@ -51,7 +51,8 @@ func (module module) DefaultGenesis(jsonMarshaler codec.JSONMarshaler) json.RawM
 }
 func (module module) ValidateGenesis(_ codec.JSONMarshaler, rawMessage json.RawMessage) error {
 	genesisState := module.genesisState.Unmarshall(rawMessage)
-	return genesisState.Validate()
+	var ctx sdkTypes.Context
+	return genesisState.Validate(ctx)
 }
 func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
 	for _, query := range module.queryList {

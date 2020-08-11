@@ -12,7 +12,7 @@ import (
 
 type GenesisState interface {
 	Default() GenesisState
-	Validate() error
+	Validate(sdkTypes.Context) error
 	Initialize(sdkTypes.Context, Mapper)
 	Export(sdkTypes.Context, Mapper) GenesisState
 	RegisterCodec(*codec.Codec)

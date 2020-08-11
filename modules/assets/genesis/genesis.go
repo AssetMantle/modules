@@ -7,6 +7,7 @@ package genesis
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
@@ -27,15 +28,19 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
 }
 
-
-func (genesisState genesisState) Validate() error {
+func (genesisState genesisState) Validate(context sdkTypes.Context) error {
 	for _, asset := range genesisState.AssetList {
 		if errs := validator.Validate(asset); errs != nil {
 			return errs
 		}
+
+		if asset.GetID() == nil || asset.GetID().String() == ""{ return constants.EntityNotFound }
+		if asset.GetClassificationID() == nil || asset.GetClassificationID().String() == ""{ return constants.EntityNotFound }
+		if asset.GetChainID() == nil || asset.GetChainID().String() == ""{ return constants.EntityNotFound }
 	}
 	return nil
 }
+
 func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
 
 	for _, asset := range genesisState.AssetList {

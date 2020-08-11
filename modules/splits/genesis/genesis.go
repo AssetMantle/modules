@@ -7,6 +7,7 @@ package genesis
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
@@ -24,10 +25,17 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
 }
 
-func (genesisState genesisState) Validate() error {
+func (genesisState genesisState) Validate(sdkTypes.Context) error {
 	for _, split := range genesisState.SplitList {
 		if errs := validator.Validate(split); errs != nil {
 			return errs
+		}
+
+		if split.GetID() == nil { return constants.EntityNotFound }
+		if split.GetOwnerID() == nil || split.GetOwnerID().String() == "" { return constants.EntityNotFound }
+		if split.GetOwnableID() == nil || split.GetOwnableID().String() == "" { return constants.EntityNotFound }
+		if split.GetSplit().LT(sdkTypes.ZeroDec()) {
+			return constants.InsufficientBalance
 		}
 	}
 	return nil
