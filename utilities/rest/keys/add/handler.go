@@ -7,12 +7,15 @@ package add
 
 import (
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
 	"net/http"
+	"os"
+	"strings"
 )
 
 func handler(cliContext context.CLIContext) http.HandlerFunc {
@@ -23,7 +26,12 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		info, _, Error := keyring.NewInMemory().NewMnemonic(request.Name, keyring.English, sdkTypes.FullFundraiserPath, hd.Secp256k1)
+		Keyring, Error := keyring.New(sdkTypes.KeyringServiceName(), keyring.BackendOS, os.ExpandEnv("$HOME/.assetClient"), strings.NewReader(keys.DefaultKeyPass))
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
+			return
+		}
+		info, _, Error := Keyring.NewMnemonic(request.Name, keyring.English, sdkTypes.FullFundraiserPath, hd.Secp256k1)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
