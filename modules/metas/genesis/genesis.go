@@ -11,6 +11,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"gopkg.in/validator.v2"
 )
 
 type genesisState struct{
@@ -24,6 +25,11 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 }
 
 func (genesisState genesisState) Validate() error {
+	for _, meta := range genesisState.MetasList {
+		if errs := validator.Validate(meta); errs != nil {
+			return errs
+		}
+	}
 	return nil
 }
 

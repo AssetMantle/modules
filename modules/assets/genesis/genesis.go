@@ -11,19 +11,30 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"gopkg.in/validator.v2"
 )
 
 type genesisState struct {
 	AssetList []mappables.InterNFT
 }
 
+//MapList := map[genesisState.AssetList]bool{}
+
 var _ helpers.GenesisState = (*genesisState)(nil)
+
 
 func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
 }
 
-func (genesisState genesisState) Validate() error {	return nil}
+func (genesisState genesisState) Validate() error {
+	for _, asset := range genesisState.AssetList {
+		if errs := validator.Validate(asset); errs != nil {
+			return errs
+		}
+	}
+	return nil
+}
 
 func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
 

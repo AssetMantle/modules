@@ -11,6 +11,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"gopkg.in/validator.v2"
 )
 
 type genesisState struct{
@@ -23,7 +24,14 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
 }
 
-func (genesisState genesisState) Validate() error {	return nil}
+func (genesisState genesisState) Validate() error {
+	for _, maintainers := range genesisState.MaintainersList {
+		if errs := validator.Validate(maintainers); errs != nil {
+			return errs
+		}
+	}
+	return nil
+}
 
 func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
 
