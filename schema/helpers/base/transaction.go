@@ -24,6 +24,7 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -141,7 +142,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		}
 
 		//using DefaultKeyPass as an input
-		Keyring, err := keyring.New(sdkTypes.KeyringServiceName(), "os", "home", strings.NewReader(keys.DefaultKeyPass))
+		Keyring, err := keyring.New(sdkTypes.KeyringServiceName(), keyring.BackendOS, os.ExpandEnv("$HOME/.assetClient"), strings.NewReader(keys.DefaultKeyPass))
 		if err != nil {
 			panic(fmt.Errorf("couldn't acquire keyring: %v", err))
 		}
