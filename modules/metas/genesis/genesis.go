@@ -25,7 +25,7 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
 }
 
-func (genesisState genesisState) Validate(sdkTypes.Context) error {
+func (genesisState genesisState) Validate() error {
 	for _, meta := range genesisState.MetasList {
 		if errs := validator.Validate(meta); errs != nil {
 			return errs

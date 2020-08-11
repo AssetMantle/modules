@@ -25,7 +25,7 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
 }
 
-func (genesisState genesisState) Validate(sdkTypes.Context) error {
+func (genesisState genesisState) Validate() error {
 	for _, split := range genesisState.SplitList {
 		if errs := validator.Validate(split); errs != nil {
 			return errs

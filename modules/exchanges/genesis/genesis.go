@@ -19,7 +19,7 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 	return newGenesisState()
 }
 
-func (genesisState genesisState) Validate(sdkTypes.Context) error { return nil }
+func (genesisState genesisState) Validate() error { return nil }
 
 func (genesisState genesisState) Initialize(_ sdkTypes.Context, _ helpers.Mapper) {
 }

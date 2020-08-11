@@ -28,7 +28,7 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
 }
 
-func (genesisState genesisState) Validate(context sdkTypes.Context) error {
+func (genesisState genesisState) Validate() error {
 	for _, asset := range genesisState.AssetList {
 		if errs := validator.Validate(asset); errs != nil {
 			return errs

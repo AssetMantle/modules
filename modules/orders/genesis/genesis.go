@@ -8,7 +8,6 @@ package genesis
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	assetsMapper "github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
@@ -26,37 +25,13 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
 }
 
-func (genesisState genesisState) Validate(context sdkTypes.Context) error {
+func (genesisState genesisState) Validate() error {
 	for _, order := range genesisState.OrderList {
 		if errs := validator.Validate(order); errs != nil {
 			return errs
 		}
-
-		makerSplit, _ := sdkTypes.NewDecFromStr(order.GetMutables().Get().Get(base.NewID(constants.MakerSplitProperty)).GetFact().GetHash())
-		makerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerSplitIDProperty)).GetFact().GetHash())
-		takerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.TakerSplitIDProperty)).GetFact().GetHash())
-		exchangeRate, _ := sdkTypes.NewDecFromStr(order.GetImmutables().Get().Get(base.NewID(constants.ExchangeRateProperty)).GetFact().GetHash())
-
-		makerIsAsset := assetsMapper.NewAssets(assetsMapper.Mapper, context).Fetch(makerSplitID).Get(makerSplitID) != nil
-		takerIsAsset := assetsMapper.NewAssets(assetsMapper.Mapper, context).Fetch(takerSplitID).Get(takerSplitID) != nil
-
-		if makerIsAsset && takerIsAsset{
-			if !sdkTypes.OneDec().Equal(makerSplit) {
-				return constants.IncorrectMessage
-			}
-		}else if !makerIsAsset {
-			if makerSplit.IsZero() || makerSplit.IsNegative(){
-				return constants.IncorrectMessage
-			}
-			if exchangeRate.IsZero() || exchangeRate.IsNegative(){
-				return constants.IncorrectMessage
-			}
-		} else if takerIsAsset{
-			val := makerSplit.Mul(exchangeRate)
-			if !sdkTypes.OneDec().Equal(val) {
-				return constants.IncorrectMessage
-			}
-		}
+		if order.GetID() == nil { return constants.EntityNotFound }
+		if order.GetChainID() == nil || order.GetChainID().String() == "" { return constants.EntityNotFound }
 	}
 	return nil
 }

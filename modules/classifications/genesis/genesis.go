@@ -26,7 +26,7 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 }
 
 
-func (genesisState genesisState) Validate(sdkTypes.Context) error {
+func (genesisState genesisState) Validate() error {
 
 	for _, classification := range genesisState.ClassificationList {
 		if errs := validator.Validate(classification); errs != nil {
