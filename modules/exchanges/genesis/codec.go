@@ -17,6 +17,6 @@ func (genesisState) RegisterCodec(codec *codec.Codec) {
 var PackageCodec = codec.New()
 
 func init() {
-	GenesisState.RegisterCodec(PackageCodec)
+	State.RegisterCodec(PackageCodec)
 	PackageCodec.Seal()
 }

@@ -10,7 +10,6 @@ import "github.com/persistenceOne/persistenceSDK/constants"
 const ModuleName = "metas"
 const ModuleRoute = constants.ProjectRoute + "/" + ModuleName
 const DefaultParamspace = "metas"
-const StoreKey = "metas"
 const QueryRoute = ModuleRoute
 const TransactionRoute = ModuleRoute
 

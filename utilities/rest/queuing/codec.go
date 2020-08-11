@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package kafka
+package queuing
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"

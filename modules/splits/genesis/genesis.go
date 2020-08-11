@@ -14,7 +14,7 @@ import (
 	"gopkg.in/validator.v2"
 )
 
-type genesisState struct{
+type genesisState struct {
 	SplitList []mappables.Split
 }
 
@@ -51,10 +51,10 @@ func (genesisState genesisState) Export(context sdkTypes.Context, mapper helpers
 }
 
 func (genesisState genesisState) Marshall() []byte {
-	return PackageCodec.MustMarshalJSON(genesisState)
+	return packageCodec.MustMarshalJSON(genesisState)
 }
 func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
-	if Error := PackageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
+	if Error := packageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
 		return nil
 	}
 	return genesisState
@@ -66,4 +66,4 @@ func newGenesisState(splitList []mappables.Split) helpers.GenesisState {
 	}
 }
 
-var GenesisState = newGenesisState([]mappables.Split{})
+var State = newGenesisState([]mappables.Split{})

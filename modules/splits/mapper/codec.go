@@ -6,11 +6,11 @@
 package mapper
 
 import (
-"github.com/cosmos/cosmos-sdk/codec"
-"github.com/persistenceOne/persistenceSDK/schema"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
-func RegisterCodec(codec *codec.Codec) {
+func registerCodec(codec *codec.Codec) {
 	codec.RegisterConcrete(split{}, ModuleRoute+"/"+"order", nil)
 	codec.RegisterConcrete(splitID{}, ModuleRoute+"/"+"orderID", nil)
 	codec.RegisterConcrete(splits{}, ModuleRoute+"/"+"orders", nil)
@@ -19,8 +19,7 @@ func RegisterCodec(codec *codec.Codec) {
 var packageCodec = codec.New()
 
 func init() {
-	RegisterCodec(packageCodec)
+	registerCodec(packageCodec)
 	schema.RegisterCodec(packageCodec)
 	packageCodec.Seal()
 }
-

@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package kafka
+package queuing
 
 import (
 	"github.com/Shopify/sarama"
@@ -55,29 +55,29 @@ func NewKafkaMsgFromRest(msg sdk.Msg, ticketID Ticket, baseRequest rest.BaseReq,
 
 }
 
-// CliCtxFromKafkaMsg : sets the txctx and clictx again to consume
-func CliCtxFromKafkaMsg(msg KafkaMsg, cliCtx context.CLIContext) context.CLIContext {
+// CliCtxFromKafkaMsg : sets the transaction and cli contexts again to consume
+func CliCtxFromKafkaMsg(kafkaMsg KafkaMsg, cliContext context.CLIContext) context.CLIContext {
 
-	//mvh := msg.KafkaCli.VerifierHome
+	//mvh := kafkaMsg.KafkaCli.VerifierHome
 
-	cliCtx.OutputFormat = msg.KafkaCli.OutputFormat
-	cliCtx.ChainID = msg.KafkaCli.ChainID
-	cliCtx.Height = msg.KafkaCli.Height
-	cliCtx.HomeDir = msg.KafkaCli.HomeDir
-	cliCtx.NodeURI = msg.KafkaCli.NodeURI
-	cliCtx.From = msg.KafkaCli.From
-	cliCtx.TrustNode = msg.KafkaCli.TrustNode
-	cliCtx.UseLedger = msg.KafkaCli.UseLedger
-	cliCtx.BroadcastMode = msg.KafkaCli.BroadcastMode
-	cliCtx.Simulate = msg.KafkaCli.Simulate
-	cliCtx.GenerateOnly = msg.KafkaCli.GenerateOnly
-	cliCtx.FromAddress = msg.KafkaCli.FromAddress
-	cliCtx.FromName = msg.KafkaCli.FromName
-	cliCtx.Offline = msg.KafkaCli.Offline
-	cliCtx.Indent = msg.KafkaCli.Indent
-	cliCtx.SkipConfirm = msg.KafkaCli.SkipConfirm
+	cliContext.OutputFormat = kafkaMsg.KafkaCli.OutputFormat
+	cliContext.ChainID = kafkaMsg.KafkaCli.ChainID
+	cliContext.Height = kafkaMsg.KafkaCli.Height
+	cliContext.HomeDir = kafkaMsg.KafkaCli.HomeDir
+	cliContext.NodeURI = kafkaMsg.KafkaCli.NodeURI
+	cliContext.From = kafkaMsg.KafkaCli.From
+	cliContext.TrustNode = kafkaMsg.KafkaCli.TrustNode
+	cliContext.UseLedger = kafkaMsg.KafkaCli.UseLedger
+	cliContext.BroadcastMode = kafkaMsg.KafkaCli.BroadcastMode
+	cliContext.Simulate = kafkaMsg.KafkaCli.Simulate
+	cliContext.GenerateOnly = kafkaMsg.KafkaCli.GenerateOnly
+	cliContext.FromAddress = kafkaMsg.KafkaCli.FromAddress
+	cliContext.FromName = kafkaMsg.KafkaCli.FromName
+	cliContext.Offline = kafkaMsg.KafkaCli.Offline
+	cliContext.Indent = kafkaMsg.KafkaCli.Indent
+	cliContext.SkipConfirm = kafkaMsg.KafkaCli.SkipConfirm
 
-	return cliCtx
+	return cliContext
 }
 
 // KafkaCliCtx : client tx without codec
@@ -102,7 +102,7 @@ type KafkaCliCtx struct {
 
 // TicketIDResponse : is a json structure to send TicketID to user
 type TicketIDResponse struct {
-	TicketID Ticket `json:"TicketID" valid:"required~TicketID is mandatory,length(20)~RelayerAddress length should be 20" `
+	TicketID Ticket `json:"ticketID" valid:"required~ticketID is mandatory,length(20)~ticketID length should be 20" `
 }
 
 // KafkaState : is a struct showing the state of kafka

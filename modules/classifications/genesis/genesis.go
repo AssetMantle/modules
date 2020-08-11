@@ -14,7 +14,7 @@ import (
 	"gopkg.in/validator.v2"
 )
 
-type genesisState struct{
+type genesisState struct {
 	ClassificationList []mappables.Classification
 }
 
@@ -24,6 +24,7 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
 }
 
+
 func (genesisState genesisState) Validate() error {
 	for _, classification := range genesisState.ClassificationList {
 		if errs := validator.Validate(classification); errs != nil {
@@ -32,6 +33,7 @@ func (genesisState genesisState) Validate() error {
 	}
 	return nil
 }
+
 
 func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
 
@@ -51,12 +53,11 @@ func (genesisState genesisState) Export(context sdkTypes.Context, mapper helpers
 	return genesisState
 }
 
-
 func (genesisState genesisState) Marshall() []byte {
-	return PackageCodec.MustMarshalJSON(genesisState)
+	return packageCodec.MustMarshalJSON(genesisState)
 }
 func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
-	if Error := PackageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
+	if Error := packageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
 		return nil
 	}
 	return genesisState
@@ -68,4 +69,4 @@ func newGenesisState(classificationList []mappables.Classification) helpers.Gene
 	}
 }
 
-var GenesisState = newGenesisState([]mappables.Classification{})
+var State = newGenesisState([]mappables.Classification{})

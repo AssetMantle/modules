@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package kafka
+package queuing
 
 import (
 	"fmt"
@@ -16,28 +16,26 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
-// SetTicketIDtoDB : initiates ticketid in Database
-func SetTicketIDtoDB(ticketID Ticket, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec, msg []byte) {
+// SetTicketIDtoDB : initiates ticketID in Database
+func SetTicketIDtoDB(TicketID Ticket, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec, msg []byte) {
 
-	ticketid, err := cdc.MarshalJSON(ticketID)
-	if err != nil {
-		panic(err)
+	ticketID, Error := cdc.MarshalJSON(TicketID)
+	if Error != nil {
+		panic(Error)
 	}
-
-	err = kafkaDB.Set(ticketid, msg)
-	if err != nil {
-		panic(err)
+	if Error := kafkaDB.Set(ticketID, msg); Error != nil {
+		panic(Error)
 	}
 	return
 }
 
 // AddResponseToDB : Updates response to DB
-func AddResponseToDB(ticketID Ticket, response []byte, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec) {
-	ticketid, err := cdc.MarshalJSON(ticketID)
+func AddResponseToDB(TicketID Ticket, response []byte, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec) {
+	ticketID, err := cdc.MarshalJSON(TicketID)
 	if err != nil {
 		panic(err)
 	}
-	err = kafkaDB.SetSync(ticketid, response)
+	err = kafkaDB.SetSync(ticketID, response)
 	if err != nil {
 		panic(err)
 	}
@@ -45,13 +43,13 @@ func AddResponseToDB(ticketID Ticket, response []byte, kafkaDB *dbm.GoLevelDB, c
 }
 
 // GetResponseFromDB : gives the response from DB
-func GetResponseFromDB(ticketID Ticket, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec) []byte {
-	ticketid, err := cdc.MarshalJSON(ticketID)
+func GetResponseFromDB(TicketID Ticket, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec) []byte {
+	ticketID, err := cdc.MarshalJSON(TicketID)
 	if err != nil {
 		panic(err)
 	}
 
-	val, _ := kafkaDB.Get(ticketid)
+	val, _ := kafkaDB.Get(ticketID)
 
 	return val
 }
@@ -62,14 +60,14 @@ func QueryDB(cdc *codec.Codec, kafkaDB *dbm.GoLevelDB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		vars := mux.Vars(r)
 
-		iDByte, err := cdc.MarshalJSON(vars["ticketid"])
+		iDByte, err := cdc.MarshalJSON(vars["ticketID"])
 		if err != nil {
 			panic(err)
 		}
 		var response []byte
 		check, _ := kafkaDB.Has(iDByte)
 		if check == true {
-			response = GetResponseFromDB(Ticket(vars["ticketid"]), kafkaDB, cdc)
+			response = GetResponseFromDB(Ticket(vars["ticketID"]), kafkaDB, cdc)
 		} else {
 			output, err := cdc.MarshalJSON("The ticket ID does not exist, it must have been deleted, Query the chain to know")
 			if err != nil {

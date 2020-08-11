@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package kafka
+package queuing
 
 import (
 	"os"
@@ -12,10 +12,10 @@ import (
 	"github.com/Shopify/sarama"
 )
 
-// SleepTimer : the time the kafka msgs are to be taken in
+// SleepTimer : the time the kafka messages are to be taken in
 var SleepTimer = time.Duration(1000000000)
 
-// SleepRoutine : the time the kafka msgs are to be taken in
+// SleepRoutine : the time the kafka messages are to be taken in
 var SleepRoutine = time.Duration(2500000000)
 
 // These are the config parameters for running kafka admins and producers and consumers. Declared very minimal
@@ -39,25 +39,3 @@ var topicDetail = sarama.TopicDetail{
 var Topics = []string{
 	"Topic",
 }
-
-/*
-BUEO - buyer execute order
-DEZO - define zone
-DEAC - define acl
-DEOR - define organization
-ISAS - issue asset
-ISFI - issue fiat
-RDAS - redeem asset
-RDFI - redeem fiat
-RLAS - release asset
-SEEO - seller execute order
-SEAS - send asset
-SEFI - send fiat
-SECO - send coin > tx.go
-CHBB - change buyer bid
-CHSB - change seller bid
-COBB - confirm buyer bid
-COSB - confirm seller bid
-SUBF -submit buyer feedback
-SUSF - submit seller feedback
-*/

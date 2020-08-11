@@ -15,11 +15,11 @@ func (genesisState) RegisterCodec(codec *codec.Codec) {
 	codec.RegisterConcrete(genesisState{}, mapper.ModuleRoute+"/"+"genesisState", nil)
 }
 
-var PackageCodec = codec.New()
+var packageCodec = codec.New()
 
 func init() {
-	GenesisState.RegisterCodec(PackageCodec)
-	schema.RegisterCodec(PackageCodec)
-	mapper.RegisterCodec(PackageCodec)
-	PackageCodec.Seal()
+	State.RegisterCodec(packageCodec)
+	schema.RegisterCodec(packageCodec)
+	mapper.Mapper.RegisterCodec(packageCodec)
+	packageCodec.Seal()
 }

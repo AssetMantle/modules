@@ -10,7 +10,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
-func registerCodec(codec *codec.Codec) {
+func registerCodec(_ *codec.Codec) {
 }
 
 var packageCodec = codec.New()

@@ -21,7 +21,7 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 
 func (genesisState genesisState) Validate() error { return nil }
 
-func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
+func (genesisState genesisState) Initialize(_ sdkTypes.Context, _ helpers.Mapper) {
 }
 func (genesisState genesisState) Export(sdkTypes.Context, helpers.Mapper) helpers.GenesisState {
 	return newGenesisState()
@@ -39,4 +39,4 @@ func newGenesisState() helpers.GenesisState {
 	return genesisState{}
 }
 
-var GenesisState = newGenesisState()
+var State = newGenesisState()
