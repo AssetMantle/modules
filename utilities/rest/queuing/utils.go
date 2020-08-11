@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package kafka
+package queuing
 
 import (
 	"math/rand"
@@ -21,7 +21,7 @@ func TicketIDGenerator(prefix string) Ticket {
 	atomic.AddInt64(&TicketIDAtomicCounter, 1)
 	atomicCounter := 10000 + int(TicketIDAtomicCounter)%89999
 	randomNumber := 10000 + rand.Intn(89999)
-	truelyRandNumber := prefix + strconv.Itoa(atomicCounter) + strconv.Itoa(now) + strconv.Itoa(randomNumber)
-	ticket := Ticket(truelyRandNumber)
+	trulyRandNumber := prefix + strconv.Itoa(atomicCounter) + strconv.Itoa(now) + strconv.Itoa(randomNumber)
+	ticket := Ticket(trulyRandNumber)
 	return ticket
 }

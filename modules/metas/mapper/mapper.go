@@ -13,5 +13,5 @@ var Mapper = base.NewMapper(
 	ModuleName,
 	generateKey,
 	metaPrototype,
-	RegisterCodec,
+	registerCodec,
 )

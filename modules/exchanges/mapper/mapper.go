@@ -22,6 +22,6 @@ func exchangePrototype() traits.Mappable {
 	return nil
 }
 
-func generateKey(exchangeID types.ID) []byte {
-	return StoreKeyPrefix
+func generateKey(_ types.ID) []byte {
+	return nil
 }

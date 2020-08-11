@@ -13,7 +13,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-type genesisState struct{
+type genesisState struct {
 	MetasList []mappables.Meta
 }
 
@@ -45,12 +45,11 @@ func (genesisState genesisState) Export(context sdkTypes.Context, mapper helpers
 	return genesisState
 }
 
-
 func (genesisState genesisState) Marshall() []byte {
-	return PackageCodec.MustMarshalJSON(genesisState)
+	return packageCodec.MustMarshalJSON(genesisState)
 }
 func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
-	if Error := PackageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
+	if Error := packageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
 		return nil
 	}
 	return genesisState
@@ -62,4 +61,4 @@ func newGenesisState(MetasList []mappables.Meta) helpers.GenesisState {
 	}
 }
 
-var GenesisState = newGenesisState([]mappables.Meta{})
+var State = newGenesisState([]mappables.Meta{})
