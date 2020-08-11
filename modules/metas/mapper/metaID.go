@@ -30,7 +30,7 @@ func (metaID metaID) Compare(id types.ID) int {
 }
 
 func readMetaID(metaIDString string) types.ID {
-	return base.NewID(metaIDString)
+	return NewMetaID(base.NewID(metaIDString))
 }
 
 func metaIDFromInterface(id types.ID) metaID {

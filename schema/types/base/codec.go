@@ -11,6 +11,7 @@ func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterConcrete(fact{}, "xprt/fact", nil)
 	codec.RegisterConcrete(height{}, "xprt/height", nil)
 	codec.RegisterConcrete(id{}, "xprt/id", nil)
+	codec.RegisterConcrete(metaFact{}, "xprt/metaFact", nil)
 	codec.RegisterConcrete(immutables{}, "xprt/immutables", nil)
 	codec.RegisterConcrete(mutables{}, "xprt/mutables", nil)
 	codec.RegisterConcrete(properties{}, "xprt/properties", nil)

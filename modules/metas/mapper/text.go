@@ -15,12 +15,13 @@ import (
 
 // TODO implement Json, URI, interface{} metadata
 type text struct {
-	Data string `json:"data" valid:"required field data missing"`
+	ID   types.ID `json:"id" valid:"required field id missing"`
+	Data string   `json:"data" valid:"required field data missing"`
 }
 
 var _ mappables.Meta = (*text)(nil)
 
-func (text text) GetID() types.ID { return base.NewID(metaUtilities.Hash(text.Data)) }
+func (text text) GetID() types.ID { return text.ID }
 func (text text) Get() string     { return text.Data }
 func (text text) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(text)
@@ -33,5 +34,8 @@ func metaPrototype() traits.Mappable {
 	return text{}
 }
 func NewMeta(data string) mappables.Meta {
-	return text{Data: data}
+	return text{
+		ID:   base.NewID(metaUtilities.Hash(data)),
+		Data: data,
+	}
 }

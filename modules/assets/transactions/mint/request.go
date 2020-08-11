@@ -40,6 +40,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadString(constants.ClassificationID),
 		cliCommand.ReadString(constants.MaintainersID),
 		cliCommand.ReadString(constants.Properties),
+		cliCommand.ReadString(constants.MetaProperties),
 		cliCommand.ReadInt64(constants.Lock),
 		cliCommand.ReadInt64(constants.Burn),
 	)
@@ -91,7 +92,7 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainersID string, properties string, lock int64, burn int64) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainersID string, properties string, metaProperties string, lock int64, burn int64) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:          baseReq,
 		FromID:           fromID,
@@ -99,6 +100,7 @@ func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, cla
 		ClassificationID: classificationID,
 		MaintainersID:    maintainersID,
 		Properties:       properties,
+		MetaProperties:   metaProperties,
 		Lock:             lock,
 		Burn:             burn,
 	}
