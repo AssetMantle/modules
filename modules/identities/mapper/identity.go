@@ -24,11 +24,11 @@ var _ mappables.InterIdentity = (*identity)(nil)
 
 func (identity identity) GetID() types.ID { return identity.ID }
 func (identity identity) GetChainID() types.ID {
-	return IdentityIDFromInterface(identity.ID).ChainID
+	return identityIDFromInterface(identity.ID).ChainID
 }
 
 func (identity identity) GetClassificationID() types.ID {
-	return IdentityIDFromInterface(identity.ID).ClassificationID
+	return identityIDFromInterface(identity.ID).ClassificationID
 }
 func (identity identity) GetProvisionedAddressList() []sdkTypes.AccAddress {
 	return identity.ProvisionedAddressList

@@ -6,17 +6,11 @@
 package rest
 
 import (
-	//cTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/pkg/errors"
-
-	context "github.com/cosmos/cosmos-sdk/client/context"
-
+	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
-
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	"github.com/pkg/errors"
 )
-
-const DefaultCodeSpace = "commit"
 
 func BroadcastRest(cliCtx context.CLIContext, cdc *codec.Codec, stdTx auth.StdTx, mode string) ([]byte, error) {
 

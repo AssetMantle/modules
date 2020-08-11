@@ -20,7 +20,7 @@ var Module = base.NewModule(
 	mapper.DefaultParamspace,
 	mapper.QueryRoute,
 	mapper.TransactionRoute,
-	genesis.GenesisState,
+	genesis.State,
 	mapper.Mapper,
 	[]helpers.Auxiliary{swap.Auxiliary, custody.Auxiliary, reverse.Auxiliary},
 	[]helpers.Query{},

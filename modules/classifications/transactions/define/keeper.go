@@ -11,7 +11,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -27,9 +26,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
 		return Error
 	}
-	var properties types.Properties
+	properties := base.NewProperties(nil)
 	for _, trait := range message.Traits.GetList() {
-		properties.Add(trait.GetProperty())
+		properties = properties.Add(trait.GetProperty())
 	}
 	mutables := base.NewMutables(properties, message.MaintainersID)
 	immutables := base.NewImmutables(properties)

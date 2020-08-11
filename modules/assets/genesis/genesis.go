@@ -23,7 +23,7 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
 }
 
-func (genesisState genesisState) Validate() error {	return nil}
+func (genesisState genesisState) Validate() error { return nil }
 
 func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
 
@@ -44,10 +44,10 @@ func (genesisState genesisState) Export(context sdkTypes.Context, mapper helpers
 }
 
 func (genesisState genesisState) Marshall() []byte {
-	return PackageCodec.MustMarshalJSON(genesisState)
+	return packageCodec.MustMarshalJSON(genesisState)
 }
 func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
-	if Error := PackageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
+	if Error := packageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
 		return nil
 	}
 	return genesisState
@@ -59,4 +59,4 @@ func newGenesisState(assetList []mappables.InterNFT) helpers.GenesisState {
 	}
 }
 
-var GenesisState = newGenesisState([]mappables.InterNFT{})
+var State = newGenesisState([]mappables.InterNFT{})

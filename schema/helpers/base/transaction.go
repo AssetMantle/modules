@@ -20,7 +20,7 @@ import (
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/utilities/rest/kafka"
+	"github.com/persistenceOne/persistenceSDK/utilities/rest/queuing"
 	"github.com/spf13/cobra"
 	"log"
 	"net/http"
@@ -40,7 +40,7 @@ type transaction struct {
 
 //declaring global variable
 var KafkaBool = false
-var KafkaState kafka.KafkaState
+var KafkaState queuing.KafkaState
 
 var _ helpers.Transaction = (*transaction)(nil)
 
@@ -173,8 +173,8 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		}
 
 		if KafkaBool == true {
-			ticketID := kafka.TicketIDGenerator("assetM")
-			jsonResponse := kafka.SendToKafka(kafka.NewKafkaMsgFromRest(msg, ticketID, baseReq, cliContext), KafkaState, cliContext.Codec)
+			ticketID := queuing.TicketIDGenerator("assetM")
+			jsonResponse := queuing.SendToKafka(queuing.NewKafkaMsgFromRest(msg, ticketID, baseReq, cliContext), KafkaState, cliContext.Codec)
 			responseWriter.WriteHeader(http.StatusAccepted)
 			_, _ = responseWriter.Write(jsonResponse)
 		} else {

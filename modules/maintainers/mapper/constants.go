@@ -10,7 +10,6 @@ import "github.com/persistenceOne/persistenceSDK/constants"
 const ModuleName = "maintainers"
 const ModuleRoute = constants.ProjectRoute + "/" + ModuleName
 const DefaultParamspace = "maintainers"
-const StoreKey = "maintainers"
 const QueryRoute = ModuleRoute
 const TransactionRoute = ModuleRoute
 
