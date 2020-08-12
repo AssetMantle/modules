@@ -13,9 +13,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"strings"
+	"github.com/persistenceOne/persistenceSDK/utilities/request"
 )
 
 type transactionRequest struct {
@@ -56,24 +55,9 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 		panic(errors.New(fmt.Sprintf("")))
 	}
 
-	properties := strings.Split(transactionRequest.Properties, constants.PropertiesSeparator)
-	metaProperties := strings.Split(transactionRequest.MetaProperties, constants.PropertiesSeparator)
-	if len(properties)+len(metaProperties) > constants.MaxTraitCount {
+	properties := base.NewProperties(append(request.ReadProperties(transactionRequest.Properties), request.ReadMetaProperties(transactionRequest.MetaProperties)...))
+	if len(properties.GetList()) > constants.MaxTraitCount {
 		panic(errors.New(fmt.Sprintf("")))
-	}
-
-	var propertyList []types.Property
-	for _, property := range properties {
-		propertyIDAndFact := strings.Split(property, constants.PropertyIDAndFactSeparator)
-		if len(propertyIDAndFact) == 2 && propertyIDAndFact[0] != "" {
-			propertyList = append(propertyList, base.NewProperty(base.NewID(propertyIDAndFact[0]), base.NewFact(propertyIDAndFact[1])))
-		}
-	}
-	for _, metaProperty := range metaProperties {
-		propertyIDAndFact := strings.Split(metaProperty, constants.PropertyIDAndFactSeparator)
-		if len(propertyIDAndFact) == 2 && propertyIDAndFact[0] != "" {
-			propertyList = append(propertyList, base.NewProperty(base.NewID(propertyIDAndFact[0]), base.NewMetaFact(propertyIDAndFact[1])))
-		}
 	}
 
 	return newMessage(
@@ -82,7 +66,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 		base.NewID(transactionRequest.ToID),
 		base.NewID(transactionRequest.MaintainersID),
 		base.NewID(transactionRequest.ClassificationID),
-		base.NewProperties(propertyList),
+		properties,
 		base.NewHeight(transactionRequest.Lock),
 		base.NewHeight(transactionRequest.Burn),
 	)
