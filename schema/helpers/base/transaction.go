@@ -22,6 +22,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/utilities/rest/queuing"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"log"
 	"net/http"
 	"os"
@@ -142,7 +143,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		}
 
 		//using DefaultKeyPass as an input
-		Keyring, err := keyring.New(sdkTypes.KeyringServiceName(), keyring.BackendPass, os.ExpandEnv("$HOME/.assetClient"), strings.NewReader(keys.DefaultKeyPass))
+		Keyring, err := keyring.New(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), os.ExpandEnv("$HOME/.assetClient"), strings.NewReader(keys.DefaultKeyPass))
 		if err != nil {
 			panic(fmt.Errorf("couldn't acquire keyring: %v", err))
 		}
