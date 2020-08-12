@@ -26,7 +26,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		Keyring, Error := keyring.New(sdkTypes.KeyringServiceName(), keyring.BackendOS, os.ExpandEnv("$HOME/.assetClient"), strings.NewReader(keys.DefaultKeyPass))
+		Keyring, Error := keyring.New(sdkTypes.KeyringServiceName(), keyring.BackendPass, os.ExpandEnv("$HOME/.assetClient"), strings.NewReader(keys.DefaultKeyPass))
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
