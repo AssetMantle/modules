@@ -37,10 +37,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			if Error := transactionKeeper.metasInitializeAuxiliary.GetKeeper().Help(context, initialize.NewAuxiliaryRequest(property.GetFact().Get())); Error != nil {
 				return Error
 			}
-			propertyList = append(propertyList, base.NewProperty(property.GetID(), base.MetaFactToFact(property.GetFact())))
-		} else {
-			propertyList = append(propertyList, property)
+			property = base.NewProperty(property.GetID(), base.MetaFactToFact(property.GetFact()))
 		}
+		propertyList = append(propertyList, property)
 	}
 	// TODO segregate immutables for mutables
 	mutableProperties := base.NewProperties(propertyList)
