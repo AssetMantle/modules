@@ -6,7 +6,10 @@
 package genesis
 
 import (
+	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
@@ -23,7 +26,18 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
 }
 
-func (genesisState genesisState) Validate() error { return nil }
+func (genesisState genesisState) Validate() error {
+	for _, split := range genesisState.SplitList {
+		var _, Error = govalidator.ValidateStruct(split)
+		if Error != nil {
+			return errors.Wrap(constants.IncorrectMessage, Error.Error())
+		}
+		if split.GetSplit().LT(sdkTypes.ZeroDec()) {
+			return constants.InsufficientBalance
+		}
+	}
+	return nil
+}
 
 func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
 	for _, split := range genesisState.SplitList {

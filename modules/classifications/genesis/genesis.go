@@ -6,7 +6,10 @@
 package genesis
 
 import (
+	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
@@ -23,7 +26,25 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
 }
 
-func (genesisState genesisState) Validate() error { return nil }
+
+func (genesisState genesisState) Validate() error {
+
+	for _, classification := range genesisState.ClassificationList {
+		var _, Error = govalidator.ValidateStruct(classification)
+		if Error != nil {
+			return errors.Wrap(constants.IncorrectMessage, Error.Error())
+		}
+
+		traits := classification.GetTraits().GetList()
+		for _, trait := range traits{
+			if trait.GetID() != trait.GetProperty().GetID() {
+				return constants.IncorrectMessage
+			}
+		}
+	}
+	return nil
+}
+
 
 func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
 
