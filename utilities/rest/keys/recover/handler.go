@@ -7,12 +7,14 @@ package recover
 
 import (
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
+	"github.com/spf13/viper"
 	"net/http"
 	"os"
 	"strings"
@@ -26,7 +28,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		Keyring, Error := keyring.New(sdkTypes.KeyringServiceName(), keyring.BackendPass, os.ExpandEnv("$HOME/.assetClient"), strings.NewReader(keys.DefaultKeyPass))
+		Keyring, Error := keyring.New(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), os.ExpandEnv("$HOME/.assetClient"), strings.NewReader(keys.DefaultKeyPass))
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
