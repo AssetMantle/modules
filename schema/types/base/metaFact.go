@@ -12,8 +12,8 @@ import (
 )
 
 type metaFact struct {
-	Hash       string           `json:"hash"`
 	Fact       string           `json:"fact"`
+	Hash       string           `json:"hash"`
 	Signatures types.Signatures `json:"signatures"`
 }
 
