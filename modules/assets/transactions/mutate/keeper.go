@@ -23,22 +23,22 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
+func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
-		return Error
+	if auxiliaryResponse := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(message.AssetID)
 	asset := assets.Get(message.AssetID)
 	if asset == nil {
-		return constants.EntityNotFound
+		return newTransactionResponse(constants.EntityNotFound)
 	}
 
 	mutableProperties := asset.GetMutables().Get()
 	for _, property := range message.Properties.GetList() {
 		if property.GetFact().IsMeta() {
-			if Error := transactionKeeper.metasInitializeAuxiliary.GetKeeper().Help(context, initialize.NewAuxiliaryRequest(property.GetFact().Get())); Error != nil {
-				return Error
+			if auxiliaryResponse := transactionKeeper.metasInitializeAuxiliary.GetKeeper().Help(context, initialize.NewAuxiliaryRequest(property.GetFact().Get())); !auxiliaryResponse.IsSuccessful() {
+				return newTransactionResponse(auxiliaryResponse.GetError())
 			}
 			property = base.NewProperty(property.GetID(), base.MetaFactToFact(property.GetFact()))
 		}
@@ -51,7 +51,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	asset = mapper.NewAsset(asset.GetID(), asset.GetBurn(), asset.GetLock(), asset.GetImmutables(), base.NewMutables(mutableProperties))
 	assets = assets.Mutate(asset)
-	return nil
+	return newTransactionResponse(nil)
 }
 
 func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{}) helpers.TransactionKeeper {

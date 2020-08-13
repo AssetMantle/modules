@@ -23,7 +23,7 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
+func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 	if Error := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
 		return Error
@@ -31,16 +31,16 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(message.AssetID)
 	asset := assets.Get(message.AssetID)
 	if asset == nil {
-		return constants.EntityNotFound
+		return newTransactionResponse(constants.EntityNotFound)
 	}
 	if !asset.CanBurn(base.NewHeight(context.BlockHeight())) {
-		return constants.DeletionNotAllowed
+		return newTransactionResponse(constants.DeletionNotAllowed)
 	}
 	if Error := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.OneDec())); Error != nil {
 		return Error
 	}
 	assets.Remove(asset)
-	return nil
+	return newTransactionResponse(nil)
 }
 
 func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{}) helpers.TransactionKeeper {

@@ -8,6 +8,7 @@ package take
 import (
 	"errors"
 	"fmt"
+	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -25,6 +26,10 @@ type transactionRequest struct {
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
+func (transactionRequest transactionRequest) Validate() error {
+	_, Error := govalidator.ValidateStruct(transactionRequest)
+	return Error
+}
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
@@ -33,11 +38,9 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadString(constants.OrderID),
 	)
 }
-
 func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
-
 func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
 	if Error != nil {
@@ -51,11 +54,9 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 		base.NewID(transactionRequest.OrderID),
 	)
 }
-
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-
 func newTransactionRequest(baseReq rest.BaseReq, fromID string, takerSplit int64, orderID string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:    baseReq,

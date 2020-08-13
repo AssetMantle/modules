@@ -20,16 +20,16 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
+func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 	metaID := mapper.NewMetaID(base.NewID(metaUtilities.Hash(message.Data)))
 	metas := mapper.NewMetas(transactionKeeper.mapper, context).Fetch(metaID)
 	meta := metas.Get(metaID)
 	if meta != nil {
-		return constants.EntityAlreadyExists
+		return newTransactionResponse(constants.EntityAlreadyExists)
 	}
 	metas.Add(mapper.NewMeta(message.Data))
-	return nil
+	return newTransactionResponse(nil)
 }
 
 func revealTransactionKeeper(mapper helpers.Mapper, _ []interface{}) helpers.TransactionKeeper {

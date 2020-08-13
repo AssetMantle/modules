@@ -26,12 +26,11 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
+func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 
-	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context,
-		verify.NewAuxiliaryRequest(message.From, message.MakerID)); Error != nil {
-		return Error
+	if auxiliaryResponse := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.MakerID)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
 	makerIsAsset := assetsMapper.NewAssets(assetsMapper.Mapper, context).Fetch(message.MakerSplitID).Get(message.MakerSplitID) != nil
@@ -39,11 +38,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	if makerIsAsset && takerIsAsset {
 		if !sdkTypes.OneDec().Equal(message.ExchangeRate) {
-			return constants.IncorrectMessage
+			return newTransactionResponse(constants.IncorrectMessage)
 		}
 	} else if !makerIsAsset && takerIsAsset {
 		if !message.MakerSplit.Mul(message.ExchangeRate).Equal(sdkTypes.OneDec()) {
-			return constants.IncorrectMessage
+			return newTransactionResponse(constants.IncorrectMessage)
 		}
 	}
 
@@ -67,7 +66,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		oldMakerSplitFact := orders.Get(orderID).GetMutables().Get().Get(base.NewID(constants.MakerSplitProperty)).GetFact()
 		oldMakerSplit, Error := sdkTypes.NewDecFromStr(oldMakerSplitFact.GetHash())
 		if Error != nil {
-			return Error
+			return newTransactionResponse(Error)
 		}
 		makerSplit = oldMakerSplit.Add(message.MakerSplit)
 	} else {
@@ -81,9 +80,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	mutables := base.NewMutables(mutableProperties)
 
 	order := mapper.NewOrder(orderID, mutables, immutables)
-	if Error := transactionKeeper.exchangesCustodyAuxiliary.GetKeeper().Help(context,
-		custody.NewAuxiliaryRequest(message.MakerID, message.MakerSplit, message.MakerSplitID)); Error != nil {
-		return Error
+	if auxiliaryResponse := transactionKeeper.exchangesCustodyAuxiliary.GetKeeper().Help(context, custody.NewAuxiliaryRequest(message.MakerID, message.MakerSplit, message.MakerSplitID)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
 	if orders.Get(orderID) != nil {
@@ -91,7 +89,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	} else {
 		orders.Add(order)
 	}
-	return nil
+	return newTransactionResponse(nil)
 }
 
 func initializeTransactionKeeper(mapper helpers.Mapper, externalKeepers []interface{}) helpers.TransactionKeeper {

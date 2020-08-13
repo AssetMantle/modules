@@ -23,19 +23,19 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
+func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(message.OrderID)
 	order := orders.Get(message.OrderID)
 	if order == nil {
-		return constants.EntityNotFound
+		return newTransactionResponse(constants.EntityNotFound)
 	}
 	//TODO
 	makerID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerIDProperty)).GetFact().GetHash())
 	makerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerSplitIDProperty)).GetFact().GetHash())
 	makerSplit, Error := sdkTypes.NewDecFromStr(order.GetMutables().Get().Get(base.NewID(constants.MakerSplitProperty)).GetFact().GetHash())
 	if Error != nil {
-		return Error
+		return newTransactionResponse(Error)
 	}
 	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context,
 		verify.NewAuxiliaryRequest(message.From, makerID)); Error != nil {
@@ -47,7 +47,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return Error
 	}
 	orders.Remove(order)
-	return nil
+	return newTransactionResponse(nil)
 }
 
 func initializeTransactionKeeper(mapper helpers.Mapper, externalKeepers []interface{}) helpers.TransactionKeeper {

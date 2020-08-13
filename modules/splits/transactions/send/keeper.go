@@ -19,20 +19,21 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
+func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 	if message.Split.LTE(sdkTypes.ZeroDec()) {
-		return constants.NotAuthorized
+		return newTransactionResponse(constants.NotAuthorized)
 	}
+	// TODO add identity verify
 	fromSplitID := mapper.NewSplitID(message.FromID, message.OwnableID)
 	splits := mapper.NewSplits(transactionKeeper.mapper, context).Fetch(fromSplitID)
 	fromSplit := splits.Get(fromSplitID)
 	if fromSplit == nil {
-		return constants.EntityNotFound
+		return newTransactionResponse(constants.EntityNotFound)
 	}
 	fromSplit = fromSplit.Send(message.Split).(mappables.Split)
 	if fromSplit.GetSplit().LT(sdkTypes.ZeroDec()) {
-		return constants.NotAuthorized
+		return newTransactionResponse(constants.NotAuthorized)
 	} else if fromSplit.GetSplit().Equal(sdkTypes.ZeroDec()) {
 		splits.Remove(fromSplit)
 	}
@@ -43,7 +44,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	} else {
 		splits.Mutate(toSplit.Receive(message.Split).(mappables.Split))
 	}
-	return nil
+	return newTransactionResponse(nil)
 }
 
 func initializeTransactionKeeper(mapper helpers.Mapper, _ []interface{}) helpers.TransactionKeeper {

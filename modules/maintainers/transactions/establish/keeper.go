@@ -21,10 +21,10 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
+func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
-		return Error
+	if auxiliaryResponse := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 	// TODO segregate immutables for mutables
 	mutableProperties := message.Properties
@@ -34,10 +34,10 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	assetID := mapper.NewAssetID(message.ClassificationID, immutables.GetHashID())
 	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(assetID)
 	if assets.Get(assetID) != nil {
-		return constants.EntityAlreadyExists
+		return newTransactionResponse(constants.EntityAlreadyExists)
 	}
 	assets.Add(mapper.NewAsset(assetID, message.Burn, message.Lock, immutables, mutables))
-	return nil
+	return newTransactionResponse(nil)
 }
 
 func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{}) helpers.TransactionKeeper {

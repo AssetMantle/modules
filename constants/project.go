@@ -12,7 +12,6 @@ const IDSeparator = "."
 const CompositeIDSeparator = "|"
 const PropertiesSeparator = ","
 const PropertyIDAndMetaFactSeparator = ":"
-const TraitsSeparator = ","
 const ToHashSeparator = "_"
 
 const MaxTraitCount = 22

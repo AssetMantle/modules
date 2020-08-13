@@ -24,16 +24,16 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
+func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 	orderID := message.OrderID
 	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(orderID)
 	order := orders.Get(orderID)
 	if order == nil {
-		return constants.EntityNotFound
+		return newTransactionResponse(constants.EntityNotFound)
 	}
-	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
-		return Error
+	if auxiliaryResponse := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(constants.EntityNotFound)
 	}
 
 	makerID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerIDProperty)).GetFact().GetHash())
@@ -43,7 +43,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	takerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.TakerSplitIDProperty)).GetFact().GetHash())
 	exchangeRate, Error := sdkTypes.NewDecFromStr(order.GetImmutables().Get().Get(base.NewID(constants.ExchangeRateProperty)).GetFact().GetHash())
 	if Error != nil {
-		return Error
+		return newTransactionResponse(Error)
 	}
 
 	makerIsAsset := assetsMapper.NewAssets(assetsMapper.Mapper, context).Fetch(makerSplitID).Get(makerSplitID) != nil
@@ -51,15 +51,15 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	if makerIsAsset && takerIsAsset {
 		if !sdkTypes.OneDec().Equal(message.TakerSplit) || !sdkTypes.OneDec().Equal(makerSplit) {
-			return constants.IncorrectMessage
+			return newTransactionResponse(constants.IncorrectMessage)
 		}
 	} else if !makerIsAsset && takerIsAsset {
 		if !sdkTypes.OneDec().Equal(message.TakerSplit) {
-			return constants.IncorrectMessage
+			return newTransactionResponse(constants.IncorrectMessage)
 		}
 	} else if makerIsAsset && !takerIsAsset {
 		if makerSplit.Mul(exchangeRate).GT(message.TakerSplit) {
-			return constants.IncorrectMessage
+			return newTransactionResponse(constants.IncorrectMessage)
 		} else {
 			message.TakerSplit = makerSplit.Mul(exchangeRate)
 		}
@@ -72,11 +72,10 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	makerSplitDeduction := message.TakerSplit.Quo(exchangeRate)
 
 	if takerID.String() != "" && message.FromID.Compare(takerID) != 0 {
-		return constants.NotAuthorized
+		return newTransactionResponse(constants.NotAuthorized)
 	}
-	if Error := transactionKeeper.exchangesSwapAuxiliary.GetKeeper().Help(context, swap.NewAuxiliaryRequest(makerID,
-		makerSplitDeduction, makerSplitID, message.FromID, message.TakerSplit, takerSplitID)); Error != nil {
-		return Error
+	if auxiliaryResponse := transactionKeeper.exchangesSwapAuxiliary.GetKeeper().Help(context, swap.NewAuxiliaryRequest(makerID, makerSplitDeduction, makerSplitID, message.FromID, message.TakerSplit, takerSplitID)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(constants.EntityNotFound)
 	}
 
 	makerSplit = makerSplit.Sub(makerSplitDeduction)
@@ -87,7 +86,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		orders.Remove(order)
 	}
 
-	return nil
+	return newTransactionResponse(nil)
 }
 
 func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{}) helpers.TransactionKeeper {
