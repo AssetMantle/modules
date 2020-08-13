@@ -6,6 +6,8 @@
 package signTx
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
@@ -27,6 +29,14 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
+		}
+
+		if request.BaseRequest.ChainID == "" {
+			request.BaseRequest.ChainID = viper.GetString(flags.FlagChainID)
+			if request.BaseRequest.ChainID == "" {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "Chain-ID required but not specified")
+				return
+			}
 		}
 
 		Keyring, Error := keyring.New(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), os.ExpandEnv("$HOME/.assetClient"), strings.NewReader(keys.DefaultKeyPass))
@@ -52,12 +62,35 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 		txBuilder = txBuilder.WithAccountNumber(num)
 		txBuilder = txBuilder.WithSequence(seq)
 
-		signedStdTx, Error := txBuilder.SignStdTx(fromName, keys.DefaultKeyPass, request.StdTx, false)
+		stdSignature, Error := types.MakeSignature(txBuilder.Keybase(), fromName, keys.DefaultKeyPass, types.StdSignMsg{
+			ChainID:       txBuilder.ChainID(),
+			AccountNumber: txBuilder.AccountNumber(),
+			Sequence:      txBuilder.Sequence(),
+			Fee:           request.StdTx.Fee,
+			Msgs:          request.StdTx.GetMsgs(),
+			Memo:          request.StdTx.GetMemo(),
+		})
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
-		rest.PostProcessResponse(responseWriter, cliContext, newResponse(signedStdTx))
+
+		signers := request.StdTx.GetSigners()
+		request.StdTx.Signatures = append(request.StdTx.Signatures, stdSignature)
+		pubicKeys := request.StdTx.GetPubKeys()
+		if len(pubicKeys) > len(signers) {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "cannot add more signatures than signers")
+			return
+		}
+		for i, publicKey := range pubicKeys {
+			if !bytes.Equal(publicKey.Address(), signers[i]) {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest,
+					fmt.Sprintf("pubKey does not match signer address %s with signer index: %d", signers[i], i))
+				return
+			}
+		}
+
+		rest.PostProcessResponse(responseWriter, cliContext, newResponse(request.StdTx))
 	}
 }
 
