@@ -56,7 +56,7 @@ func (module module) ValidateGenesis(_ codec.JSONMarshaler, rawMessage json.RawM
 func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
 	for _, query := range module.queryList {
 		//TODO pick from query flags
-		router.HandleFunc(fmt.Sprintf("/%v/%v/{%v}", query.GetModuleName(), query.GetName(), "id"), query.RESTQueryHandler(cliContext)).Methods("GET")
+		router.HandleFunc(query.GetRoute()+"/{id}", query.RESTQueryHandler(cliContext)).Methods("GET")
 	}
 
 	for _, transaction := range module.transactionList {
