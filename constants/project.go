@@ -11,7 +11,7 @@ const ProjectRoute = "/" + ProjectName
 const IDSeparator = "."
 const CompositeIDSeparator = "|"
 const PropertiesSeparator = ","
-const PropertyIDAndFactSeparator = ":"
+const PropertyIDAndMetaFactSeparator = ":"
 const TraitsSeparator = ","
 const ToHashSeparator = "_"
 

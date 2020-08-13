@@ -3,11 +3,11 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package define
+package establish
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
@@ -21,5 +21,5 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]helpers.CLIFlag{constants.FromID, constants.Traits},
+	[]helpers.CLIFlag{constants.ToID, constants.FromID, constants.ClassificationID, constants.MaintainersID, constants.Properties, constants.MetaProperties, constants.Lock, constants.Burn},
 )

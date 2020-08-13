@@ -23,9 +23,9 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
 	message := messageFromInterface(msg)
-	mutables := base.NewMutables(message.Properties, message.MaintainersID)
+	mutables := base.NewMutables(message.Properties)
 	immutables := base.NewImmutables(message.Properties)
-	identityID := mapper.NewIdentityID(base.NewID(context.ChainID()), mutables.GetMaintainersID(), message.ClassificationID, immutables.GetHashID())
+	identityID := mapper.NewIdentityID(message.ClassificationID, immutables.GetHashID())
 	identities := mapper.NewIdentities(transactionKeeper.mapper, context).Fetch(identityID)
 	if identities.Get(identityID) != nil {
 		return constants.EntityAlreadyExists

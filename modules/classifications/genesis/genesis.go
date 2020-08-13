@@ -26,7 +26,6 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 	return genesisState
 }
 
-
 func (genesisState genesisState) Validate() error {
 
 	for _, classification := range genesisState.ClassificationList {
@@ -35,8 +34,8 @@ func (genesisState genesisState) Validate() error {
 			return errors.Wrap(constants.IncorrectMessage, Error.Error())
 		}
 
-		traits := classification.GetTraits().GetList()
-		for _, trait := range traits{
+		traitList := classification.GetTraits().GetList()
+		for _, trait := range traitList {
 			if trait.GetID() != trait.GetProperty().GetID() {
 				return constants.IncorrectMessage
 			}
@@ -44,7 +43,6 @@ func (genesisState genesisState) Validate() error {
 	}
 	return nil
 }
-
 
 func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
 

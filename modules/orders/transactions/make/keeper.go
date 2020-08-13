@@ -78,7 +78,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	mutablePropertyList = append(mutablePropertyList,
 		base.NewProperty(base.NewID(constants.MakerSplitProperty), base.NewFact(makerSplit.String())))
 	mutableProperties := base.NewProperties(mutablePropertyList)
-	mutables := base.NewMutables(mutableProperties, message.MaintainersID)
+	mutables := base.NewMutables(mutableProperties)
 
 	order := mapper.NewOrder(orderID, mutables, immutables)
 	if Error := transactionKeeper.exchangesCustodyAuxiliary.GetKeeper().Help(context,

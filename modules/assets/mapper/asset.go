@@ -6,6 +6,7 @@
 package mapper
 
 import (
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -26,7 +27,7 @@ func (asset asset) GetID() types.ID {
 }
 
 func (asset asset) GetChainID() types.ID {
-	return assetIDFromInterface(asset.ID).ChainID
+	return mapper.ChainIDFromClassificationID(assetIDFromInterface(asset.ID).ClassificationID)
 }
 
 func (asset asset) GetClassificationID() types.ID {

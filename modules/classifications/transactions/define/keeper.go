@@ -30,9 +30,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	for _, trait := range message.Traits.GetList() {
 		properties = properties.Add(trait.GetProperty())
 	}
-	mutables := base.NewMutables(properties, message.MaintainersID)
-	immutables := base.NewImmutables(properties)
-	classificationID := mapper.NewClassificationID(base.NewID(context.ChainID()), mutables.GetMaintainersID(), immutables.GetHashID())
+	//mutables := base.NewMutables(properties)
+	//immutables := base.NewImmutables(properties)
+	classificationID := mapper.NewClassificationID(base.NewID(context.ChainID()), base.NewID(context.ChainID()), base.NewID(context.ChainID()))
 	classifications := mapper.NewClassifications(transactionKeeper.mapper, context).Fetch(classificationID)
 	if classifications.Get(classificationID) != nil {
 		return constants.EntityAlreadyExists

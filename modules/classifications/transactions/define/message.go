@@ -14,10 +14,9 @@ import (
 )
 
 type message struct {
-	From          sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
-	FromID        types.ID            `json:"fromID" valid:"required~required field fromID missing"`
-	MaintainersID types.ID            `json:"maintainersID" valid:"required~required field maintainersID missing"`
-	Traits        types.Traits        `json:"traits" valid:"required~required field traits missing"`
+	From   sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
+	FromID types.ID            `json:"fromID" valid:"required~required field fromID missing"`
+	Traits types.Traits        `json:"traits" valid:"required~required field traits missing"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -47,11 +46,10 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, maintainersID types.ID, traits types.Traits) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, traits types.Traits) sdkTypes.Msg {
 	return message{
-		From:          from,
-		FromID:        fromID,
-		MaintainersID: maintainersID,
-		Traits:        traits,
+		From:   from,
+		FromID: fromID,
+		Traits: traits,
 	}
 }

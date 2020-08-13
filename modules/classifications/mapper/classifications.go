@@ -41,7 +41,7 @@ func (classifications classifications) GetList() []mappables.Classification {
 func (classifications classifications) Fetch(id types.ID) mappers.Classifications {
 	var classificationList []mappables.Classification
 	classificationsID := classificationIDFromInterface(id)
-	if len(classificationsID.HashID.Bytes()) > 0 {
+	if len(classificationsID.ReadableID.Bytes()) > 0 {
 		mappable := classifications.mapper.Read(classifications.context, classificationsID)
 		if mappable != nil {
 			classificationList = append(classificationList, mappable.(classification))

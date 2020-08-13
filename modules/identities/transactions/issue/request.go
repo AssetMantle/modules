@@ -22,7 +22,6 @@ type transactionRequest struct {
 	BaseReq          rest.BaseReq `json:"baseReq"`
 	To               string       `json:"to" valid:"required~required field to missing matches(^commit[a-z0-9]{39}$)~invalid field to"`
 	FromID           string       `json:"fromID" valid:"required~required field fromID missing matches(^[a-z]$)~invalid field fromID "`
-	MaintainersID    string       `json:"maintainersID" valid:"required~required field maintainersID missing matches(^[A-Za-z]$)~invalid field maintainersID"`
 	ClassificationID string       `json:"classificationID" valid:"required~required field classificationId missing,matches(^[A-Za-z]$)~invalid field classificationID"`
 	Properties       string       `json:"properties" valid:"required~required field properties missing matches(^[A-Za-z]$)~invalid field properties"`
 }
@@ -34,7 +33,6 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(constants.To),
 		cliCommand.ReadString(constants.FromID),
-		cliCommand.ReadString(constants.MaintainersID),
 		cliCommand.ReadString(constants.ClassificationID),
 		cliCommand.ReadString(constants.Properties),
 	)
@@ -63,7 +61,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 
 	var propertyList []types.Property
 	for _, property := range properties {
-		traitIDAndProperty := strings.Split(property, constants.PropertyIDAndFactSeparator)
+		traitIDAndProperty := strings.Split(property, constants.PropertyIDAndMetaFactSeparator)
 		if len(traitIDAndProperty) == 2 && traitIDAndProperty[0] != "" {
 			// TODO split between meta and normal
 			propertyList = append(propertyList, base.NewProperty(base.NewID(traitIDAndProperty[0]), base.NewFact(traitIDAndProperty[1])))
@@ -74,7 +72,6 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 		from,
 		to,
 		base.NewID(transactionRequest.FromID),
-		base.NewID(transactionRequest.MaintainersID),
 		base.NewID(transactionRequest.ClassificationID),
 		base.NewProperties(propertyList),
 	)
@@ -84,12 +81,11 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, to string, fromID string, maintainersID string, classificationID string, properties string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, to string, fromID string, classificationID string, properties string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:          baseReq,
 		To:               to,
 		FromID:           fromID,
-		MaintainersID:    maintainersID,
 		ClassificationID: classificationID,
 		Properties:       properties,
 	}

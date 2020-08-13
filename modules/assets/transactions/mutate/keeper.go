@@ -49,7 +49,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		}
 	}
 
-	asset = mapper.NewAsset(asset.GetID(), asset.GetBurn(), asset.GetLock(), asset.GetImmutables(), base.NewMutables(mutableProperties, asset.GetMutables().GetMaintainersID()))
+	asset = mapper.NewAsset(asset.GetID(), asset.GetBurn(), asset.GetLock(), asset.GetImmutables(), base.NewMutables(mutableProperties))
 	assets = assets.Mutate(asset)
 	return nil
 }
