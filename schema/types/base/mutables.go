@@ -10,8 +10,7 @@ import (
 )
 
 type mutables struct {
-	Properties    types.Properties `json:"properties"`
-	MaintainersID types.ID         `json:"maintainersID"`
+	Properties types.Properties `json:"properties"`
 }
 
 var _ types.Mutables = (*mutables)(nil)
@@ -19,12 +18,8 @@ var _ types.Mutables = (*mutables)(nil)
 func (mutables mutables) Get() types.Properties {
 	return mutables.Properties
 }
-func (mutables mutables) GetMaintainersID() types.ID {
-	return mutables.MaintainersID
-}
-func NewMutables(properties types.Properties, maintainersID types.ID) types.Mutables {
+func NewMutables(properties types.Properties) types.Mutables {
 	return mutables{
-		Properties:    properties,
-		MaintainersID: maintainersID,
+		Properties: properties,
 	}
 }
