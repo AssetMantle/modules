@@ -6,4 +6,6 @@
 package helpers
 
 type Response interface {
+	IsSuccessful() bool
+	GetError() error
 }
