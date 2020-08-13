@@ -6,4 +6,5 @@
 package helpers
 
 type QueryResponse interface {
+	Response
 }
