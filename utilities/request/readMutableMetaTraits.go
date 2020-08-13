@@ -12,11 +12,11 @@ import (
 	"strings"
 )
 
-func ReadMutableMetaTraits(Properties string) []types.Trait {
+func ReadMutableMetaTraits(Properties string) types.Traits {
 	properties := strings.Split(Properties, constants.PropertiesSeparator)
 	var traitList []types.Trait
 	for _, property := range properties {
 		traitList = append(traitList, base.NewTrait(ReadMetaProperty(property), true))
 	}
-	return traitList
+	return base.NewTraits(traitList)
 }

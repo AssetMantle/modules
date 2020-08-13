@@ -8,14 +8,15 @@ package request
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"strings"
 )
 
-func ReadProperties(Properties string) []types.Property {
+func ReadProperties(Properties string) types.Properties {
 	var propertyList []types.Property
 	properties := strings.Split(Properties, constants.PropertiesSeparator)
 	for _, property := range properties {
 		propertyList = append(propertyList, ReadProperty(property))
 	}
-	return propertyList
+	return base.NewProperties(propertyList)
 }

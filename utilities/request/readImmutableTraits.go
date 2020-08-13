@@ -12,11 +12,11 @@ import (
 	"strings"
 )
 
-func ReadImmutableTraits(Properties string) []types.Trait {
+func ReadImmutableTraits(Properties string) types.Traits {
 	properties := strings.Split(Properties, constants.PropertiesSeparator)
 	var traitList []types.Trait
 	for _, property := range properties {
 		traitList = append(traitList, base.NewTrait(ReadProperty(property), false))
 	}
-	return traitList
+	return base.NewTraits(traitList)
 }
