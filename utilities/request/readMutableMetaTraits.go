@@ -8,14 +8,15 @@ package request
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"strings"
 )
 
-func ReadProperties(Properties string) []types.Property {
-	var propertyList []types.Property
+func ReadMutableMetaTraits(Properties string) []types.Trait {
 	properties := strings.Split(Properties, constants.PropertiesSeparator)
+	var traitList []types.Trait
 	for _, property := range properties {
-		propertyList = append(propertyList, ReadProperty(property))
+		traitList = append(traitList, base.NewTrait(ReadMetaProperty(property), true))
 	}
-	return propertyList
+	return traitList
 }

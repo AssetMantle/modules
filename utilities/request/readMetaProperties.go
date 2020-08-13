@@ -8,18 +8,14 @@ package request
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"strings"
 )
 
-func ReadMetaProperties(MetaProperties string) []types.Property {
-	properties := strings.Split(MetaProperties, constants.PropertiesSeparator)
+func ReadMetaProperties(Properties string) []types.Property {
 	var propertyList []types.Property
+	properties := strings.Split(Properties, constants.PropertiesSeparator)
 	for _, property := range properties {
-		propertyIDAndFact := strings.Split(property, constants.PropertyIDAndFactSeparator)
-		if len(propertyIDAndFact) == 2 && propertyIDAndFact[0] != "" {
-			propertyList = append(propertyList, base.NewProperty(base.NewID(propertyIDAndFact[0]), base.NewMetaFact(propertyIDAndFact[1])))
-		}
+		propertyList = append(propertyList, ReadMetaProperty(property))
 	}
 	return propertyList
 }
