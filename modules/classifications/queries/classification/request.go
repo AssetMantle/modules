@@ -6,6 +6,7 @@
 package classification
 
 import (
+	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -19,11 +20,15 @@ type queryRequest struct {
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
-func (QueryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
+func (queryRequest queryRequest) Validate() error {
+	_, Error := govalidator.ValidateStruct(queryRequest)
+	return Error
+}
+func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(cliCommand.ReadString(constants.ClassificationID)))
 }
 
-func (QueryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
+func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(vars[constants.ClassificationID.GetName()]))
 }
 
