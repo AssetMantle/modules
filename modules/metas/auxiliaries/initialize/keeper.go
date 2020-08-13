@@ -19,16 +19,16 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) error {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	metaID := mapper.NewMetaID(base.NewID(metaUtilities.Hash(auxiliaryRequest.Data)))
 	metas := mapper.NewMetas(auxiliaryKeeper.mapper, context).Fetch(metaID)
 	meta := metas.Get(metaID)
 	if meta != nil {
-		return nil
+		return newAuxiliaryResponse(nil)
 	}
 	metas.Add(mapper.NewMeta(auxiliaryRequest.Data))
-	return nil
+	return newAuxiliaryResponse(nil)
 }
 
 func initializeAuxiliaryKeeper(mapper helpers.Mapper, _ []interface{}) helpers.AuxiliaryKeeper {

@@ -18,17 +18,17 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) error {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	identities := mapper.NewIdentities(auxiliaryKeeper.mapper, context).Fetch(auxiliaryRequest.IdentityID)
 	identity := identities.Get(auxiliaryRequest.IdentityID)
 	if identity == nil {
-		return constants.EntityNotFound
+		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
 	if identity.IsProvisioned(auxiliaryRequest.Address) {
-		return nil
+		return newAuxiliaryResponse(nil)
 	} else {
-		return constants.NotAuthorized
+		return newAuxiliaryResponse(constants.NotAuthorized)
 	}
 }
 

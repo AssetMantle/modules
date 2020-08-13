@@ -6,18 +6,24 @@
 package custody
 
 import (
+	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type auxiliaryRequest struct {
-	MakerID      types.ID
-	MakerSplit   sdkTypes.Dec
-	MakerSplitID types.ID
+	MakerID      types.ID     `json:"makerID"`
+	MakerSplit   sdkTypes.Dec `json:"makerSplit"`
+	MakerSplitID types.ID     `json:"makerSplitID"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
+
+func (auxiliaryRequest auxiliaryRequest) Validate() error {
+	_, Error := govalidator.ValidateStruct(auxiliaryRequest)
+	return Error
+}
 
 func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) auxiliaryRequest {
 	switch value := AuxiliaryRequest.(type) {
