@@ -69,8 +69,8 @@ func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
 
 func (transaction transaction) HandleMessage(context sdkTypes.Context, message sdkTypes.Msg) (*sdkTypes.Result, error) {
 
-	if Error := (transaction.transactionKeeper).Transact(context, message); Error != nil {
-		return nil, Error
+	if transactionResponse := transaction.transactionKeeper.Transact(context, message); !transactionResponse.IsSuccessful() {
+		return nil, transactionResponse.GetError()
 	}
 
 	context.EventManager().EmitEvent(
