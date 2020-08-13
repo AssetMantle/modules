@@ -43,7 +43,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			authClient.GetTxEncoder(cliContext.Codec), request.BaseRequest.AccountNumber, request.BaseRequest.Sequence, 0, 0,
 			request.BaseRequest.Simulate, request.BaseRequest.ChainID, request.BaseRequest.Memo, request.BaseRequest.Fees, request.BaseRequest.GasPrices,
 		)
-		//adding account sequence
+
 		num, seq, Error := types.NewAccountRetriever(authClient.Codec, cliContext).GetAccountNumberSequence(fromAddress)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
