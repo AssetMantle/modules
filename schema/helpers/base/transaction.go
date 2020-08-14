@@ -105,7 +105,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
-		//client.WriteGenerateStdTxResponse(responseWriter, cliContext, baseReq, []sdkTypes.Msg{msg})
+		//authClient.WriteGenerateStdTxResponse(responseWriter, cliContext, baseReq, []sdkTypes.Msg{msg})
 		//adding below commands to REST to have signed txs
 		gasAdj, ok := rest.ParseFloat64OrReturnBadRequest(responseWriter, baseReq.GasAdjustment, flags.DefaultGasAdjustment)
 		if !ok {
@@ -121,7 +121,6 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			authClient.GetTxEncoder(cliContext.Codec), baseReq.AccountNumber, baseReq.Sequence, gas, gasAdj,
 			baseReq.Simulate, baseReq.ChainID, baseReq.Memo, baseReq.Fees, baseReq.GasPrices,
 		)
-
 		msgList := []sdkTypes.Msg{msg}
 		fromName := cliContext.GetFromName()
 
