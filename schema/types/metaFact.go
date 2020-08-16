@@ -5,11 +5,8 @@
 
 package types
 
-import "github.com/cosmos/cosmos-sdk/crypto/keyring"
-
-type Fact interface {
-	GetHash() string
-	GetSignatures() Signatures
-
-	Sign(keyring.Keyring) Fact
+type MetaFact interface {
+	GetData() Data
+	RemoveData() Fact
+	Fact
 }
