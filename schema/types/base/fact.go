@@ -8,7 +8,6 @@ package base
 import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
 type fact struct {
@@ -29,23 +28,9 @@ func (fact fact) Sign(_ keyring.Keyring) types.Fact {
 	return fact
 }
 
-func NewFact(Fact string) types.Fact {
+func NewFact(data types.Data) types.Fact {
 	return fact{
-		Hash:       metaUtilities.Hash(Fact),
+		Hash:       data.GenerateHash(),
 		Signatures: signatures{},
-	}
-}
-
-func MetaFactToFact(MetaFact types.Fact) types.Fact {
-	switch value := MetaFact.(type) {
-	case fact:
-		return value
-	case metaFact:
-		return fact{
-			Hash:       MetaFact.GetHash(),
-			Signatures: MetaFact.GetSignatures(),
-		}
-	default:
-		return fact{}
 	}
 }

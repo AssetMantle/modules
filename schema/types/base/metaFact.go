@@ -8,32 +8,28 @@ package base
 import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
 type metaFact struct {
-	Fact       string           `json:"fact"`
-	Hash       string           `json:"hash"`
+	Data       types.Data       `json:"meta"`
 	Signatures types.Signatures `json:"signatures"`
 }
 
-var _ types.Fact = (*metaFact)(nil)
+var _ types.MetaFact = (*metaFact)(nil)
 
-func (metaFact metaFact) Get() string                     { return metaFact.Fact }
-func (metaFact metaFact) GetHash() string                 { return metaFact.Hash }
+func (metaFact metaFact) GetData() types.Data             { return metaFact.Data }
+func (metaFact metaFact) RemoveData() types.Fact          { return NewFact(metaFact.Data) }
+func (metaFact metaFact) GetHash() string                 { return metaFact.Data.GenerateHash() }
 func (metaFact metaFact) GetSignatures() types.Signatures { return metaFact.Signatures }
-func (metaFact metaFact) IsMeta() bool {
-	return true
-}
+
 func (metaFact metaFact) Sign(_ keyring.Keyring) types.Fact {
 	//TODO implement signing
 	return metaFact
 }
 
-func NewMetaFact(fact string) types.Fact {
+func NewMetaFact(data types.Data) types.MetaFact {
 	return metaFact{
-		Hash:       metaUtilities.Hash(fact),
-		Fact:       fact,
+		Data:       data,
 		Signatures: signatures{},
 	}
 }

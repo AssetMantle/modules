@@ -18,6 +18,10 @@ var _ types.Mutables = (*mutables)(nil)
 func (mutables mutables) Get() types.Properties {
 	return mutables.Properties
 }
+func (mutables mutables) Mutate(properties types.Properties) types.Mutables {
+	mutables.Properties = properties
+	return mutables
+}
 func NewMutables(properties types.Properties) types.Mutables {
 	return mutables{
 		Properties: properties,
