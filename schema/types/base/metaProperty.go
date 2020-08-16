@@ -35,7 +35,7 @@ func NewMetaProperty(id types.ID, metaFact types.MetaFact) types.MetaProperty {
 	}
 }
 func ReadMetaProperty(PropertyIDAndStringData string) types.MetaProperty {
-	propertyIDAndStringDataList := strings.Split(PropertyIDAndStringData, constants.PropertyIDAndStringDataSeparator)
+	propertyIDAndStringDataList := strings.Split(PropertyIDAndStringData, constants.PropertyIDAndDataSeparator)
 	if len(propertyIDAndStringDataList) == 2 && propertyIDAndStringDataList[0] != "" {
 		return NewMetaProperty(NewID(propertyIDAndStringDataList[0]), NewMetaFact(NewStringData(propertyIDAndStringDataList[1])))
 	}

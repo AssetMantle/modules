@@ -11,7 +11,8 @@ const ProjectRoute = "/" + ProjectName
 const IDSeparator = "."
 const CompositeIDSeparator = "|"
 const PropertiesSeparator = ","
-const PropertyIDAndMetaFactSeparator = ":"
+const MetaPropertiesSeparator = ","
+const PropertyIDAndDataSeparator = ":"
 const ToHashSeparator = "_"
 
 const MaxTraitCount = 22
