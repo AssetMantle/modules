@@ -90,7 +90,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			}
 		}
 
-		rest.PostProcessResponse(responseWriter, cliContext, newResponse(request.StdTx))
+		rest.PostProcessResponse(responseWriter, cliContext, newResponse(request.StdTx, nil))
 	}
 }
 

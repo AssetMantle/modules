@@ -11,11 +11,28 @@ import (
 )
 
 type response struct {
-	Tx authTypes.StdTx `json:"tx"`
+	Success bool            `json:"success"`
+	Error   error           `json:"error"`
+	StdTx   authTypes.StdTx `json:"tx"`
 }
 
 var _ helpers.Response = response{}
 
-func newResponse(signedStdTx authTypes.StdTx) *response {
-	return &response{Tx: signedStdTx}
+func (response response) IsSuccessful() bool {
+	return response.Success
+}
+func (response response) GetError() error {
+	return response.Error
+}
+
+func newResponse(stdTx authTypes.StdTx, error error) helpers.Response {
+	success := true
+	if error != nil {
+		success = false
+	}
+	return response{
+		Success: success,
+		Error:   error,
+		StdTx:   stdTx,
+	}
 }
