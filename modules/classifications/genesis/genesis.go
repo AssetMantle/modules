@@ -33,13 +33,6 @@ func (genesisState genesisState) Validate() error {
 		if Error != nil {
 			return errors.Wrap(constants.IncorrectMessage, Error.Error())
 		}
-
-		traitList := classification.GetTraits().GetList()
-		for _, trait := range traitList {
-			if trait.GetID() != trait.GetProperty().GetID() {
-				return constants.IncorrectMessage
-			}
-		}
 	}
 	return nil
 }
