@@ -14,12 +14,12 @@ import (
 )
 
 type message struct {
-	From                sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
-	FromID              types.ID            `json:"fromID" valid:"required~required field fromID missing"`
-	ImmutableMetaTraits types.Traits        `json:"immutableMetaTraits" valid:"required~required field immutableMetaTraits missing"`
-	ImmutableTraits     types.Traits        `json:"immutableTraits" valid:"required~required field immutableTraits missing"`
-	MutableMetaTraits   types.Traits        `json:"mutableMetaTraits" valid:"required~required field mutableMetaTraits missing"`
-	MutableTraits       types.Traits        `json:"mutableTraits" valid:"required~required field mutableTraits missing"`
+	From                sdkTypes.AccAddress  `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
+	FromID              types.ID             `json:"fromID" valid:"required~required field fromID missing"`
+	ImmutableMetaTraits types.MetaProperties `json:"immutableMetaTraits" valid:"required~required field immutableMetaTraits missing"`
+	ImmutableTraits     types.Properties     `json:"immutableTraits" valid:"required~required field immutableTraits missing"`
+	MutableMetaTraits   types.MetaProperties `json:"mutableMetaTraits" valid:"required~required field mutableMetaTraits missing"`
+	MutableTraits       types.Properties     `json:"mutableTraits" valid:"required~required field mutableTraits missing"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -49,7 +49,7 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, immutableMetaTraits types.Traits, immutableTraits types.Traits, mutableMetaTraits types.Traits, mutableTraits types.Traits) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, immutableMetaTraits types.MetaProperties, immutableTraits types.Properties, mutableMetaTraits types.MetaProperties, mutableTraits types.Properties) sdkTypes.Msg {
 	return message{
 		From:                from,
 		FromID:              fromID,

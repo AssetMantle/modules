@@ -10,6 +10,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/initialize"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
@@ -17,6 +18,7 @@ import (
 type transactionKeeper struct {
 	mapper                    helpers.Mapper
 	identitiesVerifyAuxiliary helpers.Auxiliary
+	metasInitializeAuxiliary  helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -26,18 +28,21 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if auxiliaryResponse := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
-	properties := base.NewProperties(nil)
-	for _, trait := range message.Traits.GetList() {
-		properties = properties.Add(trait.GetProperty())
-	}
-	//mutables := base.NewMutables(properties)
-	//immutables := base.NewImmutables(properties)
-	classificationID := mapper.NewClassificationID(base.NewID(context.ChainID()), base.NewID(context.ChainID()), base.NewID(context.ChainID()))
+
+	immutableTraits := base.NewImmutables(base.NewProperties(append(message.ImmutableMetaTraits.RemoveData().GetList(), message.ImmutableTraits.GetList()...)))
+	mutableTraits := base.NewMutables(base.NewProperties(append(message.MutableMetaTraits.RemoveData().GetList(), message.MutableTraits.GetList()...)))
+
+	classificationID := mapper.NewClassificationID(base.NewID(context.ChainID()), immutableTraits, mutableTraits)
 	classifications := mapper.NewClassifications(transactionKeeper.mapper, context).Fetch(classificationID)
 	if classifications.Get(classificationID) != nil {
-		return constants.EntityAlreadyExists
+		return newTransactionResponse(constants.EntityAlreadyExists)
 	}
-	classifications.Add(mapper.NewClassification(classificationID, message.Traits))
+
+	if auxiliaryResponse := transactionKeeper.metasInitializeAuxiliary.GetKeeper().Help(context, initialize.NewAuxiliaryRequest(message.ImmutableMetaTraits, message.MutableMetaTraits)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
+	}
+
+	classifications = classifications.Add(mapper.NewClassification(classificationID, immutableTraits, mutableTraits))
 	return newTransactionResponse(nil)
 }
 
@@ -49,6 +54,8 @@ func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{
 			switch value.GetName() {
 			case verify.Auxiliary.GetName():
 				transactionKeeper.identitiesVerifyAuxiliary = value
+			case initialize.Auxiliary.GetName():
+				transactionKeeper.metasInitializeAuxiliary = value
 			}
 		}
 	}
