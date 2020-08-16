@@ -7,10 +7,10 @@ package mappables
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type Classification interface {
-	GetTraits() types.Traits
+	traits.HasImmutables
+	traits.HasMutables
 	traits.Mappable
 }
