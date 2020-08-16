@@ -12,7 +12,11 @@ import (
 
 type Chains interface {
 	GetID() types.ID
+
 	Get(types.ID) mappables.Chain
+	GetList() []mappables.Chain
+
+	Fetch(types.ID) Chains
 	Add(mappables.Chain) Chains
 	Remove(mappables.Chain) Chains
 	Mutate(mappables.Chain) Chains
