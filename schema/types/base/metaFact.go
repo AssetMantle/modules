@@ -7,7 +7,9 @@ package base
 
 import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"strings"
 )
 
 type metaFact struct {
@@ -31,5 +33,26 @@ func NewMetaFact(data types.Data) types.MetaFact {
 	return metaFact{
 		Data:       data,
 		Signatures: signatures{},
+	}
+}
+
+func ReadMetaFact(DataTypeAndString string) types.MetaFact {
+	dataTypeAndString := strings.Split(DataTypeAndString, constants.DataTypeAndStringSeparator)
+	if len(dataTypeAndString) == 2 {
+		dataType, dataString := dataTypeAndString[0], dataTypeAndString[1]
+		var data types.Data
+		switch dataType {
+		case constants.DecType:
+			data = ReadDecData(dataString)
+		case constants.HeightType:
+			data = ReadHeightData(dataString)
+		case constants.StringType:
+			data = ReadStringData(dataString)
+		default:
+			return nil
+		}
+		return NewMetaFact(data)
+	} else {
+		return nil
 	}
 }

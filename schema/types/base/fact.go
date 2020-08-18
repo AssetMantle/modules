@@ -34,3 +34,7 @@ func NewFact(data types.Data) types.Fact {
 		Signatures: signatures{},
 	}
 }
+
+func ReadFact(DataTypeAndString string) types.Fact {
+	return ReadMetaFact(DataTypeAndString).RemoveData()
+}
