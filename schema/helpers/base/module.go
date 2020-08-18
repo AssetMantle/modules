@@ -48,7 +48,7 @@ func (module module) RegisterCodec(codec *codec.Codec) {
 	}
 }
 func (module module) DefaultGenesis() json.RawMessage {
-	return authTypes.ModuleCdc.MustMarshalJSON(authTypes.DefaultGenesisState())
+	return authTypes.ModuleCdc.MustMarshalJSON(module.genesisState.Default())
 }
 func (module module) ValidateGenesis(rawMessage json.RawMessage) error {
 	genesisState := module.genesisState.Unmarshall(rawMessage)
