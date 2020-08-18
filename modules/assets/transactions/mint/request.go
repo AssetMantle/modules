@@ -15,19 +15,17 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/persistenceOne/persistenceSDK/utilities/request"
 )
 
 type transactionRequest struct {
-	BaseReq          rest.BaseReq `json:"baseReq"`
-	FromID           string       `json:"fromID" valid:"required~required field fromID missing"`
-	ToID             string       `json:"toID" valid:"required~required field toID missing"`
-	ClassificationID string       `json:"classificationID" valid:"required~required field classificationID missing matches(^[A-Za-z]$)~invalid field classificationID"`
-	MaintainersID    string       `json:"maintainersID" valid:"required~required field maintainersID missing matches(^[A-Za-z]$)~invalid field maintainersID"`
-	Properties       string       `json:"properties" valid:"required~required field properties missing matches(^[A-Za-z]$)~invalid field properties"`
-	MetaProperties   string       `json:"metaProperties" valid:"required~required field metaProperties missing matches(^[A-Za-z]$)~invalid field metaProperties"`
-	Lock             int64        `json:"lock" valid:"required~required field lock missing matches(^[0-9]$)~invalid field lock "`
-	Burn             int64        `json:"burn" valid:"required~required field burn missing matches(^[0-9]$)~invalid field burn "`
+	BaseReq                 rest.BaseReq `json:"baseReq"`
+	FromID                  string       `json:"fromID" valid:"required~required field fromID missing"`
+	ToID                    string       `json:"toID" valid:"required~required field toID missing"`
+	ClassificationID        string       `json:"classificationID" valid:"required~required field classificationID missing matches(^[A-Za-z]$)~invalid field classificationID"`
+	ImmutableMetaProperties string       `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing matches(^[A-Za-z]$)~invalid field immutableMetaProperties"`
+	ImmutableProperties     string       `json:"immutableProperties" valid:"required~required field immutableProperties missing matches(^[A-Za-z]$)~invalid field immutableProperties"`
+	MutableMetaProperties   string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing matches(^[A-Za-z]$)~invalid field mutableMetaProperties"`
+	MutableProperties       string       `json:"mutableProperties" valid:"required~required field mutableProperties missing matches(^[A-Za-z]$)~invalid field mutableProperties"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -42,11 +40,10 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.ToID),
 		cliCommand.ReadString(constants.ClassificationID),
-		cliCommand.ReadString(constants.MaintainersID),
-		cliCommand.ReadString(constants.Properties),
-		cliCommand.ReadString(constants.MetaProperties),
-		cliCommand.ReadInt64(constants.Lock),
-		cliCommand.ReadInt64(constants.Burn),
+		cliCommand.ReadString(constants.ImmutableMetaProperties),
+		cliCommand.ReadString(constants.ImmutableProperties),
+		cliCommand.ReadString(constants.MutableMetaProperties),
+		cliCommand.ReadString(constants.MutableProperties),
 	)
 }
 func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
@@ -58,35 +55,30 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 		panic(errors.New(fmt.Sprintf("")))
 	}
 
-	properties := base.NewProperties(append(request.ReadProperties(transactionRequest.Properties), request.ReadMetaProperties(transactionRequest.MetaProperties)...))
-	if len(properties.GetList()) > constants.MaxTraitCount {
-		panic(errors.New(fmt.Sprintf("")))
-	}
-
 	return newMessage(
 		from,
 		base.NewID(transactionRequest.FromID),
 		base.NewID(transactionRequest.ToID),
-		base.NewID(transactionRequest.MaintainersID),
 		base.NewID(transactionRequest.ClassificationID),
-		properties,
-		base.NewHeight(transactionRequest.Lock),
-		base.NewHeight(transactionRequest.Burn),
+		base.ReadMetaProperties(transactionRequest.ImmutableMetaProperties),
+		base.ReadProperties(transactionRequest.ImmutableProperties),
+		base.ReadMetaProperties(transactionRequest.MutableMetaProperties),
+		base.ReadProperties(transactionRequest.MutableProperties),
 	)
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainersID string, properties string, metaProperties string, lock int64, burn int64) helpers.TransactionRequest {
+
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:          baseReq,
-		FromID:           fromID,
-		ToID:             toID,
-		ClassificationID: classificationID,
-		MaintainersID:    maintainersID,
-		Properties:       properties,
-		MetaProperties:   metaProperties,
-		Lock:             lock,
-		Burn:             burn,
+		BaseReq:                 baseReq,
+		FromID:                  fromID,
+		ToID:                    toID,
+		ClassificationID:        classificationID,
+		ImmutableMetaProperties: immutableMetaProperties,
+		ImmutableProperties:     immutableProperties,
+		MutableMetaProperties:   mutableMetaProperties,
+		MutableProperties:       mutableProperties,
 	}
 }
