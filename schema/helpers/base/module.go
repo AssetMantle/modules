@@ -12,7 +12,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gorilla/mux"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/pkg/errors"
@@ -48,7 +47,7 @@ func (module module) RegisterCodec(codec *codec.Codec) {
 	}
 }
 func (module module) DefaultGenesis() json.RawMessage {
-	return authTypes.ModuleCdc.MustMarshalJSON(module.genesisState.Default())
+	return module.genesisState.Default().Marshall()
 }
 func (module module) ValidateGenesis(rawMessage json.RawMessage) error {
 	genesisState := module.genesisState.Unmarshall(rawMessage)
