@@ -43,3 +43,7 @@ func NewStringData(value string) types.Data {
 		Value: value,
 	}
 }
+
+func ReadStringData(stringData string) types.Data {
+	return NewStringData(stringData)
+}
