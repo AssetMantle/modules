@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package establish
+package deputize
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
@@ -21,5 +21,5 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]helpers.CLIFlag{constants.ToID, constants.FromID, constants.ClassificationID, constants.MaintainersID, constants.Properties, constants.MetaProperties, constants.Lock, constants.Burn},
+	[]helpers.CLIFlag{constants.ToID, constants.FromID, constants.ClassificationID, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties},
 )

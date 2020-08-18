@@ -9,7 +9,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/queries/maintainer"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/transactions/establish"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/transactions/deputize"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
@@ -23,5 +23,5 @@ var Module = base.NewModule(
 	mapper.Mapper,
 	[]helpers.Auxiliary{},
 	[]helpers.Query{maintainer.Query},
-	[]helpers.Transaction{establish.Transaction},
+	[]helpers.Transaction{deputize.Transaction},
 )
