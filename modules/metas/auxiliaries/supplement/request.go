@@ -3,15 +3,16 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package initialize
+package supplement
 
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type auxiliaryRequest struct {
-	Data string `json:"data" valid:"required~required field data missing matches(^[A-Za-z]$)~invalid field data"`
+	Properties types.Properties `json:"properties"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -30,6 +31,8 @@ func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) au
 	}
 }
 
-func NewAuxiliaryRequest(data string) helpers.AuxiliaryRequest {
-	return auxiliaryRequest{Data: data}
+func NewAuxiliaryRequest(properties types.Properties) helpers.AuxiliaryRequest {
+	return auxiliaryRequest{
+		Properties: properties,
+	}
 }
