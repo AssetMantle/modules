@@ -14,22 +14,22 @@ import (
 )
 
 type maintainerID struct {
-	MaintainedID types.ID `json:"maintainedID" valid:"required~required field maintainedID missing"`
-	IdentityID   types.ID `json:"identityID" valid:"required~required field identityID missing"`
+	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID missing"`
+	IdentityID       types.ID `json:"identityID" valid:"required~required field identityID missing"`
 }
 
 var _ types.ID = (*maintainerID)(nil)
 
 func (maintainerID maintainerID) Bytes() []byte {
 	return append(
-		maintainerID.MaintainedID.Bytes(),
+		maintainerID.ClassificationID.Bytes(),
 		maintainerID.IdentityID.Bytes()...)
 
 }
 
 func (maintainerID maintainerID) String() string {
 	var values []string
-	values = append(values, maintainerID.MaintainedID.String())
+	values = append(values, maintainerID.ClassificationID.String())
 	values = append(values, maintainerID.IdentityID.String())
 	return strings.Join(values, constants.CompositeIDSeparator)
 }
@@ -42,11 +42,11 @@ func readMaintainerID(maintainerIDString string) types.ID {
 	idList := strings.Split(maintainerIDString, constants.CompositeIDSeparator)
 	if len(idList) == 2 {
 		return maintainerID{
-			MaintainedID: base.NewID(idList[0]),
-			IdentityID:   base.NewID(idList[1]),
+			ClassificationID: base.NewID(idList[0]),
+			IdentityID:       base.NewID(idList[1]),
 		}
 	}
-	return maintainerID{IdentityID: base.NewID(""), MaintainedID: base.NewID("")}
+	return maintainerID{IdentityID: base.NewID(""), ClassificationID: base.NewID("")}
 }
 
 func maintainerIDFromInterface(id types.ID) maintainerID {
@@ -60,9 +60,9 @@ func maintainerIDFromInterface(id types.ID) maintainerID {
 func generateKey(maintainerID types.ID) []byte {
 	return append(StoreKeyPrefix, maintainerIDFromInterface(maintainerID).Bytes()...)
 }
-func NewMaintainerID(maintainedID types.ID, identityID types.ID) types.ID {
+func NewMaintainerID(classificationID types.ID, identityID types.ID) types.ID {
 	return maintainerID{
-		MaintainedID: maintainedID,
-		IdentityID:   identityID,
+		ClassificationID: classificationID,
+		IdentityID:       identityID,
 	}
 }
