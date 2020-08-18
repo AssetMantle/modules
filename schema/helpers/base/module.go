@@ -46,10 +46,10 @@ func (module module) RegisterCodec(codec *codec.Codec) {
 		query.RegisterCodec(codec)
 	}
 }
-func (module module) DefaultGenesis(jsonMarshaler codec.JSONMarshaler) json.RawMessage {
-	return jsonMarshaler.MustMarshalJSON(module.genesisState.Default())
+func (module module) DefaultGenesis() json.RawMessage {
+	return module.genesisState.Default().Marshall()
 }
-func (module module) ValidateGenesis(_ codec.JSONMarshaler, rawMessage json.RawMessage) error {
+func (module module) ValidateGenesis(rawMessage json.RawMessage) error {
 	genesisState := module.genesisState.Unmarshall(rawMessage)
 	return genesisState.Validate()
 }
@@ -126,12 +126,12 @@ func (module module) NewQuerierHandler() sdkTypes.Querier {
 		return nil, errors.New(fmt.Sprintf("Unknown query path, %v for module %v", path[0], module.Name()))
 	}
 }
-func (module module) InitGenesis(context sdkTypes.Context, _ codec.JSONMarshaler, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
+func (module module) InitGenesis(context sdkTypes.Context, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
 	genesisState := module.genesisState.Unmarshall(rawMessage)
 	genesisState.Initialize(context, module.mapper)
 	return []abciTypes.ValidatorUpdate{}
 }
-func (module module) ExportGenesis(context sdkTypes.Context, _ codec.JSONMarshaler) json.RawMessage {
+func (module module) ExportGenesis(context sdkTypes.Context) json.RawMessage {
 	return module.genesisState.Export(context, module.mapper).Marshall()
 }
 func (module module) BeginBlock(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {}

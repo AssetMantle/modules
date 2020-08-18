@@ -41,7 +41,6 @@ func NewKafkaMsgFromRest(msg sdk.Msg, ticketID Ticket, baseRequest rest.BaseReq,
 		GenerateOnly:  cliCtx.GenerateOnly,
 		FromAddress:   cliCtx.FromAddress,
 		FromName:      cliCtx.FromName,
-		Offline:       cliCtx.Offline,
 		Indent:        cliCtx.Indent,
 		SkipConfirm:   cliCtx.SkipConfirm,
 	}
@@ -73,7 +72,6 @@ func CliCtxFromKafkaMsg(kafkaMsg KafkaMsg, cliContext context.CLIContext) contex
 	cliContext.GenerateOnly = kafkaMsg.KafkaCli.GenerateOnly
 	cliContext.FromAddress = kafkaMsg.KafkaCli.FromAddress
 	cliContext.FromName = kafkaMsg.KafkaCli.FromName
-	cliContext.Offline = kafkaMsg.KafkaCli.Offline
 	cliContext.Indent = kafkaMsg.KafkaCli.Indent
 	cliContext.SkipConfirm = kafkaMsg.KafkaCli.SkipConfirm
 
