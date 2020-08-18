@@ -11,8 +11,8 @@ import (
 )
 
 type Maintainer interface {
+	GetClassificationID() types.ID
 	GetIdentityID() types.ID
-	GetMaintainedID() types.ID
 
 	CanAddMaintainer() bool
 	CanRemoveMaintainer() bool
