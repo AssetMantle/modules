@@ -18,8 +18,10 @@ var _ types.Mutables = (*mutables)(nil)
 func (mutables mutables) Get() types.Properties {
 	return mutables.Properties
 }
-func (mutables mutables) Mutate(properties types.Properties) types.Mutables {
-	mutables.Properties = properties
+func (mutables mutables) Mutate(propertyList []types.Property) types.Mutables {
+	for _, property := range propertyList {
+		mutables.Properties.Mutate(property)
+	}
 	return mutables
 }
 func NewMutables(properties types.Properties) types.Mutables {

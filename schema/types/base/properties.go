@@ -6,9 +6,7 @@
 package base
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"strings"
 )
 
 type properties struct {
@@ -61,10 +59,5 @@ func NewProperties(propertyList []types.Property) types.Properties {
 	}
 }
 func ReadProperties(Properties string) types.Properties {
-	var propertyList []types.Property
-	properties := strings.Split(Properties, constants.PropertiesSeparator)
-	for _, property := range properties {
-		propertyList = append(propertyList, ReadProperty(property))
-	}
-	return NewProperties(propertyList)
+	return ReadMetaProperties(Properties).RemoveData()
 }

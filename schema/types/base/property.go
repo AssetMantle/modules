@@ -6,9 +6,7 @@
 package base
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"strings"
 )
 
 var _ types.Property = (*property)(nil)
@@ -26,10 +24,6 @@ func NewProperty(id types.ID, fact types.Fact) types.Property {
 		Fact: fact,
 	}
 }
-func ReadProperty(PropertyIDAndStringData string) types.Property {
-	propertyIDAndFactList := strings.Split(PropertyIDAndStringData, constants.PropertyIDAndDataSeparator)
-	if len(propertyIDAndFactList) == 2 && propertyIDAndFactList[0] != "" {
-		return NewProperty(NewID(propertyIDAndFactList[0]), NewFact(NewStringData(propertyIDAndFactList[1])))
-	}
-	return nil
+func ReadProperty(PropertyIDAndData string) types.Property {
+	return ReadMetaProperty(PropertyIDAndData).RemoveData()
 }

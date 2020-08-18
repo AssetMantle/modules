@@ -34,10 +34,10 @@ func NewMetaProperty(id types.ID, metaFact types.MetaFact) types.MetaProperty {
 		MetaFact: metaFact,
 	}
 }
-func ReadMetaProperty(PropertyIDAndStringData string) types.MetaProperty {
-	propertyIDAndStringDataList := strings.Split(PropertyIDAndStringData, constants.PropertyIDAndDataSeparator)
-	if len(propertyIDAndStringDataList) == 2 && propertyIDAndStringDataList[0] != "" {
-		return NewMetaProperty(NewID(propertyIDAndStringDataList[0]), NewMetaFact(NewStringData(propertyIDAndStringDataList[1])))
+func ReadMetaProperty(PropertyIDAndData string) types.MetaProperty {
+	propertyIDAndData := strings.Split(PropertyIDAndData, constants.PropertyIDAndDataSeparator)
+	if len(propertyIDAndData) == 2 && propertyIDAndData[0] != "" {
+		return NewMetaProperty(NewID(propertyIDAndData[0]), ReadMetaFact(propertyIDAndData[1]))
 	}
 	return nil
 }

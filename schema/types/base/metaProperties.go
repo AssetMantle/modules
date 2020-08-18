@@ -119,7 +119,7 @@ func NewMetaProperties(metaPropertyList []types.MetaProperty) types.MetaProperti
 
 func ReadMetaProperties(MetaProperties string) types.MetaProperties {
 	var metaPropertyList []types.MetaProperty
-	metaProperties := strings.Split(MetaProperties, constants.MetaPropertiesSeparator)
+	metaProperties := strings.Split(MetaProperties, constants.PropertiesSeparator)
 	for _, metaProperty := range metaProperties {
 		metaPropertyList = append(metaPropertyList, ReadMetaProperty(metaProperty))
 	}
