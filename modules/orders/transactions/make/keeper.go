@@ -15,7 +15,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"strconv"
 )
 
 type transactionKeeper struct {
@@ -48,15 +47,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	var immutablePropertyList []types.Property
 	immutablePropertyList = append(immutablePropertyList,
-		// TODO add meta auxiliary
-		base.NewProperty(base.NewID(constants.MakerIDProperty), base.NewFact(message.MakerID.String())),
-		base.NewProperty(base.NewID(constants.TakerIDProperty), base.NewFact(message.TakerID.String())),
-		base.NewProperty(base.NewID(constants.MakerSplitIDProperty), base.NewFact(message.MakerSplitID.String())),
-		base.NewProperty(base.NewID(constants.ExchangeRateProperty), base.NewFact(message.ExchangeRate.String())),
-		base.NewProperty(base.NewID(constants.TakerSplitIDProperty), base.NewFact(message.TakerSplitID.String())),
-		base.NewProperty(base.NewID(constants.HeightProperty), base.NewFact(strconv.FormatInt(context.BlockHeight(), 10))))
-	immutableProperties := base.NewProperties(immutablePropertyList)
-	immutables := base.NewImmutables(immutableProperties)
+		base.NewProperty(constants.MakerIDProperty, base.NewFact(message.MakerID.String())),
+		base.NewProperty(constants.TakerIDProperty, base.NewFact(message.TakerID.String())),
+		base.NewProperty(constants.MakerSplitIDProperty, base.NewFact(message.MakerSplitID.String())),
+		base.NewProperty(constants.ExchangeRateProperty, base.NewFact(message.ExchangeRate.String())),
+		base.NewProperty(constants.TakerSplitIDProperty, base.NewFact(message.TakerSplitID.String())))
+	immutables := base.NewImmutables(base.NewProperties(immutablePropertyList))
 
 	orderID := mapper.NewOrderID(base.NewID(context.ChainID()), message.MaintainersID, immutables.GetHashID())
 	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(orderID)

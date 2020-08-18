@@ -36,11 +36,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if asset == nil {
 		return newTransactionResponse(constants.EntityNotFound)
 	}
-	supplementAuxiliaryResponse, Error := supplement.ValidateResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(base.NewProperties([]types.Property{base.NewProperty(constants.BurnID, asset.GetBurn())}))))
+	supplementAuxiliaryResponse, Error := supplement.ValidateResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(base.NewProperties([]types.Property{base.NewProperty(constants.BurnProperty, asset.GetBurn())}))))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
-	burnHeightMetaFact := supplementAuxiliaryResponse.MetaProperties.GetMetaProperty(constants.BurnID)
+	burnHeightMetaFact := supplementAuxiliaryResponse.MetaProperties.GetMetaProperty(constants.BurnProperty)
 	if burnHeightMetaFact == nil {
 		return newTransactionResponse(constants.EntityNotFound)
 	}
@@ -51,7 +51,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if burnHeight.IsGreaterThan(base.NewHeight(context.BlockHeight())) {
 		return newTransactionResponse(constants.NotAuthorized)
 	}
-	if Error := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.OneDec())); Error != nil {
+	if Error := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.SmallestDec())); Error != nil {
 		return Error
 	}
 	assets.Remove(asset)

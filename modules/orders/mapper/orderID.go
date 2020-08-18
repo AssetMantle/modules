@@ -14,26 +14,24 @@ import (
 )
 
 type orderID struct {
-	ChainID       types.ID `json:"chainID" valid:"required~required field chainID missing"`
-	MaintainersID types.ID `json:"maintainersID" valid:"required~required field maintainersID missing"`
-	HashID        types.ID `json:"hashID" valid:"required~required field hashID missing"`
+	OwnableID     types.ID `json:"ownableID"`
+	OwnablePairID types.ID `json:"ownablePairID"`
 }
 
 var _ types.ID = (*orderID)(nil)
 
 func (orderID orderID) Bytes() []byte {
-	return append(append(
-		orderID.ChainID.Bytes(),
-		orderID.MaintainersID.Bytes()...),
-		orderID.HashID.Bytes()...)
+	var Bytes []byte
+	Bytes = append(Bytes, orderID.OwnableID.Bytes()...)
+	Bytes = append(Bytes, orderID.OwnablePairID.Bytes()...)
+	return Bytes
 }
 
 func (orderID orderID) String() string {
 	var values []string
-	values = append(values, orderID.ChainID.String())
-	values = append(values, orderID.MaintainersID.String())
-	values = append(values, orderID.HashID.String())
-	return strings.Join(values, constants.IDSeparator)
+	values = append(values, orderID.OwnableID.String())
+	values = append(values, orderID.OwnablePairID.String())
+	return strings.Join(values, constants.CompositeIDSeparator)
 }
 
 func (orderID orderID) Compare(id types.ID) int {

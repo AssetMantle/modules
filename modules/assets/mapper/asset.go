@@ -43,9 +43,9 @@ func (asset asset) GetMutables() types.Mutables {
 }
 
 func (asset asset) GetBurn() types.Fact {
-	if burnProperty := asset.Immutables.Get().Get(constants.BurnID); burnProperty != nil {
+	if burnProperty := asset.Immutables.Get().Get(constants.BurnProperty); burnProperty != nil {
 		return burnProperty.GetFact()
-	} else if burnProperty := asset.Mutables.Get().Get(constants.BurnID); burnProperty != nil {
+	} else if burnProperty := asset.Mutables.Get().Get(constants.BurnProperty); burnProperty != nil {
 		return burnProperty.GetFact()
 	} else {
 		return base.NewFact(base.NewHeightData(base.NewHeight(-1)))
@@ -53,9 +53,9 @@ func (asset asset) GetBurn() types.Fact {
 }
 
 func (asset asset) GetLock() types.Fact {
-	if lockProperty := asset.Immutables.Get().Get(constants.LockID); lockProperty != nil {
+	if lockProperty := asset.Immutables.Get().Get(constants.LockProperty); lockProperty != nil {
 		return lockProperty.GetFact()
-	} else if lockProperty := asset.Mutables.Get().Get(constants.LockID); lockProperty != nil {
+	} else if lockProperty := asset.Mutables.Get().Get(constants.LockProperty); lockProperty != nil {
 		return lockProperty.GetFact()
 	} else {
 		return base.NewFact(base.NewHeightData(base.NewHeight(-1)))
