@@ -11,10 +11,11 @@ import (
 
 //Note: Arranged alphabetically
 var (
+	AddMaintainer           = base.NewCLIFlag("addMaintainer", false, "AddMaintainer")
 	AssetID                 = base.NewCLIFlag("assetID", "", "AssetID")
 	Burn                    = base.NewCLIFlag("burn", int64(-1), "Burn")
 	ClassificationID        = base.NewCLIFlag("classificationID", "", "ClassificationID")
-	Data                    = base.NewCLIFlag("data", "", "Data")
+	ExchangeRate            = base.NewCLIFlag("exchangeRate", "1", "ExchangeRate")
 	FromID                  = base.NewCLIFlag("fromID", "", "FromID")
 	IdentityID              = base.NewCLIFlag("identityID", "", "IdentityID")
 	Lock                    = base.NewCLIFlag("lock", int64(-1), "Lock")
@@ -27,6 +28,8 @@ var (
 	ImmutableMetaTraits     = base.NewCLIFlag("immutableMetaTraits", "", "immutableMetaTraits")
 	ImmutableProperties     = base.NewCLIFlag("immutableProperties", "", "immutableProperties")
 	ImmutableTraits         = base.NewCLIFlag("immutableTraits", "", "immutableTraits")
+	MetaFact                = base.NewCLIFlag("metaFact", "", "MetaFact")
+	MaintainedTraits        = base.NewCLIFlag("maintainedTraits", "", "MaintainedTraits")
 	MutableMetaProperties   = base.NewCLIFlag("mutableMetaProperties", "", "mutableMetaProperties")
 	MutableMetaTraits       = base.NewCLIFlag("mutableMetaTraits", "", "mutableMetaTraits")
 	MutableProperties       = base.NewCLIFlag("mutableProperties", "", "mutableProperties")
@@ -39,7 +42,8 @@ var (
 	MakerSplit              = base.NewCLIFlag("makerSplit", int64(0), "MakerSplit")
 	MakerSplitID            = base.NewCLIFlag("makerSplitID", "", "MakerSplitID")
 	MetaID                  = base.NewCLIFlag("metaID", "", "MetaID")
-	ExchangeRate            = base.NewCLIFlag("exchangeRate", "1", "ExchangeRate")
+	MutateMaintainer        = base.NewCLIFlag("mutateMaintainer", false, "MutateMaintainer")
+	RemoveMaintainer        = base.NewCLIFlag("removeMaintainer", false, "RemoveMaintainer")
 	TakerSplit              = base.NewCLIFlag("takerSplit", int64(0), "TakerSplit")
 	TakerSplitID            = base.NewCLIFlag("takerSplitID", "", "TakerSplitID")
 )

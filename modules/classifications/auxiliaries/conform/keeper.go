@@ -25,9 +25,6 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	if classification == nil {
 		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
-	if len(classification.GetImmutables().Get().GetList()) != len(auxiliaryRequest.Immutables.Get().GetList()) {
-		return newAuxiliaryResponse(constants.IncorrectMessage)
-	}
 	if auxiliaryRequest.Immutables != nil {
 		if len(auxiliaryRequest.Immutables.Get().GetList()) != len(classification.GetMutables().Get().GetList()) {
 			return newAuxiliaryResponse(constants.NotAuthorized)
