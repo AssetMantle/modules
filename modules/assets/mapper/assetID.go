@@ -41,10 +41,10 @@ func (assetID assetID) Compare(id types.ID) int {
 
 func readAssetID(assetIDString string) types.ID {
 	idList := strings.Split(assetIDString, constants.CompositeIDSeparator)
-	if len(idList) == 4 {
+	if len(idList) == 2 {
 		return assetID{
-			ClassificationID: base.NewID(idList[2]),
-			HashID:           base.NewID(idList[3]),
+			ClassificationID: base.NewID(idList[0]),
+			HashID:           base.NewID(idList[1]),
 		}
 	}
 	return assetID{ClassificationID: base.NewID(""), HashID: base.NewID("")}
@@ -61,9 +61,10 @@ func assetIDFromInterface(id types.ID) assetID {
 func generateKey(assetID types.ID) []byte {
 	return append(StoreKeyPrefix, assetIDFromInterface(assetID).Bytes()...)
 }
-func NewAssetID(classificationID types.ID, hashID types.ID) types.ID {
+
+func NewAssetID(classificationID types.ID, immutables types.Immutables) types.ID {
 	return assetID{
 		ClassificationID: classificationID,
-		HashID:           hashID,
+		HashID:           immutables.GetHashID(),
 	}
 }
