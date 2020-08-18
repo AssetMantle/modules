@@ -3,9 +3,9 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package initialize
+package scrub
 
 import "github.com/persistenceOne/persistenceSDK/modules/metas/mapper"
 
-const AuxiliaryName = "initialize"
+const AuxiliaryName = "scrub"
 const AuxiliaryRoute = mapper.TransactionRoute + "/" + AuxiliaryName
