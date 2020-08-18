@@ -6,7 +6,8 @@
 package metas
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/initialize"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/queries/meta"
@@ -22,7 +23,7 @@ var Module = base.NewModule(
 	mapper.TransactionRoute,
 	genesis.State,
 	mapper.Mapper,
-	[]helpers.Auxiliary{initialize.Auxiliary},
+	[]helpers.Auxiliary{scrub.Auxiliary, supplement.Auxiliary},
 	[]helpers.Query{meta.Query},
 	[]helpers.Transaction{reveal.Transaction},
 )
