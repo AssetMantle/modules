@@ -11,14 +11,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
 )
 
 func SignStdTxFromRest(txBuilder auth.TxBuilder, cliCtx context.CLIContext, name string, stdTx auth.StdTx, appendSig bool, offline bool, password string) (auth.StdTx, error) {
 
 	var signedStdTx auth.StdTx
 
-	info, err := txBuilder.Keybase().Key(name)
+	info, err := txBuilder.Keybase().Get(name)
 	if err != nil {
 		return signedStdTx, err
 	}
@@ -53,7 +52,7 @@ func isTxSigner(user sdkTypes.AccAddress, signers []sdkTypes.AccAddress) bool {
 func populateAccountFromState(
 	txBuilder auth.TxBuilder, cliCtx context.CLIContext, addr sdkTypes.AccAddress,
 ) (auth.TxBuilder, error) {
-	num, seq, err := auth.NewAccountRetriever(authClient.Codec, cliCtx).GetAccountNumberSequence(addr)
+	num, seq, err := auth.NewAccountRetriever(cliCtx).GetAccountNumberSequence(addr)
 	if err != nil {
 		return txBuilder, err
 	}

@@ -12,20 +12,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
+	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/utilities/rest/queuing"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 )
 
@@ -80,7 +77,7 @@ func (transaction transaction) HandleMessage(context sdkTypes.Context, message s
 		),
 	)
 
-	return &sdkTypes.Result{Events: context.EventManager().ABCIEvents()}, nil
+	return &sdkTypes.Result{Events: context.EventManager().Events()}, nil
 }
 
 func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
@@ -112,8 +109,9 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			return
 		}
 
-		simAndExec, gas, err := flags.ParseGas(baseReq.Gas)
-		if rest.CheckBadRequestError(responseWriter, err) {
+		simAndExec, gas, Error := flags.ParseGas(baseReq.Gas)
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
 
@@ -126,12 +124,13 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 
 		if baseReq.Simulate || simAndExec {
 			if gasAdj < 0 {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, errors.ErrorInvalidGasAdjustment.Error())
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, errors.ErrOutOfGas.Error())
 				return
 			}
 
-			txBuilder, err = authClient.EnrichWithGas(txBuilder, cliContext, msgList)
-			if rest.CheckInternalServerError(responseWriter, err) {
+			txBuilder, Error = authClient.EnrichWithGas(txBuilder, cliContext, msgList)
+			if Error != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 				return
 			}
 
@@ -141,13 +140,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			}
 		}
 
-		//using DefaultKeyPass as an input
-		Keyring, err := keyring.New(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), os.ExpandEnv("$HOME/.assetClient"), strings.NewReader(keys.DefaultKeyPass))
-		if err != nil {
-			panic(fmt.Errorf("couldn't acquire keyring: %v", err))
-		}
-
-		fromAddress, fromName, err := context.GetFromFields(Keyring, baseReq.From, false)
+		fromAddress, fromName, err := context.GetFromFields(strings.NewReader(keys.DefaultKeyPass), baseReq.From, false)
 		if err != nil {
 			fmt.Printf("failed to get from fields: %v\n", err)
 			return
@@ -158,7 +151,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		cliContext = cliContext.WithBroadcastMode("block")
 
 		//adding account sequence
-		num, seq, err := types.NewAccountRetriever(authClient.Codec, cliContext).GetAccountNumberSequence(fromAddress)
+		num, seq, err := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
 		if err != nil {
 			fmt.Printf("Error in NewAccountRetriever: %s\n", err)
 			return
@@ -168,8 +161,9 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		txBuilder = txBuilder.WithSequence(seq)
 
 		//build and sign
-		stdMsg, err := txBuilder.BuildAndSign(fromName, keys.DefaultKeyPass, msgList)
-		if rest.CheckBadRequestError(responseWriter, err) {
+		stdMsg, Error := txBuilder.BuildAndSign(fromName, keys.DefaultKeyPass, msgList)
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
 
