@@ -26,6 +26,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if identity == nil {
 		return newTransactionResponse(constants.EntityNotFound)
 	}
+	if !identity.IsProvisioned(message.From) {
+		return newTransactionResponse(constants.NotAuthorized)
+	}
 	if !identity.IsProvisioned(message.To) {
 		return newTransactionResponse(constants.EntityNotFound)
 	}

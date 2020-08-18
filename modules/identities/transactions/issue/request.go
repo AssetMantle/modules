@@ -14,17 +14,18 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"strings"
 )
 
 type transactionRequest struct {
-	BaseReq          rest.BaseReq `json:"baseReq"`
-	To               string       `json:"to" valid:"required~required field to missing matches(^commit[a-z0-9]{39}$)~invalid field to"`
-	FromID           string       `json:"fromID" valid:"required~required field fromID missing matches(^[a-z]$)~invalid field fromID "`
-	ClassificationID string       `json:"classificationID" valid:"required~required field classificationId missing,matches(^[A-Za-z]$)~invalid field classificationID"`
-	Properties       string       `json:"properties" valid:"required~required field properties missing matches(^[A-Za-z]$)~invalid field properties"`
+	BaseReq                 rest.BaseReq `json:"baseReq"`
+	To                      string       `json:"to" valid:"required~required field to missing matches(^commit[a-z0-9]{39}$)~invalid field to"`
+	FromID                  string       `json:"fromID" valid:"required~required field fromID missing matches(^[a-z]$)~invalid field fromID "`
+	ClassificationID        string       `json:"classificationID" valid:"required~required field classificationID missing matches(^[A-Za-z]$)~invalid field classificationID"`
+	ImmutableMetaProperties string       `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing matches(^[A-Za-z]$)~invalid field immutableMetaProperties"`
+	ImmutableProperties     string       `json:"immutableProperties" valid:"required~required field immutableProperties missing matches(^[A-Za-z]$)~invalid field immutableProperties"`
+	MutableMetaProperties   string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing matches(^[A-Za-z]$)~invalid field mutableMetaProperties"`
+	MutableProperties       string       `json:"mutableProperties" valid:"required~required field mutableProperties missing matches(^[A-Za-z]$)~invalid field mutableProperties"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -39,7 +40,10 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadString(constants.To),
 		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.ClassificationID),
-		cliCommand.ReadString(constants.Properties),
+		cliCommand.ReadString(constants.ImmutableMetaProperties),
+		cliCommand.ReadString(constants.ImmutableProperties),
+		cliCommand.ReadString(constants.MutableMetaProperties),
+		cliCommand.ReadString(constants.MutableProperties),
 	)
 }
 func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
@@ -56,38 +60,30 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 		panic(errors.New(fmt.Sprintf("")))
 	}
 
-	properties := strings.Split(transactionRequest.Properties, constants.PropertiesSeparator)
-	if len(properties) > constants.MaxTraitCount {
-		//TODO handle
-		panic(errors.New(fmt.Sprintf("")))
-	}
-
-	var propertyList []types.Property
-	for _, property := range properties {
-		traitIDAndProperty := strings.Split(property, constants.PropertyIDAndMetaFactSeparator)
-		if len(traitIDAndProperty) == 2 && traitIDAndProperty[0] != "" {
-			// TODO split between meta and normal
-			propertyList = append(propertyList, base.NewProperty(base.NewID(traitIDAndProperty[0]), base.NewFact(traitIDAndProperty[1])))
-		}
-	}
-
 	return newMessage(
 		from,
 		to,
 		base.NewID(transactionRequest.FromID),
 		base.NewID(transactionRequest.ClassificationID),
-		base.NewProperties(propertyList),
+		base.ReadMetaProperties(transactionRequest.ImmutableMetaProperties),
+		base.ReadProperties(transactionRequest.ImmutableProperties),
+		base.ReadMetaProperties(transactionRequest.MutableMetaProperties),
+		base.ReadProperties(transactionRequest.MutableProperties),
 	)
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, to string, fromID string, classificationID string, properties string) helpers.TransactionRequest {
+
+func newTransactionRequest(baseReq rest.BaseReq, to string, fromID string, classificationID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:          baseReq,
-		To:               to,
-		FromID:           fromID,
-		ClassificationID: classificationID,
-		Properties:       properties,
+		BaseReq:                 baseReq,
+		To:                      to,
+		FromID:                  fromID,
+		ClassificationID:        classificationID,
+		ImmutableMetaProperties: immutableMetaProperties,
+		ImmutableProperties:     immutableProperties,
+		MutableMetaProperties:   mutableMetaProperties,
+		MutableProperties:       mutableProperties,
 	}
 }
