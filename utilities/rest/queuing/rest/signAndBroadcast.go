@@ -10,11 +10,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
+	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/pkg/errors"
 	"strings"
@@ -34,7 +34,7 @@ func SignAndBroadcast(br rest.BaseReq, cliCtx context.CLIContext,
 		return nil, errors.New(err.Error())
 	}
 
-	keyBase, err := keyring.New(sdkTypes.KeyringServiceName(), "os", "home", strings.NewReader(keys.DefaultKeyPass))
+	keyBase, err := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), "os", "home", strings.NewReader(keys.DefaultKeyPass))
 	if err != nil {
 		panic(fmt.Errorf("couldn't acquire keyring: %v", err))
 	}
@@ -91,7 +91,7 @@ func SignAndBroadcastMultiples(brs []rest.BaseReq, cliContextList []context.CLIC
 			return nil, errors.New(err.Error())
 		}
 
-		keyBase, err := keyring.New(sdkTypes.KeyringServiceName(), "os", "home", strings.NewReader(keys.DefaultKeyPass))
+		keyBase, err := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), "os", "home", strings.NewReader(keys.DefaultKeyPass))
 		if err != nil {
 			panic(fmt.Errorf("couldn't acquire keyring: %v", err))
 		}
@@ -102,7 +102,7 @@ func SignAndBroadcastMultiples(brs []rest.BaseReq, cliContextList []context.CLIC
 		}
 
 		//adding account sequence
-		num, seq, err := types.NewAccountRetriever(authClient.Codec, cliContextList[i]).GetAccountNumberSequence(address)
+		num, seq, err := types.NewAccountRetriever(cliContextList[i]).GetAccountNumberSequence(address)
 		if err != nil {
 			fmt.Printf("Error in NewAccountRetriever: %s\n", err)
 			return nil, nil
@@ -192,7 +192,7 @@ func SignAndBroadcastMultiple(brs []rest.BaseReq, cliContextList []context.CLICo
 			return nil, errors.New(err.Error())
 		}
 
-		keyBase, err := keyring.New(sdkTypes.KeyringServiceName(), "os", "home", strings.NewReader(keys.DefaultKeyPass))
+		keyBase, err := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), "os", "home", strings.NewReader(keys.DefaultKeyPass))
 		if err != nil {
 			panic(fmt.Errorf("couldn't acquire keyring: %v", err))
 		}
@@ -202,7 +202,7 @@ func SignAndBroadcastMultiple(brs []rest.BaseReq, cliContextList []context.CLICo
 			return nil, errors.New(err.Error())
 		}
 
-		num, _, err := auth.NewAccountRetriever(authClient.Codec, cliContextList[i]).GetAccountNumberSequence(address)
+		num, _, err := auth.NewAccountRetriever(cliContextList[i]).GetAccountNumberSequence(address)
 		if err != nil {
 			return nil, errors.New(err.Error())
 		}

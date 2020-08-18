@@ -11,15 +11,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
+	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 	"net/http"
-	"os"
 	"strings"
 )
 
@@ -39,12 +36,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			}
 		}
 
-		Keyring, Error := keyring.New(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), os.ExpandEnv("$HOME/.assetClient"), strings.NewReader(keys.DefaultKeyPass))
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "Key not found in keyring")
-		}
-
-		fromAddress, fromName, Error := context.GetFromFields(Keyring, request.BaseRequest.From, false)
+		fromAddress, fromName, Error := context.GetFromFields(strings.NewReader(keys.DefaultKeyPass), request.BaseRequest.From, false)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
@@ -54,7 +46,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			request.BaseRequest.Simulate, request.BaseRequest.ChainID, request.BaseRequest.Memo, request.BaseRequest.Fees, request.BaseRequest.GasPrices,
 		)
 
-		num, seq, Error := types.NewAccountRetriever(authClient.Codec, cliContext).GetAccountNumberSequence(fromAddress)
+		num, seq, Error := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return

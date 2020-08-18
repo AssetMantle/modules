@@ -5,7 +5,9 @@
 
 package types
 
-import "github.com/cosmos/cosmos-sdk/crypto/keyring"
+import (
+	"github.com/99designs/keyring"
+)
 
 type Fact interface {
 	GetHash() string

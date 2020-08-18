@@ -6,7 +6,7 @@
 package base
 
 import (
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	"github.com/99designs/keyring"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
