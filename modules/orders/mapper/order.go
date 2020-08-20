@@ -6,9 +6,12 @@
 package mapper
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type order struct {
@@ -19,12 +22,70 @@ type order struct {
 
 var _ mappables.Order = (*order)(nil)
 
-func (order order) GetID() types.ID {
-	return order.ID
+func (order order) GetClassificationID() types.ID {
+	return orderIDFromInterface(order.ID).ClassificationID
 }
 
-func (order order) GetChainID() types.ID {
-	return orderIDFromInterface(order.ID).ChainID
+func (order order) GetMakerOwnableID() types.ID {
+	return orderIDFromInterface(order.ID).MakerOwnableID
+}
+
+func (order order) GetTakerOwnableID() types.ID {
+	return orderIDFromInterface(order.ID).TakerOwnableID
+}
+
+func (order order) GetMakerID() types.ID {
+	return orderIDFromInterface(order.ID).MakerID
+}
+
+func (order order) GetTakerID() types.Property {
+	if takerID := order.Immutables.Get().Get(constants.TakerIDProperty); takerID != nil {
+		return takerID
+	} else if takerID := order.Mutables.Get().Get(constants.TakerIDProperty); takerID != nil {
+		return takerID
+	} else {
+		return base.NewProperty(constants.TakerIDProperty, base.NewFact(base.ReadIDData("")))
+	}
+}
+
+func (order order) GetExchangeRate() types.Property {
+	if takerRate := order.Immutables.Get().Get(constants.ExchangeRateProperty); takerRate != nil {
+		return takerRate
+	} else if takerRate := order.Mutables.Get().Get(constants.ExchangeRateProperty); takerRate != nil {
+		return takerRate
+	} else {
+		return base.NewProperty(constants.ExchangeRateProperty, base.NewFact(base.NewDecData(sdkTypes.SmallestDec())))
+	}
+}
+
+func (order order) GetCreation() types.Property {
+	if creation := order.Immutables.Get().Get(constants.CreationProperty); creation != nil {
+		return creation
+	} else if creation := order.Mutables.Get().Get(constants.CreationProperty); creation != nil {
+		return creation
+	} else {
+		return base.NewProperty(constants.CreationProperty, base.NewFact(base.NewHeightData(base.NewHeight(-1))))
+	}
+}
+
+func (order order) GetExpiry() types.Property {
+	if expiry := order.Immutables.Get().Get(constants.ExpiryProperty); expiry != nil {
+		return expiry
+	} else if creation := order.Mutables.Get().Get(constants.ExpiryProperty); creation != nil {
+		return creation
+	} else {
+		return base.NewProperty(constants.ExpiryProperty, base.NewFact(base.NewHeightData(base.NewHeight(-1))))
+	}
+}
+
+func (order order) GetMakerOwnableSplit() types.Property {
+	if split := order.Immutables.Get().Get(constants.MakerOwnableSplitProperty); split != nil {
+		return split
+	} else if split := order.Mutables.Get().Get(constants.MakerOwnableSplitProperty); split != nil {
+		return split
+	} else {
+		return base.NewProperty(constants.MakerOwnableSplitProperty, base.NewFact(base.NewDecData(sdkTypes.SmallestDec())))
+	}
 }
 
 func (order order) GetImmutables() types.Immutables {
@@ -34,20 +95,28 @@ func (order order) GetImmutables() types.Immutables {
 func (order order) GetMutables() types.Mutables {
 	return order.Mutables
 }
+
+func (order order) GetID() types.ID {
+	return order.ID
+}
+
 func (order order) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(order)
 }
+
 func (order order) Decode(bytes []byte) traits.Mappable {
 	packageCodec.MustUnmarshalBinaryBare(bytes, &order)
 	return order
 }
+
 func orderPrototype() traits.Mappable {
 	return order{}
 }
-func NewOrder(orderID types.ID, mutables types.Mutables, immutables types.Immutables) mappables.Order {
+
+func NewOrder(orderID types.ID, immutables types.Immutables, mutables types.Mutables) mappables.Order {
 	return order{
 		ID:         orderID,
-		Mutables:   mutables,
 		Immutables: immutables,
+		Mutables:   mutables,
 	}
 }

@@ -15,14 +15,14 @@ import (
 
 //TODO make private
 type Message struct {
-	From             sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
-	FromID           types.ID            `json:"fromID" valid:"required~required field fromID missing"`
-	ToID             types.ID            `json:"toID" valid:"required~required field toID missing"`
-	MaintainersID    types.ID            `json:"maintainersID" valid:"required~required field maintainersID missing"`
-	ClassificationID types.ID            `json:"classificationID" valid:"required~required field classificationID missing"`
-	Properties       types.Properties    `json:"properties" valid:"required~required field properties missing"`
-	Lock             types.Height        `json:"lock" valid:"required~required field lock missing"`
-	Burn             types.Height        `json:"burn" valid:"required~required field burn missing"`
+	From                    sdkTypes.AccAddress  `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
+	FromID                  types.ID             `json:"fromID" valid:"required~required field fromID missing"`
+	ToID                    types.ID             `json:"toID" valid:"required~required field toID missing"`
+	ClassificationID        types.ID             `json:"classificationID" valid:"required~required field classificationID missing"`
+	ImmutableMetaProperties types.MetaProperties `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing"`
+	ImmutableProperties     types.Properties     `json:"immutableProperties" valid:"required~required field immutableProperties missing"`
+	MutableMetaProperties   types.MetaProperties `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
+	MutableProperties       types.Properties     `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
 }
 
 var _ sdkTypes.Msg = Message{}
@@ -52,15 +52,15 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, toID types.ID, maintainersID types.ID, classificationID types.ID, properties types.Properties, lock types.Height, burn types.Height) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, toID types.ID, classificationID types.ID, immutableMetaProperties types.MetaProperties, immutableProperties types.Properties, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
 	return Message{
-		From:             from,
-		FromID:           fromID,
-		ToID:             toID,
-		MaintainersID:    maintainersID,
-		ClassificationID: classificationID,
-		Properties:       properties,
-		Lock:             lock,
-		Burn:             burn,
+		From:                    from,
+		FromID:                  fromID,
+		ToID:                    toID,
+		ClassificationID:        classificationID,
+		ImmutableMetaProperties: immutableMetaProperties,
+		ImmutableProperties:     immutableProperties,
+		MutableMetaProperties:   mutableMetaProperties,
+		MutableProperties:       mutableProperties,
 	}
 }

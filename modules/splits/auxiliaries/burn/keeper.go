@@ -19,23 +19,23 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) error {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	splitID := mapper.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
 	splits := mapper.NewSplits(auxiliaryKeeper.mapper, context).Fetch(splitID)
 	split := splits.Get(splitID)
 	if split == nil {
-		return constants.EntityNotFound
+		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
 	split = split.Send(auxiliaryRequest.Split).(mappables.Split)
 	if split.GetSplit().LT(sdkTypes.ZeroDec()) {
-		return constants.InsufficientBalance
+		return newAuxiliaryResponse(constants.InsufficientBalance)
 	} else if split.GetSplit().Equal(sdkTypes.ZeroDec()) {
 		splits.Remove(split)
 	} else {
 		splits.Mutate(split)
 	}
-	return nil
+	return newAuxiliaryResponse(nil)
 }
 
 func initializeAuxiliaryKeeper(mapper helpers.Mapper, _ []interface{}) helpers.AuxiliaryKeeper {

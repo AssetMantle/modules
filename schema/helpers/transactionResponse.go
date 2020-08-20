@@ -3,13 +3,8 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package types
+package helpers
 
-type Traits interface {
-	Get(ID) Trait
-	GetList() []Trait
-
-	Add(Trait) Traits
-	Remove(Trait) Traits
-	Mutate(Trait) Traits
+type TransactionResponse interface {
+	Response
 }

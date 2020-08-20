@@ -10,20 +10,22 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
-	mapper          helpers.Mapper
-	burnAuxiliary   helpers.Auxiliary
-	verifyAuxiliary helpers.Auxiliary
+	mapper              helpers.Mapper
+	burnAuxiliary       helpers.Auxiliary
+	supplementAuxiliary helpers.Auxiliary
+	verifyAuxiliary     helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
+func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 	if Error := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
 		return Error
@@ -31,16 +33,28 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(message.AssetID)
 	asset := assets.Get(message.AssetID)
 	if asset == nil {
-		return constants.EntityNotFound
+		return newTransactionResponse(constants.EntityNotFound)
 	}
-	if !asset.CanBurn(base.NewHeight(context.BlockHeight())) {
-		return constants.DeletionNotAllowed
+	supplementAuxiliaryResponse, Error := supplement.ValidateResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetBurn())))
+	if Error != nil {
+		return newTransactionResponse(Error)
 	}
-	if Error := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.OneDec())); Error != nil {
+	burnHeightMetaFact := supplementAuxiliaryResponse.MetaProperties.GetMetaProperty(constants.BurnProperty)
+	if burnHeightMetaFact == nil {
+		return newTransactionResponse(constants.EntityNotFound)
+	}
+	burnHeight, Error := burnHeightMetaFact.GetMetaFact().GetData().AsHeight()
+	if Error != nil {
+		return newTransactionResponse(Error)
+	}
+	if burnHeight.IsGreaterThan(base.NewHeight(context.BlockHeight())) {
+		return newTransactionResponse(constants.NotAuthorized)
+	}
+	if Error := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.SmallestDec())); Error != nil {
 		return Error
 	}
 	assets.Remove(asset)
-	return nil
+	return newTransactionResponse(nil)
 }
 
 func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{}) helpers.TransactionKeeper {
@@ -51,6 +65,8 @@ func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{
 			switch value.GetName() {
 			case burn.Auxiliary.GetName():
 				transactionKeeper.burnAuxiliary = value
+			case supplement.Auxiliary.GetName():
+				transactionKeeper.supplementAuxiliary = value
 			case verify.Auxiliary.GetName():
 				transactionKeeper.verifyAuxiliary = value
 			}

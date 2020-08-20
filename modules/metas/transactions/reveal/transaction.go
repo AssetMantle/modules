@@ -21,5 +21,5 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	revealTransactionKeeper,
 	requestPrototype,
-	[]helpers.CLIFlag{constants.FromID, constants.Data},
+	[]helpers.CLIFlag{constants.FromID, constants.MetaFact},
 )

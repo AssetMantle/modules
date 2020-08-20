@@ -3,9 +3,9 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package initialize
+package transfer
 
-import "github.com/persistenceOne/persistenceSDK/modules/metas/mapper"
+import "github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
 
-const AuxiliaryName = "initialize"
+const AuxiliaryName = "transfer"
 const AuxiliaryRoute = mapper.TransactionRoute + "/" + AuxiliaryName

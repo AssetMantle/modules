@@ -10,11 +10,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type message struct {
-	From sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
-	Data string              `json:"data" valid:"required~required field data missing"`
+	From     sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
+	MetaFact types.MetaFact      `json:"metaFact" valid:"required~required field metaFact missing"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -44,9 +45,9 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, data string) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, metaFact types.MetaFact) sdkTypes.Msg {
 	return message{
-		From: from,
-		Data: data,
+		From:     from,
+		MetaFact: metaFact,
 	}
 }

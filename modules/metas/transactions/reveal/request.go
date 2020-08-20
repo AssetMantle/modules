@@ -8,31 +8,35 @@ package reveal
 import (
 	"errors"
 	"fmt"
+	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionRequest struct {
-	BaseReq rest.BaseReq `json:"baseReq"`
-	Data    string       `json:"data" valid:"required~required field data missing matches(^[A-Za-z]$)~invalid field data"`
+	BaseReq  rest.BaseReq `json:"baseReq"`
+	MetaFact string       `json:"metaFact" valid:"required~required field metaFact missing"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
+func (transactionRequest transactionRequest) Validate() error {
+	_, Error := govalidator.ValidateStruct(transactionRequest)
+	return Error
+}
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
-		cliCommand.ReadString(constants.Data),
+		cliCommand.ReadString(constants.MetaFact),
 	)
 }
-
 func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
-
 func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
 	if Error != nil {
@@ -41,17 +45,15 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 
 	return newMessage(
 		from,
-		transactionRequest.Data,
+		base.ReadMetaFact(transactionRequest.MetaFact),
 	)
 }
-
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-
-func newTransactionRequest(baseReq rest.BaseReq, meta string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, metaFact string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq: baseReq,
-		Data:    meta,
+		BaseReq:  baseReq,
+		MetaFact: metaFact,
 	}
 }

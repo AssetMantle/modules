@@ -8,6 +8,7 @@ package cancel
 import (
 	"errors"
 	"fmt"
+	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -18,22 +19,26 @@ import (
 
 type transactionRequest struct {
 	BaseReq rest.BaseReq `json:"baseReq"`
+	FromID  string       `json:"fromID"`
 	OrderID string       `json:"orderID" valid:"required~required field orderID missing"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
+func (transactionRequest transactionRequest) Validate() error {
+	_, Error := govalidator.ValidateStruct(transactionRequest)
+	return Error
+}
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
+		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.OrderID),
 	)
 }
-
 func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
-
 func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
 	if Error != nil {
@@ -41,17 +46,18 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	}
 	return newMessage(
 		from,
+		base.NewID(transactionRequest.FromID),
 		base.NewID(transactionRequest.OrderID),
 	)
 }
-
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, orderID string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, orderID string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq: baseReq,
+		FromID:  fromID,
 		OrderID: orderID,
 	}
 }

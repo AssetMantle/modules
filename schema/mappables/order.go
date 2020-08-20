@@ -7,10 +7,21 @@ package mappables
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type Order interface {
-	traits.InterChain
+	GetClassificationID() types.ID
+	GetMakerOwnableID() types.ID
+	GetTakerOwnableID() types.ID
+	GetMakerID() types.ID
+
+	GetTakerID() types.Property
+	GetExchangeRate() types.Property
+	GetCreation() types.Property
+	GetExpiry() types.Property
+	GetMakerOwnableSplit() types.Property
+
 	traits.HasMutables
 	traits.HasImmutables
 	traits.Mappable

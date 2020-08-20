@@ -24,3 +24,6 @@ func NewProperty(id types.ID, fact types.Fact) types.Property {
 		Fact: fact,
 	}
 }
+func ReadProperty(PropertyIDAndData string) types.Property {
+	return ReadMetaProperty(PropertyIDAndData).RemoveData()
+}

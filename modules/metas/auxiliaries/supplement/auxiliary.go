@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package initialize
+package supplement
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/mapper"

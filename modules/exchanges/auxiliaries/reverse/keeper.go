@@ -22,18 +22,16 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) error {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
-	if Error := auxiliaryKeeper.splitsBurnAuxiliary.GetKeeper().Help(context,
-		burn.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), auxiliaryRequest.MakerSplitID, auxiliaryRequest.MakerSplit)); Error != nil {
-		return Error
+	if auxiliaryResponse := auxiliaryKeeper.splitsBurnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), auxiliaryRequest.MakerSplitID, auxiliaryRequest.MakerSplit)); !auxiliaryResponse.IsSuccessful() {
+		return newAuxiliaryResponse(auxiliaryResponse.GetError())
 	}
-	if Error := auxiliaryKeeper.splitsMintAuxiliary.GetKeeper().Help(context,
-		mint.NewAuxiliaryRequest(auxiliaryRequest.MakerID, auxiliaryRequest.MakerSplitID, auxiliaryRequest.MakerSplit)); Error != nil {
-		return Error
+	if auxiliaryResponse := auxiliaryKeeper.splitsMintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(auxiliaryRequest.MakerID, auxiliaryRequest.MakerSplitID, auxiliaryRequest.MakerSplit)); !auxiliaryResponse.IsSuccessful() {
+		return newAuxiliaryResponse(auxiliaryResponse.GetError())
 	}
 
-	return nil
+	return newAuxiliaryResponse(nil)
 }
 
 func initializeAuxiliaryKeeper(mapper helpers.Mapper, externalKeepers []interface{}) helpers.AuxiliaryKeeper {

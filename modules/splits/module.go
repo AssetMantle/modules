@@ -8,6 +8,7 @@ package splits
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/queries/split"
@@ -25,7 +26,7 @@ var Module = base.NewModule(
 	mapper.TransactionRoute,
 	genesis.State,
 	mapper.Mapper,
-	[]helpers.Auxiliary{mint.Auxiliary, burn.Auxiliary},
+	[]helpers.Auxiliary{mint.Auxiliary, burn.Auxiliary, transfer.Auxiliary},
 	[]helpers.Query{split.Query},
 	[]helpers.Transaction{send.Transaction, unwrap.Transaction, wrap.Transaction},
 )

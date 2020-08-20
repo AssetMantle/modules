@@ -5,10 +5,12 @@
 
 package mappables
 
-import "github.com/persistenceOne/persistenceSDK/schema/traits"
+import (
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+)
 
 type Meta interface {
-	//TODO return to interface
-	Get() string
+	GetData() types.Data
 	traits.Mappable
 }

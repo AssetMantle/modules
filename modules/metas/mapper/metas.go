@@ -45,11 +45,11 @@ func (metas metas) Fetch(id types.ID) mappers.Metas {
 	if len(metaUtilities.Hash(""))-len(metasID.HashID.String()) == 0 {
 		mappable := metas.mapper.Read(metas.context, metasID)
 		if mappable != nil {
-			metaList = append(metaList, mappable.(text))
+			metaList = append(metaList, mappable.(meta))
 		}
 	} else {
 		appendMappableList := func(mappable traits.Mappable) bool {
-			metaList = append(metaList, mappable.(text))
+			metaList = append(metaList, mappable.(meta))
 			return false
 		}
 		metas.mapper.Iterate(metas.context, metasID, appendMappableList)

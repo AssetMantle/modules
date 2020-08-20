@@ -14,26 +14,33 @@ import (
 )
 
 type orderID struct {
-	ChainID       types.ID `json:"chainID" valid:"required~required field chainID missing"`
-	MaintainersID types.ID `json:"maintainersID" valid:"required~required field maintainersID missing"`
-	HashID        types.ID `json:"hashID" valid:"required~required field hashID missing"`
+	ClassificationID types.ID `json:"classificationID"`
+	MakerOwnableID   types.ID `json:"makerOwnableID"`
+	TakerOwnableID   types.ID `json:"takerOwnableID"`
+	MakerID          types.ID `json:"makerID"`
+	HashID           types.ID `json:"hashID"`
 }
 
 var _ types.ID = (*orderID)(nil)
 
 func (orderID orderID) Bytes() []byte {
-	return append(append(
-		orderID.ChainID.Bytes(),
-		orderID.MaintainersID.Bytes()...),
-		orderID.HashID.Bytes()...)
+	var Bytes []byte
+	Bytes = append(Bytes, orderID.ClassificationID.Bytes()...)
+	Bytes = append(Bytes, orderID.MakerOwnableID.Bytes()...)
+	Bytes = append(Bytes, orderID.TakerOwnableID.Bytes()...)
+	Bytes = append(Bytes, orderID.MakerID.Bytes()...)
+	Bytes = append(Bytes, orderID.HashID.Bytes()...)
+	return Bytes
 }
 
 func (orderID orderID) String() string {
 	var values []string
-	values = append(values, orderID.ChainID.String())
-	values = append(values, orderID.MaintainersID.String())
+	values = append(values, orderID.ClassificationID.String())
+	values = append(values, orderID.MakerOwnableID.String())
+	values = append(values, orderID.TakerOwnableID.String())
+	values = append(values, orderID.MakerID.String())
 	values = append(values, orderID.HashID.String())
-	return strings.Join(values, constants.IDSeparator)
+	return strings.Join(values, constants.CompositeIDSeparator)
 }
 
 func (orderID orderID) Compare(id types.ID) int {
@@ -42,14 +49,16 @@ func (orderID orderID) Compare(id types.ID) int {
 
 func readOrderID(orderIDString string) types.ID {
 	idList := strings.Split(orderIDString, constants.IDSeparator)
-	if len(idList) == 3 {
+	if len(idList) == 5 {
 		return orderID{
-			ChainID:       base.NewID(idList[0]),
-			MaintainersID: base.NewID(idList[1]),
-			HashID:        base.NewID(idList[2]),
+			ClassificationID: base.NewID(idList[0]),
+			MakerOwnableID:   base.NewID(idList[1]),
+			TakerOwnableID:   base.NewID(idList[2]),
+			MakerID:          base.NewID(idList[3]),
+			HashID:           base.NewID(idList[4]),
 		}
 	}
-	return orderID{ChainID: base.NewID(""), MaintainersID: base.NewID(""), HashID: base.NewID("")}
+	return orderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}
 }
 
 func orderIDFromInterface(id types.ID) orderID {
@@ -63,10 +72,13 @@ func orderIDFromInterface(id types.ID) orderID {
 func generateKey(orderID types.ID) []byte {
 	return append(StoreKeyPrefix, orderIDFromInterface(orderID).Bytes()...)
 }
-func NewOrderID(chainID types.ID, maintainersID types.ID, hashID types.ID) types.ID {
+
+func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, makerID types.ID, immutables types.Immutables) types.ID {
 	return orderID{
-		ChainID:       chainID,
-		MaintainersID: maintainersID,
-		HashID:        hashID,
+		ClassificationID: classificationID,
+		MakerOwnableID:   makerOwnableID,
+		TakerOwnableID:   takerOwnableID,
+		MakerID:          makerID,
+		HashID:           immutables.GetHashID(),
 	}
 }

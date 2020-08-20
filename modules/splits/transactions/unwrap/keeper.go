@@ -23,32 +23,32 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
+func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if message.Split.LTE(sdkTypes.ZeroDec()) {
-		return constants.NotAuthorized
-	}
 	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
 		return Error
+	}
+	if message.Split.LTE(sdkTypes.ZeroDec()) {
+		return newTransactionResponse(constants.NotAuthorized)
 	}
 	splitID := mapper.NewSplitID(message.FromID, message.OwnableID)
 	splits := mapper.NewSplits(transactionKeeper.mapper, context).Fetch(splitID)
 	split := splits.Get(splitID)
 	if split == nil {
-		return constants.EntityNotFound
+		return newTransactionResponse(constants.EntityNotFound)
 	}
 	split = split.Send(message.Split).(mappables.Split)
 	if split.GetSplit().LT(sdkTypes.ZeroDec()) {
-		return constants.InsufficientBalance
+		return newTransactionResponse(constants.InsufficientBalance)
 	} else if split.GetSplit().Equal(sdkTypes.ZeroDec()) {
 		splits.Remove(split)
 	} else {
 		splits.Mutate(split)
 	}
 	if Error := transactionKeeper.supplyKeeper.SendCoinsFromModuleToAccount(context, mapper.ModuleName, message.From, sdkTypes.NewCoins(sdkTypes.NewCoin(message.OwnableID.String(), message.Split.TruncateInt()))); Error != nil {
-		return Error
+		return newTransactionResponse(Error)
 	}
-	return nil
+	return newTransactionResponse(nil)
 }
 
 func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{}) helpers.TransactionKeeper {

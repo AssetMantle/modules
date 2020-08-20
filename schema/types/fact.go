@@ -10,10 +10,8 @@ import (
 )
 
 type Fact interface {
-	Get() string
 	GetHash() string
 	GetSignatures() Signatures
-	IsMeta() bool
 
 	Sign(keyring.Keyring) Fact
 }

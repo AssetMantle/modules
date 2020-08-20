@@ -6,6 +6,7 @@
 package signTx
 
 import (
+	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	//sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -19,3 +20,8 @@ type request struct {
 }
 
 var _ helpers.Request = request{}
+
+func (request request) Validate() error {
+	_, Error := govalidator.ValidateStruct(request)
+	return Error
+}

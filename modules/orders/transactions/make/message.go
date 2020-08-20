@@ -15,14 +15,17 @@ import (
 
 //TODO make private
 type Message struct {
-	From          sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^cosmos[a-z0-9]{39}$)~invalid field from"`
-	MaintainersID types.ID            `json:"maintainersID" valid:"required~required field maintainersID missing"`
-	MakerID       types.ID            `json:"makerID" valid:"required~required field makerID missing"`
-	TakerID       types.ID            `json:"takerID"`
-	MakerSplit    sdkTypes.Dec        `json:"makerSplit" valid:"required~required field makerSplit missing"`
-	MakerSplitID  types.ID            `json:"makerSplitID" valid:"required~required field makerSplitID missing"`
-	ExchangeRate  sdkTypes.Dec        `json:"exchangeRate" valid:"required~required field exchangeRate missing"`
-	TakerSplitID  types.ID            `json:"takerSplitID" valid:"required~required field takerSplitID missing"`
+	From                    sdkTypes.AccAddress  `json:"from" valid:"required~required field from missing"`
+	FromID                  types.ID             `json:"fromID" valid:"required~required field fromID missing"`
+	ClassificationID        types.ID             `json:"classificationID" valid:"required~required field classificationID missing matches(^[A-Za-z]$)~invalid field classificationID"`
+	MakerOwnableID          types.ID             `json:"makerOwnableID" valid:"required~required field makerOwnableID missing"`
+	TakerOwnableID          types.ID             `json:"takerOwnableID" valid:"required~required field takerOwnableID missing"`
+	ExpiresIn               types.Height         `json:"expiresIn" valid:"required~required field expiresIn missing"`
+	MakerOwnableSplit       sdkTypes.Dec         `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing"`
+	ImmutableMetaProperties types.MetaProperties `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing matches(^[A-Za-z]$)~invalid field immutableMetaProperties"`
+	ImmutableProperties     types.Properties     `json:"immutableProperties" valid:"required~required field immutableProperties missing matches(^[A-Za-z]$)~invalid field immutableProperties"`
+	MutableMetaProperties   types.MetaProperties `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing matches(^[A-Za-z]$)~invalid field mutableMetaProperties"`
+	MutableProperties       types.Properties     `json:"mutableProperties" valid:"required~required field mutableProperties missing matches(^[A-Za-z]$)~invalid field mutableProperties"`
 }
 
 var _ sdkTypes.Msg = Message{}
@@ -52,17 +55,18 @@ func messageFromInterface(msg sdkTypes.Msg) Message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, maintainersID types.ID,
-	fromID types.ID, toID types.ID, makerSplit sdkTypes.Dec, makerSplitID types.ID,
-	exchangeRate sdkTypes.Dec, takerSplitID types.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, expiresIn types.Height, makerOwnableSplit sdkTypes.Dec, immutableMetaProperties types.MetaProperties, immutableProperties types.Properties, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
 	return Message{
-		From:          from,
-		MaintainersID: maintainersID,
-		MakerID:       fromID,
-		TakerID:       toID,
-		MakerSplit:    makerSplit,
-		MakerSplitID:  makerSplitID,
-		ExchangeRate:  exchangeRate,
-		TakerSplitID:  takerSplitID,
+		From:                    from,
+		FromID:                  fromID,
+		ClassificationID:        classificationID,
+		MakerOwnableID:          makerOwnableID,
+		TakerOwnableID:          takerOwnableID,
+		ExpiresIn:               expiresIn,
+		MakerOwnableSplit:       makerOwnableSplit,
+		ImmutableMetaProperties: immutableMetaProperties,
+		ImmutableProperties:     immutableProperties,
+		MutableMetaProperties:   mutableMetaProperties,
+		MutableProperties:       mutableProperties,
 	}
 }

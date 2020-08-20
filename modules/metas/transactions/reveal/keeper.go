@@ -11,7 +11,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
 type transactionKeeper struct {
@@ -20,16 +19,16 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
+func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	metaID := mapper.NewMetaID(base.NewID(metaUtilities.Hash(message.Data)))
+	metaID := mapper.NewMetaID(base.NewID(message.MetaFact.GetData().GenerateHash()))
 	metas := mapper.NewMetas(transactionKeeper.mapper, context).Fetch(metaID)
 	meta := metas.Get(metaID)
 	if meta != nil {
-		return constants.EntityAlreadyExists
+		return newTransactionResponse(constants.EntityAlreadyExists)
 	}
-	metas.Add(mapper.NewMeta(message.Data))
-	return nil
+	metas.Add(mapper.NewMeta(message.MetaFact.GetData()))
+	return newTransactionResponse(nil)
 }
 
 func revealTransactionKeeper(mapper helpers.Mapper, _ []interface{}) helpers.TransactionKeeper {

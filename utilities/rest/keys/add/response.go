@@ -11,11 +11,27 @@ import (
 )
 
 type response struct {
-	KeyOutput keys.KeyOutput
+	Success   bool           `json:"success"`
+	Error     error          `json:"error"`
+	KeyOutput keys.KeyOutput `json:"keyOutput"`
 }
 
 var _ helpers.Response = response{}
 
-func newResponse(keyOutput keys.KeyOutput) *response {
-	return &response{KeyOutput: keyOutput}
+func (response response) IsSuccessful() bool {
+	return response.Success
+}
+func (response response) GetError() error {
+	return response.Error
+}
+func newResponse(keyOutput keys.KeyOutput, error error) helpers.Response {
+	success := true
+	if error != nil {
+		success = false
+	}
+	return response{
+		Success:   success,
+		Error:     error,
+		KeyOutput: keyOutput,
+	}
 }

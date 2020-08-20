@@ -7,33 +7,52 @@ package base
 
 import (
 	"github.com/99designs/keyring"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
+	"strings"
 )
 
 type metaFact struct {
-	Hash       string           `json:"hash"`
-	Fact       string           `json:"fact"`
+	Data       types.Data       `json:"meta"`
 	Signatures types.Signatures `json:"signatures"`
 }
 
-var _ types.Fact = (*metaFact)(nil)
+var _ types.MetaFact = (*metaFact)(nil)
 
-func (metaFact metaFact) Get() string                     { return metaFact.Fact }
-func (metaFact metaFact) GetHash() string                 { return metaFact.Hash }
+func (metaFact metaFact) GetData() types.Data             { return metaFact.Data }
+func (metaFact metaFact) RemoveData() types.Fact          { return NewFact(metaFact.Data) }
+func (metaFact metaFact) GetHash() string                 { return metaFact.Data.GenerateHash() }
 func (metaFact metaFact) GetSignatures() types.Signatures { return metaFact.Signatures }
-func (metaFact metaFact) IsMeta() bool {
-	return true
-}
+
 func (metaFact metaFact) Sign(_ keyring.Keyring) types.Fact {
 	//TODO implement signing
 	return metaFact
 }
 
-func NewMetaFact(fact string) types.Fact {
+func NewMetaFact(data types.Data) types.MetaFact {
 	return metaFact{
-		Hash:       metaUtilities.Hash(fact),
-		Fact:       fact,
+		Data:       data,
 		Signatures: signatures{},
+	}
+}
+
+func ReadMetaFact(DataTypeAndString string) types.MetaFact {
+	dataTypeAndString := strings.Split(DataTypeAndString, constants.DataTypeAndStringSeparator)
+	if len(dataTypeAndString) == 2 {
+		dataType, dataString := dataTypeAndString[0], dataTypeAndString[1]
+		var data types.Data
+		switch dataType {
+		case constants.DecType:
+			data = ReadDecData(dataString)
+		case constants.HeightType:
+			data = ReadHeightData(dataString)
+		case constants.StringType:
+			data = ReadStringData(dataString)
+		default:
+			return nil
+		}
+		return NewMetaFact(data)
+	} else {
+		return nil
 	}
 }

@@ -11,15 +11,31 @@ import (
 )
 
 type queryResponse struct {
-	Metas mappers.Metas `json:"metas" valid:"required~required field metas missing"`
+	Success bool          `json:"success"`
+	Error   error         `json:"error"`
+	Metas   mappers.Metas `json:"metas" valid:"required~required field metas missing"`
 }
 
 var _ helpers.QueryResponse = (*queryResponse)(nil)
 
+func (queryResponse queryResponse) IsSuccessful() bool {
+	return queryResponse.Success
+}
+func (queryResponse queryResponse) GetError() error {
+	return queryResponse.Error
+}
 func queryResponsePrototype() helpers.QueryResponse {
 	return queryResponse{}
 }
 
-func newQueryResponse(metas mappers.Metas) helpers.QueryResponse {
-	return queryResponse{Metas: metas}
+func newQueryResponse(metas mappers.Metas, error error) helpers.QueryResponse {
+	success := true
+	if error != nil {
+		success = false
+	}
+	return queryResponse{
+		Success: success,
+		Error:   error,
+		Metas:   metas,
+	}
 }

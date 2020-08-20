@@ -18,22 +18,25 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
+func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 	identityID := message.IdentityID
 	identities := mapper.NewIdentities(transactionKeeper.mapper, context).Fetch(identityID)
 	identity := identities.Get(identityID)
 	if identity == nil {
-		return constants.EntityNotFound
+		return newTransactionResponse(constants.EntityNotFound)
+	}
+	if !identity.IsProvisioned(message.From) {
+		return newTransactionResponse(constants.NotAuthorized)
 	}
 	if !identity.IsProvisioned(message.To) {
-		return constants.EntityNotFound
+		return newTransactionResponse(constants.EntityNotFound)
 	}
 	if identity.IsUnprovisioned(message.To) {
-		return constants.DeletionNotAllowed
+		return newTransactionResponse(constants.DeletionNotAllowed)
 	}
 	identities.Mutate(identity.UnprovisionAddress(message.To))
-	return nil
+	return newTransactionResponse(nil)
 }
 
 func initializeTransactionKeeper(mapper helpers.Mapper, _ []interface{}) helpers.TransactionKeeper {

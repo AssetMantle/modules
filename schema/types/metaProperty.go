@@ -5,8 +5,8 @@
 
 package types
 
-type Trait interface {
-	GetID() ID
-	GetProperty() Property
-	IsMutable() bool
+type MetaProperty interface {
+	GetMetaFact() MetaFact
+	RemoveData() Property
+	Property
 }

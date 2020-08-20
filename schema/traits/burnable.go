@@ -10,6 +10,5 @@ import (
 )
 
 type Burnable interface {
-	CanBurn(types.Height) bool
-	GetBurn() types.Height
+	GetBurn() types.Property
 }

@@ -10,35 +10,49 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
-	mapper                    helpers.Mapper
-	identitiesVerifyAuxiliary helpers.Auxiliary
+	mapper          helpers.Mapper
+	verifyAuxiliary helpers.Auxiliary
+	scrubAuxiliary  helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) error {
+func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
-		return Error
+	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
-	properties := base.NewProperties(nil)
-	for _, trait := range message.Traits.GetList() {
-		properties = properties.Add(trait.GetProperty())
+
+	scrubImmutableMetaTraitsAuxiliaryResponse, Error := scrub.ValidateResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaTraits.GetMetaPropertyList()...)))
+	if Error != nil {
+		return newTransactionResponse(Error)
 	}
-	mutables := base.NewMutables(properties, message.MaintainersID)
-	immutables := base.NewImmutables(properties)
-	classificationID := mapper.NewClassificationID(base.NewID(context.ChainID()), mutables.GetMaintainersID(), immutables.GetHashID())
+	immutableTraits := base.NewImmutables(base.NewProperties(append(scrubImmutableMetaTraitsAuxiliaryResponse.Properties.GetList(), message.ImmutableTraits.GetList()...)))
+
+	scrubMutableMetaTraitsAuxiliaryResponse, Error := scrub.ValidateResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaTraits.GetMetaPropertyList()...)))
+	if Error != nil {
+		return newTransactionResponse(Error)
+	}
+	mutableTraits := base.NewMutables(base.NewProperties(append(scrubMutableMetaTraitsAuxiliaryResponse.Properties.GetList(), message.MutableMetaTraits.GetList()...)))
+
+	if len(immutableTraits.Get().GetList())+len(mutableTraits.Get().GetList()) > constants.MaxTraitCount {
+		return newTransactionResponse(constants.NotAuthorized)
+	}
+
+	classificationID := mapper.NewClassificationID(base.NewID(context.ChainID()), immutableTraits, mutableTraits)
 	classifications := mapper.NewClassifications(transactionKeeper.mapper, context).Fetch(classificationID)
 	if classifications.Get(classificationID) != nil {
-		return constants.EntityAlreadyExists
+		return newTransactionResponse(constants.EntityAlreadyExists)
 	}
-	classifications.Add(mapper.NewClassification(classificationID, message.Traits))
-	return nil
+
+	classifications = classifications.Add(mapper.NewClassification(classificationID, immutableTraits, mutableTraits))
+	return newTransactionResponse(nil)
 }
 
 func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{}) helpers.TransactionKeeper {
@@ -47,8 +61,10 @@ func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
+			case scrub.Auxiliary.GetName():
+				transactionKeeper.scrubAuxiliary = value
 			case verify.Auxiliary.GetName():
-				transactionKeeper.identitiesVerifyAuxiliary = value
+				transactionKeeper.verifyAuxiliary = value
 			}
 		}
 	}

@@ -11,16 +11,12 @@ const ProjectRoute = "/" + ProjectName
 const IDSeparator = "."
 const CompositeIDSeparator = "|"
 const PropertiesSeparator = ","
-const PropertyIDAndFactSeparator = ":"
-const TraitsSeparator = ","
+const PropertyIDAndDataSeparator = ":"
+const DataTypeAndStringSeparator = "|"
 const ToHashSeparator = "_"
 
-const MaxTraitCount = 22
+const StringType = "S"
+const DecType = "D"
+const HeightType = "H"
 
-var MakerIDProperty = "MakerID"
-var TakerIDProperty = "TakerID"
-var MakerSplitProperty = "MakerSplit"
-var MakerSplitIDProperty = "MakerSplitID"
-var ExchangeRateProperty = "ExchangeRate"
-var TakerSplitIDProperty = "TakerSplitID"
-var HeightProperty = "Height"
+const MaxTraitCount = 22

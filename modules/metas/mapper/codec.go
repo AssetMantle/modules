@@ -12,7 +12,7 @@ import (
 
 func registerCodec(codec *codec.Codec) {
 	codec.RegisterConcrete(metas{}, ModuleRoute+"/"+"metas", nil)
-	codec.RegisterConcrete(text{}, ModuleRoute+"/"+"text", nil)
+	codec.RegisterConcrete(meta{}, ModuleRoute+"/"+"meta", nil)
 	codec.RegisterConcrete(metaID{}, ModuleRoute+"/"+"metaID", nil)
 }
 

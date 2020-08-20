@@ -12,15 +12,22 @@ import (
 )
 
 type classification struct {
-	ID     types.ID     `json:"id" valid:"required~required field id missing"`
-	Traits types.Traits `json:"traits" valid:"required~required field traits missing"`
+	ID              types.ID         `json:"id" valid:"required~required field id missing"`
+	ImmutableTraits types.Immutables `json:"immutableTraits" valid:"required field immutableTraits missing"`
+	MutableTraits   types.Mutables   `json:"mutableTraits" valid:"required~required field mutableTraits missing"`
 }
 
 var _ mappables.Classification = (*classification)(nil)
 
 func (classification classification) GetID() types.ID { return classification.ID }
 
-func (classification classification) GetTraits() types.Traits { return classification.Traits }
+func (classification classification) GetImmutables() types.Immutables {
+	return classification.ImmutableTraits
+}
+
+func (classification classification) GetMutables() types.Mutables {
+	return classification.MutableTraits
+}
 
 func (classification classification) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(classification)
@@ -34,9 +41,10 @@ func classificationPrototype() traits.Mappable {
 	return classification{}
 }
 
-func NewClassification(classificationID types.ID, traits types.Traits) mappables.Classification {
+func NewClassification(ID types.ID, immutableTraits types.Immutables, mutableTraits types.Mutables) mappables.Classification {
 	return classification{
-		ID:     classificationID,
-		Traits: traits,
+		ID:              ID,
+		ImmutableTraits: immutableTraits,
+		MutableTraits:   mutableTraits,
 	}
 }

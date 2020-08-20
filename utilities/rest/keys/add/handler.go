@@ -60,7 +60,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		rest.PostProcessResponse(responseWriter, cliContext, newResponse(keyOutput))
+		rest.PostProcessResponse(responseWriter, cliContext, newResponse(keyOutput, nil))
 	}
 }
 

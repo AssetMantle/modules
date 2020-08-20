@@ -7,6 +7,7 @@ package mapper
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -24,7 +25,7 @@ var _ mappables.InterIdentity = (*identity)(nil)
 
 func (identity identity) GetID() types.ID { return identity.ID }
 func (identity identity) GetChainID() types.ID {
-	return identityIDFromInterface(identity.ID).ChainID
+	return mapper.ChainIDFromClassificationID(identityIDFromInterface(identity.ID).ClassificationID)
 }
 
 func (identity identity) GetClassificationID() types.ID {
