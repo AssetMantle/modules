@@ -8,7 +8,7 @@ package unwrap
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/supply"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -29,17 +29,17 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return Error
 	}
 	if message.Split.LTE(sdkTypes.ZeroDec()) {
-		return newTransactionResponse(constants.NotAuthorized)
+		return newTransactionResponse(errors.NotAuthorized)
 	}
 	splitID := mapper.NewSplitID(message.FromID, message.OwnableID)
 	splits := mapper.NewSplits(transactionKeeper.mapper, context).Fetch(splitID)
 	split := splits.Get(splitID)
 	if split == nil {
-		return newTransactionResponse(constants.EntityNotFound)
+		return newTransactionResponse(errors.EntityNotFound)
 	}
 	split = split.Send(message.Split).(mappables.Split)
 	if split.GetSplit().LT(sdkTypes.ZeroDec()) {
-		return newTransactionResponse(constants.InsufficientBalance)
+		return newTransactionResponse(errors.InsufficientBalance)
 	} else if split.GetSplit().Equal(sdkTypes.ZeroDec()) {
 		splits.Remove(split)
 	} else {

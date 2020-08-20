@@ -7,7 +7,8 @@ package take
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
@@ -30,24 +31,24 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(constants.EntityNotFound)
+		return newTransactionResponse(errors.EntityNotFound)
 	}
 	orderID := message.OrderID
 	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(orderID)
 	order := orders.Get(orderID)
 	if order == nil {
-		return newTransactionResponse(constants.EntityNotFound)
+		return newTransactionResponse(errors.EntityNotFound)
 	}
 	auxiliaryResponse, Error := supplement.ValidateResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetTakerID(), order.GetExchangeRate(), order.GetMakerOwnableSplit())))
 	if Error != nil {
 		newTransactionResponse(Error)
 	}
 
-	if takerIDProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(constants.TakerIDProperty)); takerIDProperty != nil {
+	if takerIDProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(properties.TakerID)); takerIDProperty != nil {
 		takerID, Error := takerIDProperty.GetMetaFact().GetData().AsID()
 		if Error == nil {
 			if takerID.Compare(message.FromID) != 0 {
-				newTransactionResponse(constants.NotAuthorized)
+				newTransactionResponse(errors.NotAuthorized)
 			}
 		}
 	}
@@ -55,35 +56,35 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	exchangeRateProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(constants.ExchangeRateProperty))
+	exchangeRateProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(properties.ExchangeRate))
 	if exchangeRateProperty == nil {
-		return newTransactionResponse(constants.MetaDataError)
+		return newTransactionResponse(errors.MetaDataError)
 	}
 	exchangeRate, Error := exchangeRateProperty.GetMetaFact().GetData().AsDec()
 	if Error != nil {
-		return newTransactionResponse(constants.MetaDataError)
+		return newTransactionResponse(errors.MetaDataError)
 	}
 
-	makerOwnableSplitProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(constants.MakerOwnableSplitProperty))
+	makerOwnableSplitProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit))
 	if makerOwnableSplitProperty == nil {
-		return newTransactionResponse(constants.MetaDataError)
+		return newTransactionResponse(errors.MetaDataError)
 	}
 	makerOwnableSplit, Error := makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
 	if Error != nil {
-		return newTransactionResponse(constants.MetaDataError)
+		return newTransactionResponse(errors.MetaDataError)
 	}
 
 	sendMakerOwnableSplit := message.TakerOwnableSplit.Mul(exchangeRate)
 	updatedMakerOwnableSplit := makerOwnableSplit.Sub(sendMakerOwnableSplit)
 	if updatedMakerOwnableSplit.LT(sdkTypes.ZeroDec()) {
-		return newTransactionResponse(constants.InsufficientBalance)
+		return newTransactionResponse(errors.InsufficientBalance)
 	} else if updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()) {
 		orders.Remove(order)
 	} else {
 		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), message.FromID, order.GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 			return newTransactionResponse(auxiliaryResponse.GetError())
 		}
-		scrubMetaMutablesAuxiliaryResponse, Error := scrub.ValidateResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(constants.MakerSplitProperty), base.NewMetaFact(base.NewDecData(makerOwnableSplit))))))
+		scrubMetaMutablesAuxiliaryResponse, Error := scrub.ValidateResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(properties.MakerSplit), base.NewMetaFact(base.NewDecData(makerOwnableSplit))))))
 		if Error != nil {
 			return newTransactionResponse(Error)
 		}

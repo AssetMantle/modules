@@ -5,8 +5,10 @@
 
 package helpers
 
+import "encoding/json"
+
 type WasmMessage interface {
-	Type() string
-	Encode() []byte
-	Decode() WasmMessage
+	GetType() string
+	GetRawMessage() json.RawMessage
 }
+type WasmMessagePrototype func() WasmMessage

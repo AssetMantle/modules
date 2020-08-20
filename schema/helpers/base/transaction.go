@@ -7,6 +7,7 @@ package base
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -52,9 +53,16 @@ func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
 		transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(authClient.GetTxEncoder(codec))
 		cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
 
-		request := transaction.transactionRequestPrototype().FromCLI(transaction.cliCommand, cliContext)
+		transactionRequest, Error := transaction.transactionRequestPrototype().FromCLI(transaction.cliCommand, cliContext)
+		if Error != nil {
+			return Error
+		}
 
-		msg := request.MakeMsg()
+		msg, Error := transactionRequest.MakeMsg()
+		if Error != nil {
+			return Error
+		}
+
 		if Error := msg.ValidateBasic(); Error != nil {
 			return Error
 		}
@@ -82,14 +90,18 @@ func (transaction transaction) HandleMessage(context sdkTypes.Context, message s
 
 func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
-		request := transaction.transactionRequestPrototype()
-		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
+		transactionRequest := transaction.transactionRequestPrototype()
+		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &transactionRequest) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
 
-		baseReq := request.GetBaseReq()
-		msg := request.MakeMsg()
+		baseReq := transactionRequest.GetBaseReq()
+		msg, Error := transactionRequest.MakeMsg()
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+			return
+		}
 
 		baseReq = baseReq.Sanitize()
 		if !baseReq.ValidateBasic(responseWriter) {
@@ -97,8 +109,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			return
 		}
 
-		Error := msg.ValidateBasic()
-		if Error != nil {
+		if Error := msg.ValidateBasic(); Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
@@ -193,6 +204,13 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 
 func (transaction transaction) RegisterCodec(codec *codec.Codec) {
 	transaction.registerCodec(codec)
+}
+func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessage) (sdkTypes.Msg, error) {
+	transactionRequest, Error := transaction.transactionRequestPrototype().FromJSON(rawMessage)
+	if Error != nil {
+		return nil, Error
+	}
+	return transactionRequest.MakeMsg()
 }
 
 func (transaction *transaction) InitializeKeeper(mapper helpers.Mapper, auxiliaryKeepers ...interface{}) {

@@ -7,10 +7,12 @@ package base
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
+
+const StringType = "S"
 
 type stringData struct {
 	Value string `json:"value"`
@@ -27,15 +29,15 @@ func (stringData stringData) AsString() (string, error) {
 }
 
 func (stringData stringData) AsDec() (sdkTypes.Dec, error) {
-	return sdkTypes.Dec{}, constants.EntityNotFound
+	return sdkTypes.Dec{}, errors.EntityNotFound
 }
 
 func (stringData stringData) AsHeight() (types.Height, error) {
-	return height{}, constants.EntityNotFound
+	return height{}, errors.EntityNotFound
 }
 
 func (stringData stringData) AsID() (types.ID, error) {
-	return id{}, constants.EntityNotFound
+	return id{}, errors.EntityNotFound
 }
 
 func (stringData stringData) Get() interface{} {

@@ -7,11 +7,13 @@ package base
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
+
+const IDType = "I"
 
 type idData struct {
 	Value types.ID `json:"value"`
@@ -24,19 +26,19 @@ func (idData idData) GenerateHash() string {
 }
 
 func (idData idData) AsString() (string, error) {
-	return "", constants.EntityNotFound
+	return "", errors.EntityNotFound
 }
 
 func (idData idData) AsDec() (sdkTypes.Dec, error) {
-	return sdkTypes.Dec{}, constants.EntityNotFound
+	return sdkTypes.Dec{}, errors.EntityNotFound
 }
 
 func (idData idData) AsHeight() (types.Height, error) {
-	return height{}, constants.EntityNotFound
+	return height{}, errors.EntityNotFound
 }
 
 func (idData idData) AsID() (types.ID, error) {
-	return idData.Value, constants.EntityNotFound
+	return idData.Value, errors.EntityNotFound
 }
 
 func (idData idData) Get() interface{} {

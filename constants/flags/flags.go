@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package constants
+package flags
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -39,7 +39,6 @@ var (
 	ToID                    = base.NewCLIFlag("toID", "", "ToID")
 	OrderID                 = base.NewCLIFlag("orderID", "", "OrderID")
 	TakerAddress            = base.NewCLIFlag("takerAddress", "", "TakerAddress")
-	TakerID                 = base.NewCLIFlag("takerID", "", "TakerID")
 	TakerOwnableID          = base.NewCLIFlag("takerOwnableID", "", "TakerOwnableID")
 	MaintainerID            = base.NewCLIFlag("makerSplit", int64(0), "MaintainerID")
 	MakerSplit              = base.NewCLIFlag("makerSplit", int64(0), "MakerSplitProperty")

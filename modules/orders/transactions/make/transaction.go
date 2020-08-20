@@ -6,7 +6,7 @@
 package make
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -21,7 +21,7 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]helpers.CLIFlag{constants.MaintainersID, constants.FromID, constants.ToID,
-		constants.TakerAddress, constants.MakerSplit, constants.MakerSplitID, constants.ExchangeRate,
-		constants.TakerSplitID},
+	[]helpers.CLIFlag{flags.MaintainersID, flags.FromID, flags.ToID,
+		flags.TakerAddress, flags.MakerSplit, flags.MakerSplitID, flags.ExchangeRate,
+		flags.TakerSplitID},
 )

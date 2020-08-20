@@ -6,13 +6,14 @@
 package define
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
@@ -31,19 +32,25 @@ func (transactionRequest transactionRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(transactionRequest)
 	return Error
 }
-func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
+func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
-		cliCommand.ReadString(constants.ImmutableMetaTraits),
-		cliCommand.ReadString(constants.ImmutableTraits),
-		cliCommand.ReadString(constants.MutableMetaTraits),
-		cliCommand.ReadString(constants.MutableTraits),
-	)
+		cliCommand.ReadString(flags.ImmutableMetaTraits),
+		cliCommand.ReadString(flags.ImmutableTraits),
+		cliCommand.ReadString(flags.MutableMetaTraits),
+		cliCommand.ReadString(flags.MutableTraits),
+	), nil
+}
+func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
+	if Error := json.Unmarshal(rawMessage, &transactionRequest); Error != nil {
+		return nil, Error
+	}
+	return transactionRequest, nil
 }
 func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
-func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
+func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
 	if Error != nil {
 		panic(errors.New(fmt.Sprintf("")))
@@ -54,7 +61,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 		base.ReadProperties(transactionRequest.ImmutableTraits),
 		base.ReadMetaProperties(transactionRequest.MutableMetaTraits),
 		base.ReadProperties(transactionRequest.MutableTraits),
-	)
+	), nil
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
