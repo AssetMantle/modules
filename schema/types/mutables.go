@@ -7,5 +7,5 @@ package types
 
 type Mutables interface {
 	Get() Properties
-	Mutate([]Property) Mutables
+	Mutate(...Property) Mutables
 }

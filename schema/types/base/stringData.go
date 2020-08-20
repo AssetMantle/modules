@@ -34,6 +34,10 @@ func (stringData stringData) AsHeight() (types.Height, error) {
 	return height{}, constants.EntityNotFound
 }
 
+func (stringData stringData) AsID() (types.ID, error) {
+	return id{}, constants.EntityNotFound
+}
+
 func (stringData stringData) Get() interface{} {
 	return stringData.Value
 }

@@ -39,6 +39,10 @@ func (heightData heightData) Get() interface{} {
 	return heightData.Value
 }
 
+func (heightData heightData) AsID() (types.ID, error) {
+	return id{}, constants.EntityNotFound
+}
+
 func NewHeightData(value types.Height) types.Data {
 	return heightData{
 		Value: value,

@@ -13,6 +13,7 @@ type Data interface {
 	AsString() (string, error)
 	AsDec() (sdkTypes.Dec, error)
 	AsHeight() (Height, error)
+	AsID() (ID, error)
 
 	Get() interface{}
 }
