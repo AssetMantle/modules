@@ -8,5 +8,5 @@ package traits
 import "github.com/persistenceOne/persistenceSDK/schema/types"
 
 type Lockable interface {
-	GetLock() types.Fact
+	GetLock() types.Property
 }

@@ -10,5 +10,5 @@ import (
 )
 
 type Burnable interface {
-	GetBurn() types.Fact
+	GetBurn() types.Property
 }
