@@ -8,84 +8,88 @@ package take
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	assetsMapper "github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/exchanges/auxiliaries/swap"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
-	mapper                    helpers.Mapper
-	exchangesSwapAuxiliary    helpers.Auxiliary
-	identitiesVerifyAuxiliary helpers.Auxiliary
+	mapper              helpers.Mapper
+	scrubAuxiliary      helpers.Auxiliary
+	supplementAuxiliary helpers.Auxiliary
+	transferAuxiliary   helpers.Auxiliary
+	verifyAuxiliary     helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
+	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(constants.EntityNotFound)
+	}
 	orderID := message.OrderID
 	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(orderID)
 	order := orders.Get(orderID)
 	if order == nil {
 		return newTransactionResponse(constants.EntityNotFound)
 	}
-	if auxiliaryResponse := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(constants.EntityNotFound)
-	}
-
-	makerID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerIDProperty)).GetFact().GetHash())
-	makerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerSplitIDProperty)).GetFact().GetHash())
-	makerSplit, Error := sdkTypes.NewDecFromStr(order.GetMutables().Get().Get(base.NewID(constants.MakerSplitProperty)).GetFact().GetHash())
-	takerID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.TakerIDProperty)).GetFact().GetHash())
-	takerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.TakerSplitIDProperty)).GetFact().GetHash())
-	exchangeRate, Error := sdkTypes.NewDecFromStr(order.GetImmutables().Get().Get(base.NewID(constants.ExchangeRateProperty)).GetFact().GetHash())
+	auxiliaryResponse, Error := supplement.ValidateResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetTakerID(), order.GetExchangeRate(), order.GetMakerOwnableSplit())))
 	if Error != nil {
-		return newTransactionResponse(Error)
+		newTransactionResponse(Error)
 	}
 
-	makerIsAsset := assetsMapper.NewAssets(assetsMapper.Mapper, context).Fetch(makerSplitID).Get(makerSplitID) != nil
-	takerIsAsset := assetsMapper.NewAssets(assetsMapper.Mapper, context).Fetch(takerSplitID).Get(takerSplitID) != nil
-
-	if makerIsAsset && takerIsAsset {
-		if !sdkTypes.OneDec().Equal(message.TakerSplit) || !sdkTypes.OneDec().Equal(makerSplit) {
-			return newTransactionResponse(constants.IncorrectMessage)
-		}
-	} else if !makerIsAsset && takerIsAsset {
-		if !sdkTypes.OneDec().Equal(message.TakerSplit) {
-			return newTransactionResponse(constants.IncorrectMessage)
-		}
-	} else if makerIsAsset && !takerIsAsset {
-		if makerSplit.Mul(exchangeRate).GT(message.TakerSplit) {
-			return newTransactionResponse(constants.IncorrectMessage)
-		} else {
-			message.TakerSplit = makerSplit.Mul(exchangeRate)
-		}
-	} else {
-		if makerSplit.Mul(exchangeRate).LTE(message.TakerSplit) {
-			message.TakerSplit = makerSplit.Mul(exchangeRate)
+	if takerIDProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(constants.TakerIDProperty); takerIDProperty != nil {
+		takerID, Error := takerIDProperty.GetMetaFact().GetData().AsID()
+		if Error == nil {
+			if takerID.Compare(message.FromID) != 0 {
+				newTransactionResponse(constants.NotAuthorized)
+			}
 		}
 	}
-
-	makerSplitDeduction := message.TakerSplit.Quo(exchangeRate)
-
-	if takerID.String() != "" && message.FromID.Compare(takerID) != 0 {
-		return newTransactionResponse(constants.NotAuthorized)
-	}
-	if auxiliaryResponse := transactionKeeper.exchangesSwapAuxiliary.GetKeeper().Help(context, swap.NewAuxiliaryRequest(makerID, makerSplitDeduction, makerSplitID, message.FromID, message.TakerSplit, takerSplitID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(constants.EntityNotFound)
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), message.TakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	makerSplit = makerSplit.Sub(makerSplitDeduction)
-	mutables := base.NewMutables(order.GetMutables().Get().Mutate(base.NewProperty(base.NewID(constants.MakerSplitProperty), base.NewFact(makerSplit.String()))))
-	order = mapper.NewOrder(order.GetID(), mutables, order.GetImmutables())
-	orders = orders.Mutate(order)
-	if makerSplit.IsZero() {
+	exchangeRateProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(constants.ExchangeRateProperty)
+	if exchangeRateProperty == nil {
+		return newTransactionResponse(constants.MetaDataError)
+	}
+	exchangeRate, Error := exchangeRateProperty.GetMetaFact().GetData().AsDec()
+	if Error != nil {
+		return newTransactionResponse(constants.MetaDataError)
+	}
+
+	makerOwnableSplitProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty)
+	if makerOwnableSplitProperty == nil {
+		return newTransactionResponse(constants.MetaDataError)
+	}
+	makerOwnableSplit, Error := makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
+	if Error != nil {
+		return newTransactionResponse(constants.MetaDataError)
+	}
+
+	sendMakerOwnableSplit := message.TakerOwnableSplit.Mul(exchangeRate)
+	updatedMakerOwnableSplit := makerOwnableSplit.Sub(sendMakerOwnableSplit)
+	if updatedMakerOwnableSplit.LT(sdkTypes.ZeroDec()) {
+		return newTransactionResponse(constants.InsufficientBalance)
+	} else if updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()) {
 		orders.Remove(order)
+	} else {
+		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), message.FromID, order.GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+			return newTransactionResponse(auxiliaryResponse.GetError())
+		}
+		scrubMetaMutablesAuxiliaryResponse, Error := scrub.ValidateResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(constants.MakerSplitProperty, base.NewMetaFact(base.NewDecData(makerOwnableSplit))))))
+		if Error != nil {
+			return newTransactionResponse(Error)
+		}
+		order = mapper.NewOrder(order.GetID(), order.GetImmutables(), order.GetMutables().Mutate(scrubMetaMutablesAuxiliaryResponse.Properties.GetList()...))
+		orders = orders.Mutate(order)
 	}
-
 	return newTransactionResponse(nil)
 }
 
@@ -95,10 +99,14 @@ func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
-			case swap.Auxiliary.GetName():
-				transactionKeeper.exchangesSwapAuxiliary = value
+			case scrub.Auxiliary.GetName():
+				transactionKeeper.scrubAuxiliary = value
+			case supplement.Auxiliary.GetName():
+				transactionKeeper.supplementAuxiliary = value
+			case transfer.Auxiliary.GetName():
+				transactionKeeper.transferAuxiliary = value
 			case verify.Auxiliary.GetName():
-				transactionKeeper.identitiesVerifyAuxiliary = value
+				transactionKeeper.verifyAuxiliary = value
 			}
 		}
 	}

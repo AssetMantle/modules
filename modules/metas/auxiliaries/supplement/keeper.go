@@ -22,7 +22,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	var metaPropertyList []types.MetaProperty
-	for _, property := range auxiliaryRequest.Properties.GetList() {
+	for _, property := range auxiliaryRequest.PropertyList {
 		metaID := base.NewID(property.GetFact().GetHash())
 		metas := mapper.NewMetas(auxiliaryKeeper.mapper, context).Fetch(metaID)
 		meta := metas.Get(metaID)

@@ -18,10 +18,10 @@ import (
 )
 
 type transactionRequest struct {
-	BaseReq    rest.BaseReq `json:"baseReq"`
-	FromID     string       `json:"fromID" valid:"required~required field fromID missing"`
-	TakerSplit int64        `json:"takerSplit" valid:"required~required field takerSplit missing"`
-	OrderID    string       `json:"orderID" valid:"required~required field orderID missing"`
+	BaseReq           rest.BaseReq `json:"baseReq"`
+	FromID            string       `json:"fromID" valid:"required~required field fromID missing"`
+	TakerOwnableSplit int64        `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
+	OrderID           string       `json:"orderID" valid:"required~required field orderID missing"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -34,7 +34,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(constants.FromID),
-		cliCommand.ReadInt64(constants.TakerSplit),
+		cliCommand.ReadInt64(constants.TakerOwnableSplit),
 		cliCommand.ReadString(constants.OrderID),
 	)
 }
@@ -50,18 +50,18 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	return newMessage(
 		from,
 		base.NewID(transactionRequest.FromID),
-		sdkTypes.NewDec(transactionRequest.TakerSplit),
+		sdkTypes.NewDec(transactionRequest.TakerOwnableSplit),
 		base.NewID(transactionRequest.OrderID),
 	)
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, takerSplit int64, orderID string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, takerOwnableSplit int64, orderID string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:    baseReq,
-		FromID:     fromID,
-		TakerSplit: takerSplit,
-		OrderID:    orderID,
+		BaseReq:           baseReq,
+		FromID:            fromID,
+		TakerOwnableSplit: takerOwnableSplit,
+		OrderID:           orderID,
 	}
 }

@@ -22,7 +22,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	var scrubbedPropertyList []types.Property
-	for _, metaProperty := range auxiliaryRequest.MetaProperties.GetMetaPropertyList() {
+	for _, metaProperty := range auxiliaryRequest.MetaPropertyList {
 		metas := mapper.NewMetas(auxiliaryKeeper.mapper, context)
 		metas.Add(mapper.NewMeta(metaProperty.GetMetaFact().GetData()))
 		scrubbedPropertyList = append(scrubbedPropertyList, metaProperty.RemoveData())

@@ -19,6 +19,7 @@ import (
 
 type transactionRequest struct {
 	BaseReq rest.BaseReq `json:"baseReq"`
+	FromID  string       `json:"fromID"`
 	OrderID string       `json:"orderID" valid:"required~required field orderID missing"`
 }
 
@@ -31,6 +32,7 @@ func (transactionRequest transactionRequest) Validate() error {
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
+		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.OrderID),
 	)
 }
@@ -44,15 +46,18 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 	}
 	return newMessage(
 		from,
+		base.NewID(transactionRequest.FromID),
 		base.NewID(transactionRequest.OrderID),
 	)
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, orderID string) helpers.TransactionRequest {
+
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, orderID string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq: baseReq,
+		FromID:  fromID,
 		OrderID: orderID,
 	}
 }

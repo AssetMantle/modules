@@ -12,7 +12,7 @@ import (
 )
 
 type auxiliaryRequest struct {
-	MetaProperties types.MetaProperties `json:"metaProperties"`
+	MetaPropertyList []types.MetaProperty `json:"metaPropertyList"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -31,8 +31,8 @@ func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) au
 	}
 }
 
-func NewAuxiliaryRequest(metaProperties types.MetaProperties) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(metaPropertyList ...types.MetaProperty) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		MetaProperties: metaProperties,
+		MetaPropertyList: metaPropertyList,
 	}
 }

@@ -8,43 +8,50 @@ package cancel
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/modules/exchanges/auxiliaries/reverse"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
-	mapper                    helpers.Mapper
-	identitiesVerifyAuxiliary helpers.Auxiliary
-	exchangesReverseAuxiliary helpers.Auxiliary
+	mapper              helpers.Mapper
+	supplementAuxiliary helpers.Auxiliary
+	transferAuxiliary   helpers.Auxiliary
+	verifyAuxiliary     helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
+	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
+	}
 	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(message.OrderID)
 	order := orders.Get(message.OrderID)
 	if order == nil {
 		return newTransactionResponse(constants.EntityNotFound)
 	}
-	//TODO
-	makerID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerIDProperty)).GetFact().GetHash())
-	makerSplitID := base.NewID(order.GetImmutables().Get().Get(base.NewID(constants.MakerSplitIDProperty)).GetFact().GetHash())
-	makerSplit, Error := sdkTypes.NewDecFromStr(order.GetMutables().Get().Get(base.NewID(constants.MakerSplitProperty)).GetFact().GetHash())
+	if message.FromID.Compare(order.GetMakerID()) != 0 {
+		return newTransactionResponse(constants.NotAuthorized)
+	}
+	auxiliaryResponse, Error := supplement.ValidateResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetMakerOwnableSplit())))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
-	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context,
-		verify.NewAuxiliaryRequest(message.From, makerID)); Error != nil {
-		return Error
+	makerOwnableSplitProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty)
+	if makerOwnableSplitProperty == nil {
+		return newTransactionResponse(constants.MetaDataError)
 	}
-
-	if Error := transactionKeeper.exchangesReverseAuxiliary.GetKeeper().Help(context,
-		reverse.NewAuxiliaryRequest(makerID, makerSplit, makerSplitID)); Error != nil {
-		return Error
+	makerOwnableSplit, Error := makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
+	if Error != nil {
+		return newTransactionResponse(Error)
+	}
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), message.FromID, order.GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 	orders.Remove(order)
 	return newTransactionResponse(nil)
@@ -56,10 +63,12 @@ func initializeTransactionKeeper(mapper helpers.Mapper, externalKeepers []interf
 		switch value := externalKeeper.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
+			case supplement.Auxiliary.GetName():
+				transactionKeeper.supplementAuxiliary = value
+			case transfer.Auxiliary.GetName():
+				transactionKeeper.transferAuxiliary = value
 			case verify.Auxiliary.GetName():
-				transactionKeeper.identitiesVerifyAuxiliary = value
-			case reverse.Auxiliary.GetName():
-				transactionKeeper.exchangesReverseAuxiliary = value
+				transactionKeeper.verifyAuxiliary = value
 			}
 		}
 	}

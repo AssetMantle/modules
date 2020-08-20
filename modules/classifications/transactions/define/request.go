@@ -17,7 +17,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-//TODO add mutable flag to traits
 type transactionRequest struct {
 	BaseReq             rest.BaseReq `json:"baseReq"`
 	FromID              string       `json:"fromID" valid:"required~required field fromID missing"`

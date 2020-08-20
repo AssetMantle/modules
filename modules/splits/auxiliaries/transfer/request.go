@@ -3,16 +3,20 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package supplement
+package transfer
 
 import (
 	"github.com/asaskevich/govalidator"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type auxiliaryRequest struct {
-	PropertyList []types.Property `json:"propertyList"`
+	FromID    types.ID     `json:"fromID" valid:"required~required field fromID missing matches(^[A-Za-z]$)~invalid field fromID"`
+	ToID      types.ID     `json:"toID" valid:"required~required field toID missing matches(^[A-Za-z]$)~invalid field toID"`
+	OwnableID types.ID     `json:"ownableID" valid:"required~required field ownableID missing matches(^[A-Za-z]$)~invalid field ownableID"`
+	Split     sdkTypes.Dec `json:"split" valid:"required~required field split missing matches(^[A-Za-z]$)~invalid field split"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -31,8 +35,11 @@ func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) au
 	}
 }
 
-func NewAuxiliaryRequest(propertyList ...types.Property) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(fromID types.ID, toID types.ID, ownableID types.ID, split sdkTypes.Dec) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		PropertyList: propertyList,
+		FromID:    fromID,
+		ToID:      toID,
+		OwnableID: ownableID,
+		Split:     split,
 	}
 }
