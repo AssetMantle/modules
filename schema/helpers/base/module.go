@@ -55,8 +55,7 @@ func (module module) ValidateGenesis(rawMessage json.RawMessage) error {
 }
 func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
 	for _, query := range module.queryList {
-		//TODO pick from query flags
-		router.HandleFunc(query.GetRoute()+"/{id}", query.RESTQueryHandler(cliContext)).Methods("GET")
+		router.HandleFunc(query.GetRoute()+"/{query}", query.RESTQueryHandler(cliContext)).Methods("GET")
 	}
 
 	for _, transaction := range module.transactionList {
