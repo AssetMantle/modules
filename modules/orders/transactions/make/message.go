@@ -9,7 +9,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -35,7 +35,7 @@ func (message Message) Type() string  { return Transaction.GetName() }
 func (message Message) ValidateBasic() error {
 	var _, Error = govalidator.ValidateStruct(message)
 	if Error != nil {
-		return errors.Wrap(constants.IncorrectMessage, Error.Error())
+		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
 	}
 	return nil
 }

@@ -7,7 +7,7 @@ package reveal
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -25,7 +25,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	metas := mapper.NewMetas(transactionKeeper.mapper, context).Fetch(metaID)
 	meta := metas.Get(metaID)
 	if meta != nil {
-		return newTransactionResponse(constants.EntityAlreadyExists)
+		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 	metas.Add(mapper.NewMeta(message.MetaFact.GetData()))
 	return newTransactionResponse(nil)

@@ -7,7 +7,7 @@ package issue
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
@@ -35,7 +35,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	identityID := mapper.NewIdentityID(message.ClassificationID, immutables.GetHashID())
 	identities := mapper.NewIdentities(transactionKeeper.mapper, context).Fetch(identityID)
 	if identities.Get(identityID) != nil {
-		return newTransactionResponse(constants.EntityAlreadyExists)
+		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
 	scrubMetaMutablesAuxiliaryResponse, Error := scrub.ValidateResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetMetaPropertyList()...)))

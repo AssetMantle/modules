@@ -7,7 +7,7 @@ package mutate
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
@@ -33,7 +33,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(message.AssetID)
 	asset := assets.Get(message.AssetID)
 	if asset == nil {
-		return newTransactionResponse(constants.EntityNotFound)
+		return newTransactionResponse(errors.EntityNotFound)
 	}
 
 	scrubMetaMutablesAuxiliaryResponse, Error := scrub.ValidateResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetMetaPropertyList()...)))

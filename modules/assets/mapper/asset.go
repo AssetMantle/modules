@@ -6,7 +6,7 @@
 package mapper
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
@@ -43,22 +43,22 @@ func (asset asset) GetMutables() types.Mutables {
 }
 
 func (asset asset) GetBurn() types.Property {
-	if burnProperty := asset.Immutables.Get().Get(base.NewID(constants.BurnProperty)); burnProperty != nil {
+	if burnProperty := asset.Immutables.Get().Get(base.NewID(properties.Burn)); burnProperty != nil {
 		return burnProperty
-	} else if burnProperty := asset.Mutables.Get().Get(base.NewID(constants.BurnProperty)); burnProperty != nil {
+	} else if burnProperty := asset.Mutables.Get().Get(base.NewID(properties.Burn)); burnProperty != nil {
 		return burnProperty
 	} else {
-		return base.NewProperty(base.NewID(constants.BurnProperty), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
+		return base.NewProperty(base.NewID(properties.Burn), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
 	}
 }
 
 func (asset asset) GetLock() types.Property {
-	if lockProperty := asset.Immutables.Get().Get(base.NewID(constants.LockProperty)); lockProperty != nil {
+	if lockProperty := asset.Immutables.Get().Get(base.NewID(properties.Lock)); lockProperty != nil {
 		return lockProperty
-	} else if lockProperty := asset.Mutables.Get().Get(base.NewID(constants.LockProperty)); lockProperty != nil {
+	} else if lockProperty := asset.Mutables.Get().Get(base.NewID(properties.Lock)); lockProperty != nil {
 		return lockProperty
 	} else {
-		return base.NewProperty(base.NewID(constants.LockProperty), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
+		return base.NewProperty(base.NewID(properties.Lock), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
 	}
 }
 

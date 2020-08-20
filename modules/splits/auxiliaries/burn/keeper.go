@@ -7,7 +7,7 @@ package burn
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
@@ -25,11 +25,11 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	splits := mapper.NewSplits(auxiliaryKeeper.mapper, context).Fetch(splitID)
 	split := splits.Get(splitID)
 	if split == nil {
-		return newAuxiliaryResponse(constants.EntityNotFound)
+		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 	split = split.Send(auxiliaryRequest.Split).(mappables.Split)
 	if split.GetSplit().LT(sdkTypes.ZeroDec()) {
-		return newAuxiliaryResponse(constants.InsufficientBalance)
+		return newAuxiliaryResponse(errors.InsufficientBalance)
 	} else if split.GetSplit().Equal(sdkTypes.ZeroDec()) {
 		splits.Remove(split)
 	} else {

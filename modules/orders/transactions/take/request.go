@@ -6,13 +6,12 @@
 package take
 
 import (
-	"errors"
-	"fmt"
+	"encoding/json"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
@@ -30,21 +29,27 @@ func (transactionRequest transactionRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(transactionRequest)
 	return Error
 }
-func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) helpers.TransactionRequest {
+func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
-		cliCommand.ReadString(constants.FromID),
-		cliCommand.ReadInt64(constants.TakerOwnableSplit),
-		cliCommand.ReadString(constants.OrderID),
-	)
+		cliCommand.ReadString(flags.FromID),
+		cliCommand.ReadInt64(flags.TakerOwnableSplit),
+		cliCommand.ReadString(flags.OrderID),
+	), nil
+}
+func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
+	if Error := json.Unmarshal(rawMessage, &transactionRequest); Error != nil {
+		return nil, Error
+	}
+	return transactionRequest, nil
 }
 func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
-func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
+func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
 	if Error != nil {
-		panic(errors.New(fmt.Sprintf("")))
+		return nil, Error
 	}
 
 	return newMessage(
@@ -52,7 +57,7 @@ func (transactionRequest transactionRequest) MakeMsg() sdkTypes.Msg {
 		base.NewID(transactionRequest.FromID),
 		sdkTypes.NewDec(transactionRequest.TakerOwnableSplit),
 		base.NewID(transactionRequest.OrderID),
-	)
+	), nil
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}

@@ -7,7 +7,7 @@ package verify
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
@@ -23,12 +23,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	identities := mapper.NewIdentities(auxiliaryKeeper.mapper, context).Fetch(auxiliaryRequest.IdentityID)
 	identity := identities.Get(auxiliaryRequest.IdentityID)
 	if identity == nil {
-		return newAuxiliaryResponse(constants.EntityNotFound)
+		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 	if identity.IsProvisioned(auxiliaryRequest.Address) {
 		return newAuxiliaryResponse(nil)
 	} else {
-		return newAuxiliaryResponse(constants.NotAuthorized)
+		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
 }
 
