@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/99designs/keyring v1.1.5
+	github.com/CosmWasm/wasmd v0.10.0
 	github.com/Shopify/sarama v1.19.0
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
 	github.com/bartekn/go-bip39 v0.0.0-20171116152956-a05967ea095d
