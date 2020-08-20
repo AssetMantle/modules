@@ -15,8 +15,4 @@ const PropertyIDAndDataSeparator = ":"
 const DataTypeAndStringSeparator = "|"
 const ToHashSeparator = "_"
 
-const StringType = "S"
-const DecType = "D"
-const HeightType = "H"
-
 const MaxTraitCount = 22

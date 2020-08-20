@@ -13,7 +13,7 @@ import (
 )
 
 type metaFact struct {
-	Data       types.Data       `json:"meta"`
+	Data       types.Data       `json:"data"`
 	Signatures types.Signatures `json:"signatures"`
 }
 
@@ -42,11 +42,13 @@ func ReadMetaFact(DataTypeAndString string) types.MetaFact {
 		dataType, dataString := dataTypeAndString[0], dataTypeAndString[1]
 		var data types.Data
 		switch dataType {
-		case constants.DecType:
+		case DecType:
 			data = ReadDecData(dataString)
-		case constants.HeightType:
+		case IDType:
+			data = ReadIDData(dataString)
+		case HeightType:
 			data = ReadHeightData(dataString)
-		case constants.StringType:
+		case StringType:
 			data = ReadStringData(dataString)
 		default:
 			return nil
