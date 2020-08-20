@@ -6,6 +6,7 @@
 package helpers
 
 import (
+	"encoding/json"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
 )
@@ -17,5 +18,8 @@ type Module interface {
 	GetKVStoreKey() *sdkTypes.KVStoreKey
 	GetDefaultParamspace() string
 	GetAuxiliary(string) Auxiliary
+
+	DecodeModuleTransactionRequest(string, json.RawMessage) (sdkTypes.Msg, error)
+
 	Initialize(...interface{}) Module
 }

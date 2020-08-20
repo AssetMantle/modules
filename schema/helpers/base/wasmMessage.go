@@ -11,12 +11,15 @@ import (
 )
 
 type wasmMessage struct {
-	MsgType string          `json:"msgtype,required"`
-	Raw     json.RawMessage `json:"raw,omitempty"`
+	Type       string          `json:"msgtype,required"`
+	RawMessage json.RawMessage `json:"raw,omitempty"`
 }
 
 var _ helpers.WasmMessage = (*wasmMessage)(nil)
 
-func (wasmMessage wasmMessage) Type() string                { return wasmMessage.MsgType }
-func (wasmMessage wasmMessage) Encode() []byte              { return nil }
-func (wasmMessage wasmMessage) Decode() helpers.WasmMessage { return nil }
+func (wasmMessage wasmMessage) GetType() string                { return wasmMessage.Type }
+func (wasmMessage wasmMessage) GetRawMessage() json.RawMessage { return wasmMessage.RawMessage }
+
+var WasmMessagePrototype helpers.WasmMessagePrototype = func() helpers.WasmMessage {
+	return wasmMessage{}
+}

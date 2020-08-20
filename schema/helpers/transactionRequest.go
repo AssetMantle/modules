@@ -6,14 +6,18 @@
 package helpers
 
 import (
+	"encoding/json"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
 type TransactionRequest interface {
-	Request
-	FromCLI(CLICommand, context.CLIContext) TransactionRequest
 	GetBaseReq() rest.BaseReq
-	MakeMsg() sdkTypes.Msg
+
+	FromCLI(CLICommand, context.CLIContext) (TransactionRequest, error)
+	FromJSON(json.RawMessage) (TransactionRequest, error)
+	MakeMsg() (sdkTypes.Msg, error)
+
+	Request
 }
