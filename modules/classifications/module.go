@@ -6,6 +6,7 @@
 package classifications
 
 import (
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/queries/classification"
@@ -21,7 +22,7 @@ var Module = base.NewModule(
 	mapper.TransactionRoute,
 	genesis.State,
 	mapper.Mapper,
-	[]helpers.Auxiliary{},
+	[]helpers.Auxiliary{conform.Auxiliary},
 	[]helpers.Query{classification.Query},
 	[]helpers.Transaction{define.Transaction},
 )
