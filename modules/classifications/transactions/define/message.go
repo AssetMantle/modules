@@ -15,7 +15,6 @@ import (
 
 type message struct {
 	From                sdkTypes.AccAddress  `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
-	FromID              types.ID             `json:"fromID" valid:"required~required field fromID missing"`
 	ImmutableMetaTraits types.MetaProperties `json:"immutableMetaTraits" valid:"required~required field immutableMetaTraits missing"`
 	ImmutableTraits     types.Properties     `json:"immutableTraits" valid:"required~required field immutableTraits missing"`
 	MutableMetaTraits   types.MetaProperties `json:"mutableMetaTraits" valid:"required~required field mutableMetaTraits missing"`
@@ -49,10 +48,9 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 	}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, immutableMetaTraits types.MetaProperties, immutableTraits types.Properties, mutableMetaTraits types.MetaProperties, mutableTraits types.Properties) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, immutableMetaTraits types.MetaProperties, immutableTraits types.Properties, mutableMetaTraits types.MetaProperties, mutableTraits types.Properties) sdkTypes.Msg {
 	return message{
 		From:                from,
-		FromID:              fromID,
 		ImmutableMetaTraits: immutableMetaTraits,
 		ImmutableTraits:     immutableTraits,
 		MutableMetaTraits:   mutableMetaTraits,
