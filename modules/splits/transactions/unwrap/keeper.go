@@ -25,11 +25,11 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if message.Split.LTE(sdkTypes.ZeroDec()) {
-		return newTransactionResponse(constants.NotAuthorized)
-	}
 	if Error := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); Error != nil {
 		return Error
+	}
+	if message.Split.LTE(sdkTypes.ZeroDec()) {
+		return newTransactionResponse(constants.NotAuthorized)
 	}
 	splitID := mapper.NewSplitID(message.FromID, message.OwnableID)
 	splits := mapper.NewSplits(transactionKeeper.mapper, context).Fetch(splitID)
