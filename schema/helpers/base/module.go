@@ -152,7 +152,7 @@ func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
 	}
 	panic(fmt.Sprintf("auxiliary %v not found/initialized", auxiliaryName))
 }
-func (module module) InitializeKeepers(auxiliaryKeepers ...interface{}) {
+func (module module) Initialize(auxiliaryKeepers ...interface{}) helpers.Module {
 
 	for _, auxiliary := range module.auxiliaryList {
 		auxiliary.InitializeKeeper(module.mapper, auxiliaryKeepers...)
@@ -166,7 +166,7 @@ func (module module) InitializeKeepers(auxiliaryKeepers ...interface{}) {
 		query.InitializeKeeper(module.mapper, auxiliaryKeepers...)
 	}
 
-	return
+	return module
 }
 func NewModule(moduleName string, defaultParamspace string, queryRoute string, transactionRoute string, genesisState helpers.GenesisState, mapper helpers.Mapper, auxiliaryList []helpers.Auxiliary, queryList []helpers.Query, transactionList []helpers.Transaction) helpers.Module {
 	return module{
