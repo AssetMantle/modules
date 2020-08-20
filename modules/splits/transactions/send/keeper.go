@@ -40,7 +40,10 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(constants.NotAuthorized)
 	} else if fromSplit.GetSplit().Equal(sdkTypes.ZeroDec()) {
 		splits.Remove(fromSplit)
+	}else {Removing identity permissioning from define classification transaction.
+		splits.Mutate(fromSplit)
 	}
+
 	toSplitID := mapper.NewSplitID(message.ToID, message.OwnableID)
 	toSplit := splits.Fetch(toSplitID).Get(toSplitID)
 	if toSplit == nil {
