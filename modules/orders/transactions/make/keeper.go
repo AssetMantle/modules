@@ -56,7 +56,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		if Error != nil {
 			return newTransactionResponse(Error)
 		}
-		oldMakerOwnableSplitMetaProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty)
+		oldMakerOwnableSplitMetaProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(constants.MakerOwnableSplitProperty))
 		if oldMakerOwnableSplitMetaProperty == nil {
 			return newTransactionResponse(constants.MetaDataError)
 		} else {
@@ -68,8 +68,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			}
 		}
 	}
-	mutableMetaProperties := message.MutableMetaProperties.AddMetaProperty(base.NewMetaProperty(constants.ExpiryProperty, base.NewMetaFact(base.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight())))))
-	mutableMetaProperties = message.MutableMetaProperties.AddMetaProperty(base.NewMetaProperty(constants.MakerOwnableSplitProperty, base.NewMetaFact(base.NewDecData(makerOwnableSplit))))
+	mutableMetaProperties := message.MutableMetaProperties.AddMetaProperty(base.NewMetaProperty(base.NewID(constants.ExpiryProperty), base.NewMetaFact(base.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight())))))
+	mutableMetaProperties = message.MutableMetaProperties.AddMetaProperty(base.NewMetaProperty(base.NewID(constants.MakerOwnableSplitProperty), base.NewMetaFact(base.NewDecData(makerOwnableSplit))))
 	scrubMetaMutablesAuxiliaryResponse, Error := scrub.ValidateResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetMetaPropertyList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)

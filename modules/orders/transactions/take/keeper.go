@@ -43,7 +43,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		newTransactionResponse(Error)
 	}
 
-	if takerIDProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(constants.TakerIDProperty); takerIDProperty != nil {
+	if takerIDProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(constants.TakerIDProperty)); takerIDProperty != nil {
 		takerID, Error := takerIDProperty.GetMetaFact().GetData().AsID()
 		if Error == nil {
 			if takerID.Compare(message.FromID) != 0 {
@@ -55,7 +55,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	exchangeRateProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(constants.ExchangeRateProperty)
+	exchangeRateProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(constants.ExchangeRateProperty))
 	if exchangeRateProperty == nil {
 		return newTransactionResponse(constants.MetaDataError)
 	}
@@ -64,7 +64,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(constants.MetaDataError)
 	}
 
-	makerOwnableSplitProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty)
+	makerOwnableSplitProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(constants.MakerOwnableSplitProperty))
 	if makerOwnableSplitProperty == nil {
 		return newTransactionResponse(constants.MetaDataError)
 	}
@@ -83,7 +83,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), message.FromID, order.GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 			return newTransactionResponse(auxiliaryResponse.GetError())
 		}
-		scrubMetaMutablesAuxiliaryResponse, Error := scrub.ValidateResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(constants.MakerSplitProperty, base.NewMetaFact(base.NewDecData(makerOwnableSplit))))))
+		scrubMetaMutablesAuxiliaryResponse, Error := scrub.ValidateResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(constants.MakerSplitProperty), base.NewMetaFact(base.NewDecData(makerOwnableSplit))))))
 		if Error != nil {
 			return newTransactionResponse(Error)
 		}
