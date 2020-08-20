@@ -13,8 +13,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-//TODO make private
-type Message struct {
+type message struct {
 	From                    sdkTypes.AccAddress  `json:"from" valid:"required~required field from missing"`
 	FromID                  types.ID             `json:"fromID" valid:"required~required field fromID missing"`
 	ClassificationID        types.ID             `json:"classificationID" valid:"required~required field classificationID missing matches(^[A-Za-z]$)~invalid field classificationID"`
@@ -28,35 +27,35 @@ type Message struct {
 	MutableProperties       types.Properties     `json:"mutableProperties" valid:"required~required field mutableProperties missing matches(^[A-Za-z]$)~invalid field mutableProperties"`
 }
 
-var _ sdkTypes.Msg = Message{}
+var _ sdkTypes.Msg = message{}
 
-func (message Message) Route() string { return Transaction.GetModuleName() }
-func (message Message) Type() string  { return Transaction.GetName() }
-func (message Message) ValidateBasic() error {
+func (message message) Route() string { return Transaction.GetModuleName() }
+func (message message) Type() string  { return Transaction.GetName() }
+func (message message) ValidateBasic() error {
 	var _, Error = govalidator.ValidateStruct(message)
 	if Error != nil {
 		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
 	}
 	return nil
 }
-func (message Message) GetSignBytes() []byte {
+func (message message) GetSignBytes() []byte {
 	return sdkTypes.MustSortJSON(packageCodec.MustMarshalJSON(message))
 }
-func (message Message) GetSigners() []sdkTypes.AccAddress {
+func (message message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
 
-func messageFromInterface(msg sdkTypes.Msg) Message {
+func messageFromInterface(msg sdkTypes.Msg) message {
 	switch value := msg.(type) {
-	case Message:
+	case message:
 		return value
 	default:
-		return Message{}
+		return message{}
 	}
 }
 
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, expiresIn types.Height, makerOwnableSplit sdkTypes.Dec, immutableMetaProperties types.MetaProperties, immutableProperties types.Properties, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
-	return Message{
+	return message{
 		From:                    from,
 		FromID:                  fromID,
 		ClassificationID:        classificationID,
