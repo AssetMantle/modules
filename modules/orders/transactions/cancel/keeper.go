@@ -42,7 +42,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
-	makerOwnableSplitProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty)
+	makerOwnableSplitProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(constants.MakerOwnableSplitProperty))
 	if makerOwnableSplitProperty == nil {
 		return newTransactionResponse(constants.MetaDataError)
 	}
