@@ -15,9 +15,11 @@ import (
 )
 
 func RegisterCodec(codec *codec.Codec) {
+	codec.RegisterInterface((*error)(nil), nil)
 	types.RegisterCodec(codec)
 	base.RegisterCodec(codec)
 	mappables.RegisterCodec(codec)
 	mappers.RegisterCodec(codec)
 	helpers.RegisterCodec(codec)
+
 }
