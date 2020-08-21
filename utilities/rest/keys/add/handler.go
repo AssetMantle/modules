@@ -59,7 +59,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
 		}
-
+		keyOutput.Mnemonic = mnemonic
 		rest.PostProcessResponse(responseWriter, cliContext, newResponse(keyOutput, nil))
 	}
 }

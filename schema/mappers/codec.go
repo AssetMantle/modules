@@ -11,6 +11,7 @@ import (
 
 func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*Chains)(nil), nil)
+	codec.RegisterInterface((*Classifications)(nil), nil)
 	codec.RegisterInterface((*InterIdentities)(nil), nil)
 	codec.RegisterInterface((*InterNFTs)(nil), nil)
 	codec.RegisterInterface((*Maintainers)(nil), nil)

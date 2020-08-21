@@ -51,8 +51,9 @@ func NewDecData(value sdkTypes.Dec) types.Data {
 }
 
 func ReadDecData(dataString string) types.Data {
-	if dec, Error := sdkTypes.NewDecFromStr(dataString); Error != nil {
-		return NewDecData(dec)
+	dec, Error := sdkTypes.NewDecFromStr(dataString)
+	if Error != nil {
+		return nil
 	}
-	return nil
+	return NewDecData(dec)
 }

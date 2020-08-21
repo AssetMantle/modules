@@ -8,9 +8,12 @@ package base
 import "github.com/cosmos/cosmos-sdk/codec"
 
 func RegisterCodec(codec *codec.Codec) {
+	codec.RegisterConcrete(decData{}, "xprt/decData", nil)
 	codec.RegisterConcrete(fact{}, "xprt/fact", nil)
 	codec.RegisterConcrete(height{}, "xprt/height", nil)
+	codec.RegisterConcrete(heightData{}, "xprt/heightData", nil)
 	codec.RegisterConcrete(id{}, "xprt/id", nil)
+	codec.RegisterConcrete(idData{}, "xprt/idData", nil)
 	codec.RegisterConcrete(immutables{}, "xprt/immutables", nil)
 	codec.RegisterConcrete(metaFact{}, "xprt/metaFact", nil)
 	codec.RegisterConcrete(metaProperties{}, "xprt/metaProperties", nil)
