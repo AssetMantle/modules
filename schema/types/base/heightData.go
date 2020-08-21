@@ -7,11 +7,13 @@ package base
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 	"strconv"
 )
+
+const HeightType = "H"
 
 type heightData struct {
 	Value types.Height `json:"value"`
@@ -24,11 +26,11 @@ func (heightData heightData) GenerateHash() string {
 }
 
 func (heightData heightData) AsString() (string, error) {
-	return "", constants.EntityNotFound
+	return "", errors.EntityNotFound
 }
 
 func (heightData heightData) AsDec() (sdkTypes.Dec, error) {
-	return sdkTypes.Dec{}, constants.EntityNotFound
+	return sdkTypes.Dec{}, errors.EntityNotFound
 }
 
 func (heightData heightData) AsHeight() (types.Height, error) {
@@ -40,7 +42,7 @@ func (heightData heightData) Get() interface{} {
 }
 
 func (heightData heightData) AsID() (types.ID, error) {
-	return id{}, constants.EntityNotFound
+	return id{}, errors.EntityNotFound
 }
 
 func NewHeightData(value types.Height) types.Data {

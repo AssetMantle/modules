@@ -8,6 +8,7 @@ package define
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -37,13 +38,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	mutableTraits := base.NewMutables(base.NewProperties(append(scrubMutableMetaTraitsAuxiliaryResponse.Properties.GetList(), message.MutableMetaTraits.GetList()...)))
 
 	if len(immutableTraits.Get().GetList())+len(mutableTraits.Get().GetList()) > constants.MaxTraitCount {
-		return newTransactionResponse(constants.NotAuthorized)
+		return newTransactionResponse(errors.NotAuthorized)
 	}
 
 	classificationID := mapper.NewClassificationID(base.NewID(context.ChainID()), immutableTraits, mutableTraits)
 	classifications := mapper.NewClassifications(transactionKeeper.mapper, context).Fetch(classificationID)
 	if classifications.Get(classificationID) != nil {
-		return newTransactionResponse(constants.EntityAlreadyExists)
+		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
 	classifications = classifications.Add(mapper.NewClassification(classificationID, immutableTraits, mutableTraits))

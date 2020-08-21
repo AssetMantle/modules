@@ -7,7 +7,7 @@ package deputize
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/mapper"
@@ -34,13 +34,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	fromMaintainerID := mapper.NewMaintainerID(message.ClassificationID, message.FromID)
 	fromMaintainer := maintainers.Fetch(fromMaintainerID).Get(fromMaintainerID)
 	if fromMaintainer == nil || !fromMaintainer.CanAddMaintainer() {
-		return newTransactionResponse(constants.NotAuthorized)
+		return newTransactionResponse(errors.NotAuthorized)
 	}
 
 	toMaintainerID := mapper.NewMaintainerID(message.ClassificationID, message.FromID)
 	toMaintainer := maintainers.Fetch(toMaintainerID).Get(toMaintainerID)
 	if toMaintainer != nil {
-		return newTransactionResponse(constants.EntityAlreadyExists)
+		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
 	mutables := base.NewMutables(message.MaintainedTraits)

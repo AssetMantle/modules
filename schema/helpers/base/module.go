@@ -13,6 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gorilla/mux"
+	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -152,6 +153,16 @@ func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
 	}
 	panic(fmt.Sprintf("auxiliary %v not found/initialized", auxiliaryName))
 }
+
+func (module module) DecodeModuleTransactionRequest(transactionName string, rawMessage json.RawMessage) (sdkTypes.Msg, error) {
+	for _, transaction := range module.transactionList {
+		if transaction.GetName() == transactionName {
+			return transaction.DecodeTransactionRequest(rawMessage)
+		}
+	}
+	return nil, xprtErrors.IncorrectMessage
+}
+
 func (module module) Initialize(auxiliaryKeepers ...interface{}) helpers.Module {
 
 	for _, auxiliary := range module.auxiliaryList {

@@ -6,7 +6,7 @@
 package mutate
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -21,5 +21,5 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]helpers.CLIFlag{constants.AssetID, constants.FromID, constants.MutableMetaProperties, constants.MutableProperties},
+	[]helpers.CLIFlag{flags.AssetID, flags.FromID, flags.MutableMetaProperties, flags.MutableProperties},
 )

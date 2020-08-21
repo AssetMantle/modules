@@ -7,7 +7,8 @@ package cancel
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
@@ -33,18 +34,18 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(message.OrderID)
 	order := orders.Get(message.OrderID)
 	if order == nil {
-		return newTransactionResponse(constants.EntityNotFound)
+		return newTransactionResponse(errors.EntityNotFound)
 	}
 	if message.FromID.Compare(order.GetMakerID()) != 0 {
-		return newTransactionResponse(constants.NotAuthorized)
+		return newTransactionResponse(errors.NotAuthorized)
 	}
 	auxiliaryResponse, Error := supplement.ValidateResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetMakerOwnableSplit())))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
-	makerOwnableSplitProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(constants.MakerOwnableSplitProperty))
+	makerOwnableSplitProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit))
 	if makerOwnableSplitProperty == nil {
-		return newTransactionResponse(constants.MetaDataError)
+		return newTransactionResponse(errors.MetaDataError)
 	}
 	makerOwnableSplit, Error := makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
 	if Error != nil {

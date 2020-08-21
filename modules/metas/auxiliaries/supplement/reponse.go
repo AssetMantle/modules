@@ -6,7 +6,7 @@
 package supplement
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
@@ -49,6 +49,6 @@ func ValidateResponse(auxiliaryResponse helpers.AuxiliaryResponse) (AuxiliaryRes
 			return AuxiliaryResponse{}, auxiliaryResponse.GetError()
 		}
 	default:
-		return AuxiliaryResponse{}, constants.NotAuthorized
+		return AuxiliaryResponse{}, errors.NotAuthorized
 	}
 }

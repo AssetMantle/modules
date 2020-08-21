@@ -6,7 +6,7 @@
 package send
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -21,5 +21,5 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]helpers.CLIFlag{constants.FromID, constants.ToID, constants.OwnableID, constants.Split},
+	[]helpers.CLIFlag{flags.FromID, flags.ToID, flags.OwnableID, flags.Split},
 )

@@ -7,7 +7,8 @@ package make
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
@@ -56,20 +57,20 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		if Error != nil {
 			return newTransactionResponse(Error)
 		}
-		oldMakerOwnableSplitMetaProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(constants.MakerOwnableSplitProperty))
+		oldMakerOwnableSplitMetaProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit))
 		if oldMakerOwnableSplitMetaProperty == nil {
-			return newTransactionResponse(constants.MetaDataError)
+			return newTransactionResponse(errors.MetaDataError)
 		} else {
 			oldMakerOwnableSplit, Error := oldMakerOwnableSplitMetaProperty.GetMetaFact().GetData().AsDec()
 			if Error != nil {
-				newTransactionResponse(constants.MetaDataError)
+				newTransactionResponse(errors.MetaDataError)
 			} else {
 				makerOwnableSplit = oldMakerOwnableSplit.Add(makerOwnableSplit)
 			}
 		}
 	}
-	mutableMetaProperties := message.MutableMetaProperties.AddMetaProperty(base.NewMetaProperty(base.NewID(constants.ExpiryProperty), base.NewMetaFact(base.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight())))))
-	mutableMetaProperties = message.MutableMetaProperties.AddMetaProperty(base.NewMetaProperty(base.NewID(constants.MakerOwnableSplitProperty), base.NewMetaFact(base.NewDecData(makerOwnableSplit))))
+	mutableMetaProperties := message.MutableMetaProperties.AddMetaProperty(base.NewMetaProperty(base.NewID(properties.Expiry), base.NewMetaFact(base.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight())))))
+	mutableMetaProperties = message.MutableMetaProperties.AddMetaProperty(base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(makerOwnableSplit))))
 	scrubMetaMutablesAuxiliaryResponse, Error := scrub.ValidateResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetMetaPropertyList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)
