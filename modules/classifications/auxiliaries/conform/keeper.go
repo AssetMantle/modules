@@ -30,7 +30,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 		for _, immutableProperty := range auxiliaryRequest.Immutables.Get().GetList() {
-			if trait := classification.GetImmutables().Get().Get(immutableProperty.GetID()); trait == nil || trait.GetFact().GetHash() == "" && trait.GetFact().GetHash() == immutableProperty.GetFact().GetHash() {
+			if trait := classification.GetImmutables().Get().Get(immutableProperty.GetID()); trait == nil || trait.GetFact().GetHash() != "" && trait.GetFact().GetHash() != immutableProperty.GetFact().GetHash() {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}
