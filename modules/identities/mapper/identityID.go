@@ -40,10 +40,10 @@ func (identityID identityID) Compare(id types.ID) int {
 
 func readIdentityID(identityIDString string) types.ID {
 	idList := strings.Split(identityIDString, constants.CompositeIDSeparator)
-	if len(idList) == 4 {
+	if len(idList) == 2 {
 		return identityID{
-			ClassificationID: base.NewID(idList[2]),
-			HashID:           base.NewID(idList[3]),
+			ClassificationID: base.NewID(idList[0]),
+			HashID:           base.NewID(idList[1]),
 		}
 	}
 	return identityID{ClassificationID: base.NewID(""), HashID: base.NewID("")}
