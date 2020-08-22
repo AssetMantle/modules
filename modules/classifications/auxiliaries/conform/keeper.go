@@ -26,7 +26,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 	if auxiliaryRequest.Immutables != nil {
-		if len(auxiliaryRequest.Immutables.Get().GetList()) != len(classification.GetMutables().Get().GetList()) {
+		if len(auxiliaryRequest.Immutables.Get().GetList()) != len(classification.GetImmutables().Get().GetList()) {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 		for _, immutableProperty := range auxiliaryRequest.Immutables.Get().GetList() {

@@ -51,8 +51,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if burnHeight.IsGreaterThan(base.NewHeight(context.BlockHeight())) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
-	if Error := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.SmallestDec())); Error != nil {
-		return Error
+	if auxiliaryResponse := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.SmallestDec())); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 	assets.Remove(asset)
 	return newTransactionResponse(nil)
