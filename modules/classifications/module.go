@@ -7,10 +7,11 @@ package classifications
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/define"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/queries/classification"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/transactions/define"
+
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
@@ -22,7 +23,7 @@ var Module = base.NewModule(
 	mapper.TransactionRoute,
 	genesis.State,
 	mapper.Mapper,
-	[]helpers.Auxiliary{conform.Auxiliary},
+	[]helpers.Auxiliary{conform.Auxiliary, define.Auxiliary},
 	[]helpers.Query{classification.Query},
-	[]helpers.Transaction{define.Transaction},
+	[]helpers.Transaction{},
 )
