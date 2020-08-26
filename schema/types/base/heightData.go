@@ -22,6 +22,9 @@ type heightData struct {
 var _ types.Data = (*heightData)(nil)
 
 func (heightData heightData) GenerateHash() string {
+	if heightData.Value.Get() == 0 {
+		return ""
+	}
 	return meta.Hash(strconv.FormatInt(heightData.Value.Get(), 10))
 }
 

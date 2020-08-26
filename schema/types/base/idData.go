@@ -22,6 +22,9 @@ type idData struct {
 var _ types.Data = (*idData)(nil)
 
 func (idData idData) GenerateHash() string {
+	if idData.Value.String() == "" {
+		return ""
+	}
 	return meta.Hash(idData.Value.String())
 }
 

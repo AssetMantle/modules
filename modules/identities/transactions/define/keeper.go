@@ -39,13 +39,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
-	immutableTraits := base.NewImmutables(base.NewProperties(append(immutableProperties.GetList(), message.ImmutableTraits.GetList()...)))
+	immutableTraits := base.NewImmutables(base.NewProperties(append(immutableProperties.GetList(), message.ImmutableTraits.GetList()...)...))
 
 	mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaTraits.GetMetaPropertyList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
-	mutableTraits := base.NewMutables(base.NewProperties(append(mutableProperties.GetList(), message.MutableTraits.GetList()...)))
+	mutableTraits := base.NewMutables(base.NewProperties(append(mutableProperties.GetList(), message.MutableTraits.GetList()...)...))
 
 	classificationID, Error := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(immutableTraits, mutableTraits)))
 	if Error != nil {

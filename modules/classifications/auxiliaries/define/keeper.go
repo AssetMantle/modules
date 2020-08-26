@@ -30,7 +30,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	classificationID := mapper.NewClassificationID(base.NewID(context.ChainID()), auxiliaryRequest.ImmutableTraits, auxiliaryRequest.MutableTraits)
 	classifications := mapper.NewClassifications(auxiliaryKeeper.mapper, context).Fetch(classificationID)
 	if classifications.Get(classificationID) != nil {
-		return newAuxiliaryResponse(nil, errors.EntityAlreadyExists)
+		return newAuxiliaryResponse(classificationID, errors.EntityAlreadyExists)
 	}
 
 	classifications = classifications.Add(mapper.NewClassification(classificationID, auxiliaryRequest.ImmutableTraits, auxiliaryRequest.MutableTraits))

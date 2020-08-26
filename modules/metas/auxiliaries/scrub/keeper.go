@@ -27,7 +27,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 		metas.Add(mapper.NewMeta(metaProperty.GetMetaFact().GetData()))
 		scrubbedPropertyList = append(scrubbedPropertyList, metaProperty.RemoveData())
 	}
-	return newAuxiliaryResponse(base.NewProperties(scrubbedPropertyList), nil)
+	return newAuxiliaryResponse(base.NewProperties(scrubbedPropertyList...), nil)
 }
 
 func initializeAuxiliaryKeeper(mapper helpers.Mapper, _ []interface{}) helpers.AuxiliaryKeeper {
