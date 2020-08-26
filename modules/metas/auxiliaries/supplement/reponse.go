@@ -11,44 +11,43 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type AuxiliaryResponse struct {
+type auxiliaryResponse struct {
 	Success        bool                 `json:"success"`
 	Error          error                `json:"error"`
 	MetaProperties types.MetaProperties `json:"metaProperties"`
 }
 
-var _ helpers.AuxiliaryResponse = (*AuxiliaryResponse)(nil)
+var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
 
-func (auxiliaryResponse AuxiliaryResponse) IsSuccessful() bool {
+func (auxiliaryResponse auxiliaryResponse) IsSuccessful() bool {
 	return auxiliaryResponse.Success
 }
-func (auxiliaryResponse AuxiliaryResponse) GetError() error {
+func (auxiliaryResponse auxiliaryResponse) GetError() error {
 	return auxiliaryResponse.Error
 }
 func newAuxiliaryResponse(metaProperties types.MetaProperties, error error) helpers.AuxiliaryResponse {
 	if error != nil {
-		return AuxiliaryResponse{
+		return auxiliaryResponse{
 			Success: false,
 			Error:   error,
 		}
 	} else {
-		return AuxiliaryResponse{
+		return auxiliaryResponse{
 			Success:        true,
 			MetaProperties: metaProperties,
 		}
 	}
-
 }
 
-func ValidateResponse(auxiliaryResponse helpers.AuxiliaryResponse) (AuxiliaryResponse, error) {
-	switch value := auxiliaryResponse.(type) {
-	case AuxiliaryResponse:
-		if auxiliaryResponse.IsSuccessful() {
-			return value, nil
+func GetMetaPropertiesFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse) (types.MetaProperties, error) {
+	switch value := AuxiliaryResponse.(type) {
+	case auxiliaryResponse:
+		if value.IsSuccessful() {
+			return value.MetaProperties, nil
 		} else {
-			return AuxiliaryResponse{}, auxiliaryResponse.GetError()
+			return nil, value.GetError()
 		}
 	default:
-		return AuxiliaryResponse{}, errors.NotAuthorized
+		panic(errors.InvalidRequest)
 	}
 }
