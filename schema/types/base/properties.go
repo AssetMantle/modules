@@ -33,7 +33,7 @@ func (properties properties) GetList() []types.Property {
 func (properties properties) Add(property types.Property) types.Properties {
 	propertyList := properties.GetList()
 	propertyList = append(propertyList, property)
-	return NewProperties(propertyList)
+	return NewProperties(propertyList...)
 }
 func (properties properties) Remove(property types.Property) types.Properties {
 	propertyList := properties.GetList()
@@ -42,7 +42,7 @@ func (properties properties) Remove(property types.Property) types.Properties {
 			propertyList = append(propertyList[:i], propertyList[i+1:]...)
 		}
 	}
-	return NewProperties(propertyList)
+	return NewProperties(propertyList...)
 }
 func (properties properties) Mutate(property types.Property) types.Properties {
 	propertyList := properties.GetList()
@@ -51,9 +51,9 @@ func (properties properties) Mutate(property types.Property) types.Properties {
 			propertyList[i] = property
 		}
 	}
-	return NewProperties(propertyList)
+	return NewProperties(propertyList...)
 }
-func NewProperties(propertyList []types.Property) types.Properties {
+func NewProperties(propertyList ...types.Property) types.Properties {
 	return properties{
 		PropertyList: propertyList,
 	}

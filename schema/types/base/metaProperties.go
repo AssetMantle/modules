@@ -80,7 +80,7 @@ func (metaProperties metaProperties) GetList() []types.Property {
 func (metaProperties metaProperties) Add(property types.Property) types.Properties {
 	propertyList := metaProperties.GetList()
 	propertyList = append(propertyList, property)
-	return NewProperties(propertyList)
+	return NewProperties(propertyList...)
 }
 
 func (metaProperties metaProperties) Remove(property types.Property) types.Properties {
@@ -90,7 +90,7 @@ func (metaProperties metaProperties) Remove(property types.Property) types.Prope
 			propertyList = append(propertyList[:i], propertyList[i+1:]...)
 		}
 	}
-	return NewProperties(propertyList)
+	return NewProperties(propertyList...)
 }
 
 func (metaProperties metaProperties) Mutate(property types.Property) types.Properties {
@@ -100,7 +100,7 @@ func (metaProperties metaProperties) Mutate(property types.Property) types.Prope
 			propertyList[i] = property
 		}
 	}
-	return NewProperties(propertyList)
+	return NewProperties(propertyList...)
 }
 
 func (metaProperties metaProperties) RemoveData() types.Properties {
@@ -108,7 +108,7 @@ func (metaProperties metaProperties) RemoveData() types.Properties {
 	for _, oldMetaProperty := range metaProperties.GetMetaPropertyList() {
 		propertyList = append(propertyList, oldMetaProperty.RemoveData())
 	}
-	return NewProperties(propertyList)
+	return NewProperties(propertyList...)
 }
 
 func NewMetaProperties(metaPropertyList []types.MetaProperty) types.MetaProperties {
