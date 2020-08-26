@@ -8,11 +8,12 @@ package properties
 //Note: Arranged alphabetically
 const (
 	Burn              = "burn"
+	ExchangeRate      = "exchangeRate"
 	Creation          = "creation"
 	Expiry            = "expiry"
 	Lock              = "lock"
 	MakerSplit        = "makerSplit"
 	MakerOwnableSplit = "makerOwnableSplit"
+	NubID             = "nubID"
 	TakerID           = "takerID"
-	ExchangeRate      = "exchangeRate"
 )
