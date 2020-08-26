@@ -81,10 +81,10 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	} else if updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()) {
 		orders.Remove(order)
 	} else {
-		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), message.FromID, order.GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), message.FromID, order.GetMakerOwnableID(), sendMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 			return newTransactionResponse(auxiliaryResponse.GetError())
 		}
-		scrubMetaMutablesAuxiliaryResponse, Error := scrub.ValidateResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(properties.MakerSplit), base.NewMetaFact(base.NewDecData(makerOwnableSplit))))))
+		scrubMetaMutablesAuxiliaryResponse, Error := scrub.ValidateResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(properties.MakerSplit), base.NewMetaFact(base.NewDecData(updatedMakerOwnableSplit))))))
 		if Error != nil {
 			return newTransactionResponse(Error)
 		}
