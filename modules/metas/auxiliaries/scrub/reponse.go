@@ -39,15 +39,15 @@ func newAuxiliaryResponse(properties types.Properties, error error) helpers.Auxi
 	}
 }
 
-func ValidateResponse(auxiliaryResponse helpers.AuxiliaryResponse) (AuxiliaryResponse, error) {
+func GetPropertiesFromResponse(auxiliaryResponse helpers.AuxiliaryResponse) (types.Properties, error) {
 	switch value := auxiliaryResponse.(type) {
 	case AuxiliaryResponse:
 		if auxiliaryResponse.IsSuccessful() {
-			return value, nil
+			return value.Properties, nil
 		} else {
-			return AuxiliaryResponse{}, auxiliaryResponse.GetError()
+			return nil, auxiliaryResponse.GetError()
 		}
 	default:
-		return AuxiliaryResponse{}, errors.NotAuthorized
+		return nil, errors.NotAuthorized
 	}
 }
