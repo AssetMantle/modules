@@ -43,13 +43,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	mutables := base.NewMutables(message.MaintainedTraits)
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, nil, mutables)); !auxiliaryResponse.IsSuccessful() {
+	mutableTraits := base.NewMutables(message.MaintainedTraits)
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, nil, mutableTraits)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	//TODO add classification maintainer ids
-	maintainers = maintainers.Add(mapper.NewMaintainer(toMaintainerID, message.MaintainedTraits, message.AddMaintainer, message.RemoveMaintainer, message.MutateMaintainer))
+	maintainers = maintainers.Add(mapper.NewMaintainer(toMaintainerID, mutableTraits, message.AddMaintainer, message.RemoveMaintainer, message.MutateMaintainer))
 	return newTransactionResponse(nil)
 }
 
