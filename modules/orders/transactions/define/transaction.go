@@ -21,5 +21,5 @@ var Transaction = base.NewTransaction(
 	registerCodec,
 	initializeTransactionKeeper,
 	requestPrototype,
-	[]helpers.CLIFlag{flags.FromID, flags.ImmutableMetaProperties, flags.ImmutableProperties, flags.MutableMetaProperties, flags.MutableProperties},
+	[]helpers.CLIFlag{flags.FromID, flags.ImmutableMetaTraits, flags.ImmutableTraits, flags.MutableMetaTraits, flags.MutableTraits},
 )

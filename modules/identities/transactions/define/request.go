@@ -56,13 +56,30 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, Error
 	}
 
+	immutableMetaTraits, Error := base.ReadMetaProperties(transactionRequest.ImmutableMetaTraits)
+	if Error != nil {
+		return nil, Error
+	}
+	immutableTraits, Error := base.ReadProperties(transactionRequest.ImmutableTraits)
+	if Error != nil {
+		return nil, Error
+	}
+	mutableMetaTraits, Error := base.ReadMetaProperties(transactionRequest.MutableMetaTraits)
+	if Error != nil {
+		return nil, Error
+	}
+	mutableTraits, Error := base.ReadProperties(transactionRequest.MutableTraits)
+	if Error != nil {
+		return nil, Error
+	}
+
 	return newMessage(
 		from,
 		base.NewID(transactionRequest.FromID),
-		base.ReadMetaProperties(transactionRequest.ImmutableMetaTraits),
-		base.ReadProperties(transactionRequest.ImmutableTraits),
-		base.ReadMetaProperties(transactionRequest.MutableMetaTraits),
-		base.ReadProperties(transactionRequest.MutableTraits),
+		immutableMetaTraits,
+		immutableTraits,
+		mutableMetaTraits,
+		mutableTraits,
 	), nil
 }
 func requestPrototype() helpers.TransactionRequest {

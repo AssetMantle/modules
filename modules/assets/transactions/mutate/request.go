@@ -53,12 +53,22 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	if Error != nil {
 		return nil, Error
 	}
+
+	mutableMetaProperties, Error := base.ReadMetaProperties(transactionRequest.MutableMetaProperties)
+	if Error != nil {
+		return nil, Error
+	}
+	mutableProperties, Error := base.ReadProperties(transactionRequest.MutableProperties)
+	if Error != nil {
+		return nil, Error
+	}
+
 	return newMessage(
 		from,
 		base.NewID(transactionRequest.FromID),
 		base.NewID(transactionRequest.AssetID),
-		base.ReadMetaProperties(transactionRequest.MutableMetaProperties),
-		base.ReadProperties(transactionRequest.MutableProperties),
+		mutableMetaProperties,
+		mutableProperties,
 	), nil
 }
 func requestPrototype() helpers.TransactionRequest {
