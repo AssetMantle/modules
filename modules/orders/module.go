@@ -10,6 +10,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/queries/order"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/transactions/cancel"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/transactions/define"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/transactions/make"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/transactions/take"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -25,5 +26,5 @@ var Module = base.NewModule(
 	mapper.Mapper,
 	[]helpers.Auxiliary{},
 	[]helpers.Query{order.Query},
-	[]helpers.Transaction{cancel.Transaction, make.Transaction, take.Transaction},
+	[]helpers.Transaction{define.Transaction, cancel.Transaction, make.Transaction, take.Transaction},
 )
