@@ -12,10 +12,8 @@ import (
 )
 
 type auxiliaryRequest struct {
-	ImmutableMetaTraits types.MetaProperties `json:"immutableMetaTraits" valid:"required~required field immutableMetaTraits missing"`
-	ImmutableTraits     types.Properties     `json:"immutableTraits" valid:"required~required field immutableTraits missing"`
-	MutableMetaTraits   types.MetaProperties `json:"mutableMetaTraits" valid:"required~required field mutableMetaTraits missing"`
-	MutableTraits       types.Properties     `json:"mutableTraits" valid:"required~required field mutableTraits missing"`
+	ImmutableTraits types.Immutables `json:"immutableTraits" valid:"required~required field immutableTraits missing"`
+	MutableTraits   types.Mutables   `json:"mutableTraits" valid:"required~required field mutableTraits missing"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -34,11 +32,9 @@ func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) au
 	}
 }
 
-func NewAuxiliaryRequest(immutableMetaTraits types.MetaProperties, immutableTraits types.Properties, mutableMetaTraits types.MetaProperties, mutableTraits types.Properties) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(immutableTraits types.Immutables, mutableTraits types.Mutables) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		ImmutableMetaTraits: immutableMetaTraits,
-		ImmutableTraits:     immutableTraits,
-		MutableMetaTraits:   mutableMetaTraits,
-		MutableTraits:       mutableTraits,
+		ImmutableTraits: immutableTraits,
+		MutableTraits:   mutableTraits,
 	}
 }
