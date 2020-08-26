@@ -21,6 +21,9 @@ type decData struct {
 var _ types.Data = (*decData)(nil)
 
 func (decData decData) GenerateHash() string {
+	if decData.Value.IsZero() {
+		return ""
+	}
 	return meta.Hash(decData.Value.String())
 }
 

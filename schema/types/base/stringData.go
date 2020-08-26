@@ -21,6 +21,9 @@ type stringData struct {
 var _ types.Data = (*stringData)(nil)
 
 func (stringData stringData) GenerateHash() string {
+	if stringData.Value == "" {
+		return ""
+	}
 	return meta.Hash(stringData.Value)
 }
 
