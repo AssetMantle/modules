@@ -7,8 +7,6 @@ package define
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -20,10 +18,11 @@ import (
 
 type transactionRequest struct {
 	BaseReq             rest.BaseReq `json:"baseReq"`
-	ImmutableMetaTraits string       `json:"immutableMetaTraits" valid:"required~required field immutableMetaTraits missing"`
-	ImmutableTraits     string       `json:"immutableTraits" valid:"required~required field immutableTraits missing"`
-	MutableMetaTraits   string       `json:"mutableMetaTraits" valid:"required~required field mutableMetaTraits missing"`
-	MutableTraits       string       `json:"mutableTraits" valid:"required~required field mutableTraits missing"`
+	FromID              string       `json:"fromID" valid:"required~required field fromID missing"`
+	ImmutableMetaTraits string       `json:"immutableMetaTraits" valid:"required~required field immutableMetaTraits missing matches(^[A-Za-z]$)~invalid field immutableMetaProperties"`
+	ImmutableTraits     string       `json:"immutableTraits" valid:"required~required field immutableTraits missing matches(^[A-Za-z]$)~invalid field immutableProperties"`
+	MutableMetaTraits   string       `json:"mutableMetaTraits" valid:"required~required field mutableMetaTraits missing matches(^[A-Za-z]$)~invalid field mutableMetaProperties"`
+	MutableTraits       string       `json:"mutableTraits" valid:"required~required field mutableTraits missing matches(^[A-Za-z]$)~invalid field mutableProperties"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -35,6 +34,7 @@ func (transactionRequest transactionRequest) Validate() error {
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
+		cliCommand.ReadString(flags.FromID),
 		cliCommand.ReadString(flags.ImmutableMetaTraits),
 		cliCommand.ReadString(flags.ImmutableTraits),
 		cliCommand.ReadString(flags.MutableMetaTraits),
@@ -53,10 +53,12 @@ func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
 	if Error != nil {
-		panic(errors.New(fmt.Sprintf("")))
+		return nil, Error
 	}
+
 	return newMessage(
 		from,
+		base.NewID(transactionRequest.FromID),
 		base.ReadMetaProperties(transactionRequest.ImmutableMetaTraits),
 		base.ReadProperties(transactionRequest.ImmutableTraits),
 		base.ReadMetaProperties(transactionRequest.MutableMetaTraits),
@@ -66,9 +68,11 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, immutableMetaTraits string, immutableTraits string, mutableMetaTraits string, mutableTraits string) helpers.TransactionRequest {
+
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, immutableMetaTraits string, immutableTraits string, mutableMetaTraits string, mutableTraits string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:             baseReq,
+		FromID:              fromID,
 		ImmutableMetaTraits: immutableMetaTraits,
 		ImmutableTraits:     immutableTraits,
 		MutableMetaTraits:   mutableMetaTraits,

@@ -49,10 +49,10 @@ func (order order) GetTakerID() types.Property {
 }
 
 func (order order) GetExchangeRate() types.Property {
-	if takerRate := order.Immutables.Get().Get(base.NewID(properties.ExchangeRate)); takerRate != nil {
-		return takerRate
-	} else if takerRate := order.Mutables.Get().Get(base.NewID(properties.ExchangeRate)); takerRate != nil {
-		return takerRate
+	if exchangeRate := order.Immutables.Get().Get(base.NewID(properties.ExchangeRate)); exchangeRate != nil {
+		return exchangeRate
+	} else if exchangeRate := order.Mutables.Get().Get(base.NewID(properties.ExchangeRate)); exchangeRate != nil {
+		return exchangeRate
 	} else {
 		return base.NewProperty(base.NewID(properties.ExchangeRate), base.NewFact(base.NewDecData(sdkTypes.SmallestDec())))
 	}

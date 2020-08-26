@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package supplement
+package define
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
@@ -12,9 +12,9 @@ import (
 )
 
 type auxiliaryResponse struct {
-	Success        bool                 `json:"success"`
-	Error          error                `json:"error"`
-	MetaProperties types.MetaProperties `json:"metaProperties"`
+	Success          bool     `json:"success"`
+	Error            error    `json:"error"`
+	ClassificationID types.ID `json:"classificationID"`
 }
 
 var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
@@ -25,7 +25,8 @@ func (auxiliaryResponse auxiliaryResponse) IsSuccessful() bool {
 func (auxiliaryResponse auxiliaryResponse) GetError() error {
 	return auxiliaryResponse.Error
 }
-func newAuxiliaryResponse(metaProperties types.MetaProperties, error error) helpers.AuxiliaryResponse {
+
+func newAuxiliaryResponse(classificationID types.ID, error error) helpers.AuxiliaryResponse {
 	if error != nil {
 		return auxiliaryResponse{
 			Success: false,
@@ -33,17 +34,17 @@ func newAuxiliaryResponse(metaProperties types.MetaProperties, error error) help
 		}
 	} else {
 		return auxiliaryResponse{
-			Success:        true,
-			MetaProperties: metaProperties,
+			Success:          true,
+			ClassificationID: classificationID,
 		}
 	}
 }
 
-func GetMetaPropertiesFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse) (types.MetaProperties, error) {
+func GetClassificationIDFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse) (types.ID, error) {
 	switch value := AuxiliaryResponse.(type) {
 	case auxiliaryResponse:
 		if value.IsSuccessful() {
-			return value.MetaProperties, nil
+			return value.ClassificationID, nil
 		} else {
 			return nil, value.GetError()
 		}

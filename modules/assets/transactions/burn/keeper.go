@@ -36,11 +36,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if asset == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
-	supplementAuxiliaryResponse, Error := supplement.ValidateResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetBurn())))
+	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetBurn())))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
-	burnHeightMetaFact := supplementAuxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(properties.Burn))
+	burnHeightMetaFact := metaProperties.GetMetaProperty(base.NewID(properties.Burn))
 	if burnHeightMetaFact == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}

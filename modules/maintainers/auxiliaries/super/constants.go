@@ -3,11 +3,9 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package define
+package super
 
 import "github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
 
-const TransactionName = "define"
-const TransactionRoute = mapper.TransactionRoute + "/" + TransactionName
-const TransactionShort = ""
-const TransactionLong = ""
+const AuxiliaryName = "super"
+const AuxiliaryRoute = mapper.TransactionRoute + "/" + AuxiliaryName

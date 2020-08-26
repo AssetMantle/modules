@@ -11,16 +11,18 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
-	mapper           helpers.Mapper
-	verifyAuxiliary  helpers.Auxiliary
-	scrubAuxiliary   helpers.Auxiliary
-	conformAuxiliary helpers.Auxiliary
+	mapper            helpers.Mapper
+	verifyAuxiliary   helpers.Auxiliary
+	maintainAuxiliary helpers.Auxiliary
+	scrubAuxiliary    helpers.Auxiliary
+	conformAuxiliary  helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -46,6 +48,10 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
+	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, mutables)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
+	}
+
 	assets.Mutate(mapper.NewAsset(asset.GetID(), asset.GetImmutables(), asset.GetMutables().Mutate(mutables.Get().GetList()...)))
 	return newTransactionResponse(nil)
 }
@@ -57,6 +63,8 @@ func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case conform.Auxiliary.GetName():
+				transactionKeeper.conformAuxiliary = value
+			case maintain.Auxiliary.GetName():
 				transactionKeeper.conformAuxiliary = value
 			case scrub.Auxiliary.GetName():
 				transactionKeeper.scrubAuxiliary = value

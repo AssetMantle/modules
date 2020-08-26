@@ -10,6 +10,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/queries/asset"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/burn"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/define"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mutate"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -25,5 +26,5 @@ var Module = base.NewModule(
 	mapper.Mapper,
 	[]helpers.Auxiliary{},
 	[]helpers.Query{asset.Query},
-	[]helpers.Transaction{burn.Transaction, mint.Transaction, mutate.Transaction},
+	[]helpers.Transaction{burn.Transaction, define.Transaction, mint.Transaction, mutate.Transaction},
 )

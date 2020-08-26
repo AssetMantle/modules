@@ -19,10 +19,10 @@ import (
 
 type transactionKeeper struct {
 	mapper           helpers.Mapper
-	mintAuxiliary    helpers.Auxiliary
-	verifyAuxiliary  helpers.Auxiliary
-	scrubAuxiliary   helpers.Auxiliary
 	conformAuxiliary helpers.Auxiliary
+	mintAuxiliary    helpers.Auxiliary
+	scrubAuxiliary   helpers.Auxiliary
+	verifyAuxiliary  helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -70,10 +70,10 @@ func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{
 			switch value.GetName() {
 			case conform.Auxiliary.GetName():
 				transactionKeeper.conformAuxiliary = value
-			case scrub.Auxiliary.GetName():
-				transactionKeeper.scrubAuxiliary = value
 			case mint.Auxiliary.GetName():
 				transactionKeeper.mintAuxiliary = value
+			case scrub.Auxiliary.GetName():
+				transactionKeeper.scrubAuxiliary = value
 			case verify.Auxiliary.GetName():
 				transactionKeeper.verifyAuxiliary = value
 			}
