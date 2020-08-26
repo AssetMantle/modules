@@ -19,3 +19,4 @@ var InsufficientBalance = errors.Register(constants.ProjectRoute, 106, "Insuffic
 var InvalidRequest = errors.Register(constants.ProjectRoute, 107, "InvalidRequest")
 var MetaDataError = errors.Register(constants.ProjectRoute, 108, "MetaDataError")
 var NotAuthorized = errors.Register(constants.ProjectRoute, 109, "NotAuthorized")
+var UnsupportedParameter = errors.Register(constants.ProjectRoute, 110, "UnsupportedParameter")

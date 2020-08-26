@@ -8,6 +8,7 @@ package base
 import (
 	"github.com/99designs/keyring"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"strings"
 )
@@ -36,7 +37,7 @@ func NewMetaFact(data types.Data) types.MetaFact {
 	}
 }
 
-func ReadMetaFact(DataTypeAndString string) types.MetaFact {
+func ReadMetaFact(DataTypeAndString string) (types.MetaFact, error) {
 	dataTypeAndString := strings.Split(DataTypeAndString, constants.DataTypeAndStringSeparator)
 	if len(dataTypeAndString) == 2 {
 		dataType, dataString := dataTypeAndString[0], dataTypeAndString[1]
@@ -51,10 +52,10 @@ func ReadMetaFact(DataTypeAndString string) types.MetaFact {
 		case StringType:
 			data = ReadStringData(dataString)
 		default:
-			return nil
+			return nil, errors.UnsupportedParameter
 		}
-		return NewMetaFact(data)
+		return NewMetaFact(data), nil
 	} else {
-		return nil
+		return nil, errors.IncorrectFormat
 	}
 }
