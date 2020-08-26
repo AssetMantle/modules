@@ -6,6 +6,8 @@
 package maintainers
 
 import (
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/queries/maintainer"
@@ -21,7 +23,7 @@ var Module = base.NewModule(
 	mapper.TransactionRoute,
 	genesis.State,
 	mapper.Mapper,
-	[]helpers.Auxiliary{},
+	[]helpers.Auxiliary{maintain.Auxiliary, super.Auxiliary},
 	[]helpers.Query{maintainer.Query},
 	[]helpers.Transaction{deputize.Transaction},
 )
