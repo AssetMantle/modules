@@ -39,11 +39,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if message.FromID.Compare(order.GetMakerID()) != 0 {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
-	auxiliaryResponse, Error := supplement.ValidateResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetMakerOwnableSplit())))
+	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetMakerOwnableSplit())))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
-	makerOwnableSplitProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit))
+	makerOwnableSplitProperty := metaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit))
 	if makerOwnableSplitProperty == nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}

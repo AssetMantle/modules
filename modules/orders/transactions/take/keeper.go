@@ -39,12 +39,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if order == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
-	auxiliaryResponse, Error := supplement.ValidateResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetTakerID(), order.GetExchangeRate(), order.GetMakerOwnableSplit())))
+	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetTakerID(), order.GetExchangeRate(), order.GetMakerOwnableSplit())))
 	if Error != nil {
 		newTransactionResponse(Error)
 	}
 
-	if takerIDProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(properties.TakerID)); takerIDProperty != nil {
+	if takerIDProperty := metaProperties.GetMetaProperty(base.NewID(properties.TakerID)); takerIDProperty != nil {
 		takerID, Error := takerIDProperty.GetMetaFact().GetData().AsID()
 		if Error == nil {
 			if takerID.Compare(message.FromID) != 0 {
@@ -56,7 +56,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	exchangeRateProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(properties.ExchangeRate))
+	exchangeRateProperty := metaProperties.GetMetaProperty(base.NewID(properties.ExchangeRate))
 	if exchangeRateProperty == nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}
@@ -65,7 +65,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.MetaDataError)
 	}
 
-	makerOwnableSplitProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit))
+	makerOwnableSplitProperty := metaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit))
 	if makerOwnableSplitProperty == nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}

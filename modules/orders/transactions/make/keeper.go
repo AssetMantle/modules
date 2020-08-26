@@ -53,11 +53,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	makerOwnableSplit := message.MakerOwnableSplit
 	order := orders.Get(orderID)
 	if order != nil {
-		auxiliaryResponse, Error := supplement.ValidateResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetMakerOwnableSplit())))
+		metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetMakerOwnableSplit())))
 		if Error != nil {
 			return newTransactionResponse(Error)
 		}
-		oldMakerOwnableSplitMetaProperty := auxiliaryResponse.MetaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit))
+		oldMakerOwnableSplitMetaProperty := metaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit))
 		if oldMakerOwnableSplitMetaProperty == nil {
 			return newTransactionResponse(errors.MetaDataError)
 		} else {
