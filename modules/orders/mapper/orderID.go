@@ -48,7 +48,7 @@ func (orderID orderID) Compare(id types.ID) int {
 }
 
 func readOrderID(orderIDString string) types.ID {
-	idList := strings.Split(orderIDString, constants.IDSeparator)
+	idList := strings.Split(orderIDString, constants.CompositeIDSeparator)
 	if len(idList) == 5 {
 		return orderID{
 			ClassificationID: base.NewID(idList[0]),

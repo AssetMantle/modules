@@ -47,7 +47,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	immutables := base.NewImmutables(base.NewProperties(append(scrubMetaImmutablesAuxiliaryResponse.Properties.GetList(), message.ImmutableProperties.GetList()...)))
 
-	orderID := mapper.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.MakerOwnableID, message.FromID, immutables)
+	orderID := mapper.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, message.FromID, immutables)
 	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(orderID)
 
 	makerOwnableSplit := message.MakerOwnableSplit

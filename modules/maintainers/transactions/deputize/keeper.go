@@ -37,7 +37,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 
-	toMaintainerID := mapper.NewMaintainerID(message.ClassificationID, message.FromID)
+	toMaintainerID := mapper.NewMaintainerID(message.ClassificationID, message.ToID)
 	toMaintainer := maintainers.Fetch(toMaintainerID).Get(toMaintainerID)
 	if toMaintainer != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
