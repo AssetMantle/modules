@@ -60,12 +60,16 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, Error
 	}
 
+	maintainedTraits, Error := base.ReadProperties(transactionRequest.MaintainedTraits)
+	if Error != nil {
+		return nil, Error
+	}
 	return newMessage(
 		from,
 		base.NewID(transactionRequest.FromID),
 		base.NewID(transactionRequest.ToID),
 		base.NewID(transactionRequest.ClassificationID),
-		base.ReadProperties(transactionRequest.MaintainedTraits),
+		maintainedTraits,
 		transactionRequest.AddMaintainer,
 		transactionRequest.RemoveMaintainer,
 		transactionRequest.MutateMaintainer,

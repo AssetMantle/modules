@@ -13,6 +13,7 @@ import (
 var DeletionNotAllowed = errors.Register(constants.ProjectRoute, 101, "DeletionNotAllowed")
 var EntityAlreadyExists = errors.Register(constants.ProjectRoute, 102, "EntityAlreadyExists")
 var EntityNotFound = errors.Register(constants.ProjectRoute, 103, "EntityNotFound")
+var IncorrectFormat = errors.Register(constants.ProjectRoute, 104, "IncorrectFormat")
 var IncorrectMessage = errors.Register(constants.ProjectRoute, 105, "IncorrectMessage")
 var InsufficientBalance = errors.Register(constants.ProjectRoute, 106, "InsufficientBalance")
 var InvalidRequest = errors.Register(constants.ProjectRoute, 107, "InvalidRequest")

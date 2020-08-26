@@ -117,11 +117,15 @@ func NewMetaProperties(metaPropertyList []types.MetaProperty) types.MetaProperti
 	}
 }
 
-func ReadMetaProperties(MetaProperties string) types.MetaProperties {
+func ReadMetaProperties(MetaProperties string) (types.MetaProperties, error) {
 	var metaPropertyList []types.MetaProperty
 	metaProperties := strings.Split(MetaProperties, constants.PropertiesSeparator)
-	for _, metaProperty := range metaProperties {
-		metaPropertyList = append(metaPropertyList, ReadMetaProperty(metaProperty))
+	for _, metaPropertyString := range metaProperties {
+		metaProperty, Error := ReadMetaProperty(metaPropertyString)
+		if Error != nil {
+			return nil, Error
+		}
+		metaPropertyList = append(metaPropertyList, metaProperty)
 	}
-	return NewMetaProperties(metaPropertyList)
+	return NewMetaProperties(metaPropertyList), nil
 }

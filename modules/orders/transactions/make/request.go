@@ -71,6 +71,24 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	if Error != nil {
 		return nil, Error
 	}
+
+	immutableMetaProperties, Error := base.ReadMetaProperties(transactionRequest.ImmutableMetaProperties)
+	if Error != nil {
+		return nil, Error
+	}
+	immutableProperties, Error := base.ReadProperties(transactionRequest.ImmutableProperties)
+	if Error != nil {
+		return nil, Error
+	}
+	mutableMetaProperties, Error := base.ReadMetaProperties(transactionRequest.MutableMetaProperties)
+	if Error != nil {
+		return nil, Error
+	}
+	mutableProperties, Error := base.ReadProperties(transactionRequest.MutableProperties)
+	if Error != nil {
+		return nil, Error
+	}
+
 	return newMessage(
 		from,
 		base.NewID(transactionRequest.FromID),
@@ -79,10 +97,10 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		base.NewID(transactionRequest.TakerOwnableID),
 		base.NewHeight(transactionRequest.ExpiresIn),
 		makerOwnableSplit,
-		base.ReadMetaProperties(transactionRequest.ImmutableMetaProperties),
-		base.ReadProperties(transactionRequest.ImmutableProperties),
-		base.ReadMetaProperties(transactionRequest.MutableMetaProperties),
-		base.ReadProperties(transactionRequest.MutableProperties),
+		immutableMetaProperties,
+		immutableProperties,
+		mutableMetaProperties,
+		mutableProperties,
 	), nil
 }
 
