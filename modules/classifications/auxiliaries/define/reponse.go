@@ -5,11 +5,16 @@
 
 package define
 
-import "github.com/persistenceOne/persistenceSDK/schema/helpers"
+import (
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+)
 
 type auxiliaryResponse struct {
-	Success bool  `json:"success"`
-	Error   error `json:"error"`
+	Success          bool     `json:"success"`
+	Error            error    `json:"error"`
+	ClassificationID types.ID `json:"classificationID"`
 }
 
 var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
@@ -20,13 +25,30 @@ func (auxiliaryResponse auxiliaryResponse) IsSuccessful() bool {
 func (auxiliaryResponse auxiliaryResponse) GetError() error {
 	return auxiliaryResponse.Error
 }
-func newAuxiliaryResponse(error error) helpers.AuxiliaryResponse {
-	success := true
+
+func newAuxiliaryResponse(classificationID types.ID, error error) helpers.AuxiliaryResponse {
 	if error != nil {
-		success = false
+		return auxiliaryResponse{
+			Success: false,
+			Error:   error,
+		}
+	} else {
+		return auxiliaryResponse{
+			Success:          true,
+			ClassificationID: classificationID,
+		}
 	}
-	return auxiliaryResponse{
-		Success: success,
-		Error:   error,
+}
+
+func GetClassificationIDFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse) (types.ID, error) {
+	switch value := AuxiliaryResponse.(type) {
+	case auxiliaryResponse:
+		if value.IsSuccessful() {
+			return value.ClassificationID, nil
+		} else {
+			return nil, value.GetError()
+		}
+	default:
+		panic(errors.InvalidRequest)
 	}
 }
