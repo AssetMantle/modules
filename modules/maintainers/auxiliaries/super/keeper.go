@@ -22,7 +22,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	maintainerID := mapper.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.IdentityID)
 	maintainers := mapper.NewMaintainers(auxiliaryKeeper.mapper, context).Fetch(maintainerID)
-	if maintainers.Get(maintainerID) == nil {
+	if maintainers.Get(maintainerID) != nil {
 		return newAuxiliaryResponse(errors.EntityAlreadyExists)
 	}
 	maintainers = maintainers.Add(mapper.NewMaintainer(maintainerID, auxiliaryRequest.MutableTraits, true, true, true))
