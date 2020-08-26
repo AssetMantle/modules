@@ -47,10 +47,13 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	if Error != nil {
 		return nil, Error
 	}
-
+	metaFact, Error := base.ReadMetaFact(transactionRequest.MetaFact)
+	if Error != nil {
+		return nil, Error
+	}
 	return newMessage(
 		from,
-		base.ReadMetaFact(transactionRequest.MetaFact),
+		metaFact,
 	), nil
 }
 func requestPrototype() helpers.TransactionRequest {
