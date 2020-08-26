@@ -10,14 +10,12 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
-	mapper         helpers.Mapper
-	scrubAuxiliary helpers.Auxiliary
+	mapper helpers.Mapper
 }
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
@@ -25,42 +23,20 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 
-	scrubImmutableMetaTraitsAuxiliaryResponse, Error := scrub.ValidateResponse(auxiliaryKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(auxiliaryRequest.ImmutableMetaTraits.GetMetaPropertyList()...)))
-	if Error != nil {
-		return newAuxiliaryResponse(Error)
-	}
-	immutableTraits := base.NewImmutables(base.NewProperties(append(scrubImmutableMetaTraitsAuxiliaryResponse.Properties.GetList(), auxiliaryRequest.ImmutableTraits.GetList()...)))
-
-	scrubMutableMetaTraitsAuxiliaryResponse, Error := scrub.ValidateResponse(auxiliaryKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(auxiliaryRequest.MutableMetaTraits.GetMetaPropertyList()...)))
-	if Error != nil {
-		return newAuxiliaryResponse(Error)
-	}
-	mutableTraits := base.NewMutables(base.NewProperties(append(scrubMutableMetaTraitsAuxiliaryResponse.Properties.GetList(), auxiliaryRequest.MutableTraits.GetList()...)))
-
-	if len(immutableTraits.Get().GetList())+len(mutableTraits.Get().GetList()) > constants.MaxTraitCount {
-		return newAuxiliaryResponse(errors.NotAuthorized)
+	if len(auxiliaryRequest.ImmutableTraits.Get().GetList())+len(auxiliaryRequest.MutableTraits.Get().GetList()) > constants.MaxTraitCount {
+		return newAuxiliaryResponse(nil, errors.InvalidRequest)
 	}
 
-	classificationID := mapper.NewClassificationID(base.NewID(context.ChainID()), immutableTraits, mutableTraits)
+	classificationID := mapper.NewClassificationID(base.NewID(context.ChainID()), auxiliaryRequest.ImmutableTraits, auxiliaryRequest.MutableTraits)
 	classifications := mapper.NewClassifications(auxiliaryKeeper.mapper, context).Fetch(classificationID)
 	if classifications.Get(classificationID) != nil {
-		return newAuxiliaryResponse(errors.EntityAlreadyExists)
+		return newAuxiliaryResponse(nil, errors.EntityAlreadyExists)
 	}
 
-	classifications = classifications.Add(mapper.NewClassification(classificationID, immutableTraits, mutableTraits))
-	return newAuxiliaryResponse(nil)
+	classifications = classifications.Add(mapper.NewClassification(classificationID, auxiliaryRequest.ImmutableTraits, auxiliaryRequest.MutableTraits))
+	return newAuxiliaryResponse(classificationID, nil)
 }
 
-func initializeAuxiliaryKeeper(mapper helpers.Mapper, auxiliaries []interface{}) helpers.AuxiliaryKeeper {
-	transactionKeeper := auxiliaryKeeper{mapper: mapper}
-	for _, auxiliary := range auxiliaries {
-		switch value := auxiliary.(type) {
-		case helpers.Auxiliary:
-			switch value.GetName() {
-			case scrub.Auxiliary.GetName():
-				transactionKeeper.scrubAuxiliary = value
-			}
-		}
-	}
-	return transactionKeeper
+func initializeAuxiliaryKeeper(mapper helpers.Mapper, _ []interface{}) helpers.AuxiliaryKeeper {
+	return auxiliaryKeeper{mapper: mapper}
 }
