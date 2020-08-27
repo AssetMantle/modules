@@ -20,7 +20,7 @@ func (mutables mutables) Get() types.Properties {
 }
 func (mutables mutables) Mutate(propertyList ...types.Property) types.Mutables {
 	for _, property := range propertyList {
-		mutables.Properties.Mutate(property)
+		mutables.Properties = mutables.Properties.Mutate(property)
 	}
 	return mutables
 }

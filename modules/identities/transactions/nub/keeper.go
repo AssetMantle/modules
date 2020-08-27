@@ -31,7 +31,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 	immutables := base.NewImmutables(immutableProperties)
-	classificationID, Error := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(base.NewImmutables(base.NewProperties(base.NewProperty(base.NewID(properties.NubID), base.NewMetaFact(base.NewIDData(base.NewID("")))))), base.NewMutables(base.NewProperties()))))
+	classificationID, Error := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(base.NewImmutables(base.NewProperties(base.NewProperty(base.NewID(properties.NubID), base.NewFact(base.NewIDData(base.NewID("")))))), base.NewMutables(base.NewProperties()))))
 	if classificationID == nil && Error != nil {
 		return newTransactionResponse(Error)
 	}

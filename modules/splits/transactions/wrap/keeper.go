@@ -16,16 +16,16 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper                    helpers.Mapper
-	supplyKeeper              supply.Keeper
-	identitiesVerifyAuxiliary helpers.Auxiliary
+	mapper          helpers.Mapper
+	supplyKeeper    supply.Keeper
+	verifyAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.identitiesVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 	if Error := transactionKeeper.supplyKeeper.SendCoinsFromAccountToModule(context, message.From, mapper.ModuleName, message.Coins); Error != nil {
@@ -53,7 +53,7 @@ func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case verify.Auxiliary.GetName():
-				transactionKeeper.identitiesVerifyAuxiliary = value
+				transactionKeeper.verifyAuxiliary = value
 			}
 		}
 	}

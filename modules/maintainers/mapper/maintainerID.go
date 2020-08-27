@@ -31,7 +31,7 @@ func (maintainerID maintainerID) String() string {
 	var values []string
 	values = append(values, maintainerID.ClassificationID.String())
 	values = append(values, maintainerID.IdentityID.String())
-	return strings.Join(values, constants.CompositeIDSeparator)
+	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
 
 func (maintainerID maintainerID) Compare(id types.ID) int {
@@ -39,7 +39,7 @@ func (maintainerID maintainerID) Compare(id types.ID) int {
 }
 
 func readMaintainerID(maintainerIDString string) types.ID {
-	idList := strings.Split(maintainerIDString, constants.CompositeIDSeparator)
+	idList := strings.Split(maintainerIDString, constants.FirstOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return maintainerID{
 			ClassificationID: base.NewID(idList[0]),

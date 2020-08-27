@@ -65,7 +65,7 @@ func initializeTransactionKeeper(mapper helpers.Mapper, auxiliaries []interface{
 			case conform.Auxiliary.GetName():
 				transactionKeeper.conformAuxiliary = value
 			case maintain.Auxiliary.GetName():
-				transactionKeeper.conformAuxiliary = value
+				transactionKeeper.maintainAuxiliary = value
 			case scrub.Auxiliary.GetName():
 				transactionKeeper.scrubAuxiliary = value
 			case verify.Auxiliary.GetName():

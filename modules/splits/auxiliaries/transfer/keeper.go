@@ -35,7 +35,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	} else if fromSplit.GetSplit().Equal(sdkTypes.ZeroDec()) {
 		splits.Remove(fromSplit)
+	} else {
+		splits.Mutate(fromSplit)
 	}
+
 	toSplitID := mapper.NewSplitID(auxiliaryRequest.ToID, auxiliaryRequest.OwnableID)
 	toSplit := splits.Fetch(toSplitID).Get(toSplitID)
 	if toSplit == nil {

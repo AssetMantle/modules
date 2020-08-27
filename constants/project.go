@@ -9,7 +9,8 @@ const ProjectName = "xprt"
 const ProjectRoute = "/" + ProjectName
 
 const IDSeparator = "."
-const CompositeIDSeparator = "|"
+const FirstOrderCompositeIDSeparator = "|"
+const SecondOrderCompositeIDSeparator = "*"
 const PropertiesSeparator = ","
 const PropertyIDAndDataSeparator = ":"
 const DataTypeAndStringSeparator = "|"

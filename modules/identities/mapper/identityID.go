@@ -31,7 +31,7 @@ func (identityID identityID) String() string {
 	var values []string
 	values = append(values, identityID.ClassificationID.String())
 	values = append(values, identityID.HashID.String())
-	return strings.Join(values, constants.CompositeIDSeparator)
+	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
 
 func (identityID identityID) Compare(id types.ID) int {
@@ -39,7 +39,7 @@ func (identityID identityID) Compare(id types.ID) int {
 }
 
 func readIdentityID(identityIDString string) types.ID {
-	idList := strings.Split(identityIDString, constants.CompositeIDSeparator)
+	idList := strings.Split(identityIDString, constants.FirstOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return identityID{
 			ClassificationID: base.NewID(idList[0]),
