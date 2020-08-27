@@ -40,7 +40,7 @@ func (orderID orderID) String() string {
 	values = append(values, orderID.TakerOwnableID.String())
 	values = append(values, orderID.MakerID.String())
 	values = append(values, orderID.HashID.String())
-	return strings.Join(values, constants.CompositeIDSeparator)
+	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
 
 func (orderID orderID) Compare(id types.ID) int {
@@ -48,7 +48,7 @@ func (orderID orderID) Compare(id types.ID) int {
 }
 
 func readOrderID(orderIDString string) types.ID {
-	idList := strings.Split(orderIDString, constants.CompositeIDSeparator)
+	idList := strings.Split(orderIDString, constants.SecondOrderCompositeIDSeparator)
 	if len(idList) == 5 {
 		return orderID{
 			ClassificationID: base.NewID(idList[0]),

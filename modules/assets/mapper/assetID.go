@@ -32,7 +32,7 @@ func (assetID assetID) String() string {
 	var values []string
 	values = append(values, assetID.ClassificationID.String())
 	values = append(values, assetID.HashID.String())
-	return strings.Join(values, constants.CompositeIDSeparator)
+	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
 
 func (assetID assetID) Compare(id types.ID) int {
@@ -40,7 +40,7 @@ func (assetID assetID) Compare(id types.ID) int {
 }
 
 func readAssetID(assetIDString string) types.ID {
-	idList := strings.Split(assetIDString, constants.CompositeIDSeparator)
+	idList := strings.Split(assetIDString, constants.FirstOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return assetID{
 			ClassificationID: base.NewID(idList[0]),
