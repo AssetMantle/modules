@@ -12,13 +12,14 @@ import (
 
 type fact struct {
 	Hash       string           `json:"hash"`
+	Type       string           `json:"type"`
 	Signatures types.Signatures `json:"signatures"`
 }
 
 var _ types.Fact = (*fact)(nil)
 
-func (fact fact) Get() string                     { return "" }
 func (fact fact) GetHash() string                 { return fact.Hash }
+func (fact fact) GetType() string                 { return fact.Type }
 func (fact fact) GetSignatures() types.Signatures { return fact.Signatures }
 func (fact fact) IsMeta() bool {
 	return false
@@ -29,8 +30,20 @@ func (fact fact) Sign(_ keyring.Keyring) types.Fact {
 }
 
 func NewFact(data types.Data) types.Fact {
+	dataType := ""
+	switch data.(type) {
+	case decData:
+		dataType = DecType
+	case heightData:
+		dataType = HeightType
+	case idData:
+		dataType = IDType
+	case stringData:
+		dataType = StringType
+	}
 	return fact{
 		Hash:       data.GenerateHash(),
+		Type:       dataType,
 		Signatures: signatures{},
 	}
 }
