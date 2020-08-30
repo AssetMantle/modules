@@ -22,10 +22,10 @@ type assetID struct {
 var _ types.ID = (*assetID)(nil)
 
 func (assetID assetID) Bytes() []byte {
-	return append(
-		assetID.ClassificationID.Bytes(),
-		assetID.HashID.Bytes()...,
-	)
+	var Bytes []byte
+	Bytes = append(Bytes, assetID.ClassificationID.Bytes()...)
+	Bytes = append(Bytes, assetID.HashID.Bytes()...)
+	return Bytes
 }
 
 func (assetID assetID) String() string {
