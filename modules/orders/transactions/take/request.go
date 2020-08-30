@@ -19,7 +19,7 @@ import (
 type transactionRequest struct {
 	BaseReq           rest.BaseReq `json:"baseReq"`
 	FromID            string       `json:"fromID" valid:"required~required field fromID missing"`
-	TakerOwnableSplit int64        `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
+	TakerOwnableSplit string       `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
 	OrderID           string       `json:"orderID" valid:"required~required field orderID missing"`
 }
 
@@ -33,7 +33,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(flags.FromID),
-		cliCommand.ReadInt64(flags.TakerOwnableSplit),
+		cliCommand.ReadString(flags.TakerOwnableSplit),
 		cliCommand.ReadString(flags.OrderID),
 	), nil
 }
@@ -52,17 +52,21 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, Error
 	}
 
+	takerOwnableSplit, Error := sdkTypes.NewDecFromStr(transactionRequest.TakerOwnableSplit)
+	if Error != nil {
+		return nil, Error
+	}
 	return newMessage(
 		from,
 		base.NewID(transactionRequest.FromID),
-		sdkTypes.NewDec(transactionRequest.TakerOwnableSplit),
+		takerOwnableSplit,
 		base.NewID(transactionRequest.OrderID),
 	), nil
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, takerOwnableSplit int64, orderID string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, takerOwnableSplit string, orderID string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:           baseReq,
 		FromID:            fromID,
