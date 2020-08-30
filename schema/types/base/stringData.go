@@ -53,6 +53,6 @@ func NewStringData(value string) types.Data {
 	}
 }
 
-func ReadStringData(stringData string) types.Data {
-	return NewStringData(stringData)
+func ReadStringData(stringData string) (types.Data, error) {
+	return NewStringData(stringData), nil
 }

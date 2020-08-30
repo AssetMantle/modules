@@ -53,10 +53,14 @@ func NewDecData(value sdkTypes.Dec) types.Data {
 	}
 }
 
-func ReadDecData(dataString string) types.Data {
+func ReadDecData(dataString string) (types.Data, error) {
+	if dataString == "" {
+		return NewDecData(sdkTypes.SmallestDec()), nil
+	}
 	dec, Error := sdkTypes.NewDecFromStr(dataString)
 	if Error != nil {
-		return nil
+		return nil, Error
 	}
-	return NewDecData(dec)
+
+	return NewDecData(dec), nil
 }

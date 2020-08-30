@@ -68,7 +68,7 @@ func NewClassificationID(chainID types.ID, immutableTraits types.Immutables, mut
 	}
 	var mutableIDStringList []string
 	for _, mutable := range mutableTraits.Get().GetList() {
-		mutableIDStringList = append(immutableIDStringList, mutable.GetID().String())
+		mutableIDStringList = append(mutableIDStringList, mutable.GetID().String())
 	}
 	return classificationID{
 		ChainID: chainID,

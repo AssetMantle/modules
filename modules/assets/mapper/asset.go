@@ -48,7 +48,8 @@ func (asset asset) GetBurn() types.Property {
 	} else if burnProperty := asset.Mutables.Get().Get(base.NewID(properties.Burn)); burnProperty != nil {
 		return burnProperty
 	} else {
-		return base.NewProperty(base.NewID(properties.Burn), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
+		data, _ := base.ReadHeightData("")
+		return base.NewProperty(base.NewID(properties.Burn), base.NewFact(data))
 	}
 }
 
@@ -58,7 +59,8 @@ func (asset asset) GetLock() types.Property {
 	} else if lockProperty := asset.Mutables.Get().Get(base.NewID(properties.Lock)); lockProperty != nil {
 		return lockProperty
 	} else {
-		return base.NewProperty(base.NewID(properties.Lock), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
+		data, _ := base.ReadHeightData("")
+		return base.NewProperty(base.NewID(properties.Lock), base.NewFact(data))
 	}
 }
 

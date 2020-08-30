@@ -22,7 +22,7 @@ type heightData struct {
 var _ types.Data = (*heightData)(nil)
 
 func (heightData heightData) GenerateHash() string {
-	if heightData.Value.Get() == 0 {
+	if heightData.Value.Get() == -1 {
 		return ""
 	}
 	return meta.Hash(strconv.FormatInt(heightData.Value.Get(), 10))
@@ -54,10 +54,13 @@ func NewHeightData(value types.Height) types.Data {
 	}
 }
 
-func ReadHeightData(dataString string) types.Data {
+func ReadHeightData(dataString string) (types.Data, error) {
+	if dataString == "" {
+		return NewHeightData(NewHeight(-1)), nil
+	}
 	height, Error := strconv.ParseInt(dataString, 10, 64)
 	if Error != nil {
-		return nil
+		return nil, Error
 	}
-	return NewHeightData(NewHeight(height))
+	return NewHeightData(NewHeight(height)), nil
 }

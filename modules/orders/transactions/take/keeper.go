@@ -74,16 +74,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.MetaDataError)
 	}
 
-	sendMakerOwnableSplit := message.TakerOwnableSplit.Mul(exchangeRate)
+	sendMakerOwnableSplit := message.TakerOwnableSplit.Quo(sdkTypes.SmallestDec()).Mul(exchangeRate)
 	updatedMakerOwnableSplit := makerOwnableSplit.Sub(sendMakerOwnableSplit)
 	if updatedMakerOwnableSplit.LT(sdkTypes.ZeroDec()) {
-		return newTransactionResponse(errors.InsufficientBalance)
+		sendMakerOwnableSplit = makerOwnableSplit
+		orders = orders.Remove(order)
 	} else if updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()) {
-		orders.Remove(order)
+		orders = orders.Remove(order)
 	} else {
-		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), message.FromID, order.GetMakerOwnableID(), sendMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
-			return newTransactionResponse(auxiliaryResponse.GetError())
-		}
 		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(updatedMakerOwnableSplit))))))
 		if Error != nil {
 			return newTransactionResponse(Error)
@@ -91,6 +89,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		order = mapper.NewOrder(order.GetID(), order.GetImmutables(), order.GetMutables().Mutate(mutableProperties.GetList()...))
 		orders = orders.Mutate(order)
 	}
+
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), message.FromID, order.GetMakerOwnableID(), sendMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
+	}
+
 	return newTransactionResponse(nil)
 }
 

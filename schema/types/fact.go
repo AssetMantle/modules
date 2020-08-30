@@ -11,6 +11,7 @@ import (
 
 type Fact interface {
 	GetHash() string
+	GetType() string
 	GetSignatures() Signatures
 
 	Sign(keyring.Keyring) Fact

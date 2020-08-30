@@ -20,9 +20,23 @@ type metaFact struct {
 
 var _ types.MetaFact = (*metaFact)(nil)
 
-func (metaFact metaFact) GetData() types.Data             { return metaFact.Data }
-func (metaFact metaFact) RemoveData() types.Fact          { return NewFact(metaFact.Data) }
-func (metaFact metaFact) GetHash() string                 { return metaFact.Data.GenerateHash() }
+func (metaFact metaFact) GetData() types.Data    { return metaFact.Data }
+func (metaFact metaFact) RemoveData() types.Fact { return NewFact(metaFact.Data) }
+func (metaFact metaFact) GetHash() string        { return metaFact.Data.GenerateHash() }
+func (metaFact metaFact) GetType() string {
+	switch metaFact.Data.(type) {
+	case decData:
+		return IDType
+	case heightData:
+		return HeightType
+	case idData:
+		return IDType
+	case stringData:
+		return StringType
+	default:
+		return ""
+	}
+}
 func (metaFact metaFact) GetSignatures() types.Signatures { return metaFact.Signatures }
 
 func (metaFact metaFact) Sign(_ keyring.Keyring) types.Fact {
@@ -42,19 +56,24 @@ func ReadMetaFact(DataTypeAndString string) (types.MetaFact, error) {
 	if len(dataTypeAndString) == 2 {
 		dataType, dataString := dataTypeAndString[0], dataTypeAndString[1]
 		var data types.Data
+		var Error error
 		switch dataType {
 		case DecType:
-			data = ReadDecData(dataString)
+			data, Error = ReadDecData(dataString)
 		case IDType:
-			data = ReadIDData(dataString)
+			data, Error = ReadIDData(dataString)
 		case HeightType:
-			data = ReadHeightData(dataString)
+			data, Error = ReadHeightData(dataString)
 		case StringType:
-			data = ReadStringData(dataString)
+			data, Error = ReadStringData(dataString)
 		default:
 			return nil, errors.UnsupportedParameter
 		}
-		return NewMetaFact(data), nil
+		if Error != nil {
+			return nil, Error
+		} else {
+			return NewMetaFact(data), nil
+		}
 	} else {
 		return nil, errors.IncorrectFormat
 	}

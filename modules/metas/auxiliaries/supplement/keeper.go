@@ -9,6 +9,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
@@ -23,9 +24,25 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	var metaPropertyList []types.MetaProperty
 	for _, property := range auxiliaryRequest.PropertyList {
-		metaID := base.NewID(property.GetFact().GetHash())
-		metas := mapper.NewMetas(auxiliaryKeeper.mapper, context).Fetch(metaID)
-		meta := metas.Get(metaID)
+		var meta mappables.Meta
+		if property.GetFact().GetHash() == "" {
+			var data types.Data
+			switch property.GetFact().GetType() {
+			case base.DecType:
+				data, _ = base.ReadDecData("")
+			case base.HeightType:
+				data, _ = base.ReadHeightData("")
+			case base.IDType:
+				data, _ = base.ReadIDData("")
+			case base.StringType:
+				data, _ = base.ReadStringData("")
+			}
+			meta = mapper.NewMeta(data)
+		} else {
+			metaID := base.NewID(property.GetFact().GetHash())
+			metas := mapper.NewMetas(auxiliaryKeeper.mapper, context).Fetch(metaID)
+			meta = metas.Get(metaID)
+		}
 		if meta != nil {
 			metaPropertyList = append(metaPropertyList, base.NewMetaProperty(property.GetID(), base.NewMetaFact(meta.GetData())))
 		}
