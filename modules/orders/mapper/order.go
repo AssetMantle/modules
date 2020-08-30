@@ -6,7 +6,6 @@
 package mapper
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
@@ -44,7 +43,8 @@ func (order order) GetTakerID() types.Property {
 	} else if takerID := order.Mutables.Get().Get(base.NewID(properties.TakerID)); takerID != nil {
 		return takerID
 	} else {
-		return base.NewProperty(base.NewID(properties.TakerID), base.NewFact(base.ReadIDData("")))
+		data, _ := base.ReadIDData("")
+		return base.NewProperty(base.NewID(properties.TakerID), base.NewFact(data))
 	}
 }
 
@@ -54,7 +54,8 @@ func (order order) GetExchangeRate() types.Property {
 	} else if exchangeRate := order.Mutables.Get().Get(base.NewID(properties.ExchangeRate)); exchangeRate != nil {
 		return exchangeRate
 	} else {
-		return base.NewProperty(base.NewID(properties.ExchangeRate), base.NewFact(base.NewDecData(sdkTypes.SmallestDec())))
+		data, _ := base.ReadDecData("")
+		return base.NewProperty(base.NewID(properties.ExchangeRate), base.NewFact(data))
 	}
 }
 
@@ -64,7 +65,8 @@ func (order order) GetCreation() types.Property {
 	} else if creation := order.Mutables.Get().Get(base.NewID(properties.Creation)); creation != nil {
 		return creation
 	} else {
-		return base.NewProperty(base.NewID(properties.Creation), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
+		data, _ := base.ReadHeightData("")
+		return base.NewProperty(base.NewID(properties.Creation), base.NewFact(data))
 	}
 }
 
@@ -74,7 +76,8 @@ func (order order) GetExpiry() types.Property {
 	} else if creation := order.Mutables.Get().Get(base.NewID(properties.Expiry)); creation != nil {
 		return creation
 	} else {
-		return base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
+		data, _ := base.ReadHeightData("")
+		return base.NewProperty(base.NewID(properties.Expiry), base.NewFact(data))
 	}
 }
 
@@ -84,7 +87,8 @@ func (order order) GetMakerOwnableSplit() types.Property {
 	} else if split := order.Mutables.Get().Get(base.NewID(properties.MakerOwnableSplit)); split != nil {
 		return split
 	} else {
-		return base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(base.NewDecData(sdkTypes.SmallestDec())))
+		data, _ := base.ReadDecData("")
+		return base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(data))
 	}
 }
 
