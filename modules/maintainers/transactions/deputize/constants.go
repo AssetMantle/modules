@@ -5,7 +5,7 @@
 
 package deputize
 
-import "github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
+import "github.com/persistenceOne/persistenceSDK/modules/maintainers/mapper"
 
 const TransactionName = "deputize"
 const TransactionRoute = mapper.TransactionRoute + "/" + TransactionName
