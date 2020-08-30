@@ -54,6 +54,6 @@ func NewIDData(value types.ID) types.Data {
 	}
 }
 
-func ReadIDData(idData string) types.Data {
-	return NewIDData(NewID(idData))
+func ReadIDData(idData string) (types.Data, error) {
+	return NewIDData(NewID(idData)), nil
 }
