@@ -11,7 +11,8 @@ import (
 )
 
 type request struct {
-	Name string `json:"name"`
+	Name     string `json:"name"`
+	Mnemonic string `json:"mnemonic"`
 }
 
 var _ helpers.Request = request{}
