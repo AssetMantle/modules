@@ -46,7 +46,7 @@ func KafkaConsumerMessages(cliCtx context.CLIContext, kafkaState queuing.KafkaSt
 		return
 	}
 
-	output, err := SignAndBroadcastMultiples(baseRequestList, cliContextList, msgList)
+	output, err := SignAndBroadcastMultiple(baseRequestList, cliContextList, msgList)
 	if err != nil {
 		jsonError, e := cliCtx.Codec.MarshalJSON(struct {
 			Error string `json:"error"`
