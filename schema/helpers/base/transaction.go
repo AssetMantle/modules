@@ -22,6 +22,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/utilities/rest/queuing"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"log"
 	"net/http"
 	"strings"
@@ -113,7 +114,11 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
-		//authClient.WriteGenerateStdTxResponse(responseWriter, cliContext, baseReq, []sdkTypes.Msg{msg})
+
+		if viper.GetBool(flags.FlagGenerateOnly) {
+			authClient.WriteGenerateStdTxResponse(responseWriter, cliContext, baseReq, []sdkTypes.Msg{msg})
+			return
+		}
 		//adding below commands to REST to have signed txs
 		gasAdj, ok := rest.ParseFloat64OrReturnBadRequest(responseWriter, baseReq.GasAdjustment, flags.DefaultGasAdjustment)
 		if !ok {
@@ -131,7 +136,6 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			baseReq.Simulate, baseReq.ChainID, baseReq.Memo, baseReq.Fees, baseReq.GasPrices,
 		)
 		msgList := []sdkTypes.Msg{msg}
-		fromName := cliContext.GetFromName()
 
 		if baseReq.Simulate || simAndExec {
 			if gasAdj < 0 {
@@ -151,51 +155,51 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			}
 		}
 
-		fromAddress, fromName, err := context.GetFromFields(strings.NewReader(keys.DefaultKeyPass), baseReq.From, false)
-		if err != nil {
-			fmt.Printf("failed to get from fields: %v\n", err)
+		fromAddress, fromName, Error := context.GetFromFields(strings.NewReader(keys.DefaultKeyPass), baseReq.From, viper.GetBool(flags.FlagGenerateOnly))
+		if Error != nil {
+			fmt.Printf("failed to get from fields: %v\n", Error)
 			return
 		}
 
 		cliContext = cliContext.WithFromAddress(fromAddress)
 		cliContext = cliContext.WithFromName(fromName)
-		cliContext = cliContext.WithBroadcastMode("block")
-
-		//adding account sequence
-		num, seq, err := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
-		if err != nil {
-			fmt.Printf("Error in NewAccountRetriever: %s\n", err)
-			return
-		}
-
-		txBuilder = txBuilder.WithAccountNumber(num)
-		txBuilder = txBuilder.WithSequence(seq)
-
-		//build and sign
-		stdMsg, Error := txBuilder.BuildAndSign(fromName, keys.DefaultKeyPass, msgList)
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
-			return
-		}
+		cliContext = cliContext.WithBroadcastMode(viper.GetString(flags.FlagBroadcastMode))
 
 		if KafkaBool == true {
-			ticketID := queuing.TicketIDGenerator("assetM")
+			ticketID := queuing.TicketIDGenerator(transaction.name)
 			jsonResponse := queuing.SendToKafka(queuing.NewKafkaMsgFromRest(msg, ticketID, baseReq, cliContext), KafkaState, cliContext.Codec)
 			responseWriter.WriteHeader(http.StatusAccepted)
 			_, _ = responseWriter.Write(jsonResponse)
 		} else {
-			// broadcast to a node
-			res, err := cliContext.BroadcastTx(stdMsg)
-			if err != nil {
-				fmt.Printf("Error in broadcast: %s\n", err)
+			//adding account sequence
+			accountNumber, sequence, Error := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
+			if Error != nil {
+				fmt.Printf("Error in NewAccountRetriever: %s\n", Error)
 				return
 			}
 
-			output, err := cliContext.Codec.MarshalJSON(res)
+			txBuilder = txBuilder.WithAccountNumber(accountNumber)
+			txBuilder = txBuilder.WithSequence(sequence)
+
+			//build and sign
+			stdMsg, Error := txBuilder.BuildAndSign(fromName, keys.DefaultKeyPass, msgList)
+			if Error != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+				return
+			}
+
+			// broadcast to a node
+			response, Error := cliContext.BroadcastTx(stdMsg)
+			if Error != nil {
+				fmt.Printf("Error in broadcast: %s\n", Error)
+				return
+			}
+
+			output, Error := cliContext.Codec.MarshalJSON(response)
 
 			responseWriter.Header().Set("Content-Type", "application/json")
-			if _, err := responseWriter.Write(output); err != nil {
-				log.Printf("could not write response: %v", err)
+			if _, Error := responseWriter.Write(output); Error != nil {
+				log.Printf("could not write response: %v", Error)
 			}
 		}
 

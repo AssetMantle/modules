@@ -46,13 +46,13 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			request.BaseRequest.Simulate, request.BaseRequest.ChainID, request.BaseRequest.Memo, request.BaseRequest.Fees, request.BaseRequest.GasPrices,
 		)
 
-		num, seq, Error := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
+		accountNumber, sequence, Error := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
-		txBuilder = txBuilder.WithAccountNumber(num)
-		txBuilder = txBuilder.WithSequence(seq)
+		txBuilder = txBuilder.WithAccountNumber(accountNumber)
+		txBuilder = txBuilder.WithSequence(sequence)
 
 		stdSignature, Error := types.MakeSignature(txBuilder.Keybase(), fromName, keys.DefaultKeyPass, types.StdSignMsg{
 			ChainID:       txBuilder.ChainID(),

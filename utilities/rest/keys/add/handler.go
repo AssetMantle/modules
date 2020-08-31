@@ -6,6 +6,8 @@
 package add
 
 import (
+	"errors"
+	"fmt"
 	"github.com/bartekn/go-bip39"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -17,7 +19,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 	"net/http"
-	"os"
 	"strings"
 )
 
@@ -29,26 +30,37 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		Keyring, Error := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), os.ExpandEnv("$HOME/.assetClient"), strings.NewReader(keys.DefaultKeyPass))
+		Keyring, Error := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
 		}
-
-		var mnemonicEntropySize = 256
-		entropySeed, Error := bip39.NewEntropy(mnemonicEntropySize)
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
+		info, Error := Keyring.Get(request.Name)
+		if Error == nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, errors.New(fmt.Sprintf("Account for keyname %v already exists", request.Name)).Error())
 			return
 		}
 
-		mnemonic, Error := bip39.NewMnemonic(entropySeed)
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
+		if request.Mnemonic != "" && !bip39.IsMnemonicValid(request.Mnemonic) {
+			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, errors.New("invalid mnemonic").Error())
 			return
 		}
+		if request.Mnemonic == "" {
+			var mnemonicEntropySize = 256
+			entropySeed, Error := bip39.NewEntropy(mnemonicEntropySize)
+			if Error != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
+				return
+			}
 
-		info, Error := Keyring.CreateAccount(request.Name, mnemonic, cryptoKeys.DefaultBIP39Passphrase, keys.DefaultKeyPass, sdkTypes.FullFundraiserPath, cryptoKeys.Secp256k1)
+			request.Mnemonic, Error = bip39.NewMnemonic(entropySeed)
+			if Error != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
+				return
+			}
+		}
+
+		info, Error = Keyring.CreateAccount(request.Name, request.Mnemonic, cryptoKeys.DefaultBIP39Passphrase, keys.DefaultKeyPass, sdkTypes.FullFundraiserPath, cryptoKeys.Secp256k1)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
@@ -59,7 +71,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
 		}
-		keyOutput.Mnemonic = mnemonic
+		keyOutput.Mnemonic = request.Mnemonic
 		rest.PostProcessResponse(responseWriter, cliContext, newResponse(keyOutput, nil))
 	}
 }
