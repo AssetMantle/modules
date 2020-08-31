@@ -17,7 +17,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 	"net/http"
-	"os"
 	"strings"
 )
 
@@ -29,7 +28,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		Keyring, Error := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), os.ExpandEnv("$HOME/.assetClient"), strings.NewReader(keys.DefaultKeyPass))
+		Keyring, Error := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
