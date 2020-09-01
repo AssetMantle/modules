@@ -14,6 +14,7 @@ import (
 type Module interface {
 	sdkTypesModule.AppModuleBasic
 	sdkTypesModule.AppModule
+	sdkTypesModule.AppModuleSimulation
 
 	GetKVStoreKey() *sdkTypes.KVStoreKey
 	GetDefaultParamspace() string
