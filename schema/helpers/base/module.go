@@ -12,12 +12,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/gorilla/mux"
 	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"math/rand"
 )
 
 type module struct {
@@ -33,6 +36,26 @@ type module struct {
 }
 
 var _ helpers.Module = (*module)(nil)
+
+func (module module) GenerateGenesisState(_ *sdkTypesModule.SimulationState) {
+	return
+}
+
+func (module module) ProposalContents(_ sdkTypesModule.SimulationState) []simulation.WeightedProposalContent {
+	return nil
+}
+
+func (module module) RandomizedParams(_ *rand.Rand) []simulation.ParamChange {
+	return nil
+}
+
+func (module module) RegisterStoreDecoder(_ sdkTypes.StoreDecoderRegistry) {
+	return
+}
+
+func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simulation.WeightedOperation {
+	return nil
+}
 
 func (module module) Name() string {
 	return module.moduleName
