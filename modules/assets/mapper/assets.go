@@ -83,7 +83,7 @@ func (assets assets) Mutate(asset mappables.InterNFT) mappers.InterNFTs {
 	return assets
 }
 
-func NewAssets(mapper helpers.Mapper, context sdkTypes.Context) mappers.InterNFTs {
+func NewAssets(context sdkTypes.Context, mapper helpers.Mapper) mappers.InterNFTs {
 	return assets{
 		ID:      readAssetID(""),
 		List:    []mappables.InterNFT{},
