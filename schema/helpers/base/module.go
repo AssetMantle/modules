@@ -49,8 +49,8 @@ func (module module) RandomizedParams(_ *rand.Rand) []simulation.ParamChange {
 	return nil
 }
 
-func (module module) RegisterStoreDecoder(_ sdkTypes.StoreDecoderRegistry) {
-	return
+func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDecoderRegistry) {
+	storeDecoderRegistry[module.moduleName] = module.mapper.StoreDecoder
 }
 
 func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simulation.WeightedOperation {
