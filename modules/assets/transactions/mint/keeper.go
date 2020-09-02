@@ -39,7 +39,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	immutables := base.NewImmutables(base.NewProperties(append(immutableProperties.GetList(), message.ImmutableProperties.GetList()...)...))
 
 	assetID := mapper.NewAssetID(message.ClassificationID, immutables)
-	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(assetID)
+	assets := mapper.NewAssets(context, transactionKeeper.mapper).Fetch(assetID)
 	if assets.Get(assetID) != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}

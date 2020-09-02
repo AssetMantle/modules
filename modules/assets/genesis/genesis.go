@@ -8,16 +8,16 @@ package genesis
 import (
 	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/errors"
-	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type genesisState struct {
-	AssetList []mappables.InterNFT
+	AssetList  []mappables.InterNFT `json:"assetList" valid:"required~required field"`
+	Parameters types.Parameters     `json:"parameters" valid:"required~required field"`
 }
 
 var _ helpers.GenesisState = (*genesisState)(nil)
@@ -27,36 +27,27 @@ func (genesisState genesisState) Default() helpers.GenesisState {
 }
 
 func (genesisState genesisState) Validate() error {
-	for _, asset := range genesisState.AssetList {
-		var _, Error = govalidator.ValidateStruct(asset)
-		if Error != nil {
-			return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
-		}
-	}
-	return nil
+	_, Error := govalidator.ValidateStruct(genesisState)
+	return Error
 }
 
-func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
-
+func (genesisState genesisState) Initialize(context sdkTypes.Context, Mapper helpers.Mapper) {
+	assets := mapper.NewAssets(context, Mapper)
 	for _, asset := range genesisState.AssetList {
-		mapper.Create(ctx, asset)
+		assets = assets.Add(asset)
 	}
 }
 
-func (genesisState genesisState) Export(context sdkTypes.Context, mapper helpers.Mapper) helpers.GenesisState {
-	assetsID := base.NewID("")
-
-	appendableAssetList := func(mappable traits.Mappable) bool {
-		genesisState.AssetList = append(genesisState.AssetList, mappable.(mappables.InterNFT))
-		return false
-	}
-	mapper.Iterate(context, assetsID, appendableAssetList)
-	return genesisState
+func (genesisState genesisState) Export(context sdkTypes.Context, Mapper helpers.Mapper) helpers.GenesisState {
+	assets := mapper.NewAssets(context, Mapper).Fetch(base.NewID(""))
+	//TODO add parameters
+	return NewGenesisState(assets.GetList(), nil)
 }
 
 func (genesisState genesisState) Marshall() []byte {
 	return packageCodec.MustMarshalJSON(genesisState)
 }
+
 func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
 	if Error := packageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
 		return nil
@@ -64,10 +55,11 @@ func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
 	return genesisState
 }
 
-func newGenesisState(assetList []mappables.InterNFT) helpers.GenesisState {
+func NewGenesisState(assetList []mappables.InterNFT, parameters types.Parameters) helpers.GenesisState {
 	return genesisState{
-		AssetList: assetList,
+		AssetList:  assetList,
+		Parameters: parameters,
 	}
 }
 
-var State = newGenesisState([]mappables.InterNFT{})
+var State = NewGenesisState(nil, nil)

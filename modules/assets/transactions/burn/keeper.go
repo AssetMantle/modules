@@ -31,7 +31,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
-	assets := mapper.NewAssets(transactionKeeper.mapper, context).Fetch(message.AssetID)
+	assets := mapper.NewAssets(context, transactionKeeper.mapper).Fetch(message.AssetID)
 	asset := assets.Get(message.AssetID)
 	if asset == nil {
 		return newTransactionResponse(errors.EntityNotFound)
