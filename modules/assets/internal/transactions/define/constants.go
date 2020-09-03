@@ -3,11 +3,11 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package burn
+package define
 
-import "github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
+import "github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
 
-const TransactionName = "burn"
+const TransactionName = "define"
 const TransactionRoute = mapper.TransactionRoute + "/" + TransactionName
 const TransactionShort = ""
 const TransactionLong = ""
