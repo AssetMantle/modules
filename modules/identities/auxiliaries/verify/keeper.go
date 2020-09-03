@@ -8,7 +8,7 @@ package verify
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 

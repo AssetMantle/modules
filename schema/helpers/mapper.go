@@ -8,8 +8,10 @@ package helpers
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/tendermint/tendermint/libs/kv"
 )
 
 type Mapper interface {
@@ -21,5 +23,9 @@ type Mapper interface {
 	Delete(sdkTypes.Context, types.ID)
 	Iterate(sdkTypes.Context, types.ID, func(traits.Mappable) bool)
 
+	StoreDecoder(*codec.Codec, kv.Pair, kv.Pair) string
+
 	RegisterCodec(*codec.Codec)
+
+	InitializeParamsSubspace(params.Subspace) Mapper
 }

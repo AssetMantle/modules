@@ -5,7 +5,7 @@
 
 package maintain
 
-import "github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
+import "github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
 
 const AuxiliaryName = "maintain"
 const AuxiliaryRoute = mapper.TransactionRoute + "/" + AuxiliaryName

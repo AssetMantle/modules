@@ -8,10 +8,10 @@ package maintainers
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/genesis"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/queries/maintainer"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/transactions/deputize"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/genesis"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/queries/maintainer"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/transactions/deputize"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )

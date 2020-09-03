@@ -7,14 +7,14 @@ package identities
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/genesis"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/queries/identity"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/transactions/define"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/transactions/issue"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/transactions/nub"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/transactions/provision"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/transactions/unprovision"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/genesis"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/queries/identity"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/define"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/issue"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/nub"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/provision"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/unprovision"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )

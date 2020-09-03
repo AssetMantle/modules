@@ -6,13 +6,13 @@
 package assets
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/assets/genesis"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/queries/asset"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/burn"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/define"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mint"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/transactions/mutate"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/genesis"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/queries/asset"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/burn"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/define"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/mint"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/mutate"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )

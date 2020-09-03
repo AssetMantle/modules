@@ -5,7 +5,7 @@
 
 package mint
 
-import "github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
+import "github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
 
 const AuxiliaryName = "mint"
 const AuxiliaryRoute = mapper.TransactionRoute + "/" + AuxiliaryName

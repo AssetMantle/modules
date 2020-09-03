@@ -8,9 +8,9 @@ package classifications
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/define"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/genesis"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/queries/classification"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/genesis"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/queries/classification"
 
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"

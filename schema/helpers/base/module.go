@@ -13,6 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/gorilla/mux"
 	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
@@ -49,8 +50,8 @@ func (module module) RandomizedParams(_ *rand.Rand) []simulation.ParamChange {
 	return nil
 }
 
-func (module module) RegisterStoreDecoder(_ sdkTypes.StoreDecoderRegistry) {
-	return
+func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDecoderRegistry) {
+	storeDecoderRegistry[module.moduleName] = module.mapper.StoreDecoder
 }
 
 func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simulation.WeightedOperation {
@@ -186,18 +187,18 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 	return nil, xprtErrors.IncorrectMessage
 }
 
-func (module module) Initialize(auxiliaryKeepers ...interface{}) helpers.Module {
-
+func (module module) Initialize(paramsSubspace params.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
+	mapper := module.mapper.InitializeParamsSubspace(paramsSubspace)
 	for _, auxiliary := range module.auxiliaryList {
-		auxiliary.InitializeKeeper(module.mapper, auxiliaryKeepers...)
+		auxiliary.InitializeKeeper(mapper, auxiliaryKeepers...)
 	}
 
 	for _, transaction := range module.transactionList {
-		transaction.InitializeKeeper(module.mapper, auxiliaryKeepers...)
+		transaction.InitializeKeeper(mapper, auxiliaryKeepers...)
 	}
 
 	for _, query := range module.queryList {
-		query.InitializeKeeper(module.mapper, auxiliaryKeepers...)
+		query.InitializeKeeper(mapper, auxiliaryKeepers...)
 	}
 
 	return module

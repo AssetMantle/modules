@@ -8,10 +8,10 @@ package metas
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/genesis"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/queries/meta"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/transactions/reveal"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/genesis"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/queries/meta"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/transactions/reveal"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )

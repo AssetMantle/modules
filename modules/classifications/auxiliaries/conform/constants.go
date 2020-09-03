@@ -5,7 +5,7 @@
 
 package conform
 
-import "github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
+import "github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mapper"
 
 const AuxiliaryName = "conform"
 const AuxiliaryRoute = mapper.TransactionRoute + "/" + AuxiliaryName

@@ -8,7 +8,7 @@ package conform
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
