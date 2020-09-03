@@ -12,7 +12,6 @@ import (
 
 type InterNFT interface {
 	types.NFT
-	traits.InterChain
 	traits.HasImmutables
 	traits.HasMutables
 	traits.Burnable

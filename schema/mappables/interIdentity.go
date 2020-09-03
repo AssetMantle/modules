@@ -20,7 +20,6 @@ type InterIdentity interface {
 	IsProvisioned(sdkTypes.AccAddress) bool
 	IsUnprovisioned(sdkTypes.AccAddress) bool
 
-	traits.InterChain
 	traits.HasImmutables
 	traits.HasMutables
 	traits.Mappable
