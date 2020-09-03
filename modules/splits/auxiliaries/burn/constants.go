@@ -5,7 +5,7 @@
 
 package burn
 
-import "github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
+import "github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
 
 const AuxiliaryName = "burn"
 const AuxiliaryRoute = mapper.TransactionRoute + "/" + AuxiliaryName

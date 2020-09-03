@@ -6,7 +6,7 @@
 package supplement
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/metas/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 

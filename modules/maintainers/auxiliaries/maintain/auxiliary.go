@@ -6,7 +6,7 @@
 package maintain
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 

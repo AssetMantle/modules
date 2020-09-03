@@ -8,7 +8,7 @@ package super
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 

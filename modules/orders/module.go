@@ -6,13 +6,13 @@
 package orders
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/orders/genesis"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/queries/order"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/transactions/cancel"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/transactions/define"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/transactions/make"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/transactions/take"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/genesis"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/queries/order"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/cancel"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/define"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/make"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/take"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )

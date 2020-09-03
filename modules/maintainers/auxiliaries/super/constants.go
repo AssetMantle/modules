@@ -5,7 +5,7 @@
 
 package super
 
-import "github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
+import "github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
 
 const AuxiliaryName = "super"
 const AuxiliaryRoute = mapper.TransactionRoute + "/" + AuxiliaryName

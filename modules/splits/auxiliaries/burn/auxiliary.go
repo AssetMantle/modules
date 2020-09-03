@@ -6,7 +6,7 @@
 package burn
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/splits/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 

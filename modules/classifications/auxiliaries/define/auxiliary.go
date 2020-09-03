@@ -6,7 +6,7 @@
 package define
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 

@@ -7,7 +7,7 @@ package supplement
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"

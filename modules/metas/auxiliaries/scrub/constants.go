@@ -5,7 +5,7 @@
 
 package scrub
 
-import "github.com/persistenceOne/persistenceSDK/modules/metas/mapper"
+import "github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
 
 const AuxiliaryName = "scrub"
 const AuxiliaryRoute = mapper.TransactionRoute + "/" + AuxiliaryName

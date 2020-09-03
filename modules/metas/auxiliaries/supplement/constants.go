@@ -5,7 +5,7 @@
 
 package supplement
 
-import "github.com/persistenceOne/persistenceSDK/modules/metas/mapper"
+import "github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
 
 const AuxiliaryName = "supplement"
 const AuxiliaryRoute = mapper.TransactionRoute + "/" + AuxiliaryName
