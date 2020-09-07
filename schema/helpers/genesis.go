@@ -10,12 +10,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
-type GenesisState interface {
-	Default() GenesisState
+type Genesis interface {
+	Default() Genesis
 	Validate() error
 	Initialize(sdkTypes.Context, Mapper)
-	Export(sdkTypes.Context, Mapper) GenesisState
+	Export(sdkTypes.Context, Mapper) Genesis
 	RegisterCodec(*codec.Codec)
 	Marshall() []byte
-	Unmarshall([]byte) GenesisState
+	Unmarshall([]byte) Genesis
 }
