@@ -15,25 +15,26 @@ import (
 )
 
 type parameters struct {
-	ParameterList []types.Parameter
+	parameterList  []types.Parameter
+	paramsSubspace params.Subspace
 }
 
 var _ helpers.Parameters = (*parameters)(nil)
 
 func (parameters parameters) String() string {
 	var parameterList []string
-	for _, parameter := range parameters.ParameterList {
+	for _, parameter := range parameters.parameterList {
 		parameterList = append(parameterList, parameter.String())
 	}
 	return strings.Join(parameterList, "\n")
 }
 
 func (parameters parameters) GetList() []types.Parameter {
-	return parameters.ParameterList
+	return parameters.parameterList
 }
 
 func (parameters parameters) Validate() error {
-	for _, parameter := range parameters.ParameterList {
+	for _, parameter := range parameters.parameterList {
 		if Error := parameter.Validate(); Error != nil {
 			return Error
 		}
@@ -55,18 +56,22 @@ func (parameters parameters) Equal(Parameters helpers.Parameters) bool {
 
 func (parameters parameters) ParamSetPairs() params.ParamSetPairs {
 	var paramSetPairList []params.ParamSetPair
-	for _, parameter := range parameters.ParameterList {
+	for _, parameter := range parameters.parameterList {
 		paramSetPairList = append(paramSetPairList, params.NewParamSetPair([]byte(parameter.GetKey()), parameter.GetData(), parameter.GetValidator()))
 	}
 	return paramSetPairList
 }
 
-func (parameters parameters) KeyTable() params.KeyTable {
+func (parameters parameters) GetKeyTable() params.KeyTable {
 	return params.NewKeyTable().RegisterParamSet(parameters)
 }
 
+func (parameters *parameters) Initialize(paramsSubspace params.Subspace) {
+	parameters.paramsSubspace = paramsSubspace
+}
+
 func NewParameters(parameterList ...types.Parameter) helpers.Parameters {
-	return parameters{
-		ParameterList: parameterList,
+	return &parameters{
+		parameterList: parameterList,
 	}
 }
