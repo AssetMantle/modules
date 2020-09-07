@@ -13,7 +13,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters/dummy"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"math/rand"
@@ -30,10 +29,8 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { data = base.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	Parameters := baseHelpers.NewParameters(dummy.Parameter.Mutate(data))
-
 	// TODO add assetList
-	genesisState := genesis.NewGenesisState(nil, Parameters)
+	genesisState := genesis.NewGenesisState(nil, dummy.Parameter.Mutate(data))
 
 	fmt.Printf("Selected randomly generated minting parameters:\n%s\n", codec.MustMarshalJSONIndent(simulationState.Cdc, genesisState))
 	simulationState.GenState[mapper.ModuleName] = simulationState.Cdc.MustMarshalJSON(genesisState)
