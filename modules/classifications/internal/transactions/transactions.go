@@ -3,9 +3,8 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package parameters
+package transactions
 
-import sdkTypes "github.com/cosmos/cosmos-sdk/types"
+import "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 
-var KeyDummy = []byte("Dummy")
-var DefaultDummy = sdkTypes.SmallestDec()
+var Transactions = base.NewTransactions()

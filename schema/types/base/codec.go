@@ -5,7 +5,9 @@
 
 package base
 
-import "github.com/cosmos/cosmos-sdk/codec"
+import (
+	"github.com/cosmos/cosmos-sdk/codec"
+)
 
 func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterConcrete(decData{}, "xprt/decData", nil)
@@ -19,6 +21,7 @@ func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterConcrete(metaProperties{}, "xprt/metaProperties", nil)
 	codec.RegisterConcrete(metaProperty{}, "xprt/metaProperty", nil)
 	codec.RegisterConcrete(mutables{}, "xprt/mutables", nil)
+	codec.RegisterConcrete(parameter{}, "xprt/parameter", nil)
 	codec.RegisterConcrete(properties{}, "xprt/properties", nil)
 	codec.RegisterConcrete(property{}, "xprt/property", nil)
 	codec.RegisterConcrete(signature{}, "xprt/signature", nil)

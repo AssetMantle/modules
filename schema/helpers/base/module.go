@@ -29,11 +29,12 @@ type module struct {
 	defaultParamspace string
 	queryRoute        string
 	transactionRoute  string
-	genesisState      helpers.GenesisState
 	mapper            helpers.Mapper
-	auxiliaryList     []helpers.Auxiliary
-	queryList         []helpers.Query
-	transactionList   []helpers.Transaction
+	genesisState      helpers.Genesis
+	parameters        helpers.Parameters
+	auxiliaries       helpers.Auxiliaries
+	queries           helpers.Queries
+	transactions      helpers.Transactions
 }
 
 var _ helpers.Module = (*module)(nil)
@@ -64,10 +65,10 @@ func (module module) Name() string {
 func (module module) RegisterCodec(codec *codec.Codec) {
 	module.mapper.RegisterCodec(codec)
 	module.genesisState.RegisterCodec(codec)
-	for _, transaction := range module.transactionList {
+	for _, transaction := range module.transactions.GetList() {
 		transaction.RegisterCodec(codec)
 	}
-	for _, query := range module.queryList {
+	for _, query := range module.queries.GetList() {
 		query.RegisterCodec(codec)
 	}
 }
@@ -79,11 +80,11 @@ func (module module) ValidateGenesis(rawMessage json.RawMessage) error {
 	return genesisState.Validate()
 }
 func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
-	for _, query := range module.queryList {
+	for _, query := range module.queries.GetList() {
 		router.HandleFunc(query.GetRoute()+"/{query}", query.RESTQueryHandler(cliContext)).Methods("GET")
 	}
 
-	for _, transaction := range module.transactionList {
+	for _, transaction := range module.transactions.GetList() {
 		router.HandleFunc(transaction.GetRoute(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
 	}
 }
@@ -96,7 +97,7 @@ func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 	var commandList []*cobra.Command
-	for _, transaction := range module.transactionList {
+	for _, transaction := range module.transactions.GetList() {
 		commandList = append(commandList, transaction.Command(codec))
 	}
 	rootTransactionCommand.AddCommand(
@@ -113,7 +114,7 @@ func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 	var commandList []*cobra.Command
-	for _, query := range module.queryList {
+	for _, query := range module.queries.GetList() {
 		commandList = append(commandList, query.Command(codec))
 	}
 	rootQueryCommand.AddCommand(
@@ -129,10 +130,8 @@ func (module module) NewHandler() sdkTypes.Handler {
 	return func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
 		context = context.WithEventManager(sdkTypes.NewEventManager())
 
-		for _, transaction := range module.transactionList {
-			if msg.Type() == transaction.GetName() {
-				return transaction.HandleMessage(context, msg)
-			}
+		if transaction := module.transactions.Get(msg.Type()); transaction != nil {
+			return transaction.HandleMessage(context, msg)
 		}
 		return nil, errors.New(fmt.Sprintf("Unknown message type, %v for module %v", msg.Type(), module.Name()))
 	}
@@ -142,10 +141,8 @@ func (module module) QuerierRoute() string {
 }
 func (module module) NewQuerierHandler() sdkTypes.Querier {
 	return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
-		for _, query := range module.queryList {
-			if query.GetName() == path[0] {
-				return query.HandleMessage(context, requestQuery)
-			}
+		if query := module.queries.Get(path[0]); query != nil {
+			return query.HandleMessage(context, requestQuery)
 		}
 		return nil, errors.New(fmt.Sprintf("Unknown query path, %v for module %v", path[0], module.Name()))
 	}
@@ -170,49 +167,47 @@ func (module module) GetDefaultParamspace() string {
 	return module.defaultParamspace
 }
 func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
-	for _, auxiliary := range module.auxiliaryList {
-		if auxiliary.GetName() == auxiliaryName {
-			return auxiliary
-		}
+	if auxiliary := module.auxiliaries.Get(auxiliaryName); auxiliary != nil {
+		return auxiliary
 	}
 	panic(fmt.Sprintf("auxiliary %v not found/initialized", auxiliaryName))
 }
 
 func (module module) DecodeModuleTransactionRequest(transactionName string, rawMessage json.RawMessage) (sdkTypes.Msg, error) {
-	for _, transaction := range module.transactionList {
-		if transaction.GetName() == transactionName {
-			return transaction.DecodeTransactionRequest(rawMessage)
-		}
+	if transaction := module.transactions.Get(transactionName); transaction != nil {
+		return transaction.DecodeTransactionRequest(rawMessage)
 	}
 	return nil, xprtErrors.IncorrectMessage
 }
 
 func (module module) Initialize(paramsSubspace params.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
-	mapper := module.mapper.InitializeParamsSubspace(paramsSubspace)
-	for _, auxiliary := range module.auxiliaryList {
-		auxiliary.InitializeKeeper(mapper, auxiliaryKeepers...)
+	module.parameters.Initialize(paramsSubspace)
+	for _, auxiliary := range module.auxiliaries.GetList() {
+		auxiliary.InitializeKeeper(module.mapper, auxiliaryKeepers...)
 	}
 
-	for _, transaction := range module.transactionList {
-		transaction.InitializeKeeper(mapper, auxiliaryKeepers...)
+	for _, transaction := range module.transactions.GetList() {
+		transaction.InitializeKeeper(module.mapper, auxiliaryKeepers...)
 	}
 
-	for _, query := range module.queryList {
-		query.InitializeKeeper(mapper, auxiliaryKeepers...)
+	for _, query := range module.queries.GetList() {
+		query.InitializeKeeper(module.mapper, auxiliaryKeepers...)
 	}
 
 	return module
 }
-func NewModule(moduleName string, defaultParamspace string, queryRoute string, transactionRoute string, genesisState helpers.GenesisState, mapper helpers.Mapper, auxiliaryList []helpers.Auxiliary, queryList []helpers.Query, transactionList []helpers.Transaction) helpers.Module {
+
+func NewModule(moduleName string, defaultParamspace string, queryRoute string, transactionRoute string, mapper helpers.Mapper, genesisState helpers.Genesis, parameters helpers.Parameters, auxiliaries helpers.Auxiliaries, queries helpers.Queries, transactions helpers.Transactions) helpers.Module {
 	return module{
 		moduleName:        moduleName,
 		defaultParamspace: defaultParamspace,
 		queryRoute:        queryRoute,
 		transactionRoute:  transactionRoute,
-		genesisState:      genesisState,
 		mapper:            mapper,
-		auxiliaryList:     auxiliaryList,
-		queryList:         queryList,
-		transactionList:   transactionList,
+		genesisState:      genesisState,
+		parameters:        parameters,
+		auxiliaries:       auxiliaries,
+		queries:           queries,
+		transactions:      transactions,
 	}
 }

@@ -16,18 +16,18 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-type genesisState struct {
+type genesis struct {
 	OrderList []mappables.Order
 }
 
-var _ helpers.GenesisState = (*genesisState)(nil)
+var _ helpers.Genesis = (*genesis)(nil)
 
-func (genesisState genesisState) Default() helpers.GenesisState {
-	return genesisState
+func (genesis genesis) Default() helpers.Genesis {
+	return genesis
 }
 
-func (genesisState genesisState) Validate() error {
-	for _, order := range genesisState.OrderList {
+func (genesis genesis) Validate() error {
+	for _, order := range genesis.OrderList {
 		var _, Error = govalidator.ValidateStruct(order)
 		if Error != nil {
 			return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
@@ -36,38 +36,38 @@ func (genesisState genesisState) Validate() error {
 	return nil
 }
 
-func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
+func (genesis genesis) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
 
-	for _, order := range genesisState.OrderList {
+	for _, order := range genesis.OrderList {
 		mapper.Create(ctx, order)
 	}
 }
 
-func (genesisState genesisState) Export(context sdkTypes.Context, mapper helpers.Mapper) helpers.GenesisState {
+func (genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper) helpers.Genesis {
 	assetsID := base.NewID("")
 
 	appendableAssetList := func(mappable traits.Mappable) bool {
-		genesisState.OrderList = append(genesisState.OrderList, mappable.(mappables.Order))
+		genesis.OrderList = append(genesis.OrderList, mappable.(mappables.Order))
 		return false
 	}
 	mapper.Iterate(context, assetsID, appendableAssetList)
-	return genesisState
+	return genesis
 }
 
-func (genesisState genesisState) Marshall() []byte {
-	return packageCodec.MustMarshalJSON(genesisState)
+func (genesis genesis) Marshall() []byte {
+	return packageCodec.MustMarshalJSON(genesis)
 }
-func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
-	if Error := packageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
+func (genesis genesis) Unmarshall(byte []byte) helpers.Genesis {
+	if Error := packageCodec.UnmarshalJSON(byte, &genesis); Error != nil {
 		return nil
 	}
-	return genesisState
+	return genesis
 }
 
-func newGenesisState(orderList []mappables.Order) helpers.GenesisState {
-	return genesisState{
+func newGenesis(orderList []mappables.Order) helpers.Genesis {
+	return genesis{
 		OrderList: orderList,
 	}
 }
 
-var State = newGenesisState([]mappables.Order{})
+var Genesis = newGenesis([]mappables.Order{})

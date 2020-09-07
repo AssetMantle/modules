@@ -15,51 +15,51 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-type genesisState struct {
-	AssetList  []mappables.InterNFT `json:"assetList"`
-	Parameters types.Parameters     `json:"parameters"`
+type genesis struct {
+	AssetList     []mappables.InterNFT `json:"assetList"`
+	ParameterList []types.Parameter    `json:"parameterList"`
 }
 
-var _ helpers.GenesisState = (*genesisState)(nil)
+var _ helpers.Genesis = (*genesis)(nil)
 
-func (genesisState genesisState) Default() helpers.GenesisState {
-	return genesisState
+func (genesis genesis) Default() helpers.Genesis {
+	return genesis
 }
 
-func (genesisState genesisState) Validate() error {
-	_, Error := govalidator.ValidateStruct(genesisState)
+func (genesis genesis) Validate() error {
+	_, Error := govalidator.ValidateStruct(genesis)
 	return Error
 }
 
-func (genesisState genesisState) Initialize(context sdkTypes.Context, Mapper helpers.Mapper) {
+func (genesis genesis) Initialize(context sdkTypes.Context, Mapper helpers.Mapper) {
 	assets := mapper.NewAssets(context, Mapper)
-	for _, asset := range genesisState.AssetList {
+	for _, asset := range genesis.AssetList {
 		assets = assets.Add(asset)
 	}
 }
 
-func (genesisState genesisState) Export(context sdkTypes.Context, Mapper helpers.Mapper) helpers.GenesisState {
+func (genesis genesis) Export(context sdkTypes.Context, Mapper helpers.Mapper) helpers.Genesis {
 	assets := mapper.NewAssets(context, Mapper).Fetch(base.NewID(""))
 	//TODO add parameters
-	return NewGenesisState(assets.GetList(), nil)
+	return NewGenesis(assets.GetList(), nil)
 }
 
-func (genesisState genesisState) Marshall() []byte {
-	return packageCodec.MustMarshalJSON(genesisState)
+func (genesis genesis) Marshall() []byte {
+	return packageCodec.MustMarshalJSON(genesis)
 }
 
-func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
-	if Error := packageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
+func (genesis genesis) Unmarshall(byte []byte) helpers.Genesis {
+	if Error := packageCodec.UnmarshalJSON(byte, &genesis); Error != nil {
 		return nil
 	}
-	return genesisState
+	return genesis
 }
 
-func NewGenesisState(assetList []mappables.InterNFT, parameters types.Parameters) helpers.GenesisState {
-	return genesisState{
-		AssetList:  assetList,
-		Parameters: parameters,
+func NewGenesis(assetList []mappables.InterNFT, parameterList ...types.Parameter) helpers.Genesis {
+	return genesis{
+		AssetList:     assetList,
+		ParameterList: parameterList,
 	}
 }
 
-var State = NewGenesisState(nil, nil)
+var Genesis = NewGenesis([]mappables.InterNFT{}, []types.Parameter{}...)

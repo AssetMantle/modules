@@ -12,30 +12,26 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters/dummy"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"math/rand"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
 
-	var dummyParameter sdkTypes.Dec
+	var data types.Data
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		DummyParameter,
-		&dummyParameter,
+		dummy.Key,
+		&data,
 		simulationState.Rand,
-		func(r *rand.Rand) { dummyParameter = generateDummyParameter(r) },
+		func(rand *rand.Rand) { data = base.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	Parameters := parameters.NewParameters(dummyParameter)
-
 	// TODO add assetList
-	genesisState := genesis.NewGenesisState(nil, Parameters)
+	genesisState := genesis.NewGenesis(nil, dummy.Parameter.Mutate(data))
 
 	fmt.Printf("Selected randomly generated minting parameters:\n%s\n", codec.MustMarshalJSONIndent(simulationState.Cdc, genesisState))
 	simulationState.GenState[mapper.ModuleName] = simulationState.Cdc.MustMarshalJSON(genesisState)
-}
-
-func generateDummyParameter(r *rand.Rand) sdkTypes.Dec {
-	return sdkTypes.NewDecWithPrec(int64(r.Intn(99)), 2)
 }

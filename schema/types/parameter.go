@@ -5,12 +5,14 @@
 
 package types
 
-import "github.com/cosmos/cosmos-sdk/x/params/subspace"
-
-type Parameters interface {
+type Parameter interface {
 	String() string
+	Equal(Parameter) bool
 	Validate() error
-	Equal(Parameters) bool
-	KeyTable() subspace.KeyTable
-	subspace.ParamSet
+
+	GetKey() string
+	GetData() Data
+	GetValidator() func(interface{}) error
+
+	Mutate(Data) Parameter
 }

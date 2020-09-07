@@ -16,18 +16,18 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-type genesisState struct {
+type genesis struct {
 	SplitList []mappables.Split
 }
 
-var _ helpers.GenesisState = (*genesisState)(nil)
+var _ helpers.Genesis = (*genesis)(nil)
 
-func (genesisState genesisState) Default() helpers.GenesisState {
-	return genesisState
+func (genesis genesis) Default() helpers.Genesis {
+	return genesis
 }
 
-func (genesisState genesisState) Validate() error {
-	for _, split := range genesisState.SplitList {
+func (genesis genesis) Validate() error {
+	for _, split := range genesis.SplitList {
 		var _, Error = govalidator.ValidateStruct(split)
 		if Error != nil {
 			return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
@@ -39,37 +39,37 @@ func (genesisState genesisState) Validate() error {
 	return nil
 }
 
-func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
-	for _, split := range genesisState.SplitList {
+func (genesis genesis) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
+	for _, split := range genesis.SplitList {
 		mapper.Create(ctx, split)
 	}
 }
 
-func (genesisState genesisState) Export(context sdkTypes.Context, mapper helpers.Mapper) helpers.GenesisState {
+func (genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper) helpers.Genesis {
 	assetsID := base.NewID("")
 
 	appendableAssetList := func(mappable traits.Mappable) bool {
-		genesisState.SplitList = append(genesisState.SplitList, mappable.(mappables.Split))
+		genesis.SplitList = append(genesis.SplitList, mappable.(mappables.Split))
 		return false
 	}
 	mapper.Iterate(context, assetsID, appendableAssetList)
-	return genesisState
+	return genesis
 }
 
-func (genesisState genesisState) Marshall() []byte {
-	return packageCodec.MustMarshalJSON(genesisState)
+func (genesis genesis) Marshall() []byte {
+	return packageCodec.MustMarshalJSON(genesis)
 }
-func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
-	if Error := packageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
+func (genesis genesis) Unmarshall(byte []byte) helpers.Genesis {
+	if Error := packageCodec.UnmarshalJSON(byte, &genesis); Error != nil {
 		return nil
 	}
-	return genesisState
+	return genesis
 }
 
-func newGenesisState(splitList []mappables.Split) helpers.GenesisState {
-	return genesisState{
+func newGenesis(splitList []mappables.Split) helpers.Genesis {
+	return genesis{
 		SplitList: splitList,
 	}
 }
 
-var State = newGenesisState([]mappables.Split{})
+var Genesis = newGenesis([]mappables.Split{})

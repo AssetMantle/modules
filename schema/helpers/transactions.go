@@ -3,9 +3,10 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package parameters
+package helpers
 
-import sdkTypes "github.com/cosmos/cosmos-sdk/types"
+type Transactions interface {
+	Get(string) Transaction
 
-var KeyDummy = []byte("Dummy")
-var DefaultDummy = sdkTypes.SmallestDec()
+	GetList() []Transaction
+}

@@ -20,31 +20,44 @@ type decData struct {
 
 var _ types.Data = (*decData)(nil)
 
-func (decData decData) GenerateHash() string {
-	if decData.Value.IsZero() {
-		return ""
-	}
-	return meta.Hash(decData.Value.String())
+func (DecData decData) String() string {
+	return DecData.Value.String()
 }
 
-func (decData decData) AsString() (string, error) {
+func (DecData decData) GenerateHash() string {
+	if DecData.Value.IsZero() {
+		return ""
+	}
+	return meta.Hash(DecData.Value.String())
+}
+
+func (DecData decData) AsString() (string, error) {
 	return "", errors.EntityNotFound
 }
 
-func (decData decData) AsDec() (sdkTypes.Dec, error) {
-	return decData.Value, nil
+func (DecData decData) AsDec() (sdkTypes.Dec, error) {
+	return DecData.Value, nil
 }
 
-func (decData decData) AsHeight() (types.Height, error) {
+func (DecData decData) AsHeight() (types.Height, error) {
 	return height{}, errors.EntityNotFound
 }
 
-func (decData decData) AsID() (types.ID, error) {
+func (DecData decData) AsID() (types.ID, error) {
 	return id{}, errors.EntityNotFound
 }
 
-func (decData decData) Get() interface{} {
-	return decData.Value
+func (DecData decData) Get() interface{} {
+	return DecData.Value
+}
+
+func (DecData decData) Equal(data types.Data) bool {
+	switch value := data.(type) {
+	case decData:
+		return value.Equal(DecData)
+	default:
+		return false
+	}
 }
 
 func NewDecData(value sdkTypes.Dec) types.Data {

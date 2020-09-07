@@ -16,18 +16,18 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-type genesisState struct {
+type genesis struct {
 	MaintainersList []mappables.Maintainer
 }
 
-var _ helpers.GenesisState = (*genesisState)(nil)
+var _ helpers.Genesis = (*genesis)(nil)
 
-func (genesisState genesisState) Default() helpers.GenesisState {
-	return genesisState
+func (genesis genesis) Default() helpers.Genesis {
+	return genesis
 }
 
-func (genesisState genesisState) Validate() error {
-	for _, maintainers := range genesisState.MaintainersList {
+func (genesis genesis) Validate() error {
+	for _, maintainers := range genesis.MaintainersList {
 		var _, Error = govalidator.ValidateStruct(maintainers)
 		if Error != nil {
 			return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
@@ -36,38 +36,38 @@ func (genesisState genesisState) Validate() error {
 	return nil
 }
 
-func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
+func (genesis genesis) Initialize(ctx sdkTypes.Context, mapper helpers.Mapper) {
 
-	for _, cls := range genesisState.MaintainersList {
+	for _, cls := range genesis.MaintainersList {
 		mapper.Create(ctx, cls)
 	}
 }
 
-func (genesisState genesisState) Export(context sdkTypes.Context, mapper helpers.Mapper) helpers.GenesisState {
+func (genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper) helpers.Genesis {
 	assetsID := base.NewID("")
 
 	appendableAssetList := func(mappable traits.Mappable) bool {
-		genesisState.MaintainersList = append(genesisState.MaintainersList, mappable.(mappables.Maintainer))
+		genesis.MaintainersList = append(genesis.MaintainersList, mappable.(mappables.Maintainer))
 		return false
 	}
 	mapper.Iterate(context, assetsID, appendableAssetList)
-	return genesisState
+	return genesis
 }
 
-func (genesisState genesisState) Marshall() []byte {
-	return packageCodec.MustMarshalJSON(genesisState)
+func (genesis genesis) Marshall() []byte {
+	return packageCodec.MustMarshalJSON(genesis)
 }
-func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
-	if Error := packageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
+func (genesis genesis) Unmarshall(byte []byte) helpers.Genesis {
+	if Error := packageCodec.UnmarshalJSON(byte, &genesis); Error != nil {
 		return nil
 	}
-	return genesisState
+	return genesis
 }
 
-func newGenesisState(MaintainersList []mappables.Maintainer) helpers.GenesisState {
-	return genesisState{
+func newGenesis(MaintainersList []mappables.Maintainer) helpers.Genesis {
+	return genesis{
 		MaintainersList: MaintainersList,
 	}
 }
 
-var State = newGenesisState([]mappables.Maintainer{})
+var Genesis = newGenesis([]mappables.Maintainer{})

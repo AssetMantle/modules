@@ -6,14 +6,12 @@
 package orders
 
 import (
+	"github.com/persistenceOne/persistenceSDK/modules/orders/auxiliaries"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/queries/order"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/cancel"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/define"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/make"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/take"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/parameters"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/queries"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
@@ -22,9 +20,10 @@ var Module = base.NewModule(
 	mapper.DefaultParamspace,
 	mapper.QueryRoute,
 	mapper.TransactionRoute,
-	genesis.State,
 	mapper.Mapper,
-	[]helpers.Auxiliary{},
-	[]helpers.Query{order.Query},
-	[]helpers.Transaction{define.Transaction, cancel.Transaction, make.Transaction, take.Transaction},
+	genesis.Genesis,
+	parameters.Parameters,
+	auxiliaries.Auxiliaries,
+	queries.Queries,
+	transactions.Transactions,
 )

@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -19,13 +18,11 @@ import (
 )
 
 type mapper struct {
-	kvStoreKey          *sdkTypes.KVStoreKey
-	keyGenerator        func(types.ID) []byte
-	mappablePrototype   func() traits.Mappable
-	parametersPrototype func() types.Parameters
-	registerCodec       func(*codec.Codec)
-
-	paramsSubspace params.Subspace
+	kvStoreKey        *sdkTypes.KVStoreKey
+	parameters        helpers.Parameters
+	keyGenerator      func(types.ID) []byte
+	mappablePrototype func() traits.Mappable
+	registerCodec     func(*codec.Codec)
 }
 
 var _ helpers.Mapper = (*mapper)(nil)
@@ -78,16 +75,13 @@ func (mapper mapper) StoreDecoder(_ *codec.Codec, kvA kv.Pair, kvB kv.Pair) stri
 func (mapper mapper) RegisterCodec(codec *codec.Codec) {
 	mapper.registerCodec(codec)
 }
-func (mapper mapper) InitializeParamsSubspace(paramsSubspace params.Subspace) helpers.Mapper {
-	mapper.paramsSubspace = paramsSubspace
-	return mapper
-}
-func NewMapper(module string, keyGenerator func(types.ID) []byte, mappablePrototype func() traits.Mappable, parametersPrototype func() types.Parameters, registerCodec func(*codec.Codec)) helpers.Mapper {
+
+func NewMapper(module string, parameters helpers.Parameters, keyGenerator func(types.ID) []byte, mappablePrototype func() traits.Mappable, registerCodec func(*codec.Codec)) helpers.Mapper {
 	return mapper{
-		kvStoreKey:          sdkTypes.NewKVStoreKey(module),
-		keyGenerator:        keyGenerator,
-		mappablePrototype:   mappablePrototype,
-		parametersPrototype: parametersPrototype,
-		registerCodec:       registerCodec,
+		kvStoreKey:        sdkTypes.NewKVStoreKey(module),
+		parameters:        parameters,
+		keyGenerator:      keyGenerator,
+		mappablePrototype: mappablePrototype,
+		registerCodec:     registerCodec,
 	}
 }
