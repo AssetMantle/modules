@@ -11,14 +11,14 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
-func (genesisState) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(genesisState{}, mapper.ModuleRoute+"/"+"genesisState", nil)
+func (genesis) RegisterCodec(codec *codec.Codec) {
+	codec.RegisterConcrete(genesis{}, mapper.ModuleRoute+"/"+"genesis", nil)
 }
 
 var packageCodec = codec.New()
 
 func init() {
-	State.RegisterCodec(packageCodec)
+	Genesis.RegisterCodec(packageCodec)
 	schema.RegisterCodec(packageCodec)
 	mapper.Mapper.RegisterCodec(packageCodec)
 	packageCodec.Seal()

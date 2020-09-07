@@ -20,9 +20,9 @@ type genesisState struct {
 	MetasList []mappables.Meta
 }
 
-var _ helpers.GenesisState = (*genesisState)(nil)
+var _ helpers.Genesis = (*genesisState)(nil)
 
-func (genesisState genesisState) Default() helpers.GenesisState {
+func (genesisState genesisState) Default() helpers.Genesis {
 	return genesisState
 }
 
@@ -43,7 +43,7 @@ func (genesisState genesisState) Initialize(ctx sdkTypes.Context, mapper helpers
 	}
 }
 
-func (genesisState genesisState) Export(context sdkTypes.Context, mapper helpers.Mapper) helpers.GenesisState {
+func (genesisState genesisState) Export(context sdkTypes.Context, mapper helpers.Mapper) helpers.Genesis {
 	assetsID := base.NewID("")
 
 	appendableAssetList := func(mappable traits.Mappable) bool {
@@ -57,14 +57,14 @@ func (genesisState genesisState) Export(context sdkTypes.Context, mapper helpers
 func (genesisState genesisState) Marshall() []byte {
 	return packageCodec.MustMarshalJSON(genesisState)
 }
-func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
+func (genesisState genesisState) Unmarshall(byte []byte) helpers.Genesis {
 	if Error := packageCodec.UnmarshalJSON(byte, &genesisState); Error != nil {
 		return nil
 	}
 	return genesisState
 }
 
-func newGenesisState(MetasList []mappables.Meta) helpers.GenesisState {
+func newGenesisState(MetasList []mappables.Meta) helpers.Genesis {
 	return genesisState{
 		MetasList: MetasList,
 	}
