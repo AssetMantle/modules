@@ -3,12 +3,18 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package types
+package helpers
 
-import "github.com/cosmos/cosmos-sdk/x/params/subspace"
+import (
+	"github.com/cosmos/cosmos-sdk/x/params/subspace"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+)
 
 type Parameters interface {
 	String() string
+
+	GetList() []types.Parameter
+
 	Validate() error
 	Equal(Parameters) bool
 	KeyTable() subspace.KeyTable
