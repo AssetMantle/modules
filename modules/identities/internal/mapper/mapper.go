@@ -12,8 +12,8 @@ import (
 
 var Mapper = base.NewMapper(
 	ModuleName,
+	parameters.Parameters,
 	generateKey,
 	identityPrototype,
-	parameters.Prototype,
 	registerCodec,
 )

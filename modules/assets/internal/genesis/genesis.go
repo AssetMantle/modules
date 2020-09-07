@@ -16,8 +16,8 @@ import (
 )
 
 type genesisState struct {
-	AssetList  []mappables.InterNFT `json:"assetList"`
-	Parameters types.Parameters     `json:"parameters"`
+	AssetList     []mappables.InterNFT `json:"assetList"`
+	ParameterList []types.Parameter    `json:"parameterList"`
 }
 
 var _ helpers.GenesisState = (*genesisState)(nil)
@@ -55,10 +55,10 @@ func (genesisState genesisState) Unmarshall(byte []byte) helpers.GenesisState {
 	return genesisState
 }
 
-func NewGenesisState(assetList []mappables.InterNFT, parameters types.Parameters) helpers.GenesisState {
+func NewGenesisState(assetList []mappables.InterNFT, parameterList ...types.Parameter) helpers.GenesisState {
 	return genesisState{
-		AssetList:  assetList,
-		Parameters: parameters,
+		AssetList:     assetList,
+		ParameterList: parameterList,
 	}
 }
 

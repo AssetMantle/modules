@@ -10,5 +10,3 @@ const DefaultWeightTextProposal = 1
 
 const OpWeightMsg = "OpWeightMsg"
 const DefaultWeightMsg = 1
-
-const DummyParameter = "DummyParameter"
