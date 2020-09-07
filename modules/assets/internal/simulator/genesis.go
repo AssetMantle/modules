@@ -30,7 +30,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	)
 
 	// TODO add assetList
-	genesisState := genesis.NewGenesisState(nil, dummy.Parameter.Mutate(data))
+	genesisState := genesis.NewGenesis(nil, dummy.Parameter.Mutate(data))
 
 	fmt.Printf("Selected randomly generated minting parameters:\n%s\n", codec.MustMarshalJSONIndent(simulationState.Cdc, genesisState))
 	simulationState.GenState[mapper.ModuleName] = simulationState.Cdc.MustMarshalJSON(genesisState)

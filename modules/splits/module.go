@@ -6,16 +6,12 @@
 package splits
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/queries/split"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/transactions/send"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/transactions/unwrap"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/transactions/wrap"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/queries"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/transactions"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
@@ -24,9 +20,10 @@ var Module = base.NewModule(
 	mapper.DefaultParamspace,
 	mapper.QueryRoute,
 	mapper.TransactionRoute,
-	genesis.State,
 	mapper.Mapper,
-	[]helpers.Auxiliary{mint.Auxiliary, burn.Auxiliary, transfer.Auxiliary},
-	[]helpers.Query{split.Query},
-	[]helpers.Transaction{send.Transaction, unwrap.Transaction, wrap.Transaction},
+	genesis.Genesis,
+	parameters.Parameters,
+	auxiliaries.Auxiliaries,
+	queries.Queries,
+	transactions.Transactions,
 )

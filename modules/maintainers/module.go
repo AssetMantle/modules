@@ -6,13 +6,12 @@
 package maintainers
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/queries/maintainer"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/transactions/deputize"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/parameters"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/queries"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/transactions"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
@@ -21,9 +20,10 @@ var Module = base.NewModule(
 	mapper.DefaultParamspace,
 	mapper.QueryRoute,
 	mapper.TransactionRoute,
-	genesis.State,
 	mapper.Mapper,
-	[]helpers.Auxiliary{maintain.Auxiliary, super.Auxiliary},
-	[]helpers.Query{maintainer.Query},
-	[]helpers.Transaction{deputize.Transaction},
+	genesis.Genesis,
+	parameters.Parameters,
+	auxiliaries.Auxiliaries,
+	queries.Queries,
+	transactions.Transactions,
 )
