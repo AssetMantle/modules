@@ -21,31 +21,44 @@ type idData struct {
 
 var _ types.Data = (*idData)(nil)
 
-func (idData idData) GenerateHash() string {
-	if idData.Value.String() == "" {
-		return ""
-	}
-	return meta.Hash(idData.Value.String())
+func (IDData idData) String() string {
+	return IDData.Value.String()
 }
 
-func (idData idData) AsString() (string, error) {
+func (IDData idData) GenerateHash() string {
+	if IDData.Value.String() == "" {
+		return ""
+	}
+	return meta.Hash(IDData.Value.String())
+}
+
+func (IDData idData) AsString() (string, error) {
 	return "", errors.EntityNotFound
 }
 
-func (idData idData) AsDec() (sdkTypes.Dec, error) {
+func (IDData idData) AsDec() (sdkTypes.Dec, error) {
 	return sdkTypes.Dec{}, errors.EntityNotFound
 }
 
-func (idData idData) AsHeight() (types.Height, error) {
+func (IDData idData) AsHeight() (types.Height, error) {
 	return height{}, errors.EntityNotFound
 }
 
-func (idData idData) AsID() (types.ID, error) {
-	return idData.Value, errors.EntityNotFound
+func (IDData idData) AsID() (types.ID, error) {
+	return IDData.Value, errors.EntityNotFound
 }
 
-func (idData idData) Get() interface{} {
-	return idData.Value
+func (IDData idData) Get() interface{} {
+	return IDData.Value
+}
+
+func (IDData idData) Equal(data types.Data) bool {
+	switch value := data.(type) {
+	case decData:
+		return value.Equal(IDData)
+	default:
+		return false
+	}
 }
 
 func NewIDData(value types.ID) types.Data {

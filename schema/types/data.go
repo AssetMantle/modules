@@ -8,6 +8,8 @@ package types
 import sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 type Data interface {
+	String() string
+
 	GenerateHash() string
 
 	AsString() (string, error)
@@ -16,4 +18,6 @@ type Data interface {
 	AsID() (ID, error)
 
 	Get() interface{}
+
+	Equal(Data) bool
 }
