@@ -33,7 +33,7 @@ func (maintainer maintainer) CanRemoveMaintainer() bool { return maintainer.Remo
 func (maintainer maintainer) CanMutateMaintainer() bool { return maintainer.MutateMaintainer }
 func (maintainer maintainer) MaintainsTrait(id types.ID) bool {
 	for _, trait := range maintainer.MaintainedTraits.Get().GetList() {
-		if trait.GetID().Compare(id) == 0 {
+		if trait.GetID().Equal(id) {
 			return true
 		}
 	}

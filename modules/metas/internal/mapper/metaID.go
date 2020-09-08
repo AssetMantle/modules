@@ -25,8 +25,8 @@ func (metaID metaID) String() string {
 	return metaID.HashID.String()
 }
 
-func (metaID metaID) Compare(id types.ID) int {
-	return bytes.Compare(metaID.Bytes(), id.Bytes())
+func (metaID metaID) Equal(id types.ID) bool {
+	return bytes.Compare(metaID.Bytes(), id.Bytes()) == 0
 }
 
 func readMetaID(metaIDString string) types.ID {

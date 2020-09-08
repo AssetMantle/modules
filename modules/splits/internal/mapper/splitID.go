@@ -34,8 +34,8 @@ func (splitID splitID) String() string {
 	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
 
-func (splitID splitID) Compare(id types.ID) int {
-	return bytes.Compare(splitID.Bytes(), id.Bytes())
+func (splitID splitID) Equal(id types.ID) bool {
+	return bytes.Compare(splitID.Bytes(), id.Bytes()) == 0
 }
 
 func readSplitID(splitIDString string) types.ID {

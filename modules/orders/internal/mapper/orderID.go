@@ -43,8 +43,8 @@ func (orderID orderID) String() string {
 	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
 
-func (orderID orderID) Compare(id types.ID) int {
-	return bytes.Compare(orderID.Bytes(), id.Bytes())
+func (orderID orderID) Equal(id types.ID) bool {
+	return bytes.Compare(orderID.Bytes(), id.Bytes()) == 0
 }
 
 func readOrderID(orderIDString string) types.ID {

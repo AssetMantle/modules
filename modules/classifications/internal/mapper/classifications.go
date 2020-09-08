@@ -28,7 +28,7 @@ func (classifications classifications) GetID() types.ID { return classifications
 func (classifications classifications) Get(id types.ID) mappables.Classification {
 	classificationID := classificationIDFromInterface(id)
 	for _, oldClassification := range classifications.List {
-		if oldClassification.GetID().Compare(classificationID) == 0 {
+		if oldClassification.GetID().Equal(classificationID) {
 			return oldClassification
 		}
 	}
@@ -65,7 +65,7 @@ func (classifications classifications) Add(classification mappables.Classificati
 func (classifications classifications) Remove(classification mappables.Classification) mappers.Classifications {
 	classifications.mapper.Delete(classifications.context, classification.GetID())
 	for i, oldClassification := range classifications.List {
-		if oldClassification.GetID().Compare(classification.GetID()) == 0 {
+		if oldClassification.GetID().Equal(classification.GetID()) {
 			classifications.List = append(classifications.List[:i], classifications.List[i+1:]...)
 			break
 		}
@@ -75,7 +75,7 @@ func (classifications classifications) Remove(classification mappables.Classific
 func (classifications classifications) Mutate(classification mappables.Classification) mappers.Classifications {
 	classifications.mapper.Update(classifications.context, classification)
 	for i, oldClassification := range classifications.List {
-		if oldClassification.GetID().Compare(classification.GetID()) == 0 {
+		if oldClassification.GetID().Equal(classification.GetID()) {
 			classifications.List[i] = classification
 			break
 		}

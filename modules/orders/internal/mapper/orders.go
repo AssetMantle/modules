@@ -28,7 +28,7 @@ func (orders orders) GetID() types.ID { return orders.ID }
 func (orders orders) Get(id types.ID) mappables.Order {
 	orderID := orderIDFromInterface(id)
 	for _, oldOrder := range orders.List {
-		if oldOrder.GetID().Compare(orderID) == 0 {
+		if oldOrder.GetID().Equal(orderID) {
 			return oldOrder
 		}
 	}
@@ -59,18 +59,13 @@ func (orders orders) Fetch(id types.ID) mappers.Orders {
 func (orders orders) Add(order mappables.Order) mappers.Orders {
 	orders.ID = readOrderID("")
 	orders.mapper.Create(orders.context, order)
-	for i, oldOrder := range orders.List {
-		if oldOrder.GetID().Compare(order.GetID()) < 0 {
-			orders.List = append(append(orders.List[:i], order), orders.List[i+1:]...)
-			break
-		}
-	}
+	orders.List = append(orders.List, order)
 	return orders
 }
 func (orders orders) Remove(order mappables.Order) mappers.Orders {
 	orders.mapper.Delete(orders.context, order.GetID())
 	for i, oldOrder := range orders.List {
-		if oldOrder.GetID().Compare(order.GetID()) == 0 {
+		if oldOrder.GetID().Equal(order.GetID()) {
 			orders.List = append(orders.List[:i], orders.List[i+1:]...)
 			break
 		}
@@ -80,7 +75,7 @@ func (orders orders) Remove(order mappables.Order) mappers.Orders {
 func (orders orders) Mutate(order mappables.Order) mappers.Orders {
 	orders.mapper.Update(orders.context, order)
 	for i, oldOrder := range orders.List {
-		if oldOrder.GetID().Compare(order.GetID()) == 0 {
+		if oldOrder.GetID().Equal(order.GetID()) {
 			orders.List[i] = order
 			break
 		}

@@ -28,7 +28,7 @@ func (maintainers maintainers) GetID() types.ID { return maintainers.ID }
 func (maintainers maintainers) Get(id types.ID) mappables.Maintainer {
 	maintainerID := maintainerIDFromInterface(id)
 	for _, oldMaintainer := range maintainers.List {
-		if oldMaintainer.GetID().Compare(maintainerID) == 0 {
+		if oldMaintainer.GetID().Equal(maintainerID) {
 			return oldMaintainer
 		}
 	}
@@ -65,7 +65,7 @@ func (maintainers maintainers) Add(maintainer mappables.Maintainer) mappers.Main
 func (maintainers maintainers) Remove(maintainer mappables.Maintainer) mappers.Maintainers {
 	maintainers.mapper.Delete(maintainers.context, maintainer.GetID())
 	for i, oldMaintainer := range maintainers.List {
-		if oldMaintainer.GetID().Compare(maintainer.GetID()) == 0 {
+		if oldMaintainer.GetID().Equal(maintainer.GetID()) {
 			maintainers.List = append(maintainers.List[:i], maintainers.List[i+1:]...)
 			break
 		}
@@ -75,7 +75,7 @@ func (maintainers maintainers) Remove(maintainer mappables.Maintainer) mappers.M
 func (maintainers maintainers) Mutate(maintainer mappables.Maintainer) mappers.Maintainers {
 	maintainers.mapper.Update(maintainers.context, maintainer)
 	for i, oldMaintainer := range maintainers.List {
-		if oldMaintainer.GetID().Compare(maintainer.GetID()) == 0 {
+		if oldMaintainer.GetID().Equal(maintainer.GetID()) {
 			maintainers.List[i] = maintainer
 			break
 		}

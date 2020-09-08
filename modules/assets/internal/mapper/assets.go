@@ -28,7 +28,7 @@ func (assets assets) GetID() types.ID { return assets.ID }
 func (assets assets) Get(id types.ID) mappables.InterNFT {
 	assetID := assetIDFromInterface(id)
 	for _, oldAsset := range assets.List {
-		if oldAsset.GetID().Compare(assetID) == 0 {
+		if oldAsset.GetID().Equal(assetID) {
 			return oldAsset
 		}
 	}
@@ -65,7 +65,7 @@ func (assets assets) Add(asset mappables.InterNFT) mappers.InterNFTs {
 func (assets assets) Remove(asset mappables.InterNFT) mappers.InterNFTs {
 	assets.mapper.Delete(assets.context, asset.GetID())
 	for i, oldAsset := range assets.List {
-		if oldAsset.GetID().Compare(asset.GetID()) == 0 {
+		if oldAsset.GetID().Equal(asset.GetID()) {
 			assets.List = append(assets.List[:i], assets.List[i+1:]...)
 			break
 		}
@@ -75,7 +75,7 @@ func (assets assets) Remove(asset mappables.InterNFT) mappers.InterNFTs {
 func (assets assets) Mutate(asset mappables.InterNFT) mappers.InterNFTs {
 	assets.mapper.Update(assets.context, asset)
 	for i, oldAsset := range assets.List {
-		if oldAsset.GetID().Compare(asset.GetID()) == 0 {
+		if oldAsset.GetID().Equal(asset.GetID()) {
 			assets.List[i] = asset
 			break
 		}

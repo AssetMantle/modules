@@ -23,7 +23,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	var data types.Data
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		dummy.Key,
+		dummy.ID.String(),
 		&data,
 		simulationState.Rand,
 		func(rand *rand.Rand) { data = base.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
