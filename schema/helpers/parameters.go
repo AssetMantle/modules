@@ -6,6 +6,7 @@
 package helpers
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/params/subspace"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -17,7 +18,11 @@ type Parameters interface {
 	Validate() error
 	Equal(Parameters) bool
 
+	Fetch(sdkTypes.Context, types.ID) types.Parameter
+	Get(types.ID) types.Parameter
 	GetList() []types.Parameter
+	Mutate(types.Parameter) Parameters
+
 	GetKeyTable() subspace.KeyTable
 	subspace.ParamSet
 

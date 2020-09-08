@@ -8,6 +8,7 @@ package base
 import (
 	"bytes"
 	"encoding/json"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -27,10 +28,6 @@ func (parameters parameters) String() string {
 		parameterList = append(parameterList, parameter.String())
 	}
 	return strings.Join(parameterList, "\n")
-}
-
-func (parameters parameters) GetList() []types.Parameter {
-	return parameters.parameterList
 }
 
 func (parameters parameters) Validate() error {
@@ -54,10 +51,38 @@ func (parameters parameters) Equal(Parameters helpers.Parameters) bool {
 	return bytes.Compare(Bytes, CompareBytes) == 0
 }
 
+func (parameters parameters) Fetch(context sdkTypes.Context, id types.ID) (parameter types.Parameter) {
+	parameters.paramsSubspace.Get(context, id.Bytes(), &parameter)
+	return parameter
+}
+
+func (parameters parameters) Get(id types.ID) types.Parameter {
+	for _, parameter := range parameters.parameterList {
+		if parameter.GetID().Equal(id) {
+			return parameter
+		}
+	}
+	return nil
+}
+
+func (parameters parameters) GetList() []types.Parameter {
+	return parameters.parameterList
+}
+
+func (parameters parameters) Mutate(Parameter types.Parameter) helpers.Parameters {
+	for i, parameter := range parameters.parameterList {
+		if parameter.GetID().Equal(Parameter.GetID()) {
+			parameters.parameterList[i] = Parameter
+			break
+		}
+	}
+	return &parameters
+}
+
 func (parameters parameters) ParamSetPairs() params.ParamSetPairs {
 	var paramSetPairList []params.ParamSetPair
 	for _, parameter := range parameters.parameterList {
-		paramSetPairList = append(paramSetPairList, params.NewParamSetPair([]byte(parameter.GetKey()), parameter.GetData(), parameter.GetValidator()))
+		paramSetPairList = append(paramSetPairList, params.NewParamSetPair(parameter.GetID().Bytes(), parameter.GetData(), parameter.GetValidator()))
 	}
 	return paramSetPairList
 }
