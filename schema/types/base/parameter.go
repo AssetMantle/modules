@@ -6,36 +6,40 @@
 package base
 
 import (
-	"fmt"
+	"encoding/json"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type parameter struct {
-	key       string
-	data      types.Data
+	ID        types.ID   `json:"id"`
+	Data      types.Data `json:"data"`
 	validator func(interface{}) error
 }
 
 var _ types.Parameter = (*parameter)(nil)
 
 func (parameter parameter) String() string {
-	return fmt.Sprintf("%v:%v", parameter.key, parameter.data.String())
+	bytes, Error := json.Marshal(parameter)
+	if Error != nil {
+		return Error.Error()
+	}
+	return string(bytes)
 }
 
 func (parameter parameter) Equal(Parameter types.Parameter) bool {
-	return parameter.data.Equal(Parameter.GetData())
+	return parameter.Data.Equal(Parameter.GetData())
 }
 
 func (parameter parameter) Validate() error {
 	return parameter.validator(parameter)
 }
 
-func (parameter parameter) GetKey() string {
-	return parameter.key
+func (parameter parameter) GetID() types.ID {
+	return parameter.ID
 }
 
 func (parameter parameter) GetData() types.Data {
-	return parameter.data
+	return parameter.Data
 }
 
 func (parameter parameter) GetValidator() func(interface{}) error {
@@ -43,14 +47,14 @@ func (parameter parameter) GetValidator() func(interface{}) error {
 }
 
 func (parameter parameter) Mutate(data types.Data) types.Parameter {
-	parameter.data = data
+	parameter.Data = data
 	return parameter
 }
 
-func NewParameter(key string, data types.Data, validator func(interface{}) error) types.Parameter {
+func NewParameter(ID types.ID, data types.Data, validator func(interface{}) error) types.Parameter {
 	return parameter{
-		key:       key,
-		data:      data,
+		ID:        ID,
+		Data:      data,
 		validator: validator,
 	}
 }
