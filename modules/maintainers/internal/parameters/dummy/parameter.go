@@ -9,4 +9,4 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-var Parameter = base.NewParameter(Key, DefaultData, validator)
+var Parameter = base.NewParameter(ID, DefaultData, validator)

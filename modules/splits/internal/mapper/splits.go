@@ -28,7 +28,7 @@ func (splits splits) GetID() types.ID { return splits.ID }
 func (splits splits) Get(id types.ID) mappables.Split {
 	splitID := splitIDFromInterface(id)
 	for _, oldSplit := range splits.List {
-		if oldSplit.GetID().Compare(splitID) == 0 {
+		if oldSplit.GetID().Equal(splitID) {
 			return oldSplit
 		}
 	}
@@ -65,7 +65,7 @@ func (splits splits) Add(split mappables.Split) mappers.Splits {
 func (splits splits) Remove(split mappables.Split) mappers.Splits {
 	splits.mapper.Delete(splits.context, split.GetID())
 	for i, oldSplit := range splits.List {
-		if oldSplit.GetID().Compare(split.GetID()) == 0 {
+		if oldSplit.GetID().Equal(split.GetID()) {
 			splits.List = append(splits.List[:i], splits.List[i+1:]...)
 			break
 		}
@@ -75,7 +75,7 @@ func (splits splits) Remove(split mappables.Split) mappers.Splits {
 func (splits splits) Mutate(split mappables.Split) mappers.Splits {
 	splits.mapper.Update(splits.context, split)
 	for i, oldSplit := range splits.List {
-		if oldSplit.GetID().Compare(split.GetID()) == 0 {
+		if oldSplit.GetID().Equal(split.GetID()) {
 			splits.List[i] = split
 			break
 		}

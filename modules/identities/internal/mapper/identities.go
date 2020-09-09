@@ -28,7 +28,7 @@ func (identities identities) GetID() types.ID { return identities.ID }
 func (identities identities) Get(id types.ID) mappables.InterIdentity {
 	identityID := identityIDFromInterface(id)
 	for _, oldIdentity := range identities.List {
-		if oldIdentity.GetID().Compare(identityID) == 0 {
+		if oldIdentity.GetID().Equal(identityID) {
 			return oldIdentity
 		}
 	}
@@ -65,7 +65,7 @@ func (identities identities) Add(identity mappables.InterIdentity) mappers.Inter
 func (identities identities) Remove(identity mappables.InterIdentity) mappers.InterIdentities {
 	identities.mapper.Delete(identities.context, identity.GetID())
 	for i, oldIdentity := range identities.List {
-		if oldIdentity.GetID().Compare(identity.GetID()) == 0 {
+		if oldIdentity.GetID().Equal(identity.GetID()) {
 			identities.List = append(identities.List[:i], identities.List[i+1:]...)
 			break
 		}
@@ -75,7 +75,7 @@ func (identities identities) Remove(identity mappables.InterIdentity) mappers.In
 func (identities identities) Mutate(identity mappables.InterIdentity) mappers.InterIdentities {
 	identities.mapper.Update(identities.context, identity)
 	for i, oldIdentity := range identities.List {
-		if oldIdentity.GetID().Compare(identity.GetID()) == 0 {
+		if oldIdentity.GetID().Equal(identity.GetID()) {
 			identities.List[i] = identity
 			break
 		}

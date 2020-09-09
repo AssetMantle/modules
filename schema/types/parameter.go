@@ -10,7 +10,7 @@ type Parameter interface {
 	Equal(Parameter) bool
 	Validate() error
 
-	GetKey() string
+	GetID() ID
 	GetData() Data
 	GetValidator() func(interface{}) error
 

@@ -35,8 +35,8 @@ func (assetID assetID) String() string {
 	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
 
-func (assetID assetID) Compare(id types.ID) int {
-	return bytes.Compare(assetID.Bytes(), id.Bytes())
+func (assetID assetID) Equal(id types.ID) bool {
+	return bytes.Compare(assetID.Bytes(), id.Bytes()) == 0
 }
 
 func readAssetID(assetIDString string) types.ID {

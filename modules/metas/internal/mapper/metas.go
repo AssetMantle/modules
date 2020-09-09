@@ -29,7 +29,7 @@ func (metas metas) GetID() types.ID { return metas.ID }
 func (metas metas) Get(id types.ID) mappables.Meta {
 	metaID := metaIDFromInterface(id)
 	for _, oldMeta := range metas.List {
-		if oldMeta.GetID().Compare(metaID) == 0 {
+		if oldMeta.GetID().Equal(metaID) {
 			return oldMeta
 		}
 	}
@@ -66,7 +66,7 @@ func (metas metas) Add(meta mappables.Meta) mappers.Metas {
 func (metas metas) Remove(meta mappables.Meta) mappers.Metas {
 	metas.mapper.Delete(metas.context, meta.GetID())
 	for i, oldMeta := range metas.List {
-		if oldMeta.GetID().Compare(meta.GetID()) == 0 {
+		if oldMeta.GetID().Equal(meta.GetID()) {
 			metas.List = append(metas.List[:i], metas.List[i+1:]...)
 			break
 		}
@@ -76,7 +76,7 @@ func (metas metas) Remove(meta mappables.Meta) mappers.Metas {
 func (metas metas) Mutate(meta mappables.Meta) mappers.Metas {
 	metas.mapper.Update(metas.context, meta)
 	for i, oldMeta := range metas.List {
-		if oldMeta.GetID().Compare(meta.GetID()) == 0 {
+		if oldMeta.GetID().Equal(meta.GetID()) {
 			metas.List[i] = meta
 			break
 		}

@@ -10,6 +10,5 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-const Key = "Dummy"
-
+var ID = base.NewID("dummy")
 var DefaultData = base.NewDecData(sdkTypes.SmallestDec())
