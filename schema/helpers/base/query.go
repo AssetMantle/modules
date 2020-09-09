@@ -26,7 +26,7 @@ type query struct {
 	cliCommand             helpers.CLICommand
 	packageCodec           *codec.Codec
 	registerCodec          func(*codec.Codec)
-	initializeKeeper       func(helpers.Mapper, []interface{}) helpers.QueryKeeper
+	initializeKeeper       func(helpers.Mapper, helpers.Parameters, []interface{}) helpers.QueryKeeper
 	queryRequestPrototype  func() helpers.QueryRequest
 	queryResponsePrototype func() helpers.QueryResponse
 }
@@ -84,8 +84,8 @@ func (query query) RegisterCodec(codec *codec.Codec) {
 	query.registerCodec(codec)
 }
 
-func (query *query) InitializeKeeper(mapper helpers.Mapper, auxiliaryKeepers ...interface{}) {
-	query.queryKeeper = query.initializeKeeper(mapper, auxiliaryKeepers)
+func (query *query) InitializeKeeper(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) {
+	query.queryKeeper = query.initializeKeeper(mapper, parameters, auxiliaryKeepers)
 }
 
 func (query query) query(queryRequest helpers.QueryRequest, cliContext context.CLIContext) ([]byte, int64, error) {
@@ -96,7 +96,7 @@ func (query query) query(queryRequest helpers.QueryRequest, cliContext context.C
 	return cliContext.QueryWithData(strings.Join([]string{"", "custom", query.moduleName, query.name}, "/"), bytes)
 }
 
-func NewQuery(module string, name string, route string, short string, long string, packageCodec *codec.Codec, registerCodec func(*codec.Codec), initializeKeeper func(helpers.Mapper, []interface{}) helpers.QueryKeeper, queryRequestPrototype func() helpers.QueryRequest, queryResponsePrototype func() helpers.QueryResponse, flagList []helpers.CLIFlag) helpers.Query {
+func NewQuery(module string, name string, route string, short string, long string, packageCodec *codec.Codec, registerCodec func(*codec.Codec), initializeKeeper func(helpers.Mapper, helpers.Parameters, []interface{}) helpers.QueryKeeper, queryRequestPrototype func() helpers.QueryRequest, queryResponsePrototype func() helpers.QueryResponse, flagList []helpers.CLIFlag) helpers.Query {
 	return &query{
 		moduleName:             module,
 		name:                   name,

@@ -35,7 +35,7 @@ type transaction struct {
 	transactionKeeper           helpers.TransactionKeeper
 	cliCommand                  helpers.CLICommand
 	registerCodec               func(*codec.Codec)
-	initializeKeeper            func(helpers.Mapper, []interface{}) helpers.TransactionKeeper
+	initializeKeeper            func(helpers.Mapper, helpers.Parameters, []interface{}) helpers.TransactionKeeper
 	transactionRequestPrototype func() helpers.TransactionRequest
 }
 
@@ -217,11 +217,11 @@ func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessa
 	return transactionRequest.MakeMsg()
 }
 
-func (transaction *transaction) InitializeKeeper(mapper helpers.Mapper, auxiliaryKeepers ...interface{}) {
-	transaction.transactionKeeper = transaction.initializeKeeper(mapper, auxiliaryKeepers)
+func (transaction *transaction) InitializeKeeper(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) {
+	transaction.transactionKeeper = transaction.initializeKeeper(mapper, parameters, auxiliaryKeepers)
 }
 
-func NewTransaction(module string, name string, route string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(helpers.Mapper, []interface{}) helpers.TransactionKeeper, transactionRequestPrototype func() helpers.TransactionRequest, flagList []helpers.CLIFlag) helpers.Transaction {
+func NewTransaction(module string, name string, route string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(helpers.Mapper, helpers.Parameters, []interface{}) helpers.TransactionKeeper, transactionRequestPrototype func() helpers.TransactionRequest, flagList []helpers.CLIFlag) helpers.Transaction {
 	return &transaction{
 		moduleName:                  module,
 		name:                        name,

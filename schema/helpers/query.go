@@ -22,5 +22,5 @@ type Query interface {
 	HandleMessage(sdkTypes.Context, abciTypes.RequestQuery) ([]byte, error)
 	RESTQueryHandler(context.CLIContext) http.HandlerFunc
 	RegisterCodec(*codec.Codec)
-	InitializeKeeper(Mapper, ...interface{})
+	InitializeKeeper(Mapper, Parameters, ...interface{})
 }

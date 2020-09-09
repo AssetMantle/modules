@@ -181,17 +181,17 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 }
 
 func (module module) Initialize(paramsSubspace params.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
-	module.parameters.Initialize(paramsSubspace)
+	parameters := module.parameters.Initialize(paramsSubspace)
 	for _, auxiliary := range module.auxiliaries.GetList() {
-		auxiliary.InitializeKeeper(module.mapper, auxiliaryKeepers...)
+		auxiliary.InitializeKeeper(module.mapper, parameters, auxiliaryKeepers...)
 	}
 
 	for _, transaction := range module.transactions.GetList() {
-		transaction.InitializeKeeper(module.mapper, auxiliaryKeepers...)
+		transaction.InitializeKeeper(module.mapper, parameters, auxiliaryKeepers...)
 	}
 
 	for _, query := range module.queries.GetList() {
-		query.InitializeKeeper(module.mapper, auxiliaryKeepers...)
+		query.InitializeKeeper(module.mapper, parameters, auxiliaryKeepers...)
 	}
 
 	return module

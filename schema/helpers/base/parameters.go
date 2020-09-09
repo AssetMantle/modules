@@ -76,7 +76,7 @@ func (parameters parameters) Mutate(Parameter types.Parameter) helpers.Parameter
 			break
 		}
 	}
-	return &parameters
+	return parameters
 }
 
 func (parameters parameters) ParamSetPairs() params.ParamSetPairs {
@@ -91,12 +91,13 @@ func (parameters parameters) GetKeyTable() params.KeyTable {
 	return params.NewKeyTable().RegisterParamSet(parameters)
 }
 
-func (parameters *parameters) Initialize(paramsSubspace params.Subspace) {
+func (parameters parameters) Initialize(paramsSubspace params.Subspace) helpers.Parameters {
 	parameters.paramsSubspace = paramsSubspace
+	return parameters
 }
 
 func NewParameters(parameterList ...types.Parameter) helpers.Parameters {
-	return &parameters{
+	return parameters{
 		parameterList: parameterList,
 	}
 }

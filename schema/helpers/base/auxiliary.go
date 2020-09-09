@@ -12,17 +12,17 @@ type auxiliary struct {
 	name             string
 	route            string
 	auxiliaryKeeper  helpers.AuxiliaryKeeper
-	initializeKeeper func(helpers.Mapper, []interface{}) helpers.AuxiliaryKeeper
+	initializeKeeper func(helpers.Mapper, helpers.Parameters, []interface{}) helpers.AuxiliaryKeeper
 }
 
 var _ helpers.Auxiliary = (*auxiliary)(nil)
 
 func (auxiliary auxiliary) GetName() string                    { return auxiliary.name }
 func (auxiliary auxiliary) GetKeeper() helpers.AuxiliaryKeeper { return auxiliary.auxiliaryKeeper }
-func (auxiliary *auxiliary) InitializeKeeper(mapper helpers.Mapper, auxiliaryKeepers ...interface{}) {
-	auxiliary.auxiliaryKeeper = auxiliary.initializeKeeper(mapper, auxiliaryKeepers)
+func (auxiliary *auxiliary) InitializeKeeper(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) {
+	auxiliary.auxiliaryKeeper = auxiliary.initializeKeeper(mapper, parameters, auxiliaryKeepers)
 }
-func NewAuxiliary(moduleName string, name string, route string, initializeKeeper func(helpers.Mapper, []interface{}) helpers.AuxiliaryKeeper) helpers.Auxiliary {
+func NewAuxiliary(moduleName string, name string, route string, initializeKeeper func(helpers.Mapper, helpers.Parameters, []interface{}) helpers.AuxiliaryKeeper) helpers.Auxiliary {
 	return &auxiliary{
 		moduleName:       moduleName,
 		name:             name,
