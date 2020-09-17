@@ -12,7 +12,7 @@ import (
 
 var Mapper = base.NewMapper(
 	ModuleName,
-	parameters.Parameters,
+	parameters.Prototype,
 	generateKey,
 	assetPrototype,
 	registerCodec,

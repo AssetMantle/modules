@@ -21,7 +21,7 @@ type Parameters interface {
 	Fetch(sdkTypes.Context, types.ID) types.Parameter
 	Get(types.ID) types.Parameter
 	GetList() []types.Parameter
-	Mutate(types.Parameter) Parameters
+	Mutate(sdkTypes.Context, types.Parameter) Parameters
 
 	GetKeyTable() subspace.KeyTable
 	subspace.ParamSet

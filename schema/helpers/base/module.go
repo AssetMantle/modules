@@ -25,16 +25,16 @@ import (
 )
 
 type module struct {
-	moduleName        string
-	defaultParamspace string
-	queryRoute        string
-	transactionRoute  string
-	mapper            helpers.Mapper
-	genesisState      helpers.Genesis
-	parameters        helpers.Parameters
-	auxiliaries       helpers.Auxiliaries
-	queries           helpers.Queries
-	transactions      helpers.Transactions
+	moduleName          string
+	defaultParamspace   string
+	queryRoute          string
+	transactionRoute    string
+	mapper              helpers.Mapper
+	genesisPrototype    helpers.Genesis
+	parametersPrototype helpers.Parameters
+	auxiliaries         helpers.Auxiliaries
+	queries             helpers.Queries
+	transactions        helpers.Transactions
 }
 
 var _ helpers.Module = (*module)(nil)
@@ -64,7 +64,6 @@ func (module module) Name() string {
 }
 func (module module) RegisterCodec(codec *codec.Codec) {
 	module.mapper.RegisterCodec(codec)
-	module.genesisState.RegisterCodec(codec)
 	for _, transaction := range module.transactions.GetList() {
 		transaction.RegisterCodec(codec)
 	}
@@ -73,10 +72,10 @@ func (module module) RegisterCodec(codec *codec.Codec) {
 	}
 }
 func (module module) DefaultGenesis() json.RawMessage {
-	return module.genesisState.Default().Marshall()
+	return module.genesisPrototype.Default().Marshall()
 }
 func (module module) ValidateGenesis(rawMessage json.RawMessage) error {
-	genesisState := module.genesisState.Unmarshall(rawMessage)
+	genesisState := module.genesisPrototype.Unmarshall(rawMessage)
 	return genesisState.Validate()
 }
 func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
@@ -148,12 +147,12 @@ func (module module) NewQuerierHandler() sdkTypes.Querier {
 	}
 }
 func (module module) InitGenesis(context sdkTypes.Context, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
-	genesisState := module.genesisState.Unmarshall(rawMessage)
-	genesisState.Initialize(context, module.mapper)
+	genesisState := module.genesisPrototype.Unmarshall(rawMessage)
+	genesisState.Import(context, module.mapper, module.parametersPrototype)
 	return []abciTypes.ValidatorUpdate{}
 }
 func (module module) ExportGenesis(context sdkTypes.Context) json.RawMessage {
-	return module.genesisState.Export(context, module.mapper).Marshall()
+	return module.genesisPrototype.Export(context, module.mapper, module.parametersPrototype).Marshall()
 }
 func (module module) BeginBlock(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {}
 
@@ -180,34 +179,34 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 	return nil, xprtErrors.IncorrectMessage
 }
 
-func (module module) Initialize(paramsSubspace params.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
-	parameters := module.parameters.Initialize(paramsSubspace)
+func (module *module) Initialize(paramsSubspace params.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
+	module.parametersPrototype = module.parametersPrototype.Initialize(paramsSubspace)
 	for _, auxiliary := range module.auxiliaries.GetList() {
-		auxiliary.InitializeKeeper(module.mapper, parameters, auxiliaryKeepers...)
+		auxiliary.InitializeKeeper(module.mapper, module.parametersPrototype, auxiliaryKeepers...)
 	}
 
 	for _, transaction := range module.transactions.GetList() {
-		transaction.InitializeKeeper(module.mapper, parameters, auxiliaryKeepers...)
+		transaction.InitializeKeeper(module.mapper, module.parametersPrototype, auxiliaryKeepers...)
 	}
 
 	for _, query := range module.queries.GetList() {
-		query.InitializeKeeper(module.mapper, parameters, auxiliaryKeepers...)
+		query.InitializeKeeper(module.mapper, module.parametersPrototype, auxiliaryKeepers...)
 	}
 
 	return module
 }
 
-func NewModule(moduleName string, defaultParamspace string, queryRoute string, transactionRoute string, mapper helpers.Mapper, genesisState helpers.Genesis, parameters helpers.Parameters, auxiliaries helpers.Auxiliaries, queries helpers.Queries, transactions helpers.Transactions) helpers.Module {
-	return module{
-		moduleName:        moduleName,
-		defaultParamspace: defaultParamspace,
-		queryRoute:        queryRoute,
-		transactionRoute:  transactionRoute,
-		mapper:            mapper,
-		genesisState:      genesisState,
-		parameters:        parameters,
-		auxiliaries:       auxiliaries,
-		queries:           queries,
-		transactions:      transactions,
+func NewModule(moduleName string, defaultParamspace string, queryRoute string, transactionRoute string, mapper helpers.Mapper, genesisPrototype helpers.Genesis, parametersPrototype helpers.Parameters, auxiliaries helpers.Auxiliaries, queries helpers.Queries, transactions helpers.Transactions) helpers.Module {
+	return &module{
+		moduleName:          moduleName,
+		defaultParamspace:   defaultParamspace,
+		queryRoute:          queryRoute,
+		transactionRoute:    transactionRoute,
+		mapper:              mapper,
+		genesisPrototype:    genesisPrototype,
+		parametersPrototype: parametersPrototype,
+		auxiliaries:         auxiliaries,
+		queries:             queries,
+		transactions:        transactions,
 	}
 }
