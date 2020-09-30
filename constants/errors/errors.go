@@ -21,3 +21,5 @@ var InvalidRequest = errors.Register(constants.ProjectRoute, 108, "InvalidReques
 var MetaDataError = errors.Register(constants.ProjectRoute, 109, "MetaDataError")
 var NotAuthorized = errors.Register(constants.ProjectRoute, 110, "NotAuthorized")
 var UnsupportedParameter = errors.Register(constants.ProjectRoute, 111, "UnsupportedParameter")
+
+var MockError = errors.Register(constants.ProjectRoute, 999, "MockError")

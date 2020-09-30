@@ -59,89 +59,58 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, Error)
 	mutableTraits, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, Error)
-
+	mockErrorTraits, Error := base.ReadMetaProperties("superError:S|mockError")
+	require.Equal(t, nil, Error)
+	gt22Traits, Error := base.ReadMetaProperties("0:S|0,1:S|1,2:S|2,3:S|3,4:S|4,5:S|5,6:S|6,7:S|7,8:S|8,9:S|9,10:S|10,11:S|11,12:S|12,13:S|13,14:S|14,15:S|15,16:S|16,17:S|17,18:S|18,19:S|19,20:S|20,21:S|21")
+	require.Equal(t, nil, Error)
+	defaultAddr := sdkTypes.AccAddress("addr")
 	defaultIdentityID := mapper.NewIdentityID(base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA="), base.NewID("d0Jhri_bOd3EEPXpyPUpNpGiQ1U="))
 	mapper.NewIdentities(mapper.Mapper, ctx).Add(mapper.NewIdentity(defaultIdentityID, []sdkTypes.AccAddress{sdkTypes.AccAddress("addr")},
 		[]sdkTypes.AccAddress{}, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
 
-	type fields struct {
-		keeper helpers.TransactionKeeper
-	}
+	t.Run("PositiveCase", func(t *testing.T) {
+		t.Parallel()
+		want := newTransactionResponse(nil)
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, immutableMetaTraits,
+			immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
 
-	type args struct {
-		context sdkTypes.Context
-		msg     sdkTypes.Msg
-	}
+	t.Run("NegativeCase - IdentityNil", func(t *testing.T) {
+		t.Parallel()
+		want := newTransactionResponse(errors.EntityNotFound)
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(defaultAddr, base.NewID(""), immutableMetaTraits,
+			immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
 
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.TransactionResponse
-	}{
-		{
-			name:   "Expected Case",
-			fields: fields{keepers.IdentitiesKeeper},
-			args: args{
-				context: ctx,
-				msg: message{
-					From:                sdkTypes.AccAddress("addr"),
-					FromID:              defaultIdentityID,
-					ImmutableMetaTraits: immutableMetaTraits,
-					ImmutableTraits:     immutableTraits,
-					MutableMetaTraits:   mutableMetaTraits,
-					MutableTraits:       mutableTraits,
-				},
-			},
-			want: transactionResponse{
-				Success: true,
-				Error:   nil,
-			},
-		},
-		{
-			name:   "Identity nil case",
-			fields: fields{keepers.IdentitiesKeeper},
-			args: args{
-				context: ctx,
-				msg: message{
-					From:                sdkTypes.AccAddress("addr"),
-					FromID:              base.NewID(""),
-					ImmutableMetaTraits: immutableMetaTraits,
-					ImmutableTraits:     immutableTraits,
-					MutableMetaTraits:   mutableMetaTraits,
-					MutableTraits:       mutableTraits,
-				},
-			},
-			want: transactionResponse{
-				Success: false,
-				Error:   errors.EntityNotFound,
-			},
-		},
-		{
-			name:   "Identity unprovisioned address case",
-			fields: fields{keepers.IdentitiesKeeper},
-			args: args{
-				context: ctx,
-				msg: message{
-					From:                sdkTypes.AccAddress("addr1"),
-					FromID:              defaultIdentityID,
-					ImmutableMetaTraits: immutableMetaTraits,
-					ImmutableTraits:     immutableTraits,
-					MutableMetaTraits:   mutableMetaTraits,
-					MutableTraits:       mutableTraits,
-				},
-			},
-			want: transactionResponse{
-				Success: false,
-				Error:   errors.NotAuthorized,
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.fields.keeper.Transact(tt.args.context, tt.args.msg); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Transact() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	t.Run("NegativeCase - Identity unprovisioned address", func(t *testing.T) {
+		t.Parallel()
+		want := newTransactionResponse(errors.NotAuthorized)
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr1"), defaultIdentityID, immutableMetaTraits,
+			immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("NegativeCase - Mock Failure", func(t *testing.T) {
+		t.Parallel()
+		want := newTransactionResponse(errors.InvalidRequest)
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), defaultIdentityID, gt22Traits,
+			immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("NegativeCase - Mock Failure", func(t *testing.T) {
+		t.Parallel()
+		want := newTransactionResponse(errors.MockError)
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), defaultIdentityID, immutableMetaTraits,
+			immutableTraits, mutableMetaTraits, mockErrorTraits)); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+
 }
