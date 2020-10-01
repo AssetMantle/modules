@@ -10,16 +10,17 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*error)(nil), nil)
+	traits.RegisterCodec(codec)
 	types.RegisterCodec(codec)
 	base.RegisterCodec(codec)
 	mappables.RegisterCodec(codec)
 	mappers.RegisterCodec(codec)
 	helpers.RegisterCodec(codec)
-
 }

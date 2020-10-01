@@ -180,7 +180,7 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 }
 
 func (module *module) Initialize(paramsSubspace params.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
-	module.parametersPrototype = module.parametersPrototype.Initialize(paramsSubspace)
+	module.parametersPrototype = module.parametersPrototype.Initialize(paramsSubspace.WithKeyTable(module.parametersPrototype.GetKeyTable()))
 	for _, auxiliary := range module.auxiliaries.GetList() {
 		auxiliary.InitializeKeeper(module.mapper, module.parametersPrototype, auxiliaryKeepers...)
 	}

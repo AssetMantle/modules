@@ -73,7 +73,7 @@ func (parameters parameters) Mutate(context sdkTypes.Context, Parameter types.Pa
 	for i, parameter := range parameters.parameterList {
 		if parameter.GetID().Equal(Parameter.GetID()) {
 			parameters.parameterList[i] = Parameter
-			parameters.paramsSubspace.Set(context, parameter.GetID().Bytes(), parameter)
+			parameters.paramsSubspace.Set(context, parameter.GetID().Bytes(), parameter.GetData())
 			break
 		}
 	}

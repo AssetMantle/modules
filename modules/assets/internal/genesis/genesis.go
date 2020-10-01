@@ -11,4 +11,4 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 )
 
-var Prototype = base.GenesisPrototype([]traits.Mappable{}, parameters.Prototype.GetList())
+var Prototype = base.NewGenesis(packageCodec, []traits.Mappable{}, parameters.Prototype.GetList())
