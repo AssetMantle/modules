@@ -21,7 +21,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	if auxiliaryRequest.Mutables.Get().Get(base.NewID("conformError")) != nil {
-		return newAuxiliaryResponse(errors.NotAuthorized)
+		return newAuxiliaryResponse(errors.MockError)
 	}
 	return newAuxiliaryResponse(nil)
 }
