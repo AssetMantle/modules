@@ -23,9 +23,7 @@ type identity struct {
 var _ mappables.InterIdentity = (*identity)(nil)
 
 func (identity identity) GetID() types.ID { return identity.ID }
-func (identity identity) GetClassificationID() types.ID {
-	return identityIDFromInterface(identity.ID).ClassificationID
-}
+
 func (identity identity) GetProvisionedAddressList() []sdkTypes.AccAddress {
 	return identity.ProvisionedAddressList
 }
