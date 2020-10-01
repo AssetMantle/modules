@@ -26,6 +26,6 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, AuxiliaryReq
 	return newAuxiliaryResponse(nil)
 }
 
-func initializeAuxiliaryKeeperMock(mapper helpers.Mapper, _ []interface{}) helpers.AuxiliaryKeeper {
+func initializeAuxiliaryKeeperMock(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.AuxiliaryKeeper {
 	return auxiliaryKeeperMock{mapper: mapper}
 }

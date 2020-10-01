@@ -6,6 +6,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/define"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -36,11 +37,11 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrub.AuxiliaryMock.InitializeKeeper(mapper.Mapper)
-	define.AuxiliaryMock.InitializeKeeper(mapper.Mapper)
-	super.AuxiliaryMock.InitializeKeeper(mapper.Mapper)
+	scrub.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
+	define.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
+	super.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
 	keepers := TestKeepers{
-		IdentitiesKeeper: initializeTransactionKeeper(mapper.Mapper,
+		IdentitiesKeeper: initializeTransactionKeeper(mapper.Mapper, parameters.Prototype,
 			[]interface{}{scrub.AuxiliaryMock,
 				define.AuxiliaryMock, super.AuxiliaryMock}),
 	}

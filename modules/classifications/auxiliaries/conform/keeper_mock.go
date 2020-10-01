@@ -3,12 +3,12 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package scrub
+package conform
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -20,11 +20,10 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
-	var scrubbedPropertyList []types.Property
-	for _, metaProperty := range auxiliaryRequest.MetaPropertyList {
-		scrubbedPropertyList = append(scrubbedPropertyList, metaProperty.RemoveData())
+	if auxiliaryRequest.Mutables.Get().Get(base.NewID("conformError")) != nil {
+		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
-	return newAuxiliaryResponse(base.NewProperties(scrubbedPropertyList...), nil)
+	return newAuxiliaryResponse(nil)
 }
 
 func initializeAuxiliaryKeeperMock(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.AuxiliaryKeeper {
