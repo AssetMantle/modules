@@ -89,7 +89,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	return newTransactionResponse(nil)
 }
 
-func initializeTransactionKeeper(mapper helpers.Mapper, externalKeepers []interface{}) helpers.TransactionKeeper {
+func initializeTransactionKeeper(mapper helpers.Mapper, _ helpers.Parameters, externalKeepers []interface{}) helpers.TransactionKeeper {
 	transactionKeeper := transactionKeeper{mapper: mapper}
 	for _, externalKeeper := range externalKeepers {
 		switch value := externalKeeper.(type) {

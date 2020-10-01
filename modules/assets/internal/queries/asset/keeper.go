@@ -21,6 +21,6 @@ func (queryKeeper queryKeeper) Enquire(context sdkTypes.Context, queryRequest he
 	return newQueryResponse(mapper.NewAssets(context, queryKeeper.mapper).Fetch(queryRequestFromInterface(queryRequest).AssetID), nil)
 }
 
-func initializeQueryKeeper(mapper helpers.Mapper, _ []interface{}) helpers.QueryKeeper {
+func initializeQueryKeeper(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.QueryKeeper {
 	return queryKeeper{mapper: mapper}
 }

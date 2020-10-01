@@ -6,16 +6,19 @@
 package helpers
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type Genesis interface {
 	Default() Genesis
 	Validate() error
-	Initialize(sdkTypes.Context, Mapper)
-	Export(sdkTypes.Context, Mapper) Genesis
-	RegisterCodec(*codec.Codec)
+	Import(sdkTypes.Context, Mapper, Parameters)
+	Export(sdkTypes.Context, Mapper, Parameters) Genesis
+
 	Marshall() []byte
 	Unmarshall([]byte) Genesis
+
+	Initialize([]traits.Mappable, []types.Parameter) Genesis
 }

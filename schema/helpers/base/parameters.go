@@ -69,14 +69,15 @@ func (parameters parameters) GetList() []types.Parameter {
 	return parameters.parameterList
 }
 
-func (parameters parameters) Mutate(Parameter types.Parameter) helpers.Parameters {
+func (parameters parameters) Mutate(context sdkTypes.Context, Parameter types.Parameter) helpers.Parameters {
 	for i, parameter := range parameters.parameterList {
 		if parameter.GetID().Equal(Parameter.GetID()) {
 			parameters.parameterList[i] = Parameter
+			parameters.paramsSubspace.Set(context, parameter.GetID().Bytes(), parameter.GetData())
 			break
 		}
 	}
-	return &parameters
+	return parameters
 }
 
 func (parameters parameters) ParamSetPairs() params.ParamSetPairs {
@@ -91,12 +92,13 @@ func (parameters parameters) GetKeyTable() params.KeyTable {
 	return params.NewKeyTable().RegisterParamSet(parameters)
 }
 
-func (parameters *parameters) Initialize(paramsSubspace params.Subspace) {
+func (parameters parameters) Initialize(paramsSubspace params.Subspace) helpers.Parameters {
 	parameters.paramsSubspace = paramsSubspace
+	return parameters
 }
 
-func NewParameters(parameterList ...types.Parameter) helpers.Parameters {
-	return &parameters{
+func ParametersPrototype(parameterList ...types.Parameter) helpers.Parameters {
+	return parameters{
 		parameterList: parameterList,
 	}
 }
