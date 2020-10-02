@@ -6,6 +6,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/define"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -36,11 +37,11 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrub.AuxiliaryMock.InitializeKeeper(mapper.Mapper)
-	define.AuxiliaryMock.InitializeKeeper(mapper.Mapper)
-	super.AuxiliaryMock.InitializeKeeper(mapper.Mapper)
+	scrub.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
+	define.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
+	super.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
 	keepers := TestKeepers{
-		IdentitiesKeeper: initializeTransactionKeeper(mapper.Mapper,
+		IdentitiesKeeper: initializeTransactionKeeper(mapper.Mapper, parameters.Prototype,
 			[]interface{}{scrub.AuxiliaryMock,
 				define.AuxiliaryMock, super.AuxiliaryMock}),
 	}
@@ -59,7 +60,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, Error)
 	mutableTraits, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, Error)
-	mockErrorTraits, Error := base.ReadMetaProperties("superError:S|mockError")
+	superMockErrorTraits, Error := base.ReadMetaProperties("superError:S|mockError")
+	require.Equal(t, nil, Error)
+	scrubMockErrorTraits, Error := base.ReadMetaProperties("scrubError:S|mockError")
 	require.Equal(t, nil, Error)
 	gt22Traits, Error := base.ReadMetaProperties("0:S|0,1:S|1,2:S|2,3:S|3,4:S|4,5:S|5,6:S|6,7:S|7,8:S|8,9:S|9,10:S|10,11:S|11,12:S|12,13:S|13,14:S|14,15:S|15,16:S|16,17:S|17,18:S|18,19:S|19,20:S|20,21:S|21")
 	require.Equal(t, nil, Error)
@@ -95,7 +98,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase - Mock Failure", func(t *testing.T) {
+	t.Run("NegativeCase - define classification Failure", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.InvalidRequest)
 		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), defaultIdentityID, gt22Traits,
@@ -104,11 +107,29 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase - Mock Failure", func(t *testing.T) {
+	t.Run("NegativeCase - Metas Scrub Immutable Failure", func(t *testing.T) {
+		t.Parallel()
+		want := newTransactionResponse(errors.MockError)
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), defaultIdentityID, scrubMockErrorTraits,
+			immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("NegativeCase - Metas Scrub Mutables Failure", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), defaultIdentityID, immutableMetaTraits,
-			immutableTraits, mutableMetaTraits, mockErrorTraits)); !reflect.DeepEqual(got, want) {
+			immutableTraits, scrubMockErrorTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("NegativeCase - Maintainer super Failure", func(t *testing.T) {
+		t.Parallel()
+		want := newTransactionResponse(errors.MockError)
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), defaultIdentityID, immutableMetaTraits,
+			immutableTraits, mutableMetaTraits, superMockErrorTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

@@ -30,6 +30,6 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(context sdkTypes.Context, Auxili
 	return newAuxiliaryResponse(base.NewID(classificationID.String()), nil)
 }
 
-func initializeAuxiliaryKeeperMock(mapper helpers.Mapper, _ []interface{}) helpers.AuxiliaryKeeper {
+func initializeAuxiliaryKeeperMock(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.AuxiliaryKeeper {
 	return auxiliaryKeeperMock{mapper: mapper}
 }
