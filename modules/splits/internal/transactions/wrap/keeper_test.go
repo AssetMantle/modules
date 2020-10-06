@@ -46,14 +46,14 @@ func MakeCodec() *codec.Codec {
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
-	keyIdentity := mapper.Mapper.GetKVStoreKey()
+	keySplits := mapper.Mapper.GetKVStoreKey()
 	keyParams := sdkTypes.NewKVStoreKey(params.StoreKey)
 	keyAuth := sdkTypes.NewKVStoreKey(auth.StoreKey)
 	keySupply := sdkTypes.NewKVStoreKey(supply.StoreKey)
 
 	db := dbm.NewMemDB()
 	ms := store.NewCommitMultiStore(db)
-	ms.MountStoreWithDB(keyIdentity, sdkTypes.StoreTypeIAVL, db)
+	ms.MountStoreWithDB(keySplits, sdkTypes.StoreTypeIAVL, db)
 	ms.MountStoreWithDB(keyParams, sdkTypes.StoreTypeIAVL, db)
 	ms.MountStoreWithDB(keyAuth, sdkTypes.StoreTypeIAVL, db)
 	ms.MountStoreWithDB(keySupply, sdkTypes.StoreTypeIAVL, db)

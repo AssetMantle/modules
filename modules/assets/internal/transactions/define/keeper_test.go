@@ -26,11 +26,11 @@ type TestKeepers struct {
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
-	keyIdentity := mapper.Mapper.GetKVStoreKey()
+	keyassets := mapper.Mapper.GetKVStoreKey()
 
 	db := dbm.NewMemDB()
 	ms := store.NewCommitMultiStore(db)
-	ms.MountStoreWithDB(keyIdentity, sdkTypes.StoreTypeIAVL, db)
+	ms.MountStoreWithDB(keyassets, sdkTypes.StoreTypeIAVL, db)
 	err := ms.LoadLatestVersion()
 	require.Nil(t, err)
 
