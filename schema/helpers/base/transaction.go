@@ -217,12 +217,13 @@ func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessa
 	return transactionRequest.MakeMsg()
 }
 
-func (transaction *transaction) InitializeKeeper(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) {
+func (transaction transaction) InitializeKeeper(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Transaction {
 	transaction.transactionKeeper = transaction.initializeKeeper(mapper, parameters, auxiliaryKeepers)
+	return transaction
 }
 
 func NewTransaction(module string, name string, route string, short string, long string, registerCodec func(*codec.Codec), initializeKeeper func(helpers.Mapper, helpers.Parameters, []interface{}) helpers.TransactionKeeper, transactionRequestPrototype func() helpers.TransactionRequest, flagList []helpers.CLIFlag) helpers.Transaction {
-	return &transaction{
+	return transaction{
 		moduleName:                  module,
 		name:                        name,
 		route:                       route,

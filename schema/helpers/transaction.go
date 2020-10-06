@@ -23,5 +23,5 @@ type Transaction interface {
 	RESTRequestHandler(context.CLIContext) http.HandlerFunc
 	RegisterCodec(*codec.Codec)
 	DecodeTransactionRequest(json.RawMessage) (sdkTypes.Msg, error)
-	InitializeKeeper(Mapper, Parameters, ...interface{})
+	InitializeKeeper(Mapper, Parameters, ...interface{}) Transaction
 }
