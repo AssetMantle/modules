@@ -5,10 +5,14 @@
 
 package traits
 
-import "github.com/persistenceOne/persistenceSDK/schema/types"
+import (
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+)
 
 type Mappable interface {
 	GetID() types.ID
 	Encode() []byte
 	Decode([]byte) Mappable
+	RegisterCodec(*codec.Codec)
 }
