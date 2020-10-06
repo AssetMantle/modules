@@ -84,8 +84,9 @@ func (query query) RegisterCodec(codec *codec.Codec) {
 	query.registerCodec(codec)
 }
 
-func (query *query) InitializeKeeper(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) {
+func (query query) InitializeKeeper(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Query {
 	query.queryKeeper = query.initializeKeeper(mapper, parameters, auxiliaryKeepers)
+	return query
 }
 
 func (query query) query(queryRequest helpers.QueryRequest, cliContext context.CLIContext) ([]byte, int64, error) {
@@ -97,7 +98,7 @@ func (query query) query(queryRequest helpers.QueryRequest, cliContext context.C
 }
 
 func NewQuery(module string, name string, route string, short string, long string, packageCodec *codec.Codec, registerCodec func(*codec.Codec), initializeKeeper func(helpers.Mapper, helpers.Parameters, []interface{}) helpers.QueryKeeper, queryRequestPrototype func() helpers.QueryRequest, queryResponsePrototype func() helpers.QueryResponse, flagList []helpers.CLIFlag) helpers.Query {
-	return &query{
+	return query{
 		moduleName:             module,
 		name:                   name,
 		route:                  route,
