@@ -7,7 +7,7 @@ package asset
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/collection"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
@@ -18,7 +18,7 @@ type queryKeeper struct {
 var _ helpers.QueryKeeper = (*queryKeeper)(nil)
 
 func (queryKeeper queryKeeper) Enquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
-	return newQueryResponse(mapper.NewAssets(context, queryKeeper.mapper).Fetch(queryRequestFromInterface(queryRequest).AssetID), nil)
+	return newQueryResponse(collection.Prototype().Initialize(context, queryKeeper.mapper).Fetch(queryRequestFromInterface(queryRequest).AssetID), nil)
 }
 
 func initializeQueryKeeper(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.QueryKeeper {

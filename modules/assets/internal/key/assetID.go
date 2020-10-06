@@ -3,14 +3,16 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package mapper
+package key
 
 import (
 	"bytes"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/module"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-
 	"strings"
 )
 
@@ -19,24 +21,38 @@ type assetID struct {
 	HashID           types.ID `json:"hashID" valid:"required~required field hashID missing"`
 }
 
-var _ types.ID = (*assetID)(nil)
+func (AssetID assetID) GenerateStoreKeyBytes() []byte {
+	return append(storeKeyPrefix, AssetID.Bytes()...)
+}
 
-func (assetID assetID) Bytes() []byte {
+var _ types.ID = (*assetID)(nil)
+var _ helpers.Key = (*assetID)(nil)
+
+func (AssetID assetID) Bytes() []byte {
 	var Bytes []byte
-	Bytes = append(Bytes, assetID.ClassificationID.Bytes()...)
-	Bytes = append(Bytes, assetID.HashID.Bytes()...)
+	Bytes = append(Bytes, AssetID.ClassificationID.Bytes()...)
+	Bytes = append(Bytes, AssetID.HashID.Bytes()...)
 	return Bytes
 }
 
-func (assetID assetID) String() string {
+func (AssetID assetID) String() string {
 	var values []string
-	values = append(values, assetID.ClassificationID.String())
-	values = append(values, assetID.HashID.String())
+	values = append(values, AssetID.ClassificationID.String())
+	values = append(values, AssetID.HashID.String())
 	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
 
-func (assetID assetID) Equal(id types.ID) bool {
-	return bytes.Compare(assetID.Bytes(), id.Bytes()) == 0
+func (AssetID assetID) Equal(id types.ID) bool {
+	switch id.(type) {
+	case assetID:
+		return bytes.Compare(AssetID.Bytes(), id.Bytes()) == 0
+	default:
+		return false
+	}
+}
+
+func (assetID) RegisterCodec(codec *codec.Codec) {
+	codec.RegisterConcrete(assetID{}, module.Route+"/"+"assetID", nil)
 }
 
 func readAssetID(assetIDString string) types.ID {
@@ -58,8 +74,14 @@ func assetIDFromInterface(id types.ID) assetID {
 		return assetIDFromInterface(readAssetID(id.String()))
 	}
 }
-func generateKey(assetID types.ID) []byte {
-	return append(StoreKeyPrefix, assetIDFromInterface(assetID).Bytes()...)
+func AssetIDAsKey(id types.ID) helpers.Key {
+	return assetIDFromInterface(id)
+}
+func ReadClassificationID(assetID types.ID) types.ID {
+	return assetIDFromInterface(assetID).ClassificationID
+}
+func ReadHashID(assetID types.ID) types.ID {
+	return assetIDFromInterface(assetID).HashID
 }
 
 func NewAssetID(classificationID types.ID, immutables types.Immutables) types.ID {

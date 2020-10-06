@@ -12,8 +12,8 @@ import (
 )
 
 func registerCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(queryRequest{}, QueryRoute+"/"+"request", nil)
-	codec.RegisterConcrete(queryResponse{}, QueryRoute+"/"+"response", nil)
+	codec.RegisterConcrete(queryRequest{}, Route+"/"+"request", nil)
+	codec.RegisterConcrete(queryResponse{}, Route+"/"+"response", nil)
 }
 
 var packageCodec = codec.New()
@@ -21,6 +21,6 @@ var packageCodec = codec.New()
 func init() {
 	registerCodec(packageCodec)
 	schema.RegisterCodec(packageCodec)
-	mapper.Mapper.RegisterCodec(packageCodec)
+	mapper.Prototype().RegisterCodec(packageCodec)
 	packageCodec.Seal()
 }

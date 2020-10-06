@@ -5,9 +5,11 @@
 
 package asset
 
-import "github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
+import (
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/queries"
+)
 
-const QueryName = "assets"
-const QueryRoute = mapper.QueryRoute + "/" + QueryName
-const QueryShort = ""
-const QueryLong = ""
+const Name = "assets"
+const Route = queries.Route + "/" + Name
+const Short = ""
+const Long = ""

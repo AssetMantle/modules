@@ -3,8 +3,8 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package auxiliaries
+package queries
 
-import "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+import "github.com/persistenceOne/persistenceSDK/modules/assets/module"
 
-var Auxiliaries = base.NewAuxiliaries()
+const Route = module.Route

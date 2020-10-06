@@ -11,8 +11,8 @@ import (
 )
 
 func registerCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(message{}, TransactionRoute+"/"+"message", nil)
-	codec.RegisterConcrete(transactionRequest{}, TransactionRoute+"/"+"request", nil)
+	codec.RegisterConcrete(message{}, Route+"/"+"message", nil)
+	codec.RegisterConcrete(transactionRequest{}, Route+"/"+"request", nil)
 }
 
 var packageCodec = codec.New()

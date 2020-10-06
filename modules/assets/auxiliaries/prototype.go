@@ -3,17 +3,13 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package mapper
+package auxiliaries
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Mapper = base.NewMapper(
-	ModuleName,
-	parameters.Prototype,
-	generateKey,
-	assetPrototype,
-	registerCodec,
-)
+func Prototype() helpers.Auxiliaries {
+	return base.NewAuxiliaries()
+}

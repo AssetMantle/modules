@@ -3,23 +3,22 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package mapper
+package mappable
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/module"
 	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
-func registerCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(asset{}, ModuleRoute+"/"+"asset", nil)
-	codec.RegisterConcrete(assetID{}, ModuleRoute+"/"+"assetID", nil)
-	codec.RegisterConcrete(assets{}, ModuleRoute+"/"+"assets", nil)
+func (asset) RegisterCodec(codec *codec.Codec) {
+	codec.RegisterConcrete(asset{}, module.Route+"/"+"asset", nil)
 }
 
 var packageCodec = codec.New()
 
 func init() {
-	registerCodec(packageCodec)
+	Prototype().RegisterCodec(packageCodec)
 	schema.RegisterCodec(packageCodec)
 	packageCodec.Seal()
 }

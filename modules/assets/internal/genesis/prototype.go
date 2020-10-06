@@ -7,8 +7,15 @@ package genesis
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 )
 
-var Prototype = base.NewGenesis(packageCodec, []traits.Mappable{}, parameters.Prototype.GetList())
+func Prototype() helpers.Genesis {
+	return base.NewGenesis(
+		packageCodec,
+		[]traits.Mappable{},
+		parameters.Prototype().GetList(),
+	)
+}

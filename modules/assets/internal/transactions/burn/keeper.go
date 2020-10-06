@@ -9,11 +9,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/collection"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -31,8 +32,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
-	assets := mapper.NewAssets(context, transactionKeeper.mapper).Fetch(message.AssetID)
-	asset := assets.Get(message.AssetID)
+	assets := collection.Prototype().Initialize(context, transactionKeeper.mapper).Fetch(message.AssetID)
+	asset := assets.Get(message.AssetID).(mappables.InterNFT)
 	if asset == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}

@@ -14,7 +14,7 @@ import (
 var packageCodec = codec.New()
 
 func init() {
-	mapper.Mapper.RegisterCodec(packageCodec)
+	mapper.Prototype().RegisterCodec(packageCodec)
 	schema.RegisterCodec(packageCodec)
 	packageCodec.Seal()
 }

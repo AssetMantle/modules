@@ -10,7 +10,16 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/define"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/mutate"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Transactions = base.NewTransactions(burn.Transaction, define.Transaction, mint.Transaction, mutate.Transaction)
+func Prototype() helpers.Transactions {
+	return base.NewTransactions(
+		Route,
+		burn.Transaction,
+		define.Transaction,
+		mint.Transaction,
+		mutate.Transaction,
+	)
+}

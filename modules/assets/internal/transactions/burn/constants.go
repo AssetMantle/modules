@@ -5,9 +5,11 @@
 
 package burn
 
-import "github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
+import (
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions"
+)
 
-const TransactionName = "burn"
-const TransactionRoute = mapper.TransactionRoute + "/" + TransactionName
-const TransactionShort = ""
-const TransactionLong = ""
+const Name = "burn"
+const Route = transactions.Route + "/" + Name
+const Short = ""
+const Long = ""

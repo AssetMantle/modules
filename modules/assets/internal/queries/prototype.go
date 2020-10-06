@@ -7,7 +7,13 @@ package queries
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/queries/asset"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Queries = base.NewQueries(asset.Query)
+func Prototype() helpers.Queries {
+	return base.NewQueries(
+		Route,
+		asset.Query,
+	)
+}

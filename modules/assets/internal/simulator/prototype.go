@@ -7,10 +7,6 @@ package simulator
 
 import "github.com/persistenceOne/persistenceSDK/schema/helpers"
 
-type simulator struct{}
-
-var _ helpers.Simulator = (*simulator)(nil)
-
-func newSimulator() helpers.Simulator {
-	return simulator{}
+func Prototype() helpers.Simulator {
+	return newSimulator()
 }
