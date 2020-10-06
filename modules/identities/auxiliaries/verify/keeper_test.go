@@ -45,7 +45,6 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	ctx, keepers := CreateTestInput(t)
 	defaultAddr := sdkTypes.AccAddress("addr")
-	//addr2 := sdkTypes.AccAddress("addr2")
 	unprovisionedAddr := sdkTypes.AccAddress("unProvisionedAddr")
 	defaultClassificationID := base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
 	defaultIdentityID := mapper.NewIdentityID(defaultClassificationID, base.NewID("d0Jhri_bOd3EEPXpyPUpNpGiQ1U="))
