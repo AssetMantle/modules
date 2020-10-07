@@ -41,15 +41,15 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetTakerID(), order.GetExchangeRate(), order.GetMakerOwnableSplit())))
 	if Error != nil {
-		newTransactionResponse(Error)
+		return newTransactionResponse(Error)
 	}
 
 	if takerIDProperty := metaProperties.GetMetaProperty(base.NewID(properties.TakerID)); takerIDProperty != nil {
 		takerID, Error := takerIDProperty.GetMetaFact().GetData().AsID()
-		if Error == nil {
-			if takerID.Equal(message.FromID) {
-				newTransactionResponse(errors.NotAuthorized)
-			}
+		if Error != nil {
+			return newTransactionResponse(errors.NotAuthorized)
+		} else if !takerID.Equal(message.FromID) {
+			return newTransactionResponse(errors.NotAuthorized)
 		}
 	}
 	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), message.TakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
