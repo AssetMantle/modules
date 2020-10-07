@@ -7,7 +7,6 @@ package helpers
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -20,5 +19,5 @@ type Genesis interface {
 	Marshall() []byte
 	Unmarshall([]byte) Genesis
 
-	Initialize([]traits.Mappable, []types.Parameter) Genesis
+	Initialize([]Mappable, []types.Parameter) Genesis
 }
