@@ -6,11 +6,12 @@
 package mappables
 
 import (
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 )
 
 type Classification interface {
 	traits.HasImmutables
 	traits.HasMutables
-	traits.Mappable
+	helpers.Mappable
 }
