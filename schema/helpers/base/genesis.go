@@ -7,20 +7,17 @@ package base
 
 import (
 	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type genesis struct {
-	codec                *codec.Codec
-	MappableList         []traits.Mappable `json:"mappableList"`
-	ParameterList        []types.Parameter `json:"parameterList"`
-	defaultMappableList  []traits.Mappable
+	MappableList         []helpers.Mappable `json:"mappableList"`
+	ParameterList        []types.Parameter  `json:"parameterList"`
+	defaultMappableList  []helpers.Mappable
 	defaultParameterList []types.Parameter
 }
 
@@ -38,7 +35,7 @@ func (Genesis genesis) Validate() error {
 		var isPresent bool
 		for _, defaultParameter := range Genesis.defaultParameterList {
 			isPresent = false
-			if defaultParameter.GetID().Equal(parameter.GetID()) {
+			if defaultParameter.GetID().Equals(parameter.GetID()) {
 				isPresent = true
 				break
 			}
@@ -64,8 +61,8 @@ func (Genesis genesis) Import(context sdkTypes.Context, mapper helpers.Mapper, p
 }
 
 func (Genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper, parameters helpers.Parameters) helpers.Genesis {
-	var mappableList []traits.Mappable
-	appendMappableList := func(mappable traits.Mappable) bool {
+	var mappableList []helpers.Mappable
+	appendMappableList := func(mappable helpers.Mappable) bool {
 		mappableList = append(mappableList, mappable)
 		return false
 	}
@@ -93,10 +90,10 @@ func (Genesis genesis) Unmarshall(byte []byte) helpers.Genesis {
 	return NewGenesis(Genesis.codec, Genesis.defaultMappableList, Genesis.defaultParameterList).Initialize(genesis.MappableList, genesis.ParameterList)
 }
 
-func (Genesis genesis) Initialize(mappableList []traits.Mappable, parameterList []types.Parameter) helpers.Genesis {
+func (Genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList []types.Parameter) helpers.Genesis {
 	for _, defaultParameter := range Genesis.defaultParameterList {
 		for i, parameter := range parameterList {
-			if defaultParameter.GetID().Equal(parameter.GetID()) {
+			if defaultParameter.GetID().Equals(parameter.GetID()) {
 				parameterList[i] = defaultParameter.Mutate(parameter.GetData())
 			}
 		}
@@ -109,10 +106,9 @@ func (Genesis genesis) Initialize(mappableList []traits.Mappable, parameterList 
 	return Genesis
 }
 
-func NewGenesis(codec *codec.Codec, defaultMappableList []traits.Mappable, defaultParameterList []types.Parameter) helpers.Genesis {
+func NewGenesis(defaultMappableList []helpers.Mappable, defaultParameterList []types.Parameter) helpers.Genesis {
 	return genesis{
-		codec:                codec,
-		MappableList:         []traits.Mappable{},
+		MappableList:         []helpers.Mappable{},
 		ParameterList:        []types.Parameter{},
 		defaultMappableList:  defaultMappableList,
 		defaultParameterList: defaultParameterList,
