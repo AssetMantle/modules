@@ -30,7 +30,8 @@ func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ contex
 }
 
 func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(base.NewID(vars[flags.IdentityID.GetName()]))
+	return newQueryRequest(base.NewID(vars[Query.GetName()]))
+
 }
 
 func queryRequestPrototype() helpers.QueryRequest {
