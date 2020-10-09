@@ -24,11 +24,14 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, AuxiliaryReq
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	var metaPropertyList []types.MetaProperty
 	for _, property := range auxiliaryRequest.PropertyList {
-		if property.GetID().String() == "burn" && property.GetFact().GetHash() == "" {
+		if property.GetID().String() == properties.Burn && property.GetFact().GetHash() == "" {
 			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList), errors.MockError)
 		}
 	}
 	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.Burn), base.NewMetaFact(base.NewHeightData(base.NewHeight(1)))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(sdkTypes.SmallestDec().MulInt64(2)))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.TakerID), base.NewMetaFact(base.NewIDData(base.NewID("fromID")))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewDecData(sdkTypes.SmallestDec()))))
 	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList), nil)
 }
 
