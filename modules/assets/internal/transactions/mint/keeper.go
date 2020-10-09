@@ -8,10 +8,8 @@ package mint
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/collection"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters/dummy"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
@@ -33,10 +31,6 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	a := transactionKeeper.parameters.Fetch(context, dummy.ID)
-	if a == nil {
-		return nil
-	}
 	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
@@ -47,8 +41,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	immutables := base.NewImmutables(base.NewProperties(append(immutableProperties.GetList(), message.ImmutableProperties.GetList()...)...))
 
 	assetID := key.NewAssetID(message.ClassificationID, immutables)
-	assets := collection.Prototype().Initialize(context, transactionKeeper.mapper).Fetch(assetID)
-	if assets.Get(assetID) != nil {
+	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(assetID))
+	if assets.Get(key.New(assetID)) != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 

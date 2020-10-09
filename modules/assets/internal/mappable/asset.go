@@ -10,13 +10,12 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type asset struct {
-	ID         types.ID         `json:"key" valid:"required~required field key missing"`
+	ID         types.ID         `json:"id" valid:"required~required field id missing"`
 	Immutables types.Immutables `json:"immutables" valid:"required field immutables missing"`
 	Mutables   types.Mutables   `json:"mutables" valid:"required~required field mutables missing"`
 }
@@ -61,13 +60,13 @@ func (asset asset) GetLock() types.Property {
 	}
 }
 func (asset asset) GetKey() helpers.Key {
-	return key.AssetIDAsKey(asset.ID)
+	return key.New(asset.ID)
 }
 func (asset asset) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(asset)
 }
 
-func (asset asset) Decode(bytes []byte) traits.Mappable {
+func (asset asset) Decode(bytes []byte) helpers.Mappable {
 	packageCodec.MustUnmarshalBinaryBare(bytes, &asset)
 	return asset
 }

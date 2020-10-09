@@ -10,9 +10,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters/dummy"
 	assetsModule "github.com/persistenceOne/persistenceSDK/modules/assets/module"
+	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"math/rand"
@@ -30,7 +30,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	)
 
 	// TODO add assetList
-	genesisState := genesis.Prototype().Initialize(nil, []types.Parameter{dummy.Parameter.Mutate(data)})
+	genesisState := baseHelpers.NewGenesis(nil, nil).Initialize(nil, []types.Parameter{dummy.Parameter.Mutate(data)})
 
 	fmt.Printf("Selected randomly generated minting parameters:\n%s\n", codec.MustMarshalJSONIndent(simulationState.Cdc, genesisState))
 	simulationState.GenState[assetsModule.Name] = simulationState.Cdc.MustMarshalJSON(genesisState)

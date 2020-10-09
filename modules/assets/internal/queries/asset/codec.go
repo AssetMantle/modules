@@ -7,7 +7,8 @@ package asset
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
@@ -20,7 +21,8 @@ var packageCodec = codec.New()
 
 func init() {
 	registerCodec(packageCodec)
+	key.Prototype().RegisterCodec(packageCodec)
+	mappable.Prototype().RegisterCodec(packageCodec)
 	schema.RegisterCodec(packageCodec)
-	mapper.Prototype().RegisterCodec(packageCodec)
 	packageCodec.Seal()
 }

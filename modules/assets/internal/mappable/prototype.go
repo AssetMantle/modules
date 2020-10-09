@@ -5,8 +5,10 @@
 
 package mappable
 
-import "github.com/persistenceOne/persistenceSDK/schema/traits"
+import (
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+)
 
-func Prototype() traits.Mappable {
+func Prototype() helpers.Mappable {
 	return asset{}
 }

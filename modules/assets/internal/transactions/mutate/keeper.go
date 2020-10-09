@@ -8,7 +8,7 @@ package mutate
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/collection"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
@@ -34,8 +34,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
-	assets := collection.Prototype().Initialize(context, transactionKeeper.mapper).Fetch(message.AssetID)
-	asset := assets.Get(message.AssetID).(mappables.InterNFT)
+	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(message.AssetID))
+	asset := assets.Get(key.New(message.AssetID)).(mappables.InterNFT)
 	if asset == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
