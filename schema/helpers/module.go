@@ -17,11 +17,10 @@ type Module interface {
 	sdkTypesModule.AppModule
 	sdkTypesModule.AppModuleSimulation
 
-	GetKVStoreKey() *sdkTypes.KVStoreKey
 	GetDefaultParamspace() string
 	GetAuxiliary(string) Auxiliary
 
 	DecodeModuleTransactionRequest(string, json.RawMessage) (sdkTypes.Msg, error)
 
-	Initialize(params.Subspace, ...interface{}) Module
+	Initialize(*sdkTypes.KVStoreKey, params.Subspace, ...interface{}) Module
 }
