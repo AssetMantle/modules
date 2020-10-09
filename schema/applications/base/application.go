@@ -216,14 +216,14 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			upgrade.StoreKey,
 			evidence.StoreKey,
 			wasm.StoreKey,
-			module.Prototype.Name(),
-			classifications.Module.Name(),
-			identities.Module.Name(),
-			maintainers.Module.Name(),
-			metas.Module.Name(),
-			orders.Module.Name(),
-			splits.Module.Name(),
 		)
+		keys[assets.Module.Name()] = assets.Module.GetKVStoreKey()
+		keys[classifications.Module.Name()] = classifications.Module.GetKVStoreKey()
+		keys[identities.Module.Name()] = identities.Module.GetKVStoreKey()
+		keys[maintainers.Module.Name()] = maintainers.Module.GetKVStoreKey()
+		keys[metas.Module.Name()] = metas.Module.GetKVStoreKey()
+		keys[orders.Module.Name()] = orders.Module.GetKVStoreKey()
+		keys[splits.Module.Name()] = splits.Module.GetKVStoreKey()
 
 		transientStoreKeys := sdkTypes.NewTransientStoreKeys(params.TStoreKey)
 
@@ -339,21 +339,13 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			staking.NewMultiStakingHooks(application.distributionKeeper.Hooks(), application.slashingKeeper.Hooks()),
 		)
 
-		metasModule := metas.Module.Initialize(
-			keys[metas.Module.Name()],
-			paramsKeeper.Subspace(metas.Module.GetDefaultParamspace()),
-		)
-		maintainersModule := maintainers.Module.Initialize(
-			keys[identities.Module.Name()],
-			paramsKeeper.Subspace(maintainers.Module.GetDefaultParamspace()),
-		)
+		metasModule := metas.Module.Initialize(paramsKeeper.Subspace(metas.Module.GetDefaultParamspace()))
+		maintainersModule := maintainers.Module.Initialize(paramsKeeper.Subspace(maintainers.Module.GetDefaultParamspace()))
 		classificationsModule := classifications.Module.Initialize(
-			keys[classifications.Module.Name()],
 			paramsKeeper.Subspace(classifications.Module.GetDefaultParamspace()),
 			metasModule.GetAuxiliary(scrub.AuxiliaryName),
 		)
 		identitiesModule := identities.Module.Initialize(
-			keys[identities.Module.Name()],
 			paramsKeeper.Subspace(identities.Module.GetDefaultParamspace()),
 			classificationsModule.GetAuxiliary(conform.AuxiliaryName),
 			classificationsModule.GetAuxiliary(define.AuxiliaryName),
@@ -362,14 +354,12 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			metasModule.GetAuxiliary(scrub.AuxiliaryName),
 		)
 		splitsModule := splits.Module.Initialize(
-			keys[splits.Module.Name()],
 			paramsKeeper.Subspace(splits.Module.GetDefaultParamspace()),
 			supplyKeeper,
 			identitiesModule.GetAuxiliary(verify.AuxiliaryName),
 		)
-		module.Prototype.Initialize(
-			keys[module.Prototype.Name()],
-			paramsKeeper.Subspace(module.Prototype.GetDefaultParamspace()),
+		assets.Module.Initialize(
+			paramsKeeper.Subspace(assets.Module.GetDefaultParamspace()),
 			classificationsModule.GetAuxiliary(conform.AuxiliaryName),
 			classificationsModule.GetAuxiliary(define.AuxiliaryName),
 			identitiesModule.GetAuxiliary(verify.AuxiliaryName),
@@ -381,7 +371,6 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			splitsModule.GetAuxiliary(burn.AuxiliaryName),
 		)
 		orders.Module.Initialize(
-			keys[orders.Module.Name()],
 			paramsKeeper.Subspace(orders.Module.GetDefaultParamspace()),
 			bankKeeper,
 			classificationsModule.GetAuxiliary(conform.AuxiliaryName),
@@ -421,7 +410,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			wasmDir,
 			wasmConfig,
 			"staking",
-			&wasm.MessageEncoders{Custom: wasmUtilities.CustomEncoder(module.Prototype, classifications.Module, identities.Module, maintainers.Module, metas.Module, orders.Module, splits.Module)},
+			&wasm.MessageEncoders{Custom: wasmUtilities.CustomEncoder(assets.Module, classifications.Module, identities.Module, maintainers.Module, metas.Module, orders.Module, splits.Module)},
 			nil)
 
 		if len(enabledProposals) != 0 {
@@ -452,7 +441,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			wasm.NewAppModule(wasmKeeper),
 			evidence.NewAppModule(*evidenceKeeper),
 
-			module.Prototype,
+			assets.Module,
 			classifications.Module,
 			identities.Module,
 			maintainers.Module,
@@ -485,7 +474,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			genutil.ModuleName,
 			evidence.ModuleName,
 			wasm.ModuleName,
-			module.Prototype.Name(),
+			assets.Module.Name(),
 			classifications.Module.Name(),
 			identities.Module.Name(),
 			maintainers.Module.Name(),
@@ -506,7 +495,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			distribution.NewAppModule(application.distributionKeeper, accountKeeper, supplyKeeper, application.stakingKeeper),
 			slashing.NewAppModule(application.slashingKeeper, accountKeeper, application.stakingKeeper),
 			params.NewAppModule(),
-			module.Prototype,
+			assets.Module,
 			classifications.Module,
 			identities.Module,
 			maintainers.Module,

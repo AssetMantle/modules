@@ -19,7 +19,7 @@ var Transaction = base.NewTransaction(
 	TransactionShort,
 	TransactionLong,
 	registerCodec,
-	revealTransactionKeeper,
+	initializeTransactionKeeper,
 	requestPrototype,
 	[]helpers.CLIFlag{flags.FromID, flags.MetaFact},
 )

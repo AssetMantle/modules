@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package issue
 
 import (
@@ -68,10 +73,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	emptyProperties := base.NewProperties()
 	require.Equal(t, nil, Error)
 	defaultAddr := sdkTypes.AccAddress("addr")
-	defaultIdentityID := mapper.NewIdentityID(base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA="), base.NewID("d0Jhri_bOd3EEPXpyPUpNpGiQ1U="))
+	defaultClassificationID := base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
+	defaultIdentityID := mapper.NewIdentityID(defaultClassificationID, base.NewID("d0Jhri_bOd3EEPXpyPUpNpGiQ1U="))
 	mapper.NewIdentities(mapper.Mapper, ctx).Add(mapper.NewIdentity(defaultIdentityID, []sdkTypes.AccAddress{defaultAddr},
 		[]sdkTypes.AccAddress{}, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
-	defaultClassificationID := base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

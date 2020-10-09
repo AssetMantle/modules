@@ -46,10 +46,10 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	if takerIDProperty := metaProperties.GetMetaProperty(base.NewID(properties.TakerID)); takerIDProperty != nil {
 		takerID, Error := takerIDProperty.GetMetaFact().GetData().AsID()
-		if Error == nil {
-			if takerID.Equals(message.FromID) {
-				newTransactionResponse(errors.NotAuthorized)
-			}
+		if Error != nil {
+			return newTransactionResponse(errors.NotAuthorized)
+		} else if !takerID.Equals(base.NewID("")) && !takerID.Equals(message.FromID) {
+			return newTransactionResponse(errors.NotAuthorized)
 		}
 	}
 	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), message.TakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {

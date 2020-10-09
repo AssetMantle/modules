@@ -16,3 +16,9 @@ var Auxiliary = base.NewAuxiliary(
 	AuxiliaryRoute,
 	initializeAuxiliaryKeeper,
 )
+var AuxiliaryMock = base.NewAuxiliary(
+	mapper.ModuleName,
+	AuxiliaryName,
+	AuxiliaryRoute,
+	initializeAuxiliaryKeeperMock,
+)

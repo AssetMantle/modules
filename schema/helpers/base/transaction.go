@@ -96,7 +96,11 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
-
+		Error := transactionRequest.Validate()
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+			return
+		}
 		baseReq := transactionRequest.GetBaseReq()
 		msg, Error := transactionRequest.MakeMsg()
 		if Error != nil {
@@ -174,7 +178,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			//adding account sequence
 			accountNumber, sequence, Error := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
 			if Error != nil {
-				fmt.Printf("Error in NewAccountRetriever: %s\n", Error)
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 				return
 			}
 
@@ -191,7 +195,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			// broadcast to a node
 			response, Error := cliContext.BroadcastTx(stdMsg)
 			if Error != nil {
-				fmt.Printf("Error in broadcast: %s\n", Error)
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 				return
 			}
 

@@ -31,6 +31,10 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
+	a := transactionKeeper.parameters.Fetch(context, dummy.ID)
+	if a == nil {
+		return nil
+	}
 	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
@@ -40,9 +44,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	immutables := base.NewImmutables(base.NewProperties(append(immutableProperties.GetList(), message.ImmutableProperties.GetList()...)...))
 
-	assetID := key.NewAssetID(message.ClassificationID, immutables)
-	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(assetID))
-	if assets.Get(key.New(assetID)) != nil {
+	assetID := mapper.NewAssetID(message.ClassificationID, immutables)
+	assets := mapper.NewAssets(context, transactionKeeper.mapper).Fetch(assetID)
+	if assets.Get(assetID) != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
@@ -60,7 +64,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	assets.Add(mappable.NewAsset(assetID, immutables, mutables))
+	assets.Add(mapper.NewAsset(assetID, immutables, mutables))
 	return newTransactionResponse(nil)
 }
 

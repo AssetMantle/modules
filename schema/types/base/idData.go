@@ -45,7 +45,7 @@ func (IDData idData) AsHeight() (types.Height, error) {
 }
 
 func (IDData idData) AsID() (types.ID, error) {
-	return IDData.Value, errors.EntityNotFound
+	return IDData.Value, nil
 }
 
 func (IDData idData) Get() interface{} {

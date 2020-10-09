@@ -21,10 +21,10 @@ type transactionRequest struct {
 	FromID           string       `json:"fromID" valid:"required~required field fromID missing"`
 	ToID             string       `json:"toID" valid:"required~required field toID missing"`
 	ClassificationID string       `json:"classificationID" valid:"required~required field classificationID missing matches(^[A-Za-z]$)~invalid field classificationID"`
-	MaintainedTraits string       `json:"maintainedTraits" valid:"required field maintainedTraits missing"`
-	AddMaintainer    bool         `json:"addMaintainer"`
-	RemoveMaintainer bool         `json:"removeMaintainer"`
-	MutateMaintainer bool         `json:"mutateMaintainer"`
+	MaintainedTraits string       `json:"maintainedTraits" valid:"required~required field maintainedTraits missing"`
+	AddMaintainer    bool         `json:"addMaintainer" valid:"required~required field addMaintainer missing"`
+	RemoveMaintainer bool         `json:"removeMaintainer" valid:"required~required field removeMaintainer missing"`
+	MutateMaintainer bool         `json:"mutateMaintainer" valid:"required~required field mutateMaintainer missing"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)

@@ -87,7 +87,7 @@ func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *m
 		panic(xprtErrors.UninitializedUsage)
 	}
 	for _, query := range module.queries.GetList() {
-		router.HandleFunc(query.GetRoute()+"/{query}", query.RESTQueryHandler(cliContext)).Methods("GET")
+		router.HandleFunc(query.GetRoute()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(cliContext)).Methods("GET")
 	}
 
 	for _, transaction := range module.transactions.GetList() {

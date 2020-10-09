@@ -31,6 +31,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	return newTransactionResponse(nil)
 }
 
-func revealTransactionKeeper(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.TransactionKeeper {
+func initializeTransactionKeeper(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.TransactionKeeper {
 	return transactionKeeper{mapper: mapper}
 }
