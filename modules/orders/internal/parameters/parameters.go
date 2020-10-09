@@ -10,4 +10,4 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Prototype = base.ParametersPrototype(dummy.Parameter)
+var Prototype = base.NewParameters(dummy.Parameter)

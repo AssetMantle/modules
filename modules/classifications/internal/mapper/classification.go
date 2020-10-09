@@ -6,8 +6,8 @@
 package mapper
 
 import (
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -32,12 +32,12 @@ func (classification classification) GetMutables() types.Mutables {
 func (classification classification) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(classification)
 }
-func (classification classification) Decode(bytes []byte) traits.Mappable {
+func (classification classification) Decode(bytes []byte) helpers.Mappable {
 	packageCodec.MustUnmarshalBinaryBare(bytes, &classification)
 	return classification
 }
 
-func classificationPrototype() traits.Mappable {
+func classificationPrototype() helpers.Mappable {
 	return classification{}
 }
 

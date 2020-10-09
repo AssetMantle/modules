@@ -10,7 +10,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -47,7 +46,7 @@ func (orders orders) Fetch(id types.ID) mappers.Orders {
 			orderList = append(orderList, mappable.(order))
 		}
 	} else {
-		appendOrderList := func(mappable traits.Mappable) bool {
+		appendOrderList := func(mappable helpers.Mappable) bool {
 			orderList = append(orderList, mappable.(order))
 			return false
 		}

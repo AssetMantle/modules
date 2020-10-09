@@ -7,13 +7,14 @@ package mapper
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type split struct {
-	ID    types.ID     `json:"id" valid:"required field id missing"`
+	ID    types.ID     `json:"key" valid:"required field key missing"`
 	Split sdkTypes.Dec `json:"split" valid:"required~required field split missing matches(^[0-9]$)~invalid field split"`
 }
 
@@ -43,11 +44,11 @@ func (split split) CanSend(Split sdkTypes.Dec) bool {
 func (split split) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(split)
 }
-func (split split) Decode(bytes []byte) traits.Mappable {
+func (split split) Decode(bytes []byte) helpers.Mappable {
 	packageCodec.MustUnmarshalBinaryBare(bytes, &split)
 	return split
 }
-func splitPrototype() traits.Mappable {
+func splitPrototype() helpers.Mappable {
 	return split{}
 }
 func NewSplit(splitID types.ID, spl sdkTypes.Dec) mappables.Split {

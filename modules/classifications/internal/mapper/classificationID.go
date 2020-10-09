@@ -34,7 +34,7 @@ func (classificationID classificationID) String() string {
 	return strings.Join(values, constants.IDSeparator)
 }
 
-func (classificationID classificationID) Equal(id types.ID) bool {
+func (classificationID classificationID) Equals(id types.ID) bool {
 	return bytes.Compare(classificationID.Bytes(), id.Bytes()) == 0
 }
 func readClassificationID(classificationIDString string) types.ID {

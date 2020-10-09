@@ -10,7 +10,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -47,7 +46,7 @@ func (classifications classifications) Fetch(id types.ID) mappers.Classification
 			classificationList = append(classificationList, mappable.(classification))
 		}
 	} else {
-		appendClassificationList := func(mappable traits.Mappable) bool {
+		appendClassificationList := func(mappable helpers.Mappable) bool {
 			classificationList = append(classificationList, mappable.(classification))
 			return false
 		}

@@ -36,7 +36,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if order == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
-	if !message.FromID.Equal(order.GetMakerID()) {
+	if !message.FromID.Equals(order.GetMakerID()) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetMakerOwnableSplit())))

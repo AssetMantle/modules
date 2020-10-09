@@ -25,7 +25,7 @@ func (metaID metaID) String() string {
 	return metaID.HashID.String()
 }
 
-func (metaID metaID) Equal(id types.ID) bool {
+func (metaID metaID) Equals(id types.ID) bool {
 	return bytes.Compare(metaID.Bytes(), id.Bytes()) == 0
 }
 

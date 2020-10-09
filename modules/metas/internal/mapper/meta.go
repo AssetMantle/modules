@@ -6,8 +6,8 @@
 package mapper
 
 import (
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
@@ -26,12 +26,12 @@ func (meta meta) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(meta)
 }
 
-func (meta meta) Decode(bytes []byte) traits.Mappable {
+func (meta meta) Decode(bytes []byte) helpers.Mappable {
 	packageCodec.MustUnmarshalBinaryBare(bytes, &meta)
 	return meta
 }
 
-func metaPrototype() traits.Mappable {
+func metaPrototype() helpers.Mappable {
 	return meta{}
 }
 

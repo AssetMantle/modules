@@ -47,7 +47,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if takerIDProperty := metaProperties.GetMetaProperty(base.NewID(properties.TakerID)); takerIDProperty != nil {
 		takerID, Error := takerIDProperty.GetMetaFact().GetData().AsID()
 		if Error == nil {
-			if takerID.Equal(message.FromID) {
+			if takerID.Equals(message.FromID) {
 				newTransactionResponse(errors.NotAuthorized)
 			}
 		}

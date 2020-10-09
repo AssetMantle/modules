@@ -10,7 +10,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -47,7 +46,7 @@ func (identities identities) Fetch(id types.ID) mappers.InterIdentities {
 			identityList = append(identityList, mappable.(identity))
 		}
 	} else {
-		appendIdentityList := func(mappable traits.Mappable) bool {
+		appendIdentityList := func(mappable helpers.Mappable) bool {
 			identityList = append(identityList, mappable.(identity))
 			return false
 		}

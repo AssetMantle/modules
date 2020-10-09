@@ -37,7 +37,7 @@ func CreateTestInput(t *testing.T) sdkTypes.Context {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	ctx := CreateTestInput(t)
 	idString := "classification|hashID"
-	idByteString := "classificationhashID"
+	idByteString := "classificationHashID"
 
 	addr := sdkTypes.AccAddress("addr")
 
@@ -45,7 +45,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	id := NewIdentityID(base.NewID("classification"), base.NewID("hashID"))
 	require.Equal(t, idString, id.String())
 	require.Equal(t, []byte(idByteString), id.Bytes())
-	require.Equal(t, false, id.Equal(base.NewID("")))
+	require.Equal(t, false, id.Equals(base.NewID("")))
 
 	//Test Identity
 	testIdentity := NewIdentity(id, []sdkTypes.AccAddress{addr},
@@ -72,16 +72,16 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	//Test Identities
 	testIdentities := NewIdentities(Mapper, ctx)
-	require.Equal(t, "|", testIdentities.GetID().String())
+	require.Equal(t, "|", testIdentities.GetKey().String())
 	require.Equal(t, nil, testIdentities.Get(base.NewID("")))
 
 	testIdentities = testIdentities.Add(testIdentity)
 	require.Equal(t, testIdentity, testIdentities.Get(id))
-	require.Equal(t, NewIdentityID(base.NewID(""), base.NewID("")), testIdentities.GetID())
+	require.Equal(t, NewIdentityID(base.NewID(""), base.NewID("")), testIdentities.GetKey())
 	require.Equal(t, []mappables.InterIdentity{testIdentity}, testIdentities.GetList())
-	require.Equal(t, base.NewID("someID"), testIdentities.Fetch(base.NewID("someID")).GetID())
-	require.Equal(t, id, testIdentities.Fetch(id).GetID())
-	require.Equal(t, id.String(), testIdentities.Fetch(base.NewID(idString)).GetID().String())
+	require.Equal(t, base.NewID("someID"), testIdentities.Fetch(base.NewID("someID")).GetKey())
+	require.Equal(t, id, testIdentities.Fetch(id).GetKey())
+	require.Equal(t, id.String(), testIdentities.Fetch(base.NewID(idString)).GetKey().String())
 
 	testIdentities = testIdentities.Mutate(identityMutated)
 	require.Equal(t, identityMutated.GetImmutables().Get().GetList(), testIdentities.Get(id).GetImmutables().Get().GetList())

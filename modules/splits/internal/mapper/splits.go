@@ -10,7 +10,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -47,7 +46,7 @@ func (splits splits) Fetch(id types.ID) mappers.Splits {
 			splitList = append(splitList, mappable.(split))
 		}
 	} else {
-		appendSplitList := func(mappable traits.Mappable) bool {
+		appendSplitList := func(mappable helpers.Mappable) bool {
 			splitList = append(splitList, mappable.(split))
 			return false
 		}

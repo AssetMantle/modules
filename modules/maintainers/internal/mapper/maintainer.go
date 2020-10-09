@@ -6,13 +6,13 @@
 package mapper
 
 import (
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type maintainer struct {
-	ID               types.ID       `json:"id" valid:"required field id missing"`
+	ID               types.ID       `json:"key" valid:"required field key missing"`
 	MaintainedTraits types.Mutables `json:"maintainedTraits" valid:"required field maintainedTraits missing"`
 	AddMaintainer    bool           `json:"addMaintainer" valid:"required field addMaintainer missing"`
 	RemoveMaintainer bool           `json:"removeMaintainer" valid:"required field removeMaintainer missing"`
@@ -33,7 +33,7 @@ func (maintainer maintainer) CanRemoveMaintainer() bool { return maintainer.Remo
 func (maintainer maintainer) CanMutateMaintainer() bool { return maintainer.MutateMaintainer }
 func (maintainer maintainer) MaintainsTrait(id types.ID) bool {
 	for _, trait := range maintainer.MaintainedTraits.Get().GetList() {
-		if trait.GetID().Equal(id) {
+		if trait.GetID().Equals(id) {
 			return true
 		}
 	}
@@ -42,11 +42,11 @@ func (maintainer maintainer) MaintainsTrait(id types.ID) bool {
 func (maintainer maintainer) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(maintainer)
 }
-func (maintainer maintainer) Decode(bytes []byte) traits.Mappable {
+func (maintainer maintainer) Decode(bytes []byte) helpers.Mappable {
 	packageCodec.MustUnmarshalBinaryBare(bytes, &maintainer)
 	return maintainer
 }
-func maintainerPrototype() traits.Mappable {
+func maintainerPrototype() helpers.Mappable {
 	return maintainer{}
 }
 func NewMaintainer(ID types.ID, maintainedTraits types.Mutables, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) mappables.Maintainer {

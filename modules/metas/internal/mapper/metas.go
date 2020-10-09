@@ -10,13 +10,12 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
 type metas struct {
-	ID   types.ID         `json:"id" valid:"required~required field id missing"`
+	ID   types.ID         `json:"key" valid:"required~required field key missing"`
 	List []mappables.Meta `json:"list" valid:"required~required field list missing"`
 
 	mapper  helpers.Mapper
@@ -48,7 +47,7 @@ func (metas metas) Fetch(id types.ID) mappers.Metas {
 			metaList = append(metaList, mappable.(meta))
 		}
 	} else {
-		appendMappableList := func(mappable traits.Mappable) bool {
+		appendMappableList := func(mappable helpers.Mappable) bool {
 			metaList = append(metaList, mappable.(meta))
 			return false
 		}

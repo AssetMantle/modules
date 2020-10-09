@@ -34,7 +34,7 @@ func (maintainerID maintainerID) String() string {
 	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
 
-func (maintainerID maintainerID) Equal(id types.ID) bool {
+func (maintainerID maintainerID) Equals(id types.ID) bool {
 	return bytes.Compare(maintainerID.Bytes(), id.Bytes()) == 0
 }
 

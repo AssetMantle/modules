@@ -7,14 +7,14 @@ package mapper
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type order struct {
-	ID         types.ID         `json:"id" valid:"required~required field id missing"`
+	ID         types.ID         `json:"key" valid:"required~required field key missing"`
 	Immutables types.Immutables `json:"immutables" valid:"required field immutables missing"`
 	Mutables   types.Mutables   `json:"mutables" valid:"required~required field mutables missing"`
 }
@@ -108,12 +108,12 @@ func (order order) Encode() []byte {
 	return packageCodec.MustMarshalBinaryBare(order)
 }
 
-func (order order) Decode(bytes []byte) traits.Mappable {
+func (order order) Decode(bytes []byte) helpers.Mappable {
 	packageCodec.MustUnmarshalBinaryBare(bytes, &order)
 	return order
 }
 
-func orderPrototype() traits.Mappable {
+func orderPrototype() helpers.Mappable {
 	return order{}
 }
 

@@ -10,12 +10,11 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/mappers"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type maintainers struct {
-	ID   types.ID               `json:"id" valid:"required~required field id missing"`
+	ID   types.ID               `json:"key" valid:"required~required field key missing"`
 	List []mappables.Maintainer `json:"list" valid:"required~required field list missing"`
 
 	mapper  helpers.Mapper
@@ -47,7 +46,7 @@ func (maintainers maintainers) Fetch(id types.ID) mappers.Maintainers {
 			maintainerList = append(maintainerList, mappable.(maintainer))
 		}
 	} else {
-		appendMaintainerList := func(mappable traits.Mappable) bool {
+		appendMaintainerList := func(mappable helpers.Mappable) bool {
 			maintainerList = append(maintainerList, mappable.(maintainer))
 			return false
 		}
