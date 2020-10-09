@@ -10,4 +10,6 @@ import "github.com/cosmos/cosmos-sdk/codec"
 type Key interface {
 	GenerateStoreKeyBytes() []byte
 	RegisterCodec(*codec.Codec)
+	IsPartial() bool
+	Matches(Key) bool
 }
