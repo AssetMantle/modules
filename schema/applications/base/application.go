@@ -340,11 +340,15 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 		)
 
 		metasModule := metas.Module.Initialize(paramsKeeper.Subspace(metas.Module.GetDefaultParamspace()))
-		maintainersModule := maintainers.Module.Initialize(paramsKeeper.Subspace(maintainers.Module.GetDefaultParamspace()))
 		classificationsModule := classifications.Module.Initialize(
 			paramsKeeper.Subspace(classifications.Module.GetDefaultParamspace()),
 			metasModule.GetAuxiliary(scrub.AuxiliaryName),
 		)
+
+		maintainersModule := maintainers.Module.Initialize(paramsKeeper.Subspace(maintainers.Module.GetDefaultParamspace()), classificationsModule.GetAuxiliary(conform.AuxiliaryName),
+			classificationsModule.GetAuxiliary(define.AuxiliaryName),
+			identities.Module.GetAuxiliary(verify.AuxiliaryName))
+
 		identitiesModule := identities.Module.Initialize(
 			paramsKeeper.Subspace(identities.Module.GetDefaultParamspace()),
 			classificationsModule.GetAuxiliary(conform.AuxiliaryName),
