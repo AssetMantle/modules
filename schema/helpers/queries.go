@@ -6,7 +6,6 @@
 package helpers
 
 type Queries interface {
-	GetRoute() string
 	Get(string) Query
 	GetList() []Query
 }

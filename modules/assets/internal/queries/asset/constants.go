@@ -6,10 +6,10 @@
 package asset
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/queries"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/module"
 )
 
 const Name = "assets"
-const Route = queries.Route + "/" + Name
+const Route = module.Route + "/" + Name
 const Short = ""
 const Long = ""

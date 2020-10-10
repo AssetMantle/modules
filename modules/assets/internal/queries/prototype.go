@@ -13,7 +13,6 @@ import (
 
 func Prototype() helpers.Queries {
 	return base.NewQueries(
-		Route,
 		asset.Query,
 	)
 }
