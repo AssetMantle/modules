@@ -11,7 +11,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type genesis struct {
@@ -66,7 +65,7 @@ func (Genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper, p
 		mappableList = append(mappableList, mappable)
 		return false
 	}
-	mapper.Iterate(context, base.NewID(""), appendMappableList)
+	mapper.Iterate(context, nil, appendMappableList)
 	var parameterList []types.Parameter
 	for _, defaultParameter := range Genesis.defaultParameterList {
 		parameterList = append(parameterList, parameters.Fetch(context, defaultParameter.GetID()))
