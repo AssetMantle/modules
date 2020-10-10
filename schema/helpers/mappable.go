@@ -11,7 +11,5 @@ import (
 
 type Mappable interface {
 	GetKey() Key
-	Encode() []byte
-	Decode([]byte) Mappable
 	RegisterCodec(*codec.Codec)
 }
