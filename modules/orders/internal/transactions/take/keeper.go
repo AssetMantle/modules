@@ -52,9 +52,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return newTransactionResponse(errors.NotAuthorized)
 		}
 	}
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), message.TakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
 
 	exchangeRateProperty := metaProperties.GetMetaProperty(base.NewID(properties.ExchangeRate))
 	if exchangeRateProperty == nil {
@@ -74,7 +71,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.MetaDataError)
 	}
 
-	sendMakerOwnableSplit := message.TakerOwnableSplit.Quo(sdkTypes.SmallestDec()).Mul(exchangeRate)
+	sendTakerOwnableSplit := makerOwnableSplit.Mul(exchangeRate)
+	sendMakerOwnableSplit := message.TakerOwnableSplit.Quo(exchangeRate)
 	updatedMakerOwnableSplit := makerOwnableSplit.Sub(sendMakerOwnableSplit)
 	if updatedMakerOwnableSplit.LT(sdkTypes.ZeroDec()) {
 		sendMakerOwnableSplit = makerOwnableSplit
@@ -82,6 +80,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	} else if updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()) {
 		orders = orders.Remove(order)
 	} else {
+		sendTakerOwnableSplit = message.TakerOwnableSplit
 		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(updatedMakerOwnableSplit))))))
 		if Error != nil {
 			return newTransactionResponse(Error)
@@ -89,7 +88,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		order = mapper.NewOrder(order.GetID(), order.GetImmutables(), order.GetMutables().Mutate(mutableProperties.GetList()...))
 		orders = orders.Mutate(order)
 	}
-
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), sendTakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
+	}
 	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(mapper.ModuleName), message.FromID, order.GetMakerOwnableID(), sendMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
