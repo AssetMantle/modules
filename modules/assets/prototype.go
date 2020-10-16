@@ -7,6 +7,7 @@ package assets
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/auxiliaries"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/queries"
@@ -19,6 +20,7 @@ var Prototype = base.NewModule(
 	module.Name,
 	simulator.Prototype,
 	parameters.Prototype,
+	genesis.Prototype,
 	auxiliaries.Prototype,
 	queries.Prototype,
 	transactions.Prototype,
