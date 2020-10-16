@@ -3,8 +3,8 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package parameters
+package helpers
 
-import "github.com/persistenceOne/persistenceSDK/modules/assets/module"
-
-const DefaultParamspace = module.Name
+type Keeper interface {
+	Initialize(Mapper, Parameters, []interface{}) Keeper
+}
