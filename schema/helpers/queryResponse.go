@@ -5,6 +5,10 @@
 
 package helpers
 
+import "github.com/cosmos/cosmos-sdk/codec"
+
 type QueryResponse interface {
 	Response
+	Encode() ([]byte, error)
+	Decode([]byte) (QueryResponse, error)
 }
