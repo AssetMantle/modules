@@ -73,7 +73,7 @@ func (Genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper, p
 	return Genesis.Initialize(mappableList, parameterList)
 }
 
-func (Genesis genesis) Marshall() []byte {
+func (Genesis genesis) Encode() []byte {
 	bytes, Error := Genesis.codec.MarshalJSON(Genesis)
 	if Error != nil {
 		panic(Error)
@@ -81,12 +81,12 @@ func (Genesis genesis) Marshall() []byte {
 	return bytes
 }
 
-func (Genesis genesis) Unmarshall(byte []byte) helpers.Genesis {
+func (Genesis genesis) Decode(byte []byte) helpers.Genesis {
 	var genesis genesis
 	if Error := Genesis.codec.UnmarshalJSON(byte, &genesis); Error != nil {
 		panic(Error)
 	}
-	return NewGenesis(Genesis.codec, Genesis.defaultMappableList, Genesis.defaultParameterList).Initialize(genesis.MappableList, genesis.ParameterList)
+	return NewGenesis(Genesis.defaultMappableList, Genesis.defaultParameterList).Initialize(genesis.MappableList, genesis.ParameterList)
 }
 
 func (Genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList []types.Parameter) helpers.Genesis {
