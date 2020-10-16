@@ -6,7 +6,6 @@
 package helpers
 
 type Transactions interface {
-	GetRoute() string
 	Get(string) Transaction
 	GetList() []Transaction
 }

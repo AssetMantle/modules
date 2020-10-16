@@ -8,15 +8,10 @@ package base
 import "github.com/persistenceOne/persistenceSDK/schema/helpers"
 
 type transactions struct {
-	route           string
 	transactionList []helpers.Transaction
 }
 
 var _ helpers.Transactions = (*transactions)(nil)
-
-func (transactions transactions) GetRoute() string {
-	return transactions.route
-}
 
 func (transactions transactions) Get(name string) helpers.Transaction {
 	for _, transaction := range transactions.transactionList {
@@ -31,9 +26,8 @@ func (transactions transactions) GetList() []helpers.Transaction {
 	return transactions.transactionList
 }
 
-func NewTransactions(route string, transactionList ...helpers.Transaction) helpers.Transactions {
+func NewTransactions(transactionList ...helpers.Transaction) helpers.Transactions {
 	return transactions{
-		route:           route,
 		transactionList: transactionList,
 	}
 }
