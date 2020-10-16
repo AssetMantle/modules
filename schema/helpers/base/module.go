@@ -29,6 +29,7 @@ type module struct {
 
 	simulatorPrototype    func() helpers.Simulator
 	parametersPrototype   func() helpers.Parameters
+	genesisPrototype      func() helpers.Genesis
 	auxiliariesPrototype  func() helpers.Auxiliaries
 	queriesPrototype      func() helpers.Queries
 	transactionsPrototype func() helpers.Transactions
@@ -73,10 +74,10 @@ func (module module) RegisterCodec(codec *codec.Codec) {
 	}
 }
 func (module module) DefaultGenesis() json.RawMessage {
-	return module.genesis.Default().Encode()
+	return module.genesisPrototype().Default().Encode()
 }
 func (module module) ValidateGenesis(rawMessage json.RawMessage) error {
-	genesisState := module.genesis.Decode(rawMessage)
+	genesisState := module.genesisPrototype().Decode(rawMessage)
 	return genesisState.Validate()
 }
 func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
@@ -156,7 +157,7 @@ func (module module) NewQuerierHandler() sdkTypes.Querier {
 	}
 }
 func (module module) InitGenesis(context sdkTypes.Context, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
-	genesisState := module.genesis.Decode(rawMessage)
+	genesisState := module.genesisPrototype().Decode(rawMessage)
 	if module.mapper == nil || module.parameters == nil {
 		panic(xprtErrors.UninitializedUsage)
 	}
@@ -167,7 +168,7 @@ func (module module) ExportGenesis(context sdkTypes.Context) json.RawMessage {
 	if module.mapper == nil || module.parameters == nil {
 		panic(xprtErrors.UninitializedUsage)
 	}
-	return module.genesis.Export(context, module.mapper, module.parameters).Encode()
+	return module.genesisPrototype().Export(context, module.mapper, module.parameters).Encode()
 }
 func (module module) BeginBlock(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {}
 
@@ -193,7 +194,7 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace params.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
 	module.mapper = module.mapper.Initialize(kvStoreKey)
 	//TODO initialize genesis
-	module.genesis = module.genesis.Initialize(nil, nil)
+	module.genesis = module.genesisPrototype().Initialize(nil, nil)
 	module.parameters = module.parametersPrototype().Initialize(paramsSubspace.WithKeyTable(module.parametersPrototype().GetKeyTable()))
 
 	var auxiliaryList []helpers.Auxiliary
@@ -216,11 +217,12 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 	return module
 }
 
-func NewModule(moduleName string, simulatorPrototype func() helpers.Simulator, parametersPrototype func() helpers.Parameters, auxiliariesPrototype func() helpers.Auxiliaries, queriesPrototype func() helpers.Queries, transactionsPrototype func() helpers.Transactions) helpers.Module {
+func NewModule(moduleName string, simulatorPrototype func() helpers.Simulator, parametersPrototype func() helpers.Parameters, genesisPrototype func() helpers.Genesis, auxiliariesPrototype func() helpers.Auxiliaries, queriesPrototype func() helpers.Queries, transactionsPrototype func() helpers.Transactions) helpers.Module {
 	return module{
 		moduleName:            moduleName,
 		simulatorPrototype:    simulatorPrototype,
 		parametersPrototype:   parametersPrototype,
+		genesisPrototype:      genesisPrototype,
 		auxiliariesPrototype:  auxiliariesPrototype,
 		queriesPrototype:      queriesPrototype,
 		transactionsPrototype: transactionsPrototype,
