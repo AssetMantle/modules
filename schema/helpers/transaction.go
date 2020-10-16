@@ -15,9 +15,7 @@ import (
 )
 
 type Transaction interface {
-	GetModuleName() string
 	GetName() string
-	GetRoute() string
 	Command(*codec.Codec) *cobra.Command
 	HandleMessage(sdkTypes.Context, sdkTypes.Msg) (*sdkTypes.Result, error)
 	RESTRequestHandler(context.CLIContext) http.HandlerFunc
