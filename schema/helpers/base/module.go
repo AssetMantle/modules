@@ -71,15 +71,12 @@ func (module module) RegisterCodec(codec *codec.Codec) {
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterCodec(codec)
 	}
-	for _, query := range module.queriesPrototype().GetList() {
-		query.RegisterCodec(codec)
-	}
 }
 func (module module) DefaultGenesis() json.RawMessage {
-	return module.genesis.Default().Marshall()
+	return module.genesis.Default().Encode()
 }
 func (module module) ValidateGenesis(rawMessage json.RawMessage) error {
-	genesisState := module.genesis.Unmarshall(rawMessage)
+	genesisState := module.genesis.Decode(rawMessage)
 	return genesisState.Validate()
 }
 func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
@@ -87,11 +84,11 @@ func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *m
 		panic(xprtErrors.UninitializedUsage)
 	}
 	for _, query := range module.queries.GetList() {
-		router.HandleFunc(query.GetRoute()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(cliContext)).Methods("GET")
+		router.HandleFunc(module.Name()+"/"+query.GetName()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(cliContext)).Methods("GET")
 	}
 
 	for _, transaction := range module.transactions.GetList() {
-		router.HandleFunc(transaction.GetRoute(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
+		router.HandleFunc(module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
 	}
 }
 func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
@@ -159,7 +156,7 @@ func (module module) NewQuerierHandler() sdkTypes.Querier {
 	}
 }
 func (module module) InitGenesis(context sdkTypes.Context, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
-	genesisState := module.genesis.Unmarshall(rawMessage)
+	genesisState := module.genesis.Decode(rawMessage)
 	if module.mapper == nil || module.parameters == nil {
 		panic(xprtErrors.UninitializedUsage)
 	}
@@ -170,15 +167,12 @@ func (module module) ExportGenesis(context sdkTypes.Context) json.RawMessage {
 	if module.mapper == nil || module.parameters == nil {
 		panic(xprtErrors.UninitializedUsage)
 	}
-	return module.genesis.Export(context, module.mapper, module.parameters).Marshall()
+	return module.genesis.Export(context, module.mapper, module.parameters).Encode()
 }
 func (module module) BeginBlock(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {}
 
 func (module module) EndBlock(_ sdkTypes.Context, _ abciTypes.RequestEndBlock) []abciTypes.ValidatorUpdate {
 	return []abciTypes.ValidatorUpdate{}
-}
-func (module module) GetDefaultParamspace() string {
-	return module.parametersPrototype().GetDefaultParamspace()
 }
 func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
 	if module.auxiliaries != nil {
@@ -212,13 +206,13 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transactionList = append(transactionList, transaction.InitializeKeeper(module.mapper, module.parameters, auxiliaryKeepers...))
 	}
-	module.transactions = NewTransactions(module.transactionsPrototype().GetRoute(), transactionList...)
+	module.transactions = NewTransactions(transactionList...)
 
 	var queryList []helpers.Query
 	for _, query := range module.queriesPrototype().GetList() {
-		queryList = append(queryList, query.InitializeKeeper(module.mapper, module.parameters, auxiliaryKeepers...))
+		queryList = append(queryList, query.Initialize(module.mapper, module.parameters, auxiliaryKeepers...))
 	}
-	module.queries = NewQueries(module.queriesPrototype().GetRoute(), queryList...)
+	module.queries = NewQueries(queryList...)
 	return module
 }
 

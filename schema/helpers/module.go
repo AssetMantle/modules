@@ -17,7 +17,6 @@ type Module interface {
 	sdkTypesModule.AppModule
 	sdkTypesModule.AppModuleSimulation
 
-	GetDefaultParamspace() string
 	GetAuxiliary(string) Auxiliary
 
 	DecodeModuleTransactionRequest(string, json.RawMessage) (sdkTypes.Msg, error)
