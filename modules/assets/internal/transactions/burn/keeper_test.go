@@ -6,20 +6,27 @@
 package burn
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/assets"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
+	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
-	dbm "github.com/tendermint/tm-db"
+	tendermintDB "github.com/tendermint/tm-db"
 	"reflect"
 	"testing"
 )
@@ -29,30 +36,48 @@ type TestKeepers struct {
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
+	var Codec = codec.New()
+	assets.Prototype.RegisterCodec(Codec)
+	schema.RegisterCodec(Codec)
+	sdkTypes.RegisterCodec(Codec)
+	codec.RegisterCrypto(Codec)
+	codec.RegisterEvidences(Codec)
+	vesting.RegisterCodec(Codec)
+	Codec.Seal()
 
-	keyAssets := mapper.Mapper.GetKVStoreKey()
+	storeKey := sdkTypes.NewKVStoreKey("test")
+	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
+	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
+	mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	paramsKeeper := params.NewKeeper(
+		Codec,
+		paramsStoreKey,
+		paramsTransientStoreKeys,
+	)
+	Parameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
 
-	db := dbm.NewMemDB()
-	ms := store.NewCommitMultiStore(db)
-	ms.MountStoreWithDB(keyAssets, sdkTypes.StoreTypeIAVL, db)
+	memDB := tendermintDB.NewMemDB()
+	commitMultiStore := store.NewCommitMultiStore(memDB)
+	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeTransient, memDB)
+	Error := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, Error)
 
-	err := ms.LoadLatestVersion()
-	require.Nil(t, err)
-
-	ctx := sdkTypes.NewContext(ms, abci.Header{
+	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	burn.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
-	supplement.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
-	verify.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
+	burn.AuxiliaryMock.InitializeKeeper(mapper, Parameters)
+	supplement.AuxiliaryMock.InitializeKeeper(mapper, Parameters)
+	verify.AuxiliaryMock.InitializeKeeper(mapper, Parameters)
 	keepers := TestKeepers{
-		AssetsKeeper: initializeTransactionKeeper(mapper.Mapper, parameters.Prototype,
+		AssetsKeeper: keeperPrototype().Initialize(mapper, Parameters,
 			[]interface{}{burn.AuxiliaryMock, supplement.AuxiliaryMock,
-				verify.AuxiliaryMock}),
+				verify.AuxiliaryMock}).(helpers.TransactionKeeper),
 	}
 
-	return ctx, keepers
+	return context, keepers
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
@@ -70,14 +95,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	defaultIdentityID := base.NewID("fromIdentityID")
 	burnMockErrorIdentity := base.NewID("burnError")
 	classificationID := base.NewID("ClassificationID")
-	assetID := mapper.NewAssetID(classificationID, base.NewImmutables(immutableTraits))
-	assetID2 := mapper.NewAssetID(base.NewID("ClassificationID2"), base.NewImmutables(immutableTraits))
-	assetID3 := mapper.NewAssetID(base.NewID("ClassificationID3"), base.NewImmutables(immutableTraits))
-	mapper.NewAssets(ctx, mapper.Mapper).Add(mapper.NewAsset(assetID,
+	assetID := key.NewAssetID(classificationID, base.NewImmutables(immutableTraits))
+	assetID2 := key.NewAssetID(base.NewID("ClassificationID2"), base.NewImmutables(immutableTraits))
+	assetID3 := key.NewAssetID(base.NewID("ClassificationID3"), base.NewImmutables(immutableTraits))
+	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID,
 		base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits)))
-	mapper.NewAssets(ctx, mapper.Mapper).Add(mapper.NewAsset(assetID2,
+	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID2,
 		base.NewImmutables(immutableTraits), base.NewMutables(supplementError)))
-	mapper.NewAssets(ctx, mapper.Mapper).Add(mapper.NewAsset(assetID3,
+	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID3,
 		base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits)))
 
 	t.Run("PositiveCase", func(t *testing.T) {
