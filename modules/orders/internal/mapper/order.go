@@ -6,6 +6,7 @@
 package mapper
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
@@ -54,7 +55,7 @@ func (order order) GetExchangeRate() types.Property {
 	} else if exchangeRate := order.Mutables.Get().Get(base.NewID(properties.ExchangeRate)); exchangeRate != nil {
 		return exchangeRate
 	} else {
-		data, _ := base.ReadDecData("")
+		data := base.NewDecData(sdkTypes.OneDec())
 		return base.NewProperty(base.NewID(properties.ExchangeRate), base.NewFact(data))
 	}
 }
