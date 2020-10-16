@@ -208,7 +208,6 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 }
 
 func (transaction transaction) RegisterCodec(codec *codec.Codec) {
-	transaction.requestPrototype().RegisterCodec(codec)
 	transaction.messagePrototype().RegisterCodec(codec)
 }
 func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessage) (sdkTypes.Msg, error) {
