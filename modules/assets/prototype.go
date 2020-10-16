@@ -3,10 +3,11 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package module
+package assets
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/auxiliaries"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/queries"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/simulator"
@@ -15,7 +16,7 @@ import (
 )
 
 var Prototype = base.NewModule(
-	Name,
+	module.Name,
 	simulator.Prototype,
 	parameters.Prototype,
 	auxiliaries.Prototype,
