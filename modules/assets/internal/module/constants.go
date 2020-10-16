@@ -5,7 +5,4 @@
 
 package module
 
-import "github.com/persistenceOne/persistenceSDK/constants"
-
 const Name = "assets"
-const Route = constants.ProjectRoute + "/" + Name

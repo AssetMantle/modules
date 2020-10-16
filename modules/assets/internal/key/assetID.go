@@ -9,7 +9,6 @@ import (
 	"bytes"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"strings"
@@ -54,10 +53,10 @@ func (AssetID assetID) Matches(key helpers.Key) bool {
 	}
 }
 func (AssetID assetID) GenerateStoreKeyBytes() []byte {
-	return append(storeKeyPrefix, AssetID.Bytes()...)
+	return append([]byte{0x11}, AssetID.Bytes()...)
 }
 func (assetID) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(assetID{}, module.Route+"/"+"assetID", nil)
+	codec.RegisterConcrete(assetID{}, constants.ProjectRoute+"/"+"assetID", nil)
 }
 
 func (AssetID assetID) IsPartial() bool {
