@@ -7,17 +7,26 @@ package base
 
 import (
 	"github.com/asaskevich/govalidator"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/tendermint/go-amino"
 )
 
 type genesis struct {
-	MappableList         []helpers.Mappable `json:"mappableList"`
-	ParameterList        []types.Parameter  `json:"parameterList"`
+	codec *codec.Codec
+
+	keyPrototype      func() helpers.Key
+	mappablePrototype func() helpers.Mappable
+
 	defaultMappableList  []helpers.Mappable
 	defaultParameterList []types.Parameter
+
+	MappableList  []helpers.Mappable `json:"mappableList"`
+	ParameterList []types.Parameter  `json:"parameterList"`
 }
 
 var _ helpers.Genesis = (*genesis)(nil)
@@ -86,7 +95,7 @@ func (Genesis genesis) Decode(byte []byte) helpers.Genesis {
 	if Error := Genesis.codec.UnmarshalJSON(byte, &genesis); Error != nil {
 		panic(Error)
 	}
-	return NewGenesis(Genesis.defaultMappableList, Genesis.defaultParameterList).Initialize(genesis.MappableList, genesis.ParameterList)
+	return NewGenesis(Genesis.keyPrototype, Genesis.mappablePrototype, Genesis.defaultMappableList, Genesis.defaultParameterList).Initialize(genesis.MappableList, genesis.ParameterList)
 }
 
 func (Genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList []types.Parameter) helpers.Genesis {
@@ -105,11 +114,19 @@ func (Genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList
 	return Genesis
 }
 
-func NewGenesis(defaultMappableList []helpers.Mappable, defaultParameterList []types.Parameter) helpers.Genesis {
+func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable, defaultMappableList []helpers.Mappable, defaultParameterList []types.Parameter) helpers.Genesis {
+	Codec := amino.NewCodec()
+	keyPrototype().RegisterCodec(Codec)
+	mappablePrototype().RegisterCodec(Codec)
+	schema.RegisterCodec(Codec)
+	Codec.Seal()
 	return genesis{
-		MappableList:         []helpers.Mappable{},
-		ParameterList:        []types.Parameter{},
+		codec:                Codec,
+		keyPrototype:         keyPrototype,
+		mappablePrototype:    mappablePrototype,
 		defaultMappableList:  defaultMappableList,
 		defaultParameterList: defaultParameterList,
+		MappableList:         []helpers.Mappable{},
+		ParameterList:        []types.Parameter{},
 	}
 }
