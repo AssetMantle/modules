@@ -27,15 +27,21 @@ func (queryRequest queryRequest) Validate() error {
 func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(cliCommand.ReadString(flags.AssetID)))
 }
-
 func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(vars[Query.GetName()]))
 }
-
-func queryRequestPrototype() helpers.QueryRequest {
-	return queryRequest{}
+func (queryRequest queryRequest) Encode() ([]byte, error) {
+	//TODO
+	panic("implement me")
 }
 
+func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
+	//TODO
+	panic("implement me")
+}
+func requestPrototype() helpers.QueryRequest {
+	return queryRequest{}
+}
 func queryRequestFromInterface(QueryRequest helpers.QueryRequest) queryRequest {
 	switch value := QueryRequest.(type) {
 	case queryRequest:
@@ -44,7 +50,6 @@ func queryRequestFromInterface(QueryRequest helpers.QueryRequest) queryRequest {
 		return queryRequest{}
 	}
 }
-
 func newQueryRequest(assetID types.ID) helpers.QueryRequest {
 	return queryRequest{AssetID: assetID}
 }

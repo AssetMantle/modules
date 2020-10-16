@@ -126,7 +126,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase - Conform Auxlilary fail", func(t *testing.T) {
+	t.Run("NegativeCase - Conform Auxiliary fail", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, toID, classificationID,
@@ -135,7 +135,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase - Mint Auxlilary fail", func(t *testing.T) {
+	t.Run("NegativeCase - Mint Auxiliary fail", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, base.NewID("mintError"), classificationID,

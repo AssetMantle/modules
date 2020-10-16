@@ -64,11 +64,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	return newTransactionResponse(nil)
 }
 
-func initializeTransactionKeeper(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.TransactionKeeper {
-	transactionKeeper := transactionKeeper{
-		mapper:     mapper,
-		parameters: parameters,
-	}
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
+	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
+
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
@@ -85,4 +83,8 @@ func initializeTransactionKeeper(mapper helpers.Mapper, parameters helpers.Param
 		}
 	}
 	return transactionKeeper
+}
+
+func keeperPrototype() helpers.TransactionKeeper {
+	return transactionKeeper{}
 }

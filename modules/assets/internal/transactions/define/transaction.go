@@ -7,19 +7,21 @@ package define
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Transaction = base.NewTransaction(
-	module.Name,
-	Name,
-	Route,
-	Short,
-	Long,
-	registerCodec,
-	initializeTransactionKeeper,
+	"define",
+	"",
+	"",
+
 	requestPrototype,
-	[]helpers.CLIFlag{flags.FromID, flags.ImmutableMetaTraits, flags.ImmutableTraits, flags.MutableMetaTraits, flags.MutableTraits},
+	messagePrototype,
+	keeperPrototype,
+
+	flags.FromID,
+	flags.ImmutableMetaTraits,
+	flags.ImmutableTraits,
+	flags.MutableMetaTraits,
+	flags.MutableTraits,
 )

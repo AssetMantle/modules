@@ -16,7 +16,6 @@ import (
 
 func Prototype() helpers.Transactions {
 	return base.NewTransactions(
-		Route,
 		burn.Transaction,
 		define.Transaction,
 		mint.Transaction,

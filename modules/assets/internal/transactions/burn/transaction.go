@@ -7,19 +7,18 @@ package burn
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Transaction = base.NewTransaction(
-	module.Name,
-	Name,
-	Route,
-	Short,
-	Long,
-	registerCodec,
-	initializeTransactionKeeper,
+	"burn",
+	"",
+	"",
+
 	requestPrototype,
-	[]helpers.CLIFlag{flags.FromID, flags.AssetID},
+	messagePrototype,
+	keeperPrototype,
+
+	flags.FromID,
+	flags.AssetID,
 )

@@ -6,6 +6,7 @@
 package asset
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
@@ -23,7 +24,16 @@ func (queryResponse queryResponse) IsSuccessful() bool {
 func (queryResponse queryResponse) GetError() error {
 	return queryResponse.Error
 }
-func queryResponsePrototype() helpers.QueryResponse {
+func (queryResponse queryResponse) Encode() ([]byte, error) {
+	//todo
+	panic("implement me")
+}
+
+func (queryResponse queryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
+	//todo
+	panic("implement me")
+}
+func responsePrototype() helpers.QueryResponse {
 	return queryResponse{}
 }
 func newQueryResponse(assets helpers.Collection, error error) helpers.QueryResponse {
