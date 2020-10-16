@@ -15,8 +15,6 @@ import (
 type Parameters interface {
 	String() string
 
-	GetDefaultParamspace() string
-
 	Validate() error
 	Equal(Parameters) bool
 

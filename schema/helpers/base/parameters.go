@@ -16,16 +16,12 @@ import (
 )
 
 type parameters struct {
-	defaultParamspace string
-	parameterList     []types.Parameter
-	paramsSubspace    params.Subspace
+	parameterList  []types.Parameter
+	paramsSubspace params.Subspace
 }
 
 var _ helpers.Parameters = (*parameters)(nil)
 
-func (parameters parameters) GetDefaultParamspace() string {
-	return parameters.defaultParamspace
-}
 func (parameters parameters) String() string {
 	var parameterList []string
 	for _, parameter := range parameters.parameterList {
@@ -101,7 +97,7 @@ func (parameters parameters) Initialize(paramsSubspace params.Subspace) helpers.
 	return parameters
 }
 
-func NewParameters(defaultParamspace string, parameterList ...types.Parameter) helpers.Parameters {
+func NewParameters(parameterList ...types.Parameter) helpers.Parameters {
 	return parameters{
 		parameterList: parameterList,
 	}
