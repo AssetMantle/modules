@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package asset
+package module
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -12,17 +12,11 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
-func registerCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(queryRequest{}, Route+"/"+"request", nil)
-	codec.RegisterConcrete(queryResponse{}, Route+"/"+"response", nil)
-}
-
-var packageCodec = codec.New()
+var Codec = codec.New()
 
 func init() {
-	registerCodec(packageCodec)
-	key.Prototype().RegisterCodec(packageCodec)
-	mappable.Prototype().RegisterCodec(packageCodec)
-	schema.RegisterCodec(packageCodec)
-	packageCodec.Seal()
+	key.Prototype().RegisterCodec(Codec)
+	mappable.Prototype().RegisterCodec(Codec)
+	schema.RegisterCodec(Codec)
+	Codec.Seal()
 }

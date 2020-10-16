@@ -3,8 +3,6 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package transactions
+package module
 
-import "github.com/persistenceOne/persistenceSDK/modules/assets/module"
-
-const Route = module.Route
+const Name = "assets"
