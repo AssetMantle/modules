@@ -12,8 +12,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
+	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/tendermint/go-amino"
 )
 
 type message struct {
@@ -34,7 +36,7 @@ func (message message) ValidateBasic() error {
 	return nil
 }
 func (message message) GetSignBytes() []byte {
-	return sdkTypes.MustSortJSON(module.Codec.MustMarshalJSON(message))
+	return sdkTypes.MustSortJSON(messageCodec().MustMarshalJSON(message))
 }
 func (message message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
@@ -50,10 +52,17 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 		return message{}
 	}
 }
+func messageCodec() *codec.Codec {
+	Codec := amino.NewCodec()
+	schema.RegisterCodec(Codec)
+	Codec.Seal()
+	return Codec
+}
 func messagePrototype() helpers.Message {
 	return message{}
 }
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, assetID types.ID) sdkTypes.Msg {
+
 	return message{
 		From:    from,
 		FromID:  fromID,
