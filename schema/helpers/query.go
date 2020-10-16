@@ -15,12 +15,9 @@ import (
 )
 
 type Query interface {
-	GetModuleName() string
 	GetName() string
-	GetRoute() string
 	Command(*codec.Codec) *cobra.Command
 	HandleMessage(sdkTypes.Context, abciTypes.RequestQuery) ([]byte, error)
 	RESTQueryHandler(context.CLIContext) http.HandlerFunc
-	RegisterCodec(*codec.Codec)
-	InitializeKeeper(Mapper, Parameters, ...interface{}) Query
+	Initialize(Mapper, Parameters, ...interface{}) Query
 }
