@@ -16,8 +16,8 @@ type Genesis interface {
 	Import(sdkTypes.Context, Mapper, Parameters)
 	Export(sdkTypes.Context, Mapper, Parameters) Genesis
 
-	Marshall() []byte
-	Unmarshall([]byte) Genesis
+	Encode() []byte
+	Decode([]byte) Genesis
 
 	Initialize([]Mappable, []types.Parameter) Genesis
 }

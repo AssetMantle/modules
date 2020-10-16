@@ -12,5 +12,5 @@ import (
 )
 
 func Prototype() helpers.Parameters {
-	return base.NewParameters(DefaultParamspace, dummy.Parameter)
+	return base.NewParameters(dummy.Parameter)
 }
