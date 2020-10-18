@@ -3,9 +3,12 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package mapper
+package mappable
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -23,10 +26,10 @@ var _ mappables.Maintainer = (*maintainer)(nil)
 
 func (maintainer maintainer) GetID() types.ID { return maintainer.ID }
 func (maintainer maintainer) GetClassificationID() types.ID {
-	return maintainerIDFromInterface(maintainer.ID).ClassificationID
+	return key.ReadClassificationID(maintainer.ID)
 }
 func (maintainer maintainer) GetIdentityID() types.ID {
-	return maintainerIDFromInterface(maintainer.ID).IdentityID
+	return key.ReadIdentityID(maintainer.ID)
 }
 func (maintainer maintainer) CanAddMaintainer() bool    { return maintainer.AddMaintainer }
 func (maintainer maintainer) CanRemoveMaintainer() bool { return maintainer.RemoveMaintainer }
@@ -39,15 +42,12 @@ func (maintainer maintainer) MaintainsTrait(id types.ID) bool {
 	}
 	return false
 }
-func (maintainer maintainer) Encode() []byte {
-	return packageCodec.MustMarshalBinaryBare(maintainer)
+func (maintainer maintainer) GetKey() helpers.Key {
+	return key.New(maintainer.ID)
 }
-func (maintainer maintainer) Decode(bytes []byte) helpers.Mappable {
-	packageCodec.MustUnmarshalBinaryBare(bytes, &maintainer)
-	return maintainer
-}
-func maintainerPrototype() helpers.Mappable {
-	return maintainer{}
+
+func (maintainer) RegisterCodec(codec *codec.Codec) {
+	codec.RegisterConcrete(maintainer{}, constants.ProjectRoute+"/"+"maintainer", nil)
 }
 func NewMaintainer(ID types.ID, maintainedTraits types.Mutables, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) mappables.Maintainer {
 	return maintainer{

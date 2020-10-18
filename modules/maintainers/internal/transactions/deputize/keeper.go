@@ -10,6 +10,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -31,13 +33,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	maintainers := mapper.NewMaintainers(transactionKeeper.mapper, context)
 
-	fromMaintainerID := mapper.NewMaintainerID(message.ClassificationID, message.FromID)
+	fromMaintainerID := key.NewMaintainerID(message.ClassificationID, message.FromID)
 	fromMaintainer := maintainers.Fetch(fromMaintainerID).Get(fromMaintainerID)
 	if fromMaintainer == nil || !fromMaintainer.CanAddMaintainer() {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 
-	toMaintainerID := mapper.NewMaintainerID(message.ClassificationID, message.ToID)
+	toMaintainerID := key.NewMaintainerID(message.ClassificationID, message.ToID)
 	toMaintainer := maintainers.Fetch(toMaintainerID).Get(toMaintainerID)
 	if toMaintainer != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
@@ -48,7 +50,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	maintainers = maintainers.Add(mapper.NewMaintainer(toMaintainerID, mutableTraits, message.AddMaintainer, message.RemoveMaintainer, message.MutateMaintainer))
+	maintainers = maintainers.Add(mappable.NewMaintainer(toMaintainerID, mutableTraits, message.AddMaintainer, message.RemoveMaintainer, message.MutateMaintainer))
 	return newTransactionResponse(nil)
 }
 

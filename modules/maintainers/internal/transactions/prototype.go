@@ -7,7 +7,12 @@ package transactions
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/transactions/deputize"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Transactions = base.NewTransactions(deputize.Transaction)
+func Prototype() helpers.Transactions {
+	return base.NewTransactions(
+		deputize.Transaction,
+	)
+}

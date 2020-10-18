@@ -8,7 +8,13 @@ package auxiliaries
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Auxiliaries = base.NewAuxiliaries(maintain.Auxiliary, super.Auxiliary)
+func Prototype() helpers.Auxiliaries {
+	return base.NewAuxiliaries(
+		maintain.Auxiliary,
+		super.Auxiliary,
+	)
+}
