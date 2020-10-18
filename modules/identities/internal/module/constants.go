@@ -3,8 +3,6 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package transactions
+package module
 
-import "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-
-var Transactions = base.NewTransactions()
+const Name = "identities"

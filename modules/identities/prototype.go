@@ -8,22 +8,23 @@ package identities
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/genesis"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/queries"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/simulator"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Module = base.NewModule(
-	mapper.ModuleName,
-	mapper.DefaultParamspace,
-	mapper.QueryRoute,
-	mapper.TransactionRoute,
-	mapper.Mapper,
-	genesis.Prototype,
-	parameters.Prototype,
-	auxiliaries.Auxiliaries,
-	queries.Queries,
-	transactions.Transactions,
-)
+func Prototype() helpers.Module {
+	return base.NewModule(
+		module.Name,
+		simulator.Prototype,
+		parameters.Prototype,
+		genesis.Prototype,
+		auxiliaries.Prototype,
+		queries.Prototype,
+		transactions.Prototype,
+	)
+}

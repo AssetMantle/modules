@@ -7,7 +7,12 @@ package queries
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/queries/identity"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Queries = base.NewQueries(identity.Query)
+func Prototype() helpers.Queries {
+	return base.NewQueries(
+		identity.Query,
+	)
+}

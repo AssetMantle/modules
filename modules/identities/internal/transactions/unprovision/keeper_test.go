@@ -9,6 +9,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -53,8 +55,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	provisionedAddr2 := sdkTypes.AccAddress("addr2")
 	unprovisionedAddr := sdkTypes.AccAddress("unProvisionedAddr")
 	defaultClassificationID := base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
-	defaultIdentityID := mapper.NewIdentityID(defaultClassificationID, base.NewID("d0Jhri_bOd3EEPXpyPUpNpGiQ1U="))
-	mapper.NewIdentities(mapper.Mapper, ctx).Add(mapper.NewIdentity(defaultIdentityID, []sdkTypes.AccAddress{defaultAddr, provisionedAddr2, unprovisionedAddr},
+	defaultIdentityID := key.NewIdentityID(defaultClassificationID, base.NewID("d0Jhri_bOd3EEPXpyPUpNpGiQ1U="))
+	mapper.NewIdentities(mapper.Mapper, ctx).Add(mappable.NewIdentity(defaultIdentityID, []sdkTypes.AccAddress{defaultAddr, provisionedAddr2, unprovisionedAddr},
 		[]sdkTypes.AccAddress{unprovisionedAddr}, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
 
 	t.Run("PositiveCase", func(t *testing.T) {

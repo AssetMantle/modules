@@ -10,6 +10,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/define"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -35,13 +37,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if classificationID == nil && Error != nil {
 		return newTransactionResponse(Error)
 	}
-	identityID := mapper.NewIdentityID(classificationID, immutables.GetHashID())
+	identityID := key.NewIdentityID(classificationID, immutables.GetHashID())
 	identities := mapper.NewIdentities(transactionKeeper.mapper, context).Fetch(identityID)
 	if identities.Get(identityID) != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	identities.Add(mapper.NewIdentity(identityID, []sdkTypes.AccAddress{message.From}, []sdkTypes.AccAddress{}, immutables, base.NewMutables(base.NewProperties())))
+	identities.Add(mappable.NewIdentity(identityID, []sdkTypes.AccAddress{message.From}, []sdkTypes.AccAddress{}, immutables, base.NewMutables(base.NewProperties())))
 	return newTransactionResponse(nil)
 }
 

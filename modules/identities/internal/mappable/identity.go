@@ -3,10 +3,13 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package mapper
+package mappable
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -62,16 +65,13 @@ func (identity identity) IsUnprovisioned(accAddress sdkTypes.AccAddress) bool {
 	}
 	return false
 }
-func (identity identity) Encode() []byte {
-	return packageCodec.MustMarshalBinaryBare(identity)
+func (identity identity) GetKey() helpers.Key {
+	return key.New(identity.ID)
 }
-func (identity identity) Decode(bytes []byte) helpers.Mappable {
-	packageCodec.MustUnmarshalBinaryBare(bytes, &identity)
-	return identity
+func (identity) RegisterCodec(codec *codec.Codec) {
+	codec.RegisterConcrete(identity{}, constants.ProjectRoute+"/"+"identity", nil)
 }
-func identityPrototype() helpers.Mappable {
-	return identity{}
-}
+
 func NewIdentity(identityID types.ID, provisionedAddressList []sdkTypes.AccAddress, unprovisionedAddressList []sdkTypes.AccAddress, immutables types.Immutables, mutables types.Mutables) mappables.InterIdentity {
 	return identity{
 		ID:                       identityID,

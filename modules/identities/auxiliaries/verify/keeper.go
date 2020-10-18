@@ -32,6 +32,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	}
 }
 
-func initializeAuxiliaryKeeper(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.AuxiliaryKeeper {
+func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
 	return auxiliaryKeeper{mapper: mapper}
+}
+
+func keeperPrototype() helpers.AuxiliaryKeeper {
+	return auxiliaryKeeper{}
 }
