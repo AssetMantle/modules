@@ -6,6 +6,7 @@
 package asset
 
 import (
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
@@ -24,13 +25,14 @@ func (queryResponse queryResponse) GetError() error {
 	return queryResponse.Error
 }
 func (queryResponse queryResponse) Encode() ([]byte, error) {
-	//todo
-	panic("implement me")
+	return module.Codec.MarshalJSON(queryResponse)
 }
 
 func (queryResponse queryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
-	//todo
-	panic("implement me")
+	if Error := module.Codec.UnmarshalJSON(bytes, &queryResponse); Error != nil {
+		return nil, Error
+	}
+	return queryResponse, nil
 }
 func responsePrototype() helpers.QueryResponse {
 	return queryResponse{}

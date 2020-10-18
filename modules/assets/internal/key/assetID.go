@@ -28,21 +28,26 @@ func (AssetID assetID) Bytes() []byte {
 	Bytes = append(Bytes, AssetID.HashID.Bytes()...)
 	return Bytes
 }
-
 func (AssetID assetID) String() string {
 	var values []string
 	values = append(values, AssetID.ClassificationID.String())
 	values = append(values, AssetID.HashID.String())
 	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
-
 func (AssetID assetID) Equals(id types.ID) bool {
-	switch id.(type) {
-	case assetID:
-		return bytes.Compare(AssetID.Bytes(), id.Bytes()) == 0
-	default:
+	return bytes.Compare(AssetID.Bytes(), id.Bytes()) == 0
+}
+func (AssetID assetID) GenerateStoreKeyBytes() []byte {
+	return append([]byte{0x11}, AssetID.Bytes()...)
+}
+func (assetID) RegisterCodec(codec *codec.Codec) {
+	codec.RegisterConcrete(assetID{}, constants.ProjectRoute+"/"+"assetID", nil)
+}
+func (AssetID assetID) IsPartial() bool {
+	if len(AssetID.HashID.Bytes()) > 0 {
 		return false
 	}
+	return true
 }
 func (AssetID assetID) Matches(key helpers.Key) bool {
 	switch value := key.(type) {
@@ -51,19 +56,6 @@ func (AssetID assetID) Matches(key helpers.Key) bool {
 	default:
 		return false
 	}
-}
-func (AssetID assetID) GenerateStoreKeyBytes() []byte {
-	return append([]byte{0x11}, AssetID.Bytes()...)
-}
-func (assetID) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(assetID{}, constants.ProjectRoute+"/"+"assetID", nil)
-}
-
-func (AssetID assetID) IsPartial() bool {
-	if len(AssetID.HashID.Bytes()) > 0 {
-		return false
-	}
-	return true
 }
 
 func New(id types.ID) helpers.Key {

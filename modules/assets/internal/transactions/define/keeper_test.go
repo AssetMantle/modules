@@ -71,9 +71,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	}, false, log.NewNopLogger())
 
 	scrub.AuxiliaryMock.InitializeKeeper(mapper, Parameters)
-	define.AuxiliaryMock.InitializeKeeper(mapper, Parameters)
-	super.AuxiliaryMock.InitializeKeeper(mapper, Parameters)
-	verify.AuxiliaryMock.InitializeKeeper(mapper, Parameters)
+	define.AuxiliaryMock.Initialize(mapper, Parameters)
+	super.AuxiliaryMock.Initialize(mapper, Parameters)
+	verify.AuxiliaryMock.Initialize(mapper, Parameters)
 	keepers := TestKeepers{
 		AssetsKeeper: keeperPrototype().Initialize(
 			mapper,

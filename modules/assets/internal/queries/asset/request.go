@@ -9,6 +9,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -31,13 +32,14 @@ func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRe
 	return newQueryRequest(base.NewID(vars[Query.GetName()]))
 }
 func (queryRequest queryRequest) Encode() ([]byte, error) {
-	//TODO
-	panic("implement me")
+	return module.Codec.MarshalJSON(queryRequest)
 }
 
 func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
-	//TODO
-	panic("implement me")
+	if Error := module.Codec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
+		return nil, Error
+	}
+	return queryRequest, nil
 }
 func requestPrototype() helpers.QueryRequest {
 	return queryRequest{}

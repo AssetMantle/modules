@@ -13,15 +13,18 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/queries"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/simulator"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Prototype = base.NewModule(
-	module.Name,
-	simulator.Prototype,
-	parameters.Prototype,
-	genesis.Prototype,
-	auxiliaries.Prototype,
-	queries.Prototype,
-	transactions.Prototype,
-)
+func Prototype() helpers.Module {
+	return base.NewModule(
+		module.Name,
+		simulator.Prototype,
+		parameters.Prototype,
+		genesis.Prototype,
+		auxiliaries.Prototype,
+		queries.Prototype,
+		transactions.Prototype,
+	)
+}
