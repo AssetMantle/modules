@@ -377,7 +377,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			maintainersModule.GetAuxiliary(maintain.AuxiliaryName),
 			metasModule.GetAuxiliary(scrub.AuxiliaryName),
 			metasModule.GetAuxiliary(supplement.AuxiliaryName),
-			splitsModule.GetAuxiliary(auxiliariesMint.AuxiliaryName),
+			splitsModule.GetAuxiliary(auxiliariesMint.Name),
 			splitsModule.GetAuxiliary(burn.AuxiliaryName),
 		)
 		orders.Module.Initialize(
@@ -387,7 +387,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			classificationsModule.GetAuxiliary(conform.AuxiliaryName),
 			classificationsModule.GetAuxiliary(define.AuxiliaryName),
 			metasModule.GetAuxiliary(supplement.AuxiliaryName),
-			splitsModule.GetAuxiliary(auxiliariesMint.AuxiliaryName),
+			splitsModule.GetAuxiliary(auxiliariesMint.Name),
 			maintainersModule.GetAuxiliary(super.AuxiliaryName),
 			maintainersModule.GetAuxiliary(maintain.AuxiliaryName),
 			metasModule.GetAuxiliary(scrub.AuxiliaryName),
