@@ -9,6 +9,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
@@ -32,11 +34,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 	for _, coin := range message.Coins {
-		splitID := mapper.NewSplitID(message.FromID, base.NewID(coin.Denom))
+		splitID := key.NewSplitID(message.FromID, base.NewID(coin.Denom))
 		splits := mapper.NewSplits(transactionKeeper.mapper, context).Fetch(splitID)
 		split := splits.Get(splitID)
 		if split == nil {
-			splits.Add(mapper.NewSplit(splitID, sdkTypes.NewDecFromInt(coin.Amount)))
+			splits.Add(mappable.NewSplit(splitID, sdkTypes.NewDecFromInt(coin.Amount)))
 		} else {
 			splits.Mutate(split.Receive(sdkTypes.NewDecFromInt(coin.Amount)).(mappables.Split))
 		}

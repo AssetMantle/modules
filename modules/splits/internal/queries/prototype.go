@@ -7,7 +7,12 @@ package queries
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/queries/split"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Queries = base.NewQueries(split.Query)
+func Prototype() helpers.Queries {
+	return base.NewQueries(
+		split.Query,
+	)
+}

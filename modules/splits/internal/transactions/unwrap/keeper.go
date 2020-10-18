@@ -10,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
@@ -31,7 +32,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if message.Split.LTE(sdkTypes.ZeroDec()) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
-	splitID := mapper.NewSplitID(message.FromID, message.OwnableID)
+	splitID := key.NewSplitID(message.FromID, message.OwnableID)
 	splits := mapper.NewSplits(transactionKeeper.mapper, context).Fetch(splitID)
 	split := splits.Get(splitID)
 	if split == nil {

@@ -9,6 +9,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
@@ -29,7 +31,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if message.Split.LTE(sdkTypes.ZeroDec()) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
-	fromSplitID := mapper.NewSplitID(message.FromID, message.OwnableID)
+	fromSplitID := key.NewSplitID(message.FromID, message.OwnableID)
 	splits := mapper.NewSplits(transactionKeeper.mapper, context).Fetch(fromSplitID)
 	fromSplit := splits.Get(fromSplitID)
 	if fromSplit == nil {
@@ -44,10 +46,10 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		splits.Mutate(fromSplit)
 	}
 
-	toSplitID := mapper.NewSplitID(message.ToID, message.OwnableID)
+	toSplitID := key.NewSplitID(message.ToID, message.OwnableID)
 	toSplit := splits.Fetch(toSplitID).Get(toSplitID)
 	if toSplit == nil {
-		splits.Add(mapper.NewSplit(toSplitID, message.Split))
+		splits.Add(mappable.NewSplit(toSplitID, message.Split))
 	} else {
 		splits.Mutate(toSplit.Receive(message.Split).(mappables.Split))
 	}

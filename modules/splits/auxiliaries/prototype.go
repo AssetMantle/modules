@@ -9,7 +9,14 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Auxiliaries = base.NewAuxiliaries(burn.Auxiliary, mint.Auxiliary, transfer.Auxiliary)
+func Prototype() helpers.Auxiliaries {
+	return base.NewAuxiliaries(
+		burn.Auxiliary,
+		mint.Auxiliary,
+		transfer.Auxiliary,
+	)
+}

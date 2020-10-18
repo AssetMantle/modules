@@ -76,7 +76,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 	bankKeeper := bank.NewBaseKeeper(accountKeeper, paramsKeeper.Subspace(bank.DefaultParamspace), make(map[string]bool))
 	supplyKeeper := supply.NewKeeper(Codec, keySupply, accountKeeper, bankKeeper, map[string][]string{mapper.ModuleName: nil})
-	verify.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
+	verify.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
 	keepers := TestKeepers{
 		SplitsKeeper: initializeTransactionKeeper(mapper.Mapper, parameters.Prototype,
 			[]interface{}{verify.AuxiliaryMock, supplyKeeper}),

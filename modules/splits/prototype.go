@@ -8,22 +8,23 @@ package splits
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/genesis"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/queries"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/simulator"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/transactions"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Module = base.NewModule(
-	mapper.ModuleName,
-	mapper.DefaultParamspace,
-	mapper.QueryRoute,
-	mapper.TransactionRoute,
-	mapper.Mapper,
-	genesis.Prototype,
-	parameters.Prototype,
-	auxiliaries.Auxiliaries,
-	queries.Queries,
-	transactions.Transactions,
-)
+func Prototype() helpers.Module {
+	return base.NewModule(
+		module.Name,
+		simulator.Prototype,
+		parameters.Prototype,
+		genesis.Prototype,
+		auxiliaries.Prototype,
+		queries.Prototype,
+		transactions.Prototype,
+	)
+}
