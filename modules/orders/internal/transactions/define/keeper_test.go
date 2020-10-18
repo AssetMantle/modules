@@ -13,6 +13,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -43,10 +45,10 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrub.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
-	define.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
-	super.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
-	verify.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
+	scrub.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
+	define.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
+	super.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
+	verify.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
 	keepers := TestKeepers{
 		OrdersKeeper: initializeTransactionKeeper(mapper.Mapper, parameters.Prototype,
 			[]interface{}{scrub.AuxiliaryMock, verify.AuxiliaryMock,
@@ -76,9 +78,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultAddr := sdkTypes.AccAddress("addr")
 	defaultIdentityID := base.NewID("fromID")
-	orderID := mapper.NewOrderID(base.NewID("classificationID"), base.NewID("makerOwnableID"),
+	orderID := key.NewOrderID(base.NewID("classificationID"), base.NewID("makerOwnableID"),
 		base.NewID("takerOwnableID"), defaultIdentityID, base.NewImmutables(base.NewProperties()))
-	mapper.NewOrders(mapper.Mapper, ctx).Add(mapper.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
+	mapper.NewOrders(mapper.Mapper, ctx).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

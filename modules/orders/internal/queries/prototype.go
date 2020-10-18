@@ -7,7 +7,12 @@ package queries
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/queries/order"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Queries = base.NewQueries(order.Query)
+func Prototype() helpers.Queries {
+	return base.NewQueries(
+		order.Query,
+	)
+}

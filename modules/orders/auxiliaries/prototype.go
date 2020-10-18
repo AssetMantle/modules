@@ -3,11 +3,13 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package parameters
+package auxiliaries
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/parameters/dummy"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Prototype = base.NewParameters(dummy.Parameter)
+func Prototype() helpers.Auxiliaries {
+	return base.NewAuxiliaries()
+}

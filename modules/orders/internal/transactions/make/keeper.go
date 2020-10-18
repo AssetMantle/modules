@@ -13,6 +13,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
@@ -47,7 +49,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	immutables := base.NewImmutables(base.NewProperties(append(immutableProperties.GetList(), message.ImmutableProperties.GetList()...)...))
 
-	orderID := mapper.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, message.FromID, immutables)
+	orderID := key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, message.FromID, immutables)
 	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(orderID)
 
 	makerOwnableSplit := message.MakerOwnableSplit
@@ -82,9 +84,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	if order != nil {
-		orders.Mutate(mapper.NewOrder(orderID, immutables, order.GetMutables().Mutate(mutables.Get().GetList()...)))
+		orders.Mutate(mappable.NewOrder(orderID, immutables, order.GetMutables().Mutate(mutables.Get().GetList()...)))
 	} else {
-		orders.Add(mapper.NewOrder(orderID, immutables, mutables))
+		orders.Add(mappable.NewOrder(orderID, immutables, mutables))
 	}
 	return newTransactionResponse(nil)
 }

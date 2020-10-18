@@ -10,7 +10,15 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/define"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/make"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/take"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Transactions = base.NewTransactions(cancel.Transaction, define.Transaction, make.Transaction, take.Transaction)
+func Prototype() helpers.Transactions {
+	return base.NewTransactions(
+		cancel.Transaction,
+		define.Transaction,
+		make.Transaction,
+		take.Transaction,
+	)
+}

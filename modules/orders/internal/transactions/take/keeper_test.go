@@ -13,6 +13,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
@@ -44,10 +46,10 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrub.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
-	transfer.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
-	verify.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
-	supplement.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
+	scrub.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
+	transfer.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
+	verify.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
+	supplement.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
 	keepers := TestKeepers{
 		OrdersKeeper: initializeTransactionKeeper(mapper.Mapper, parameters.Prototype,
 			[]interface{}{scrub.AuxiliaryMock, verify.AuxiliaryMock,
@@ -66,23 +68,23 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	classificationID := base.NewID("classificationID")
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
-	orderID := mapper.NewOrderID(classificationID, makerOwnableID,
+	orderID := key.NewOrderID(classificationID, makerOwnableID,
 		takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
-	nontakingOrderID := mapper.NewOrderID(base.NewID(""), makerOwnableID,
+	nontakingOrderID := key.NewOrderID(base.NewID(""), makerOwnableID,
 		takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
 	metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 		"," + properties.TakerID + ":I|fromID" + "," +
 		properties.ExchangeRate + ":D|0.000000000000000001")
 	require.Equal(t, nil, Error)
 
-	mapper.NewOrders(mapper.Mapper, ctx).Add(mapper.NewOrder(nontakingOrderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+	mapper.NewOrders(mapper.Mapper, ctx).Add(mappable.NewOrder(nontakingOrderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
 			properties.ExchangeRate + ":D|0.000000000000000001")
 		require.Equal(t, nil, Error)
-		mapper.NewOrders(mapper.Mapper, ctx).Add(mapper.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+		mapper.NewOrders(mapper.Mapper, ctx).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
 
 		want := newTransactionResponse(nil)
 		if got := keepers.OrdersKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec(),
@@ -112,14 +114,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - transfer mock fail", func(t *testing.T) {
 		t.Parallel()
-		transferErrorID := mapper.NewOrderID(classificationID, makerOwnableID,
+		transferErrorID := key.NewOrderID(classificationID, makerOwnableID,
 			base.NewID("transferError"), defaultIdentityID, base.NewImmutables(base.NewProperties()))
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
 			properties.ExchangeRate + ":D|0.000000000000000001")
 		require.Equal(t, nil, Error)
 
-		mapper.NewOrders(mapper.Mapper, ctx).Add(mapper.NewOrder(transferErrorID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+		mapper.NewOrders(mapper.Mapper, ctx).Add(mappable.NewOrder(transferErrorID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
 
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec(),
@@ -130,14 +132,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - transfer mock fail", func(t *testing.T) {
 		t.Parallel()
-		transferErrorID := mapper.NewOrderID(classificationID, base.NewID("transferError"),
+		transferErrorID := key.NewOrderID(classificationID, base.NewID("transferError"),
 			takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
 			properties.ExchangeRate + ":D|0.000000000000000001")
 		require.Equal(t, nil, Error)
 
-		mapper.NewOrders(mapper.Mapper, ctx).Add(mapper.NewOrder(transferErrorID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+		mapper.NewOrders(mapper.Mapper, ctx).Add(mappable.NewOrder(transferErrorID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
 
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec(),
@@ -157,14 +159,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - take more than make order", func(t *testing.T) {
 		t.Parallel()
-		orderID := mapper.NewOrderID(classificationID, makerOwnableID,
+		orderID := key.NewOrderID(classificationID, makerOwnableID,
 			takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
 			properties.ExchangeRate + ":D|0.000000000000000001")
 		require.Equal(t, nil, Error)
 
-		mapper.NewOrders(mapper.Mapper, ctx).Add(mapper.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+		mapper.NewOrders(mapper.Mapper, ctx).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
 
 		want := newTransactionResponse(nil)
 		if got := keepers.OrdersKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec().MulInt64(1),

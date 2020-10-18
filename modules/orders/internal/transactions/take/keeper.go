@@ -12,6 +12,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -91,7 +92,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		if Error != nil {
 			return newTransactionResponse(Error)
 		}
-		order = mapper.NewOrder(order.GetID(), order.GetImmutables(), order.GetMutables().Mutate(mutableProperties.GetList()...))
+		order = mappable.NewOrder(order.GetID(), order.GetImmutables(), order.GetMutables().Mutate(mutableProperties.GetList()...))
 		orders = orders.Mutate(order)
 	}
 	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), sendTakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
