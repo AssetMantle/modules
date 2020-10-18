@@ -3,11 +3,13 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package mapper
+package key
 
 import (
 	"bytes"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
@@ -20,44 +22,47 @@ type classificationID struct {
 }
 
 var _ types.ID = (*classificationID)(nil)
+var _ helpers.Key = (*classificationID)(nil)
 
-func (classificationID classificationID) Bytes() []byte {
+func (ClassificationID classificationID) Bytes() []byte {
 	return append(
-		classificationID.ChainID.Bytes(),
-		classificationID.HashID.Bytes()...)
+		ClassificationID.ChainID.Bytes(),
+		ClassificationID.HashID.Bytes()...)
 }
-
-func (classificationID classificationID) String() string {
+func (ClassificationID classificationID) String() string {
 	var values []string
-	values = append(values, classificationID.ChainID.String())
-	values = append(values, classificationID.HashID.String())
+	values = append(values, ClassificationID.ChainID.String())
+	values = append(values, ClassificationID.HashID.String())
 	return strings.Join(values, constants.IDSeparator)
 }
-
-func (classificationID classificationID) Equals(id types.ID) bool {
-	return bytes.Compare(classificationID.Bytes(), id.Bytes()) == 0
+func (ClassificationID classificationID) Equals(id types.ID) bool {
+	return bytes.Compare(ClassificationID.Bytes(), id.Bytes()) == 0
 }
-func readClassificationID(classificationIDString string) types.ID {
-	idList := strings.Split(classificationIDString, constants.IDSeparator)
-	if len(idList) == 2 {
-		return classificationID{
-			ChainID: base.NewID(idList[0]),
-			HashID:  base.NewID(idList[1]),
-		}
+func (ClassificationID classificationID) GenerateStoreKeyBytes() []byte {
+	return append([]byte{0x16}, ClassificationID.Bytes()...)
+}
+func (classificationID) RegisterCodec(codec *codec.Codec) {
+	codec.RegisterConcrete(classificationID{}, constants.ProjectRoute+"/"+"classificationID", nil)
+}
+func (ClassificationID classificationID) IsPartial() bool {
+	if len(ClassificationID.HashID.Bytes()) > 0 {
+		return false
 	}
-	return classificationID{ChainID: base.NewID(""), HashID: base.NewID("")}
+	return true
 }
-func classificationIDFromInterface(id types.ID) classificationID {
-	switch value := id.(type) {
+func (ClassificationID classificationID) Matches(key helpers.Key) bool {
+	switch value := key.(type) {
 	case classificationID:
-		return value
+		return bytes.Compare(ClassificationID.Bytes(), value.Bytes()) == 0
 	default:
-		return classificationIDFromInterface(readClassificationID(id.String()))
+		return false
 	}
 }
-func generateKey(classificationID types.ID) []byte {
-	return append(StoreKeyPrefix, classificationIDFromInterface(classificationID).Bytes()...)
+
+func New(id types.ID) helpers.Key {
+	return classificationIDFromInterface(id)
 }
+
 func NewClassificationID(chainID types.ID, immutableTraits types.Immutables, mutableTraits types.Mutables) types.ID {
 	var immutableIDStringList []string
 	for _, immutable := range immutableTraits.Get().GetList() {

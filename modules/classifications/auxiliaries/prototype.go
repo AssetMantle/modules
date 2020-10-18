@@ -8,7 +8,13 @@ package auxiliaries
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/define"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Auxiliaries = base.NewAuxiliaries(conform.Auxiliary, define.Auxiliary)
+func Prototype() helpers.Auxiliaries {
+	return base.NewAuxiliaries(
+		conform.Auxiliary,
+		define.Auxiliary,
+	)
+}

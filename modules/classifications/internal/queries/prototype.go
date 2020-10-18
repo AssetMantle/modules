@@ -7,7 +7,12 @@ package queries
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/queries/classification"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Queries = base.NewQueries(classification.Query)
+func Prototype() helpers.Queries {
+	return base.NewQueries(
+		classification.Query,
+	)
+}

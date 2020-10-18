@@ -11,10 +11,8 @@ import (
 )
 
 var Auxiliary = base.NewAuxiliary(
-	mapper.ModuleName,
-	AuxiliaryName,
-	AuxiliaryRoute,
-	initializeAuxiliaryKeeper,
+	"conform",
+	keeperPrototype,
 )
 
 var AuxiliaryMock = base.NewAuxiliary(

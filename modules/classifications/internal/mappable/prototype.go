@@ -3,8 +3,10 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package auxiliaries
+package mappable
 
-import "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+import "github.com/persistenceOne/persistenceSDK/schema/helpers"
 
-var Auxiliaries = base.NewAuxiliaries()
+func Prototype() helpers.Mappable {
+	return classification{}
+}
