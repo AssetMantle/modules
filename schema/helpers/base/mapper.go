@@ -12,7 +12,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/kv"
 )
 
@@ -90,7 +89,7 @@ func (mapper mapper) Initialize(kvStoreKey *sdkTypes.KVStoreKey) helpers.Mapper 
 	return mapper
 }
 func NewMapper(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) helpers.Mapper {
-	Codec := amino.NewCodec()
+	Codec := codec.New()
 	keyPrototype().RegisterCodec(Codec)
 	mappablePrototype().RegisterCodec(Codec)
 	schema.RegisterCodec(Codec)

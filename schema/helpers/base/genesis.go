@@ -13,7 +13,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/tendermint/go-amino"
 )
 
 type genesis struct {
@@ -115,7 +114,7 @@ func (Genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList
 }
 
 func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable, defaultMappableList []helpers.Mappable, defaultParameterList []types.Parameter) helpers.Genesis {
-	Codec := amino.NewCodec()
+	Codec := codec.New()
 	keyPrototype().RegisterCodec(Codec)
 	mappablePrototype().RegisterCodec(Codec)
 	schema.RegisterCodec(Codec)
