@@ -6,9 +6,13 @@
 package genesis
 
 import (
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Prototype = base.NewGenesis(packageCodec, []helpers.Mappable{}, parameters.Prototype.GetList())
+func Prototype() helpers.Genesis {
+	return base.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{}, parameters.Prototype().GetList())
+}

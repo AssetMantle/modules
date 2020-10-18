@@ -3,9 +3,12 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package mapper
+package mappable
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -19,20 +22,12 @@ type meta struct {
 var _ mappables.Meta = (*meta)(nil)
 
 func (meta meta) GetData() types.Data { return meta.Data }
-
-func (meta meta) GetID() types.ID { return base.NewID(meta.Data.GenerateHash()) }
-
-func (meta meta) Encode() []byte {
-	return packageCodec.MustMarshalBinaryBare(meta)
+func (meta meta) GetID() types.ID     { return base.NewID(meta.Data.GenerateHash()) }
+func (meta meta) GetKey() helpers.Key {
+	return key.New(meta.GetID())
 }
-
-func (meta meta) Decode(bytes []byte) helpers.Mappable {
-	packageCodec.MustUnmarshalBinaryBare(bytes, &meta)
-	return meta
-}
-
-func metaPrototype() helpers.Mappable {
-	return meta{}
+func (meta) RegisterCodec(codec *codec.Codec) {
+	codec.RegisterConcrete(meta{}, constants.ProjectRoute+"/"+"meta", nil)
 }
 
 func NewMeta(data types.Data) mappables.Meta {

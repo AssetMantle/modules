@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -54,7 +55,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, Error)
 	newFact, Error := base.ReadMetaFact("S|newFact")
 	require.Equal(t, nil, Error)
-	mapper.NewMetas(mapper.Mapper, ctx).Add(mapper.NewMeta(defaultFact.GetData()))
+	mapper.NewMetas(mapper.Mapper, ctx).Add(mappable.NewMeta(defaultFact.GetData()))
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
 		if got := keepers.MetasKeeper.Transact(ctx, newMessage(defaultAddr, newFact)); !reflect.DeepEqual(got, want) {

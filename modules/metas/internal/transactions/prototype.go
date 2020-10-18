@@ -7,7 +7,12 @@ package transactions
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/transactions/reveal"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Transactions = base.NewTransactions(reveal.Transaction)
+func Prototype() helpers.Transactions {
+	return base.NewTransactions(
+		reveal.Transaction,
+	)
+}
