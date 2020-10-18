@@ -199,7 +199,7 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 
 	var auxiliaryList []helpers.Auxiliary
 	for _, auxiliary := range module.auxiliariesPrototype().GetList() {
-		auxiliaryList = append(auxiliaryList, auxiliary.InitializeKeeper(module.mapper, module.parameters, auxiliaryKeepers...))
+		auxiliaryList = append(auxiliaryList, auxiliary.Initialize(module.mapper, module.parameters, auxiliaryKeepers...))
 	}
 	module.auxiliaries = NewAuxiliaries(auxiliaryList...)
 
