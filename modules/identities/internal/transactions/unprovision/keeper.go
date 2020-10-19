@@ -8,12 +8,14 @@ package unprovision
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 )
 
 type transactionKeeper struct {
-	mapper helpers.Mapper
+	mapper     helpers.Mapper
+	parameters helpers.Parameters
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -21,8 +23,8 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 	identityID := message.IdentityID
-	identities := mapper.NewIdentities(transactionKeeper.mapper, context).Fetch(identityID)
-	identity := identities.Get(identityID)
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(identityID))
+	identity := identities.Get(key.New(identityID)).(mappables.InterIdentity)
 	if identity == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
@@ -39,6 +41,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	return newTransactionResponse(nil)
 }
 
-func initializeTransactionKeeper(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.TransactionKeeper {
-	return transactionKeeper{mapper: mapper}
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
+	transactionKeeper.mapper = mapper
+	return transactionKeeper
+}
+
+func keeperPrototype() helpers.TransactionKeeper {
+	return transactionKeeper{}
 }
