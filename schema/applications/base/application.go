@@ -216,13 +216,13 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			upgrade.StoreKey,
 			evidence.StoreKey,
 			wasm.StoreKey,
-			assets.Prototype.Name(),
-			classifications.Module.Name(),
-			identities.Module.Name(),
-			maintainers.Module.Name(),
-			metas.Module.Name(),
-			orders.Module.Name(),
-			splits.Module.Name(),
+			assets.Prototype().Name(),
+			classifications.Prototype().Name(),
+			identities.Prototype().Name(),
+			maintainers.Prototype().Name(),
+			metas.Prototype().Name(),
+			orders.Prototype().Name(),
+			splits.Prototype().Name(),
 		)
 
 		transientStoreKeys := sdkTypes.NewTransientStoreKeys(params.TStoreKey)
@@ -339,60 +339,60 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			staking.NewMultiStakingHooks(application.distributionKeeper.Hooks(), application.slashingKeeper.Hooks()),
 		)
 
-		metasModule := metas.Module.Initialize(
-			keys[metas.Module.Name()],
-			paramsKeeper.Subspace(metas.Module.Name()),
+		metasModule := metas.Prototype().Initialize(
+			keys[metas.Prototype().Name()],
+			paramsKeeper.Subspace(metas.Prototype().Name()),
 		)
-		maintainersModule := maintainers.Module.Initialize(
-			keys[metas.Module.Name()],
-			paramsKeeper.Subspace(metas.Module.Name()),
+		maintainersModule := maintainers.Prototype().Initialize(
+			keys[metas.Prototype().Name()],
+			paramsKeeper.Subspace(metas.Prototype().Name()),
 		)
-		classificationsModule := classifications.Module.Initialize(
-			keys[classifications.Module.Name()],
-			paramsKeeper.Subspace(classifications.Module.Name()),
-			metasModule.GetAuxiliary(scrub.AuxiliaryName),
+		classificationsModule := classifications.Prototype().Initialize(
+			keys[classifications.Prototype().Name()],
+			paramsKeeper.Subspace(classifications.Prototype().Name()),
+			metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 		)
-		identitiesModule := identities.Module.Initialize(
-			keys[identities.Module.Name()],
-			paramsKeeper.Subspace(identities.Module.Name()),
-			classificationsModule.GetAuxiliary(conform.AuxiliaryName),
-			classificationsModule.GetAuxiliary(define.AuxiliaryName),
-			maintainersModule.GetAuxiliary(super.AuxiliaryName),
-			maintainersModule.GetAuxiliary(maintain.AuxiliaryName),
-			metasModule.GetAuxiliary(scrub.AuxiliaryName),
+		identitiesModule := identities.Prototype().Initialize(
+			keys[identities.Prototype().Name()],
+			paramsKeeper.Subspace(identities.Prototype().Name()),
+			classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
+			classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
+			maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+			maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
+			metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 		)
-		splitsModule := splits.Module.Initialize(
-			keys[splits.Module.Name()],
-			paramsKeeper.Subspace(splits.Module.Name()),
+		splitsModule := splits.Prototype().Initialize(
+			keys[splits.Prototype().Name()],
+			paramsKeeper.Subspace(splits.Prototype().Name()),
 			supplyKeeper,
-			identitiesModule.GetAuxiliary(verify.AuxiliaryName),
+			identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
 		)
-		assets.Prototype.Initialize(
-			keys[assets.Prototype.Name()],
-			paramsKeeper.Subspace(assets.Prototype.Name()),
-			classificationsModule.GetAuxiliary(conform.AuxiliaryName),
-			classificationsModule.GetAuxiliary(define.AuxiliaryName),
-			identitiesModule.GetAuxiliary(verify.AuxiliaryName),
-			maintainersModule.GetAuxiliary(super.AuxiliaryName),
-			maintainersModule.GetAuxiliary(maintain.AuxiliaryName),
-			metasModule.GetAuxiliary(scrub.AuxiliaryName),
-			metasModule.GetAuxiliary(supplement.AuxiliaryName),
-			splitsModule.GetAuxiliary(auxiliariesMint.Name),
-			splitsModule.GetAuxiliary(burn.AuxiliaryName),
+		assets.Prototype().Initialize(
+			keys[assets.Prototype().Name()],
+			paramsKeeper.Subspace(assets.Prototype().Name()),
+			classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
+			classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
+			identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
+			maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+			maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
+			metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+			metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
+			splitsModule.GetAuxiliary(auxiliariesMint.Auxiliary.GetName()),
+			splitsModule.GetAuxiliary(burn.Auxiliary.GetName()),
 		)
-		orders.Module.Initialize(
-			keys[orders.Module.Name()],
-			paramsKeeper.Subspace(orders.Module.Name()),
+		orders.Prototype().Initialize(
+			keys[orders.Prototype().Name()],
+			paramsKeeper.Subspace(orders.Prototype().Name()),
 			bankKeeper,
-			classificationsModule.GetAuxiliary(conform.AuxiliaryName),
-			classificationsModule.GetAuxiliary(define.AuxiliaryName),
-			metasModule.GetAuxiliary(supplement.AuxiliaryName),
-			splitsModule.GetAuxiliary(auxiliariesMint.Name),
-			maintainersModule.GetAuxiliary(super.AuxiliaryName),
-			maintainersModule.GetAuxiliary(maintain.AuxiliaryName),
-			metasModule.GetAuxiliary(scrub.AuxiliaryName),
-			splitsModule.GetAuxiliary(transfer.AuxiliaryName),
-			identitiesModule.GetAuxiliary(verify.AuxiliaryName),
+			classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
+			classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
+			metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
+			splitsModule.GetAuxiliary(auxiliariesMint.Auxiliary.GetName()),
+			maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+			maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
+			metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+			splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
+			identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
 		)
 
 		var wasmRouter = baseApp.Router()
@@ -421,7 +421,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			wasmDir,
 			wasmConfig,
 			"staking",
-			&wasm.MessageEncoders{Custom: wasmUtilities.CustomEncoder(assets.Prototype, classifications.Module, identities.Module, maintainers.Module, metas.Module, orders.Module, splits.Module)},
+			&wasm.MessageEncoders{Custom: wasmUtilities.CustomEncoder(assets.Prototype(), classifications.Prototype(), identities.Prototype(), maintainers.Prototype(), metas.Prototype(), orders.Prototype(), splits.Prototype())},
 			nil)
 
 		if len(enabledProposals) != 0 {
@@ -452,13 +452,13 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			wasm.NewAppModule(wasmKeeper),
 			evidence.NewAppModule(*evidenceKeeper),
 
-			assets.Prototype,
-			classifications.Module,
-			identities.Module,
-			maintainers.Module,
-			metas.Module,
-			orders.Module,
-			splits.Module,
+			assets.Prototype(),
+			classifications.Prototype(),
+			identities.Prototype(),
+			maintainers.Prototype(),
+			metas.Prototype(),
+			orders.Prototype(),
+			splits.Prototype(),
 		)
 
 		application.moduleManager.SetOrderBeginBlockers(
@@ -485,13 +485,13 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			genutil.ModuleName,
 			evidence.ModuleName,
 			wasm.ModuleName,
-			assets.Prototype.Name(),
-			classifications.Module.Name(),
-			identities.Module.Name(),
-			maintainers.Module.Name(),
-			metas.Module.Name(),
-			orders.Module.Name(),
-			splits.Module.Name(),
+			assets.Prototype().Name(),
+			classifications.Prototype().Name(),
+			identities.Prototype().Name(),
+			maintainers.Prototype().Name(),
+			metas.Prototype().Name(),
+			orders.Prototype().Name(),
+			splits.Prototype().Name(),
 		)
 		application.moduleManager.RegisterInvariants(&application.crisisKeeper)
 		application.moduleManager.RegisterRoutes(application.Router(), application.QueryRouter())
@@ -506,13 +506,13 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			distribution.NewAppModule(application.distributionKeeper, accountKeeper, supplyKeeper, application.stakingKeeper),
 			slashing.NewAppModule(application.slashingKeeper, accountKeeper, application.stakingKeeper),
 			params.NewAppModule(),
-			assets.Prototype,
-			classifications.Module,
-			identities.Module,
-			maintainers.Module,
-			metas.Module,
-			orders.Module,
-			splits.Module,
+			assets.Prototype(),
+			classifications.Prototype(),
+			identities.Prototype(),
+			maintainers.Prototype(),
+			metas.Prototype(),
+			orders.Prototype(),
+			splits.Prototype(),
 		)
 
 		simulationManager.RegisterStoreDecoders()
