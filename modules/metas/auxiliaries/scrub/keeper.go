@@ -8,7 +8,6 @@ package scrub
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -24,7 +23,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	var scrubbedPropertyList []types.Property
 	for _, metaProperty := range auxiliaryRequest.MetaPropertyList {
-		metas := mapper.NewMetas(auxiliaryKeeper.mapper, context)
+		metas := auxiliaryKeeper.mapper.NewCollection(context)
 		metas.Add(mappable.NewMeta(metaProperty.GetMetaFact().GetData()))
 		scrubbedPropertyList = append(scrubbedPropertyList, metaProperty.RemoveData())
 	}
