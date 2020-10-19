@@ -7,21 +7,17 @@ package order
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Query = base.NewQuery(
-	mapper.ModuleName,
-	QueryName,
-	QueryRoute,
-	QueryShort,
-	QueryLong,
-	packageCodec,
-	registerCodec,
-	initializeQueryKeeper,
-	queryRequestPrototype,
-	queryResponsePrototype,
-	[]helpers.CLIFlag{flags.OrderID},
+	"orders",
+	"",
+	"",
+
+	requestPrototype,
+	responsePrototype,
+	keeperPrototype,
+
+	flags.OrderID,
 )
