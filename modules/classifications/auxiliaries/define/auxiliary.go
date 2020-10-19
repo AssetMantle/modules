@@ -6,20 +6,15 @@
 package define
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Auxiliary = base.NewAuxiliary(
-	mapper.ModuleName,
-	AuxiliaryName,
-	AuxiliaryRoute,
-	initializeAuxiliaryKeeper,
+	"define",
+	keeperPrototype,
 )
 
 var AuxiliaryMock = base.NewAuxiliary(
-	mapper.ModuleName,
-	AuxiliaryName,
-	AuxiliaryRoute,
-	initializeAuxiliaryKeeperMock,
+	"define",
+	keeperPrototypeMock,
 )

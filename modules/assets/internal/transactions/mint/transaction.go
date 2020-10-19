@@ -7,19 +7,23 @@ package mint
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Transaction = base.NewTransaction(
-	mapper.ModuleName,
-	TransactionName,
-	TransactionRoute,
-	TransactionShort,
-	TransactionLong,
-	registerCodec,
-	initializeTransactionKeeper,
+	"mint",
+	"",
+	"",
+
 	requestPrototype,
-	[]helpers.CLIFlag{flags.ToID, flags.FromID, flags.ClassificationID, flags.ImmutableMetaProperties, flags.ImmutableProperties, flags.MutableMetaProperties, flags.MutableProperties},
+	messagePrototype,
+	keeperPrototype,
+
+	flags.ToID,
+	flags.FromID,
+	flags.ClassificationID,
+	flags.ImmutableMetaProperties,
+	flags.ImmutableProperties,
+	flags.MutableMetaProperties,
+	flags.MutableProperties,
 )

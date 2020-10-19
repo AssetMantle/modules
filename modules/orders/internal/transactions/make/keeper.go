@@ -13,15 +13,19 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
 	mapper              helpers.Mapper
+	parameters          helpers.Parameters
 	conformAuxiliary    helpers.Auxiliary
 	mintAuxiliary       helpers.Auxiliary
 	scrubAuxiliary      helpers.Auxiliary
@@ -37,7 +41,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, base.NewID(mapper.ModuleName), message.MakerOwnableID, message.MakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, base.NewID(module.Name), message.MakerOwnableID, message.MakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
@@ -47,11 +51,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	immutables := base.NewImmutables(base.NewProperties(append(immutableProperties.GetList(), message.ImmutableProperties.GetList()...)...))
 
-	orderID := mapper.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, message.FromID, immutables)
-	orders := mapper.NewOrders(transactionKeeper.mapper, context).Fetch(orderID)
+	orderID := key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, message.FromID, immutables)
+	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(orderID))
 
 	makerOwnableSplit := message.MakerOwnableSplit
-	order := orders.Get(orderID)
+	order := orders.Get(key.New(orderID)).(mappables.Order)
 	if order != nil {
 		metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetMakerOwnableSplit())))
 		if Error != nil {
@@ -82,16 +86,16 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	if order != nil {
-		orders.Mutate(mapper.NewOrder(orderID, immutables, order.GetMutables().Mutate(mutables.Get().GetList()...)))
+		orders.Mutate(mappable.NewOrder(orderID, immutables, order.GetMutables().Mutate(mutables.Get().GetList()...)))
 	} else {
-		orders.Add(mapper.NewOrder(orderID, immutables, mutables))
+		orders.Add(mappable.NewOrder(orderID, immutables, mutables))
 	}
 	return newTransactionResponse(nil)
 }
 
-func initializeTransactionKeeper(mapper helpers.Mapper, _ helpers.Parameters, externalKeepers []interface{}) helpers.TransactionKeeper {
-	transactionKeeper := transactionKeeper{mapper: mapper}
-	for _, externalKeeper := range externalKeepers {
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
+	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
+	for _, externalKeeper := range auxiliaries {
 		switch value := externalKeeper.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
@@ -111,4 +115,7 @@ func initializeTransactionKeeper(mapper helpers.Mapper, _ helpers.Parameters, ex
 		}
 	}
 	return transactionKeeper
+}
+func keeperPrototype() helpers.TransactionKeeper {
+	return transactionKeeper{}
 }

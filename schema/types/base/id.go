@@ -24,7 +24,7 @@ func (id id) Bytes() []byte {
 	return []byte(id.IDString)
 }
 
-func (id id) Equal(ID types.ID) bool {
+func (id id) Equals(ID types.ID) bool {
 	return bytes.Compare(id.Bytes(), ID.Bytes()) == 0
 }
 

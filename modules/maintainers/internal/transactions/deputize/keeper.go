@@ -10,13 +10,16 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
 	mapper           helpers.Mapper
+	parameters       helpers.Parameters
 	verifyAuxiliary  helpers.Auxiliary
 	conformAuxiliary helpers.Auxiliary
 }
@@ -29,16 +32,16 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	maintainers := mapper.NewMaintainers(transactionKeeper.mapper, context)
+	maintainers := transactionKeeper.mapper.NewCollection(context)
 
-	fromMaintainerID := mapper.NewMaintainerID(message.ClassificationID, message.FromID)
-	fromMaintainer := maintainers.Fetch(fromMaintainerID).Get(fromMaintainerID)
+	fromMaintainerID := key.NewMaintainerID(message.ClassificationID, message.FromID)
+	fromMaintainer := maintainers.Fetch(key.New(fromMaintainerID)).Get(key.New(fromMaintainerID)).(mappables.Maintainer)
 	if fromMaintainer == nil || !fromMaintainer.CanAddMaintainer() {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 
-	toMaintainerID := mapper.NewMaintainerID(message.ClassificationID, message.ToID)
-	toMaintainer := maintainers.Fetch(toMaintainerID).Get(toMaintainerID)
+	toMaintainerID := key.NewMaintainerID(message.ClassificationID, message.ToID)
+	toMaintainer := maintainers.Fetch(key.New(toMaintainerID)).Get(key.New(toMaintainerID))
 	if toMaintainer != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
@@ -48,12 +51,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	maintainers = maintainers.Add(mapper.NewMaintainer(toMaintainerID, mutableTraits, message.AddMaintainer, message.RemoveMaintainer, message.MutateMaintainer))
+	maintainers = maintainers.Add(mappable.NewMaintainer(toMaintainerID, mutableTraits, message.AddMaintainer, message.RemoveMaintainer, message.MutateMaintainer))
 	return newTransactionResponse(nil)
 }
 
-func initializeTransactionKeeper(mapper helpers.Mapper, _ helpers.Parameters, auxiliaries []interface{}) helpers.TransactionKeeper {
-	transactionKeeper := transactionKeeper{mapper: mapper}
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
+	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
@@ -66,4 +69,7 @@ func initializeTransactionKeeper(mapper helpers.Mapper, _ helpers.Parameters, au
 		}
 	}
 	return transactionKeeper
+}
+func keeperPrototype() helpers.TransactionKeeper {
+	return transactionKeeper{}
 }

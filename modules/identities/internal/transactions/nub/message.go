@@ -7,9 +7,12 @@ package nub
 
 import (
 	"github.com/asaskevich/govalidator"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -20,7 +23,7 @@ type message struct {
 
 var _ sdkTypes.Msg = message{}
 
-func (message message) Route() string { return Transaction.GetModuleName() }
+func (message message) Route() string { return module.Name }
 func (message message) Type() string  { return Transaction.GetName() }
 func (message message) ValidateBasic() error {
 	var _, Error = govalidator.ValidateStruct(message)
@@ -30,12 +33,14 @@ func (message message) ValidateBasic() error {
 	return nil
 }
 func (message message) GetSignBytes() []byte {
-	return sdkTypes.MustSortJSON(packageCodec.MustMarshalJSON(message))
+	return sdkTypes.MustSortJSON(module.Codec.MustMarshalJSON(message))
 }
 func (message message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
-
+func (message) RegisterCodec(codec *codec.Codec) {
+	codec.RegisterConcrete(message{}, Transaction.GetName()+"/"+"message", nil)
+}
 func messageFromInterface(msg sdkTypes.Msg) message {
 	switch value := msg.(type) {
 	case message:
@@ -44,7 +49,9 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 		return message{}
 	}
 }
-
+func messagePrototype() helpers.Message {
+	return message{}
+}
 func newMessage(from sdkTypes.AccAddress, nubID types.ID) sdkTypes.Msg {
 	return message{
 		From:  from,

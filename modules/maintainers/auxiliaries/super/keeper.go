@@ -8,8 +8,10 @@ package super
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 )
 
 type auxiliaryKeeper struct {
@@ -20,15 +22,19 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
-	maintainerID := mapper.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.IdentityID)
-	maintainers := mapper.NewMaintainers(auxiliaryKeeper.mapper, context).Fetch(maintainerID)
-	if maintainers.Get(maintainerID) != nil {
+	maintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.IdentityID)
+	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(maintainerID))
+	if maintainers.Get(key.New(maintainerID)).(mappables.Maintainer) != nil {
 		return newAuxiliaryResponse(errors.EntityAlreadyExists)
 	}
-	maintainers = maintainers.Add(mapper.NewMaintainer(maintainerID, auxiliaryRequest.MutableTraits, true, true, true))
+	maintainers = maintainers.Add(mappable.NewMaintainer(maintainerID, auxiliaryRequest.MutableTraits, true, true, true))
 	return newAuxiliaryResponse(nil)
 }
 
-func initializeAuxiliaryKeeper(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.AuxiliaryKeeper {
+func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
 	return auxiliaryKeeper{mapper: mapper}
+}
+
+func keeperPrototype() helpers.AuxiliaryKeeper {
+	return auxiliaryKeeper{}
 }

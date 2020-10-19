@@ -6,19 +6,15 @@
 package mint
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Auxiliary = base.NewAuxiliary(
-	mapper.ModuleName,
-	AuxiliaryName,
-	AuxiliaryRoute,
-	initializeAuxiliaryKeeper,
+	"mint",
+	keeperPrototype,
 )
+
 var AuxiliaryMock = base.NewAuxiliary(
-	mapper.ModuleName,
-	AuxiliaryName,
-	AuxiliaryRoute,
-	initializeAuxiliaryKeeperMock,
+	"mint",
+	keeperPrototypeMock,
 )

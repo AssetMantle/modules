@@ -8,5 +8,5 @@ package types
 type ID interface {
 	String() string
 	Bytes() []byte
-	Equal(ID) bool
+	Equals(ID) bool
 }

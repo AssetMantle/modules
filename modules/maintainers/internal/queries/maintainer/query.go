@@ -7,21 +7,16 @@ package maintainer
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Query = base.NewQuery(
-	mapper.ModuleName,
-	QueryName,
-	QueryRoute,
-	QueryShort,
-	QueryLong,
-	packageCodec,
-	registerCodec,
-	initializeQueryKeeper,
-	queryRequestPrototype,
-	queryResponsePrototype,
-	[]helpers.CLIFlag{flags.MaintainerID},
+	"maintainers",
+	"",
+	"",
+
+	requestPrototype,
+	responsePrototype,
+	keeperPrototype,
+	flags.MaintainerID,
 )

@@ -7,9 +7,12 @@ package define
 
 import (
 	"github.com/asaskevich/govalidator"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -22,9 +25,9 @@ type message struct {
 	MutableTraits       types.Properties     `json:"mutableTraits" valid:"required~required field mutableTraits missing"`
 }
 
-var _ sdkTypes.Msg = message{}
+var _ helpers.Message = message{}
 
-func (message message) Route() string { return Transaction.GetModuleName() }
+func (message message) Route() string { return module.Name }
 func (message message) Type() string  { return Transaction.GetName() }
 func (message message) ValidateBasic() error {
 	var _, Error = govalidator.ValidateStruct(message)
@@ -34,12 +37,14 @@ func (message message) ValidateBasic() error {
 	return nil
 }
 func (message message) GetSignBytes() []byte {
-	return sdkTypes.MustSortJSON(packageCodec.MustMarshalJSON(message))
+	return sdkTypes.MustSortJSON(module.Codec.MustMarshalJSON(message))
 }
 func (message message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
-
+func (message) RegisterCodec(codec *codec.Codec) {
+	codec.RegisterConcrete(message{}, Transaction.GetName()+"/"+"message", nil)
+}
 func messageFromInterface(msg sdkTypes.Msg) message {
 	switch value := msg.(type) {
 	case message:
@@ -48,7 +53,9 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 		return message{}
 	}
 }
-
+func messagePrototype() helpers.Message {
+	return message{}
+}
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, immutableMetaTraits types.MetaProperties, immutableTraits types.Properties, mutableMetaTraits types.MetaProperties, mutableTraits types.Properties) sdkTypes.Msg {
 	return message{
 		From:                from,

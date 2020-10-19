@@ -6,14 +6,14 @@
 package split
 
 import (
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappers"
 )
 
 type queryResponse struct {
-	Success bool           `json:"success"`
-	Error   error          `json:"error"`
-	Splits  mappers.Splits `json:"splits" valid:"required~required field splits missing"`
+	Success bool               `json:"success"`
+	Error   error              `json:"error"`
+	Splits  helpers.Collection `json:"splits" valid:"required~required field splits missing"`
 }
 
 var _ helpers.QueryResponse = (*queryResponse)(nil)
@@ -24,11 +24,21 @@ func (queryResponse queryResponse) IsSuccessful() bool {
 func (queryResponse queryResponse) GetError() error {
 	return queryResponse.Error
 }
-func queryResponsePrototype() helpers.QueryResponse {
+func (queryResponse queryResponse) Encode() ([]byte, error) {
+	return module.Codec.MarshalJSON(queryResponse)
+}
+
+func (queryResponse queryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
+	if Error := module.Codec.UnmarshalJSON(bytes, &queryResponse); Error != nil {
+		return nil, Error
+	}
+	return queryResponse, nil
+}
+func responsePrototype() helpers.QueryResponse {
 	return queryResponse{}
 }
 
-func newQueryResponse(splits mappers.Splits, error error) helpers.QueryResponse {
+func newQueryResponse(splits helpers.Collection, error error) helpers.QueryResponse {
 	success := true
 	if error != nil {
 		success = false

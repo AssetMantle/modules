@@ -8,29 +8,36 @@ package reveal
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
-	mapper helpers.Mapper
+	mapper     helpers.Mapper
+	parameters helpers.Parameters
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	metaID := mapper.NewMetaID(base.NewID(message.MetaFact.GetData().GenerateHash()))
-	metas := mapper.NewMetas(transactionKeeper.mapper, context).Fetch(metaID)
-	meta := metas.Get(metaID)
+	metaID := key.NewMetaID(base.NewID(message.MetaFact.GetData().GenerateHash()))
+	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(metaID))
+	meta := metas.Get(key.New(metaID)).(mappables.Meta)
 	if meta != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
-	metas.Add(mapper.NewMeta(message.MetaFact.GetData()))
+	metas.Add(mappable.NewMeta(message.MetaFact.GetData()))
 	return newTransactionResponse(nil)
 }
 
-func initializeTransactionKeeper(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.TransactionKeeper {
-	return transactionKeeper{mapper: mapper}
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, _ []interface{}) helpers.Keeper {
+	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
+	return transactionKeeper
+}
+func keeperPrototype() helpers.TransactionKeeper {
+	return transactionKeeper{}
 }

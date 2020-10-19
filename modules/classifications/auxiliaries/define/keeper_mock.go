@@ -9,7 +9,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
@@ -26,10 +26,13 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(context sdkTypes.Context, Auxili
 	if len(auxiliaryRequest.ImmutableTraits.Get().GetList())+len(auxiliaryRequest.MutableTraits.Get().GetList()) > constants.MaxTraitCount {
 		return newAuxiliaryResponse(nil, errors.InvalidRequest)
 	}
-	classificationID := mapper.NewClassificationID(base.NewID(context.ChainID()), auxiliaryRequest.ImmutableTraits, auxiliaryRequest.MutableTraits)
+	classificationID := key.NewClassificationID(base.NewID(context.ChainID()), auxiliaryRequest.ImmutableTraits, auxiliaryRequest.MutableTraits)
 	return newAuxiliaryResponse(base.NewID(classificationID.String()), nil)
 }
 
-func initializeAuxiliaryKeeperMock(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.AuxiliaryKeeper {
+func (auxiliaryKeeperMock) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
 	return auxiliaryKeeperMock{mapper: mapper}
+}
+func keeperPrototypeMock() helpers.AuxiliaryKeeper {
+	return auxiliaryKeeperMock{}
 }

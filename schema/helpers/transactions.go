@@ -7,6 +7,5 @@ package helpers
 
 type Transactions interface {
 	Get(string) Transaction
-
 	GetList() []Transaction
 }

@@ -6,7 +6,7 @@
 package mappables
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -19,5 +19,5 @@ type Maintainer interface {
 	CanMutateMaintainer() bool
 
 	MaintainsTrait(types.ID) bool
-	traits.Mappable
+	helpers.Mappable
 }

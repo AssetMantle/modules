@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package issue
 
 import (
@@ -5,6 +10,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
@@ -36,8 +43,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrub.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
-	conform.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
+	scrub.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
+	conform.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
 	keepers := TestKeepers{
 		IdentitiesKeeper: initializeTransactionKeeper(mapper.Mapper, parameters.Prototype,
 			[]interface{}{scrub.AuxiliaryMock,
@@ -69,8 +76,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, Error)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	defaultClassificationID := base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
-	defaultIdentityID := mapper.NewIdentityID(defaultClassificationID, base.NewID("d0Jhri_bOd3EEPXpyPUpNpGiQ1U="))
-	mapper.NewIdentities(mapper.Mapper, ctx).Add(mapper.NewIdentity(defaultIdentityID, []sdkTypes.AccAddress{defaultAddr},
+	defaultIdentityID := key.NewIdentityID(defaultClassificationID, base.NewID("d0Jhri_bOd3EEPXpyPUpNpGiQ1U="))
+	mapper.NewIdentities(mapper.Mapper, ctx).Add(mappable.NewIdentity(defaultIdentityID, []sdkTypes.AccAddress{defaultAddr},
 		[]sdkTypes.AccAddress{}, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
 
 	t.Run("PositiveCase", func(t *testing.T) {

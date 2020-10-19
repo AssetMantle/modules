@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package deputize
 
 import (
@@ -6,6 +11,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -37,8 +44,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	conform.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
-	verify.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
+	conform.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
+	verify.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
 	keepers := TestKeepers{
 		MaintainersKeeper: initializeTransactionKeeper(mapper.Mapper, parameters.Prototype,
 			[]interface{}{verify.AuxiliaryMock, conform.AuxiliaryMock}),
@@ -62,7 +69,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	toID2 := base.NewID("toID2")
 	classificationID := base.NewID("ClassificationID")
 
-	mapper.NewMaintainers(mapper.Mapper, ctx).Add(mapper.NewMaintainer(mapper.NewMaintainerID(classificationID, defaultIdentityID),
+	mapper.NewMaintainers(mapper.Mapper, ctx).Add(mappable.NewMaintainer(key.NewMaintainerID(classificationID, defaultIdentityID),
 		base.NewMutables(maintainedTraits), true, true, true))
 
 	t.Run("PositiveCase", func(t *testing.T) {
