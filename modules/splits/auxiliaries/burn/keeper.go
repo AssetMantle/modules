@@ -9,7 +9,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 )
@@ -23,8 +22,8 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	splitID := key.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
-	splits := mapper.NewSplits(auxiliaryKeeper.mapper, context).Fetch(splitID)
-	split := splits.Get(splitID)
+	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(splitID))
+	split := splits.Get(key.New(splitID)).(mappables.Split)
 	if split == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
