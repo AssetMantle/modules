@@ -6,7 +6,6 @@
 package conform
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
@@ -16,8 +15,6 @@ var Auxiliary = base.NewAuxiliary(
 )
 
 var AuxiliaryMock = base.NewAuxiliary(
-	mapper.ModuleName,
-	AuxiliaryName,
-	AuxiliaryRoute,
-	initializeAuxiliaryKeeperMock,
+	"conform",
+	keeperPrototypeMock,
 )
