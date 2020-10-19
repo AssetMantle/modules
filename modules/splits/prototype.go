@@ -1,0 +1,30 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
+package splits
+
+import (
+	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/genesis"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/queries"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/simulator"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/transactions"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+)
+
+func Prototype() helpers.Module {
+	return base.NewModule(
+		module.Name,
+		simulator.Prototype,
+		parameters.Prototype,
+		genesis.Prototype,
+		auxiliaries.Prototype,
+		queries.Prototype,
+		transactions.Prototype,
+	)
+}

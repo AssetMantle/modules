@@ -13,4 +13,6 @@ type QueryRequest interface {
 	Request
 	FromCLI(CLICommand, context.CLIContext) QueryRequest
 	FromMap(map[string]string) QueryRequest
+	Encode() ([]byte, error)
+	Decode([]byte) (QueryRequest, error)
 }

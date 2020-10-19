@@ -9,7 +9,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -17,6 +18,7 @@ import (
 
 type transactionKeeper struct {
 	mapper           helpers.Mapper
+	parameters       helpers.Parameters
 	scrubAuxiliary   helpers.Auxiliary
 	conformAuxiliary helpers.Auxiliary
 }
@@ -32,9 +34,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	immutables := base.NewImmutables(base.NewProperties(append(immutableProperties.GetList(), message.ImmutableProperties.GetList()...)...))
 
-	identityID := mapper.NewIdentityID(message.ClassificationID, immutables.GetHashID())
-	identities := mapper.NewIdentities(transactionKeeper.mapper, context).Fetch(identityID)
-	if identities.Get(identityID) != nil {
+	identityID := key.NewIdentityID(message.ClassificationID, immutables.GetHashID())
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(identityID))
+	if identities.Get(key.New(identityID)) != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
@@ -48,12 +50,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	identities.Add(mapper.NewIdentity(identityID, []sdkTypes.AccAddress{message.To}, []sdkTypes.AccAddress{}, immutables, mutables))
+	identities.Add(mappable.NewIdentity(identityID, []sdkTypes.AccAddress{message.To}, []sdkTypes.AccAddress{}, immutables, mutables))
 	return newTransactionResponse(nil)
 }
 
-func initializeTransactionKeeper(mapper helpers.Mapper, _ helpers.Parameters, auxiliaries []interface{}) helpers.TransactionKeeper {
-	transactionKeeper := transactionKeeper{mapper: mapper}
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
+	transactionKeeper.mapper = mapper
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
@@ -66,4 +68,8 @@ func initializeTransactionKeeper(mapper helpers.Mapper, _ helpers.Parameters, au
 		}
 	}
 	return transactionKeeper
+}
+
+func keeperPrototype() helpers.TransactionKeeper {
+	return transactionKeeper{}
 }

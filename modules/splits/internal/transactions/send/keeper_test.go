@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package send
 
 import (
@@ -5,6 +10,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -35,7 +42,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	verify.AuxiliaryMock.InitializeKeeper(mapper.Mapper, parameters.Prototype)
+	verify.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
 	keepers := TestKeepers{
 		SplitsKeeper: initializeTransactionKeeper(mapper.Mapper, parameters.Prototype, []interface{}{verify.AuxiliaryMock}),
 	}
@@ -53,7 +60,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	toID := base.NewID("toID")
 	ownableID := base.NewID("stake")
 
-	mapper.NewSplits(mapper.Mapper, ctx).Add(mapper.NewSplit(mapper.NewSplitID(fromID, ownableID), sdkTypes.NewDec(100)))
+	mapper.NewSplits(mapper.Mapper, ctx).Add(mappable.NewSplit(key.NewSplitID(fromID, ownableID), sdkTypes.NewDec(100)))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

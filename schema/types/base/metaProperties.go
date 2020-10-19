@@ -19,7 +19,7 @@ var _ types.MetaProperties = (*metaProperties)(nil)
 
 func (metaProperties metaProperties) GetMetaProperty(id types.ID) types.MetaProperty {
 	for _, metaProperty := range metaProperties.GetMetaPropertyList() {
-		if metaProperty.GetID().Equal(id) {
+		if metaProperty.GetID().Equals(id) {
 			return metaProperty
 		}
 	}
@@ -43,7 +43,7 @@ func (metaProperties metaProperties) AddMetaProperty(metaProperty types.MetaProp
 func (metaProperties metaProperties) RemoveMetaProperty(metaProperty types.MetaProperty) types.MetaProperties {
 	metaPropertyList := metaProperties.GetMetaPropertyList()
 	for i, oldMetaProperty := range metaPropertyList {
-		if oldMetaProperty.GetID().Equal(metaProperty.GetID()) {
+		if oldMetaProperty.GetID().Equals(metaProperty.GetID()) {
 			metaPropertyList = append(metaPropertyList[:i], metaPropertyList[i+1:]...)
 		}
 	}
@@ -53,7 +53,7 @@ func (metaProperties metaProperties) RemoveMetaProperty(metaProperty types.MetaP
 func (metaProperties metaProperties) MutateMetaProperty(metaProperty types.MetaProperty) types.MetaProperties {
 	metaPropertyList := metaProperties.GetMetaPropertyList()
 	for i, oldProperty := range metaPropertyList {
-		if oldProperty.GetID().Equal(metaProperty.GetID()) {
+		if oldProperty.GetID().Equals(metaProperty.GetID()) {
 			metaPropertyList[i] = metaProperty
 		}
 	}
@@ -62,7 +62,7 @@ func (metaProperties metaProperties) MutateMetaProperty(metaProperty types.MetaP
 
 func (metaProperties metaProperties) Get(id types.ID) types.Property {
 	for _, property := range metaProperties.GetList() {
-		if property.GetID().Equal(id) {
+		if property.GetID().Equals(id) {
 			return property
 		}
 	}
@@ -86,7 +86,7 @@ func (metaProperties metaProperties) Add(property types.Property) types.Properti
 func (metaProperties metaProperties) Remove(property types.Property) types.Properties {
 	propertyList := metaProperties.GetList()
 	for i, oldProperty := range propertyList {
-		if oldProperty.GetID().Equal(property.GetID()) {
+		if oldProperty.GetID().Equals(property.GetID()) {
 			propertyList = append(propertyList[:i], propertyList[i+1:]...)
 		}
 	}
@@ -96,7 +96,7 @@ func (metaProperties metaProperties) Remove(property types.Property) types.Prope
 func (metaProperties metaProperties) Mutate(property types.Property) types.Properties {
 	propertyList := metaProperties.GetList()
 	for i, oldProperty := range propertyList {
-		if oldProperty.GetID().Equal(property.GetID()) {
+		if oldProperty.GetID().Equals(property.GetID()) {
 			propertyList[i] = property
 		}
 	}

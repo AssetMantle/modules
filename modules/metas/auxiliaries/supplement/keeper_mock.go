@@ -35,6 +35,9 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, AuxiliaryReq
 	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList), nil)
 }
 
-func initializeAuxiliaryKeeperMock(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.AuxiliaryKeeper {
+func (auxiliaryKeeperMock) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
 	return auxiliaryKeeperMock{mapper: mapper}
+}
+func keeperPrototypeMock() helpers.AuxiliaryKeeper {
+	return auxiliaryKeeperMock{}
 }

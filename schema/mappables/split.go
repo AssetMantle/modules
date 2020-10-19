@@ -6,11 +6,12 @@
 package mappables
 
 import (
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 )
 
 type Split interface {
 	traits.Ownable
 	traits.Transactional
-	traits.Mappable
+	helpers.Mappable
 }

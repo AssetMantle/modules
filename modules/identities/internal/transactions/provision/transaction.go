@@ -7,19 +7,18 @@ package provision
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Transaction = base.NewTransaction(
-	mapper.ModuleName,
-	TransactionName,
-	TransactionRoute,
-	TransactionShort,
-	TransactionLong,
-	registerCodec,
-	initializeTransactionKeeper,
+	"provision",
+	"",
+	"",
+
 	requestPrototype,
-	[]helpers.CLIFlag{flags.To, flags.IdentityID},
+	messagePrototype,
+	keeperPrototype,
+
+	flags.To,
+	flags.IdentityID,
 )

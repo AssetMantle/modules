@@ -9,6 +9,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -31,8 +32,17 @@ func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ contex
 func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(vars[Query.GetName()]))
 }
+func (queryRequest queryRequest) Encode() ([]byte, error) {
+	return module.Codec.MarshalJSON(queryRequest)
+}
 
-func queryRequestPrototype() helpers.QueryRequest {
+func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
+	if Error := module.Codec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
+		return nil, Error
+	}
+	return queryRequest, nil
+}
+func requestPrototype() helpers.QueryRequest {
 	return queryRequest{}
 }
 

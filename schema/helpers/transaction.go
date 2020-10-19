@@ -15,13 +15,11 @@ import (
 )
 
 type Transaction interface {
-	GetModuleName() string
 	GetName() string
-	GetRoute() string
 	Command(*codec.Codec) *cobra.Command
 	HandleMessage(sdkTypes.Context, sdkTypes.Msg) (*sdkTypes.Result, error)
 	RESTRequestHandler(context.CLIContext) http.HandlerFunc
 	RegisterCodec(*codec.Codec)
 	DecodeTransactionRequest(json.RawMessage) (sdkTypes.Msg, error)
-	InitializeKeeper(Mapper, Parameters, ...interface{})
+	InitializeKeeper(Mapper, Parameters, ...interface{}) Transaction
 }

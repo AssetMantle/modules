@@ -20,6 +20,7 @@ var InvalidParameter = errors.Register(constants.ProjectRoute, 107, "InvalidPara
 var InvalidRequest = errors.Register(constants.ProjectRoute, 108, "InvalidRequest")
 var MetaDataError = errors.Register(constants.ProjectRoute, 109, "MetaDataError")
 var NotAuthorized = errors.Register(constants.ProjectRoute, 110, "NotAuthorized")
-var UnsupportedParameter = errors.Register(constants.ProjectRoute, 111, "UnsupportedParameter")
+var UninitializedUsage = errors.Register(constants.ProjectRoute, 111, "UninitializedUsage")
+var UnsupportedParameter = errors.Register(constants.ProjectRoute, 112, "UnsupportedParameter")
 
 var MockError = errors.Register(constants.ProjectRoute, 999, "MockError")

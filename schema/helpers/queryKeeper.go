@@ -11,4 +11,5 @@ import (
 
 type QueryKeeper interface {
 	Enquire(sdkTypes.Context, QueryRequest) QueryResponse
+	Keeper
 }
