@@ -11,7 +11,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -19,6 +19,7 @@ import (
 
 type transactionKeeper struct {
 	mapper          helpers.Mapper
+	parameters      helpers.Parameters
 	supplyKeeper    supply.Keeper
 	verifyAuxiliary helpers.Auxiliary
 }
@@ -30,13 +31,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
-	if Error := transactionKeeper.supplyKeeper.SendCoinsFromAccountToModule(context, message.From, mapper.ModuleName, message.Coins); Error != nil {
+	if Error := transactionKeeper.supplyKeeper.SendCoinsFromAccountToModule(context, message.From, module.Name, message.Coins); Error != nil {
 		return newTransactionResponse(Error)
 	}
 	for _, coin := range message.Coins {
 		splitID := key.NewSplitID(message.FromID, base.NewID(coin.Denom))
-		splits := mapper.NewSplits(transactionKeeper.mapper, context).Fetch(splitID)
-		split := splits.Get(splitID)
+		splits := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(splitID))
+		split := splits.Get(key.New(splitID)).(mappables.Split)
 		if split == nil {
 			splits.Add(mappable.NewSplit(splitID, sdkTypes.NewDecFromInt(coin.Amount)))
 		} else {
@@ -46,8 +47,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	return newTransactionResponse(nil)
 }
 
-func initializeTransactionKeeper(mapper helpers.Mapper, _ helpers.Parameters, auxiliaries []interface{}) helpers.TransactionKeeper {
-	transactionKeeper := transactionKeeper{mapper: mapper}
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
+	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
 		case supply.Keeper:
@@ -60,4 +61,8 @@ func initializeTransactionKeeper(mapper helpers.Mapper, _ helpers.Parameters, au
 		}
 	}
 	return transactionKeeper
+}
+
+func keeperPrototype() helpers.TransactionKeeper {
+	return transactionKeeper{}
 }
