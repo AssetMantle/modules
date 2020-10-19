@@ -7,8 +7,8 @@ package supplement
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -41,8 +41,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 			meta = mappable.NewMeta(data)
 		} else {
 			metaID := base.NewID(property.GetFact().GetHash())
-			metas := mapper.NewMetas(auxiliaryKeeper.mapper, context).Fetch(metaID)
-			meta = metas.Get(metaID)
+			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(metaID))
+			meta = metas.Get(key.New(metaID)).(mappables.Meta)
 		}
 		if meta != nil {
 			metaPropertyList = append(metaPropertyList, base.NewMetaProperty(property.GetID(), base.NewMetaFact(meta.GetData())))

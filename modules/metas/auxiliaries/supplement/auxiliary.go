@@ -6,19 +6,15 @@
 package supplement
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Auxiliary = base.NewAuxiliary(
-	mapper.ModuleName,
-	AuxiliaryName,
-	AuxiliaryRoute,
-	initializeAuxiliaryKeeper,
+	"supplement",
+	keeperPrototype,
 )
+
 var AuxiliaryMock = base.NewAuxiliary(
-	mapper.ModuleName,
-	AuxiliaryName,
-	AuxiliaryRoute,
-	initializeAuxiliaryKeeperMock,
+	"supplement",
+	keeperPrototypeMock,
 )

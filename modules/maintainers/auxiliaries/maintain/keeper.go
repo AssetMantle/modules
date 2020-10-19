@@ -9,8 +9,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 )
 
 type auxiliaryKeeper struct {
@@ -22,8 +22,8 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	maintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.IdentityID)
-	maintainers := mapper.NewMaintainers(auxiliaryKeeper.mapper, context).Fetch(maintainerID)
-	maintainer := maintainers.Get(maintainerID)
+	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(maintainerID))
+	maintainer := maintainers.Get(key.New(maintainerID)).(mappables.Maintainer)
 	if maintainer == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}

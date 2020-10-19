@@ -6,19 +6,15 @@
 package maintain
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Auxiliary = base.NewAuxiliary(
-	mapper.ModuleName,
-	AuxiliaryName,
-	AuxiliaryRoute,
-	initializeAuxiliaryKeeper,
+	"maintain",
+	keeperPrototype,
 )
+
 var AuxiliaryMock = base.NewAuxiliary(
-	mapper.ModuleName,
-	AuxiliaryName,
-	AuxiliaryRoute,
-	initializeAuxiliaryKeeperMock,
+	"maintain",
+	keeperPrototypeMock,
 )

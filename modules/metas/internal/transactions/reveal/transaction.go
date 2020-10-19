@@ -7,19 +7,17 @@ package reveal
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Transaction = base.NewTransaction(
-	mapper.ModuleName,
-	TransactionName,
-	TransactionRoute,
-	TransactionShort,
-	TransactionLong,
-	registerCodec,
-	initializeTransactionKeeper,
+	"reveal",
+	"",
+	"",
+
 	requestPrototype,
-	[]helpers.CLIFlag{flags.FromID, flags.MetaFact},
+	messagePrototype,
+	keeperPrototype,
+	flags.FromID,
+	flags.MetaFact,
 )

@@ -62,7 +62,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore := store.NewCommitMultiStore(memDB)
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeTransient, memDB)
+	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
 	Error := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, Error)
 
@@ -70,7 +70,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrub.AuxiliaryMock.InitializeKeeper(mapper, Parameters)
+	scrub.AuxiliaryMock.Initialize(mapper, Parameters)
 	define.AuxiliaryMock.Initialize(mapper, Parameters)
 	super.AuxiliaryMock.Initialize(mapper, Parameters)
 	verify.AuxiliaryMock.Initialize(mapper, Parameters)
