@@ -7,21 +7,17 @@ package classification
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 var Query = base.NewQuery(
-	mapper.ModuleName,
-	QueryName,
-	QueryRoute,
-	QueryShort,
-	QueryLong,
-	packageCodec,
-	registerCodec,
-	initializeQueryKeeper,
-	queryRequestPrototype,
-	queryResponsePrototype,
-	[]helpers.CLIFlag{flags.ClassificationID},
+	"classifications",
+	"",
+	"",
+
+	requestPrototype,
+	responsePrototype,
+	keeperPrototype,
+
+	flags.ClassificationID,
 )
