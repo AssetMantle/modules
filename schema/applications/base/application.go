@@ -345,7 +345,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 		)
 		maintainersModule := maintainers.Prototype().Initialize(
 			keys[metas.Prototype().Name()],
-			paramsKeeper.Subspace(metas.Prototype().Name()),
+			paramsKeeper.Subspace(maintainers.Prototype().Name()),
 		)
 		classificationsModule := classifications.Prototype().Initialize(
 			keys[classifications.Prototype().Name()],
@@ -367,7 +367,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			supplyKeeper,
 			identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
 		)
-		assets.Prototype().Initialize(
+		assetsModule := assets.Prototype().Initialize(
 			keys[assets.Prototype().Name()],
 			paramsKeeper.Subspace(assets.Prototype().Name()),
 			classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
@@ -380,7 +380,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			splitsModule.GetAuxiliary(auxiliariesMint.Auxiliary.GetName()),
 			splitsModule.GetAuxiliary(burn.Auxiliary.GetName()),
 		)
-		orders.Prototype().Initialize(
+		ordersModule := orders.Prototype().Initialize(
 			keys[orders.Prototype().Name()],
 			paramsKeeper.Subspace(orders.Prototype().Name()),
 			bankKeeper,
@@ -452,13 +452,13 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			wasm.NewAppModule(wasmKeeper),
 			evidence.NewAppModule(*evidenceKeeper),
 
-			assets.Prototype(),
-			classifications.Prototype(),
-			identities.Prototype(),
-			maintainers.Prototype(),
-			metas.Prototype(),
-			orders.Prototype(),
-			splits.Prototype(),
+			assetsModule,
+			classificationsModule,
+			identitiesModule,
+			maintainersModule,
+			metasModule,
+			ordersModule,
+			splitsModule,
 		)
 
 		application.moduleManager.SetOrderBeginBlockers(
