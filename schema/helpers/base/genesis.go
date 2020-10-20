@@ -98,15 +98,25 @@ func (Genesis genesis) Decode(byte []byte) helpers.Genesis {
 }
 
 func (Genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList []types.Parameter) helpers.Genesis {
-	for _, defaultParameter := range Genesis.defaultParameterList {
-		for i, parameter := range parameterList {
-			if defaultParameter.GetID().Equals(parameter.GetID()) {
-				parameterList[i] = defaultParameter.Mutate(parameter.GetData())
+	if mappableList == nil || len(mappableList) == 0 {
+		Genesis.MappableList = Genesis.defaultMappableList
+	} else {
+		Genesis.MappableList = mappableList
+	}
+
+	if parameterList == nil || len(parameterList) == 0 {
+		Genesis.ParameterList = Genesis.defaultParameterList
+	} else {
+		for _, defaultParameter := range Genesis.defaultParameterList {
+			for i, parameter := range parameterList {
+				if defaultParameter.GetID().Equals(parameter.GetID()) {
+					parameterList[i] = defaultParameter.Mutate(parameter.GetData())
+				}
 			}
 		}
+		Genesis.ParameterList = parameterList
 	}
-	Genesis.MappableList = mappableList
-	Genesis.ParameterList = parameterList
+
 	if Error := Genesis.Validate(); Error != nil {
 		panic(Error)
 	}
