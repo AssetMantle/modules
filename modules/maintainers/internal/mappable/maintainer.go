@@ -7,11 +7,12 @@ package mappable
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type maintainer struct {
@@ -47,7 +48,7 @@ func (maintainer maintainer) GetKey() helpers.Key {
 }
 
 func (maintainer) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(maintainer{}, constants.ProjectRoute+"/"+"maintainer", nil)
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, maintainer{})
 }
 func NewMaintainer(ID types.ID, maintainedTraits types.Mutables, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) mappables.Maintainer {
 	return maintainer{

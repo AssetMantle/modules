@@ -7,13 +7,14 @@ package mappable
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type asset struct {
@@ -65,7 +66,7 @@ func (asset asset) GetKey() helpers.Key {
 	return key.New(asset.ID)
 }
 func (asset) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(asset{}, constants.ProjectRoute+"/"+"asset", nil)
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, asset{})
 }
 func NewAsset(assetID types.ID, immutables types.Immutables, mutables types.Mutables) mappables.InterNFT {
 	return asset{

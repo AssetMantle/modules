@@ -7,12 +7,13 @@ package mappable
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type meta struct {
@@ -27,7 +28,7 @@ func (meta meta) GetKey() helpers.Key {
 	return key.New(meta.GetID())
 }
 func (meta) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(meta{}, constants.ProjectRoute+"/"+"meta", nil)
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, meta{})
 }
 
 func NewMeta(data types.Data) mappables.Meta {

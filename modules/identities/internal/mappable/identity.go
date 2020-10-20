@@ -8,11 +8,12 @@ package mappable
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type identity struct {
@@ -69,7 +70,7 @@ func (identity identity) GetKey() helpers.Key {
 	return key.New(identity.ID)
 }
 func (identity) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(identity{}, constants.ProjectRoute+"/"+"identity", nil)
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, identity{})
 }
 
 func NewIdentity(identityID types.ID, provisionedAddressList []sdkTypes.AccAddress, unprovisionedAddressList []sdkTypes.AccAddress, immutables types.Immutables, mutables types.Mutables) mappables.InterIdentity {

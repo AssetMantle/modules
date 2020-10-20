@@ -8,12 +8,13 @@ package mappable
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type split struct {
@@ -48,7 +49,7 @@ func (split split) GetKey() helpers.Key {
 	return key.New(split.ID)
 }
 func (split) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(split{}, constants.ProjectRoute+"/"+"split", nil)
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, split{})
 }
 
 func NewSplit(splitID types.ID, spl sdkTypes.Dec) mappables.Split {

@@ -8,13 +8,14 @@ package mappable
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type order struct {
@@ -100,7 +101,7 @@ func (order order) GetKey() helpers.Key {
 	return key.New(order.ID)
 }
 func (order) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(order{}, constants.ProjectRoute+"/"+"order", nil)
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, order{})
 }
 
 func NewOrder(orderID types.ID, immutables types.Immutables, mutables types.Mutables) mappables.Order {
