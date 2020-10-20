@@ -8,6 +8,7 @@ package maintainers
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/genesis"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/queries"
@@ -20,11 +21,12 @@ import (
 func Prototype() helpers.Module {
 	return base.NewModule(
 		module.Name,
-		simulator.Prototype,
-		parameters.Prototype,
-		genesis.Prototype,
 		auxiliaries.Prototype,
+		genesis.Prototype,
+		mapper.Prototype,
+		parameters.Prototype,
 		queries.Prototype,
+		simulator.Prototype,
 		transactions.Prototype,
 	)
 }

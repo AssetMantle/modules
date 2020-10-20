@@ -3,21 +3,17 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package module
+package common
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/schema"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 var Codec *codec.Codec
 
 func init() {
-	Codec := codec.New()
-	key.Prototype().RegisterCodec(Codec)
-	mappable.Prototype().RegisterCodec(Codec)
-	schema.RegisterCodec(Codec)
-	Codec.Seal()
+	Codec = codecUtilities.RegisterModuleCodec(key.Prototype, mappable.Prototype)
 }

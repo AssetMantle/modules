@@ -25,19 +25,20 @@ import (
 )
 
 type module struct {
-	moduleName string
+	name string
 
-	simulatorPrototype    func() helpers.Simulator
-	parametersPrototype   func() helpers.Parameters
-	genesisPrototype      func() helpers.Genesis
 	auxiliariesPrototype  func() helpers.Auxiliaries
+	genesisPrototype      func() helpers.Genesis
+	mapperPrototype       func() helpers.Mapper
+	parametersPrototype   func() helpers.Parameters
 	queriesPrototype      func() helpers.Queries
+	simulatorPrototype    func() helpers.Simulator
 	transactionsPrototype func() helpers.Transactions
 
-	mapper       helpers.Mapper
-	genesis      helpers.Genesis
-	parameters   helpers.Parameters
 	auxiliaries  helpers.Auxiliaries
+	genesis      helpers.Genesis
+	mapper       helpers.Mapper
+	parameters   helpers.Parameters
 	queries      helpers.Queries
 	transactions helpers.Transactions
 }
@@ -57,7 +58,7 @@ func (module module) RandomizedParams(_ *rand.Rand) []simulation.ParamChange {
 }
 
 func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDecoderRegistry) {
-	storeDecoderRegistry[module.moduleName] = module.mapper.StoreDecoder
+	storeDecoderRegistry[module.name] = module.mapperPrototype().StoreDecoder
 }
 
 func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simulation.WeightedOperation {
@@ -65,10 +66,10 @@ func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simu
 }
 
 func (module module) Name() string {
-	return module.moduleName
+	return module.name
 }
 func (module module) RegisterCodec(codec *codec.Codec) {
-	module.mapper.RegisterCodec(codec)
+	module.mapperPrototype().RegisterCodec(codec)
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterCodec(codec)
 	}
@@ -94,7 +95,7 @@ func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *m
 }
 func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
-		Use:                        module.moduleName,
+		Use:                        module.name,
 		Short:                      "Get root transaction command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
@@ -111,7 +112,7 @@ func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 }
 func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 	rootQueryCommand := &cobra.Command{
-		Use:                        module.moduleName,
+		Use:                        module.name,
 		Short:                      "Get root query command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
@@ -128,7 +129,7 @@ func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 }
 func (module module) RegisterInvariants(_ sdkTypes.InvariantRegistry) {}
 func (module module) Route() string {
-	return module.moduleName
+	return module.name
 }
 func (module module) NewHandler() sdkTypes.Handler {
 	return func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
@@ -143,7 +144,7 @@ func (module module) NewHandler() sdkTypes.Handler {
 	}
 }
 func (module module) QuerierRoute() string {
-	return module.moduleName
+	return module.name
 }
 func (module module) NewQuerierHandler() sdkTypes.Querier {
 	return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
@@ -192,7 +193,7 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 }
 
 func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace params.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
-	module.mapper = module.mapper.Initialize(kvStoreKey)
+	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)
 	//TODO initialize genesis
 	module.genesis = module.genesisPrototype().Initialize(nil, nil)
 	module.parameters = module.parametersPrototype().Initialize(paramsSubspace.WithKeyTable(module.parametersPrototype().GetKeyTable()))
@@ -217,14 +218,15 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 	return module
 }
 
-func NewModule(moduleName string, simulatorPrototype func() helpers.Simulator, parametersPrototype func() helpers.Parameters, genesisPrototype func() helpers.Genesis, auxiliariesPrototype func() helpers.Auxiliaries, queriesPrototype func() helpers.Queries, transactionsPrototype func() helpers.Transactions) helpers.Module {
+func NewModule(name string, auxiliariesPrototype func() helpers.Auxiliaries, genesisPrototype func() helpers.Genesis, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.Parameters, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions) helpers.Module {
 	return module{
-		moduleName:            moduleName,
-		simulatorPrototype:    simulatorPrototype,
-		parametersPrototype:   parametersPrototype,
-		genesisPrototype:      genesisPrototype,
+		name:                  name,
 		auxiliariesPrototype:  auxiliariesPrototype,
+		genesisPrototype:      genesisPrototype,
+		mapperPrototype:       mapperPrototype,
+		parametersPrototype:   parametersPrototype,
 		queriesPrototype:      queriesPrototype,
+		simulatorPrototype:    simulatorPrototype,
 		transactionsPrototype: transactionsPrototype,
 	}
 }

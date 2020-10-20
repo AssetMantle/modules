@@ -7,11 +7,12 @@ package mappable
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type classification struct {
@@ -34,7 +35,7 @@ func (classification classification) GetKey() helpers.Key {
 }
 
 func (classification) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(classification{}, constants.ProjectRoute+"/"+"classification", nil)
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, classification{})
 }
 
 func NewClassification(ID types.ID, immutableTraits types.Immutables, mutableTraits types.Mutables) mappables.Classification {

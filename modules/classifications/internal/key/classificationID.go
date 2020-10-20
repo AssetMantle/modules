@@ -9,9 +9,11 @@ import (
 	"bytes"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 	"strings"
 )
@@ -42,7 +44,7 @@ func (ClassificationID classificationID) GenerateStoreKeyBytes() []byte {
 	return append([]byte{0x16}, ClassificationID.Bytes()...)
 }
 func (classificationID) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(classificationID{}, constants.ProjectRoute+"/"+"classificationID", nil)
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, classificationID{})
 }
 func (ClassificationID classificationID) IsPartial() bool {
 	if len(ClassificationID.HashID.Bytes()) > 0 {

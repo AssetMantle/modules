@@ -8,6 +8,7 @@ package classifications
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/genesis"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/queries"
@@ -20,11 +21,12 @@ import (
 func Prototype() helpers.Module {
 	return base.NewModule(
 		module.Name,
-		simulator.Prototype,
-		parameters.Prototype,
-		genesis.Prototype,
 		auxiliaries.Prototype,
+		genesis.Prototype,
+		mapper.Prototype,
+		parameters.Prototype,
 		queries.Prototype,
+		simulator.Prototype,
 		transactions.Prototype,
 	)
 }

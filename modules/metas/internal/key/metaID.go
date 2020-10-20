@@ -8,9 +8,10 @@ package key
 import (
 	"bytes"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type metaID struct {
@@ -33,7 +34,7 @@ func (MetaID metaID) GenerateStoreKeyBytes() []byte {
 	return append([]byte{0x13}, MetaID.Bytes()...)
 }
 func (metaID) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(metaID{}, constants.ProjectRoute+"/"+"metaID", nil)
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, metaID{})
 }
 func (MetaID metaID) IsPartial() bool {
 	if len(MetaID.HashID.Bytes()) > 0 {
