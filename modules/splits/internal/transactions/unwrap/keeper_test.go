@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	authVesting "github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/supply"
@@ -19,14 +19,16 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
-	dbm "github.com/tendermint/tm-db"
+	tendermintDB "github.com/tendermint/tm-db"
 
 	"reflect"
 	"testing"
@@ -39,61 +41,62 @@ type TestKeepers struct {
 	SupplyKeeper  supply.Keeper
 }
 
-func MakeCodec() *codec.Codec {
+func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
+
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
-	authVesting.RegisterCodec(Codec)
-	supply.RegisterCodec(Codec)
-	params.RegisterCodec(Codec)
-	auth.RegisterCodec(Codec)
-	return Codec
-}
+	vesting.RegisterCodec(Codec)
+	Codec.Seal()
 
-func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
+	storeKey := sdkTypes.NewKVStoreKey("test")
+	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
+	authStoreKey := sdkTypes.NewKVStoreKey("testAuth")
+	supplyStoreKey := sdkTypes.NewKVStoreKey("testSupply")
+	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
+	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	paramsKeeper := params.NewKeeper(
+		Codec,
+		paramsStoreKey,
+		paramsTransientStoreKeys,
+	)
+	Parameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
 
-	keySplits := mapper.Mapper.GetKVStoreKey()
-	keyParams := sdkTypes.NewKVStoreKey(params.StoreKey)
-	keyAuth := sdkTypes.NewKVStoreKey(auth.StoreKey)
-	keySupply := sdkTypes.NewKVStoreKey(supply.StoreKey)
+	memDB := tendermintDB.NewMemDB()
+	commitMultiStore := store.NewCommitMultiStore(memDB)
+	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeTransient, memDB)
+	commitMultiStore.MountStoreWithDB(authStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(supplyStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+	Error := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, Error)
 
-	db := dbm.NewMemDB()
-	ms := store.NewCommitMultiStore(db)
-	ms.MountStoreWithDB(keySplits, sdkTypes.StoreTypeIAVL, db)
-	ms.MountStoreWithDB(keyParams, sdkTypes.StoreTypeIAVL, db)
-	ms.MountStoreWithDB(keyAuth, sdkTypes.StoreTypeIAVL, db)
-	ms.MountStoreWithDB(keySupply, sdkTypes.StoreTypeIAVL, db)
-	err := ms.LoadLatestVersion()
-	require.Nil(t, err)
-	transientStoreKeys := sdkTypes.NewTransientStoreKeys(params.TStoreKey)
-
-	ctx := sdkTypes.NewContext(ms, abci.Header{
+	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	Codec := MakeCodec()
-	paramsKeeper := params.NewKeeper(Codec, keyParams, transientStoreKeys[params.TStoreKey])
-	accountKeeper := auth.NewAccountKeeper(Codec, keyAuth, paramsKeeper.Subspace(auth.DefaultParamspace), auth.ProtoBaseAccount)
+	accountKeeper := auth.NewAccountKeeper(Codec, authStoreKey, paramsKeeper.Subspace(auth.DefaultParamspace), auth.ProtoBaseAccount)
 
 	bankKeeper := bank.NewBaseKeeper(accountKeeper, paramsKeeper.Subspace(bank.DefaultParamspace), make(map[string]bool))
-	supplyKeeper := supply.NewKeeper(Codec, keySupply, accountKeeper, bankKeeper, map[string][]string{mapper.ModuleName: nil})
-	verify.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
+	supplyKeeper := supply.NewKeeper(Codec, supplyStoreKey, accountKeeper, bankKeeper, map[string][]string{module.Name: nil})
+	verifyAuxiliary := verify.AuxiliaryMock.Initialize(Mapper, Parameters)
 	keepers := TestKeepers{
-		SplitsKeeper: initializeTransactionKeeper(mapper.Mapper, parameters.Prototype,
-			[]interface{}{verify.AuxiliaryMock, supplyKeeper}),
+		SplitsKeeper: keeperPrototype().Initialize(Mapper, Parameters,
+			[]interface{}{verifyAuxiliary, supplyKeeper}).(helpers.TransactionKeeper),
 		AccountKeeper: accountKeeper,
 		BankKeeper:    bankKeeper,
 		SupplyKeeper:  supplyKeeper,
 	}
 
-	return ctx, keepers
+	return context, keepers
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
 
-	ctx, keepers := CreateTestInput(t)
+	context, keepers := CreateTestInput(t)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	ownableID := base.NewID("stake")
@@ -101,26 +104,26 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	coins := func(amount int64) sdkTypes.Coins {
 		return sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(amount)))
 	}
-	Error := keepers.BankKeeper.SetCoins(ctx, defaultAddr, coins(1000))
+	Error := keepers.BankKeeper.SetCoins(context, defaultAddr, coins(1000))
 	require.Equal(t, nil, Error)
-	Error = keepers.SupplyKeeper.SendCoinsFromAccountToModule(ctx, defaultAddr, mapper.ModuleName, coins(1000))
+	Error = keepers.SupplyKeeper.SendCoinsFromAccountToModule(context, defaultAddr, module.Name, coins(1000))
 	require.Equal(t, nil, Error)
-	mapper.NewSplits(mapper.Mapper, ctx).Add(mappable.NewSplit(key.NewSplitID(fromID, ownableID), sdkTypes.NewDec(1000)))
+	mapper.Prototype().NewCollection(context).Add(mappable.NewSplit(key.NewSplitID(fromID, ownableID), sdkTypes.NewDec(1000)))
 
 	t.Run("PositiveCase- Send All", func(t *testing.T) {
 		want := newTransactionResponse(nil)
-		if got := keepers.SplitsKeeper.Transact(ctx, newMessage(defaultAddr, fromID, ownableID, sdkTypes.NewDec(1000))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, fromID, ownableID, sdkTypes.NewDec(1000))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	Error = keepers.SupplyKeeper.SendCoinsFromAccountToModule(ctx, defaultAddr, mapper.ModuleName, coins(1000))
+	Error = keepers.SupplyKeeper.SendCoinsFromAccountToModule(context, defaultAddr, module.Name, coins(1000))
 	require.Equal(t, nil, Error)
-	mapper.NewSplits(mapper.Mapper, ctx).Add(mappable.NewSplit(key.NewSplitID(fromID, ownableID), sdkTypes.NewDec(1000)))
+	mapper.Prototype().NewCollection(context).Add(mappable.NewSplit(key.NewSplitID(fromID, ownableID), sdkTypes.NewDec(1000)))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
-		if got := keepers.SplitsKeeper.Transact(ctx, newMessage(defaultAddr, fromID, ownableID, sdkTypes.NewDec(10))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, fromID, ownableID, sdkTypes.NewDec(10))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -128,7 +131,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase-Verify Identity Failure", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
-		if got := keepers.SplitsKeeper.Transact(ctx, newMessage(verifyMockErrorAddress, fromID, ownableID, sdkTypes.NewDec(10))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Transact(context, newMessage(verifyMockErrorAddress, fromID, ownableID, sdkTypes.NewDec(10))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -136,7 +139,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase-Send Negative Balance", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.NotAuthorized)
-		if got := keepers.SplitsKeeper.Transact(ctx, newMessage(defaultAddr, fromID, ownableID, sdkTypes.NewDec(-10))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, fromID, ownableID, sdkTypes.NewDec(-10))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -144,7 +147,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase-Send More than own Balance", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.InsufficientBalance)
-		if got := keepers.SplitsKeeper.Transact(ctx, newMessage(defaultAddr, fromID, ownableID, sdkTypes.NewDec(10000))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, fromID, ownableID, sdkTypes.NewDec(10000))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -152,16 +155,16 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase-Split Not found", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.EntityNotFound)
-		if got := keepers.SplitsKeeper.Transact(ctx, newMessage(defaultAddr, base.NewID("id"), ownableID, sdkTypes.NewDec(10))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, base.NewID("id"), ownableID, sdkTypes.NewDec(10))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	Error = keepers.SupplyKeeper.SendCoinsFromModuleToAccount(ctx, mapper.ModuleName, defaultAddr, coins(900))
+	Error = keepers.SupplyKeeper.SendCoinsFromModuleToAccount(context, module.Name, defaultAddr, coins(900))
 	require.Equal(t, nil, Error)
 	t.Run("NegativeCase-Module does not have enough coins", func(t *testing.T) {
 		want := newTransactionResponse(errors.InsufficientBalance)
-		if got := keepers.SplitsKeeper.Transact(ctx, newMessage(defaultAddr, fromID, ownableID, sdkTypes.NewDec(200))); !reflect.DeepEqual(got.IsSuccessful(), want.IsSuccessful()) {
+		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, fromID, ownableID, sdkTypes.NewDec(200))); !reflect.DeepEqual(got.IsSuccessful(), want.IsSuccessful()) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

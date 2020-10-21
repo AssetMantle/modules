@@ -6,8 +6,11 @@
 package make
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
@@ -19,12 +22,14 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
+	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
-	dbm "github.com/tendermint/tm-db"
+	tendermintDB "github.com/tendermint/tm-db"
 	"reflect"
 	"testing"
 )
@@ -35,36 +40,55 @@ type TestKeepers struct {
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
-	keyOrder := mapper.Mapper.GetKVStoreKey()
+	var Codec = codec.New()
+	schema.RegisterCodec(Codec)
+	sdkTypes.RegisterCodec(Codec)
+	codec.RegisterCrypto(Codec)
+	codec.RegisterEvidences(Codec)
+	vesting.RegisterCodec(Codec)
+	Codec.Seal()
 
-	db := dbm.NewMemDB()
-	ms := store.NewCommitMultiStore(db)
-	ms.MountStoreWithDB(keyOrder, sdkTypes.StoreTypeIAVL, db)
-	err := ms.LoadLatestVersion()
-	require.Nil(t, err)
+	storeKey := sdkTypes.NewKVStoreKey("test")
+	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
+	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
+	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	paramsKeeper := params.NewKeeper(
+		Codec,
+		paramsStoreKey,
+		paramsTransientStoreKeys,
+	)
+	Parameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
 
-	ctx := sdkTypes.NewContext(ms, abci.Header{
+	memDB := tendermintDB.NewMemDB()
+	commitMultiStore := store.NewCommitMultiStore(memDB)
+	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeTransient, memDB)
+	Error := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, Error)
+
+	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrub.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
-	conform.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
-	transfer.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
-	verify.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
-	mint.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
-	supplement.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
+	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(Mapper, Parameters)
+	conformAuxiliary := conform.AuxiliaryMock.Initialize(Mapper, Parameters)
+	transferAuxiliary := transfer.AuxiliaryMock.Initialize(Mapper, Parameters)
+	verifyAuxiliary := verify.AuxiliaryMock.Initialize(Mapper, Parameters)
+	mintAuxiliary := mint.AuxiliaryMock.Initialize(Mapper, Parameters)
+	supplementAuxiliary := supplement.AuxiliaryMock.Initialize(Mapper, Parameters)
 	keepers := TestKeepers{
-		OrdersKeeper: initializeTransactionKeeper(mapper.Mapper, parameters.Prototype,
-			[]interface{}{scrub.AuxiliaryMock, verify.AuxiliaryMock,
-				conform.AuxiliaryMock, transfer.AuxiliaryMock, mint.AuxiliaryMock, supplement.AuxiliaryMock}),
+		OrdersKeeper: keeperPrototype().Initialize(Mapper, Parameters,
+			[]interface{}{scrubAuxiliary, verifyAuxiliary,
+				conformAuxiliary, transferAuxiliary, mintAuxiliary, supplementAuxiliary}).(helpers.TransactionKeeper),
 	}
 
-	return ctx, keepers
+	return context, keepers
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
 
-	ctx, keepers := CreateTestInput(t)
+	context, keepers := CreateTestInput(t)
 	immutableMetaTraits, Error := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, Error)
 	immutableTraits, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
@@ -85,11 +109,11 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	takerOwnableID := base.NewID("takerOwnableID")
 	orderID := key.NewOrderID(classificationID, makerOwnableID,
 		takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
-	mapper.NewOrders(mapper.Mapper, ctx).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
+	mapper.Prototype().NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
-		if got := keepers.OrdersKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, classificationID,
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(),
 			immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -97,7 +121,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	})
 	t.Run("PositiveCase- ReAdd order", func(t *testing.T) {
 		want := newTransactionResponse(nil)
-		if got := keepers.OrdersKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, classificationID,
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(),
 			immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -107,7 +131,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - Identity mock error", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
-		if got := keepers.OrdersKeeper.Transact(ctx, newMessage(verifyMockErrorAddress, defaultIdentityID, classificationID,
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, classificationID,
 			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(),
 			immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -117,7 +141,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - conform mock fail", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
-		if got := keepers.OrdersKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, classificationID,
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(),
 			immutableMetaTraits, immutableTraits, mutableMetaTraits, conformMockErrorTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -127,7 +151,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - mutables scrub mock fail", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
-		if got := keepers.OrdersKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, classificationID,
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(),
 			immutableMetaTraits, immutableTraits, scrubMockErrorTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -137,7 +161,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - immutables scrub mock fail", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
-		if got := keepers.OrdersKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, classificationID,
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(),
 			scrubMockErrorTraits, immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -147,7 +171,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - Transfer mock fail", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
-		if got := keepers.OrdersKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, classificationID,
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			base.NewID("transferError"), takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(),
 			immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
