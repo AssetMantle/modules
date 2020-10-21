@@ -7,6 +7,7 @@ package meta
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
@@ -14,6 +15,8 @@ var Query = base.NewQuery(
 	"metas",
 	"",
 	"",
+
+	module.Name,
 
 	requestPrototype,
 	responsePrototype,

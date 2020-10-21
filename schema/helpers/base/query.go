@@ -20,6 +20,7 @@ import (
 type query struct {
 	name              string
 	cliCommand        helpers.CLICommand
+	moduleName        string
 	queryKeeper       helpers.QueryKeeper
 	requestPrototype  func() helpers.QueryRequest
 	responsePrototype func() helpers.QueryResponse
@@ -83,14 +84,14 @@ func (query query) query(queryRequest helpers.QueryRequest, cliContext context.C
 	if Error != nil {
 		return nil, 0, Error
 	}
-	//TODO check route
-	return cliContext.QueryWithData(query.name, bytes)
+	return cliContext.QueryWithData("custom"+"/"+query.moduleName+"/"+query.name, bytes)
 }
 
-func NewQuery(name string, short string, long string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, flagList ...helpers.CLIFlag) helpers.Query {
+func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, flagList ...helpers.CLIFlag) helpers.Query {
 	return query{
 		name:              name,
 		cliCommand:        NewCLICommand(name, short, long, flagList),
+		moduleName:        moduleName,
 		requestPrototype:  requestPrototype,
 		responsePrototype: responsePrototype,
 		keeperPrototype:   keeperPrototype,

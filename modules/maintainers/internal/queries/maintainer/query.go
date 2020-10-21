@@ -7,6 +7,7 @@ package maintainer
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
@@ -15,8 +16,11 @@ var Query = base.NewQuery(
 	"",
 	"",
 
+	module.Name,
+
 	requestPrototype,
 	responsePrototype,
 	keeperPrototype,
+
 	flags.MaintainerID,
 )
