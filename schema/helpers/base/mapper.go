@@ -42,7 +42,7 @@ func (mapper mapper) Read(context sdkTypes.Context, key helpers.Key) helpers.Map
 	if Bytes == nil {
 		return nil
 	}
-	mappable := mapper.mappablePrototype()
+	var mappable helpers.Mappable
 	mapper.codec.MustUnmarshalBinaryBare(Bytes, &mappable)
 	return mappable
 }
@@ -62,7 +62,7 @@ func (mapper mapper) Iterate(context sdkTypes.Context, key helpers.Key, accumula
 
 	defer kvStorePrefixIterator.Close()
 	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {
-		mappable := mapper.mappablePrototype()
+		var mappable helpers.Mappable
 		mapper.codec.MustUnmarshalBinaryBare(kvStorePrefixIterator.Value(), &mappable)
 		if accumulator(mappable) {
 			break
@@ -71,9 +71,9 @@ func (mapper mapper) Iterate(context sdkTypes.Context, key helpers.Key, accumula
 }
 func (mapper mapper) StoreDecoder(_ *codec.Codec, kvA kv.Pair, kvB kv.Pair) string {
 	if bytes.Equal(kvA.Key[:1], mapper.keyPrototype().GenerateStoreKeyBytes()) {
-		mappableA := mapper.mappablePrototype()
+		var mappableA helpers.Mappable
 		mapper.codec.MustUnmarshalBinaryBare(kvA.Value, &mappableA)
-		mappableB := mapper.mappablePrototype()
+		var mappableB helpers.Mappable
 		mapper.codec.MustUnmarshalBinaryBare(kvB.Value, &mappableB)
 		return fmt.Sprintf("%v\n%v", mappableA, mappableB)
 	} else {
