@@ -94,14 +94,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	takerOwnableID := base.NewID("takerOwnableID")
 	orderID := key.NewOrderID(classificationID, makerOwnableID,
 		takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
-	nontakingOrderID := key.NewOrderID(base.NewID(""), makerOwnableID,
+	nonTakingOrderID := key.NewOrderID(base.NewID(""), makerOwnableID,
 		takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
 	metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 		"," + properties.TakerID + ":I|fromID" + "," +
 		properties.ExchangeRate + ":D|0.000000000000000001")
 	require.Equal(t, nil, Error)
 
-	mapper.Prototype().NewCollection(context).Add(mappable.NewOrder(nontakingOrderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+	mapper.Prototype().NewCollection(context).Add(mappable.NewOrder(nonTakingOrderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
@@ -121,7 +121,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.EntityNotFound)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, sdkTypes.SmallestDec(),
-			nontakingOrderID)); !reflect.DeepEqual(got, want) {
+			nonTakingOrderID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -176,7 +176,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.NotAuthorized)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, base.NewID("id"), sdkTypes.SmallestDec(),
-			nontakingOrderID)); !reflect.DeepEqual(got, want) {
+			nonTakingOrderID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -194,13 +194,13 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 		want := newTransactionResponse(nil)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec().MulInt64(1),
-			nontakingOrderID)); !reflect.DeepEqual(got, want) {
+			nonTakingOrderID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 
 		want = newTransactionResponse(nil)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec().MulInt64(10),
-			nontakingOrderID)); !reflect.DeepEqual(got, want) {
+			nonTakingOrderID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

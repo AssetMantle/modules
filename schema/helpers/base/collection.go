@@ -35,16 +35,17 @@ func (collection collection) GetList() []helpers.Mappable {
 func (collection collection) Fetch(key helpers.Key) helpers.Collection {
 	var mappableList []helpers.Mappable
 	if key.IsPartial() {
-		mappable := collection.mapper.Read(collection.context, key)
-		if mappable != nil {
-			mappableList = append(mappableList, mappable)
-		}
-	} else {
 		appendMappableList := func(mappable helpers.Mappable) bool {
 			mappableList = append(mappableList, mappable)
 			return false
 		}
 		collection.mapper.Iterate(collection.context, key, appendMappableList)
+
+	} else {
+		mappable := collection.mapper.Read(collection.context, key)
+		if mappable != nil {
+			mappableList = append(mappableList, mappable)
+		}
 	}
 	collection.Key, collection.List = key, mappableList
 	return collection

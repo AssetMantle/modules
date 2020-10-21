@@ -11,9 +11,9 @@ import (
 )
 
 type queryResponse struct {
-	Success    bool               `json:"success"`
-	Error      error              `json:"error"`
-	Identities helpers.Collection `json:"identities" valid:"required~required field identities missing"`
+	Success bool               `json:"success"`
+	Error   error              `json:"error"`
+	List    []helpers.Mappable `json:"list"`
 }
 
 var _ helpers.QueryResponse = (*queryResponse)(nil)
@@ -27,7 +27,6 @@ func (queryResponse queryResponse) GetError() error {
 func (queryResponse queryResponse) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryResponse)
 }
-
 func (queryResponse queryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
 	if Error := common.Codec.UnmarshalJSON(bytes, &queryResponse); Error != nil {
 		return nil, Error
@@ -37,15 +36,14 @@ func (queryResponse queryResponse) Decode(bytes []byte) (helpers.QueryResponse, 
 func responsePrototype() helpers.QueryResponse {
 	return queryResponse{}
 }
-
-func newQueryResponse(identities helpers.Collection, error error) helpers.QueryResponse {
+func newQueryResponse(collection helpers.Collection, error error) helpers.QueryResponse {
 	success := true
 	if error != nil {
 		success = false
 	}
 	return queryResponse{
-		Success:    success,
-		Error:      error,
-		Identities: identities,
+		Success: success,
+		Error:   error,
+		List:    collection.GetList(),
 	}
 }
