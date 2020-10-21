@@ -52,8 +52,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	keyAuth := sdkTypes.NewKVStoreKey(auth.StoreKey)
-	keySupply := sdkTypes.NewKVStoreKey(supply.StoreKey)
+	authStoreKey := sdkTypes.NewKVStoreKey("testAuth")
+	supplyStoreKey := sdkTypes.NewKVStoreKey("testSupply")
 	mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
 	paramsKeeper := params.NewKeeper(
 		Codec,
@@ -67,8 +67,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeTransient, memDB)
-	commitMultiStore.MountStoreWithDB(keyAuth, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(keySupply, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(authStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(supplyStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	Error := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, Error)
 
@@ -76,10 +76,10 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	accountKeeper := auth.NewAccountKeeper(Codec, keyAuth, paramsKeeper.Subspace(auth.DefaultParamspace), auth.ProtoBaseAccount)
+	accountKeeper := auth.NewAccountKeeper(Codec, authStoreKey, paramsKeeper.Subspace(auth.DefaultParamspace), auth.ProtoBaseAccount)
 
 	bankKeeper := bank.NewBaseKeeper(accountKeeper, paramsKeeper.Subspace(bank.DefaultParamspace), make(map[string]bool))
-	supplyKeeper := supply.NewKeeper(Codec, keySupply, accountKeeper, bankKeeper, map[string][]string{module.Name: nil})
+	supplyKeeper := supply.NewKeeper(Codec, supplyStoreKey, accountKeeper, bankKeeper, map[string][]string{module.Name: nil})
 	verifyAuxiliary := verify.AuxiliaryMock.Initialize(mapper, Parameters)
 	keepers := TestKeepers{
 		SplitsKeeper: keeperPrototype().Initialize(mapper, Parameters,
