@@ -10,21 +10,24 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	authVesting "github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
-	dbm "github.com/tendermint/tm-db"
+	tendermintDB "github.com/tendermint/tm-db"
 
 	"reflect"
 	"testing"
@@ -36,55 +39,56 @@ type TestKeepers struct {
 	BankKeeper    bank.Keeper
 }
 
-func MakeCodec() *codec.Codec {
+func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
+
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
-	authVesting.RegisterCodec(Codec)
-	supply.RegisterCodec(Codec)
-	params.RegisterCodec(Codec)
-	auth.RegisterCodec(Codec)
-	return Codec
-}
+	vesting.RegisterCodec(Codec)
+	Codec.Seal()
 
-func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
-
-	keySplits := mapper.Mapper.GetKVStoreKey()
-	keyParams := sdkTypes.NewKVStoreKey(params.StoreKey)
+	storeKey := sdkTypes.NewKVStoreKey("test")
+	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
+	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	keyAuth := sdkTypes.NewKVStoreKey(auth.StoreKey)
 	keySupply := sdkTypes.NewKVStoreKey(supply.StoreKey)
+	mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	paramsKeeper := params.NewKeeper(
+		Codec,
+		paramsStoreKey,
+		paramsTransientStoreKeys,
+	)
+	Parameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
 
-	db := dbm.NewMemDB()
-	ms := store.NewCommitMultiStore(db)
-	ms.MountStoreWithDB(keySplits, sdkTypes.StoreTypeIAVL, db)
-	ms.MountStoreWithDB(keyParams, sdkTypes.StoreTypeIAVL, db)
-	ms.MountStoreWithDB(keyAuth, sdkTypes.StoreTypeIAVL, db)
-	ms.MountStoreWithDB(keySupply, sdkTypes.StoreTypeIAVL, db)
-	err := ms.LoadLatestVersion()
-	require.Nil(t, err)
-	transientStoreKeys := sdkTypes.NewTransientStoreKeys(params.TStoreKey)
+	memDB := tendermintDB.NewMemDB()
+	commitMultiStore := store.NewCommitMultiStore(memDB)
+	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeTransient, memDB)
+	commitMultiStore.MountStoreWithDB(keyAuth, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(keySupply, sdkTypes.StoreTypeIAVL, memDB)
+	Error := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, Error)
 
-	ctx := sdkTypes.NewContext(ms, abci.Header{
+	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	Codec := MakeCodec()
-	paramsKeeper := params.NewKeeper(Codec, keyParams, transientStoreKeys[params.TStoreKey])
 	accountKeeper := auth.NewAccountKeeper(Codec, keyAuth, paramsKeeper.Subspace(auth.DefaultParamspace), auth.ProtoBaseAccount)
 
 	bankKeeper := bank.NewBaseKeeper(accountKeeper, paramsKeeper.Subspace(bank.DefaultParamspace), make(map[string]bool))
-	supplyKeeper := supply.NewKeeper(Codec, keySupply, accountKeeper, bankKeeper, map[string][]string{mapper.ModuleName: nil})
-	verify.AuxiliaryMock.Initialize(mapper.Mapper, parameters.Prototype)
+	supplyKeeper := supply.NewKeeper(Codec, keySupply, accountKeeper, bankKeeper, map[string][]string{module.Name: nil})
+	verifyAuxiliary := verify.AuxiliaryMock.Initialize(mapper, Parameters)
 	keepers := TestKeepers{
-		SplitsKeeper: initializeTransactionKeeper(mapper.Mapper, parameters.Prototype,
-			[]interface{}{verify.AuxiliaryMock, supplyKeeper}),
+		SplitsKeeper: keeperPrototype().Initialize(mapper, Parameters,
+			[]interface{}{verifyAuxiliary, supplyKeeper}).(helpers.TransactionKeeper),
 		AccountKeeper: accountKeeper,
 		BankKeeper:    bankKeeper,
 	}
 
-	return ctx, keepers
+	return context, keepers
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {

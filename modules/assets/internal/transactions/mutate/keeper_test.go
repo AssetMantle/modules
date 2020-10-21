@@ -12,7 +12,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/assets"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
@@ -39,7 +38,6 @@ type TestKeepers struct {
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 	var Codec = codec.New()
-	assets.Prototype.RegisterCodec(Codec)
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
@@ -70,14 +68,14 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrub.AuxiliaryMock.Initialize(mapper, Parameters)
-	maintain.AuxiliaryMock.Initialize(mapper, Parameters)
-	conform.AuxiliaryMock.Initialize(mapper, Parameters)
-	verify.AuxiliaryMock.Initialize(mapper, Parameters)
+	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(mapper, Parameters)
+	maintainAuxiliary := maintain.AuxiliaryMock.Initialize(mapper, Parameters)
+	conformAuxiliary := conform.AuxiliaryMock.Initialize(mapper, Parameters)
+	verifyAuxiliary := verify.AuxiliaryMock.Initialize(mapper, Parameters)
 	keepers := TestKeepers{
 		AssetsKeeper: keeperPrototype().Initialize(mapper, Parameters,
-			[]interface{}{scrub.AuxiliaryMock, verify.AuxiliaryMock,
-				maintain.AuxiliaryMock, conform.AuxiliaryMock}).(helpers.TransactionKeeper),
+			[]interface{}{scrubAuxiliary, verifyAuxiliary,
+				maintainAuxiliary, conformAuxiliary}).(helpers.TransactionKeeper),
 	}
 
 	return context, keepers
