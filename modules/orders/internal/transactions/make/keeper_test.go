@@ -18,7 +18,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
@@ -63,7 +62,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore := store.NewCommitMultiStore(memDB)
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeTransient, memDB)
+	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
 	Error := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, Error)
 
@@ -109,7 +108,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	takerOwnableID := base.NewID("takerOwnableID")
 	orderID := key.NewOrderID(classificationID, makerOwnableID,
 		takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
-	mapper.Prototype().NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
+	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

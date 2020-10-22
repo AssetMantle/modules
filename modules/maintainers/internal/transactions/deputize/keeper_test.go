@@ -16,7 +16,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -59,7 +58,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore := store.NewCommitMultiStore(memDB)
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeTransient, memDB)
+	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
 	Error := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, Error)
 
@@ -92,7 +91,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	toID2 := base.NewID("toID2")
 	classificationID := base.NewID("ClassificationID")
 
-	mapper.Prototype().NewCollection(context).Add(mappable.NewMaintainer(key.NewMaintainerID(classificationID, defaultIdentityID),
+	keepers.MaintainersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(key.NewMaintainerID(classificationID, defaultIdentityID),
 		base.NewMutables(maintainedTraits), true, true, true))
 
 	t.Run("PositiveCase", func(t *testing.T) {

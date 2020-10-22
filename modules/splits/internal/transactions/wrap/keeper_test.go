@@ -47,6 +47,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
+	supply.RegisterCodec(Codec)
+	params.RegisterCodec(Codec)
+	auth.RegisterCodec(Codec)
 	Codec.Seal()
 
 	storeKey := sdkTypes.NewKVStoreKey("test")
@@ -66,7 +69,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore := store.NewCommitMultiStore(memDB)
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeTransient, memDB)
+	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
 	commitMultiStore.MountStoreWithDB(authStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(supplyStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	Error := commitMultiStore.LoadLatestVersion()

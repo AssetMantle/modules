@@ -18,7 +18,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema"
@@ -49,6 +48,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
+	supply.RegisterCodec(Codec)
+	params.RegisterCodec(Codec)
+	auth.RegisterCodec(Codec)
 	Codec.Seal()
 
 	storeKey := sdkTypes.NewKVStoreKey("test")
@@ -68,7 +70,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore := store.NewCommitMultiStore(memDB)
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeTransient, memDB)
+	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
 	commitMultiStore.MountStoreWithDB(authStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(supplyStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	Error := commitMultiStore.LoadLatestVersion()
@@ -108,7 +110,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, Error)
 	Error = keepers.SupplyKeeper.SendCoinsFromAccountToModule(context, defaultAddr, module.Name, coins(1000))
 	require.Equal(t, nil, Error)
-	mapper.Prototype().NewCollection(context).Add(mappable.NewSplit(key.NewSplitID(fromID, ownableID), sdkTypes.NewDec(1000)))
+	keepers.SplitsKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(key.NewSplitID(fromID, ownableID), sdkTypes.NewDec(1000)))
 
 	t.Run("PositiveCase- Send All", func(t *testing.T) {
 		want := newTransactionResponse(nil)
@@ -119,7 +121,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	Error = keepers.SupplyKeeper.SendCoinsFromAccountToModule(context, defaultAddr, module.Name, coins(1000))
 	require.Equal(t, nil, Error)
-	mapper.Prototype().NewCollection(context).Add(mappable.NewSplit(key.NewSplitID(fromID, ownableID), sdkTypes.NewDec(1000)))
+	keepers.SplitsKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(key.NewSplitID(fromID, ownableID), sdkTypes.NewDec(1000)))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

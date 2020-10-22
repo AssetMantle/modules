@@ -18,7 +18,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -104,7 +103,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	defaultIdentityID := base.NewID("fromID")
 	orderID := key.NewOrderID(base.NewID("classificationID"), base.NewID("makerOwnableID"),
 		base.NewID("takerOwnableID"), defaultIdentityID, base.NewImmutables(base.NewProperties()))
-	mapper.Prototype().NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
+	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
