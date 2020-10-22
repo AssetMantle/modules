@@ -80,10 +80,6 @@ func (mapper mapper) StoreDecoder(_ *codec.Codec, kvA kv.Pair, kvB kv.Pair) stri
 		panic(fmt.Sprintf("invalid key prefix %X", kvA.Key[:1]))
 	}
 }
-func (mapper mapper) RegisterCodec(codec *codec.Codec) {
-	mapper.keyPrototype().RegisterCodec(codec)
-	mapper.mappablePrototype().RegisterCodec(codec)
-}
 func (mapper mapper) Initialize(kvStoreKey *sdkTypes.KVStoreKey) helpers.Mapper {
 	mapper.kvStoreKey = kvStoreKey
 	return mapper
