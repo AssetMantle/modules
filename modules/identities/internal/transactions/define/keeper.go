@@ -30,11 +30,11 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(message.FromID))
-	identity := identities.Get(key.New(message.FromID)).(mappables.InterIdentity)
+	identity := identities.Get(key.New(message.FromID))
 	if identity == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
-	if !identity.IsProvisioned(message.From) {
+	if !identity.(mappables.InterIdentity).IsProvisioned(message.From) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 	immutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaTraits.GetMetaPropertyList()...)))

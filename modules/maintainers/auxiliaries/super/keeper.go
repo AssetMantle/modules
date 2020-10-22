@@ -11,7 +11,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 )
 
 type auxiliaryKeeper struct {
@@ -24,7 +23,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	maintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.IdentityID)
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(maintainerID))
-	if maintainers.Get(key.New(maintainerID)).(mappables.Maintainer) != nil {
+	if maintainers.Get(key.New(maintainerID)) != nil {
 		return newAuxiliaryResponse(errors.EntityAlreadyExists)
 	}
 	maintainers = maintainers.Add(mappable.NewMaintainer(maintainerID, auxiliaryRequest.MutableTraits, true, true, true))

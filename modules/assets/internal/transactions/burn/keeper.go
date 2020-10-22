@@ -33,11 +33,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(message.AssetID))
-	asset := assets.Get(key.New(message.AssetID)).(mappables.InterNFT)
+	asset := assets.Get(key.New(message.AssetID))
 	if asset == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetBurn())))
+	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetBurn())))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}

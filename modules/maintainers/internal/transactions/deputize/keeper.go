@@ -35,8 +35,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	maintainers := transactionKeeper.mapper.NewCollection(context)
 
 	fromMaintainerID := key.NewMaintainerID(message.ClassificationID, message.FromID)
-	fromMaintainer := maintainers.Fetch(key.New(fromMaintainerID)).Get(key.New(fromMaintainerID)).(mappables.Maintainer)
-	if fromMaintainer == nil || !fromMaintainer.CanAddMaintainer() {
+	fromMaintainer := maintainers.Fetch(key.New(fromMaintainerID)).Get(key.New(fromMaintainerID))
+	if fromMaintainer == nil || !fromMaintainer.(mappables.Maintainer).CanAddMaintainer() {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 

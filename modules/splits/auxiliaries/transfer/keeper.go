@@ -27,14 +27,14 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	}
 	fromSplitID := key.NewSplitID(auxiliaryRequest.FromID, auxiliaryRequest.OwnableID)
 	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(fromSplitID))
-	fromSplit := splits.Get(key.New(fromSplitID)).(mappables.Split)
+	fromSplit := splits.Get(key.New(fromSplitID))
 	if fromSplit == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
-	fromSplit = fromSplit.Send(auxiliaryRequest.Split).(mappables.Split)
-	if fromSplit.GetSplit().LT(sdkTypes.ZeroDec()) {
+	fromSplit = fromSplit.(mappables.Split).Send(auxiliaryRequest.Split).(mappables.Split)
+	if fromSplit.(mappables.Split).GetSplit().LT(sdkTypes.ZeroDec()) {
 		return newAuxiliaryResponse(errors.NotAuthorized)
-	} else if fromSplit.GetSplit().Equal(sdkTypes.ZeroDec()) {
+	} else if fromSplit.(mappables.Split).GetSplit().Equal(sdkTypes.ZeroDec()) {
 		splits.Remove(fromSplit)
 	} else {
 		splits.Mutate(fromSplit)

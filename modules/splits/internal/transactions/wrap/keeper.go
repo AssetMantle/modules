@@ -37,11 +37,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	for _, coin := range message.Coins {
 		splitID := key.NewSplitID(message.FromID, base.NewID(coin.Denom))
 		splits := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(splitID))
-		split := splits.Get(key.New(splitID)).(mappables.Split)
+		split := splits.Get(key.New(splitID))
 		if split == nil {
 			splits.Add(mappable.NewSplit(splitID, sdkTypes.NewDecFromInt(coin.Amount)))
 		} else {
-			splits.Mutate(split.Receive(sdkTypes.NewDecFromInt(coin.Amount)).(mappables.Split))
+			splits.Mutate(split.(mappables.Split).Receive(sdkTypes.NewDecFromInt(coin.Amount)).(mappables.Split))
 		}
 	}
 	return newTransactionResponse(nil)
