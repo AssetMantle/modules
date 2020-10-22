@@ -69,7 +69,6 @@ func (module module) Name() string {
 	return module.name
 }
 func (module module) RegisterCodec(codec *codec.Codec) {
-	module.mapperPrototype().RegisterCodec(codec)
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterCodec(codec)
 	}

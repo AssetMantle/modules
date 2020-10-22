@@ -35,7 +35,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(message.AssetID))
-	asset := assets.Get(key.New(message.AssetID)).(mappables.InterNFT)
+	asset := assets.Get(key.New(message.AssetID))
 	if asset == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
@@ -46,15 +46,15 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	mutables := base.NewMutables(base.NewProperties(append(mutableProperties.GetList(), message.MutableProperties.GetList()...)...))
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.GetClassificationID(), nil, mutables)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetClassificationID(), nil, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, mutables)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetClassificationID(), message.FromID, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	assets.Mutate(mappable.NewAsset(asset.GetID(), asset.GetImmutables(), asset.GetMutables().Mutate(mutables.Get().GetList()...)))
+	assets.Mutate(mappable.NewAsset(asset.(mappables.InterNFT).GetID(), asset.(mappables.InterNFT).GetImmutables(), asset.(mappables.InterNFT).GetMutables().Mutate(mutables.Get().GetList()...)))
 	return newTransactionResponse(nil)
 }
 

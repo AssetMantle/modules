@@ -22,7 +22,5 @@ type Mapper interface {
 
 	StoreDecoder(*codec.Codec, kv.Pair, kv.Pair) string
 
-	RegisterCodec(*codec.Codec)
-
 	Initialize(*sdkTypes.KVStoreKey) Mapper
 }

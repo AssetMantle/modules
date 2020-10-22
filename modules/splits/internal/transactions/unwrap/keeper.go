@@ -35,14 +35,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	splitID := key.NewSplitID(message.FromID, message.OwnableID)
 	splits := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(splitID))
-	split := splits.Get(key.New(splitID)).(mappables.Split)
+	split := splits.Get(key.New(splitID))
 	if split == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
-	split = split.Send(message.Split).(mappables.Split)
-	if split.GetSplit().LT(sdkTypes.ZeroDec()) {
+	split = split.(mappables.Split).Send(message.Split).(mappables.Split)
+	if split.(mappables.Split).GetSplit().LT(sdkTypes.ZeroDec()) {
 		return newTransactionResponse(errors.InsufficientBalance)
-	} else if split.GetSplit().Equal(sdkTypes.ZeroDec()) {
+	} else if split.(mappables.Split).GetSplit().Equal(sdkTypes.ZeroDec()) {
 		splits.Remove(split)
 	} else {
 		splits.Mutate(split)

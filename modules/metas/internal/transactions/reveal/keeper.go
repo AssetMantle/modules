@@ -11,7 +11,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -26,7 +25,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	message := messageFromInterface(msg)
 	metaID := key.NewMetaID(base.NewID(message.MetaFact.GetData().GenerateHash()))
 	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(metaID))
-	meta := metas.Get(key.New(metaID)).(mappables.Meta)
+	meta := metas.Get(key.New(metaID))
 	if meta != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}

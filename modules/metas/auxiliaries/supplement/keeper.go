@@ -25,7 +25,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	var metaPropertyList []types.MetaProperty
 	for _, property := range auxiliaryRequest.PropertyList {
-		var meta mappables.Meta
+		var meta helpers.Mappable
 		if property.GetFact().GetHash() == "" {
 			var data types.Data
 			switch property.GetFact().GetType() {
@@ -42,10 +42,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 		} else {
 			metaID := base.NewID(property.GetFact().GetHash())
 			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(metaID))
-			meta = metas.Get(key.New(metaID)).(mappables.Meta)
+			meta = metas.Get(key.New(metaID))
 		}
 		if meta != nil {
-			metaPropertyList = append(metaPropertyList, base.NewMetaProperty(property.GetID(), base.NewMetaFact(meta.GetData())))
+			metaPropertyList = append(metaPropertyList, base.NewMetaProperty(property.GetID(), base.NewMetaFact(meta.(mappables.Meta).GetData())))
 		}
 	}
 	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList), nil)

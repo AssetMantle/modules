@@ -55,9 +55,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(orderID))
 
 	makerOwnableSplit := message.MakerOwnableSplit
-	order := orders.Get(key.New(orderID)).(mappables.Order)
+	order := orders.Get(key.New(orderID))
 	if order != nil {
-		metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetMakerOwnableSplit())))
+		metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetMakerOwnableSplit())))
 		if Error != nil {
 			return newTransactionResponse(Error)
 		}
@@ -86,7 +86,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	if order != nil {
-		orders.Mutate(mappable.NewOrder(orderID, immutables, order.GetMutables().Mutate(mutables.Get().GetList()...)))
+		orders.Mutate(mappable.NewOrder(orderID, immutables, order.(mappables.Order).GetMutables().Mutate(mutables.Get().GetList()...)))
 	} else {
 		orders.Add(mappable.NewOrder(orderID, immutables, mutables))
 	}

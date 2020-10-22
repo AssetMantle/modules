@@ -23,12 +23,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	maintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.IdentityID)
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(maintainerID))
-	maintainer := maintainers.Get(key.New(maintainerID)).(mappables.Maintainer)
+	maintainer := maintainers.Get(key.New(maintainerID))
 	if maintainer == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 	for _, maintainedProperty := range auxiliaryRequest.MaintainedMutables.Get().GetList() {
-		if !maintainer.MaintainsTrait(maintainedProperty.GetID()) {
+		if !maintainer.(mappables.Maintainer).MaintainsTrait(maintainedProperty.GetID()) {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 	}
