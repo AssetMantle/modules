@@ -72,15 +72,14 @@ func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
 	ownerID := base.NewID("ownerID")
 	ownableID := base.NewID("ownableID")
 
-	fromID := ownerID
 	toID := base.NewID("toID")
 	defaultSplitID := key.NewSplitID(ownerID, ownableID)
 	splits := sdkTypes.NewDec(123)
-	keepers.SplitsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(defaultSplitID, splits)).Add(mappable.NewSplit(key.NewSplitID(toID, ownableID), splits))
+	keepers.SplitsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(defaultSplitID, splits))
 
 	t.Run("PositiveCase - transfer to same ownable ID", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(fromID, toID, ownableID, sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, ownableID, sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -88,7 +87,7 @@ func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-0 Split transfer", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(fromID, toID, ownableID, sdkTypes.NewDec(0))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, ownableID, sdkTypes.NewDec(0))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -96,7 +95,7 @@ func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-No Split Present", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.EntityNotFound)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(fromID, toID, base.NewID("ownableIDNotPresent"), sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, base.NewID("ownableIDNotPresent"), sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -104,7 +103,7 @@ func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Transfer More than available splits", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(fromID, toID, ownableID, sdkTypes.NewDec(1234))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, ownableID, sdkTypes.NewDec(1234))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

@@ -70,8 +70,6 @@ func Test_Burn_Aux_Keeper_Help(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
 
-	//	defaultID:= base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
-
 	ownerID := base.NewID("ownerID")
 	ownableID := base.NewID("ownableID")
 

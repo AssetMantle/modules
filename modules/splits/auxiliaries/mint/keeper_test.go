@@ -73,8 +73,8 @@ func Test_Burn_Aux_Keeper_Help(t *testing.T) {
 	ownableID := base.NewID("ownableID")
 
 	defaultSplitID := key.NewSplitID(ownerID, ownableID)
-	//zxcasd:=key.ReadOwnerID()
 	splits := sdkTypes.NewDec(123)
+
 	keepers.SplitsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(defaultSplitID, splits))
 
 	t.Run("PositiveCase - Mint First Time", func(t *testing.T) {
