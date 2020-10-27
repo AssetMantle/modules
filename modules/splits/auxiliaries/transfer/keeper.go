@@ -22,7 +22,6 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
-
 	if auxiliaryRequest.Split.LTE(sdkTypes.ZeroDec()) {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
