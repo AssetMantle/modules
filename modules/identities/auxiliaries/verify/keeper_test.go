@@ -71,7 +71,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	return context, keepers
 }
 
-func Test_transactionKeeper_Transact(t *testing.T) {
+func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
 	defaultAddr := sdkTypes.AccAddress("addr")

@@ -66,24 +66,28 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 }
 
-func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
+func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
 
+	heightData, _ := base.ReadHeightData("")
+	decData, _ := base.ReadDecData("")
+
 	property1 := base.NewMetaProperty(base.NewID("id1"), base.NewMetaFact(base.NewStringData("")))
-	property2 := base.NewMetaProperty(base.NewID("id2"), base.NewMetaFact(base.NewHeightData(base.NewHeight(23))))
-	decSTr, _ := sdkTypes.NewDecFromStr("23")
-	property3 := base.NewMetaProperty(base.NewID("id3"), base.NewMetaFact(base.NewDecData(decSTr)))
-	property4 := base.NewMetaProperty(base.NewID("id4"), base.NewMetaFact(base.NewIDData(base.NewID("2344"))))
+	property2 := base.NewMetaProperty(base.NewID("id2"), base.NewMetaFact(heightData))
+	dec, _ := sdkTypes.NewDecFromStr("123")
+	property3 := base.NewMetaProperty(base.NewID("id3"), base.NewMetaFact(decData))
+	property4 := base.NewMetaProperty(base.NewID("id4"), base.NewMetaFact(base.NewIDData(base.NewID(""))))
+	property5 := base.NewMetaProperty(base.NewID("id5"), base.NewMetaFact(base.NewDecData(dec)))
 
 	var metaPropertyList []types.MetaProperty
-	metaPropertyList = append(metaPropertyList, property1, property2, property3, property4)
+	metaPropertyList = append(metaPropertyList, property1, property2, property3, property4, property5)
 
-	keepers.MetasKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(base.NewStringData("234"))).Add(mappable.NewMeta(base.NewHeightData(base.NewHeight(23)))).Add(mappable.NewMeta(base.NewDecData(decSTr))).Add(mappable.NewMeta(base.NewIDData(base.NewID("2344"))))
+	keepers.MetasKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(decData)).Add(mappable.NewMeta(base.NewDecData(dec)))
 
-	t.Run("PositiveCase - ", func(t *testing.T) {
+	t.Run("Positive Case", func(t *testing.T) {
 		want := newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList), nil)
-		if got := keepers.MetasKeeper.Help(context, NewAuxiliaryRequest(property1, property2, property3, property4)); !reflect.DeepEqual(got, want) {
+		if got := keepers.MetasKeeper.Help(context, NewAuxiliaryRequest(property1, property2, property3, property4, property5)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

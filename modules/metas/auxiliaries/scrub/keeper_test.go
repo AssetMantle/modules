@@ -71,7 +71,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 }
 
-func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
+func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
 

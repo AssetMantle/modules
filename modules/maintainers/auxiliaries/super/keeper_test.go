@@ -1,4 +1,4 @@
-package mint
+package super
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -6,9 +6,10 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -22,7 +23,7 @@ import (
 )
 
 type TestKeepers struct {
-	SplitsKeeper helpers.AuxiliaryKeeper
+	MaintainersKeeper helpers.AuxiliaryKeeper
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
@@ -58,35 +59,34 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		SplitsKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
+		MaintainersKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
 
 	return context, keepers
-
 }
 
-func Test_Burn_Aux_Keeper_Help(t *testing.T) {
+func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
 
-	ownerID := base.NewID("ownerID")
-	ownableID := base.NewID("ownableID")
+	classificationID := base.NewID("classificationID")
+	identityID := base.NewID("identityID")
 
-	defaultSplitID := key.NewSplitID(ownerID, ownableID)
-	splits := sdkTypes.NewDec(123)
+	maintainedModules := base.NewMutables(base.NewProperties())
+	maintainerID := key.NewMaintainerID(classificationID, identityID)
+	keepers.MaintainersKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, maintainedModules, false, false, false))
 
-	keepers.SplitsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(defaultSplitID, splits))
-
-	t.Run("PositiveCase - Mint First Time", func(t *testing.T) {
+	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, ownableID, splits)); !reflect.DeepEqual(got, want) {
+		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(base.NewID("classficationID1"), base.NewID("identityID1"), base.NewMutables(base.NewProperties()))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	t.Run("PositiveCase - Mint 2nd Time", func(t *testing.T) {
-		want := newAuxiliaryResponse(nil)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(base.NewID("ownerID1"), base.NewID("ownableID1"), sdkTypes.NewDec(12))); !reflect.DeepEqual(got, want) {
+	t.Run("NegativeCase-Maintainer not present", func(t *testing.T) {
+		t.Parallel()
+		want := newAuxiliaryResponse(errors.EntityAlreadyExists)
+		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(classificationID, identityID, maintainedModules)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

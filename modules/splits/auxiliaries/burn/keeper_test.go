@@ -73,14 +73,25 @@ func Test_Burn_Aux_Keeper_Help(t *testing.T) {
 	ownerID := base.NewID("ownerID")
 	ownableID := base.NewID("ownableID")
 
-	defaultSplitID := key.NewSplitID(ownerID, ownableID)
-	splits := sdkTypes.NewDec(123)
+	ownerID2 := base.NewID("ownerID2")
+	ownableID2 := base.NewID("ownableID2")
 
-	keepers.SplitsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(defaultSplitID, splits))
+	splitID := key.NewSplitID(ownerID, ownableID)
+	splitID2 := key.NewSplitID(ownerID2, ownableID2)
+	splits := sdkTypes.NewDec(10)
 
-	t.Run("PositiveCase", func(t *testing.T) {
+	keepers.SplitsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(splitID, splits)).Add(mappable.NewSplit(splitID2, splits))
+
+	t.Run("PositiveCase- mutate split", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, ownableID, splits)); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, ownableID, sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("PositiveCase- remove split", func(t *testing.T) {
+		want := newAuxiliaryResponse(nil)
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID2, ownableID2, sdkTypes.NewDec(10))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -93,7 +104,7 @@ func Test_Burn_Aux_Keeper_Help(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase-No Balance", func(t *testing.T) {
+	t.Run("NegativeCase-Insufficient Balance", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.InsufficientBalance)
 		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, ownableID, sdkTypes.NewDec(1234))); !reflect.DeepEqual(got, want) {
