@@ -2,36 +2,27 @@ package key
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"reflect"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
-func Test_IdentityID_Help(t *testing.T) {
+func Test_IdentityID_Methods(t *testing.T) {
 
 	classificationID := base.NewID("classificationID")
 	hashID := base.NewID("hashID")
 	testIdentityID := NewIdentityID(classificationID, hashID)
 	testIdentityID2 := NewIdentityID(classificationID, base.NewID(""))
+	key := New(testIdentityID)
 
-	t.Run("PositiveCase - is Partial check false", func(t *testing.T) {
-		want := false
-		if got := testIdentityID.(identityID).IsPartial(); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("PositiveCase - is Partial check true", func(t *testing.T) {
-		want := true
-		if got := testIdentityID2.(identityID).IsPartial(); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("PositiveCase - Equal Check", func(t *testing.T) {
-		want := false
-		if got := testIdentityID2.(identityID).Equals(testIdentityID); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
+	require.Equal(t, testIdentityID, identityID{ClassificationID: classificationID, HashID: hashID})
+	require.Equal(t, New(testIdentityID), identityIDFromInterface(testIdentityID))
+	require.Equal(t, testIdentityID.(identityID).IsPartial(), false)
+	require.Equal(t, testIdentityID2.(identityID).IsPartial(), true)
+	require.Equal(t, testIdentityID2.(identityID).Equals(testIdentityID), false)
+	require.Equal(t, testIdentityID.(identityID).Matches(key), true)
+	require.Equal(t, testIdentityID.(identityID).Matches(New(base.NewID("id"))), false)
+	require.Equal(t, testIdentityID.(identityID).Bytes(), append(classificationID.Bytes(), hashID.Bytes()...))
+	require.Equal(t, readIdentityID(testIdentityID.(identityID).String()), testIdentityID)
+	require.Equal(t, identityIDFromInterface(testIdentityID.(identityID)), testIdentityID.(identityID))
+	require.Equal(t, identityIDFromInterface(base.NewID("id")), identityID{ClassificationID: base.NewID(""), HashID: base.NewID("")})
 }
