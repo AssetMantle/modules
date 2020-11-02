@@ -54,7 +54,7 @@ func (DecData decData) Get() interface{} {
 func (DecData decData) Equal(data types.Data) bool {
 	switch value := data.(type) {
 	case decData:
-		return value.Equal(DecData)
+		return value.Value.Equal(DecData.Value)
 	default:
 		return false
 	}
