@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package verify
+package scrub
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -11,13 +11,13 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
@@ -28,11 +28,10 @@ import (
 )
 
 type TestKeepers struct {
-	IdentitiesKeeper helpers.AuxiliaryKeeper
+	MetasKeeper helpers.AuxiliaryKeeper
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
-
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
@@ -65,41 +64,23 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		IdentitiesKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
+		MetasKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
 
 	return context, keepers
+
 }
 
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
-	defaultAddr := sdkTypes.AccAddress("addr")
-	unprovisionedAddr := sdkTypes.AccAddress("unProvisionedAddr")
-	defaultClassificationID := base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
-	defaultIdentityID := key.NewIdentityID(defaultClassificationID, base.NewID("d0Jhri_bOd3EEPXpyPUpNpGiQ1U="))
-	keepers.IdentitiesKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(defaultIdentityID, []sdkTypes.AccAddress{defaultAddr},
-		[]sdkTypes.AccAddress{unprovisionedAddr}, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
 
-	t.Run("PositiveCase", func(t *testing.T) {
-		want := newAuxiliaryResponse(nil)
-		if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(defaultAddr, defaultIdentityID)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
+	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewMetaFact(base.NewStringData("Data")))
+	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty})
 
-	t.Run("NegativeCase-Nil Identity", func(t *testing.T) {
-		t.Parallel()
-		want := newAuxiliaryResponse(errors.EntityNotFound)
-		if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(defaultAddr, base.NewID("id"))); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase-Unprovisioned Address", func(t *testing.T) {
-		t.Parallel()
-		want := newAuxiliaryResponse(errors.NotAuthorized)
-		if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(unprovisionedAddr, defaultIdentityID)); !reflect.DeepEqual(got, want) {
+	t.Run("PositiveCase - ", func(t *testing.T) {
+		want := newAuxiliaryResponse(metaPropertyList.RemoveData(), nil)
+		if got := keepers.MetasKeeper.Help(context, NewAuxiliaryRequest(metaProperty)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

@@ -1,9 +1,4 @@
-/*
- Copyright [2019] - [2020], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
-
-package verify
+package transfer
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -12,9 +7,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -28,11 +23,10 @@ import (
 )
 
 type TestKeepers struct {
-	IdentitiesKeeper helpers.AuxiliaryKeeper
+	SplitsKeeper helpers.AuxiliaryKeeper
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
-
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
@@ -65,43 +59,52 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		IdentitiesKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
+		SplitsKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
 
 	return context, keepers
+
 }
 
-func Test_Auxiliary_Keeper_Help(t *testing.T) {
+func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
-	defaultAddr := sdkTypes.AccAddress("addr")
-	unprovisionedAddr := sdkTypes.AccAddress("unProvisionedAddr")
-	defaultClassificationID := base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
-	defaultIdentityID := key.NewIdentityID(defaultClassificationID, base.NewID("d0Jhri_bOd3EEPXpyPUpNpGiQ1U="))
-	keepers.IdentitiesKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(defaultIdentityID, []sdkTypes.AccAddress{defaultAddr},
-		[]sdkTypes.AccAddress{unprovisionedAddr}, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
+	ownerID := base.NewID("ownerID")
+	ownableID := base.NewID("ownableID")
 
-	t.Run("PositiveCase", func(t *testing.T) {
+	toID := base.NewID("toID")
+	defaultSplitID := key.NewSplitID(ownerID, ownableID)
+	splits := sdkTypes.NewDec(123)
+	keepers.SplitsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(defaultSplitID, splits))
+
+	t.Run("PositiveCase - transfer to same ownable ID", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
-		if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(defaultAddr, defaultIdentityID)); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, ownableID, sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	t.Run("NegativeCase-Nil Identity", func(t *testing.T) {
-		t.Parallel()
-		want := newAuxiliaryResponse(errors.EntityNotFound)
-		if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(defaultAddr, base.NewID("id"))); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase-Unprovisioned Address", func(t *testing.T) {
+	t.Run("NegativeCase-0 Split transfer", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
-		if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(unprovisionedAddr, defaultIdentityID)); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, ownableID, sdkTypes.NewDec(0))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
+	t.Run("NegativeCase-No Split Present", func(t *testing.T) {
+		t.Parallel()
+		want := newAuxiliaryResponse(errors.EntityNotFound)
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, base.NewID("ownableIDNotPresent"), sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("NegativeCase-Transfer More than available splits", func(t *testing.T) {
+		t.Parallel()
+		want := newAuxiliaryResponse(errors.NotAuthorized)
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, ownableID, sdkTypes.NewDec(1234))); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
 }
