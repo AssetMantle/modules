@@ -34,18 +34,18 @@ func orderIDFromInterface(id types.ID) orderID {
 	}
 }
 
-func ReadClassificationID(assetID types.ID) types.ID {
-	return orderIDFromInterface(assetID).ClassificationID
+func ReadClassificationID(orderID types.ID) types.ID {
+	return orderIDFromInterface(orderID).ClassificationID
 }
 
-func ReadMakerOwnableID(assetID types.ID) types.ID {
-	return orderIDFromInterface(assetID).MakerOwnableID
+func ReadMakerOwnableID(orderID types.ID) types.ID {
+	return orderIDFromInterface(orderID).MakerOwnableID
 }
 
-func ReadTakerOwnableID(assetID types.ID) types.ID {
-	return orderIDFromInterface(assetID).TakerOwnableID
+func ReadTakerOwnableID(orderID types.ID) types.ID {
+	return orderIDFromInterface(orderID).TakerOwnableID
 }
 
-func ReadMakerID(assetID types.ID) types.ID {
-	return orderIDFromInterface(assetID).MakerID
+func ReadMakerID(orderID types.ID) types.ID {
+	return orderIDFromInterface(orderID).MakerID
 }
