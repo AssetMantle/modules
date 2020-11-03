@@ -27,11 +27,7 @@ func (metaProperties metaProperties) GetMetaProperty(id types.ID) types.MetaProp
 }
 
 func (metaProperties metaProperties) GetMetaPropertyList() []types.MetaProperty {
-	var metaPropertyList []types.MetaProperty
-	for _, metaProperty := range metaProperties.MetaPropertyList {
-		metaPropertyList = append(metaPropertyList, metaProperty)
-	}
-	return metaPropertyList
+	return metaProperties.MetaPropertyList
 }
 
 func (metaProperties metaProperties) AddMetaProperty(metaProperty types.MetaProperty) types.MetaProperties {
