@@ -47,8 +47,6 @@ func Test_DecData(t *testing.T) {
 	require.Equal(t, decData{Value: sdkTypes.NewDec(123)}, data)
 	require.Nil(t, error)
 
-	//The Equal method is written incorrectly for maybe all data . Its calling itself recursively
-
 	require.Equal(t, false, testDecData.Equal(NewStringData("")))
 	require.Equal(t, true, testDecData.Equal(NewDecData(sdkTypes.NewDec(12))))
 

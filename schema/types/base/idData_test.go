@@ -40,8 +40,6 @@ func Test_IDData(t *testing.T) {
 	require.Equal(t, idData{Value: id{IDString: "testString"}}, data)
 	require.Nil(t, error)
 
-	//The Equal method is written incorrectly for maybe all data . Its calling itself recursively
-
 	require.Equal(t, false, testIDData.Equal(NewStringData("")))
 	require.Equal(t, true, testIDData.Equal(testIDData))
 

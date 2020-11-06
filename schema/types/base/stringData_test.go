@@ -40,8 +40,6 @@ func Test_StringData(t *testing.T) {
 	require.Equal(t, stringData{Value: "testString"}, data)
 	require.Nil(t, error)
 
-	//The Equal method is written incorrectly for maybe all data . Its calling itself recursively
-
-	//require.Equal(t, false, testStringData.Equal(testStringData2))
-	//require.Equal(t, true, testStringData.Equal(testStringData))
+	require.Equal(t, false, testStringData.Equal(testStringData2))
+	require.Equal(t, true, testStringData.Equal(testStringData))
 }

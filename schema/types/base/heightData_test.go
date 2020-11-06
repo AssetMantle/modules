@@ -47,8 +47,6 @@ func Test_HeightData(t *testing.T) {
 	require.Equal(t, heightData{Value: height{Height: 123}}, data)
 	require.Nil(t, error)
 
-	//The Equal method is written incorrectly for maybe all data . Its calling itself recursively
-
 	require.Equal(t, false, testHeightData.Equal(NewStringData("")))
 	require.Equal(t, true, testHeightData.Equal(NewHeightData(NewHeight(123))))
 
