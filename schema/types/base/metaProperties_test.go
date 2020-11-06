@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func Test_MetaProperties_Data(t *testing.T) {
+func Test_MetaProperties(t *testing.T) {
 	testMetaProperty := NewMetaProperty(NewID("ID"), NewMetaFact(NewHeightData(NewHeight(123))))
 	testMetaProperty2 := NewMetaProperty(NewID("ID2"), NewMetaFact(NewStringData("Data")))
 	testMetaPropertyList := []types.MetaProperty{testMetaProperty}
@@ -32,11 +32,10 @@ func Test_MetaProperties_Data(t *testing.T) {
 	require.Equal(t, []types.Property{testMetaProperty}, testMetaProperties.GetList())
 
 	newTestMetaProperties2 := testMetaProperties.Add(newProperty)
-	propertyMutated := NewProperty(NewID("ID3"), NewFact(NewDecData(sdkTypes.NewDec(34))))
+	propertyMutated := NewProperty(NewID("ID"), NewFact(NewDecData(sdkTypes.NewDec(34))))
 	require.Equal(t, properties{PropertyList: []types.Property{testMetaProperty, newProperty}}, newTestMetaProperties2)
-	require.Equal(t, properties{PropertyList: []types.Property{newProperty}}, newTestMetaProperties.Remove(testMetaProperty))
-	require.Equal(t, properties{PropertyList: []types.Property{testMetaProperty, propertyMutated}}, newTestMetaProperties2.Mutate(propertyMutated))
-	require.Equal(t, properties{PropertyList: []types.Property{testMetaProperty, newProperty}}, newTestMetaProperties2.(metaProperties).RemoveData())
-	//require.Equal(t, )
-	//require.Equal(t, properties{})
+	require.Equal(t, properties{PropertyList: []types.Property{testMetaProperty2}}, newTestMetaProperties.Remove(testMetaProperty))
+	require.Equal(t, properties{PropertyList: []types.Property{propertyMutated, testMetaProperty2}}, newTestMetaProperties.Mutate(propertyMutated))
+	require.Equal(t, properties{PropertyList: []types.Property{testMetaProperty.RemoveData(), testMetaProperty2.RemoveData()}}, newTestMetaProperties.RemoveData())
+
 }

@@ -26,7 +26,7 @@ func (metaFact metaFact) GetHash() string        { return metaFact.Data.Generate
 func (metaFact metaFact) GetType() string {
 	switch metaFact.Data.(type) {
 	case decData:
-		return IDType
+		return DecType
 	case heightData:
 		return HeightType
 	case idData:

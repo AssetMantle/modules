@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func Test_Height_Data(t *testing.T) {
+func Test_HeightData(t *testing.T) {
 
 	heightValue := NewHeight(123)
 	testHeightData := NewHeightData(heightValue)
@@ -49,7 +49,7 @@ func Test_Height_Data(t *testing.T) {
 
 	//The Equal method is written incorrectly for maybe all data . Its calling itself recursively
 
-	//require.Equal(t, false, testHeightData.Equal(NewStringData("")))
-	//require.Equal(t, true, testHeightData.Equal(NewHeightData(sdkTypes.NewHeight(12))))
+	require.Equal(t, false, testHeightData.Equal(NewStringData("")))
+	require.Equal(t, true, testHeightData.Equal(NewHeightData(NewHeight(123))))
 
 }

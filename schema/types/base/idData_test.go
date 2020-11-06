@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func Test_ID_Data_Data(t *testing.T) {
+func Test_IDData(t *testing.T) {
 
 	idValue := NewID("ID")
 	testIDData := NewIDData(idValue)
@@ -42,7 +42,7 @@ func Test_ID_Data_Data(t *testing.T) {
 
 	//The Equal method is written incorrectly for maybe all data . Its calling itself recursively
 
-	//require.Equal(t, false, testIDData.Equal(NewStringData("")))
-	//require.Equal(t, true, testIDData.Equal(NewIDData(sdkTypes.NewID(12))))
+	require.Equal(t, false, testIDData.Equal(NewStringData("")))
+	require.Equal(t, true, testIDData.Equal(testIDData))
 
 }

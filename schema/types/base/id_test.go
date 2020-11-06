@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func Test_ID_Data(t *testing.T) {
+func Test_ID(t *testing.T) {
 	testID := NewID("ID")
 
 	require.Equal(t, id{IDString: "ID"}, testID)

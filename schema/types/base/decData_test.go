@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func Test_Dec_Data(t *testing.T) {
+func Test_DecData(t *testing.T) {
 
 	decValue := sdkTypes.NewDec(12)
 	testDecData := NewDecData(decValue)
@@ -49,7 +49,7 @@ func Test_Dec_Data(t *testing.T) {
 
 	//The Equal method is written incorrectly for maybe all data . Its calling itself recursively
 
-	//require.Equal(t, false, testDecData.Equal(NewStringData("")))
-	//require.Equal(t, true, testDecData.Equal(NewDecData(sdkTypes.NewDec(12))))
+	require.Equal(t, false, testDecData.Equal(NewStringData("")))
+	require.Equal(t, true, testDecData.Equal(NewDecData(sdkTypes.NewDec(12))))
 
 }
