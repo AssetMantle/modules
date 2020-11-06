@@ -28,7 +28,7 @@ func (baseSignature signature) Verify(pubKey crypto.PubKey, bytes []byte) bool {
 	return pubKey.VerifyBytes(bytes, baseSignature.Bytes())
 }
 func (baseSignature signature) GetValidityHeight() types.Height {
-	return baseSignature.GetValidityHeight()
+	return baseSignature.ValidityHeight
 }
 func (baseSignature signature) HasExpired(height types.Height) bool {
 	return baseSignature.GetValidityHeight().IsGreaterThan(height)

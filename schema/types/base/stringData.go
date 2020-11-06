@@ -54,7 +54,7 @@ func (StringData stringData) Get() interface{} {
 func (StringData stringData) Equal(data types.Data) bool {
 	switch value := data.(type) {
 	case stringData:
-		return value.Equal(StringData)
+		return value.Value == StringData.Value
 	default:
 		return false
 	}
