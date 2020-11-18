@@ -21,6 +21,7 @@ func Test_MaintainerID_Methods(t *testing.T) {
 	require.Equal(t, false, testMaintainerID.Equals(maintainerID{ClassificationID: base.NewID(""), IdentityID: base.NewID("")}))
 	require.Equal(t, true, testMaintainerID.Matches(testMaintainerID))
 	require.Equal(t, false, testMaintainerID.Matches(maintainerID{ClassificationID: base.NewID(""), IdentityID: base.NewID("")}))
+	require.Equal(t, false, testMaintainerID.Matches(nil))
 	require.Equal(t, testMaintainerID, New(testMaintainerID))
 	require.Equal(t, maintainerID{ClassificationID: base.NewID(""), IdentityID: base.NewID("")}, New(base.NewID("")))
 	require.Equal(t, testMaintainerID, readMaintainerID(testMaintainerID.String()))

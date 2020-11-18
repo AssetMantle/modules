@@ -18,6 +18,7 @@ func Test_ClassificationID_Methods(t *testing.T) {
 	require.Equal(t, classificationID{ChainID: chainID, HashID: base.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), immutables.GetHashID().String()))}, testClassificationID)
 	require.Equal(t, strings.Join([]string{chainID.String(), base.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), immutables.GetHashID().String())).String()}, constants.IDSeparator), testClassificationID.String())
 	require.Equal(t, false, testClassificationID.Matches(classificationID{ChainID: base.NewID("chainID"), HashID: base.NewID("hashID")}))
+	require.Equal(t, false, testClassificationID.Matches(nil))
 	require.Equal(t, false, testClassificationID.Equals(base.NewID("id")))
 	require.Equal(t, true, testClassificationID.Equals(testClassificationID))
 	require.Equal(t, false, testClassificationID.IsPartial())

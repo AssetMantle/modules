@@ -17,6 +17,7 @@ func Test_MetaID_Methods(t *testing.T) {
 	require.Equal(t, true, metaID{HashID: base.NewID("")}.IsPartial())
 	require.Equal(t, true, testMetaID.Matches(testMetaID))
 	require.Equal(t, false, testMetaID.Matches(metaID{HashID: base.NewID("tempHash")}))
+	require.Equal(t, false, testMetaID.Matches(nil))
 	require.Equal(t, testMetaID, New(testMetaID))
 	require.Equal(t, NewMetaID(base.NewID("")), New(base.NewID("")))
 }

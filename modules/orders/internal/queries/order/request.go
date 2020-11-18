@@ -16,7 +16,7 @@ import (
 )
 
 type queryRequest struct {
-	OrderID types.ID `json:"orderID" valid:"required field orderID missing"`
+	OrderID types.ID `json:"orderID" valid:"required~required field orderID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
