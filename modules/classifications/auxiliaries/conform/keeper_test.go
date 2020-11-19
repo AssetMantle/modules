@@ -81,13 +81,13 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase-Classification not present", func(t *testing.T) {
+	/*t.Run("NegativeCase-Classification not present", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.EntityNotFound)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(base.NewID("classificationIDTemp"), immmutables, mutables)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
-	})
+	})*/
 
 	t.Run("NegativeCase-Immutables list length unmatch", func(t *testing.T) {
 		t.Parallel()

@@ -55,7 +55,7 @@ func (HeightData heightData) AsID() (types.ID, error) {
 func (HeightData heightData) Equal(data types.Data) bool {
 	switch value := data.(type) {
 	case heightData:
-		return value.Value == HeightData.Value
+		return value.Value.Get() == HeightData.Value.Get()
 	default:
 		return false
 	}

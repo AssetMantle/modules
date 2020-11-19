@@ -20,6 +20,7 @@ func Test_AssetID_Methods(t *testing.T) {
 	require.Equal(t, true, testAssetID.Equals(testAssetID))
 	require.Equal(t, false, testAssetID.Equals(assetID{ClassificationID: classificationID, HashID: base.NewID("")}))
 	require.Equal(t, true, testAssetID.Matches(testAssetID))
+	require.Equal(t, false, testAssetID.Matches(nil))
 	require.Equal(t, false, testAssetID.Matches(assetID{ClassificationID: classificationID, HashID: base.NewID("")}))
 	require.Equal(t, testAssetID, New(testAssetID))
 	require.Equal(t, assetID{ClassificationID: base.NewID(""), HashID: base.NewID("")}, New(base.NewID("")))

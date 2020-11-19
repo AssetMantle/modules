@@ -25,6 +25,7 @@ func Test_OrderID_Methods(t *testing.T) {
 	require.Equal(t, false, testOrderID.IsPartial())
 	require.Equal(t, true, testOrderID.Matches(testOrderID))
 	require.Equal(t, false, testOrderID.Matches(testOrderID2))
+	require.Equal(t, false, testOrderID.Matches(nil))
 	require.Equal(t, testOrderID, New(testOrderID))
 	require.Equal(t, orderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}, New(base.NewID("")))
 	require.Equal(t, testOrderID, New(base.NewID(classificationID.String()+constants.SecondOrderCompositeIDSeparator+makerOwnableID.String()+constants.SecondOrderCompositeIDSeparator+takerOwnableID.String()+constants.SecondOrderCompositeIDSeparator+makerID.String()+constants.SecondOrderCompositeIDSeparator+immutables.GetHashID().String())))
