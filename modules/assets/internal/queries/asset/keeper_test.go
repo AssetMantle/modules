@@ -5,10 +5,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
@@ -18,7 +19,15 @@ import (
 	"testing"
 )
 
-func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Mapper) {
+/*func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Mapper) {
+
+
+	//return context, mapper
+}*/
+
+func Test_keeper_Asset(t *testing.T) {
+
+	//context, mapper := CreateTestInput2(t)
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
@@ -43,13 +52,12 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Mapper) {
 	}, false, log.NewNopLogger())
 
 	mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
-
-	return context, mapper
-}
-
-func Test_keeper_Asset(t *testing.T) {
-
-	context, mapper := CreateTestInput2(t)
+	paramsKeeper := params.NewKeeper(
+		Codec,
+		paramsStoreKey,
+		paramsTransientStoreKeys,
+	)
+	Parameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
 
 	testQueryKeeper := keeperPrototype()
 
@@ -62,8 +70,10 @@ func Test_keeper_Asset(t *testing.T) {
 	assetID := key.NewAssetID(classificationID, base.NewImmutables(immutableTraits))
 	mapper.NewCollection(context).Add(mappable.NewAsset(assetID, base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits)))
 
+	//mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+
 	testQueryRequest := newQueryRequest(assetID)
-	testQueryKeeper.Initialize(mapper, nil, nil)
-	require.Equal(t, 123, testQueryKeeper.Enquire(context, testQueryRequest))
+	testQueryKeeper.Initialize(mapper, Parameters, nil)
+	require.Equal(t, queryResponse{Success: true, Error: nil, List: mapper.NewCollection(context).Fetch(key.New(assetID)).GetList()}, testQueryKeeper.Enquire(context, testQueryRequest))
 
 }
