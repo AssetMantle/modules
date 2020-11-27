@@ -25,6 +25,7 @@ func Test_MetaFact(t *testing.T) {
 	require.Equal(t, DecType, NewMetaFact(decData).GetType())
 	require.Equal(t, IDType, NewMetaFact(idData).GetType())
 	require.Equal(t, HeightType, NewMetaFact(heightData).GetType())
+	require.Equal(t, "", metaFact{Data: nil, Signatures: signatures{}}.GetType())
 
 	readMetaFact, error := ReadMetaFact("S|testString")
 	require.Equal(t, testMetaFact, readMetaFact)
@@ -43,8 +44,12 @@ func Test_MetaFact(t *testing.T) {
 	require.Equal(t, NewMetaFact(decData), readMetaFact4)
 	require.Nil(t, error)
 
-	readMetaFact5, error := ReadMetaFact("randomString")
+	readMetaFact5, error := ReadMetaFact("Z|12.0")
 	require.Equal(t, nil, readMetaFact5)
+	require.Equal(t, errors.UnsupportedParameter, error)
+
+	readMetaFact6, error := ReadMetaFact("randomString")
+	require.Equal(t, nil, readMetaFact6)
 	require.Equal(t, errors.IncorrectFormat, error)
 
 }

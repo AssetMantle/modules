@@ -24,7 +24,11 @@ func (properties properties) Get(id types.ID) types.Property {
 	return nil
 }
 func (properties properties) GetList() []types.Property {
-	return properties.PropertyList
+	var propertyList []types.Property
+	for _, baseProperty := range properties.PropertyList {
+		propertyList = append(propertyList, baseProperty)
+	}
+	return propertyList
 }
 func (properties properties) Add(property types.Property) types.Properties {
 	propertyList := properties.GetList()

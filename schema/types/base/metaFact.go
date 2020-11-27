@@ -67,7 +67,7 @@ func ReadMetaFact(DataTypeAndString string) (types.MetaFact, error) {
 		case StringType:
 			data, Error = ReadStringData(dataString)
 		default:
-			return nil, errors.UnsupportedParameter
+			data, Error = nil, errors.UnsupportedParameter
 		}
 		if Error != nil {
 			return nil, Error

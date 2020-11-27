@@ -15,6 +15,7 @@ func Test_Properties(t *testing.T) {
 
 	require.Equal(t, properties{PropertyList: []types.Property{testProperty, testProperty2}}, testProperties)
 	require.Equal(t, testProperty, testProperties.Get(NewID("ID")))
+	require.Equal(t, nil, testProperties.Get(NewID("RandomID")))
 	require.Equal(t, []types.Property{testProperty, testProperty2}, testProperties.GetList())
 
 	newProperty := NewProperty(NewID("ID3"), NewFact(NewDecData(sdkTypes.NewDec(12))))

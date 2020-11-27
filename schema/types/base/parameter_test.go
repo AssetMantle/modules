@@ -17,8 +17,14 @@ func Test_Parameter(t *testing.T) {
 
 	testParameter := NewParameter(id, data, validator)
 	//require.Equal(t,parameter{ID: id,Data: data,validator: validator},testParameter)
+	/*t.Run("PositiveCase", func(t *testing.T) {
+		want := parameter{ID: id,Data: data,validator: validator}
+		if got := testParameter; !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})*/
 	require.Equal(t, id, testParameter.GetID())
-	//require.Equal(t,true,testParameter.Equal(testParameter))
+	require.Equal(t, true, testParameter.Equal(testParameter))
 	require.Equal(t, errors.ErrKeyIncorrect, testParameter.Validate())
 	require.Equal(t, data, testParameter.GetData())
 
