@@ -18,7 +18,12 @@ type queryKeeper struct {
 var _ helpers.QueryKeeper = (*queryKeeper)(nil)
 
 func (queryKeeper queryKeeper) Enquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
-	return newQueryResponse(queryKeeper.mapper.NewCollection(context).Fetch(key.New(queryRequestFromInterface(queryRequest).AssetID)), nil)
+
+	assetID := queryRequestFromInterface(queryRequest).AssetID
+	keyAsset := key.New(assetID)
+
+	testCollection := queryKeeper.mapper.NewCollection(context).Fetch(keyAsset)
+	return newQueryResponse(testCollection, nil)
 }
 
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

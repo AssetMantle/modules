@@ -1,4 +1,4 @@
-package asset
+package split
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -6,9 +6,9 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -57,18 +57,16 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 	return context, testQueryKeeper
 }
 
-func Test_Query_Keeper_Asset(t *testing.T) {
+func Test_Query_Keeper_Split(t *testing.T) {
 
 	context, keepers := CreateTestInput2(t)
-	immutableTraits, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, Error)
-	mutableTraits, Error := base.ReadProperties("burn:S|100")
-	require.Equal(t, nil, Error)
-	classificationID := base.NewID("ClassificationID")
-	assetID := key.NewAssetID(classificationID, base.NewImmutables(immutableTraits))
-	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewAsset(assetID, base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits)))
 
-	testQueryRequest := newQueryRequest(assetID)
-	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.New(assetID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
+	ownerID := base.NewID("ownerID")
+	ownableID := base.NewID("ownableID")
+	splitID := key.NewSplitID(ownerID, ownableID)
+	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(splitID, sdkTypes.NewDec(123)))
+
+	testQueryRequest := newQueryRequest(splitID)
+	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.New(splitID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
 
 }
