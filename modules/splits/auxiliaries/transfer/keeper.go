@@ -26,8 +26,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
 	fromSplitID := key.NewSplitID(auxiliaryRequest.FromID, auxiliaryRequest.OwnableID)
-	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(fromSplitID))
-	fromSplit := splits.Get(key.New(fromSplitID))
+	splits := auxiliaryKeeper.mapper.NewCollection(context)
+	fromSplit := splits.Fetch(key.New(fromSplitID)).Get(key.New(fromSplitID))
 	if fromSplit == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
@@ -41,8 +41,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	}
 
 	toSplitID := key.NewSplitID(auxiliaryRequest.ToID, auxiliaryRequest.OwnableID)
-	toSplit := splits.Fetch(key.New(toSplitID)).Get(key.New(toSplitID)).(mappables.Split)
-	if toSplit == nil {
+	toSplit, ok := splits.Fetch(key.New(toSplitID)).Get(key.New(toSplitID)).(mappables.Split)
+	if !ok {
 		splits.Add(mappable.NewSplit(toSplitID, auxiliaryRequest.Split))
 	} else {
 		splits.Mutate(toSplit.Receive(auxiliaryRequest.Split).(mappables.Split))
