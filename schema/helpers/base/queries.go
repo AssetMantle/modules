@@ -23,7 +23,11 @@ func (queries queries) Get(name string) helpers.Query {
 }
 
 func (queries queries) GetList() []helpers.Query {
-	return queries.queriesList
+	var queryList []helpers.Query
+	for _, query := range queries.queriesList {
+		queryList = append(queryList, query)
+	}
+	return queryList
 }
 
 func NewQueries(queriesList ...helpers.Query) helpers.Queries {

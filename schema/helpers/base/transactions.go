@@ -23,7 +23,11 @@ func (transactions transactions) Get(name string) helpers.Transaction {
 }
 
 func (transactions transactions) GetList() []helpers.Transaction {
-	return transactions.transactionList
+	var transactionList []helpers.Transaction
+	for _, transaction := range transactions.transactionList {
+		transactionList = append(transactionList, transaction)
+	}
+	return transactionList
 }
 
 func NewTransactions(transactionList ...helpers.Transaction) helpers.Transactions {

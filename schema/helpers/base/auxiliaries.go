@@ -23,7 +23,11 @@ func (auxiliaries auxiliaries) Get(name string) helpers.Auxiliary {
 }
 
 func (auxiliaries auxiliaries) GetList() []helpers.Auxiliary {
-	return auxiliaries.auxiliaryList
+	var auxiliaryList []helpers.Auxiliary
+	for _, auxiliary := range auxiliaries.auxiliaryList {
+		auxiliaryList = append(auxiliaryList, auxiliary)
+	}
+	return auxiliaryList
 }
 
 func NewAuxiliaries(auxiliaryList ...helpers.Auxiliary) helpers.Auxiliaries {

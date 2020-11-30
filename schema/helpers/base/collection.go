@@ -30,7 +30,11 @@ func (collection collection) Get(key helpers.Key) helpers.Mappable {
 	return nil
 }
 func (collection collection) GetList() []helpers.Mappable {
-	return collection.List
+	var mappableList []helpers.Mappable
+	for _, mappable := range collection.List {
+		mappableList = append(mappableList, mappable)
+	}
+	return mappableList
 }
 func (collection collection) Fetch(key helpers.Key) helpers.Collection {
 	var mappableList []helpers.Mappable
