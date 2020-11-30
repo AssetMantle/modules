@@ -14,10 +14,9 @@ func Test_MetaProperties(t *testing.T) {
 	testMetaProperties := NewMetaProperties(testMetaPropertyList)
 
 	require.Equal(t, metaProperties{MetaPropertyList: testMetaPropertyList}, testMetaProperties)
-	require.Equal(t, testMetaProperty, testMetaProperties.Get(NewID("ID")))
+	require.Equal(t, testMetaProperty, testMetaProperties.GetMetaProperty(NewID("ID")))
 
-	//The GetMetaProperty method is buggy needs to be fixed
-	//require.Equal(t, nil,testMetaProperty,testMetaProperties.GetMetaProperty(NewID("randomID")))
+	require.Equal(t, nil, testMetaProperties.GetMetaProperty(NewID("randomID")))
 	require.Equal(t, testMetaPropertyList, testMetaProperties.GetMetaPropertyList())
 
 	newTestMetaProperties := testMetaProperties.AddMetaProperty(testMetaProperty2)
@@ -27,10 +26,10 @@ func Test_MetaProperties(t *testing.T) {
 	newMetaProperty := NewMetaProperty(NewID("ID"), NewMetaFact(NewDecData(sdkTypes.NewDec(12))))
 	require.Equal(t, metaProperties{MetaPropertyList: []types.MetaProperty{newMetaProperty}}, testMetaProperties.MutateMetaProperty(newMetaProperty))
 
-	newProperty := NewProperty(NewID("ID3"), NewFact(NewStringData("Data3")))
-	require.Equal(t, testMetaProperty, testMetaProperties.Get(NewID("ID")))
+	require.Equal(t, testMetaProperty.RemoveData(), testMetaProperties.Get(NewID("ID")))
 	require.Equal(t, []types.Property{testMetaProperty}, testMetaProperties.GetList())
 
+	newProperty := NewProperty(NewID("ID3"), NewFact(NewStringData("Data3")))
 	newTestMetaProperties2 := testMetaProperties.Add(newProperty)
 	propertyMutated := NewProperty(NewID("ID"), NewFact(NewDecData(sdkTypes.NewDec(34))))
 	require.Equal(t, properties{PropertyList: []types.Property{testMetaProperty, newProperty}}, newTestMetaProperties2)
