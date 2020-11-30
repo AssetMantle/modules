@@ -62,8 +62,8 @@ func Test_Query_Keeper_Identity(t *testing.T) {
 	context, keepers := CreateTestInput2(t)
 	immutableTraits, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, Error)
-	mutableTraits, Error := base.ReadProperties("burn:S|100")
-	require.Equal(t, nil, Error)
+	mutableTraits, Error2 := base.ReadProperties("burn:S|100")
+	require.Equal(t, nil, Error2)
 
 	classificationID := base.NewID("ClassificationID")
 	hashID := base.NewID("HashID")

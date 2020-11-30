@@ -62,12 +62,11 @@ func Test_Query_Keeper_Classification(t *testing.T) {
 	context, keepers := CreateTestInput2(t)
 	immutableTraits, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, Error)
-	mutableTraits, Error := base.ReadProperties("burn:S|100")
-	require.Equal(t, nil, Error)
+	mutableTraits, Error2 := base.ReadProperties("burn:S|100")
+	require.Equal(t, nil, Error2)
 	chainID := base.NewID("ChainID")
 
 	classificationID := key.NewClassificationID(chainID, base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits))
-	//assetID := key.NewAssetID(classificationID, base.NewImmutables(immutableTraits))
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewClassification(classificationID, base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits)))
 
 	testQueryRequest := newQueryRequest(classificationID)

@@ -60,7 +60,6 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 func Test_Query_Keeper_Meta(t *testing.T) {
 
 	context, keepers := CreateTestInput2(t)
-
 	hashID := base.NewID("HashID")
 	metaID := key.NewMetaID(hashID)
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(base.NewIDData(hashID)))

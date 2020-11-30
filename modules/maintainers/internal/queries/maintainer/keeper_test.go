@@ -66,7 +66,6 @@ func Test_Query_Keeper_Maintainer(t *testing.T) {
 	identityID := base.NewID("identityID")
 	classificationID := base.NewID("classificationID")
 	maintainerID := key.NewMaintainerID(classificationID, identityID)
-	//assetID := key.NewAssetID(classificationID, base.NewImmutables(immutableTraits))
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, base.NewMutables(mutableTraits), false, false, false))
 
 	testQueryRequest := newQueryRequest(classificationID)
