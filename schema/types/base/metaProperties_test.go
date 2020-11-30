@@ -15,13 +15,12 @@ func Test_MetaProperties(t *testing.T) {
 
 	require.Equal(t, metaProperties{MetaPropertyList: testMetaPropertyList}, testMetaProperties)
 	require.Equal(t, testMetaProperty, testMetaProperties.GetMetaProperty(NewID("ID")))
-
 	require.Equal(t, nil, testMetaProperties.GetMetaProperty(NewID("randomID")))
 	require.Equal(t, testMetaPropertyList, testMetaProperties.GetMetaPropertyList())
 
 	newTestMetaProperties := testMetaProperties.AddMetaProperty(testMetaProperty2)
 	require.Equal(t, metaProperties{MetaPropertyList: append(testMetaPropertyList, testMetaProperty2)}, newTestMetaProperties)
-	require.Equal(t, metaProperties{MetaPropertyList: []types.MetaProperty{testMetaProperty2}}, newTestMetaProperties.RemoveMetaProperty(testMetaProperty))
+	require.Equal(t, metaProperties{MetaPropertyList: []types.MetaProperty{testMetaProperty}}, newTestMetaProperties.RemoveMetaProperty(testMetaProperty2))
 
 	newMetaProperty := NewMetaProperty(NewID("ID"), NewMetaFact(NewDecData(sdkTypes.NewDec(12))))
 	require.Equal(t, metaProperties{MetaPropertyList: []types.MetaProperty{newMetaProperty}}, testMetaProperties.MutateMetaProperty(newMetaProperty))

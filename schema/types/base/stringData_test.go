@@ -42,4 +42,5 @@ func Test_StringData(t *testing.T) {
 
 	require.Equal(t, false, testStringData.Equal(testStringData2))
 	require.Equal(t, true, testStringData.Equal(testStringData))
+	require.Equal(t, false, testStringData.Equal(NewIDData(NewID("ID"))))
 }
