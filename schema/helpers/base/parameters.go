@@ -66,7 +66,11 @@ func (parameters parameters) Get(id types.ID) types.Parameter {
 }
 
 func (parameters parameters) GetList() []types.Parameter {
-	return parameters.parameterList
+	var parameterList []types.Parameter
+	for _, parameter := range parameters.parameterList {
+		parameterList = append(parameterList, parameter)
+	}
+	return parameterList
 }
 
 func (parameters parameters) Mutate(context sdkTypes.Context, Parameter types.Parameter) helpers.Parameters {
