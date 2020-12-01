@@ -18,27 +18,27 @@ func Test_IDData(t *testing.T) {
 	require.Equal(t, meta.Hash("ID"), testIDData.GenerateHash())
 	require.Equal(t, "", testIDData2.GenerateHash())
 
-	dataAsString, error := testIDData.AsString()
+	dataAsString, Error := testIDData.AsString()
 	require.Equal(t, "", dataAsString)
-	require.Equal(t, errors.EntityNotFound, error)
+	require.Equal(t, errors.EntityNotFound, Error)
 
-	dataAsID, error := testIDData.AsID()
+	dataAsID, Error := testIDData.AsID()
 	require.Equal(t, idValue, dataAsID)
-	require.Equal(t, nil, error)
+	require.Equal(t, nil, Error)
 
-	dataAsHeight, error := testIDData.AsHeight()
+	dataAsHeight, Error := testIDData.AsHeight()
 	require.Equal(t, height{}, dataAsHeight)
-	require.Equal(t, errors.EntityNotFound, error)
+	require.Equal(t, errors.EntityNotFound, Error)
 
-	dataAsDec, error := testIDData.AsDec()
+	dataAsDec, Error := testIDData.AsDec()
 	require.Equal(t, sdkTypes.Dec{}, dataAsDec)
-	require.Equal(t, errors.EntityNotFound, error)
+	require.Equal(t, errors.EntityNotFound, Error)
 
 	require.Equal(t, idValue, testIDData.Get())
 
-	data, error := ReadIDData("testString")
+	data, Error := ReadIDData("testString")
 	require.Equal(t, idData{Value: id{IDString: "testString"}}, data)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 
 	require.Equal(t, false, testIDData.Equal(NewStringData("")))
 	require.Equal(t, true, testIDData.Equal(testIDData))

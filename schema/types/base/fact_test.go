@@ -24,11 +24,11 @@ func Test_Fact(t *testing.T) {
 	require.Equal(t, IDType, NewFact(idData).GetType())
 	require.Equal(t, HeightType, NewFact(heightData).GetType())
 
-	readFact, error := ReadFact("S|testString")
+	readFact, Error := ReadFact("S|testString")
 	require.Equal(t, testFact, readFact)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 
-	readFact2, error := ReadFact("")
+	readFact2, Error := ReadFact("")
 	require.Equal(t, nil, readFact2)
-	require.Equal(t, errors.IncorrectFormat, error)
+	require.Equal(t, errors.IncorrectFormat, Error)
 }

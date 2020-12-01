@@ -38,14 +38,14 @@ func Test_Identity_Request(t *testing.T) {
 	vars["identities"] = "randomString"
 	require.Equal(t, newQueryRequest(base.NewID("randomString")), queryRequest{}.FromMap(vars))
 
-	encodedRequest, error := testQueryRequest.Encode()
+	encodedRequest, Error := testQueryRequest.Encode()
 	encodedResult, _ := common.Codec.MarshalJSON(testQueryRequest)
 	require.Equal(t, encodedResult, encodedRequest)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 
-	decodedRequest, errorDecode := queryRequest{}.Decode(encodedRequest)
+	decodedRequest, Error := queryRequest{}.Decode(encodedRequest)
 	require.Equal(t, testQueryRequest, decodedRequest)
-	require.Equal(t, nil, errorDecode)
+	require.Equal(t, nil, Error)
 
 	randomDecode, _ := queryRequest{}.Decode(base.NewID("").Bytes())
 	require.Equal(t, nil, randomDecode)

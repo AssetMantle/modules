@@ -36,27 +36,27 @@ func Test_Burn_Request(t *testing.T) {
 	require.Equal(t, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", AssetID: "assetID"}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
-	requestFromCLI, error := transactionRequest{}.FromCLI(cliCommand, clicontext)
-	require.Equal(t, nil, error)
+	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, clicontext)
+	require.Equal(t, nil, Error)
 	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: clicontext.GetFromAddress().String(), ChainID: clicontext.ChainID, Simulate: clicontext.Simulate}, FromID: "", AssetID: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
-	transactionRequestUnmarshalled, error3 := transactionRequest{}.FromJSON(jsonMessage)
-	require.Equal(t, nil, error3)
+	transactionRequestUnmarshalled, Error := transactionRequest{}.FromJSON(jsonMessage)
+	require.Equal(t, nil, Error)
 	require.Equal(t, testTransactionRequest, transactionRequestUnmarshalled)
 
-	randomUnmarshall, error := transactionRequest{}.FromJSON([]byte{})
+	randomUnmarshall, Error := transactionRequest{}.FromJSON([]byte{})
 	require.Equal(t, nil, randomUnmarshall)
-	require.NotNil(t, error)
+	require.NotNil(t, Error)
 
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
-	msg, error := testTransactionRequest.MakeMsg()
+	msg, Error := testTransactionRequest.MakeMsg()
 	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), base.NewID("assetID")), msg)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 
-	msg2, error2 := newTransactionRequest(rest.BaseReq{From: "randomFromAddrs", ChainID: "test"}, "fromID", "assetID").MakeMsg()
-	require.NotNil(t, error2)
+	msg2, Error := newTransactionRequest(rest.BaseReq{From: "randomFromAddrs", ChainID: "test"}, "fromID", "assetID").MakeMsg()
+	require.NotNil(t, Error)
 	require.Nil(t, msg2)
 
 	require.Equal(t, transactionRequest{}, requestPrototype())
