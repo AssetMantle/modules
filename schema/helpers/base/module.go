@@ -81,15 +81,12 @@ func (module module) ValidateGenesis(rawMessage json.RawMessage) error {
 	return genesisState.Validate()
 }
 func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
-	if module.queries == nil || module.transactions == nil {
-		panic(xprtErrors.UninitializedUsage)
-	}
-	for _, query := range module.queries.GetList() {
-		router.HandleFunc(module.Name()+"/"+query.GetName()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(cliContext)).Methods("GET")
+	for _, query := range module.queriesPrototype().GetList() {
+		router.HandleFunc("/"+module.Name()+"/"+query.GetName()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(cliContext)).Methods("GET")
 	}
 
-	for _, transaction := range module.transactions.GetList() {
-		router.HandleFunc(module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
+	for _, transaction := range module.transactionsPrototype().GetList() {
+		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
 	}
 }
 func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {

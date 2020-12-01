@@ -1,4 +1,4 @@
-package asset
+package identity
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -6,9 +6,9 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -57,18 +57,22 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 	return context, testQueryKeeper
 }
 
-func Test_Query_Keeper_Asset(t *testing.T) {
+func Test_Query_Keeper_Identity(t *testing.T) {
 
 	context, keepers := CreateTestInput2(t)
 	immutableTraits, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, Error)
 	mutableTraits, Error2 := base.ReadProperties("burn:S|100")
 	require.Equal(t, nil, Error2)
-	classificationID := base.NewID("ClassificationID")
-	assetID := key.NewAssetID(classificationID, base.NewImmutables(immutableTraits))
-	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewAsset(assetID, base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits)))
 
-	testQueryRequest := newQueryRequest(assetID)
-	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.New(assetID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
+	classificationID := base.NewID("ClassificationID")
+	hashID := base.NewID("HashID")
+	identityID := key.NewIdentityID(classificationID, hashID)
+	provisionedAddr := sdkTypes.AccAddress("addr")
+	unprovisionedAddr := sdkTypes.AccAddress("unProvisionedAddr")
+	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(identityID, []sdkTypes.AccAddress{provisionedAddr}, []sdkTypes.AccAddress{unprovisionedAddr}, base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits)))
+
+	testQueryRequest := newQueryRequest(classificationID)
+	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.New(identityID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
 
 }

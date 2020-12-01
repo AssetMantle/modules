@@ -84,7 +84,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	ctx = ctx.WithBlockHeight(2)
 	immutableTraits, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, Error)
-	mutableTraits, Error := base.ReadProperties("burn:S|100")
+	mutableTraits, Error := base.ReadProperties("burn:H|100")
 	require.Equal(t, nil, Error)
 	supplementError, Error := base.ReadMetaProperties("supplementError:S|mockError")
 	require.Equal(t, nil, Error)

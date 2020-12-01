@@ -26,8 +26,6 @@ func Test_MetaProperties(t *testing.T) {
 	require.Equal(t, metaProperties{MetaPropertyList: []types.MetaProperty{newMetaProperty}}, testMetaProperties.MutateMetaProperty(newMetaProperty))
 
 	require.Equal(t, testMetaProperty.RemoveData(), testMetaProperties.Get(NewID("ID")))
-	//RemoveData func doesn't work for nil cases. Needs to be handled
-	//require.Equal(t, nil, testMetaProperties.Get(NewID("RandomID")))
 	require.Equal(t, []types.Property{testMetaProperty}, testMetaProperties.GetList())
 
 	newProperty := NewProperty(NewID("ID3"), NewFact(NewStringData("Data3")))

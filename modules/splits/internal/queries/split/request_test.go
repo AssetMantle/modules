@@ -31,8 +31,8 @@ func Test_Split_Request(t *testing.T) {
 	require.Equal(t, queryRequest{}, requestPrototype())
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.SplitID})
-	clicontext := context.NewCLIContext().WithCodec(Codec)
-	require.Equal(t, newQueryRequest(base.NewID("")), queryRequest{}.FromCLI(cliCommand, clicontext))
+	cliContext := context.NewCLIContext().WithCodec(Codec)
+	require.Equal(t, newQueryRequest(base.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
 
 	vars := make(map[string]string)
 	vars["splits"] = "randomString"
@@ -43,9 +43,9 @@ func Test_Split_Request(t *testing.T) {
 	require.Equal(t, encodedResult, encodedRequest)
 	require.Nil(t, error)
 
-	decodedRequest, errorDeocde := queryRequest{}.Decode(encodedRequest)
+	decodedRequest, errorDecode := queryRequest{}.Decode(encodedRequest)
 	require.Equal(t, testQueryRequest, decodedRequest)
-	require.Equal(t, nil, errorDeocde)
+	require.Equal(t, nil, errorDecode)
 
 	randomDecode, _ := queryRequest{}.Decode(base.NewID("").Bytes())
 	require.Equal(t, nil, randomDecode)
