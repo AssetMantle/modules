@@ -8,7 +8,8 @@ import (
 
 func Test_Kafka_Consumer(t *testing.T) {
 
-	kafkaPorts := []string{"9092"}
+	kafkaPorts := []string{"localhost:9092"}
+	KafkaAdmin(kafkaPorts)
 	newComsumer := NewConsumer(kafkaPorts)
 	config := sarama.NewConfig()
 	consumer, _ := sarama.NewConsumer(kafkaPorts, config)
