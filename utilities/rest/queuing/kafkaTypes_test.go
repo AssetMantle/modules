@@ -55,4 +55,5 @@ func Test_Kafka_Types(t *testing.T) {
 	}
 	require.Equal(t, KafkaMsg{Msg: testMessage, TicketID: ticketID, BaseRequest: testBaseReq, KafkaCli: kafkaCli}, testKafkaMsg)
 	require.Equal(t, clicontext, CliCtxFromKafkaMsg(testKafkaMsg, clicontext))
+	//require
 }

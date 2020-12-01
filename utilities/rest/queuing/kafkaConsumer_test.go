@@ -8,7 +8,7 @@ import (
 
 func Test_Kafka_Consumer(t *testing.T) {
 
-	kafkaPorts := []string{"9000"}
+	kafkaPorts := []string{"9092"}
 	newComsumer := NewConsumer(kafkaPorts)
 	config := sarama.NewConfig()
 	consumer, _ := sarama.NewConsumer(kafkaPorts, config)
