@@ -6,6 +6,6 @@ import (
 	"testing"
 )
 
-func Test_Prototype(t *testing.T) {
+func Test_Auxiliaries_Prototype(t *testing.T) {
 	require.Equal(t, base.NewAuxiliaries(), Prototype())
 }

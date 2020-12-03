@@ -10,7 +10,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 	"github.com/stretchr/testify/require"
-	"reflect"
 	"testing"
 )
 
@@ -61,11 +60,8 @@ func Test_Kafka(t *testing.T) {
 	SendToKafka(testKafkaMsg, testKafkaState, Codec)
 
 	kafkaMsg := KafkaTopicConsumer("Topic", testKafkaState.Consumers, Codec)
-	require.Equal(t, testKafkaMsg, kafkaMsg)
-	t.Run("KafkaTestMsg", func(t *testing.T) {
-		want := testKafkaMsg
-		if got := kafkaMsg; !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
+	//require.Equal(t,kafkaMsg,testKafkaMsg)
+	require.Equal(t, testKafkaMsg.TicketID, kafkaMsg.TicketID)
+	require.Equal(t, testKafkaMsg.TicketID, kafkaMsg.BaseRequest)
+
 }
