@@ -60,8 +60,7 @@ func Test_Kafka(t *testing.T) {
 	SendToKafka(testKafkaMsg, testKafkaState, Codec)
 
 	kafkaMsg := KafkaTopicConsumer("Topic", testKafkaState.Consumers, Codec)
-	//require.Equal(t,kafkaMsg,testKafkaMsg)
 	require.Equal(t, testKafkaMsg.TicketID, kafkaMsg.TicketID)
-	require.Equal(t, testKafkaMsg.TicketID, kafkaMsg.BaseRequest)
+	require.Equal(t, testKafkaMsg.BaseRequest, kafkaMsg.BaseRequest)
 
 }
