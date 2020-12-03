@@ -18,34 +18,35 @@ func Test_HeightData(t *testing.T) {
 	require.Equal(t, meta.Hash("123"), testHeightData.GenerateHash())
 	require.Equal(t, "", testHeightData2.GenerateHash())
 
-	dataAsString, error := testHeightData.AsString()
+	dataAsString, Error := testHeightData.AsString()
 	require.Equal(t, "", dataAsString)
-	require.Equal(t, errors.EntityNotFound, error)
+	require.Equal(t, errors.EntityNotFound, Error)
 
-	dataAsHeight, error := testHeightData.AsHeight()
+	dataAsHeight, Error := testHeightData.AsHeight()
 	require.Equal(t, heightValue, dataAsHeight)
-	require.Equal(t, nil, error)
+	require.Equal(t, nil, Error)
 
-	dataAsDec, error := testHeightData.AsDec()
+	dataAsDec, Error := testHeightData.AsDec()
 	require.Equal(t, sdkTypes.Dec{}, dataAsDec)
-	require.Equal(t, errors.EntityNotFound, error)
+	require.Equal(t, errors.EntityNotFound, Error)
 
-	dataAsID, error := testHeightData.AsID()
+	dataAsID, Error := testHeightData.AsID()
 	require.Equal(t, id{}, dataAsID)
-	require.Equal(t, errors.EntityNotFound, error)
+	require.Equal(t, errors.EntityNotFound, Error)
 
 	require.Equal(t, heightValue, testHeightData.Get())
 
-	data, error := ReadHeightData("")
+	data, Error := ReadHeightData("")
 	require.Equal(t, heightData{Value: height{Height: -1}}, data)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 
-	data, error = ReadHeightData("testString")
+	data, Error = ReadHeightData("testString")
 	require.Equal(t, nil, data)
+	require.NotNil(t, Error)
 
-	data, error = ReadHeightData("123")
+	data, Error = ReadHeightData("123")
 	require.Equal(t, heightData{Value: height{Height: 123}}, data)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 
 	require.Equal(t, false, testHeightData.Equal(NewStringData("")))
 	require.Equal(t, true, testHeightData.Equal(NewHeightData(NewHeight(123))))
