@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	//"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -14,9 +14,8 @@ import (
 	"testing"
 )
 
-func SetupTest(t *testing.T) (sdkTypes.Context, helpers.Mapper) {
+func SetupTest(t *testing.T) (sdkTypes.Context, *sdkTypes.KVStoreKey) {
 	storeKey := sdkTypes.NewKVStoreKey("test")
-	mapper := base.NewMapper(keyPrototype, mappablePrototype).Initialize(storeKey)
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -27,7 +26,7 @@ func SetupTest(t *testing.T) (sdkTypes.Context, helpers.Mapper) {
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
-	return context, mapper
+	return context, storeKey
 }
 
 // key struct, implements helpers.Key
@@ -63,7 +62,7 @@ func NewKey(id string) helpers.Key {
 	return testKey{ID: id}
 }
 
-func keyPrototype() helpers.Key {
+func KeyPrototype() helpers.Key {
 	return testKey{}
 }
 
@@ -88,6 +87,6 @@ func NewMappable(id string, value string) helpers.Mappable {
 	return testMappable{ID: id, Value: value}
 }
 
-func mappablePrototype() helpers.Mappable {
+func MappablePrototype() helpers.Mappable {
 	return testMappable{}
 }
