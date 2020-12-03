@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -13,9 +14,9 @@ import (
 	"testing"
 )
 
-func setupTest(t *testing.T) (sdkTypes.Context, helpers.Mapper) {
+func SetupTest(t *testing.T) (sdkTypes.Context, helpers.Mapper) {
 	storeKey := sdkTypes.NewKVStoreKey("test")
-	mapper := NewMapper(keyPrototype, mappablePrototype).Initialize(storeKey)
+	mapper := base.NewMapper(keyPrototype, mappablePrototype).Initialize(storeKey)
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
