@@ -7,12 +7,11 @@ package base
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
-
-const DecType = "D"
 
 type decData struct {
 	Value sdkTypes.Dec `json:"value"`
@@ -23,34 +22,33 @@ var _ types.Data = (*decData)(nil)
 func (DecData decData) String() string {
 	return DecData.Value.String()
 }
-
-func (DecData decData) GenerateHash() string {
-	if DecData.Value.IsZero() {
-		return ""
-	}
-	return meta.Hash(DecData.Value.String())
+func (DecData decData) Type() string {
+	return "D"
 }
-
+func (DecData decData) ZeroValue() types.Data {
+	return NewDecData(sdkTypes.ZeroDec())
+}
+func (DecData decData) GenerateHash() string {
+	if DecData.Equal(DecData.ZeroValue()) {
+		return DecData.Type() + constants.DataTypeAndValueSeparator
+	}
+	return DecData.Type() + constants.DataTypeAndValueSeparator + meta.Hash(DecData.Value.String())
+}
 func (DecData decData) AsString() (string, error) {
 	return "", errors.EntityNotFound
 }
-
 func (DecData decData) AsDec() (sdkTypes.Dec, error) {
 	return DecData.Value, nil
 }
-
 func (DecData decData) AsHeight() (types.Height, error) {
 	return height{}, errors.EntityNotFound
 }
-
 func (DecData decData) AsID() (types.ID, error) {
 	return id{}, errors.EntityNotFound
 }
-
 func (DecData decData) Get() interface{} {
 	return DecData.Value
 }
-
 func (DecData decData) Equal(data types.Data) bool {
 	switch value := data.(type) {
 	case decData:
@@ -68,11 +66,11 @@ func NewDecData(value sdkTypes.Dec) types.Data {
 
 func ReadDecData(dataString string) (types.Data, error) {
 	if dataString == "" {
-		return NewDecData(sdkTypes.SmallestDec()), nil
+		return decData{}.ZeroValue(), nil
 	}
 	dec, Error := sdkTypes.NewDecFromStr(dataString)
 	if Error != nil {
-		return nil, Error
+		return decData{}.ZeroValue(), Error
 	}
 
 	return NewDecData(dec), nil
