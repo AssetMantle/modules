@@ -27,29 +27,29 @@ func Test_MetaFact(t *testing.T) {
 	require.Equal(t, HeightType, NewMetaFact(heightData).GetType())
 	require.Equal(t, "", metaFact{Data: nil, Signatures: signatures{}}.GetType())
 
-	readMetaFact, error := ReadMetaFact("S|testString")
+	readMetaFact, Error := ReadMetaFact("S|testString")
 	require.Equal(t, testMetaFact, readMetaFact)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 
-	readMetaFact2, error := ReadMetaFact("H|123")
+	readMetaFact2, Error := ReadMetaFact("H|123")
 	require.Equal(t, NewMetaFact(heightData), readMetaFact2)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 
-	readMetaFact3, error := ReadMetaFact("I|id")
+	readMetaFact3, Error := ReadMetaFact("I|id")
 	require.Equal(t, NewMetaFact(idData), readMetaFact3)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 
 	//Fix the decData case in GetType Method
-	readMetaFact4, error := ReadMetaFact("D|12.0")
+	readMetaFact4, Error := ReadMetaFact("D|12.0")
 	require.Equal(t, NewMetaFact(decData), readMetaFact4)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 
-	readMetaFact5, error := ReadMetaFact("Z|12.0")
+	readMetaFact5, Error := ReadMetaFact("Z|12.0")
 	require.Equal(t, nil, readMetaFact5)
-	require.Equal(t, errors.UnsupportedParameter, error)
+	require.Equal(t, errors.UnsupportedParameter, Error)
 
-	readMetaFact6, error := ReadMetaFact("randomString")
+	readMetaFact6, Error := ReadMetaFact("randomString")
 	require.Equal(t, nil, readMetaFact6)
-	require.Equal(t, errors.IncorrectFormat, error)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
 }

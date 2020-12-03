@@ -24,7 +24,7 @@ func Test_Properties(t *testing.T) {
 
 	mutatedProperty := NewProperty(NewID("ID"), NewFact(NewIDData(NewID("IDString"))))
 	require.Equal(t, properties{PropertyList: []types.Property{mutatedProperty, testProperty2}}, testProperties.Mutate(mutatedProperty))
-	readProperties, error := ReadProperties("ID:S|Data,ID2:H|12")
+	readProperties, Error := ReadProperties("ID:S|Data,ID2:H|12")
 	require.Equal(t, properties{PropertyList: []types.Property{testProperty, testProperty2}}, readProperties)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 }

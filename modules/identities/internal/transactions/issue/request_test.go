@@ -56,48 +56,48 @@ func Test_Mint_Request(t *testing.T) {
 	require.Equal(t, transactionRequest{BaseReq: testBaseReq, To: toAddress, FromID: "fromID", ClassificationID: "classificationID", ImmutableMetaProperties: immutableMetaTraits, ImmutableProperties: immutableTraits, MutableMetaProperties: mutableMetaTraits, MutableProperties: mutableTraits}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
-	requestFromCLI, error := transactionRequest{}.FromCLI(cliCommand, clicontext)
-	require.Equal(t, nil, error)
+	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, clicontext)
+	require.Equal(t, nil, Error)
 	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: clicontext.GetFromAddress().String(), ChainID: clicontext.ChainID, Simulate: clicontext.Simulate}, To: "", FromID: "", ClassificationID: "", ImmutableMetaProperties: "", ImmutableProperties: "", MutableMetaProperties: "", MutableProperties: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
-	transactionRequestUnmarshalled, error3 := transactionRequest{}.FromJSON(jsonMessage)
-	require.Equal(t, nil, error3)
+	transactionRequestUnmarshalled, Error := transactionRequest{}.FromJSON(jsonMessage)
+	require.Equal(t, nil, Error)
 	require.Equal(t, testTransactionRequest, transactionRequestUnmarshalled)
 
-	randomUnmarshall, error := transactionRequest{}.FromJSON([]byte{})
+	randomUnmarshall, Error := transactionRequest{}.FromJSON([]byte{})
 	require.Equal(t, nil, randomUnmarshall)
-	require.NotNil(t, error)
+	require.NotNil(t, Error)
 
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
-	msg, error := testTransactionRequest.MakeMsg()
+	msg, Error := testTransactionRequest.MakeMsg()
 	require.Equal(t, newMessage(fromAccAddress, toAccAddress, base.NewID("fromID"), base.NewID("classificationID"), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 
-	msg, error = newTransactionRequest(rest.BaseReq{From: "randomFromAddrs", ChainID: "test"}, toAddress, "fromID", "classificationID", immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
+	msg, Error = newTransactionRequest(rest.BaseReq{From: "randomFromAddrs", ChainID: "test"}, toAddress, "fromID", "classificationID", immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
 	require.Equal(t, nil, msg)
-	require.NotNil(t, error)
+	require.NotNil(t, Error)
 
-	msg, error = newTransactionRequest(rest.BaseReq{From: fromAddress, ChainID: "test"}, "randomString", "fromID", "classificationID", immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
+	msg, Error = newTransactionRequest(rest.BaseReq{From: fromAddress, ChainID: "test"}, "randomString", "fromID", "classificationID", immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
 	require.Equal(t, nil, msg)
-	require.NotNil(t, error)
+	require.NotNil(t, Error)
 
-	msg, error = newTransactionRequest(testBaseReq, toAddress, "fromID", "classificationID", "randomString", immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
+	msg, Error = newTransactionRequest(testBaseReq, toAddress, "fromID", "classificationID", "randomString", immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
 	require.Equal(t, nil, msg)
-	require.NotNil(t, error)
+	require.NotNil(t, Error)
 
-	msg, error = newTransactionRequest(testBaseReq, toAddress, "fromID", "classificationID", immutableMetaTraits, "randomString", mutableMetaTraits, mutableTraits).MakeMsg()
+	msg, Error = newTransactionRequest(testBaseReq, toAddress, "fromID", "classificationID", immutableMetaTraits, "randomString", mutableMetaTraits, mutableTraits).MakeMsg()
 	require.Equal(t, nil, msg)
-	require.NotNil(t, error)
+	require.NotNil(t, Error)
 
-	msg, error = newTransactionRequest(testBaseReq, toAddress, "fromID", "classificationID", immutableMetaTraits, immutableTraits, "randomString", mutableTraits).MakeMsg()
+	msg, Error = newTransactionRequest(testBaseReq, toAddress, "fromID", "classificationID", immutableMetaTraits, immutableTraits, "randomString", mutableTraits).MakeMsg()
 	require.Equal(t, nil, msg)
-	require.NotNil(t, error)
+	require.NotNil(t, Error)
 
-	msg, error = newTransactionRequest(testBaseReq, toAddress, "fromID", "classificationID", immutableMetaTraits, immutableTraits, mutableMetaTraits, "randomString").MakeMsg()
+	msg, Error = newTransactionRequest(testBaseReq, toAddress, "fromID", "classificationID", immutableMetaTraits, immutableTraits, mutableMetaTraits, "randomString").MakeMsg()
 	require.Equal(t, nil, msg)
-	require.NotNil(t, error)
+	require.NotNil(t, Error)
 
 	require.Equal(t, transactionRequest{}, requestPrototype())
 }
