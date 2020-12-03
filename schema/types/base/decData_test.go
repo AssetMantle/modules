@@ -18,34 +18,35 @@ func Test_DecData(t *testing.T) {
 	require.Equal(t, meta.Hash(decValue.String()), testDecData.GenerateHash())
 	require.Equal(t, "", testDecData2.GenerateHash())
 
-	dataAsString, error := testDecData.AsString()
+	dataAsString, Error := testDecData.AsString()
 	require.Equal(t, "", dataAsString)
-	require.Equal(t, errors.EntityNotFound, error)
+	require.Equal(t, errors.EntityNotFound, Error)
 
-	dataAsDec, error := testDecData.AsDec()
+	dataAsDec, Error := testDecData.AsDec()
 	require.Equal(t, decValue, dataAsDec)
-	require.Equal(t, nil, error)
+	require.Equal(t, nil, Error)
 
-	dataAsHeight, error := testDecData.AsHeight()
+	dataAsHeight, Error := testDecData.AsHeight()
 	require.Equal(t, height{}, dataAsHeight)
-	require.Equal(t, errors.EntityNotFound, error)
+	require.Equal(t, errors.EntityNotFound, Error)
 
-	dataAsID, error := testDecData.AsID()
+	dataAsID, Error := testDecData.AsID()
 	require.Equal(t, id{}, dataAsID)
-	require.Equal(t, errors.EntityNotFound, error)
+	require.Equal(t, errors.EntityNotFound, Error)
 
 	require.Equal(t, decValue, testDecData.Get())
 
-	data, error := ReadDecData("")
+	data, Error := ReadDecData("")
 	require.Equal(t, decData{Value: sdkTypes.SmallestDec()}, data)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 
-	data, error = ReadDecData("testString")
+	data, Error = ReadDecData("testString")
 	require.Equal(t, nil, data)
+	require.NotNil(t, Error)
 
-	data, error = ReadDecData("123")
+	data, Error = ReadDecData("123")
 	require.Equal(t, decData{Value: sdkTypes.NewDec(123)}, data)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 
 	require.Equal(t, false, testDecData.Equal(NewStringData("")))
 	require.Equal(t, true, testDecData.Equal(NewDecData(sdkTypes.NewDec(12))))

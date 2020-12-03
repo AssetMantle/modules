@@ -16,15 +16,15 @@ func Test_MetaProperty(t *testing.T) {
 	require.Equal(t, NewProperty(NewID("ID"), NewFact(NewHeightData(NewHeight(123)))), testMetaProperty.RemoveData())
 	require.Equal(t, NewID("ID"), testMetaProperty.GetID())
 	require.Equal(t, metaFact1, testMetaProperty.GetFact())
-	readMetaProperty, error := ReadMetaProperty("ID2:S|SomeData")
+	readMetaProperty, Error := ReadMetaProperty("ID2:S|SomeData")
 	require.Equal(t, NewMetaProperty(NewID("ID2"), NewMetaFact(NewStringData("SomeData"))), readMetaProperty)
-	require.Nil(t, error)
+	require.Nil(t, Error)
 
-	readMetaProperty, error = ReadMetaProperty("RandomValue")
+	readMetaProperty, Error = ReadMetaProperty("RandomValue")
 	require.Equal(t, nil, readMetaProperty)
-	require.Equal(t, errors.IncorrectFormat, error)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
-	readMetaProperty, error = ReadMetaProperty("RandomID:RandomValue")
+	readMetaProperty, Error = ReadMetaProperty("RandomID:RandomValue")
 	require.Equal(t, nil, readMetaProperty)
-	require.Equal(t, errors.IncorrectFormat, error)
+	require.Equal(t, errors.IncorrectFormat, Error)
 }
