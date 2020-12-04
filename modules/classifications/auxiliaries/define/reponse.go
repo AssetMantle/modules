@@ -29,8 +29,9 @@ func (auxiliaryResponse auxiliaryResponse) GetError() error {
 func newAuxiliaryResponse(classificationID types.ID, error error) helpers.AuxiliaryResponse {
 	if error != nil {
 		return auxiliaryResponse{
-			Success: false,
-			Error:   error,
+			Success:          false,
+			Error:            error,
+			ClassificationID: classificationID,
 		}
 	} else {
 		return auxiliaryResponse{
@@ -46,7 +47,7 @@ func GetClassificationIDFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse
 		if value.IsSuccessful() {
 			return value.ClassificationID, nil
 		} else {
-			return nil, value.GetError()
+			return value.ClassificationID, value.GetError()
 		}
 	default:
 		panic(errors.InvalidRequest)
