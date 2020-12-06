@@ -5,6 +5,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	//"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/stretchr/testify/require"
@@ -27,6 +29,16 @@ func SetupTest(t *testing.T) (sdkTypes.Context, *sdkTypes.KVStoreKey) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 	return context, storeKey
+}
+
+func MakeCodec() *codec.Codec {
+	var Codec = codec.New()
+	schema.RegisterCodec(Codec)
+	sdkTypes.RegisterCodec(Codec)
+	codec.RegisterCrypto(Codec)
+	codec.RegisterEvidences(Codec)
+	vesting.RegisterCodec(Codec)
+	return Codec
 }
 
 // key struct, implements helpers.Key
@@ -52,7 +64,7 @@ func (t testKey) IsPartial() bool {
 }
 
 func (t testKey) Matches(key helpers.Key) bool {
-	if bytes.Equal([]byte(t.ID), key.GenerateStoreKeyBytes()) {
+	if bytes.Equal([]byte(t.ID), []byte(key.(testKey).ID)) {
 		return true
 	}
 	return false
