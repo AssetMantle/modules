@@ -8,6 +8,5 @@ import (
 )
 
 func Test_Prototype(t *testing.T) {
-
 	require.Equal(t, base.NewParameters(dummy.Parameter), Prototype())
 }
