@@ -21,7 +21,7 @@ func Test_Kafka_Types(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
 	//cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.IdentityID, flags.To})
-	clicontext := context.NewCLIContext().WithCodec(Codec)
+	cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	//fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -35,25 +35,25 @@ func Test_Kafka_Types(t *testing.T) {
 
 	//testMsg:=newMessage(burn)
 	ticketID := TicketIDGenerator("name")
-	testKafkaMsg := NewKafkaMsgFromRest(testMessage, ticketID, testBaseReq, clicontext)
+	testKafkaMsg := NewKafkaMsgFromRest(testMessage, ticketID, testBaseReq, cliContext)
 	kafkaCli := KafkaCliCtx{
-		OutputFormat:  clicontext.OutputFormat,
-		ChainID:       clicontext.ChainID,
-		Height:        clicontext.Height,
-		HomeDir:       clicontext.HomeDir,
-		NodeURI:       clicontext.NodeURI,
-		From:          clicontext.From,
-		TrustNode:     clicontext.TrustNode,
-		UseLedger:     clicontext.UseLedger,
-		BroadcastMode: clicontext.BroadcastMode,
-		Simulate:      clicontext.Simulate,
-		GenerateOnly:  clicontext.GenerateOnly,
-		FromAddress:   clicontext.FromAddress,
-		FromName:      clicontext.FromName,
-		Indent:        clicontext.Indent,
-		SkipConfirm:   clicontext.SkipConfirm,
+		OutputFormat:  cliContext.OutputFormat,
+		ChainID:       cliContext.ChainID,
+		Height:        cliContext.Height,
+		HomeDir:       cliContext.HomeDir,
+		NodeURI:       cliContext.NodeURI,
+		From:          cliContext.From,
+		TrustNode:     cliContext.TrustNode,
+		UseLedger:     cliContext.UseLedger,
+		BroadcastMode: cliContext.BroadcastMode,
+		Simulate:      cliContext.Simulate,
+		GenerateOnly:  cliContext.GenerateOnly,
+		FromAddress:   cliContext.FromAddress,
+		FromName:      cliContext.FromName,
+		Indent:        cliContext.Indent,
+		SkipConfirm:   cliContext.SkipConfirm,
 	}
 	require.Equal(t, KafkaMsg{Msg: testMessage, TicketID: ticketID, BaseRequest: testBaseReq, KafkaCli: kafkaCli}, testKafkaMsg)
-	require.Equal(t, clicontext, CliCtxFromKafkaMsg(testKafkaMsg, clicontext))
+	require.Equal(t, cliContext, CliCtxFromKafkaMsg(testKafkaMsg, cliContext))
 	//require
 }

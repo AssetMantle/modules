@@ -19,12 +19,11 @@ func Test_MetaFact(t *testing.T) {
 	require.Equal(t, stringData, testMetaFact.GetData())
 	require.Equal(t, NewFact(stringData), testMetaFact.RemoveData())
 	require.Equal(t, stringData.GenerateHash(), testMetaFact.GetHash())
-	require.Equal(t, StringType, testMetaFact.GetType())
 	require.Equal(t, signatures{}, testMetaFact.GetSignatures())
-	//Fix the decData case in GetType Method
-	require.Equal(t, DecType, NewMetaFact(decData).GetType())
-	require.Equal(t, IDType, NewMetaFact(idData).GetType())
-	require.Equal(t, HeightType, NewMetaFact(heightData).GetType())
+	require.Equal(t, "S", testMetaFact.GetType())
+	require.Equal(t, "D", NewMetaFact(decData).GetType())
+	require.Equal(t, "I", NewMetaFact(idData).GetType())
+	require.Equal(t, "H", NewMetaFact(heightData).GetType())
 	require.Equal(t, "", metaFact{Data: nil, Signatures: signatures{}}.GetType())
 
 	readMetaFact, Error := ReadMetaFact("S|testString")
