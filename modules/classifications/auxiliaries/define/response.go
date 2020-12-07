@@ -50,6 +50,6 @@ func GetClassificationIDFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse
 			return value.ClassificationID, value.GetError()
 		}
 	default:
-		panic(errors.InvalidRequest)
+		return nil, errors.InvalidRequest
 	}
 }
