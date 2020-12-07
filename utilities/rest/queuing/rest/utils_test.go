@@ -13,10 +13,10 @@ import (
 
 func Test_Rest_Utils(t *testing.T) {
 
-	value, status, error := ParseFloat64OrReturnBadRequest("", 0.4)
+	value, status, Error := ParseFloat64OrReturnBadRequest("", 0.4)
 	require.Equal(t, 0.4, value)
 	require.Equal(t, http.StatusAccepted, status)
-	require.Equal(t, nil, error)
+	require.Equal(t, nil, Error)
 
 	value2, status2, error2 := ParseFloat64OrReturnBadRequest("test", 0.5)
 	require.Equal(t, float64(0), value2)
@@ -37,10 +37,10 @@ func Test_Rest_Utils(t *testing.T) {
 	Codec.Seal()
 
 	gas := uint64(123)
-	response, error := SimulationResponse(Codec, gas)
+	response, Error := SimulationResponse(Codec, gas)
 	gasEst := rest.GasEstimateResponse{GasEstimate: gas}
 	resp, _ := Codec.MarshalJSON(gasEst)
 	require.Equal(t, resp, response)
-	require.Equal(t, nil, error)
+	require.Equal(t, nil, Error)
 
 }

@@ -71,7 +71,7 @@ func Test_Mint_Request(t *testing.T) {
 	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), base.NewID("toID"), base.NewID("classificationID"), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
 	require.Nil(t, Error)
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "randomFromAddrs", ChainID: "test"}, "fromID", "toID", "classificationID", immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
+	msg, Error = newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, "fromID", "toID", "classificationID", immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
 	require.Equal(t, nil, msg)
 	require.NotNil(t, Error)
 

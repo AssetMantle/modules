@@ -25,7 +25,7 @@ func Test_Reveal_Request(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.MetaFact})
-	clicontext := context.NewCLIContext().WithCodec(Codec)
+	cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -41,9 +41,9 @@ func Test_Reveal_Request(t *testing.T) {
 	require.Equal(t, transactionRequest{BaseReq: testBaseReq, MetaFact: metaFact}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
-	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, clicontext)
+	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, cliContext)
 	require.Equal(t, nil, Error)
-	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: clicontext.GetFromAddress().String(), ChainID: clicontext.ChainID, Simulate: clicontext.Simulate}, MetaFact: ""}, requestFromCLI)
+	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, MetaFact: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
 	transactionRequestUnmarshalled, Error := transactionRequest{}.FromJSON(jsonMessage)
@@ -60,7 +60,7 @@ func Test_Reveal_Request(t *testing.T) {
 	require.Equal(t, newMessage(fromAccAddress, newMetaFact), msg)
 	require.Nil(t, Error)
 
-	msg2, Error := newTransactionRequest(rest.BaseReq{From: "randomFromAddrs", ChainID: "test"}, metaFact).MakeMsg()
+	msg2, Error := newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, metaFact).MakeMsg()
 	require.NotNil(t, Error)
 	require.Nil(t, msg2)
 

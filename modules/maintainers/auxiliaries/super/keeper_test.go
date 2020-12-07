@@ -78,7 +78,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
-		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(base.NewID("classficationID1"), base.NewID("identityID1"), base.NewMutables(base.NewProperties()))); !reflect.DeepEqual(got, want) {
+		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(base.NewID("classificationID1"), base.NewID("identityID1"), base.NewMutables(base.NewProperties()))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

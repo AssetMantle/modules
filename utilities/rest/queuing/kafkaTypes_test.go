@@ -20,16 +20,10 @@ func Test_Kafka_Types(t *testing.T) {
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
-	//cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.IdentityID, flags.To})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	//fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	//require.Nil(t, Error)
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
-
-	//testAssetID := base.NewID("assetID")
-	//testFromID := base.NewID("fromID")
 
 	testMessage := sdkTypes.NewTestMsg()
 
