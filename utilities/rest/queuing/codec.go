@@ -7,12 +7,15 @@ package queuing
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
+const moduleName = "queuing"
+
 // Register concrete types on codec
-func RegisterCodec(cdc *codec.Codec) {
-	cdc.RegisterConcrete(KafkaCliCtx{}, "persistence-blockchain/KafkaCliCtx", nil)
-	cdc.RegisterConcrete(KafkaMsg{}, "persistence-blockchain/KafkaMsg", nil)
+func RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, KafkaCliCtx{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, KafkaMsg{})
 }
 
 // module codec
