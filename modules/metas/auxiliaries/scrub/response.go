@@ -11,41 +11,41 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type AuxiliaryResponse struct {
+type auxiliaryResponse struct {
 	Success    bool             `json:"success"`
 	Error      error            `json:"error"`
 	Properties types.Properties `json:"properties"`
 }
 
-var _ helpers.AuxiliaryResponse = (*AuxiliaryResponse)(nil)
+var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
 
-func (auxiliaryResponse AuxiliaryResponse) IsSuccessful() bool {
+func (auxiliaryResponse auxiliaryResponse) IsSuccessful() bool {
 	return auxiliaryResponse.Success
 }
-func (auxiliaryResponse AuxiliaryResponse) GetError() error {
+func (auxiliaryResponse auxiliaryResponse) GetError() error {
 	return auxiliaryResponse.Error
 }
 func newAuxiliaryResponse(properties types.Properties, error error) helpers.AuxiliaryResponse {
 	if error != nil {
-		return AuxiliaryResponse{
+		return auxiliaryResponse{
 			Success: false,
 			Error:   error,
 		}
 	} else {
-		return AuxiliaryResponse{
+		return auxiliaryResponse{
 			Success:    true,
 			Properties: properties,
 		}
 	}
 }
 
-func GetPropertiesFromResponse(auxiliaryResponse helpers.AuxiliaryResponse) (types.Properties, error) {
-	switch value := auxiliaryResponse.(type) {
-	case AuxiliaryResponse:
-		if auxiliaryResponse.IsSuccessful() {
+func GetPropertiesFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse) (types.Properties, error) {
+	switch value := AuxiliaryResponse.(type) {
+	case auxiliaryResponse:
+		if value.IsSuccessful() {
 			return value.Properties, nil
 		} else {
-			return nil, auxiliaryResponse.GetError()
+			return nil, value.GetError()
 		}
 	default:
 		return nil, errors.NotAuthorized

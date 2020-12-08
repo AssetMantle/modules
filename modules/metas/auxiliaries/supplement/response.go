@@ -48,6 +48,6 @@ func GetMetaPropertiesFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse) 
 			return nil, value.GetError()
 		}
 	default:
-		panic(errors.InvalidRequest)
+		return nil, errors.InvalidRequest
 	}
 }
