@@ -2,12 +2,16 @@ package parameters
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters/dummy"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func Test_Prototype(t *testing.T) {
 
-	require.Equal(t, base.NewParameters(dummy.Parameter), Prototype())
+	prototype := Prototype()
+	require.Equal(t, baseHelpers.NewParameters(dummy.Parameter).String(), prototype.String())
+	require.Equal(t, nil, prototype.Validate())
+	require.Equal(t, dummy.Parameter.String(), prototype.Get(base.NewID("dummy")).String())
 }
