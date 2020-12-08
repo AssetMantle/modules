@@ -31,8 +31,8 @@ func Test_Maintainer_Request(t *testing.T) {
 	require.Equal(t, queryRequest{}, requestPrototype())
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.MaintainerID})
-	clicontext := context.NewCLIContext().WithCodec(Codec)
-	require.Equal(t, newQueryRequest(base.NewID("")), queryRequest{}.FromCLI(cliCommand, clicontext))
+	cliContext := context.NewCLIContext().WithCodec(Codec)
+	require.Equal(t, newQueryRequest(base.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
 
 	vars := make(map[string]string)
 	vars["maintainers"] = "randomString"

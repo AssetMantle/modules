@@ -13,18 +13,16 @@ func Test_Maintainer_Methods(t *testing.T) {
 	mutables := base.NewMutables(base.NewProperties(base.NewProperty(base.NewID("ID"), base.NewFact(base.NewStringData("MutableData")))))
 
 	testMaintainerID := key.NewMaintainerID(classificationID, identityID)
-	addMaintainer := true
-	removeMaintainer := true
-	mutateMaintainer := true
-	testMaintainer := NewMaintainer(testMaintainerID, mutables, addMaintainer, removeMaintainer, mutateMaintainer).(maintainer)
 
-	require.Equal(t, maintainer{ID: testMaintainerID, MaintainedTraits: mutables, AddMaintainer: addMaintainer, RemoveMaintainer: removeMaintainer, MutateMaintainer: mutateMaintainer}, testMaintainer)
+	testMaintainer := NewMaintainer(testMaintainerID, mutables, true, true, true).(maintainer)
+
+	require.Equal(t, maintainer{ID: testMaintainerID, MaintainedTraits: mutables, AddMaintainer: true, RemoveMaintainer: true, MutateMaintainer: true}, testMaintainer)
 	require.Equal(t, testMaintainerID, testMaintainer.GetID())
 	require.Equal(t, classificationID, testMaintainer.GetClassificationID())
 	require.Equal(t, identityID, testMaintainer.GetIdentityID())
-	require.Equal(t, addMaintainer, testMaintainer.CanAddMaintainer())
-	require.Equal(t, mutateMaintainer, testMaintainer.CanMutateMaintainer())
-	require.Equal(t, removeMaintainer, testMaintainer.CanRemoveMaintainer())
+	require.Equal(t, true, testMaintainer.CanAddMaintainer())
+	require.Equal(t, true, testMaintainer.CanMutateMaintainer())
+	require.Equal(t, true, testMaintainer.CanRemoveMaintainer())
 	require.Equal(t, true, testMaintainer.MaintainsTrait(base.NewID("ID")))
 	require.Equal(t, false, testMaintainer.MaintainsTrait(base.NewID("ID2")))
 	require.Equal(t, testMaintainerID, testMaintainer.GetKey())

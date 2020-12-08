@@ -77,13 +77,6 @@ func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
 	splits := sdkTypes.NewDec(123)
 	keepers.SplitsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(defaultSplitID, splits))
 
-	/*t.Run("PositiveCase - transfer to same ownable ID", func(t *testing.T) {
-		want := newAuxiliaryResponse(nil)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, ownableID, sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})*/
-
 	t.Run("NegativeCase-0 Split transfer", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)

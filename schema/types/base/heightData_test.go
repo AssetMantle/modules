@@ -12,11 +12,11 @@ func Test_HeightData(t *testing.T) {
 
 	heightValue := NewHeight(123)
 	testHeightData := NewHeightData(heightValue)
-	testHeightData2 := NewHeightData(NewHeight(-1))
+	testHeightData2 := NewHeightData(NewHeight(0))
 
 	require.Equal(t, "123", testHeightData.String())
-	require.Equal(t, meta.Hash("123"), testHeightData.GenerateHash())
-	require.Equal(t, "", testHeightData2.GenerateHash())
+	require.Equal(t, "H|"+meta.Hash("123"), testHeightData.GenerateHash())
+	require.Equal(t, "H|", testHeightData2.GenerateHash())
 
 	dataAsString, Error := testHeightData.AsString()
 	require.Equal(t, "", dataAsString)
@@ -37,7 +37,7 @@ func Test_HeightData(t *testing.T) {
 	require.Equal(t, heightValue, testHeightData.Get())
 
 	data, Error := ReadHeightData("")
-	require.Equal(t, heightData{Value: height{Height: -1}}, data)
+	require.Equal(t, heightData{Value: height{Height: 0}}, data)
 	require.Nil(t, Error)
 
 	data, Error = ReadHeightData("testString")

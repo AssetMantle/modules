@@ -26,7 +26,7 @@ func Test_Define_Request(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.FromID, flags.ClassificationID, flags.MakerOwnableSplit, flags.MakerOwnableID, flags.TakerOwnableID, flags.ExpiresIn, flags.ImmutableMetaProperties, flags.ImmutableProperties, flags.MutableMetaProperties, flags.MutableProperties})
-	clicontext := context.NewCLIContext().WithCodec(Codec)
+	cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	immutableMetaTraits := "defaultImmutableMeta1:S|defaultImmutableMeta1"
 	immutableTraits := "defaultMutableMeta1:S|defaultMutableMeta1"
@@ -52,9 +52,9 @@ func Test_Define_Request(t *testing.T) {
 	require.Equal(t, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", ClassificationID: "classificationID", MakerOwnableID: "makerOwnableID", TakerOwnableID: "takerOwnableID", ExpiresIn: 123, MakerOwnableSplit: "2", ImmutableMetaProperties: immutableMetaTraits, ImmutableProperties: immutableTraits, MutableMetaProperties: mutableMetaTraits, MutableProperties: mutableTraits}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
-	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, clicontext)
+	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, cliContext)
 	require.Equal(t, nil, Error)
-	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: clicontext.GetFromAddress().String(), ChainID: clicontext.ChainID, Simulate: clicontext.Simulate}, FromID: "", ImmutableMetaProperties: "", ImmutableProperties: "", MutableMetaProperties: "", MutableProperties: ""}, requestFromCLI)
+	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, FromID: "", ImmutableMetaProperties: "", ImmutableProperties: "", MutableMetaProperties: "", MutableProperties: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
 	transactionRequestUnmarshalled, error3 := transactionRequest{}.FromJSON(jsonMessage)
@@ -71,7 +71,7 @@ func Test_Define_Request(t *testing.T) {
 	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), base.NewID("classificationID"), base.NewID("makerOwnableID"), base.NewID("takerOwnableID"), base.NewHeight(123), sdkTypes.NewDec(2), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
 	require.Nil(t, Error)
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "randomFromAddrs", ChainID: "test"}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
+	msg, Error = newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
 	require.Equal(t, nil, msg)
 	require.NotNil(t, Error)
 
