@@ -17,16 +17,16 @@ func Test_Define_Response(t *testing.T) {
 	require.Equal(t, nil, testAuxiliaryResponse.GetError())
 
 	testAuxiliaryResponse2 := newAuxiliaryResponse(classificationID, errors.IncorrectFormat)
-	require.Equal(t, auxiliaryResponse{Success: false, Error: errors.IncorrectFormat, ClassificationID: nil}, testAuxiliaryResponse2)
+	require.Equal(t, auxiliaryResponse{Success: false, Error: errors.IncorrectFormat, ClassificationID: classificationID}, testAuxiliaryResponse2)
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
 	require.Equal(t, errors.IncorrectFormat, testAuxiliaryResponse2.GetError())
 
-	classificationIDValue, Error := GetClassificationIDFromResponse(testAuxiliaryResponse)
-	require.Equal(t, classificationID, classificationIDValue)
+	classificationIDFromResponse, Error := GetClassificationIDFromResponse(testAuxiliaryResponse)
+	require.Equal(t, classificationID, classificationIDFromResponse)
 	require.Equal(t, nil, Error)
 
-	classificationIDValue2, Error := GetClassificationIDFromResponse(testAuxiliaryResponse2)
-	require.Equal(t, nil, classificationIDValue2)
+	classificationIDFromResponse2, Error := GetClassificationIDFromResponse(testAuxiliaryResponse2)
+	require.Equal(t, classificationID, classificationIDFromResponse2)
 	require.Equal(t, errors.IncorrectFormat, Error)
 
 }
