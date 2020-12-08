@@ -22,7 +22,7 @@ func (t testQueryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters,
 }
 
 func (t testQueryKeeper) Enquire(_ sdkTypes.Context, _ helpers.QueryRequest) helpers.QueryResponse {
-	return nil
+	return testQueryResponse{}
 }
 
 func TestQueryKeeperPrototype() helpers.QueryKeeper {

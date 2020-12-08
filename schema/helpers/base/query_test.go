@@ -13,13 +13,15 @@ func TestQuery(t *testing.T) {
 	codec := base.MakeCodec()
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 	Query := NewQuery("test", "t", "testQuery", "test", base.TestQueryRequestPrototype,
-		base.TestQueryResponsePrototype, base.TestQueryKeeperPrototype).Initialize(Mapper, parametersPrototype())
+		base.TestQueryResponsePrototype, base.TestQueryKeeperPrototype).Initialize(Mapper, parametersPrototype()).(query)
 
 	// GetName
 	Query.GetName()
 
-	//
-	_, Error := Query.HandleMessage(context, abciTypes.RequestQuery{})
+	// HandleMessage
+	encodedRequest, Error := Query.requestPrototype().Encode()
+	require.Nil(t, Error)
+	_, Error = Query.HandleMessage(context, abciTypes.RequestQuery{Data: encodedRequest})
 	require.Nil(t, Error)
 
 	Query.Command(codec)

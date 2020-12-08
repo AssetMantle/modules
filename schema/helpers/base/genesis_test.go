@@ -10,13 +10,16 @@ import (
 
 func TestGenesis(t *testing.T) {
 
-	Genesis := NewGenesis(base.KeyPrototype, base.MappablePrototype, []helpers.Mappable{}, []types.Parameter{})
-	Genesis.Initialize(nil, nil)
+	Genesis := NewGenesis(base.KeyPrototype, base.MappablePrototype, []helpers.Mappable{}, []types.Parameter{}).Initialize(nil, nil).(genesis)
+
 	Error := Genesis.Validate()
 	require.Nil(t, Error)
-	Genesis.Default()
-	Genesis.Encode()
-	Genesis.Decode(Genesis.Encode())
-	//Genesis.Import()
-	//Genesis.Export()
+
+	require.Equal(t, []helpers.Mappable{}, Genesis.Default().(genesis).MappableList)
+	require.Equal(t, []types.Parameter{}, Genesis.Default().(genesis).defaultParameterList)
+
+	require.Equal(t, Genesis.Encode(), Genesis.Decode(Genesis.Encode()).Encode())
+
+	//TODO Genesis.Import()
+	//TODO Genesis.Export()
 }

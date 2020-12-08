@@ -15,14 +15,14 @@ type testMsg struct {
 
 var _ helpers.Message = (*testMsg)(nil)
 
-func NewTestMsg(addr sdkTypes.AccAddress, id string) *testMsg {
-	return &testMsg{
+func NewTestMsg(addr sdkTypes.AccAddress, id string) sdkTypes.Msg {
+	return testMsg{
 		From: addr,
 		ID:   id,
 	}
 }
 func (msg testMsg) Route() string { return "testMsg" }
-func (msg testMsg) Type() string  { return "Test message" }
+func (msg testMsg) Type() string  { return "testMsg" }
 func (msg testMsg) GetSignBytes() []byte {
 	bz, err := json.Marshal(msg.From)
 	if err != nil {
