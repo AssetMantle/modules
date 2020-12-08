@@ -31,8 +31,8 @@ func Test_Meta_Request(t *testing.T) {
 	require.Equal(t, queryRequest{}, requestPrototype())
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.MetaID})
-	clicontext := context.NewCLIContext().WithCodec(Codec)
-	require.Equal(t, newQueryRequest(base.NewID("")), queryRequest{}.FromCLI(cliCommand, clicontext))
+	cliContext := context.NewCLIContext().WithCodec(Codec)
+	require.Equal(t, newQueryRequest(base.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
 
 	vars := make(map[string]string)
 	vars["metas"] = "randomString"

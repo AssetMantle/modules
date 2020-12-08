@@ -26,7 +26,7 @@ func Test_Define_Request(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.FromID, flags.AssetID, flags.MutableMetaProperties, flags.MutableProperties})
-	clicontext := context.NewCLIContext().WithCodec(Codec)
+	cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	mutableMetaTraits := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableTraits := "defaultMutable1:S|defaultMutable1"
@@ -46,9 +46,9 @@ func Test_Define_Request(t *testing.T) {
 	require.Equal(t, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", AssetID: "assetID", MutableMetaProperties: mutableMetaTraits, MutableProperties: mutableTraits}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
-	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, clicontext)
+	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, cliContext)
 	require.Equal(t, nil, Error)
-	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: clicontext.GetFromAddress().String(), ChainID: clicontext.ChainID, Simulate: clicontext.Simulate}, FromID: "", MutableMetaProperties: "", MutableProperties: ""}, requestFromCLI)
+	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, FromID: "", MutableMetaProperties: "", MutableProperties: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
 	transactionRequestUnmarshalled, Error := transactionRequest{}.FromJSON(jsonMessage)
@@ -65,7 +65,7 @@ func Test_Define_Request(t *testing.T) {
 	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), base.NewID("assetID"), mutableMetaProperties, mutableProperties), msg)
 	require.Nil(t, Error)
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "randomFromAddrs", ChainID: "test"}, "fromID", "assetID", mutableMetaTraits, mutableTraits).MakeMsg()
+	msg, Error = newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, "fromID", "assetID", mutableMetaTraits, mutableTraits).MakeMsg()
 	require.Equal(t, nil, msg)
 	require.NotNil(t, Error)
 

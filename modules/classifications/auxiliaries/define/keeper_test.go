@@ -70,24 +70,24 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
 	mutables := base.NewMutables(base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("Data1")))))
-	immmutables := base.NewImmutables(base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("Data2")))))
+	immutable := base.NewImmutables(base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("Data2")))))
 
-	classificationID := key.NewClassificationID(base.NewID(context.ChainID()), immmutables, mutables)
+	classificationID := key.NewClassificationID(base.NewID(context.ChainID()), immutable, mutables)
 
-	testClassficationID := key.NewClassificationID(base.NewID(context.ChainID()), base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties()))
+	testClassificationID := key.NewClassificationID(base.NewID(context.ChainID()), base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties()))
 
-	keepers.ClassificationsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewClassification(testClassficationID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
+	keepers.ClassificationsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewClassification(testClassificationID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(base.NewID(classificationID.String()), nil)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(immmutables, mutables)); !reflect.DeepEqual(got, want) {
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(immutable, mutables)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	t.Run("NegativeCase-Classifition already present", func(t *testing.T) {
+	t.Run("NegativeCase-Classification already present", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(base.NewID(testClassficationID.String()), errors.EntityAlreadyExists)
+		want := newAuxiliaryResponse(base.NewID(testClassificationID.String()), errors.EntityAlreadyExists)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties()))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

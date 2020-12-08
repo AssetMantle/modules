@@ -30,20 +30,9 @@ func (fact fact) Sign(_ keyring.Keyring) types.Fact {
 }
 
 func NewFact(data types.Data) types.Fact {
-	dataType := ""
-	switch data.(type) {
-	case decData:
-		dataType = DecType
-	case heightData:
-		dataType = HeightType
-	case idData:
-		dataType = IDType
-	case stringData:
-		dataType = StringType
-	}
 	return fact{
 		Hash:       data.GenerateHash(),
-		Type:       dataType,
+		Type:       data.Type(),
 		Signatures: signatures{},
 	}
 }

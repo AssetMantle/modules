@@ -13,7 +13,7 @@ const FirstOrderCompositeIDSeparator = "|"
 const SecondOrderCompositeIDSeparator = "*"
 const PropertiesSeparator = ","
 const PropertyIDAndDataSeparator = ":"
-const DataTypeAndStringSeparator = "|"
+const DataTypeAndValueSeparator = "|"
 const ToHashSeparator = "_"
 
 const MaxTraitCount = 22
