@@ -1,4 +1,4 @@
-package codec
+package module
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -6,7 +6,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
-func RegisterModuleCodec(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) *codec.Codec {
+func RegisterCodec(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) *codec.Codec {
 	Codec := codec.New()
 	keyPrototype().RegisterCodec(Codec)
 	mappablePrototype().RegisterCodec(Codec)

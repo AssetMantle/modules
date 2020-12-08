@@ -7,12 +7,14 @@ package supplement
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"strings"
 )
 
 type auxiliaryKeeper struct {
@@ -26,19 +28,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	var metaPropertyList []types.MetaProperty
 	for _, property := range auxiliaryRequest.PropertyList {
 		var meta helpers.Mappable
-		if property.GetFact().GetHash() == "" {
-			var data types.Data
-			switch property.GetFact().GetType() {
-			case base.DecType:
-				data, _ = base.ReadDecData("")
-			case base.HeightType:
-				data, _ = base.ReadHeightData("")
-			case base.IDType:
-				data, _ = base.ReadIDData("")
-			case base.StringType:
-				data, _ = base.ReadStringData("")
+		if strings.Split(property.GetFact().GetHash(), constants.DataTypeAndValueSeparator)[1] == "" {
+			if metaFact, Error := base.ReadMetaFact(property.GetFact().GetType() + constants.DataTypeAndValueSeparator); Error == nil {
+				meta = mappable.NewMeta(metaFact.GetData())
+			} else {
+				return newAuxiliaryResponse(nil, Error)
 			}
-			meta = mappable.NewMeta(data)
 		} else {
 			metaID := base.NewID(property.GetFact().GetHash())
 			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(metaID))

@@ -9,11 +9,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mappable"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"github.com/persistenceOne/persistenceSDK/utilities/module"
 )
 
 var Codec *codec.Codec
 
 func init() {
-	Codec = codecUtilities.RegisterModuleCodec(key.Prototype, mappable.Prototype)
+	Codec = module.RegisterCodec(key.Prototype, mappable.Prototype)
 }

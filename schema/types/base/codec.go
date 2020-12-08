@@ -7,24 +7,27 @@ package base
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
+const moduleName = "types"
+
 func RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(decData{}, "xprt/decData", nil)
-	codec.RegisterConcrete(fact{}, "xprt/fact", nil)
-	codec.RegisterConcrete(height{}, "xprt/height", nil)
-	codec.RegisterConcrete(heightData{}, "xprt/heightData", nil)
-	codec.RegisterConcrete(id{}, "xprt/id", nil)
-	codec.RegisterConcrete(idData{}, "xprt/idData", nil)
-	codec.RegisterConcrete(immutables{}, "xprt/immutables", nil)
-	codec.RegisterConcrete(metaFact{}, "xprt/metaFact", nil)
-	codec.RegisterConcrete(metaProperties{}, "xprt/metaProperties", nil)
-	codec.RegisterConcrete(metaProperty{}, "xprt/metaProperty", nil)
-	codec.RegisterConcrete(mutables{}, "xprt/mutables", nil)
-	codec.RegisterConcrete(parameter{}, "xprt/parameter", nil)
-	codec.RegisterConcrete(properties{}, "xprt/properties", nil)
-	codec.RegisterConcrete(property{}, "xprt/property", nil)
-	codec.RegisterConcrete(signature{}, "xprt/signature", nil)
-	codec.RegisterConcrete(signatures{}, "xprt/signatures", nil)
-	codec.RegisterConcrete(stringData{}, "xprt/stringData", nil)
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, decData{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, fact{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, height{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, heightData{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, id{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, idData{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, immutables{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, metaFact{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, metaProperties{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, metaProperty{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, mutables{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, parameter{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, properties{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, property{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, signature{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, signatures{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, stringData{})
 }

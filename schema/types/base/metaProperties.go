@@ -61,7 +61,10 @@ func (metaProperties metaProperties) MutateMetaProperty(metaProperty types.MetaP
 }
 
 func (metaProperties metaProperties) Get(id types.ID) types.Property {
-	return metaProperties.GetMetaProperty(id).RemoveData()
+	if metaProperty := metaProperties.GetMetaProperty(id); metaProperty != nil {
+		return metaProperty.RemoveData()
+	}
+	return nil
 }
 
 func (metaProperties metaProperties) GetList() []types.Property {
