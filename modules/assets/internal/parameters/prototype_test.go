@@ -9,7 +9,6 @@ import (
 )
 
 func Test_Prototype(t *testing.T) {
-
 	prototype := Prototype()
 	require.Equal(t, baseHelpers.NewParameters(dummy.Parameter).String(), prototype.String())
 	require.Equal(t, nil, prototype.Validate())

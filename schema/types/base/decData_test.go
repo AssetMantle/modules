@@ -15,8 +15,8 @@ func Test_DecData(t *testing.T) {
 	testDecData2 := NewDecData(sdkTypes.NewDec(0))
 
 	require.Equal(t, decValue.String(), testDecData.String())
-	require.Equal(t, meta.Hash(decValue.String()), testDecData.GenerateHash())
-	require.Equal(t, "", testDecData2.GenerateHash())
+	require.Equal(t, "D|"+meta.Hash(decValue.String()), testDecData.GenerateHash())
+	require.Equal(t, "D|", testDecData2.GenerateHash())
 
 	dataAsString, Error := testDecData.AsString()
 	require.Equal(t, "", dataAsString)
@@ -37,11 +37,10 @@ func Test_DecData(t *testing.T) {
 	require.Equal(t, decValue, testDecData.Get())
 
 	data, Error := ReadDecData("")
-	require.Equal(t, decData{Value: sdkTypes.SmallestDec()}, data)
+	require.Equal(t, decData{Value: sdkTypes.ZeroDec()}, data)
 	require.Nil(t, Error)
 
 	data, Error = ReadDecData("testString")
-	require.Equal(t, nil, data)
 	require.NotNil(t, Error)
 
 	data, Error = ReadDecData("123")

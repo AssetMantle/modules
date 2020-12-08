@@ -7,51 +7,49 @@ package base
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 	"strconv"
 )
 
-const HeightType = "H"
-
 type heightData struct {
 	Value types.Height `json:"value"`
 }
 
+var _ types.Data = (*heightData)(nil)
+
 func (HeightData heightData) String() string {
 	return strconv.FormatInt(HeightData.Value.Get(), 10)
 }
-
-var _ types.Data = (*heightData)(nil)
-
-func (HeightData heightData) GenerateHash() string {
-	if HeightData.Value.Get() == -1 {
-		return ""
-	}
-	return meta.Hash(strconv.FormatInt(HeightData.Value.Get(), 10))
+func (HeightData heightData) Type() string {
+	return "H"
 }
-
+func (HeightData heightData) ZeroValue() types.Data {
+	return NewHeightData(NewHeight(0))
+}
+func (HeightData heightData) GenerateHash() string {
+	if HeightData.Equal(HeightData.ZeroValue()) {
+		return HeightData.Type() + constants.DataTypeAndValueSeparator
+	}
+	return HeightData.Type() + constants.DataTypeAndValueSeparator + meta.Hash(strconv.FormatInt(HeightData.Value.Get(), 10))
+}
 func (HeightData heightData) AsString() (string, error) {
 	return "", errors.EntityNotFound
 }
-
 func (HeightData heightData) AsDec() (sdkTypes.Dec, error) {
 	return sdkTypes.Dec{}, errors.EntityNotFound
 }
-
 func (HeightData heightData) AsHeight() (types.Height, error) {
 	return HeightData.Value, nil
 }
-
 func (HeightData heightData) Get() interface{} {
 	return HeightData.Value
 }
-
 func (HeightData heightData) AsID() (types.ID, error) {
 	return id{}, errors.EntityNotFound
 }
-
 func (HeightData heightData) Equal(data types.Data) bool {
 	switch value := data.(type) {
 	case heightData:
@@ -69,7 +67,7 @@ func NewHeightData(value types.Height) types.Data {
 
 func ReadHeightData(dataString string) (types.Data, error) {
 	if dataString == "" {
-		return NewHeightData(NewHeight(-1)), nil
+		return heightData{}.ZeroValue(), nil
 	}
 	height, Error := strconv.ParseInt(dataString, 10, 64)
 	if Error != nil {

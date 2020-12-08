@@ -8,14 +8,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
-
-func runE(command *cobra.Command, args []string) error {
-	return nil
-}
 
 func Test_Cli_Command(t *testing.T) {
 	var Codec = codec.New()
