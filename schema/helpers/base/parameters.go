@@ -52,10 +52,16 @@ func (parameters parameters) Equal(Parameters helpers.Parameters) bool {
 	return bytes.Compare(Bytes, CompareBytes) == 0
 }
 
-func (parameters parameters) Fetch(context sdkTypes.Context, id types.ID) (parameter types.Parameter) {
+func (parameters parameters) Fetch(context sdkTypes.Context, id types.ID) types.Parameter {
 	var data types.Data
 	parameters.paramsSubspace.Get(context, id.Bytes(), &data)
-	return base.NewParameter(id, data, func(interface{}) error { return nil })
+	var validator func(interface{}) error
+	for _, parameter := range parameters.GetList() {
+		if parameter.GetID().Equals(id) {
+			validator = parameter.GetValidator()
+		}
+	}
+	return base.NewParameter(id, data, validator)
 }
 
 func (parameters parameters) Get(id types.ID) types.Parameter {
