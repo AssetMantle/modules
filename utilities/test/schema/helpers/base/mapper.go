@@ -16,19 +16,23 @@ import (
 	"testing"
 )
 
-func SetupTest(t *testing.T) (sdkTypes.Context, *sdkTypes.KVStoreKey) {
+func SetupTest(t *testing.T) (sdkTypes.Context, *sdkTypes.KVStoreKey, *sdkTypes.TransientStoreKey) {
 	storeKey := sdkTypes.NewKVStoreKey("test")
+	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
+	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
 	Error := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, Error)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
-	return context, storeKey
+	return context, storeKey, paramsTransientStoreKeys
 }
 
 func MakeCodec() *codec.Codec {

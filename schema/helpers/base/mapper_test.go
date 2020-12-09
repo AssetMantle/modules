@@ -12,7 +12,7 @@ import (
 
 func TestMapper(t *testing.T) {
 
-	context, storeKey := base.SetupTest(t)
+	context, storeKey, _ := base.SetupTest(t)
 
 	// NewMapper
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
