@@ -11,25 +11,29 @@ import (
 func TestParameters(t *testing.T) {
 
 	codec := baseTestUilities.MakeCodec()
-	_, storeKeys := baseTestUilities.SetupTest(t)
+	context, storeKeys := baseTestUilities.SetupTest(t)
 	validatorFunction := func(interface{}) error { return nil }
 	Parameter := base.NewParameter(base.NewID("testParameter1"), base.NewStringData("testData1"), validatorFunction)
 	Parameters := NewParameters(Parameter)
 
-	Parameters = Parameters.Initialize(params.NewSubspace(codec, storeKeys, nil, "test"))
+	paramsSubspace := params.NewSubspace(codec, storeKeys, nil, "test").
+		WithKeyTable(Parameters.GetKeyTable())
+	initializedParameters := Parameters.Initialize(paramsSubspace).(parameters)
+	//initializedParameters.paramsSubspace.SetParamSet(context, Parameters.ParamSetPairs())
+	require.NotNil(t, initializedParameters.ParamSetPairs())
 
-	require.NotNil(t, Parameters.ParamSetPairs())
+	require.NotNil(t, initializedParameters.GetKeyTable())
 
-	require.NotNil(t, Parameters.GetKeyTable())
+	require.Equal(t, true, initializedParameters.Equal(initializedParameters))
 
-	require.Equal(t, true, Parameters.Equal(Parameters))
+	require.Equal(t, true, initializedParameters.GetList()[0].Equal(Parameter))
+	require.Equal(t, `{"id":{"idString":"testParameter1"},"data":{"value":"testData1"}}`, initializedParameters.String())
 
-	require.Equal(t, true, Parameters.GetList()[0].Equal(Parameter))
-	require.Equal(t, `{"id":{"idString":"testParameter1"},"data":{"value":"testData1"}}`, Parameters.String())
-
-	Error := Parameters.Validate()
+	Error := initializedParameters.Validate()
 	require.Nil(t, Error)
 
-	//TODO Parameters.Fetch(context, Parameters.Get(base.NewID("testParameter1")).GetID())
-	//TODO Parameters.Mutate(context, Parameters.Get(base.NewID("")))
+	require.NotPanics(t, func() {
+		initializedParameters.Fetch(context, base.NewID("testParameter1"))
+	})
+	//TODO initializedParameters.Mutate(context, initializedParameters.Get(base.NewID("")))
 }
