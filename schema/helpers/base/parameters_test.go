@@ -3,15 +3,15 @@ package base
 import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	baseTestUilities "github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
+	baseTestUtilities "github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func TestParameters(t *testing.T) {
 
-	codec := baseTestUilities.MakeCodec()
-	_, storeKeys := baseTestUilities.SetupTest(t)
+	codec := baseTestUtilities.MakeCodec()
+	_, storeKeys := baseTestUtilities.SetupTest(t)
 	validatorFunction := func(interface{}) error { return nil }
 	Parameter := base.NewParameter(base.NewID("testParameter1"), base.NewStringData("testData1"), validatorFunction)
 	Parameters := NewParameters(Parameter)

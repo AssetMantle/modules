@@ -12,7 +12,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"strings"
 )
 
@@ -30,7 +29,6 @@ func (parameters parameters) String() string {
 	}
 	return strings.Join(parameterList, "\n")
 }
-
 func (parameters parameters) Validate() error {
 	for _, parameter := range parameters.parameterList {
 		if Error := parameter.Validate(); Error != nil {
@@ -39,7 +37,6 @@ func (parameters parameters) Validate() error {
 	}
 	return nil
 }
-
 func (parameters parameters) Equal(Parameters helpers.Parameters) bool {
 	Bytes, Error := json.Marshal(parameters)
 	if Error != nil {
@@ -51,19 +48,6 @@ func (parameters parameters) Equal(Parameters helpers.Parameters) bool {
 	}
 	return bytes.Compare(Bytes, CompareBytes) == 0
 }
-
-func (parameters parameters) Fetch(context sdkTypes.Context, id types.ID) types.Parameter {
-	var data types.Data
-	parameters.paramsSubspace.Get(context, id.Bytes(), &data)
-	var validator func(interface{}) error
-	for _, parameter := range parameters.GetList() {
-		if parameter.GetID().Equals(id) {
-			validator = parameter.GetValidator()
-		}
-	}
-	return base.NewParameter(id, data, validator)
-}
-
 func (parameters parameters) Get(id types.ID) types.Parameter {
 	for _, parameter := range parameters.parameterList {
 		if parameter.GetID().Equals(id) {
@@ -72,7 +56,6 @@ func (parameters parameters) Get(id types.ID) types.Parameter {
 	}
 	return nil
 }
-
 func (parameters parameters) GetList() []types.Parameter {
 	var parameterList []types.Parameter
 	for _, parameter := range parameters.parameterList {
@@ -80,7 +63,17 @@ func (parameters parameters) GetList() []types.Parameter {
 	}
 	return parameterList
 }
+func (parameters parameters) Fetch(context sdkTypes.Context, id types.ID) helpers.Parameters {
+	var data types.Data
+	parameters.paramsSubspace.Get(context, id.Bytes(), &data)
 
+	for i, parameter := range parameters.parameterList {
+		if parameter.GetID().Equals(id) {
+			parameters.parameterList[i] = parameter.Mutate(data)
+		}
+	}
+	return parameters
+}
 func (parameters parameters) Mutate(context sdkTypes.Context, Parameter types.Parameter) helpers.Parameters {
 	for i, parameter := range parameters.parameterList {
 		if parameter.GetID().Equals(Parameter.GetID()) {
@@ -91,7 +84,6 @@ func (parameters parameters) Mutate(context sdkTypes.Context, Parameter types.Pa
 	}
 	return parameters
 }
-
 func (parameters parameters) ParamSetPairs() params.ParamSetPairs {
 	var paramSetPairList []params.ParamSetPair
 	for _, parameter := range parameters.parameterList {
@@ -99,11 +91,9 @@ func (parameters parameters) ParamSetPairs() params.ParamSetPairs {
 	}
 	return paramSetPairList
 }
-
 func (parameters parameters) GetKeyTable() params.KeyTable {
 	return params.NewKeyTable().RegisterParamSet(parameters)
 }
-
 func (parameters parameters) Initialize(paramsSubspace params.Subspace) helpers.Parameters {
 	parameters.paramsSubspace = paramsSubspace
 	return parameters
