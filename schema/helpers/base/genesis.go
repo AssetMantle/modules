@@ -73,7 +73,7 @@ func (Genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper, p
 		mappableList = append(mappableList, mappable)
 		return false
 	}
-	mapper.Iterate(context, nil, appendMappableList)
+	mapper.Iterate(context, Genesis.keyPrototype(), appendMappableList)
 	var parameterList []types.Parameter
 	for _, defaultParameter := range Genesis.defaultParameterList {
 		parameterList = append(parameterList, parameters.Fetch(context, defaultParameter.GetID()))
