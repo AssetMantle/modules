@@ -12,6 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"strings"
 )
 
@@ -52,8 +53,9 @@ func (parameters parameters) Equal(Parameters helpers.Parameters) bool {
 }
 
 func (parameters parameters) Fetch(context sdkTypes.Context, id types.ID) (parameter types.Parameter) {
-	parameters.paramsSubspace.Get(context, id.Bytes(), &parameter)
-	return parameter
+	var data types.Data
+	parameters.paramsSubspace.Get(context, id.Bytes(), &data)
+	return base.NewParameter(id, data, func(interface{}) error { return nil })
 }
 
 func (parameters parameters) Get(id types.ID) types.Parameter {
