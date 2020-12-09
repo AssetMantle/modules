@@ -93,10 +93,6 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, Error)
 	conformMockErrorTraits, Error := base.ReadMetaProperties("conformError:S|mockError")
 	require.Equal(t, nil, Error)
-	nubImmutables, Error := base.ReadMetaProperties("nubID:I|nubID")
-	require.Equal(t, nil, Error)
-	emptyProperties := base.NewProperties()
-	require.Equal(t, nil, Error)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	defaultClassificationID := base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
 	defaultIdentityID := key.NewIdentityID(defaultClassificationID, base.NewID("d0Jhri_bOd3EEPXpyPUpNpGiQ1U="))
@@ -115,7 +111,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.EntityAlreadyExists)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, defaultAddr, defaultIdentityID, defaultClassificationID,
-			nubImmutables, emptyProperties, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
+			immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
