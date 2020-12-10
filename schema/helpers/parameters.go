@@ -18,9 +18,10 @@ type Parameters interface {
 	Validate() error
 	Equal(Parameters) bool
 
-	Fetch(sdkTypes.Context, types.ID) types.Parameter
 	Get(types.ID) types.Parameter
 	GetList() []types.Parameter
+
+	Fetch(sdkTypes.Context, types.ID) Parameters
 	Mutate(sdkTypes.Context, types.Parameter) Parameters
 
 	GetKeyTable() subspace.KeyTable
