@@ -6,7 +6,7 @@ import (
 )
 
 func TestAuxiliaries(t *testing.T) {
-	_, storeKey := base.SetupTest(t)
+	_, storeKey, _ := base.SetupTest(t)
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 	Auxiliaries := NewAuxiliaries(NewAuxiliary("testAuxiliary", base.TestAuxiliaryKeeperPrototype).Initialize(Mapper, nil))
 	Auxiliaries.Get("testAuxiliary")

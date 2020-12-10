@@ -11,7 +11,7 @@ import (
 
 func TestTransaction(t *testing.T) {
 	codec := base.MakeCodec()
-	context, storeKey := base.SetupTest(t)
+	context, storeKey, _ := base.SetupTest(t)
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 	Transaction := NewTransaction("test", "", "", base.TestTransactionRequestPrototype, base.TestMessagePrototype,
 		base.TestTransactionKeeperPrototype).InitializeKeeper(Mapper, parametersPrototype()).(transaction)

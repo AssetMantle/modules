@@ -2,6 +2,7 @@ package base
 
 import (
 	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	baseTestUtilities "github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
 	"github.com/stretchr/testify/require"
@@ -9,14 +10,15 @@ import (
 )
 
 func TestParameters(t *testing.T) {
-
+  
+	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
 	codec := baseTestUtilities.MakeCodec()
-	_, storeKeys := baseTestUtilities.SetupTest(t)
-	validatorFunction := func(interface{}) error { return nil }
-	Parameter := base.NewParameter(base.NewID("testParameter1"), base.NewStringData("testData1"), validatorFunction)
-	Parameters := NewParameters(Parameter)
-
-	Parameters = Parameters.Initialize(params.NewSubspace(codec, storeKeys, nil, "test"))
+	Parameter := base.NewParameter(base.NewID("testParameter"), base.NewStringData("testData"), func(interface{}) error { return nil })
+	ParameterList := []types.Parameter{Parameter}
+	Parameters := NewParameters(ParameterList...)
+	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
+	subspace.SetParamSet(context, Parameters)
+	Parameters = Parameters.Initialize(subspace).(parameters)
 
 	require.NotNil(t, Parameters.ParamSetPairs())
 
@@ -25,11 +27,15 @@ func TestParameters(t *testing.T) {
 	require.Equal(t, true, Parameters.Equal(Parameters))
 
 	require.Equal(t, true, Parameters.GetList()[0].Equal(Parameter))
-	require.Equal(t, `{"id":{"idString":"testParameter1"},"data":{"value":"testData1"}}`, Parameters.String())
+	require.Equal(t, `{"id":{"idString":"testParameter"},"data":{"value":"testData"}}`, Parameters.String())
 
 	Error := Parameters.Validate()
 	require.Nil(t, Error)
 
-	//TODO Parameters.Fetch(context, Parameters.Get(base.NewID("testParameter1")).GetID())
-	//TODO Parameters.Mutate(context, Parameters.Get(base.NewID("")))
+	require.NotPanics(t, func() {
+		Parameters.Fetch(context, base.NewID("testParameter"))
+	})
+
+	require.Equal(t, "testData123", Parameters.Mutate(context,
+		base.NewParameter(base.NewID("testParameter"), base.NewStringData("testData123"), func(interface{}) error { return nil })).Get(base.NewID("testParameter")).GetData().String())
 }

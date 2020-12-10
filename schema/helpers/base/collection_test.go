@@ -10,7 +10,7 @@ import (
 
 func TestCollection(t *testing.T) {
 
-	context, storeKey := base.SetupTest(t)
+	context, storeKey, _ := base.SetupTest(t)
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 
 	// Initialize

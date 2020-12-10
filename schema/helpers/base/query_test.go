@@ -9,7 +9,7 @@ import (
 )
 
 func TestQuery(t *testing.T) {
-	context, storeKey := base.SetupTest(t)
+	context, storeKey, _ := base.SetupTest(t)
 	codec := base.MakeCodec()
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 	Query := NewQuery("test", "t", "testQuery", "test", base.TestQueryRequestPrototype,
