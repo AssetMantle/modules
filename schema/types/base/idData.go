@@ -7,7 +7,6 @@ package base
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -31,9 +30,9 @@ func (IDData idData) Type() string {
 }
 func (IDData idData) GenerateHash() string {
 	if IDData.Value.String() == "" {
-		return IDData.Type() + constants.DataTypeAndValueSeparator
+		return ""
 	}
-	return IDData.Type() + constants.DataTypeAndValueSeparator + meta.Hash(IDData.Value.String())
+	return meta.Hash(IDData.Value.String())
 }
 func (IDData idData) AsString() (string, error) {
 	return "", errors.EntityNotFound

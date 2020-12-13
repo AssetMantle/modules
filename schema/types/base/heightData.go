@@ -7,7 +7,6 @@ package base
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
@@ -31,9 +30,9 @@ func (HeightData heightData) ZeroValue() types.Data {
 }
 func (HeightData heightData) GenerateHash() string {
 	if HeightData.Equal(HeightData.ZeroValue()) {
-		return HeightData.Type() + constants.DataTypeAndValueSeparator
+		return ""
 	}
-	return HeightData.Type() + constants.DataTypeAndValueSeparator + meta.Hash(strconv.FormatInt(HeightData.Value.Get(), 10))
+	return meta.Hash(strconv.FormatInt(HeightData.Value.Get(), 10))
 }
 func (HeightData heightData) AsString() (string, error) {
 	return "", errors.EntityNotFound

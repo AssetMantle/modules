@@ -14,7 +14,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"strings"
 )
 
 type auxiliaryKeeper struct {
@@ -28,7 +27,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	var metaPropertyList []types.MetaProperty
 	for _, property := range auxiliaryRequest.PropertyList {
 		var meta helpers.Mappable
-		if strings.Split(property.GetFact().GetHash(), constants.DataTypeAndValueSeparator)[1] == "" {
+		if property.GetFact().GetHash() == "" {
 			if metaFact, Error := base.ReadMetaFact(property.GetFact().GetType() + constants.DataTypeAndValueSeparator); Error == nil {
 				meta = mappable.NewMeta(metaFact.GetData())
 			} else {
