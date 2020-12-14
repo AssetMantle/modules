@@ -11,11 +11,11 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/common"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	messageUtilities "github.com/persistenceOne/persistenceSDK/utilities/message"
 )
 
 type message struct {
@@ -41,7 +41,8 @@ func (message message) ValidateBasic() error {
 	return nil
 }
 func (message message) GetSignBytes() []byte {
-	return sdkTypes.MustSortJSON(common.Codec.MustMarshalJSON(message))
+	messageCodec := messageUtilities.RegisterCodec(messagePrototype)
+	return sdkTypes.MustSortJSON(messageCodec.MustMarshalJSON(message))
 }
 func (message message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
