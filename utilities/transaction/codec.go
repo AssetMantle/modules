@@ -1,4 +1,4 @@
-package module
+package transaction
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
