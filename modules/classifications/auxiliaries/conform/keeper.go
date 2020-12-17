@@ -7,7 +7,6 @@ package conform
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -32,7 +31,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 		for _, immutableProperty := range auxiliaryRequest.Immutables.Get().GetList() {
-			if trait := classification.(mappables.Classification).GetImmutables().Get().Get(immutableProperty.GetID()); trait == nil || trait.GetFact().GetHash() != trait.GetFact().GetType()+constants.DataTypeAndValueSeparator && trait.GetFact().GetHash() != immutableProperty.GetFact().GetHash() {
+			if trait := classification.(mappables.Classification).GetImmutables().Get().Get(immutableProperty.GetID()); trait == nil || trait.GetFact().GetHash() != "" && trait.GetFact().GetHash() != immutableProperty.GetFact().GetHash() {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}

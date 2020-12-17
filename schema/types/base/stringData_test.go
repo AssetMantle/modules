@@ -15,8 +15,8 @@ func Test_StringData(t *testing.T) {
 	testStringData2 := NewStringData("")
 
 	require.Equal(t, value, testStringData.String())
-	require.Equal(t, "S|"+meta.Hash(value), testStringData.GenerateHash())
-	require.Equal(t, "S|", testStringData2.GenerateHash())
+	require.Equal(t, meta.Hash(value), testStringData.GenerateHash())
+	require.Equal(t, "", testStringData2.GenerateHash())
 
 	dataAsString, Error := testStringData.AsString()
 	require.Equal(t, value, dataAsString)
