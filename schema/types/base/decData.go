@@ -21,17 +21,17 @@ var _ types.Data = (*decData)(nil)
 func (DecData decData) String() string {
 	return DecData.Value.String()
 }
-func (DecData decData) Type() string {
-	return "D"
+func (DecData decData) GetTypeID() types.ID {
+	return NewID("D")
 }
 func (DecData decData) ZeroValue() types.Data {
 	return NewDecData(sdkTypes.ZeroDec())
 }
-func (DecData decData) GenerateHash() string {
+func (DecData decData) GenerateHashID() types.ID {
 	if DecData.Equal(DecData.ZeroValue()) {
-		return ""
+		return NewID("")
 	}
-	return meta.Hash(DecData.Value.String())
+	return NewID(meta.Hash(DecData.Value.String()))
 }
 func (DecData decData) AsString() (string, error) {
 	return "", errors.EntityNotFound

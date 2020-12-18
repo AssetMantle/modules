@@ -22,8 +22,8 @@ var _ types.MetaFact = (*metaFact)(nil)
 
 func (metaFact metaFact) GetData() types.Data             { return metaFact.Data }
 func (metaFact metaFact) RemoveData() types.Fact          { return NewFact(metaFact.Data) }
-func (metaFact metaFact) GetHash() string                 { return metaFact.Data.GenerateHash() }
-func (metaFact metaFact) GetType() string                 { return metaFact.Data.Type() }
+func (metaFact metaFact) GetHashID() types.ID             { return metaFact.Data.GenerateHashID() }
+func (metaFact metaFact) GetTypeID() types.ID             { return metaFact.Data.GetTypeID() }
 func (metaFact metaFact) GetSignatures() types.Signatures { return metaFact.Signatures }
 
 func (metaFact metaFact) Sign(_ keyring.Keyring) types.Fact {
@@ -44,14 +44,14 @@ func ReadMetaFact(DataTypeAndString string) (types.MetaFact, error) {
 		dataType, dataString := dataTypeAndString[0], dataTypeAndString[1]
 		var data types.Data
 		var Error error
-		switch dataType {
-		case decData{}.Type():
+		switch NewID(dataType) {
+		case decData{}.GetTypeID():
 			data, Error = ReadDecData(dataString)
-		case idData{}.Type():
+		case idData{}.GetTypeID():
 			data, Error = ReadIDData(dataString)
-		case heightData{}.Type():
+		case heightData{}.GetTypeID():
 			data, Error = ReadHeightData(dataString)
-		case stringData{}.Type():
+		case stringData{}.GetTypeID():
 			data, Error = ReadStringData(dataString)
 		default:
 			data, Error = nil, errors.UnsupportedParameter
