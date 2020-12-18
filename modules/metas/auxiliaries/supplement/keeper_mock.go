@@ -24,7 +24,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, AuxiliaryReq
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	var metaPropertyList []types.MetaProperty
 	for _, property := range auxiliaryRequest.PropertyList {
-		if property.GetID().String() == properties.Burn && property.GetFact().GetHash() == "H|" {
+		if property.GetID().String() == properties.Burn && property.GetFact().GetHashID().Equals(base.NewID("")) {
 			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList), errors.MockError)
 		}
 	}
