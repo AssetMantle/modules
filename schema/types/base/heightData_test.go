@@ -15,8 +15,8 @@ func Test_HeightData(t *testing.T) {
 	testHeightData2 := NewHeightData(NewHeight(0))
 
 	require.Equal(t, "123", testHeightData.String())
-	require.Equal(t, meta.Hash("123"), testHeightData.GenerateHash())
-	require.Equal(t, "", testHeightData2.GenerateHash())
+	require.Equal(t, NewID(meta.Hash("123")), testHeightData.GenerateHashID())
+	require.Equal(t, NewID(""), testHeightData2.GenerateHashID())
 
 	dataAsString, Error := testHeightData.AsString()
 	require.Equal(t, "", dataAsString)

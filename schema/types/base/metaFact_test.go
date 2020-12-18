@@ -18,12 +18,12 @@ func Test_MetaFact(t *testing.T) {
 	require.Equal(t, metaFact{Data: stringData, Signatures: signatures{}}, testMetaFact)
 	require.Equal(t, stringData, testMetaFact.GetData())
 	require.Equal(t, NewFact(stringData), testMetaFact.RemoveData())
-	require.Equal(t, stringData.GenerateHash(), testMetaFact.GetHash())
+	require.Equal(t, stringData.GenerateHashID(), testMetaFact.GetHashID())
 	require.Equal(t, signatures{}, testMetaFact.GetSignatures())
-	require.Equal(t, "S", testMetaFact.GetType())
-	require.Equal(t, "D", NewMetaFact(decData).GetType())
-	require.Equal(t, "I", NewMetaFact(idData).GetType())
-	require.Equal(t, "H", NewMetaFact(heightData).GetType())
+	require.Equal(t, NewID("S"), testMetaFact.GetTypeID())
+	require.Equal(t, NewID("D"), NewMetaFact(decData).GetTypeID())
+	require.Equal(t, NewID("I"), NewMetaFact(idData).GetTypeID())
+	require.Equal(t, NewID("H"), NewMetaFact(heightData).GetTypeID())
 
 	readMetaFact, Error := ReadMetaFact("S|testString")
 	require.Equal(t, testMetaFact, readMetaFact)
@@ -37,7 +37,7 @@ func Test_MetaFact(t *testing.T) {
 	require.Equal(t, NewMetaFact(idData), readMetaFact3)
 	require.Nil(t, Error)
 
-	//Fix the decData case in GetType Method
+	//Fix the decData case in GetTypeID Method
 	readMetaFact4, Error := ReadMetaFact("D|12.0")
 	require.Equal(t, NewMetaFact(decData), readMetaFact4)
 	require.Nil(t, Error)
