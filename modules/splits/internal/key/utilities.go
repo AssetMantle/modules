@@ -13,7 +13,7 @@ import (
 )
 
 func readSplitID(splitIDString string) types.ID {
-	idList := strings.Split(splitIDString, constants.FirstOrderCompositeIDSeparator)
+	idList := strings.Split(splitIDString, constants.SecondOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return splitID{
 			OwnerID:   base.NewID(idList[0]),
