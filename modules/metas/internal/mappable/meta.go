@@ -12,18 +12,18 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type meta struct {
+	ID   types.ID   `json:"id" valid:"required field id missing"`
 	Data types.Data `json:"data" valid:"required field data missing"`
 }
 
 var _ mappables.Meta = (*meta)(nil)
 
 func (meta meta) GetData() types.Data { return meta.Data }
-func (meta meta) GetID() types.ID     { return base.NewID(meta.Data.GenerateHash()) }
+func (meta meta) GetID() types.ID     { return meta.ID }
 func (meta meta) GetKey() helpers.Key {
 	return key.New(meta.GetID())
 }
@@ -33,6 +33,7 @@ func (meta) RegisterCodec(codec *codec.Codec) {
 
 func NewMeta(data types.Data) mappables.Meta {
 	return meta{
+		ID:   key.GenerateMetaID(data),
 		Data: data,
 	}
 }

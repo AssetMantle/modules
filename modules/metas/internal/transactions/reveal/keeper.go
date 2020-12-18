@@ -11,7 +11,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -23,7 +22,7 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	metaID := key.NewMetaID(base.NewID(message.MetaFact.GetData().GenerateHash()))
+	metaID := key.GenerateMetaID(message.MetaFact.GetData())
 	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(metaID))
 	meta := metas.Get(key.New(metaID))
 	if meta != nil {
