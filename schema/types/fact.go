@@ -10,8 +10,8 @@ import (
 )
 
 type Fact interface {
-	GetHash() string
-	GetType() string
+	GetHashID() ID
+	GetTypeID() ID
 	GetSignatures() Signatures
 
 	Sign(keyring.Keyring) Fact
