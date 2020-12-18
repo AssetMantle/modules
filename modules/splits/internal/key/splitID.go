@@ -34,7 +34,7 @@ func (SplitID splitID) String() string {
 	var values []string
 	values = append(values, SplitID.OwnerID.String())
 	values = append(values, SplitID.OwnableID.String())
-	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
+	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
 func (SplitID splitID) Equals(id types.ID) bool {
 	return bytes.Compare(SplitID.Bytes(), id.Bytes()) == 0

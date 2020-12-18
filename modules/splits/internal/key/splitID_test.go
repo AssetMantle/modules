@@ -15,7 +15,7 @@ func Test_SplitID_Methods(t *testing.T) {
 
 	testSplitID := NewSplitID(ownerID, ownableID).(splitID)
 	testSplitID2 := NewSplitID(base.NewID(""), base.NewID("")).(splitID)
-	require.Equal(t, strings.Join([]string{ownerID.String(), ownableID.String()}, constants.FirstOrderCompositeIDSeparator), testSplitID.String())
+	require.Equal(t, strings.Join([]string{ownerID.String(), ownableID.String()}, constants.SecondOrderCompositeIDSeparator), testSplitID.String())
 	require.Equal(t, true, testSplitID.Equals(testSplitID))
 	require.Equal(t, false, testSplitID.Equals(testSplitID2))
 	require.Equal(t, false, testSplitID.IsPartial())
