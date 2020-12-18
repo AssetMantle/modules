@@ -11,6 +11,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
@@ -31,7 +32,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 		for _, immutableProperty := range auxiliaryRequest.Immutables.Get().GetList() {
-			if trait := classification.(mappables.Classification).GetImmutables().Get().Get(immutableProperty.GetID()); trait == nil || trait.GetFact().GetHash() != "" && trait.GetFact().GetHash() != immutableProperty.GetFact().GetHash() {
+			if trait := classification.(mappables.Classification).GetImmutables().Get().Get(immutableProperty.GetID()); trait == nil || !trait.GetFact().GetHashID().Equals(base.NewID("")) && trait.GetFact().GetHashID() != immutableProperty.GetFact().GetHashID() {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}
