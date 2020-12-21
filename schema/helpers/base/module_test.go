@@ -74,7 +74,7 @@ func TestModule(t *testing.T) {
 	Module.RegisterInvariants(nil) //No return
 	require.Equal(t, "test", Module.Route())
 
-	response, Error := Module.NewHandler()(context, baseTestUtilities.NewTestMsg(sdkTypes.AccAddress("addr"), "id"))
+	response, Error := Module.NewHandler()(context, baseTestUtilities.NewTestMessage(sdkTypes.AccAddress("addr"), "id"))
 	require.Nil(t, Error)
 	require.NotNil(t, response)
 
