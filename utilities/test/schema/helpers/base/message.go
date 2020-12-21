@@ -8,35 +8,36 @@ import (
 )
 
 // msg type for testing
-type testMsg struct {
+type TestMessage struct {
 	From sdkTypes.AccAddress
 	ID   string
 }
 
-var _ helpers.Message = (*testMsg)(nil)
+var _ helpers.Message = (*TestMessage)(nil)
 
-func NewTestMsg(addr sdkTypes.AccAddress, id string) sdkTypes.Msg {
-	return testMsg{
+func NewTestMessage(addr sdkTypes.AccAddress, id string) sdkTypes.Msg {
+	return TestMessage{
 		From: addr,
 		ID:   id,
 	}
 }
-func (msg testMsg) Route() string { return "testMsg" }
-func (msg testMsg) Type() string  { return "testMsg" }
-func (msg testMsg) GetSignBytes() []byte {
-	bz, err := json.Marshal(msg.From)
+func (message TestMessage) Route() string { return "TestMessage" }
+func (message TestMessage) Type() string  { return "TestMessage" }
+func (message TestMessage) GetSignBytes() []byte {
+	bz, err := json.Marshal(message.From)
 	if err != nil {
 		panic(err)
 	}
 	return sdkTypes.MustSortJSON(bz)
 }
-func (msg testMsg) ValidateBasic() error { return nil }
-func (msg testMsg) GetSigners() []sdkTypes.AccAddress {
-	return []sdkTypes.AccAddress{msg.From}
+func (message TestMessage) ValidateBasic() error { return nil }
+func (message TestMessage) GetSigners() []sdkTypes.AccAddress {
+	return []sdkTypes.AccAddress{message.From}
 }
-func (msg testMsg) RegisterCodec(_ *codec.Codec) {
+func (message TestMessage) RegisterCodec(Codec *codec.Codec) {
+	Codec.RegisterConcrete(TestMessage{}, "test/TestMessage", nil)
 }
 
 func TestMessagePrototype() helpers.Message {
-	return testMsg{}
+	return TestMessage{}
 }

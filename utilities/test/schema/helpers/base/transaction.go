@@ -32,7 +32,7 @@ func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	return NewTestMsg(sdkTypes.AccAddress(transactionRequest.BaseReq.From), transactionRequest.ID), nil
+	return NewTestMessage(sdkTypes.AccAddress(transactionRequest.BaseReq.From), transactionRequest.ID), nil
 }
 func (transactionRequest) RegisterCodec(_ *codec.Codec) {
 	//codecUtilities.RegisterXPRTConcrete(codec, module.Name, transactionRequest{})
