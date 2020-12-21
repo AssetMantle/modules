@@ -29,4 +29,7 @@ func Test_Define_Response(t *testing.T) {
 	require.Equal(t, classificationID, classificationIDFromResponse2)
 	require.Equal(t, errors.IncorrectFormat, Error)
 
+	_, Error = GetClassificationIDFromResponse(nil)
+	require.Equal(t, errors.InvalidRequest, Error)
+
 }
