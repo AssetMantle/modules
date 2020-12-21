@@ -13,6 +13,7 @@ import (
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
+	"github.com/tendermint/go-amino"
 	"testing"
 )
 
@@ -65,4 +66,7 @@ func Test_Unwrap_Request(t *testing.T) {
 	require.Nil(t, msg2)
 
 	require.Equal(t, transactionRequest{}, requestPrototype())
+	require.NotPanics(t, func() {
+		requestPrototype().RegisterCodec(amino.NewCodec())
+	})
 }
