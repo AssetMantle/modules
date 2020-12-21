@@ -21,17 +21,17 @@ var _ types.Data = (*stringData)(nil)
 func (StringData stringData) String() string {
 	return StringData.Value
 }
-func (StringData stringData) Type() string {
-	return "S"
+func (StringData stringData) GetTypeID() types.ID {
+	return NewID("S")
 }
 func (StringData stringData) ZeroValue() types.Data {
 	return NewStringData("")
 }
-func (StringData stringData) GenerateHash() string {
+func (StringData stringData) GenerateHashID() types.ID {
 	if StringData.Equal(StringData.ZeroValue()) {
-		return ""
+		return NewID("")
 	}
-	return meta.Hash(StringData.Value)
+	return NewID(meta.Hash(StringData.Value))
 }
 func (StringData stringData) AsString() (string, error) {
 	return StringData.Value, nil

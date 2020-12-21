@@ -27,14 +27,14 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	var metaPropertyList []types.MetaProperty
 	for _, property := range auxiliaryRequest.PropertyList {
 		var meta helpers.Mappable
-		if property.GetFact().GetHash() == "" {
-			if metaFact, Error := base.ReadMetaFact(property.GetFact().GetType() + constants.DataTypeAndValueSeparator); Error == nil {
+		if property.GetFact().GetHashID().Equals(base.NewID("")) {
+			if metaFact, Error := base.ReadMetaFact(property.GetFact().GetTypeID().String() + constants.DataTypeAndValueSeparator); Error == nil {
 				meta = mappable.NewMeta(metaFact.GetData())
 			} else {
 				return newAuxiliaryResponse(nil, Error)
 			}
 		} else {
-			metaID := base.NewID(property.GetFact().GetHash())
+			metaID := key.NewMetaID(property.GetFact().GetTypeID(), property.GetFact().GetHashID())
 			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(metaID))
 			meta = metas.Get(key.New(metaID))
 		}

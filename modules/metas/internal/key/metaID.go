@@ -8,13 +8,16 @@ package key
 import (
 	"bytes"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"strings"
 )
 
 type metaID struct {
+	TypeID types.ID `json:"typeID" valid:"required~required field typeID missing"`
 	HashID types.ID `json:"hashID" valid:"required~required field hashID missing"`
 }
 
@@ -22,10 +25,16 @@ var _ types.ID = (*metaID)(nil)
 var _ helpers.Key = (*metaID)(nil)
 
 func (MetaID metaID) Bytes() []byte {
-	return MetaID.HashID.Bytes()
+	var Bytes []byte
+	Bytes = append(Bytes, MetaID.TypeID.Bytes()...)
+	Bytes = append(Bytes, MetaID.HashID.Bytes()...)
+	return Bytes
 }
 func (MetaID metaID) String() string {
-	return MetaID.HashID.String()
+	var values []string
+	values = append(values, MetaID.TypeID.String())
+	values = append(values, MetaID.HashID.String())
+	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
 func (MetaID metaID) Equals(id types.ID) bool {
 	return bytes.Compare(MetaID.Bytes(), id.Bytes()) == 0
@@ -51,12 +60,20 @@ func (MetaID metaID) Matches(key helpers.Key) bool {
 	}
 }
 
+func GenerateMetaID(data types.Data) types.ID {
+	return metaID{
+		TypeID: data.GetTypeID(),
+		HashID: data.GenerateHashID(),
+	}
+}
+
 func New(id types.ID) helpers.Key {
 	return metaIDFromInterface(id)
 }
 
-func NewMetaID(hashID types.ID) types.ID {
+func NewMetaID(typeID types.ID, hashID types.ID) types.ID {
 	return metaID{
+		TypeID: typeID,
 		HashID: hashID,
 	}
 }

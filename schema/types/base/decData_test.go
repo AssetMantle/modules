@@ -15,8 +15,8 @@ func Test_DecData(t *testing.T) {
 	testDecData2 := NewDecData(sdkTypes.NewDec(0))
 
 	require.Equal(t, decValue.String(), testDecData.String())
-	require.Equal(t, meta.Hash(decValue.String()), testDecData.GenerateHash())
-	require.Equal(t, "", testDecData2.GenerateHash())
+	require.Equal(t, NewID(meta.Hash(decValue.String())), testDecData.GenerateHashID())
+	require.Equal(t, NewID(""), testDecData2.GenerateHashID())
 
 	dataAsString, Error := testDecData.AsString()
 	require.Equal(t, "", dataAsString)

@@ -25,14 +25,14 @@ func (IDData idData) String() string {
 func (IDData idData) ZeroValue() types.Data {
 	return NewIDData(NewID(""))
 }
-func (IDData idData) Type() string {
-	return "I"
+func (IDData idData) GetTypeID() types.ID {
+	return NewID("I")
 }
-func (IDData idData) GenerateHash() string {
+func (IDData idData) GenerateHashID() types.ID {
 	if IDData.Value.String() == "" {
-		return ""
+		return NewID("")
 	}
-	return meta.Hash(IDData.Value.String())
+	return NewID(meta.Hash(IDData.Value.String()))
 }
 func (IDData idData) AsString() (string, error) {
 	return "", errors.EntityNotFound

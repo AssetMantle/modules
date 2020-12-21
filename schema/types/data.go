@@ -10,11 +10,11 @@ import sdkTypes "github.com/cosmos/cosmos-sdk/types"
 type Data interface {
 	String() string
 
-	Type() string
+	GetTypeID() ID
 
 	ZeroValue() Data
 
-	GenerateHash() string
+	GenerateHashID() ID
 
 	AsString() (string, error)
 	AsDec() (sdkTypes.Dec, error)

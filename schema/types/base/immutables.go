@@ -22,7 +22,7 @@ func (immutables immutables) Get() types.Properties {
 func (immutables immutables) GetHashID() types.ID {
 	var metaList []string
 	for _, immutableProperty := range immutables.Properties.GetList() {
-		metaList = append(metaList, immutableProperty.GetFact().GetHash())
+		metaList = append(metaList, immutableProperty.GetFact().GetHashID().String())
 	}
 	return NewID(metaUtilities.Hash(metaList...))
 }

@@ -22,17 +22,17 @@ var _ types.Data = (*heightData)(nil)
 func (HeightData heightData) String() string {
 	return strconv.FormatInt(HeightData.Value.Get(), 10)
 }
-func (HeightData heightData) Type() string {
-	return "H"
+func (HeightData heightData) GetTypeID() types.ID {
+	return NewID("H")
 }
 func (HeightData heightData) ZeroValue() types.Data {
 	return NewHeightData(NewHeight(0))
 }
-func (HeightData heightData) GenerateHash() string {
+func (HeightData heightData) GenerateHashID() types.ID {
 	if HeightData.Equal(HeightData.ZeroValue()) {
-		return ""
+		return NewID("")
 	}
-	return meta.Hash(strconv.FormatInt(HeightData.Value.Get(), 10))
+	return NewID(meta.Hash(strconv.FormatInt(HeightData.Value.Get(), 10)))
 }
 func (HeightData heightData) AsString() (string, error) {
 	return "", errors.EntityNotFound

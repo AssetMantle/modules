@@ -11,15 +11,15 @@ import (
 )
 
 type fact struct {
-	Hash       string           `json:"hash"`
-	Type       string           `json:"type"`
+	HashID     types.ID         `json:"hashID"`
+	TypeID     types.ID         `json:"typeID"`
 	Signatures types.Signatures `json:"signatures"`
 }
 
 var _ types.Fact = (*fact)(nil)
 
-func (fact fact) GetHash() string                 { return fact.Hash }
-func (fact fact) GetType() string                 { return fact.Type }
+func (fact fact) GetHashID() types.ID             { return fact.HashID }
+func (fact fact) GetTypeID() types.ID             { return fact.TypeID }
 func (fact fact) GetSignatures() types.Signatures { return fact.Signatures }
 func (fact fact) IsMeta() bool {
 	return false
@@ -31,8 +31,8 @@ func (fact fact) Sign(_ keyring.Keyring) types.Fact {
 
 func NewFact(data types.Data) types.Fact {
 	return fact{
-		Hash:       data.GenerateHash(),
-		Type:       data.Type(),
+		HashID:     data.GenerateHashID(),
+		TypeID:     data.GetTypeID(),
 		Signatures: signatures{},
 	}
 }
