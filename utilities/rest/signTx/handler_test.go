@@ -2,7 +2,6 @@ package signTx
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
@@ -36,7 +35,7 @@ func TestHandler(t *testing.T) {
 	viper.Set(flags.FlagKeyringBackend, cryptoKeys.BackendTest)
 	viper.Set(flags.FlagHome, t.TempDir())
 
-	keyring, Error := cryptoKeys.NewKeyring(sdk.KeyringServiceName(), cryptoKeys.BackendTest, t.TempDir(), strings.NewReader(""))
+	keyring, Error := cryptoKeys.NewKeyring(sdk.KeyringServiceName(), cryptoKeys.BackendTest, viper.GetString(flags.FlagHome), strings.NewReader(""))
 	require.NoError(t, Error)
 
 	router := mux.NewRouter()
@@ -51,19 +50,10 @@ func TestHandler(t *testing.T) {
 		cryptoKeys.DefaultBIP39Passphrase, keys.DefaultKeyPass, sdkTypes.FullFundraiserPath, cryptoKeys.Secp256k1)
 	require.Nil(t, Error)
 
-	getResponse := func(responseBytes []byte) response {
-		var Response rest.ResponseWithHeight
-		Error := Codec.UnmarshalJSON(responseBytes, &Response)
-		require.Nil(t, Error)
-
-		var ResponseValue response
-		Error = Codec.UnmarshalJSON(Response.Result, &ResponseValue)
-		return ResponseValue
-	}
-
-	// create account without mnemonic
 	address := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	sdkAddress, Error := sdkTypes.AccAddressFromBech32(address)
+
+	// signWithout chainID
 	requestBody1, Error := Codec.MarshalJSON(request{
 		BaseRequest: rest.BaseReq{From: address},
 		Type:        "cosmos-sdk/StdTx",
@@ -74,11 +64,35 @@ func TestHandler(t *testing.T) {
 	require.Nil(t, Error)
 	responseRecorder := httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest1)
-	fmt.Println(responseRecorder.Body.String())
-	require.Equal(t, responseRecorder.Code, http.StatusOK)
+	require.Equal(t, responseRecorder.Code, http.StatusBadRequest)
+	require.Equal(t, `{"error":"Chain-ID required but not specified"}`, responseRecorder.Body.String())
 
-	response1 := getResponse(responseRecorder.Body.Bytes())
-	require.Nil(t, response1.Error)
-	require.Equal(t, true, response1.Success)
+	// with wrong key
+	requestBody2, Error := Codec.MarshalJSON(request{
+		BaseRequest: rest.BaseReq{From: "address", ChainID: "test"},
+		Type:        "cosmos-sdk/StdTx",
+		StdTx:       auth.NewStdTx([]sdkTypes.Msg{base.NewTestMessage(sdkAddress, "id")}, auth.NewStdFee(20, sdkTypes.NewCoins()), nil, ""),
+	})
+	require.Nil(t, Error)
+	testRequest2, Error := http.NewRequest("POST", "/signTx", bytes.NewBuffer(requestBody2))
+	require.Nil(t, Error)
+	responseRecorder = httptest.NewRecorder()
+	handler.ServeHTTP(responseRecorder, testRequest2)
+	require.Equal(t, responseRecorder.Code, http.StatusBadRequest)
+	require.Equal(t, `{"error":"The specified item could not be found in the keyring"}`, responseRecorder.Body.String())
+
+	// RPC client offile
+	requestBody3, Error := Codec.MarshalJSON(request{
+		BaseRequest: rest.BaseReq{From: address, ChainID: "test"},
+		Type:        "cosmos-sdk/StdTx",
+		StdTx:       auth.NewStdTx([]sdkTypes.Msg{base.NewTestMessage(sdkAddress, "id")}, auth.NewStdFee(30, sdkTypes.NewCoins()), nil, ""),
+	})
+	require.Nil(t, Error)
+	testRequest3, Error := http.NewRequest("POST", "/signTx", bytes.NewBuffer(requestBody3))
+	require.Nil(t, Error)
+	responseRecorder = httptest.NewRecorder()
+	handler.ServeHTTP(responseRecorder, testRequest3)
+	require.Equal(t, responseRecorder.Code, http.StatusBadRequest)
+	require.Equal(t, `{"error":"no RPC client is defined in offline mode"}`, responseRecorder.Body.String())
 
 }
