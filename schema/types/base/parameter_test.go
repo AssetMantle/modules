@@ -20,4 +20,8 @@ func Test_Parameter(t *testing.T) {
 	require.Equal(t, true, testParameter.Equal(testParameter))
 	require.Equal(t, errors.ErrKeyIncorrect, testParameter.Validate())
 	require.Equal(t, data, testParameter.GetData())
+
+	require.Equal(t, `{"id":{"idString":"ID"},"data":{"value":"Data"}}`, testParameter.String())
+	require.Equal(t, "Data2", testParameter.Mutate(NewStringData("Data2")).GetData().String())
+	require.Equal(t, errors.ErrKeyIncorrect, testParameter.GetValidator()(nil))
 }

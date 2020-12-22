@@ -27,6 +27,7 @@ func Test_Fact(t *testing.T) {
 	readFact, Error := ReadFact("S|testString")
 	require.Equal(t, testFact, readFact)
 	require.Nil(t, Error)
+	require.Equal(t, readFact, readFact.Sign(nil))
 
 	readFact2, Error := ReadFact("")
 	require.Equal(t, nil, readFact2)
