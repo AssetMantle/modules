@@ -9,11 +9,11 @@ import (
 
 func Test_Signature(t *testing.T) {
 
-	privKey := ed25519.GenPrivKey()
-	pubKey := privKey.PubKey()
+	privateKey := ed25519.GenPrivKey()
+	pubKey := privateKey.PubKey()
 	signatureBytes := NewID("Temp").Bytes()
 
-	signedBytes, err := privKey.Sign(signatureBytes)
+	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 	id := NewID("ID")
 	validityHeight := NewHeight(123)
