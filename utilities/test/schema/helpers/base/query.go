@@ -7,26 +7,26 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
-type testQueryKeeper struct {
+type TestQueryKeeper struct {
 	mapper helpers.Mapper
 }
 
-var _ helpers.QueryKeeper = (*testQueryKeeper)(nil)
+var _ helpers.QueryKeeper = (*TestQueryKeeper)(nil)
 
-func (t testQueryKeeper) Help(_ sdkTypes.Context, _ helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (t TestQueryKeeper) Help(_ sdkTypes.Context, _ helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	return nil
 }
 
-func (t testQueryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
-	return testQueryKeeper{mapper: mapper}
+func (t TestQueryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
+	return TestQueryKeeper{mapper: mapper}
 }
 
-func (t testQueryKeeper) Enquire(_ sdkTypes.Context, _ helpers.QueryRequest) helpers.QueryResponse {
+func (t TestQueryKeeper) Enquire(_ sdkTypes.Context, _ helpers.QueryRequest) helpers.QueryResponse {
 	return testQueryResponse{}
 }
 
 func TestQueryKeeperPrototype() helpers.QueryKeeper {
-	return testQueryKeeper{}
+	return TestQueryKeeper{}
 }
 
 type testQueryRequest struct {

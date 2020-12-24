@@ -37,7 +37,7 @@ var queriesPrototype = func() helpers.Queries {
 }
 var simulatorPrototype = func() helpers.Simulator { return nil }
 var transactionsPrototype = func() helpers.Transactions {
-	return transactions{[]helpers.Transaction{NewTransaction("testMsg", "", "", baseTestUtilities.TestTransactionRequestPrototype, baseTestUtilities.TestMessagePrototype,
+	return transactions{[]helpers.Transaction{NewTransaction("TestMessage", "", "", baseTestUtilities.TestTransactionRequestPrototype, baseTestUtilities.TestMessagePrototype,
 		baseTestUtilities.TestTransactionKeeperPrototype)}}
 }
 
@@ -74,7 +74,7 @@ func TestModule(t *testing.T) {
 	Module.RegisterInvariants(nil) //No return
 	require.Equal(t, "test", Module.Route())
 
-	response, Error := Module.NewHandler()(context, baseTestUtilities.NewTestMsg(sdkTypes.AccAddress("addr"), "id"))
+	response, Error := Module.NewHandler()(context, baseTestUtilities.NewTestMessage(sdkTypes.AccAddress("addr"), "id"))
 	require.Nil(t, Error)
 	require.NotNil(t, response)
 
@@ -101,6 +101,6 @@ func TestModule(t *testing.T) {
 
 	//types.Module
 	require.Equal(t, "testAuxiliary", Module.GetAuxiliary("testAuxiliary").GetName())
-	_, Error = Module.DecodeModuleTransactionRequest("testMsg", json.RawMessage(`{"BaseReq":{"from":"addr"},"ID":"id"}`))
+	_, Error = Module.DecodeModuleTransactionRequest("TestMessage", json.RawMessage(`{"BaseReq":{"from":"addr"},"ID":"id"}`))
 	require.Nil(t, Error)
 }

@@ -96,5 +96,7 @@ func Test_Define_Request(t *testing.T) {
 	require.NotNil(t, Error)
 
 	require.Equal(t, transactionRequest{}, requestPrototype())
-
+	require.NotPanics(t, func() {
+		requestPrototype().RegisterCodec(codec.New())
+	})
 }

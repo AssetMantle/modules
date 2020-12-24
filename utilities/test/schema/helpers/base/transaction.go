@@ -7,38 +7,39 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
-type transactionRequest struct {
+type TransactionRequest struct {
 	BaseReq rest.BaseReq
 	ID      string
 }
 
-var _ helpers.TransactionRequest = (*transactionRequest)(nil)
+var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
 
-func (transactionRequest transactionRequest) Validate() error {
+func (transactionRequest TransactionRequest) Validate() error {
 	return nil
 }
-func (transactionRequest transactionRequest) FromCLI(_ helpers.CLICommand, _ context.CLIContext) (helpers.TransactionRequest, error) {
+func (transactionRequest TransactionRequest) FromCLI(_ helpers.CLICommand, _ context.CLIContext) (helpers.TransactionRequest, error) {
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
+func (transactionRequest TransactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
 	if Error := json.Unmarshal(rawMessage, &transactionRequest); Error != nil {
 		return nil, Error
 	}
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
+func (transactionRequest TransactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
-func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	return NewTestMsg(sdkTypes.AccAddress(transactionRequest.BaseReq.From), transactionRequest.ID), nil
+func (transactionRequest TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
+	return NewTestMessage(sdkTypes.AccAddress(transactionRequest.BaseReq.From), transactionRequest.ID), nil
 }
-func (transactionRequest) RegisterCodec(_ *codec.Codec) {
-	//codecUtilities.RegisterXPRTConcrete(codec, module.Name, transactionRequest{})
+func (TransactionRequest) RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterXPRTConcrete(codec, "test/TransactionRequest", TransactionRequest{})
 }
 func TestTransactionRequestPrototype() helpers.TransactionRequest {
-	return transactionRequest{}
+	return TransactionRequest{}
 }
 
 type transactionResponse struct {

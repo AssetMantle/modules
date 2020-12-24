@@ -50,4 +50,5 @@ func Test_MetaFact(t *testing.T) {
 	require.Equal(t, nil, readMetaFact6)
 	require.Equal(t, errors.IncorrectFormat, Error)
 
+	require.Equal(t, readMetaFact4, readMetaFact4.Sign(nil))
 }

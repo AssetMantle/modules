@@ -20,4 +20,5 @@ func Test_Classification_Methods(t *testing.T) {
 	require.Equal(t, immutables, testClassification.GetImmutables())
 	require.Equal(t, mutables, testClassification.GetMutables())
 	require.Equal(t, key.New(id), testClassification.GetKey())
+	require.Equal(t, id, testClassification.(classification).GetID())
 }

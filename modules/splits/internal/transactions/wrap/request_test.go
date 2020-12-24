@@ -65,4 +65,7 @@ func Test_Unwrap_Request(t *testing.T) {
 	require.Nil(t, msg2)
 
 	require.Equal(t, transactionRequest{}, requestPrototype())
+	require.NotPanics(t, func() {
+		requestPrototype().RegisterCodec(codec.New())
+	})
 }
