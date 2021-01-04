@@ -5,4 +5,10 @@
 
 package module
 
-const Name = "splits"
+import (
+	"github.com/persistenceOne/persistenceSDK/constants/keys"
+	"github.com/persistenceOne/persistenceSDK/constants/names"
+)
+
+const Name = names.Splits
+const StoreKeyPrefix = keys.Splits

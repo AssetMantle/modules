@@ -40,7 +40,7 @@ func (MetaID metaID) Equals(id types.ID) bool {
 	return bytes.Compare(MetaID.Bytes(), id.Bytes()) == 0
 }
 func (MetaID metaID) GenerateStoreKeyBytes() []byte {
-	return append([]byte{0x13}, MetaID.Bytes()...)
+	return module.StoreKeyPrefix.GenerateStoreKey(MetaID.Bytes())
 }
 func (metaID) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, metaID{})

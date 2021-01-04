@@ -49,7 +49,7 @@ func (OrderID orderID) Equals(id types.ID) bool {
 	return bytes.Compare(OrderID.Bytes(), id.Bytes()) == 0
 }
 func (OrderID orderID) GenerateStoreKeyBytes() []byte {
-	return append([]byte{0x14}, OrderID.Bytes()...)
+	return module.StoreKeyPrefix.GenerateStoreKey(OrderID.Bytes())
 }
 func (orderID) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, orderID{})

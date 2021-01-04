@@ -39,7 +39,7 @@ func (MaintainerID maintainerID) Equals(id types.ID) bool {
 	return bytes.Compare(MaintainerID.Bytes(), id.Bytes()) == 0
 }
 func (MaintainerID maintainerID) GenerateStoreKeyBytes() []byte {
-	return append([]byte{0x13}, MaintainerID.Bytes()...)
+	return module.StoreKeyPrefix.GenerateStoreKey(MaintainerID.Bytes())
 }
 func (maintainerID) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, maintainerID{})

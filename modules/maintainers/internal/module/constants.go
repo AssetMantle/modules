@@ -5,4 +5,10 @@
 
 package module
 
-const Name = "maintainers"
+import (
+	"github.com/persistenceOne/persistenceSDK/constants/keys"
+	"github.com/persistenceOne/persistenceSDK/constants/names"
+)
+
+const Name = names.Maintainers
+const StoreKeyPrefix = keys.Maintainers

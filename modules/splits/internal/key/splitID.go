@@ -40,7 +40,7 @@ func (SplitID splitID) Equals(id types.ID) bool {
 	return bytes.Compare(SplitID.Bytes(), id.Bytes()) == 0
 }
 func (SplitID splitID) GenerateStoreKeyBytes() []byte {
-	return append([]byte{0x13}, SplitID.Bytes()...)
+	return module.StoreKeyPrefix.GenerateStoreKey(SplitID.Bytes())
 }
 func (splitID) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, splitID{})
