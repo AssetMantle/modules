@@ -40,7 +40,7 @@ func (AssetID assetID) Equals(id types.ID) bool {
 	return bytes.Compare(AssetID.Bytes(), id.Bytes()) == 0
 }
 func (AssetID assetID) GenerateStoreKeyBytes() []byte {
-	return append([]byte{0x11}, AssetID.Bytes()...)
+	return module.StoreKeyPrefix.GenerateStoreKey(AssetID.Bytes())
 }
 func (assetID) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, assetID{})

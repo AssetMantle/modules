@@ -40,7 +40,7 @@ func (IdentityID identityID) Equals(id types.ID) bool {
 	return bytes.Compare(IdentityID.Bytes(), id.Bytes()) == 0
 }
 func (IdentityID identityID) GenerateStoreKeyBytes() []byte {
-	return append([]byte{0x12}, IdentityID.Bytes()...)
+	return module.StoreKeyPrefix.GenerateStoreKey(IdentityID.Bytes())
 }
 func (identityID) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, identityID{})

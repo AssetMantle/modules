@@ -41,7 +41,7 @@ func (ClassificationID classificationID) Equals(id types.ID) bool {
 	return bytes.Compare(ClassificationID.Bytes(), id.Bytes()) == 0
 }
 func (ClassificationID classificationID) GenerateStoreKeyBytes() []byte {
-	return append([]byte{0x16}, ClassificationID.Bytes()...)
+	return module.StoreKeyPrefix.GenerateStoreKey(ClassificationID.Bytes())
 }
 func (classificationID) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, classificationID{})
