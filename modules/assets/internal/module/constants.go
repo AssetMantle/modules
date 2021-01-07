@@ -5,4 +5,10 @@
 
 package module
 
-const Name = "assets"
+import (
+	"github.com/persistenceOne/persistenceSDK/constants/keys"
+	"github.com/persistenceOne/persistenceSDK/constants/names"
+)
+
+const Name = names.Assets
+const StoreKeyPrefix = keys.Assets
