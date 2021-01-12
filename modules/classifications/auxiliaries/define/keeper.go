@@ -30,7 +30,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	}
 
 	if property.Duplicate(append(auxiliaryRequest.ImmutableTraits.Get().GetList(), auxiliaryRequest.MutableTraits.Get().GetList()...)) {
-		return newAuxiliaryResponse(nil, errors.DuplicatePropertyID)
+		return newAuxiliaryResponse(nil, errors.InvalidRequest)
 	}
 
 	classificationID := key.NewClassificationID(base.NewID(context.ChainID()), auxiliaryRequest.ImmutableTraits, auxiliaryRequest.MutableTraits)
