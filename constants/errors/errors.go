@@ -22,5 +22,6 @@ var MetaDataError = errors.Register(constants.ProjectRoute, 109, "MetaDataError"
 var NotAuthorized = errors.Register(constants.ProjectRoute, 110, "NotAuthorized")
 var UninitializedUsage = errors.Register(constants.ProjectRoute, 111, "UninitializedUsage")
 var UnsupportedParameter = errors.Register(constants.ProjectRoute, 112, "UnsupportedParameter")
+var DuplicatePropertyID = errors.Register(constants.ProjectRoute, 113, "DuplicatePropertyID")
 
 var MockError = errors.Register(constants.ProjectRoute, 999, "MockError")
