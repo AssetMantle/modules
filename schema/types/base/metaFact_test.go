@@ -42,6 +42,10 @@ func Test_MetaFact(t *testing.T) {
 	require.Equal(t, NewMetaFact(idData), readMetaFact3)
 	require.Nil(t, Error)
 
+	readMetaFact3, Error = ReadMetaFact("I|test.Class|hash")
+	require.Equal(t, NewMetaFact(NewIDData(NewID("test.Class|hash"))), readMetaFact3)
+	require.Nil(t, Error)
+
 	//Fix the decData case in GetTypeID Method
 	readMetaFact4, Error := ReadMetaFact("D|12.0")
 	require.Equal(t, NewMetaFact(decData), readMetaFact4)

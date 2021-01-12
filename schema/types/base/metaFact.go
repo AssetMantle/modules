@@ -39,7 +39,7 @@ func NewMetaFact(data types.Data) types.MetaFact {
 }
 
 func ReadMetaFact(DataTypeAndString string) (types.MetaFact, error) {
-	dataTypeAndString := strings.Split(DataTypeAndString, constants.DataTypeAndValueSeparator)
+	dataTypeAndString := strings.SplitN(DataTypeAndString, constants.DataTypeAndValueSeparator, 2)
 	if len(dataTypeAndString) == 2 {
 		dataType, dataString := dataTypeAndString[0], dataTypeAndString[1]
 		var data types.Data
