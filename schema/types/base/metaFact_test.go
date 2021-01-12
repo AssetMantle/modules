@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package base
 
 import (
@@ -35,6 +40,10 @@ func Test_MetaFact(t *testing.T) {
 
 	readMetaFact3, Error := ReadMetaFact("I|id")
 	require.Equal(t, NewMetaFact(idData), readMetaFact3)
+	require.Nil(t, Error)
+
+	readMetaFact3, Error = ReadMetaFact("I|test.Class|hash")
+	require.Equal(t, NewMetaFact(NewIDData(NewID("test.Class|hash"))), readMetaFact3)
 	require.Nil(t, Error)
 
 	//Fix the decData case in GetTypeID Method
