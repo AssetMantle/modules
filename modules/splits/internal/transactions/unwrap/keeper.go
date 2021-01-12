@@ -39,7 +39,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if split == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
-	split = split.(mappables.Split).Send(message.Split).(mappables.Split)
+	split = split.(mappables.Split).Send(message.Split.TruncateDec()).(mappables.Split)
 	if split.(mappables.Split).GetSplit().LT(sdkTypes.ZeroDec()) {
 		return newTransactionResponse(errors.InsufficientBalance)
 	} else if split.(mappables.Split).GetSplit().Equal(sdkTypes.ZeroDec()) {
