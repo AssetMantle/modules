@@ -113,4 +113,12 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		}
 	})
 
+	t.Run("NegativeCase- Classification EntityNotFound", func(t *testing.T) {
+		t.Parallel()
+		want := newAuxiliaryResponse(errors.EntityNotFound)
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(base.NewID("test.classification"), immutables, base.NewMutables(base.NewProperties(base.NewProperty(base.NewID("ID6"), base.NewFact(base.NewStringData("Data3"))))))); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+
 }
