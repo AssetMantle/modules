@@ -100,4 +100,22 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
+
+	t.Run("NegativeCase-DuplicateProperties", func(t *testing.T) {
+		t.Parallel()
+		want := newAuxiliaryResponse(nil, errors.DuplicatePropertyID)
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(base.NewImmutables(base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("Data1"))), base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("Data2"))), base.NewProperty(base.NewID("ID3"), base.NewFact(base.NewStringData("Data3"))), base.NewProperty(base.NewID("ID4"), base.NewFact(base.NewStringData("Data4"))), base.NewProperty(base.NewID("ID5"), base.NewFact(base.NewStringData("Data5"))), base.NewProperty(base.NewID("ID6"), base.NewFact(base.NewStringData("Data6"))), base.NewProperty(base.NewID("ID7"), base.NewFact(base.NewStringData("Data7"))), base.NewProperty(base.NewID("ID8"), base.NewFact(base.NewStringData("Data8"))), base.NewProperty(base.NewID("ID9"), base.NewFact(base.NewStringData("Data9"))), base.NewProperty(base.NewID("ID10"), base.NewFact(base.NewStringData("Data10"))))),
+			base.NewMutables(base.NewProperties(base.NewProperty(base.NewID("ID11"), base.NewFact(base.NewStringData("Data11"))), base.NewProperty(base.NewID("ID12"), base.NewFact(base.NewStringData("Data12"))), base.NewProperty(base.NewID("ID13"), base.NewFact(base.NewStringData("Data13"))), base.NewProperty(base.NewID("ID14"), base.NewFact(base.NewStringData("Data14"))), base.NewProperty(base.NewID("ID15"), base.NewFact(base.NewStringData("Data15"))), base.NewProperty(base.NewID("ID16"), base.NewFact(base.NewStringData("Data16"))), base.NewProperty(base.NewID("ID17"), base.NewFact(base.NewStringData("Data17"))), base.NewProperty(base.NewID("ID18"), base.NewFact(base.NewStringData("Data18"))), base.NewProperty(base.NewID("ID19"), base.NewFact(base.NewStringData("Data19"))), base.NewProperty(base.NewID("ID20"), base.NewFact(base.NewStringData("Data20"))))))); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("NegativeCase-DuplicateProperties", func(t *testing.T) {
+		t.Parallel()
+		want := newAuxiliaryResponse(nil, errors.DuplicatePropertyID)
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(base.NewImmutables(base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("Data1"))), base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("Data2"))), base.NewProperty(base.NewID("ID3"), base.NewFact(base.NewStringData("Data3"))), base.NewProperty(base.NewID("ID4"), base.NewFact(base.NewStringData("Data4"))), base.NewProperty(base.NewID("ID5"), base.NewFact(base.NewStringData("Data5"))), base.NewProperty(base.NewID("ID6"), base.NewFact(base.NewStringData("Data6"))), base.NewProperty(base.NewID("ID7"), base.NewFact(base.NewStringData("Data7"))), base.NewProperty(base.NewID("ID8"), base.NewFact(base.NewStringData("Data8"))), base.NewProperty(base.NewID("ID9"), base.NewFact(base.NewStringData("Data9"))), base.NewProperty(base.NewID("ID10"), base.NewFact(base.NewStringData("Data10"))))),
+			base.NewMutables(base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("Data11"))), base.NewProperty(base.NewID("ID12"), base.NewFact(base.NewStringData("Data12"))), base.NewProperty(base.NewID("ID13"), base.NewFact(base.NewStringData("Data13"))), base.NewProperty(base.NewID("ID14"), base.NewFact(base.NewStringData("Data14"))), base.NewProperty(base.NewID("ID15"), base.NewFact(base.NewStringData("Data15"))), base.NewProperty(base.NewID("ID16"), base.NewFact(base.NewStringData("Data16"))), base.NewProperty(base.NewID("ID17"), base.NewFact(base.NewStringData("Data17"))), base.NewProperty(base.NewID("ID18"), base.NewFact(base.NewStringData("Data18"))), base.NewProperty(base.NewID("ID19"), base.NewFact(base.NewStringData("Data19"))), base.NewProperty(base.NewID("ID20"), base.NewFact(base.NewStringData("Data20"))))))); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
 }

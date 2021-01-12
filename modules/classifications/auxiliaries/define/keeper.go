@@ -13,7 +13,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/persistenceOne/persistenceSDK/utilities/properties"
+	"github.com/persistenceOne/persistenceSDK/utilities/property"
 )
 
 type auxiliaryKeeper struct {
@@ -29,7 +29,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 		return newAuxiliaryResponse(nil, errors.InvalidRequest)
 	}
 
-	if properties.Duplicate(auxiliaryRequest.ImmutableTraits.Get()) || properties.Duplicate(auxiliaryRequest.MutableTraits.Get()) {
+	if property.Duplicate(append(auxiliaryRequest.ImmutableTraits.Get().GetList(), auxiliaryRequest.MutableTraits.Get().GetList()...)) {
 		return newAuxiliaryResponse(nil, errors.DuplicatePropertyID)
 	}
 
