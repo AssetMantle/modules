@@ -13,6 +13,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/utilities/property"
 )
 
 type auxiliaryKeeper struct {
@@ -25,6 +26,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 
 	if len(auxiliaryRequest.ImmutableTraits.Get().GetList())+len(auxiliaryRequest.MutableTraits.Get().GetList()) > constants.MaxTraitCount {
+		return newAuxiliaryResponse(nil, errors.InvalidRequest)
+	}
+
+	if property.Duplicate(append(auxiliaryRequest.ImmutableTraits.Get().GetList(), auxiliaryRequest.MutableTraits.Get().GetList()...)) {
 		return newAuxiliaryResponse(nil, errors.InvalidRequest)
 	}
 
