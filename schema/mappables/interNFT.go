@@ -17,5 +17,6 @@ type InterNFT interface {
 	traits.HasMutables
 	traits.Burnable
 	traits.Lockable
+	traits.Splittable
 	helpers.Mappable
 }
