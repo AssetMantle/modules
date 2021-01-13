@@ -41,9 +41,9 @@ func TestHandler(t *testing.T) {
 	RegisterRESTRoutes(clientContext, router)
 
 	t.Cleanup(func() {
-		_ = keyring.Delete("keyname1", "", true)
-		_ = keyring.Delete("keyname2", "", true)
-		_ = keyring.Delete("keyname3", "", true)
+		_ = keyring.Delete("keyName1", "", true)
+		_ = keyring.Delete("keyName2", "", true)
+		_ = keyring.Delete("keyName3", "", true)
 	})
 
 	getResponse := func(responseBytes []byte) response {
@@ -110,7 +110,7 @@ func TestHandler(t *testing.T) {
 	handler.ServeHTTP(responseRecorder, testRequest4)
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 
-	//Retry adding same acconunt
+	//Retry adding same account
 	requestBody5, Error := Codec.MarshalJSON(request{
 		Name: "testKey1",
 	})
@@ -121,6 +121,6 @@ func TestHandler(t *testing.T) {
 	responseRecorder = httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest5)
 	require.Equal(t, http.StatusInternalServerError, responseRecorder.Code)
-	require.Equal(t, `{"error":"Account for keyname testKey1 already exists"}`, responseRecorder.Body.String())
+	require.Equal(t, `{"error":"Account for keyName testKey1 already exists"}`, responseRecorder.Body.String())
 
 }
