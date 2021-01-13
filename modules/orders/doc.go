@@ -3,5 +3,5 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-// orders package defines the assets module.
+// orders package defines the orders module.
 package orders
