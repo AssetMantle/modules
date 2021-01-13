@@ -32,7 +32,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 		for _, immutableProperty := range auxiliaryRequest.Immutables.Get().GetList() {
-			if trait := classification.(mappables.Classification).GetImmutables().Get().Get(immutableProperty.GetID()); trait == nil || !trait.GetFact().GetHashID().Equals(base.NewID("")) && trait.GetFact().GetHashID() != immutableProperty.GetFact().GetHashID() {
+			if trait := classification.(mappables.Classification).GetImmutables().Get().Get(immutableProperty.GetID()); trait == nil || !trait.GetFact().GetTypeID().Equals(immutableProperty.GetFact().GetTypeID()) || !trait.GetFact().GetHashID().Equals(base.NewID("")) && trait.GetFact().GetHashID() != immutableProperty.GetFact().GetHashID() {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}
@@ -42,7 +42,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 		for _, mutableProperty := range auxiliaryRequest.Mutables.Get().GetList() {
-			if classification.(mappables.Classification).GetMutables().Get().Get(mutableProperty.GetID()) == nil {
+			if trait := classification.(mappables.Classification).GetMutables().Get().Get(mutableProperty.GetID()); trait == nil || !trait.GetFact().GetTypeID().Equals(mutableProperty.GetFact().GetTypeID()) {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}

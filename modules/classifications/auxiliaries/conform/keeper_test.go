@@ -86,6 +86,22 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		}
 	})
 
+	t.Run("Negative Case - Immutable Data Type mismatch", func(t *testing.T) {
+		t.Parallel()
+		want := newAuxiliaryResponse(errors.NotAuthorized)
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, base.NewImmutables(base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewIDData(base.NewID("Data2")))))), mutables)); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("Negative Case - Mutable Data Type mismatch", func(t *testing.T) {
+		t.Parallel()
+		want := newAuxiliaryResponse(errors.NotAuthorized)
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, immutables, base.NewMutables(base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewIDData(base.NewID("Data1")))))))); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+
 	t.Run("NegativeCase-Immutables list length mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
