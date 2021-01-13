@@ -31,7 +31,7 @@ func (split split) GetOwnerID() types.ID {
 func (split split) GetOwnableID() types.ID {
 	return key.ReadOwnableID(split.ID)
 }
-func (split split) GetSplit() sdkTypes.Dec {
+func (split split) GetValue() sdkTypes.Dec {
 	return split.Split
 }
 func (split split) Send(Split sdkTypes.Dec) traits.Transactional {

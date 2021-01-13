@@ -38,9 +38,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 	fromSplit = fromSplit.(mappables.Split).Send(message.Split).(mappables.Split)
-	if fromSplit.(mappables.Split).GetSplit().LT(sdkTypes.ZeroDec()) {
+	if fromSplit.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()) {
 		return newTransactionResponse(errors.NotAuthorized)
-	} else if fromSplit.(mappables.Split).GetSplit().Equal(sdkTypes.ZeroDec()) {
+	} else if fromSplit.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()) {
 		splits.Remove(fromSplit)
 	} else {
 		splits.Mutate(fromSplit)

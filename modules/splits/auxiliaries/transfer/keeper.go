@@ -32,9 +32,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 	fromSplit = fromSplit.(mappables.Split).Send(auxiliaryRequest.Split).(mappables.Split)
-	if fromSplit.(mappables.Split).GetSplit().LT(sdkTypes.ZeroDec()) {
+	if fromSplit.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()) {
 		return newAuxiliaryResponse(errors.NotAuthorized)
-	} else if fromSplit.(mappables.Split).GetSplit().Equal(sdkTypes.ZeroDec()) {
+	} else if fromSplit.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()) {
 		splits.Remove(fromSplit)
 	} else {
 		splits.Mutate(fromSplit)

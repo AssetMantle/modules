@@ -7,6 +7,7 @@ package mappable
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
@@ -28,19 +29,15 @@ var _ mappables.InterNFT = (*asset)(nil)
 func (asset asset) GetID() types.ID {
 	return asset.ID
 }
-
 func (asset asset) GetClassificationID() types.ID {
 	return key.ReadClassificationID(asset.ID)
 }
-
 func (asset asset) GetImmutables() types.Immutables {
 	return asset.Immutables
 }
-
 func (asset asset) GetMutables() types.Mutables {
 	return asset.Mutables
 }
-
 func (asset asset) GetBurn() types.Property {
 	if burnProperty := asset.Immutables.Get().Get(base.NewID(properties.Burn)); burnProperty != nil {
 		return burnProperty
@@ -51,7 +48,6 @@ func (asset asset) GetBurn() types.Property {
 		return base.NewProperty(base.NewID(properties.Burn), base.NewFact(data))
 	}
 }
-
 func (asset asset) GetLock() types.Property {
 	if lockProperty := asset.Immutables.Get().Get(base.NewID(properties.Lock)); lockProperty != nil {
 		return lockProperty
@@ -60,6 +56,15 @@ func (asset asset) GetLock() types.Property {
 	} else {
 		data, _ := base.ReadHeightData("")
 		return base.NewProperty(base.NewID(properties.Lock), base.NewFact(data))
+	}
+}
+func (asset asset) GetSplit() types.Property {
+	if splitProperty := asset.Immutables.Get().Get(base.NewID(properties.Split)); splitProperty != nil {
+		return splitProperty
+	} else if splitProperty := asset.Mutables.Get().Get(base.NewID(properties.Split)); splitProperty != nil {
+		return splitProperty
+	} else {
+		return base.NewProperty(base.NewID(properties.Split), base.NewFact(base.NewDecData(sdkTypes.SmallestDec())))
 	}
 }
 func (asset asset) GetKey() helpers.Key {
