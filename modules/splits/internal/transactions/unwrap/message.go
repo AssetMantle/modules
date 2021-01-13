@@ -22,7 +22,7 @@ type message struct {
 	From      sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
 	FromID    types.ID            `json:"fromID" valid:"required~required field fromID missing"`
 	OwnableID types.ID            `json:"ownableID" valid:"required~required field ownableID missing"`
-	Split     sdkTypes.Dec        `json:"split" valid:"required~required field split missing"`
+	Split     sdkTypes.Int        `json:"split" valid:"required~required field split missing"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -57,7 +57,7 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, ownableID types.ID, split sdkTypes.Dec) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, ownableID types.ID, split sdkTypes.Int) sdkTypes.Msg {
 	return message{
 		From:      from,
 		FromID:    fromID,

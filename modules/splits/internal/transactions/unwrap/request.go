@@ -12,6 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
+	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -23,7 +24,7 @@ type transactionRequest struct {
 	BaseReq   rest.BaseReq `json:"baseReq"`
 	FromID    string       `json:"fromID" valid:"required~required field fromID missing matches(^[A-Za-z]$)~invalid field fromID"`
 	OwnableID string       `json:"ownableID" valid:"required~required field ownableID missing matches(^[A-Za-z]$)~invalid field ownableID"`
-	Split     string       `json:"split" valid:"required~required field split missing matches(^[A-Za-z]$)~invalid field split"`
+	Split     string       `json:"split" valid:"required~required field split missing"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -55,11 +56,10 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, Error
 	}
 
-	split, Error := sdkTypes.NewDecFromStr(transactionRequest.Split)
-	if Error != nil {
-		return nil, Error
+	split, ok := sdkTypes.NewIntFromString(transactionRequest.Split)
+	if !ok {
+		return nil, xprtErrors.InvalidRequest
 	}
-
 	return newMessage(
 		from,
 		base.NewID(transactionRequest.FromID),

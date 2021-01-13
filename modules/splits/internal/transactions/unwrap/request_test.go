@@ -12,6 +12,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -58,11 +59,15 @@ func Test_Unwrap_Request(t *testing.T) {
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
 	msg, Error := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), base.NewID("ownableID"), sdkTypes.NewDec(2)), msg)
+	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), base.NewID("ownableID"), sdkTypes.NewInt(2)), msg)
 	require.Nil(t, Error)
 
 	msg2, Error := newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, "fromID", "ownableID", "2").MakeMsg()
 	require.NotNil(t, Error)
+	require.Nil(t, msg2)
+
+	msg2, Error = newTransactionRequest(rest.BaseReq{From: fromAddress, ChainID: "test"}, "fromID", "ownableID", "2.5").MakeMsg()
+	require.Equal(t, xprtErrors.InvalidRequest, Error)
 	require.Nil(t, msg2)
 
 	msg2, Error = newTransactionRequest(testBaseReq, "fromID", "ownableID", "randomString").MakeMsg()

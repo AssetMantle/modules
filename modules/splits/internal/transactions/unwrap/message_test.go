@@ -18,7 +18,7 @@ func Test_Unwrap_Message(t *testing.T) {
 
 	testFromID := base.NewID("fromID")
 	testOwnableID := base.NewID("ownableID")
-	testSplit := sdkTypes.NewDec(2)
+	testSplit := sdkTypes.NewInt(2)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)

@@ -30,7 +30,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
-	if message.Split.LTE(sdkTypes.ZeroDec()) {
+	splitAmount := sdkTypes.NewDecFromInt(message.Split)
+	if splitAmount.LTE(sdkTypes.ZeroDec()) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 	splitID := key.NewSplitID(message.FromID, message.OwnableID)
@@ -39,7 +40,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if split == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
-	split = split.(mappables.Split).Send(message.Split.TruncateDec()).(mappables.Split)
+	split = split.(mappables.Split).Send(splitAmount).(mappables.Split)
 	if split.(mappables.Split).GetSplit().LT(sdkTypes.ZeroDec()) {
 		return newTransactionResponse(errors.InsufficientBalance)
 	} else if split.(mappables.Split).GetSplit().Equal(sdkTypes.ZeroDec()) {
@@ -47,7 +48,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	} else {
 		splits.Mutate(split)
 	}
-	if Error := transactionKeeper.supplyKeeper.SendCoinsFromModuleToAccount(context, module.Name, message.From, sdkTypes.NewCoins(sdkTypes.NewCoin(message.OwnableID.String(), message.Split.TruncateInt()))); Error != nil {
+	if Error := transactionKeeper.supplyKeeper.SendCoinsFromModuleToAccount(context, module.Name, message.From, sdkTypes.NewCoins(sdkTypes.NewCoin(message.OwnableID.String(), message.Split))); Error != nil {
 		return newTransactionResponse(Error)
 	}
 	return newTransactionResponse(nil)
