@@ -21,7 +21,7 @@ import (
 
 type transactionRequest struct {
 	BaseReq  rest.BaseReq `json:"baseReq"`
-	MetaFact string       `json:"metaFact" valid:"required~required field metaFact missing"`
+	MetaFact string       `json:"metaFact" valid:"required~required field metaFact missing, matches(^[DHIS]{1}[|]{1}.*$)"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)

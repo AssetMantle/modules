@@ -15,7 +15,7 @@ import (
 
 type request struct {
 	BaseRequest rest.BaseReq    `json:"baseReq"`
-	Type        string          `json:"type"`
+	Type        string          `json:"type" valid:"required~required field to missing, matches(^.*$)~invalid field type"`
 	StdTx       authTypes.StdTx `json:"value"`
 }
 

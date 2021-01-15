@@ -21,10 +21,10 @@ import (
 
 type transactionRequest struct {
 	BaseReq          rest.BaseReq `json:"baseReq"`
-	FromID           string       `json:"fromID" valid:"required~required field fromID missing"`
-	ToID             string       `json:"toID" valid:"required~required field toID missing"`
-	ClassificationID string       `json:"classificationID" valid:"required~required field classificationID missing matches(^[A-Za-z]$)~invalid field classificationID"`
-	MaintainedTraits string       `json:"maintainedTraits" valid:"required~required field maintainedTraits missing"`
+	FromID           string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
+	ToID             string       `json:"toID" valid:"required~required field toID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field toID"`
+	ClassificationID string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^[A-Za-z0-9-_=.]+$)~invalid field classificationID"`
+	MaintainedTraits string       `json:"maintainedTraits" valid:"required~required field maintainedTraits missing, matches(^.*$)~invalid field maintainedTraits"`
 	AddMaintainer    bool         `json:"addMaintainer" valid:"required~required field addMaintainer missing"`
 	RemoveMaintainer bool         `json:"removeMaintainer" valid:"required~required field removeMaintainer missing"`
 	MutateMaintainer bool         `json:"mutateMaintainer" valid:"required~required field mutateMaintainer missing"`

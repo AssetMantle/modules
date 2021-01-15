@@ -19,7 +19,7 @@ import (
 
 type split struct {
 	ID    types.ID     `json:"key" valid:"required field key missing"`
-	Split sdkTypes.Dec `json:"split" valid:"required~required field split missing matches(^[0-9]$)~invalid field split"`
+	Split sdkTypes.Dec `json:"split" valid:"required~required field split missing, matches(^[0-9]$)~invalid field split"`
 }
 
 var _ mappables.Split = (*split)(nil)
