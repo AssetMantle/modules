@@ -46,7 +46,7 @@ func (split split) CanSend(Split sdkTypes.Dec) bool {
 	return split.Split.GTE(Split)
 }
 func (split split) GetKey() helpers.Key {
-	return key.New(split.ID)
+	return key.FromID(split.ID)
 }
 func (split) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, split{})

@@ -22,8 +22,8 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	splitID := key.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
-	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(splitID))
-	split := splits.Get(key.New(splitID))
+	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(splitID))
+	split := splits.Get(key.FromID(splitID))
 	if split == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}

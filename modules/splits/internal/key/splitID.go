@@ -60,10 +60,6 @@ func (SplitID splitID) Matches(key helpers.Key) bool {
 	}
 }
 
-func New(id types.ID) helpers.Key {
-	return splitIDFromInterface(id)
-}
-
 func NewSplitID(ownerID types.ID, ownableID types.ID) types.ID {
 	return splitID{
 		OwnerID:   ownerID,

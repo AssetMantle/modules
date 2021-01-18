@@ -56,9 +56,9 @@ func (mapper mapper) Delete(context sdkTypes.Context, key helpers.Key) {
 	kvStore := context.KVStore(mapper.kvStoreKey)
 	kvStore.Delete(key.GenerateStoreKeyBytes())
 }
-func (mapper mapper) Iterate(context sdkTypes.Context, key helpers.Key, accumulator func(helpers.Mappable) bool) {
+func (mapper mapper) Iterate(context sdkTypes.Context, partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
 	store := context.KVStore(mapper.kvStoreKey)
-	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(store, key.GenerateStoreKeyBytes())
+	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(store, partialKey.GenerateStoreKeyBytes())
 
 	defer kvStorePrefixIterator.Close()
 	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {

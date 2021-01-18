@@ -32,8 +32,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 	fromSplitID := key.NewSplitID(message.FromID, message.OwnableID)
-	splits := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(fromSplitID))
-	fromSplit := splits.Get(key.New(fromSplitID))
+	splits := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(fromSplitID))
+	fromSplit := splits.Get(key.FromID(fromSplitID))
 	if fromSplit == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
@@ -47,7 +47,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	toSplitID := key.NewSplitID(message.ToID, message.OwnableID)
-	toSplit := splits.Fetch(key.New(toSplitID)).Get(key.New(toSplitID))
+	toSplit := splits.Fetch(key.FromID(toSplitID)).Get(key.FromID(toSplitID))
 	if toSplit == nil {
 		splits.Add(mappable.NewSplit(toSplitID, message.Split))
 	} else {

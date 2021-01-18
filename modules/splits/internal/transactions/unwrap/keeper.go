@@ -35,8 +35,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 	splitID := key.NewSplitID(message.FromID, message.OwnableID)
-	splits := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(splitID))
-	split := splits.Get(key.New(splitID))
+	splits := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(splitID))
+	split := splits.Get(key.FromID(splitID))
 	if split == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
