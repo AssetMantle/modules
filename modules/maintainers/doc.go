@@ -3,5 +3,5 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-// maintainers package defines the assets module.
+// maintainers package defines the maintainers module.
 package maintainers
