@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package signTx
+package sign
 
 import (
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"

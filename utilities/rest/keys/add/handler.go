@@ -6,7 +6,6 @@
 package add
 
 import (
-	"errors"
 	"fmt"
 	"github.com/bartekn/go-bip39"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -41,12 +40,12 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 		}
 		info, Error := Keyring.Get(request.Name)
 		if Error == nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, errors.New(fmt.Sprintf("Account for keyname %v already exists", request.Name)).Error())
+			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, fmt.Sprintf("Account for keyname %v already exists", request.Name))
 			return
 		}
 
 		if request.Mnemonic != "" && !bip39.IsMnemonicValid(request.Mnemonic) {
-			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, errors.New("invalid mnemonic").Error())
+			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, "invalid mnemonic")
 			return
 		}
 		if request.Mnemonic == "" {

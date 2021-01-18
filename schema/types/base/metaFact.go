@@ -58,10 +58,9 @@ func ReadMetaFact(DataTypeAndString string) (types.MetaFact, error) {
 		}
 		if Error != nil {
 			return nil, Error
-		} else {
-			return NewMetaFact(data), nil
 		}
-	} else {
-		return nil, errors.IncorrectFormat
+		return NewMetaFact(data), nil
 	}
+	return nil, errors.IncorrectFormat
+
 }

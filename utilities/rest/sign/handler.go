@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package signTx
+package sign
 
 import (
 	"bytes"
@@ -87,5 +87,5 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 }
 
 func RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
-	router.HandleFunc("/signTx", handler(cliContext)).Methods("POST")
+	router.HandleFunc("/sign", handler(cliContext)).Methods("POST")
 }

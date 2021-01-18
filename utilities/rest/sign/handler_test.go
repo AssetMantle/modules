@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package signTx
+package sign
 
 import (
 	"bytes"
@@ -65,7 +65,7 @@ func TestHandler(t *testing.T) {
 		StdTx:       auth.NewStdTx([]sdkTypes.Msg{base.NewTestMessage(sdkAddress, "id")}, auth.NewStdFee(10, sdkTypes.NewCoins()), nil, ""),
 	})
 	require.Nil(t, Error)
-	testRequest1, Error := http.NewRequest("POST", "/signTx", bytes.NewBuffer(requestBody1))
+	testRequest1, Error := http.NewRequest("POST", "/sign", bytes.NewBuffer(requestBody1))
 	require.Nil(t, Error)
 	responseRecorder := httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest1)
@@ -79,7 +79,7 @@ func TestHandler(t *testing.T) {
 		StdTx:       auth.NewStdTx([]sdkTypes.Msg{base.NewTestMessage(sdkAddress, "id")}, auth.NewStdFee(20, sdkTypes.NewCoins()), nil, ""),
 	})
 	require.Nil(t, Error)
-	testRequest2, Error := http.NewRequest("POST", "/signTx", bytes.NewBuffer(requestBody2))
+	testRequest2, Error := http.NewRequest("POST", "/sign", bytes.NewBuffer(requestBody2))
 	require.Nil(t, Error)
 	responseRecorder = httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest2)
@@ -93,7 +93,7 @@ func TestHandler(t *testing.T) {
 		StdTx:       auth.NewStdTx([]sdkTypes.Msg{base.NewTestMessage(sdkAddress, "id")}, auth.NewStdFee(30, sdkTypes.NewCoins()), nil, ""),
 	})
 	require.Nil(t, Error)
-	testRequest3, Error := http.NewRequest("POST", "/signTx", bytes.NewBuffer(requestBody3))
+	testRequest3, Error := http.NewRequest("POST", "/sign", bytes.NewBuffer(requestBody3))
 	require.Nil(t, Error)
 	responseRecorder = httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest3)

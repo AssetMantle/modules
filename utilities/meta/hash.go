@@ -17,6 +17,8 @@ func Hash(meta ...string) string {
 	sort.Strings(meta)
 	toDigest := strings.Join(meta, constants.ToHashSeparator)
 	hash := sha1.New()
-	hash.Write([]byte(toDigest))
+	if _, Error := hash.Write([]byte(toDigest)); Error != nil {
+		panic(Error)
+	}
 	return base64.URLEncoding.EncodeToString(hash.Sum(nil))
 }

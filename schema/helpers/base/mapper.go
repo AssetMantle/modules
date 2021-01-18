@@ -76,9 +76,9 @@ func (mapper mapper) StoreDecoder(_ *codec.Codec, kvA kv.Pair, kvB kv.Pair) stri
 		var mappableB helpers.Mappable
 		mapper.codec.MustUnmarshalBinaryBare(kvB.Value, &mappableB)
 		return fmt.Sprintf("%v\n%v", mappableA, mappableB)
-	} else {
-		panic(fmt.Sprintf("invalid key prefix %X", kvA.Key[:1]))
 	}
+	panic(fmt.Errorf("invalid key prefix %X", kvA.Key[:1]))
+
 }
 func (mapper mapper) Initialize(kvStoreKey *sdkTypes.KVStoreKey) helpers.Mapper {
 	mapper.kvStoreKey = kvStoreKey
