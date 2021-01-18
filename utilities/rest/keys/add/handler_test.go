@@ -65,7 +65,7 @@ func TestHandler(t *testing.T) {
 	require.Nil(t, Error)
 	responseRecorder := httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest1)
-	require.Equal(t, responseRecorder.Code, http.StatusOK)
+	require.Equal(t, http.StatusOK, responseRecorder.Code)
 
 	response1 := getResponse(responseRecorder.Body.Bytes())
 	require.Nil(t, response1.Error)

@@ -13,10 +13,10 @@ import (
 )
 
 type auxiliaryRequest struct {
-	FromID    types.ID     `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
-	ToID      types.ID     `json:"toID" valid:"required~required field toID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field toID"`
-	OwnableID types.ID     `json:"ownableID" valid:"required~required field ownableID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field ownableID"`
-	Split     sdkTypes.Dec `json:"split" valid:"required~required field split missing, matches(^[0-9.]*$)~invalid field split"`
+	FromID    types.ID     `json:"fromID" valid:"required~required field fromID missing"`
+	ToID      types.ID     `json:"toID" valid:"required~required field toID missing"`
+	OwnableID types.ID     `json:"ownableID" valid:"required~required field ownableID missing"`
+	Split     sdkTypes.Dec `json:"split" valid:"required~required field split missing"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)

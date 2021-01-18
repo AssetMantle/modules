@@ -190,9 +190,9 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 
 func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace params.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
 	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)
-	//TODO initialize genesis
-	module.genesis = module.genesisPrototype().Initialize(nil, nil)
+
 	module.parameters = module.parametersPrototype().Initialize(paramsSubspace.WithKeyTable(module.parametersPrototype().GetKeyTable()))
+	module.genesis = module.genesisPrototype().Initialize(module.mapper.NewCollection(sdkTypes.Context{}).GetList(), module.parameters.GetList())
 
 	var auxiliaryList []helpers.Auxiliary
 	for _, auxiliary := range module.auxiliariesPrototype().GetList() {
