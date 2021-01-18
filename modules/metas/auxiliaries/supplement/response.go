@@ -43,9 +43,8 @@ func GetMetaPropertiesFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse) 
 	case auxiliaryResponse:
 		if value.IsSuccessful() {
 			return value.MetaProperties, nil
-		} else {
-			return nil, value.GetError()
 		}
+		return nil, value.GetError()
 	default:
 		return nil, errors.InvalidRequest
 	}

@@ -45,9 +45,8 @@ func GetClassificationIDFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse
 	case auxiliaryResponse:
 		if value.IsSuccessful() {
 			return value.ClassificationID, nil
-		} else {
-			return value.ClassificationID, value.GetError()
 		}
+		return value.ClassificationID, value.GetError()
 	default:
 		return nil, errors.InvalidRequest
 	}

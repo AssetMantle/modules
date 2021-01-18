@@ -44,9 +44,8 @@ func GetPropertiesFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse) (typ
 	case auxiliaryResponse:
 		if value.IsSuccessful() {
 			return value.Properties, nil
-		} else {
-			return nil, value.GetError()
 		}
+		return nil, value.GetError()
 	default:
 		return nil, errors.NotAuthorized
 	}
