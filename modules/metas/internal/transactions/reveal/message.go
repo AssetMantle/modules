@@ -19,7 +19,7 @@ import (
 )
 
 type message struct {
-	From     sdkTypes.AccAddress `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
+	From     sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
 	MetaFact types.MetaFact      `json:"metaFact" valid:"required~required field metaFact missing"`
 }
 

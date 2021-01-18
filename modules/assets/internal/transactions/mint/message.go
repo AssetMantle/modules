@@ -19,7 +19,7 @@ import (
 )
 
 type message struct {
-	From                    sdkTypes.AccAddress  `json:"from" valid:"required~required field from missing matches(^commit[a-z0-9]{39}$)~invalid field from"`
+	From                    sdkTypes.AccAddress  `json:"from" valid:"required~required field from missing"`
 	FromID                  types.ID             `json:"fromID" valid:"required~required field fromID missing"`
 	ToID                    types.ID             `json:"toID" valid:"required~required field toID missing"`
 	ClassificationID        types.ID             `json:"classificationID" valid:"required~required field classificationID missing"`

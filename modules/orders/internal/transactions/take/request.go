@@ -21,9 +21,9 @@ import (
 
 type transactionRequest struct {
 	BaseReq           rest.BaseReq `json:"baseReq"`
-	FromID            string       `json:"fromID" valid:"required~required field fromID missing"`
-	TakerOwnableSplit string       `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
-	OrderID           string       `json:"orderID" valid:"required~required field orderID missing"`
+	FromID            string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
+	TakerOwnableSplit string       `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing, matches(^[0-9.]+$)"`
+	OrderID           string       `json:"orderID" valid:"required~required field orderID missing, matches(^[A-Za-z0-9-_=.|*]+$)~invalid field orderID"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)

@@ -21,7 +21,7 @@ import (
 
 type transactionRequest struct {
 	BaseReq rest.BaseReq `json:"baseReq"`
-	NubID   string       `json:"nubID" valid:"required~required field nubID missing"`
+	NubID   string       `json:"nubID" valid:"required~required field nubID missing, matches(^.*$)~invalid field nubID"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)

@@ -29,6 +29,10 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
+		if Error := request.Validate(); Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+			return
+		}
 
 		Keyring, Error := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
 		if Error != nil {
