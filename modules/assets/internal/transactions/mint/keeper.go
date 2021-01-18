@@ -8,6 +8,7 @@ package mint
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	propertiesConstants "github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
@@ -56,7 +57,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.ToID, assetID, sdkTypes.SmallestDec())); !auxiliaryResponse.IsSuccessful() {
+	split := sdkTypes.SmallestDec()
+	if metaProperties := base.NewMetaProperties(append(message.ImmutableMetaProperties.GetMetaPropertyList(), message.MutableMetaProperties.GetMetaPropertyList()...)); metaProperties.Get(base.NewID(propertiesConstants.Lock)) != nil {
+		if split, Error = metaProperties.GetMetaProperty(base.NewID(propertiesConstants.Lock)).GetMetaFact().GetData().AsDec(); Error != nil {
+			return newTransactionResponse(errors.MetaDataError)
+		}
+	}
+	if auxiliaryResponse := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.ToID, assetID, split)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
