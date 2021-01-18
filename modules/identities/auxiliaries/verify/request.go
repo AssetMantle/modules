@@ -13,7 +13,7 @@ import (
 )
 
 type auxiliaryRequest struct {
-	Address    sdkTypes.AccAddress `json:"address" valid:"required~required field address missing matches(^commit[a-z0-9]{39}$)~field address is invalid"`
+	Address    sdkTypes.AccAddress `json:"address" valid:"required~required field address missing, matches(^[a-z0-9]*$)~field address is invalid"`
 	IdentityID types.ID            `json:"identityID" valid:"required~required field identityID missing"`
 }
 

@@ -21,8 +21,8 @@ import (
 
 type transactionRequest struct {
 	BaseReq rest.BaseReq `json:"baseReq"`
-	FromID  string       `json:"fromID" valid:"required~required field fromID missing matches(^[a-z]$)~invalid field fromID "`
-	AssetID string       `json:"assetID" valid:"required~required field assetID missing matches(^[a-z]$)~invalid field assetID "`
+	FromID  string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID "`
+	AssetID string       `json:"assetID" valid:"required~required field assetID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field assetID "`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
