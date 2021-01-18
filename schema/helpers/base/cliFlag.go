@@ -6,7 +6,6 @@
 package base
 
 import (
-	"errors"
 	"fmt"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
@@ -51,7 +50,7 @@ func (cliFlag cliFlag) ReadCLIValue() interface{} {
 	case string:
 		return viper.GetString(cliFlag.name)
 	default:
-		panic(errors.New(fmt.Sprintf("Unhandled flag type %T for flag %v", value, cliFlag.name)))
+		panic(fmt.Errorf("unhandled flag type %T for flag %v", value, cliFlag.name))
 	}
 }
 

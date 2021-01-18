@@ -33,11 +33,10 @@ func newAuxiliaryResponse(classificationID types.ID, error error) helpers.Auxili
 			Error:            error,
 			ClassificationID: classificationID,
 		}
-	} else {
-		return auxiliaryResponse{
-			Success:          true,
-			ClassificationID: classificationID,
-		}
+	}
+	return auxiliaryResponse{
+		Success:          true,
+		ClassificationID: classificationID,
 	}
 }
 

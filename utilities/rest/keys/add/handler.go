@@ -38,7 +38,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
 		}
-		info, Error := Keyring.Get(request.Name)
+		_, Error = Keyring.Get(request.Name)
 		if Error == nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, fmt.Sprintf("Account for keyname %v already exists", request.Name))
 			return
@@ -63,7 +63,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			}
 		}
 
-		info, Error = Keyring.CreateAccount(request.Name, request.Mnemonic, cryptoKeys.DefaultBIP39Passphrase, keys.DefaultKeyPass, sdkTypes.FullFundraiserPath, cryptoKeys.Secp256k1)
+		info, Error := Keyring.CreateAccount(request.Name, request.Mnemonic, cryptoKeys.DefaultBIP39Passphrase, keys.DefaultKeyPass, sdkTypes.FullFundraiserPath, cryptoKeys.Secp256k1)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return

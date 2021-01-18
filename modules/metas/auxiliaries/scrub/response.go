@@ -31,12 +31,12 @@ func newAuxiliaryResponse(properties types.Properties, error error) helpers.Auxi
 			Success: false,
 			Error:   error,
 		}
-	} else {
-		return auxiliaryResponse{
-			Success:    true,
-			Properties: properties,
-		}
 	}
+	return auxiliaryResponse{
+		Success:    true,
+		Properties: properties,
+	}
+
 }
 
 func GetPropertiesFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse) (types.Properties, error) {

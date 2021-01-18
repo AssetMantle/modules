@@ -31,11 +31,10 @@ func newAuxiliaryResponse(metaProperties types.MetaProperties, error error) help
 			Success: false,
 			Error:   error,
 		}
-	} else {
-		return auxiliaryResponse{
-			Success:        true,
-			MetaProperties: metaProperties,
-		}
+	}
+	return auxiliaryResponse{
+		Success:        true,
+		MetaProperties: metaProperties,
 	}
 }
 
