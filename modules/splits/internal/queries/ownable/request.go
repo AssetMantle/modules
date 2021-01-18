@@ -27,7 +27,7 @@ func (queryRequest queryRequest) Validate() error {
 }
 
 func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return newQueryRequest(base.NewID(cliCommand.ReadString(flags.SplitID)))
+	return newQueryRequest(base.NewID(cliCommand.ReadString(flags.OwnableID)))
 }
 
 func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {

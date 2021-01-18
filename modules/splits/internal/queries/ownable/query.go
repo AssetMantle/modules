@@ -12,7 +12,7 @@ import (
 )
 
 var Query = base.NewQuery(
-	"splits",
+	"ownables",
 	"",
 	"",
 
