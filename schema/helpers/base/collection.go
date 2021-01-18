@@ -36,14 +36,17 @@ func (collection collection) GetList() []helpers.Mappable {
 	}
 	return mappableList
 }
+func (collection collection) Iterate(partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
+	collection.mapper.Iterate(collection.context, partialKey, accumulator)
+}
 func (collection collection) Fetch(key helpers.Key) helpers.Collection {
 	var mappableList []helpers.Mappable
 	if key.IsPartial() {
-		appendMappableList := func(mappable helpers.Mappable) bool {
+		accumulator := func(mappable helpers.Mappable) bool {
 			mappableList = append(mappableList, mappable)
 			return false
 		}
-		collection.mapper.Iterate(collection.context, key, appendMappableList)
+		collection.mapper.Iterate(collection.context, key, accumulator)
 
 	} else {
 		mappable := collection.mapper.Read(collection.context, key)
