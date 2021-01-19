@@ -35,6 +35,9 @@ func TestGenesis(t *testing.T) {
 	require.Equal(t, mappableList, Genesis.Default().(genesis).MappableList)
 	require.Equal(t, ParameterList, Genesis.Default().(genesis).defaultParameterList)
 
+	require.Equal(t, mappableList, Genesis.GetMappableList())
+	require.Equal(t, ParameterList, Genesis.GetParameterList())
+
 	require.Equal(t, Genesis.Encode(), Genesis.Decode(Genesis.Encode()).Encode())
 
 	require.NotPanics(t, func() {

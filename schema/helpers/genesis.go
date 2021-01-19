@@ -20,4 +20,7 @@ type Genesis interface {
 	Decode([]byte) Genesis
 
 	Initialize([]Mappable, []types.Parameter) Genesis
+
+	GetParameterList() []types.Parameter
+	GetMappableList() []Mappable
 }

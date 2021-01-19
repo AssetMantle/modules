@@ -61,22 +61,30 @@ func TestModule(t *testing.T) {
 	Module.RegisterCodec(codec)
 
 	//TODO DefaultGenesis
-	//Module.DefaultGenesis()
+	require.NotPanics(t, func() {
+		Module.DefaultGenesis()
+	})
 
-	//TODO ValidateGenesis
-	// Module.ValidateGenesis(json.RawMessage{})
+	require.NotPanics(t, func() {
+
+	})
+	require.Nil(t, Module.ValidateGenesis(Module.DefaultGenesis()))
 
 	// RegisterRESTRoutes
 	cliContext := clientContext.NewCLIContext().WithCodec(codec).WithChainID("test")
 	router := mux.NewRouter()
-	Module.RegisterRESTRoutes(cliContext, router)
+	require.NotPanics(t, func() {
+		Module.RegisterRESTRoutes(cliContext, router)
+	})
 
 	// GetTxCmd
 	require.Equal(t, "test", Module.GetTxCmd(codec).Name())
 	require.Equal(t, "test", Module.GetQueryCmd(codec).Name())
 
 	//AppModule
-	Module.RegisterInvariants(nil) //No return
+	require.NotPanics(t, func() {
+		Module.RegisterInvariants(nil)
+	})
 	require.Equal(t, "test", Module.Route())
 
 	response, Error := Module.NewHandler()(context, baseTestUtilities.NewTestMessage(sdkTypes.AccAddress("addr"), "id"))
@@ -92,17 +100,26 @@ func TestModule(t *testing.T) {
 	require.Nil(t, Error)
 	require.NotNil(t, queryResponse)
 
-	Module.BeginBlock(context, abciTypes.RequestBeginBlock{})
-	Module.EndBlock(context, abciTypes.RequestEndBlock{})
-	//TODO	Module.InitGenesis(context, json.RawMessage{})
-	// Module.ExportGenesis(context)
+	require.NotPanics(t, func() {
+		Module.BeginBlock(context, abciTypes.RequestBeginBlock{})
+	})
+	require.NotPanics(t, func() {
+		Module.EndBlock(context, abciTypes.RequestEndBlock{})
+	})
 
+	require.NotPanics(t, func() {
+		Module.InitGenesis(context, Module.DefaultGenesis())
+	})
+
+	require.Equal(t, Module.DefaultGenesis(), Module.ExportGenesis(context))
 	// AppModuleSimulation
-	Module.GenerateGenesisState(&sdkModule.SimulationState{})
-	Module.ProposalContents(sdkModule.SimulationState{})
-	Module.RandomizedParams(&rand.Rand{})
-	Module.RegisterStoreDecoder(sdkTypes.StoreDecoderRegistry{})
-	Module.WeightedOperations(sdkModule.SimulationState{})
+	require.NotPanics(t, func() {
+		Module.GenerateGenesisState(&sdkModule.SimulationState{})
+		Module.ProposalContents(sdkModule.SimulationState{})
+		Module.RandomizedParams(&rand.Rand{})
+		Module.RegisterStoreDecoder(sdkTypes.StoreDecoderRegistry{})
+		Module.WeightedOperations(sdkModule.SimulationState{})
+	})
 
 	//types.Module
 	require.Equal(t, "testAuxiliary", Module.GetAuxiliary("testAuxiliary").GetName())
