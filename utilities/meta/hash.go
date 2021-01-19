@@ -6,7 +6,7 @@
 package meta
 
 import (
-	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/base64"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"sort"
@@ -16,7 +16,7 @@ import (
 func Hash(meta ...string) string {
 	sort.Strings(meta)
 	toDigest := strings.Join(meta, constants.ToHashSeparator)
-	hash := sha1.New()
+	hash := sha256.New()
 	if _, Error := hash.Write([]byte(toDigest)); Error != nil {
 		panic(Error)
 	}
