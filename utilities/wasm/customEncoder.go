@@ -28,9 +28,8 @@ func CustomEncoder(moduleList ...helpers.Module) wasm.CustomEncoder {
 				msg, Error := module.DecodeModuleTransactionRequest(path[1], wasmMessage.GetRawMessage())
 				if Error != nil {
 					return nil, Error
-				} else {
-					return []sdkTypes.Msg{msg}, nil
 				}
+				return []sdkTypes.Msg{msg}, nil
 			}
 		}
 		return nil, errors.IncorrectMessage

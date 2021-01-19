@@ -26,11 +26,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	if identity == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
-	if identity.(mappables.InterIdentity).IsProvisioned(auxiliaryRequest.Address) {
-		return newAuxiliaryResponse(nil)
-	} else {
+	if !identity.(mappables.InterIdentity).IsProvisioned(auxiliaryRequest.Address) {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
+	return newAuxiliaryResponse(nil)
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

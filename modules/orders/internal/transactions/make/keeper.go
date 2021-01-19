@@ -64,13 +64,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		oldMakerOwnableSplitMetaProperty := metaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit))
 		if oldMakerOwnableSplitMetaProperty == nil {
 			return newTransactionResponse(errors.MetaDataError)
+		}
+		oldMakerOwnableSplit, Error := oldMakerOwnableSplitMetaProperty.GetMetaFact().GetData().AsDec()
+		if Error != nil {
+			newTransactionResponse(errors.MetaDataError)
 		} else {
-			oldMakerOwnableSplit, Error := oldMakerOwnableSplitMetaProperty.GetMetaFact().GetData().AsDec()
-			if Error != nil {
-				newTransactionResponse(errors.MetaDataError)
-			} else {
-				makerOwnableSplit = oldMakerOwnableSplit.Add(makerOwnableSplit)
-			}
+			makerOwnableSplit = oldMakerOwnableSplit.Add(makerOwnableSplit)
 		}
 	}
 	mutableMetaProperties := message.MutableMetaProperties.AddMetaProperty(base.NewMetaProperty(base.NewID(properties.Expiry), base.NewMetaFact(base.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight())))))

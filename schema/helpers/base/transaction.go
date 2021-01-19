@@ -38,7 +38,7 @@ type transaction struct {
 }
 
 //TODO remove
-//declaring global variable
+
 var KafkaBool = false
 var KafkaState queuing.KafkaState
 
