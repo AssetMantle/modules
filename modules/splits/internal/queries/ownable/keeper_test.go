@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package split
+package ownable
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -72,6 +72,6 @@ func Test_Query_Keeper_Split(t *testing.T) {
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(splitID, sdkTypes.NewDec(123)))
 
 	testQueryRequest := newQueryRequest(splitID)
-	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.FromID(splitID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
+	require.Equal(t, queryResponse{Success: true, Split: sdkTypes.NewDec(123)}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
 
 }

@@ -29,7 +29,7 @@ func Test_SplitID_Methods(t *testing.T) {
 	require.Equal(t, true, testSplitID.Matches(testSplitID))
 	require.Equal(t, false, testSplitID.Matches(testSplitID2))
 	require.Equal(t, false, testSplitID.Matches(nil))
-	require.Equal(t, testSplitID, New(testSplitID))
-	require.Equal(t, testSplitID2, New(base.NewID("")))
+	require.Equal(t, testSplitID, FromID(testSplitID))
+	require.Equal(t, testSplitID2, FromID(base.NewID("")))
 	require.Equal(t, splitID{OwnerID: base.NewID("ID1"), OwnableID: base.NewID("ID2")}, readSplitID("ID1*ID2"))
 }

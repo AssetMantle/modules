@@ -7,6 +7,7 @@ package key
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"strings"
@@ -23,19 +24,29 @@ func readSplitID(splitIDString string) types.ID {
 	return splitID{OwnerID: base.NewID(""), OwnableID: base.NewID("")}
 }
 
-func splitIDFromInterface(id types.ID) splitID {
-	switch value := id.(type) {
+func splitIDFromInterface(Interface interface{}) splitID {
+	switch value := Interface.(type) {
 	case splitID:
 		return value
+	case types.ID:
+		return splitIDFromInterface(readSplitID(value.String()))
 	default:
-		return splitIDFromInterface(readSplitID(id.String()))
+		panic(Interface)
 	}
 }
 
-func ReadOwnableID(assetID types.ID) types.ID {
-	return splitIDFromInterface(assetID).OwnableID
+func ReadOwnableID(id types.ID) types.ID {
+	return splitIDFromInterface(id).OwnableID
 }
 
-func ReadOwnerID(assetID types.ID) types.ID {
-	return splitIDFromInterface(assetID).OwnerID
+func ReadOwnerID(id types.ID) types.ID {
+	return splitIDFromInterface(id).OwnerID
+}
+
+func FromID(id types.ID) helpers.Key {
+	return splitIDFromInterface(id)
+}
+
+func ToID(key helpers.Key) types.ID {
+	return splitIDFromInterface(key)
 }

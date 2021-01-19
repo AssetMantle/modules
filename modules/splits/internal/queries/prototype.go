@@ -6,6 +6,7 @@
 package queries
 
 import (
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/queries/ownable"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/queries/split"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -14,5 +15,6 @@ import (
 func Prototype() helpers.Queries {
 	return base.NewQueries(
 		split.Query,
+		ownable.Query,
 	)
 }
