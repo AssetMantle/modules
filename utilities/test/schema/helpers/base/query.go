@@ -7,6 +7,7 @@ package base
 
 import (
 	"encoding/json"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -35,7 +36,6 @@ func TestQueryKeeperPrototype() helpers.QueryKeeper {
 }
 
 type testQueryRequest struct {
-	id string
 }
 
 var _ helpers.QueryRequest = (*testQueryRequest)(nil)
@@ -59,6 +59,7 @@ func (t testQueryRequest) Encode() ([]byte, error) {
 func (t testQueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
 	var queryRequest testQueryRequest
 	Error := json.Unmarshal(bytes, &queryRequest)
+
 	return queryRequest, Error
 }
 
@@ -88,6 +89,7 @@ func (t testQueryResponse) Encode() ([]byte, error) {
 func (t testQueryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
 	var queryResponse testQueryResponse
 	Error := json.Unmarshal(bytes, &queryResponse)
+
 	return queryResponse, Error
 }
 func TestQueryResponsePrototype() helpers.QueryResponse {

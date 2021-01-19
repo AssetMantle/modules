@@ -17,17 +17,18 @@ func NewProducer(kafkaPorts []string) sarama.SyncProducer {
 	if err != nil {
 		panic(err)
 	}
+
 	return producer
 }
 
 // KafkaProducerDeliverMessage : delivers messages to kafka
 func KafkaProducerDeliverMessage(msg KafkaMsg, topic string, producer sarama.SyncProducer, cdc *codec.Codec) error {
-
 	kafkaStoreBytes, err := cdc.MarshalJSON(msg)
 
 	if err != nil {
 		panic(err)
 	}
+
 	sendMsg := sarama.ProducerMessage{
 		Topic: topic,
 		Value: sarama.ByteEncoder(kafkaStoreBytes),
@@ -37,20 +38,21 @@ func KafkaProducerDeliverMessage(msg KafkaMsg, topic string, producer sarama.Syn
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
 // SendToKafka : handles sending message to kafka
 func SendToKafka(msg KafkaMsg, kafkaState KafkaState, cdc *codec.Codec) []byte {
-
-	err := KafkaProducerDeliverMessage(msg, "Topic", kafkaState.Producer, cdc)
-	if err != nil {
-		jsonResponse, err := cdc.MarshalJSON(struct {
+	Error := KafkaProducerDeliverMessage(msg, "Topic", kafkaState.Producer, cdc)
+	if Error != nil {
+		jsonResponse, Error := cdc.MarshalJSON(struct {
 			Response string `json:"response"`
 		}{Response: "Something is up with kafka server, restart rest and kafka."})
-		if err != nil {
-			panic(err)
+		if Error != nil {
+			panic(Error)
 		}
+
 		SetTicketIDtoDB(msg.TicketID, kafkaState.KafkaDB, cdc, jsonResponse)
 	} else {
 		jsonResponse, err := cdc.MarshalJSON(struct {
@@ -61,11 +63,14 @@ func SendToKafka(msg KafkaMsg, kafkaState KafkaState, cdc *codec.Codec) []byte {
 		}
 		SetTicketIDtoDB(msg.TicketID, kafkaState.KafkaDB, cdc, jsonResponse)
 	}
-	jsonResponse, err := cdc.MarshalJSON(struct {
+
+	jsonResponse, Error := cdc.MarshalJSON(struct {
 		TicketID Ticket `json:"ticketID"`
 	}{TicketID: msg.TicketID})
-	if err != nil {
-		panic(err)
+
+	if Error != nil {
+		panic(Error)
 	}
+
 	return jsonResponse
 }

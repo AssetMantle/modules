@@ -17,34 +17,33 @@ import (
 )
 
 // SetTicketIDtoDB : initiates ticketID in Database
-func SetTicketIDtoDB(TicketID Ticket, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec, msg []byte) {
-
-	ticketID, Error := cdc.MarshalJSON(TicketID)
+func SetTicketIDtoDB(ticket Ticket, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec, msg []byte) {
+	ticketID, Error := cdc.MarshalJSON(ticket)
 	if Error != nil {
 		panic(Error)
 	}
+
 	if Error := kafkaDB.Set(ticketID, msg); Error != nil {
 		panic(Error)
 	}
-	return
 }
 
 // AddResponseToDB : Updates response to DB
-func AddResponseToDB(TicketID Ticket, response []byte, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec) {
-	ticketID, err := cdc.MarshalJSON(TicketID)
+func AddResponseToDB(ticket Ticket, response []byte, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec) {
+	ticketID, err := cdc.MarshalJSON(ticket)
 	if err != nil {
 		panic(err)
 	}
+
 	err = kafkaDB.SetSync(ticketID, response)
 	if err != nil {
 		panic(err)
 	}
-	return
 }
 
 // GetResponseFromDB : gives the response from DB
-func GetResponseFromDB(TicketID Ticket, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec) []byte {
-	ticketID, err := cdc.MarshalJSON(TicketID)
+func GetResponseFromDB(ticket Ticket, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec) []byte {
+	ticketID, err := cdc.MarshalJSON(ticket)
 	if err != nil {
 		panic(err)
 	}
@@ -58,15 +57,18 @@ func GetResponseFromDB(TicketID Ticket, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec
 func QueryDB(cdc *codec.Codec, kafkaDB *dbm.GoLevelDB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
+
 		vars := mux.Vars(r)
 
 		iDByte, err := cdc.MarshalJSON(vars["ticketID"])
 		if err != nil {
 			panic(err)
 		}
+
 		var response []byte
+
 		check, _ := kafkaDB.Has(iDByte)
-		if check == true {
+		if check {
 			response = GetResponseFromDB(Ticket(vars["ticketID"]), kafkaDB, cdc)
 		} else {
 			output, err := cdc.MarshalJSON("The ticket ID does not exist, it must have been deleted, Query the chain to know")
@@ -82,6 +84,5 @@ func QueryDB(cdc *codec.Codec, kafkaDB *dbm.GoLevelDB) http.HandlerFunc {
 
 		w.WriteHeader(http.StatusAccepted)
 		_, _ = w.Write(response)
-		return
 	}
 }

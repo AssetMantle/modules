@@ -7,6 +7,7 @@ package base
 
 import (
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -100,6 +101,7 @@ func (cliCommand cliCommand) CreateCommand(runE func(command *cobra.Command, arg
 		RunE:  runE,
 	}
 	cliCommand.registerFlags(command)
+
 	return flags.PostCommands(command)[0]
 }
 

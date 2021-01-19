@@ -7,6 +7,7 @@ package base
 
 import (
 	"encoding/json"
+
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -23,37 +24,36 @@ func (parameter parameter) String() string {
 	if Error != nil {
 		return Error.Error()
 	}
+
 	return string(bytes)
 }
+func (parameter parameter) Equal(compareParameter types.Parameter) bool {
+	if compareParameter == nil {
+		return false
+	}
 
-func (parameter parameter) Equal(Parameter types.Parameter) bool {
-	return parameter.Data.Equal(Parameter.GetData())
+	return parameter.Data.Equal(compareParameter.GetData())
 }
-
 func (parameter parameter) Validate() error {
 	return parameter.validator(parameter)
 }
-
 func (parameter parameter) GetID() types.ID {
 	return parameter.ID
 }
-
 func (parameter parameter) GetData() types.Data {
 	return parameter.Data
 }
-
 func (parameter parameter) GetValidator() func(interface{}) error {
 	return parameter.validator
 }
-
 func (parameter parameter) Mutate(data types.Data) types.Parameter {
 	parameter.Data = data
 	return parameter
 }
 
-func NewParameter(ID types.ID, data types.Data, validator func(interface{}) error) types.Parameter {
+func NewParameter(id types.ID, data types.Data, validator func(interface{}) error) types.Parameter {
 	return parameter{
-		ID:        ID,
+		ID:        id,
 		Data:      data,
 		validator: validator,
 	}

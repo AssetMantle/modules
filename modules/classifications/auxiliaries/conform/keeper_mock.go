@@ -18,11 +18,12 @@ type auxiliaryKeeperMock struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
-	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
+func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	if auxiliaryRequest.Mutables.Get().Get(base.NewID("conformError")) != nil {
 		return newAuxiliaryResponse(errors.MockError)
 	}
+
 	return newAuxiliaryResponse(nil)
 }
 

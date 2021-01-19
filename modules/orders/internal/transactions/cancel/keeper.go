@@ -34,35 +34,45 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
+
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(message.OrderID))
+
 	order := orders.Get(key.New(message.OrderID))
 	if order == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
+
 	if !message.FromID.Equals(order.(mappables.Order).GetMakerID()) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
+
 	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetMakerOwnableSplit())))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
+
 	makerOwnableSplitProperty := metaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit))
 	if makerOwnableSplitProperty == nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}
+
 	makerOwnableSplit, Error := makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
+
 	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), message.FromID, order.(mappables.Order).GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
+
 	orders.Remove(order)
+
 	return newTransactionResponse(nil)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
+
 	for _, externalKeeper := range auxiliaries {
 		switch value := externalKeeper.(type) {
 		case helpers.Auxiliary:
@@ -74,8 +84,11 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			case verify.Auxiliary.GetName():
 				transactionKeeper.verifyAuxiliary = value
 			}
+		default:
+			panic(errors.UninitializedUsage)
 		}
 	}
+
 	return transactionKeeper
 }
 func keeperPrototype() helpers.TransactionKeeper {

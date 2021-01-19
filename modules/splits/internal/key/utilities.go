@@ -6,11 +6,12 @@
 package key
 
 import (
+	"strings"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"strings"
 )
 
 func readSplitID(splitIDString string) types.ID {
@@ -21,17 +22,18 @@ func readSplitID(splitIDString string) types.ID {
 			OwnableID: base.NewID(idList[1]),
 		}
 	}
+
 	return splitID{OwnerID: base.NewID(""), OwnableID: base.NewID("")}
 }
 
-func splitIDFromInterface(Interface interface{}) splitID {
-	switch value := Interface.(type) {
+func splitIDFromInterface(i interface{}) splitID {
+	switch value := i.(type) {
 	case splitID:
 		return value
 	case types.ID:
 		return splitIDFromInterface(readSplitID(value.String()))
 	default:
-		panic(Interface)
+		panic(i)
 	}
 }
 

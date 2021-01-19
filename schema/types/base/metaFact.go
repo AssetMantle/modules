@@ -6,11 +6,12 @@
 package base
 
 import (
+	"strings"
+
 	"github.com/99designs/keyring"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"strings"
 )
 
 type metaFact struct {
@@ -27,7 +28,7 @@ func (metaFact metaFact) GetTypeID() types.ID             { return metaFact.Data
 func (metaFact metaFact) GetSignatures() types.Signatures { return metaFact.Signatures }
 
 func (metaFact metaFact) Sign(_ keyring.Keyring) types.Fact {
-	//TODO implement signing
+	// TODO implement signing
 	return metaFact
 }
 
@@ -38,12 +39,15 @@ func NewMetaFact(data types.Data) types.MetaFact {
 	}
 }
 
-func ReadMetaFact(DataTypeAndString string) (types.MetaFact, error) {
-	dataTypeAndString := strings.SplitN(DataTypeAndString, constants.DataTypeAndValueSeparator, 2)
+func ReadMetaFact(metaFactString string) (types.MetaFact, error) {
+	dataTypeAndString := strings.SplitN(metaFactString, constants.DataTypeAndValueSeparator, 2)
 	if len(dataTypeAndString) == 2 {
 		dataType, dataString := dataTypeAndString[0], dataTypeAndString[1]
+
 		var data types.Data
+
 		var Error error
+
 		switch NewID(dataType) {
 		case decData{}.GetTypeID():
 			data, Error = ReadDecData(dataString)
@@ -56,11 +60,13 @@ func ReadMetaFact(DataTypeAndString string) (types.MetaFact, error) {
 		default:
 			data, Error = nil, errors.UnsupportedParameter
 		}
+
 		if Error != nil {
 			return nil, Error
 		}
+
 		return NewMetaFact(data), nil
 	}
-	return nil, errors.IncorrectFormat
 
+	return nil, errors.IncorrectFormat
 }

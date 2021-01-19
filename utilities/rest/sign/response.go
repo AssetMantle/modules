@@ -30,6 +30,7 @@ func newResponse(stdTx authTypes.StdTx, error error) helpers.Response {
 	if error != nil {
 		success = false
 	}
+
 	return response{
 		Success: success,
 		Error:   error,

@@ -27,6 +27,7 @@ func newTransactionResponse(error error) helpers.TransactionResponse {
 	if error != nil {
 		success = false
 	}
+
 	return transactionResponse{
 		Success: success,
 		Error:   error,

@@ -22,8 +22,8 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
-	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
+func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
 	if len(auxiliaryRequest.ImmutableTraits.Get().GetList())+len(auxiliaryRequest.MutableTraits.Get().GetList()) > constants.MaxTraitCount {
 		return newAuxiliaryResponse(nil, errors.InvalidRequest)
@@ -34,12 +34,14 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 	}
 
 	classificationID := key.NewClassificationID(base.NewID(context.ChainID()), auxiliaryRequest.ImmutableTraits, auxiliaryRequest.MutableTraits)
+
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(classificationID))
 	if classifications.Get(key.New(classificationID)) != nil {
 		return newAuxiliaryResponse(base.NewID(classificationID.String()), errors.EntityAlreadyExists)
 	}
 
-	classifications = classifications.Add(mappable.NewClassification(classificationID, auxiliaryRequest.ImmutableTraits, auxiliaryRequest.MutableTraits))
+	classifications.Add(mappable.NewClassification(classificationID, auxiliaryRequest.ImmutableTraits, auxiliaryRequest.MutableTraits))
+
 	return newAuxiliaryResponse(base.NewID(classificationID.String()), nil)
 }
 

@@ -19,15 +19,11 @@ func (auxiliaries auxiliaries) Get(name string) helpers.Auxiliary {
 			return auxiliary
 		}
 	}
+
 	return nil
 }
-
 func (auxiliaries auxiliaries) GetList() []helpers.Auxiliary {
-	var auxiliaryList []helpers.Auxiliary
-	for _, auxiliary := range auxiliaries.auxiliaryList {
-		auxiliaryList = append(auxiliaryList, auxiliary)
-	}
-	return auxiliaryList
+	return auxiliaries.auxiliaryList
 }
 
 func NewAuxiliaries(auxiliaryList ...helpers.Auxiliary) helpers.Auxiliaries {

@@ -7,11 +7,12 @@ package base
 
 import (
 	"encoding/json"
+
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
 type wasmMessage struct {
-	Type       string          `json:"msgtype,required"`
+	Type       string          `json:"msgtype"`
 	RawMessage json.RawMessage `json:"raw,omitempty"`
 }
 

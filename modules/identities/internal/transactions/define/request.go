@@ -7,6 +7,7 @@ package define
 
 import (
 	"encoding/json"
+
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -48,6 +49,7 @@ func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage
 	if Error := json.Unmarshal(rawMessage, &transactionRequest); Error != nil {
 		return nil, Error
 	}
+
 	return transactionRequest, nil
 }
 func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
@@ -63,14 +65,17 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	if Error != nil {
 		return nil, Error
 	}
+
 	immutableTraits, Error := base.ReadProperties(transactionRequest.ImmutableTraits)
 	if Error != nil {
 		return nil, Error
 	}
+
 	mutableMetaTraits, Error := base.ReadMetaProperties(transactionRequest.MutableMetaTraits)
 	if Error != nil {
 		return nil, Error
 	}
+
 	mutableTraits, Error := base.ReadProperties(transactionRequest.MutableTraits)
 	if Error != nil {
 		return nil, Error

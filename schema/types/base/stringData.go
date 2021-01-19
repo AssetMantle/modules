@@ -18,42 +18,51 @@ type stringData struct {
 
 var _ types.Data = (*stringData)(nil)
 
-func (StringData stringData) String() string {
-	return StringData.Value
+func (stringData stringData) String() string {
+	return stringData.Value
 }
-func (StringData stringData) GetTypeID() types.ID {
+func (stringData stringData) GetTypeID() types.ID {
 	return NewID("S")
 }
-func (StringData stringData) ZeroValue() types.Data {
+func (stringData stringData) ZeroValue() types.Data {
 	return NewStringData("")
 }
-func (StringData stringData) GenerateHashID() types.ID {
-	if StringData.Equal(StringData.ZeroValue()) {
+func (stringData stringData) GenerateHashID() types.ID {
+	if stringData.Equal(stringData.ZeroValue()) {
 		return NewID("")
 	}
-	return NewID(meta.Hash(StringData.Value))
+
+	return NewID(meta.Hash(stringData.Value))
 }
-func (StringData stringData) AsString() (string, error) {
-	return StringData.Value, nil
+func (stringData stringData) AsString() (string, error) {
+	return stringData.Value, nil
 }
-func (StringData stringData) AsDec() (sdkTypes.Dec, error) {
+func (stringData stringData) AsDec() (sdkTypes.Dec, error) {
 	return sdkTypes.Dec{}, errors.EntityNotFound
 }
-func (StringData stringData) AsHeight() (types.Height, error) {
+func (stringData stringData) AsHeight() (types.Height, error) {
 	return height{}, errors.EntityNotFound
 }
-func (StringData stringData) AsID() (types.ID, error) {
+func (stringData stringData) AsID() (types.ID, error) {
 	return id{}, errors.EntityNotFound
 }
-func (StringData stringData) Get() interface{} {
-	return StringData.Value
+func (stringData stringData) Get() interface{} {
+	return stringData.Value
 }
-func (StringData stringData) Equal(data types.Data) bool {
+func (stringData stringData) Equal(data types.Data) bool {
+	compareStringData, Error := stringDataFromInterface(data)
+	if Error != nil {
+		return false
+	}
+
+	return stringData.Value == compareStringData.Value
+}
+func stringDataFromInterface(data types.Data) (stringData, error) {
 	switch value := data.(type) {
 	case stringData:
-		return value.Value == StringData.Value
+		return value, nil
 	default:
-		return false
+		return stringData{}, errors.MetaDataError
 	}
 }
 

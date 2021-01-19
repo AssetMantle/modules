@@ -35,12 +35,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	maintainers := transactionKeeper.mapper.NewCollection(context)
 
 	fromMaintainerID := key.NewMaintainerID(message.ClassificationID, message.FromID)
+
 	fromMaintainer := maintainers.Fetch(key.New(fromMaintainerID)).Get(key.New(fromMaintainerID))
 	if fromMaintainer == nil || !fromMaintainer.(mappables.Maintainer).CanAddMaintainer() {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 
 	toMaintainerID := key.NewMaintainerID(message.ClassificationID, message.ToID)
+
 	toMaintainer := maintainers.Fetch(key.New(toMaintainerID)).Get(key.New(toMaintainerID))
 	if toMaintainer != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
@@ -51,12 +53,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	maintainers = maintainers.Add(mappable.NewMaintainer(toMaintainerID, mutableTraits, message.AddMaintainer, message.RemoveMaintainer, message.MutateMaintainer))
+	maintainers.Add(mappable.NewMaintainer(toMaintainerID, mutableTraits, message.AddMaintainer, message.RemoveMaintainer, message.MutateMaintainer))
+
 	return newTransactionResponse(nil)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
+
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
@@ -66,8 +70,11 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			case verify.Auxiliary.GetName():
 				transactionKeeper.verifyAuxiliary = value
 			}
+		default:
+			panic(errors.UninitializedUsage)
 		}
 	}
+
 	return transactionKeeper
 }
 func keeperPrototype() helpers.TransactionKeeper {

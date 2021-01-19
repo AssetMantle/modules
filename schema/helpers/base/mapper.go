@@ -8,6 +8,7 @@ package base
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema"
@@ -38,12 +39,16 @@ func (mapper mapper) Create(context sdkTypes.Context, mappable helpers.Mappable)
 }
 func (mapper mapper) Read(context sdkTypes.Context, key helpers.Key) helpers.Mappable {
 	kvStore := context.KVStore(mapper.kvStoreKey)
+
 	Bytes := kvStore.Get(key.GenerateStoreKeyBytes())
 	if Bytes == nil {
 		return nil
 	}
+
 	var mappable helpers.Mappable
+
 	mapper.codec.MustUnmarshalBinaryBare(Bytes, &mappable)
+
 	return mappable
 }
 func (mapper mapper) Update(context sdkTypes.Context, mappable helpers.Mappable) {
@@ -61,9 +66,12 @@ func (mapper mapper) Iterate(context sdkTypes.Context, partialKey helpers.Key, a
 	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(store, partialKey.GenerateStoreKeyBytes())
 
 	defer kvStorePrefixIterator.Close()
+
 	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {
 		var mappable helpers.Mappable
+
 		mapper.codec.MustUnmarshalBinaryBare(kvStorePrefixIterator.Value(), &mappable)
+
 		if accumulator(mappable) {
 			break
 		}
@@ -72,13 +80,17 @@ func (mapper mapper) Iterate(context sdkTypes.Context, partialKey helpers.Key, a
 func (mapper mapper) StoreDecoder(_ *codec.Codec, kvA kv.Pair, kvB kv.Pair) string {
 	if bytes.Equal(kvA.Key[:1], mapper.keyPrototype().GenerateStoreKeyBytes()) {
 		var mappableA helpers.Mappable
+
 		mapper.codec.MustUnmarshalBinaryBare(kvA.Value, &mappableA)
+
 		var mappableB helpers.Mappable
+
 		mapper.codec.MustUnmarshalBinaryBare(kvB.Value, &mappableB)
+
 		return fmt.Sprintf("%v\n%v", mappableA, mappableB)
 	}
-	panic(fmt.Errorf("invalid key prefix %X", kvA.Key[:1]))
 
+	panic(fmt.Errorf("invalid key prefix %X", kvA.Key[:1]))
 }
 func (mapper mapper) Initialize(kvStoreKey *sdkTypes.KVStoreKey) helpers.Mapper {
 	mapper.kvStoreKey = kvStoreKey
@@ -90,6 +102,7 @@ func NewMapper(keyPrototype func() helpers.Key, mappablePrototype func() helpers
 	mappablePrototype().RegisterCodec(Codec)
 	schema.RegisterCodec(Codec)
 	Codec.Seal()
+
 	return mapper{
 		codec:             Codec,
 		keyPrototype:      keyPrototype,

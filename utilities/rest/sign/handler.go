@@ -8,6 +8,9 @@ package sign
 import (
 	"bytes"
 	"fmt"
+	"net/http"
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
@@ -16,8 +19,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
-	"net/http"
-	"strings"
 )
 
 func handler(cliContext context.CLIContext) http.HandlerFunc {
@@ -41,6 +42,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
+
 		txBuilder := types.NewTxBuilder(
 			authClient.GetTxEncoder(cliContext.Codec), request.BaseRequest.AccountNumber, request.BaseRequest.Sequence, 0, 0,
 			request.BaseRequest.Simulate, request.BaseRequest.ChainID, request.BaseRequest.Memo, request.BaseRequest.Fees, request.BaseRequest.GasPrices,
@@ -51,6 +53,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
+
 		txBuilder = txBuilder.WithAccountNumber(accountNumber)
 		txBuilder = txBuilder.WithSequence(sequence)
 
@@ -70,10 +73,12 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 		signers := request.StdTx.GetSigners()
 		request.StdTx.Signatures = append(request.StdTx.Signatures, stdSignature)
 		pubicKeys := request.StdTx.GetPubKeys()
+
 		if len(pubicKeys) > len(signers) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "cannot add more signatures than signers")
 			return
 		}
+
 		for i, publicKey := range pubicKeys {
 			if !bytes.Equal(publicKey.Address(), signers[i]) {
 				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest,

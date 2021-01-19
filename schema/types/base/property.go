@@ -24,10 +24,11 @@ func NewProperty(id types.ID, fact types.Fact) types.Property {
 		Fact: fact,
 	}
 }
-func ReadProperty(PropertyIDAndData string) (types.Property, error) {
-	property, Error := ReadMetaProperty(PropertyIDAndData)
+func ReadProperty(propertyString string) (types.Property, error) {
+	property, Error := ReadMetaProperty(propertyString)
 	if Error != nil {
 		return nil, Error
 	}
+
 	return property.RemoveData(), nil
 }

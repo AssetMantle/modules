@@ -32,19 +32,20 @@ func newAuxiliaryResponse(properties types.Properties, error error) helpers.Auxi
 			Error:   error,
 		}
 	}
+
 	return auxiliaryResponse{
 		Success:    true,
 		Properties: properties,
 	}
-
 }
 
-func GetPropertiesFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse) (types.Properties, error) {
-	switch value := AuxiliaryResponse.(type) {
+func GetPropertiesFromResponse(response helpers.AuxiliaryResponse) (types.Properties, error) {
+	switch value := response.(type) {
 	case auxiliaryResponse:
 		if value.IsSuccessful() {
 			return value.Properties, nil
 		}
+
 		return nil, value.GetError()
 	default:
 		return nil, errors.NotAuthorized

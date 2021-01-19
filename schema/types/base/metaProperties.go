@@ -6,9 +6,10 @@
 package base
 
 import (
+	"strings"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"strings"
 )
 
 type metaProperties struct {
@@ -23,20 +24,18 @@ func (metaProperties metaProperties) GetMetaProperty(id types.ID) types.MetaProp
 			return metaProperty
 		}
 	}
+
 	return nil
 }
 
 func (metaProperties metaProperties) GetMetaPropertyList() []types.MetaProperty {
-	var metaPropertyList []types.MetaProperty
-	for _, metaProperty := range metaProperties.MetaPropertyList {
-		metaPropertyList = append(metaPropertyList, metaProperty)
-	}
-	return metaPropertyList
+	return metaProperties.MetaPropertyList
 }
 
 func (metaProperties metaProperties) AddMetaProperty(metaProperty types.MetaProperty) types.MetaProperties {
 	metaPropertyList := metaProperties.GetMetaPropertyList()
 	metaPropertyList = append(metaPropertyList, metaProperty)
+
 	return NewMetaProperties(metaPropertyList)
 }
 
@@ -47,6 +46,7 @@ func (metaProperties metaProperties) RemoveMetaProperty(metaProperty types.MetaP
 			metaPropertyList = append(metaPropertyList[:i], metaPropertyList[i+1:]...)
 		}
 	}
+
 	return NewMetaProperties(metaPropertyList)
 }
 
@@ -57,6 +57,7 @@ func (metaProperties metaProperties) MutateMetaProperty(metaProperty types.MetaP
 			metaPropertyList[i] = metaProperty
 		}
 	}
+
 	return NewMetaProperties(metaPropertyList)
 }
 
@@ -64,20 +65,23 @@ func (metaProperties metaProperties) Get(id types.ID) types.Property {
 	if metaProperty := metaProperties.GetMetaProperty(id); metaProperty != nil {
 		return metaProperty.RemoveData()
 	}
+
 	return nil
 }
 
 func (metaProperties metaProperties) GetList() []types.Property {
-	var propertyList []types.Property
+	propertyList := make([]types.Property, len(metaProperties.MetaPropertyList))
 	for _, metaProperty := range metaProperties.MetaPropertyList {
 		propertyList = append(propertyList, metaProperty)
 	}
+
 	return propertyList
 }
 
 func (metaProperties metaProperties) Add(property types.Property) types.Properties {
 	propertyList := metaProperties.GetList()
 	propertyList = append(propertyList, property)
+
 	return NewProperties(propertyList...)
 }
 
@@ -88,6 +92,7 @@ func (metaProperties metaProperties) Remove(property types.Property) types.Prope
 			propertyList = append(propertyList[:i], propertyList[i+1:]...)
 		}
 	}
+
 	return NewProperties(propertyList...)
 }
 
@@ -98,14 +103,16 @@ func (metaProperties metaProperties) Mutate(property types.Property) types.Prope
 			propertyList[i] = property
 		}
 	}
+
 	return NewProperties(propertyList...)
 }
 
 func (metaProperties metaProperties) RemoveData() types.Properties {
-	var propertyList []types.Property
+	propertyList := make([]types.Property, len(metaProperties.GetMetaPropertyList()))
 	for _, oldMetaProperty := range metaProperties.GetMetaPropertyList() {
 		propertyList = append(propertyList, oldMetaProperty.RemoveData())
 	}
+
 	return NewProperties(propertyList...)
 }
 
@@ -115,17 +122,20 @@ func NewMetaProperties(metaPropertyList []types.MetaProperty) types.MetaProperti
 	}
 }
 
-func ReadMetaProperties(MetaProperties string) (types.MetaProperties, error) {
+func ReadMetaProperties(metaPropertiesString string) (types.MetaProperties, error) {
 	var metaPropertyList []types.MetaProperty
-	metaProperties := strings.Split(MetaProperties, constants.PropertiesSeparator)
+
+	metaProperties := strings.Split(metaPropertiesString, constants.PropertiesSeparator)
 	for _, metaPropertyString := range metaProperties {
 		if metaPropertyString != "" {
 			metaProperty, Error := ReadMetaProperty(metaPropertyString)
 			if Error != nil {
 				return nil, Error
 			}
+
 			metaPropertyList = append(metaPropertyList, metaProperty)
 		}
 	}
+
 	return NewMetaProperties(metaPropertyList), nil
 }

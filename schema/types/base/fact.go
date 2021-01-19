@@ -25,7 +25,7 @@ func (fact fact) IsMeta() bool {
 	return false
 }
 func (fact fact) Sign(_ keyring.Keyring) types.Fact {
-	//TODO implement signing
+	// TODO implement signing
 	return fact
 }
 
@@ -37,10 +37,11 @@ func NewFact(data types.Data) types.Fact {
 	}
 }
 
-func ReadFact(MetaFact string) (types.Fact, error) {
-	metaFact, Error := ReadMetaFact(MetaFact)
+func ReadFact(metaFactString string) (types.Fact, error) {
+	metaFact, Error := ReadMetaFact(metaFactString)
 	if Error != nil {
 		return nil, Error
 	}
+
 	return metaFact.RemoveData(), nil
 }
