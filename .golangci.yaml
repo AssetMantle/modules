@@ -7,11 +7,11 @@ linters:
     - unconvert
     - misspell
     - govet
-    # - unused
-    # - deadcode
+    - unused
+    - deadcode
     - goconst
     - gosec
-    # - staticcheck
+    - staticcheck
 linters-settings:
   gocyclo:
     min-complexity: 11
@@ -23,4 +23,4 @@ issues:
   exclude:
     - composite
 run:
-  tests: false
+  tests: true
