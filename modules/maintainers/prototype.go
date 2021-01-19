@@ -7,6 +7,7 @@ package maintainers
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/block"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/module"
@@ -28,5 +29,6 @@ func Prototype() helpers.Module {
 		queries.Prototype,
 		simulator.Prototype,
 		transactions.Prototype,
+		block.Prototype,
 	)
 }

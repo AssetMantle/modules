@@ -7,6 +7,7 @@ package identities
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/block"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
@@ -28,5 +29,6 @@ func Prototype() helpers.Module {
 		queries.Prototype,
 		simulator.Prototype,
 		transactions.Prototype,
+		block.Prototype,
 	)
 }
