@@ -7,6 +7,7 @@ package base
 
 import (
 	"bytes"
+
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -19,13 +20,11 @@ var _ types.ID = (*id)(nil)
 func (id id) String() string {
 	return id.IDString
 }
-
 func (id id) Bytes() []byte {
 	return []byte(id.IDString)
 }
-
-func (id id) Equals(ID types.ID) bool {
-	return bytes.Compare(id.Bytes(), ID.Bytes()) == 0
+func (id id) Equals(compareID types.ID) bool {
+	return bytes.Equal(id.Bytes(), compareID.Bytes())
 }
 
 func NewID(idString string) types.ID {

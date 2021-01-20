@@ -33,22 +33,22 @@ func newAuxiliaryResponse(classificationID types.ID, error error) helpers.Auxili
 			Error:            error,
 			ClassificationID: classificationID,
 		}
-	} else {
-		return auxiliaryResponse{
-			Success:          true,
-			ClassificationID: classificationID,
-		}
+	}
+
+	return auxiliaryResponse{
+		Success:          true,
+		ClassificationID: classificationID,
 	}
 }
 
-func GetClassificationIDFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse) (types.ID, error) {
-	switch value := AuxiliaryResponse.(type) {
+func GetClassificationIDFromResponse(response helpers.AuxiliaryResponse) (types.ID, error) {
+	switch value := response.(type) {
 	case auxiliaryResponse:
 		if value.IsSuccessful() {
 			return value.ClassificationID, nil
-		} else {
-			return value.ClassificationID, value.GetError()
 		}
+
+		return value.ClassificationID, value.GetError()
 	default:
 		return nil, errors.InvalidRequest
 	}

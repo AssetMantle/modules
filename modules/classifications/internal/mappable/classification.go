@@ -38,9 +38,9 @@ func (classification) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, classification{})
 }
 
-func NewClassification(ID types.ID, immutableTraits types.Immutables, mutableTraits types.Mutables) mappables.Classification {
+func NewClassification(id types.ID, immutableTraits types.Immutables, mutableTraits types.Mutables) mappables.Classification {
 	return classification{
-		ID:              ID,
+		ID:              id,
 		ImmutableTraits: immutableTraits,
 		MutableTraits:   mutableTraits,
 	}

@@ -37,12 +37,15 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
+
 	orderID := message.OrderID
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(orderID))
 	order := orders.Get(key.New(orderID))
+
 	if order == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
+
 	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetTakerID(), order.(mappables.Order).GetExchangeRate(), order.(mappables.Order).GetMakerOwnableSplit())))
 	if Error != nil {
 		newTransactionResponse(Error)
@@ -61,6 +64,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if exchangeRateProperty == nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}
+
 	exchangeRate, Error := exchangeRateProperty.GetMetaFact().GetData().AsDec()
 	if Error != nil {
 		return newTransactionResponse(errors.MetaDataError)
@@ -70,6 +74,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if makerOwnableSplitProperty == nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}
+
 	makerOwnableSplit, Error := makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
 	if Error != nil {
 		return newTransactionResponse(errors.MetaDataError)
@@ -78,29 +83,38 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	sendTakerOwnableSplit := makerOwnableSplit.Mul(exchangeRate)
 	sendMakerOwnableSplit := message.TakerOwnableSplit.Quo(exchangeRate)
 	updatedMakerOwnableSplit := makerOwnableSplit.Sub(sendMakerOwnableSplit)
-	if updatedMakerOwnableSplit.LT(sdkTypes.ZeroDec()) {
+
+	switch {
+	case updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()):
 		if message.TakerOwnableSplit.LT(sendTakerOwnableSplit) {
 			return newTransactionResponse(errors.InsufficientBalance)
 		}
+
+		orders.Remove(order)
+	case updatedMakerOwnableSplit.LT(sdkTypes.ZeroDec()):
+		if message.TakerOwnableSplit.LT(sendTakerOwnableSplit) {
+			return newTransactionResponse(errors.InsufficientBalance)
+		}
+
 		sendMakerOwnableSplit = makerOwnableSplit
-		orders = orders.Remove(order)
-	} else if updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()) {
-		if message.TakerOwnableSplit.LT(sendTakerOwnableSplit) {
-			return newTransactionResponse(errors.InsufficientBalance)
-		}
-		orders = orders.Remove(order)
-	} else {
+
+		orders.Remove(order)
+	default:
 		sendTakerOwnableSplit = message.TakerOwnableSplit
 		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(updatedMakerOwnableSplit))))))
+
 		if Error != nil {
 			return newTransactionResponse(Error)
 		}
+
 		order = mappable.NewOrder(orderID, order.(mappables.Order).GetImmutables(), order.(mappables.Order).GetMutables().Mutate(mutableProperties.GetList()...))
-		orders = orders.Mutate(order)
+		orders.Mutate(order)
 	}
+
 	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetTakerOwnableID(), sendTakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
+
 	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), message.FromID, order.(mappables.Order).GetMakerOwnableID(), sendMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
@@ -110,6 +124,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
+
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
@@ -123,8 +138,11 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			case verify.Auxiliary.GetName():
 				transactionKeeper.verifyAuxiliary = value
 			}
+		default:
+			panic(errors.UninitializedUsage)
 		}
 	}
+
 	return transactionKeeper
 }
 func keeperPrototype() helpers.TransactionKeeper {

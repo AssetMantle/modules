@@ -33,6 +33,7 @@ func (message message) ValidateBasic() error {
 	if Error != nil {
 		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
 	}
+
 	return nil
 }
 func (message message) GetSignBytes() []byte {
@@ -56,7 +57,6 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, assetID types.ID) sdkTypes.Msg {
-
 	return message{
 		From:    from,
 		FromID:  fromID,

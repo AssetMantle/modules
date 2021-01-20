@@ -6,11 +6,12 @@
 package base
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_HeightData(t *testing.T) {
@@ -42,7 +43,7 @@ func Test_HeightData(t *testing.T) {
 	require.Equal(t, heightValue, testHeightData.Get())
 
 	data, Error := ReadHeightData("")
-	require.Equal(t, heightData{Value: height{Height: 0}}, data)
+	require.Equal(t, heightData{Value: height{Value: 0}}, data)
 	require.Nil(t, Error)
 
 	data, Error = ReadHeightData("testString")
@@ -50,7 +51,7 @@ func Test_HeightData(t *testing.T) {
 	require.NotNil(t, Error)
 
 	data, Error = ReadHeightData("123")
-	require.Equal(t, heightData{Value: height{Height: 123}}, data)
+	require.Equal(t, heightData{Value: height{Value: 123}}, data)
 	require.Nil(t, Error)
 
 	require.Equal(t, false, testHeightData.Equal(NewStringData("")))

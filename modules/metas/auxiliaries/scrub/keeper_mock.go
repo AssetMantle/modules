@@ -19,15 +19,19 @@ type auxiliaryKeeperMock struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
-	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
-	var scrubbedPropertyList []types.Property
+func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+	auxiliaryRequest := auxiliaryRequestFromInterface(request)
+
+	scrubbedPropertyList := make([]types.Property, len(auxiliaryRequest.MetaPropertyList))
+
 	for _, metaProperty := range auxiliaryRequest.MetaPropertyList {
 		scrubbedPropertyList = append(scrubbedPropertyList, metaProperty.RemoveData())
+
 		if metaProperty.GetID().String() == "scrubError" {
 			return newAuxiliaryResponse(nil, errors.MockError)
 		}
 	}
+
 	return newAuxiliaryResponse(base.NewProperties(scrubbedPropertyList...), nil)
 }
 

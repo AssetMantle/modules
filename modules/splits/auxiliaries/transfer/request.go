@@ -26,8 +26,8 @@ func (auxiliaryRequest auxiliaryRequest) Validate() error {
 	return Error
 }
 
-func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) auxiliaryRequest {
-	switch value := AuxiliaryRequest.(type) {
+func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
+	switch value := request.(type) {
 	case auxiliaryRequest:
 		return value
 	default:

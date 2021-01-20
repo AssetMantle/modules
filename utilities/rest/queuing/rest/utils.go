@@ -30,8 +30,10 @@ func ParseFloat64OrReturnBadRequest(s string, defaultIfEmpty float64) (float64, 
 func SimulationResponse(cdc *codec.Codec, gas uint64) ([]byte, error) {
 	gasEst := rest.GasEstimateResponse{GasEstimate: gas}
 	resp, err := cdc.MarshalJSON(gasEst)
+
 	if err != nil {
 		return nil, errors.New(err.Error())
 	}
+
 	return resp, nil
 }

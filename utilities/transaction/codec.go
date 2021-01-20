@@ -16,5 +16,6 @@ func RegisterCodec(messagePrototype func() helpers.Message) *codec.Codec {
 	messagePrototype().RegisterCodec(Codec)
 	schema.RegisterCodec(Codec)
 	Codec.Seal()
+
 	return Codec
 }

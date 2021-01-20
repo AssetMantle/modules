@@ -92,6 +92,7 @@ func (application *application) ExportApplicationStateAndValidators(forZeroHeigh
 			if _, Error := sdkTypes.ValAddressFromBech32(address); Error != nil {
 				panic(Error)
 			}
+
 			whiteListMap[address] = true
 		}
 
@@ -155,6 +156,7 @@ func (application *application) ExportApplicationStateAndValidators(forZeroHeigh
 		for ; kvStoreReversePrefixIterator.Valid(); kvStoreReversePrefixIterator.Next() {
 			addr := sdkTypes.ValAddress(kvStoreReversePrefixIterator.Key()[1:])
 			validator, found := application.stakingKeeper.GetValidator(context, addr)
+
 			if !found {
 				panic("Validator not found!")
 			}
@@ -185,15 +187,16 @@ func (application *application) ExportApplicationStateAndValidators(forZeroHeigh
 
 	genesisState := application.moduleManager.ExportGenesis(context)
 	applicationState, Error := codec.MarshalJSONIndent(application.codec, genesisState)
+
 	if Error != nil {
 		return nil, nil, Error
 	}
+
 	return applicationState, staking.WriteValidators(context, application.stakingKeeper), nil
 }
 
 func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.NewApplication {
 	return func(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
-
 		baseApp := baseapp.NewBaseApp(
 			applicationName,
 			logger,
@@ -233,6 +236,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			codec:   codec,
 			keys:    keys,
 		}
+
 		paramsKeeper := params.NewKeeper(
 			codec,
 			keys[params.StoreKey],
@@ -250,6 +254,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 		for account := range moduleAccountPermissions {
 			blacklistedAddresses[supply.NewModuleAddress(account).String()] = !tokenReceiveAllowedModules[account]
 		}
+
 		bankKeeper := bank.NewBaseKeeper(
 			accountKeeper,
 			paramsKeeper.Subspace(bank.DefaultParamspace),
@@ -284,6 +289,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 		for moduleAccount := range moduleAccountPermissions {
 			blackListedModuleAddresses[supply.NewModuleAddress(moduleAccount).String()] = true
 		}
+
 		application.distributionKeeper = distribution.NewKeeper(
 			codec,
 			keys[distribution.StoreKey],
@@ -397,6 +403,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 		)
 
 		var wasmRouter = baseApp.Router()
+
 		wasmDir := filepath.Join(home, wasm.ModuleName)
 
 		wasmWrap := struct {
@@ -409,6 +416,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 		if err != nil {
 			panic("error while reading wasm config: " + err.Error())
 		}
+
 		wasmConfig := wasmWrap.Wasm
 
 		wasmKeeper := wasm.NewKeeper(

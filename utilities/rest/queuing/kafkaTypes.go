@@ -26,7 +26,6 @@ type KafkaMsg struct {
 
 // NewKafkaMsgFromRest : makes a msg to send to kafka queue
 func NewKafkaMsgFromRest(msg sdk.Msg, ticketID Ticket, baseRequest rest.BaseReq, cliCtx context.CLIContext) KafkaMsg {
-
 	kafkaCli := KafkaCliCtx{
 		OutputFormat:  cliCtx.OutputFormat,
 		ChainID:       cliCtx.ChainID,
@@ -51,14 +50,10 @@ func NewKafkaMsgFromRest(msg sdk.Msg, ticketID Ticket, baseRequest rest.BaseReq,
 		BaseRequest: baseRequest,
 		KafkaCli:    kafkaCli,
 	}
-
 }
 
 // CliCtxFromKafkaMsg : sets the transaction and cli contexts again to consume
 func CliCtxFromKafkaMsg(kafkaMsg KafkaMsg, cliContext context.CLIContext) context.CLIContext {
-
-	//mvh := kafkaMsg.KafkaCli.VerifierHome
-
 	cliContext.OutputFormat = kafkaMsg.KafkaCli.OutputFormat
 	cliContext.ChainID = kafkaMsg.KafkaCli.ChainID
 	cliContext.Height = kafkaMsg.KafkaCli.Height
@@ -80,19 +75,19 @@ func CliCtxFromKafkaMsg(kafkaMsg KafkaMsg, cliContext context.CLIContext) contex
 
 // KafkaCliCtx : client tx without codec
 type KafkaCliCtx struct {
+	FromAddress   sdk.AccAddress
 	OutputFormat  string
 	ChainID       string
-	Height        int64
 	HomeDir       string
 	NodeURI       string
 	From          string
+	BroadcastMode string
+	FromName      string
+	Height        int64
 	TrustNode     bool
 	UseLedger     bool
-	BroadcastMode string
 	Simulate      bool
 	GenerateOnly  bool
-	FromAddress   sdk.AccAddress
-	FromName      string
 	Offline       bool
 	Indent        bool
 	SkipConfirm   bool
@@ -119,6 +114,7 @@ func NewKafkaState(kafkaPorts []string) KafkaState {
 	admin := KafkaAdmin(kafkaPorts)
 	producer := NewProducer(kafkaPorts)
 	consumer := NewConsumer(kafkaPorts)
+
 	var consumers = make(map[string]sarama.PartitionConsumer)
 
 	for _, topic := range Topics {

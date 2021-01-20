@@ -18,7 +18,6 @@ import (
 
 type transactionKeeper struct {
 	mapper           helpers.Mapper
-	parameters       helpers.Parameters
 	scrubAuxiliary   helpers.Auxiliary
 	conformAuxiliary helpers.Auxiliary
 }
@@ -32,9 +31,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
+
 	immutables := base.NewImmutables(base.NewProperties(append(immutableProperties.GetList(), message.ImmutableProperties.GetList()...)...))
 
 	identityID := key.NewIdentityID(message.ClassificationID, immutables.GetHashID())
+
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(identityID))
 	if identities.Get(key.New(identityID)) != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
@@ -44,6 +45,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
+
 	mutables := base.NewMutables(base.NewProperties(append(mutableProperties.GetList(), message.MutableProperties.GetList()...)...))
 
 	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); !auxiliaryResponse.IsSuccessful() {
@@ -51,11 +53,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	identities.Add(mappable.NewIdentity(identityID, []sdkTypes.AccAddress{message.To}, []sdkTypes.AccAddress{}, immutables, mutables))
+
 	return newTransactionResponse(nil)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
+
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
@@ -65,8 +69,11 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			case scrub.Auxiliary.GetName():
 				transactionKeeper.scrubAuxiliary = value
 			}
+		default:
+			panic(errors.UninitializedUsage)
 		}
 	}
+
 	return transactionKeeper
 }
 
