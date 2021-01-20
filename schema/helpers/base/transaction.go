@@ -9,6 +9,10 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
@@ -23,9 +27,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/utilities/rest/queuing"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"log"
-	"net/http"
-	"strings"
 )
 
 type transaction struct {
@@ -37,8 +38,8 @@ type transaction struct {
 	keeperPrototype  func() helpers.TransactionKeeper
 }
 
-//TODO remove
-//declaring global variable
+// TODO remove
+
 var KafkaBool = false
 var KafkaState queuing.KafkaState
 
@@ -67,11 +68,11 @@ func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
 
 		return authClient.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{msg})
 	}
+
 	return transaction.cliCommand.CreateCommand(runE)
 }
 
 func (transaction transaction) HandleMessage(context sdkTypes.Context, message sdkTypes.Msg) (*sdkTypes.Result, error) {
-
 	if transactionResponse := transaction.keeper.Transact(context, message); !transactionResponse.IsSuccessful() {
 		return nil, transactionResponse.GetError()
 	}
@@ -93,12 +94,15 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
+
 		Error := transactionRequest.Validate()
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
+
 		baseReq := transactionRequest.GetBaseReq()
+
 		msg, Error := transactionRequest.MakeMsg()
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
@@ -120,7 +124,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			authClient.WriteGenerateStdTxResponse(responseWriter, cliContext, baseReq, []sdkTypes.Msg{msg})
 			return
 		}
-		//adding below commands to REST to have signed txs
+
 		gasAdj, ok := rest.ParseFloat64OrReturnBadRequest(responseWriter, baseReq.GasAdjustment, flags.DefaultGasAdjustment)
 		if !ok {
 			return
@@ -166,13 +170,13 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		cliContext = cliContext.WithFromName(fromName)
 		cliContext = cliContext.WithBroadcastMode(viper.GetString(flags.FlagBroadcastMode))
 
-		if KafkaBool == true {
+		if KafkaBool {
 			ticketID := queuing.TicketIDGenerator(transaction.name)
 			jsonResponse := queuing.SendToKafka(queuing.NewKafkaMsgFromRest(msg, ticketID, baseReq, cliContext), KafkaState, cliContext.Codec)
+
 			responseWriter.WriteHeader(http.StatusAccepted)
 			_, _ = responseWriter.Write(jsonResponse)
 		} else {
-			//adding account sequence
 			accountNumber, sequence, Error := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
 			if Error != nil {
 				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
@@ -182,7 +186,6 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			txBuilder = txBuilder.WithAccountNumber(accountNumber)
 			txBuilder = txBuilder.WithSequence(sequence)
 
-			//build and sign
 			stdMsg, Error := txBuilder.BuildAndSign(fromName, keys.DefaultKeyPass, msgList)
 			if Error != nil {
 				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
@@ -197,13 +200,16 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			}
 
 			output, Error := cliContext.Codec.MarshalJSON(response)
+			if Error != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+				return
+			}
 
 			responseWriter.Header().Set("Content-Type", "application/json")
 			if _, Error := responseWriter.Write(output); Error != nil {
 				log.Printf("could not write response: %v", Error)
 			}
 		}
-
 	}
 }
 
@@ -216,6 +222,7 @@ func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessa
 	if Error != nil {
 		return nil, Error
 	}
+
 	return transactionRequest.MakeMsg()
 }
 

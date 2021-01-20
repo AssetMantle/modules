@@ -6,6 +6,8 @@
 package base
 
 import (
+	"net/http"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -14,7 +16,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"net/http"
 )
 
 type query struct {
@@ -36,6 +37,7 @@ func (query query) Command(codec *codec.Codec) *cobra.Command {
 
 		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, cliContext)
 		responseBytes, _, Error := query.query(queryRequest, cliContext)
+
 		if Error != nil {
 			return Error
 		}
@@ -44,8 +46,10 @@ func (query query) Command(codec *codec.Codec) *cobra.Command {
 		if Error != nil {
 			return Error
 		}
+
 		return cliContext.PrintOutput(response)
 	}
+
 	return query.cliCommand.CreateCommand(runE)
 }
 func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
@@ -53,6 +57,7 @@ func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciType
 	if Error != nil {
 		return nil, Error
 	}
+
 	return query.queryKeeper.Enquire(context, request).Encode()
 }
 
@@ -60,16 +65,19 @@ func (query query) RESTQueryHandler(cliContext context.CLIContext) http.HandlerF
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		responseWriter.Header().Set("Content-Type", "application/json")
 		cliContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, cliContext, httpRequest)
+
 		if !ok {
 			return
 		}
 
 		queryRequest := query.requestPrototype().FromMap(mux.Vars(httpRequest))
 		response, height, Error := query.query(queryRequest, cliContext)
+
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
 		}
+
 		cliContext = cliContext.WithHeight(height)
 		rest.PostProcessResponse(responseWriter, cliContext, response)
 	}
@@ -84,6 +92,7 @@ func (query query) query(queryRequest helpers.QueryRequest, cliContext context.C
 	if Error != nil {
 		return nil, 0, Error
 	}
+
 	return cliContext.QueryWithData("custom"+"/"+query.moduleName+"/"+query.name, bytes)
 }
 

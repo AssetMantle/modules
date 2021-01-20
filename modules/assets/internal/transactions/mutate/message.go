@@ -35,6 +35,7 @@ func (message message) ValidateBasic() error {
 	if Error != nil {
 		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
 	}
+
 	return nil
 }
 func (message message) GetSignBytes() []byte {

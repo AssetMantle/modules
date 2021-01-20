@@ -20,18 +20,22 @@ type auxiliaryKeeperMock struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
-	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
+func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+	auxiliaryRequest := auxiliaryRequestFromInterface(request)
+
 	var metaPropertyList []types.MetaProperty
+
 	for _, property := range auxiliaryRequest.PropertyList {
 		if property.GetID().String() == properties.Burn && property.GetFact().GetHashID().Equals(base.NewID("")) {
 			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList), errors.MockError)
 		}
 	}
+
 	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.Burn), base.NewMetaFact(base.NewHeightData(base.NewHeight(1)))))
 	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(sdkTypes.SmallestDec().MulInt64(2)))))
 	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.TakerID), base.NewMetaFact(base.NewIDData(base.NewID("fromID")))))
 	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewDecData(sdkTypes.SmallestDec()))))
+
 	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList), nil)
 }
 

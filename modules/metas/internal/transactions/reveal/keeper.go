@@ -24,11 +24,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	message := messageFromInterface(msg)
 	metaID := key.GenerateMetaID(message.MetaFact.GetData())
 	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(metaID))
+
 	meta := metas.Get(key.New(metaID))
 	if meta != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
+
 	metas.Add(mappable.NewMeta(message.MetaFact.GetData()))
+
 	return newTransactionResponse(nil)
 }
 

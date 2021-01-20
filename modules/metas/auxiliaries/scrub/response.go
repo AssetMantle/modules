@@ -31,22 +31,22 @@ func newAuxiliaryResponse(properties types.Properties, error error) helpers.Auxi
 			Success: false,
 			Error:   error,
 		}
-	} else {
-		return auxiliaryResponse{
-			Success:    true,
-			Properties: properties,
-		}
+	}
+
+	return auxiliaryResponse{
+		Success:    true,
+		Properties: properties,
 	}
 }
 
-func GetPropertiesFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse) (types.Properties, error) {
-	switch value := AuxiliaryResponse.(type) {
+func GetPropertiesFromResponse(response helpers.AuxiliaryResponse) (types.Properties, error) {
+	switch value := response.(type) {
 	case auxiliaryResponse:
 		if value.IsSuccessful() {
 			return value.Properties, nil
-		} else {
-			return nil, value.GetError()
 		}
+
+		return nil, value.GetError()
 	default:
 		return nil, errors.NotAuthorized
 	}

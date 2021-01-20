@@ -6,10 +6,11 @@
 package key
 
 import (
+	"strings"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"strings"
 )
 
 func readOrderID(orderIDString string) types.ID {
@@ -23,14 +24,17 @@ func readOrderID(orderIDString string) types.ID {
 			HashID:           base.NewID(idList[4]),
 		}
 	}
+
 	return orderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}
 }
-func orderIDFromInterface(id types.ID) orderID {
-	switch value := id.(type) {
+func orderIDFromInterface(i interface{}) orderID {
+	switch value := i.(type) {
 	case orderID:
 		return value
+	case types.ID:
+		return orderIDFromInterface(readOrderID(value.String()))
 	default:
-		return orderIDFromInterface(readOrderID(id.String()))
+		panic(i)
 	}
 }
 

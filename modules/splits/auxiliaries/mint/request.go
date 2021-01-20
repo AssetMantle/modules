@@ -6,6 +6,8 @@
 package mint
 
 import (
+	"fmt"
+
 	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -26,8 +28,8 @@ func (auxiliaryRequest auxiliaryRequest) Validate() error {
 	return Error
 }
 
-func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) auxiliaryRequest {
-	switch value := AuxiliaryRequest.(type) {
+func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
+	switch value := request.(type) {
 	case auxiliaryRequest:
 		return value
 	default:
@@ -35,7 +37,7 @@ func auxiliaryRequestFromInterface(AuxiliaryRequest helpers.AuxiliaryRequest) au
 	}
 }
 
-func NewAuxiliaryRequest(ownerID types.ID, ownableID types.ID, split sdkTypes.Dec) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(ownerID fmt.Stringer, ownableID fmt.Stringer, split sdkTypes.Dec) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		OwnerID:   base.NewID(ownerID.String()),
 		OwnableID: base.NewID(ownableID.String()),

@@ -19,14 +19,17 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
-	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
-	var scrubbedPropertyList []types.Property
+func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+	auxiliaryRequest := auxiliaryRequestFromInterface(request)
+
+	scrubbedPropertyList := make([]types.Property, len(auxiliaryRequest.MetaPropertyList))
+
 	for _, metaProperty := range auxiliaryRequest.MetaPropertyList {
 		metas := auxiliaryKeeper.mapper.NewCollection(context)
 		metas.Add(mappable.NewMeta(metaProperty.GetMetaFact().GetData()))
 		scrubbedPropertyList = append(scrubbedPropertyList, metaProperty.RemoveData())
 	}
+
 	return newAuxiliaryResponse(base.NewProperties(scrubbedPropertyList...), nil)
 }
 

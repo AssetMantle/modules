@@ -17,6 +17,7 @@ func validator(i interface{}) error {
 		if Error != nil || !value.GetID().Equals(ID) || data.IsZero() {
 			return errors.InvalidParameter
 		}
+
 		return nil
 	default:
 		return errors.IncorrectFormat

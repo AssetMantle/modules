@@ -19,42 +19,51 @@ type idData struct {
 
 var _ types.Data = (*idData)(nil)
 
-func (IDData idData) String() string {
-	return IDData.Value.String()
+func (idData idData) String() string {
+	return idData.Value.String()
 }
-func (IDData idData) ZeroValue() types.Data {
+func (idData idData) ZeroValue() types.Data {
 	return NewIDData(NewID(""))
 }
-func (IDData idData) GetTypeID() types.ID {
+func (idData idData) GetTypeID() types.ID {
 	return NewID("I")
 }
-func (IDData idData) GenerateHashID() types.ID {
-	if IDData.Value.String() == "" {
+func (idData idData) GenerateHashID() types.ID {
+	if idData.Value.String() == "" {
 		return NewID("")
 	}
-	return NewID(meta.Hash(IDData.Value.String()))
+
+	return NewID(meta.Hash(idData.Value.String()))
 }
-func (IDData idData) AsString() (string, error) {
+func (idData idData) AsString() (string, error) {
 	return "", errors.EntityNotFound
 }
-func (IDData idData) AsDec() (sdkTypes.Dec, error) {
+func (idData idData) AsDec() (sdkTypes.Dec, error) {
 	return sdkTypes.Dec{}, errors.EntityNotFound
 }
-func (IDData idData) AsHeight() (types.Height, error) {
+func (idData idData) AsHeight() (types.Height, error) {
 	return height{}, errors.EntityNotFound
 }
-func (IDData idData) AsID() (types.ID, error) {
-	return IDData.Value, nil
+func (idData idData) AsID() (types.ID, error) {
+	return idData.Value, nil
 }
-func (IDData idData) Get() interface{} {
-	return IDData.Value
+func (idData idData) Get() interface{} {
+	return idData.Value
 }
-func (IDData idData) Equal(data types.Data) bool {
+func (idData idData) Equal(data types.Data) bool {
+	compareIDData, Error := idDataFromInterface(data)
+	if Error != nil {
+		return false
+	}
+
+	return idData.Value.Equals(compareIDData.Value)
+}
+func idDataFromInterface(data types.Data) (idData, error) {
 	switch value := data.(type) {
 	case idData:
-		return value.Value.Equals(IDData.Value)
+		return value, nil
 	default:
-		return false
+		return idData{}, errors.MetaDataError
 	}
 }
 

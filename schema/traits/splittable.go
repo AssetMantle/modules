@@ -6,9 +6,9 @@
 package traits
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type Splittable interface {
-	GetSplit() sdkTypes.Dec
+	GetSplit() types.Property
 }

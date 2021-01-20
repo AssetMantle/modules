@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package signTx
+package sign
 
 import (
 	"bytes"
@@ -47,11 +47,11 @@ func TestHandler(t *testing.T) {
 	RegisterRESTRoutes(clientContext, router)
 
 	t.Cleanup(func() {
-		_ = keyring.Delete("keyname1", "", true)
-		_ = keyring.Delete("keyname2", "", true)
-		_ = keyring.Delete("keyname3", "", true)
+		_ = keyring.Delete("keyName1", "", true)
+		_ = keyring.Delete("keyName2", "", true)
+		_ = keyring.Delete("keyName3", "", true)
 	})
-	_, Error = keyring.CreateAccount("keyname1", "wage thunder live sense resemble foil apple course spin horse glass mansion midnight laundry acoustic rhythm loan scale talent push green direct brick please",
+	_, Error = keyring.CreateAccount("keyName1", "wage thunder live sense resemble foil apple course spin horse glass mansion midnight laundry acoustic rhythm loan scale talent push green direct brick please",
 		cryptoKeys.DefaultBIP39Passphrase, keys.DefaultKeyPass, sdkTypes.FullFundraiserPath, cryptoKeys.Secp256k1)
 	require.Nil(t, Error)
 
@@ -65,7 +65,7 @@ func TestHandler(t *testing.T) {
 		StdTx:       auth.NewStdTx([]sdkTypes.Msg{base.NewTestMessage(sdkAddress, "id")}, auth.NewStdFee(10, sdkTypes.NewCoins()), nil, ""),
 	})
 	require.Nil(t, Error)
-	testRequest1, Error := http.NewRequest("POST", "/signTx", bytes.NewBuffer(requestBody1))
+	testRequest1, Error := http.NewRequest("POST", "/sign", bytes.NewBuffer(requestBody1))
 	require.Nil(t, Error)
 	responseRecorder := httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest1)
@@ -79,21 +79,21 @@ func TestHandler(t *testing.T) {
 		StdTx:       auth.NewStdTx([]sdkTypes.Msg{base.NewTestMessage(sdkAddress, "id")}, auth.NewStdFee(20, sdkTypes.NewCoins()), nil, ""),
 	})
 	require.Nil(t, Error)
-	testRequest2, Error := http.NewRequest("POST", "/signTx", bytes.NewBuffer(requestBody2))
+	testRequest2, Error := http.NewRequest("POST", "/sign", bytes.NewBuffer(requestBody2))
 	require.Nil(t, Error)
 	responseRecorder = httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest2)
 	require.Equal(t, responseRecorder.Code, http.StatusBadRequest)
 	require.Equal(t, `{"error":"The specified item could not be found in the keyring"}`, responseRecorder.Body.String())
 
-	// RPC client offile
+	// RPC client offline
 	requestBody3, Error := Codec.MarshalJSON(request{
 		BaseRequest: rest.BaseReq{From: address, ChainID: "test"},
 		Type:        "cosmos-sdk/StdTx",
 		StdTx:       auth.NewStdTx([]sdkTypes.Msg{base.NewTestMessage(sdkAddress, "id")}, auth.NewStdFee(30, sdkTypes.NewCoins()), nil, ""),
 	})
 	require.Nil(t, Error)
-	testRequest3, Error := http.NewRequest("POST", "/signTx", bytes.NewBuffer(requestBody3))
+	testRequest3, Error := http.NewRequest("POST", "/sign", bytes.NewBuffer(requestBody3))
 	require.Nil(t, Error)
 	responseRecorder = httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest3)

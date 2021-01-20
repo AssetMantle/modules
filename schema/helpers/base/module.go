@@ -8,6 +8,8 @@ package base
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -16,12 +18,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/gorilla/mux"
-	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"math/rand"
 )
 
 type module struct {
@@ -46,7 +46,6 @@ type module struct {
 var _ helpers.Module = (*module)(nil)
 
 func (module module) GenerateGenesisState(_ *sdkTypesModule.SimulationState) {
-	return
 }
 
 func (module module) ProposalContents(_ sdkTypesModule.SimulationState) []simulation.WeightedProposalContent {
@@ -97,13 +96,16 @@ func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	var commandList []*cobra.Command
+	commandList := make([]*cobra.Command, len(module.transactionsPrototype().GetList()))
+
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		commandList = append(commandList, transaction.Command(codec))
 	}
+
 	rootTransactionCommand.AddCommand(
 		commandList...,
 	)
+
 	return rootTransactionCommand
 }
 func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
@@ -114,13 +116,16 @@ func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	var commandList []*cobra.Command
+	commandList := make([]*cobra.Command, len(module.queriesPrototype().GetList()))
+
 	for _, query := range module.queriesPrototype().GetList() {
 		commandList = append(commandList, query.Command(codec))
 	}
+
 	rootQueryCommand.AddCommand(
 		commandList...,
 	)
+
 	return rootQueryCommand
 }
 func (module module) RegisterInvariants(_ sdkTypes.InvariantRegistry) {}
@@ -130,13 +135,16 @@ func (module module) Route() string {
 func (module module) NewHandler() sdkTypes.Handler {
 	return func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
 		context = context.WithEventManager(sdkTypes.NewEventManager())
+
 		if module.transactions == nil {
-			panic(xprtErrors.UninitializedUsage)
+			panic(errors.UninitializedUsage)
 		}
+
 		if transaction := module.transactions.Get(msg.Type()); transaction != nil {
 			return transaction.HandleMessage(context, msg)
 		}
-		return nil, errors.New(fmt.Sprintf("Unknown message type, %v for module %v", msg.Type(), module.Name()))
+
+		return nil, fmt.Errorf("unknown message type, %v for module %v", msg.Type(), module.Name())
 	}
 }
 func (module module) QuerierRoute() string {
@@ -145,26 +153,32 @@ func (module module) QuerierRoute() string {
 func (module module) NewQuerierHandler() sdkTypes.Querier {
 	return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
 		if module.queries == nil {
-			panic(xprtErrors.UninitializedUsage)
+			panic(errors.UninitializedUsage)
 		}
+
 		if query := module.queries.Get(path[0]); query != nil {
 			return query.HandleMessage(context, requestQuery)
 		}
-		return nil, errors.New(fmt.Sprintf("Unknown query path, %v for module %v", path[0], module.Name()))
+
+		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())
 	}
 }
 func (module module) InitGenesis(context sdkTypes.Context, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
 	genesisState := module.genesisPrototype().Decode(rawMessage)
+
 	if module.mapper == nil || module.parameters == nil {
-		panic(xprtErrors.UninitializedUsage)
+		panic(errors.UninitializedUsage)
 	}
+
 	genesisState.Import(context, module.mapper, module.parameters)
+
 	return []abciTypes.ValidatorUpdate{}
 }
 func (module module) ExportGenesis(context sdkTypes.Context) json.RawMessage {
 	if module.mapper == nil || module.parameters == nil {
-		panic(xprtErrors.UninitializedUsage)
+		panic(errors.UninitializedUsage)
 	}
+
 	return module.genesisPrototype().Export(context, module.mapper, module.parameters).Encode()
 }
 func (module module) BeginBlock(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {}
@@ -178,39 +192,48 @@ func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
 			return auxiliary
 		}
 	}
-	panic(fmt.Sprintf("auxiliary %v not found/initialized", auxiliaryName))
+
+	panic(fmt.Errorf("auxiliary %v not found/initialized", auxiliaryName))
 }
 
 func (module module) DecodeModuleTransactionRequest(transactionName string, rawMessage json.RawMessage) (sdkTypes.Msg, error) {
 	if transaction := module.transactionsPrototype().Get(transactionName); transaction != nil {
 		return transaction.DecodeTransactionRequest(rawMessage)
 	}
-	return nil, xprtErrors.IncorrectMessage
+
+	return nil, errors.IncorrectMessage
 }
 
 func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace params.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
 	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)
-
+	// TODO initialize genesis
+	module.genesis = module.genesisPrototype().Initialize(nil, nil)
 	module.parameters = module.parametersPrototype().Initialize(paramsSubspace.WithKeyTable(module.parametersPrototype().GetKeyTable()))
-	module.genesis = module.genesisPrototype().Initialize(module.mapper.NewCollection(sdkTypes.Context{}).GetList(), module.parameters.GetList())
 
-	var auxiliaryList []helpers.Auxiliary
+	auxiliaryList := make([]helpers.Auxiliary, len(module.auxiliariesPrototype().GetList()))
+
 	for _, auxiliary := range module.auxiliariesPrototype().GetList() {
 		auxiliaryList = append(auxiliaryList, auxiliary.Initialize(module.mapper, module.parameters, auxiliaryKeepers...))
 	}
+
 	module.auxiliaries = NewAuxiliaries(auxiliaryList...)
 
-	var transactionList []helpers.Transaction
+	transactionList := make([]helpers.Transaction, len(module.transactionsPrototype().GetList()))
+
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transactionList = append(transactionList, transaction.InitializeKeeper(module.mapper, module.parameters, auxiliaryKeepers...))
 	}
+
 	module.transactions = NewTransactions(transactionList...)
 
-	var queryList []helpers.Query
+	queryList := make([]helpers.Query, len(module.queriesPrototype().GetList()))
+
 	for _, query := range module.queriesPrototype().GetList() {
 		queryList = append(queryList, query.Initialize(module.mapper, module.parameters, auxiliaryKeepers...))
 	}
+
 	module.queries = NewQueries(queryList...)
+
 	return module
 }
 

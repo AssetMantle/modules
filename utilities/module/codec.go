@@ -17,5 +17,6 @@ func RegisterCodec(keyPrototype func() helpers.Key, mappablePrototype func() hel
 	mappablePrototype().RegisterCodec(Codec)
 	schema.RegisterCodec(Codec)
 	Codec.Seal()
+
 	return Codec
 }

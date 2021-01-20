@@ -7,6 +7,7 @@ package base
 
 import (
 	"encoding/json"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -32,6 +33,7 @@ func (transactionRequest TransactionRequest) FromJSON(rawMessage json.RawMessage
 	if Error := json.Unmarshal(rawMessage, &transactionRequest); Error != nil {
 		return nil, Error
 	}
+
 	return transactionRequest, nil
 }
 func (transactionRequest TransactionRequest) GetBaseReq() rest.BaseReq {

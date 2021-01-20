@@ -6,10 +6,11 @@
 package key
 
 import (
+	"strings"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"strings"
 )
 
 func readClassificationID(classificationIDString string) types.ID {
@@ -20,13 +21,16 @@ func readClassificationID(classificationIDString string) types.ID {
 			HashID:  base.NewID(idList[1]),
 		}
 	}
+
 	return classificationID{ChainID: base.NewID(""), HashID: base.NewID("")}
 }
-func classificationIDFromInterface(id types.ID) classificationID {
-	switch value := id.(type) {
+func classificationIDFromInterface(i interface{}) classificationID {
+	switch value := i.(type) {
 	case classificationID:
 		return value
+	case types.ID:
+		return classificationIDFromInterface(readClassificationID(value.String()))
 	default:
-		return classificationIDFromInterface(readClassificationID(id.String()))
+		panic(i)
 	}
 }

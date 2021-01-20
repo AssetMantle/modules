@@ -20,33 +20,39 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
-	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
+func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(auxiliaryRequest.ClassificationID))
+
 	classification := classifications.Get(key.New(auxiliaryRequest.ClassificationID))
 	if classification == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
+
 	if auxiliaryRequest.Immutables != nil {
 		if len(auxiliaryRequest.Immutables.Get().GetList()) != len(classification.(mappables.Classification).GetImmutables().Get().GetList()) {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
+
 		for _, immutableProperty := range auxiliaryRequest.Immutables.Get().GetList() {
 			if trait := classification.(mappables.Classification).GetImmutables().Get().Get(immutableProperty.GetID()); trait == nil || !trait.GetFact().GetTypeID().Equals(immutableProperty.GetFact().GetTypeID()) || !trait.GetFact().GetHashID().Equals(base.NewID("")) && trait.GetFact().GetHashID() != immutableProperty.GetFact().GetHashID() {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}
 	}
+
 	if auxiliaryRequest.Mutables != nil {
 		if len(auxiliaryRequest.Mutables.Get().GetList()) > len(classification.(mappables.Classification).GetMutables().Get().GetList()) {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
+
 		for _, mutableProperty := range auxiliaryRequest.Mutables.Get().GetList() {
 			if trait := classification.(mappables.Classification).GetMutables().Get().Get(mutableProperty.GetID()); trait == nil || !trait.GetFact().GetTypeID().Equals(mutableProperty.GetFact().GetTypeID()) {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}
 	}
+
 	return newAuxiliaryResponse(nil)
 }
 

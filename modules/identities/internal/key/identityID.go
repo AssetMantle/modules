@@ -7,13 +7,14 @@ package key
 
 import (
 	"bytes"
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
-	"strings"
 )
 
 type identityID struct {
@@ -24,40 +25,33 @@ type identityID struct {
 var _ types.ID = (*identityID)(nil)
 var _ helpers.Key = (*identityID)(nil)
 
-func (IdentityID identityID) Bytes() []byte {
+func (identityID identityID) Bytes() []byte {
 	return append(
-		IdentityID.ClassificationID.Bytes(),
-		IdentityID.HashID.Bytes()...,
+		identityID.ClassificationID.Bytes(),
+		identityID.HashID.Bytes()...,
 	)
 }
-func (IdentityID identityID) String() string {
+func (identityID identityID) String() string {
 	var values []string
-	values = append(values, IdentityID.ClassificationID.String())
-	values = append(values, IdentityID.HashID.String())
+	values = append(values, identityID.ClassificationID.String())
+	values = append(values, identityID.HashID.String())
+
 	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
-func (IdentityID identityID) Equals(id types.ID) bool {
-	return bytes.Compare(IdentityID.Bytes(), id.Bytes()) == 0
+func (identityID identityID) Equals(id types.ID) bool {
+	return bytes.Equal(identityID.Bytes(), id.Bytes())
 }
-func (IdentityID identityID) GenerateStoreKeyBytes() []byte {
-	return module.StoreKeyPrefix.GenerateStoreKey(IdentityID.Bytes())
+func (identityID identityID) GenerateStoreKeyBytes() []byte {
+	return module.StoreKeyPrefix.GenerateStoreKey(identityID.Bytes())
 }
 func (identityID) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, identityID{})
 }
-func (IdentityID identityID) IsPartial() bool {
-	if len(IdentityID.HashID.Bytes()) > 0 {
-		return false
-	}
-	return true
+func (identityID identityID) IsPartial() bool {
+	return len(identityID.HashID.Bytes()) == 0
 }
-func (IdentityID identityID) Matches(key helpers.Key) bool {
-	switch value := key.(type) {
-	case identityID:
-		return bytes.Compare(IdentityID.Bytes(), value.Bytes()) == 0
-	default:
-		return false
-	}
+func (identityID identityID) Matches(key helpers.Key) bool {
+	return identityID.Equals(identityIDFromInterface(key))
 }
 
 func New(id types.ID) helpers.Key {

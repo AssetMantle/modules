@@ -22,11 +22,14 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
-	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
+func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+	auxiliaryRequest := auxiliaryRequestFromInterface(request)
+
 	var metaPropertyList []types.MetaProperty
+
 	for _, property := range auxiliaryRequest.PropertyList {
 		var meta helpers.Mappable
+
 		if property.GetFact().GetHashID().Equals(base.NewID("")) {
 			if metaFact, Error := base.ReadMetaFact(property.GetFact().GetTypeID().String() + constants.DataTypeAndValueSeparator); Error == nil {
 				meta = mappable.NewMeta(metaFact.GetData())
@@ -38,10 +41,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryR
 			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(metaID))
 			meta = metas.Get(key.New(metaID))
 		}
+
 		if meta != nil {
 			metaPropertyList = append(metaPropertyList, base.NewMetaProperty(property.GetID(), base.NewMetaFact(meta.(mappables.Meta).GetData())))
 		}
 	}
+
 	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList), nil)
 }
 

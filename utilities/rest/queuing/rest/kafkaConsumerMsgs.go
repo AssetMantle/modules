@@ -6,21 +6,24 @@
 package rest
 
 import (
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/utilities/rest/queuing"
-	"time"
 )
 
 // KafkaConsumerMessages : messages to consume 5 second delay
 func KafkaConsumerMessages(cliCtx context.CLIContext, kafkaState queuing.KafkaState) {
-
 	quit := make(chan bool)
 
 	var cliContextList []context.CLIContext
+
 	var baseRequestList []rest.BaseReq
+
 	var ticketIDList []queuing.Ticket
+
 	var msgList []sdkTypes.Msg
 
 	go func() {
@@ -42,6 +45,7 @@ func KafkaConsumerMessages(cliCtx context.CLIContext, kafkaState queuing.KafkaSt
 
 	time.Sleep(queuing.SleepTimer)
 	quit <- true
+
 	if len(msgList) == 0 {
 		return
 	}
@@ -54,9 +58,11 @@ func KafkaConsumerMessages(cliCtx context.CLIContext, kafkaState queuing.KafkaSt
 		if e != nil {
 			panic(err)
 		}
+
 		for _, ticketID := range ticketIDList {
 			queuing.AddResponseToDB(ticketID, jsonError, kafkaState.KafkaDB, cliCtx.Codec)
 		}
+
 		return
 	}
 
