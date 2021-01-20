@@ -7,6 +7,7 @@ package block
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -32,6 +33,7 @@ func (block block) End(_ sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 
 func (block block) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []helpers.Auxiliary) helpers.Block {
 	block.mapper, block.parameters = mapper, parameters
+
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
@@ -41,7 +43,10 @@ func (block block) Initialize(mapper helpers.Mapper, parameters helpers.Paramete
 			case transfer.Auxiliary.GetName():
 				block.transferAuxiliary = value
 			}
+		default:
+			panic(errors.UninitializedUsage)
 		}
 	}
+
 	return block
 }
