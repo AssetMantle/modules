@@ -19,15 +19,12 @@ func (transactions transactions) Get(name string) helpers.Transaction {
 			return transaction
 		}
 	}
+
 	return nil
 }
 
 func (transactions transactions) GetList() []helpers.Transaction {
-	var transactionList []helpers.Transaction
-	for _, transaction := range transactions.transactionList {
-		transactionList = append(transactionList, transaction)
-	}
-	return transactionList
+	return transactions.transactionList
 }
 
 func NewTransactions(transactionList ...helpers.Transaction) helpers.Transactions {

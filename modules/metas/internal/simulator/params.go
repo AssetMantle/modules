@@ -6,8 +6,9 @@
 package simulator
 
 import (
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"math/rand"
+
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulation.ParamChange {

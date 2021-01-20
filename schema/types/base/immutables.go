@@ -20,10 +20,11 @@ func (immutables immutables) Get() types.Properties {
 	return immutables.Properties
 }
 func (immutables immutables) GetHashID() types.ID {
-	var metaList []string
+	metaList := make([]string, len(immutables.Properties.GetList()))
 	for _, immutableProperty := range immutables.Properties.GetList() {
 		metaList = append(metaList, immutableProperty.GetFact().GetHashID().String())
 	}
+
 	return NewID(metaUtilities.Hash(metaList...))
 }
 func NewImmutables(properties types.Properties) types.Immutables {

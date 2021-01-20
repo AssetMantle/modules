@@ -6,20 +6,21 @@
 package add
 
 import (
-	"errors"
 	"fmt"
+
 	"github.com/bartekn/go-bip39"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
+
+	"net/http"
+	"strings"
 
 	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
-	"net/http"
-	"strings"
 )
 
 func handler(cliContext context.CLIContext) http.HandlerFunc {
@@ -29,6 +30,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
+
 		if Error := request.Validate(); Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
@@ -39,18 +41,21 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
 		}
-		info, Error := Keyring.Get(request.Name)
+
+		_, Error = Keyring.Get(request.Name)
 		if Error == nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, errors.New(fmt.Sprintf("Account for keyname %v already exists", request.Name)).Error())
+			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, fmt.Sprintf("Account for keyname %v already exists", request.Name))
 			return
 		}
 
 		if request.Mnemonic != "" && !bip39.IsMnemonicValid(request.Mnemonic) {
-			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, errors.New("invalid mnemonic").Error())
+			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, "invalid mnemonic")
 			return
 		}
+
 		if request.Mnemonic == "" {
 			var mnemonicEntropySize = 256
+
 			entropySeed, Error := bip39.NewEntropy(mnemonicEntropySize)
 			if Error != nil {
 				rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
@@ -64,7 +69,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			}
 		}
 
-		info, Error = Keyring.CreateAccount(request.Name, request.Mnemonic, cryptoKeys.DefaultBIP39Passphrase, keys.DefaultKeyPass, sdkTypes.FullFundraiserPath, cryptoKeys.Secp256k1)
+		info, Error := Keyring.CreateAccount(request.Name, request.Mnemonic, cryptoKeys.DefaultBIP39Passphrase, keys.DefaultKeyPass, sdkTypes.FullFundraiserPath, cryptoKeys.Secp256k1)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
@@ -75,6 +80,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
 		}
+
 		keyOutput.Mnemonic = request.Mnemonic
 		rest.PostProcessResponse(responseWriter, cliContext, newResponse(keyOutput, nil))
 	}

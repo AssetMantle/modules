@@ -31,22 +31,22 @@ func (split split) GetOwnerID() types.ID {
 func (split split) GetOwnableID() types.ID {
 	return key.ReadOwnableID(split.ID)
 }
-func (split split) GetSplit() sdkTypes.Dec {
+func (split split) GetValue() sdkTypes.Dec {
 	return split.Split
 }
-func (split split) Send(Split sdkTypes.Dec) traits.Transactional {
-	split.Split = split.Split.Sub(Split)
+func (split split) Send(outSplit sdkTypes.Dec) traits.Transactional {
+	split.Split = split.Split.Sub(outSplit)
 	return split
 }
-func (split split) Receive(Split sdkTypes.Dec) traits.Transactional {
-	split.Split = split.Split.Add(Split)
+func (split split) Receive(inSplit sdkTypes.Dec) traits.Transactional {
+	split.Split = split.Split.Add(inSplit)
 	return split
 }
-func (split split) CanSend(Split sdkTypes.Dec) bool {
-	return split.Split.GTE(Split)
+func (split split) CanSend(outSplit sdkTypes.Dec) bool {
+	return split.Split.GTE(outSplit)
 }
 func (split split) GetKey() helpers.Key {
-	return key.New(split.ID)
+	return key.FromID(split.ID)
 }
 func (split) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, split{})

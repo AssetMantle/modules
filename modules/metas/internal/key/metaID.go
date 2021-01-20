@@ -7,13 +7,14 @@ package key
 
 import (
 	"bytes"
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
-	"strings"
 )
 
 type metaID struct {
@@ -24,40 +25,34 @@ type metaID struct {
 var _ types.ID = (*metaID)(nil)
 var _ helpers.Key = (*metaID)(nil)
 
-func (MetaID metaID) Bytes() []byte {
+func (metaID metaID) Bytes() []byte {
 	var Bytes []byte
-	Bytes = append(Bytes, MetaID.TypeID.Bytes()...)
-	Bytes = append(Bytes, MetaID.HashID.Bytes()...)
+	Bytes = append(Bytes, metaID.TypeID.Bytes()...)
+	Bytes = append(Bytes, metaID.HashID.Bytes()...)
+
 	return Bytes
 }
-func (MetaID metaID) String() string {
+func (metaID metaID) String() string {
 	var values []string
-	values = append(values, MetaID.TypeID.String())
-	values = append(values, MetaID.HashID.String())
+	values = append(values, metaID.TypeID.String())
+	values = append(values, metaID.HashID.String())
+
 	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
-func (MetaID metaID) Equals(id types.ID) bool {
-	return bytes.Compare(MetaID.Bytes(), id.Bytes()) == 0
+func (metaID metaID) Equals(id types.ID) bool {
+	return bytes.Equal(metaID.Bytes(), id.Bytes())
 }
-func (MetaID metaID) GenerateStoreKeyBytes() []byte {
-	return module.StoreKeyPrefix.GenerateStoreKey(MetaID.Bytes())
+func (metaID metaID) GenerateStoreKeyBytes() []byte {
+	return module.StoreKeyPrefix.GenerateStoreKey(metaID.Bytes())
 }
 func (metaID) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, metaID{})
 }
-func (MetaID metaID) IsPartial() bool {
-	if len(MetaID.HashID.Bytes()) > 0 {
-		return false
-	}
-	return true
+func (metaID metaID) IsPartial() bool {
+	return len(metaID.HashID.Bytes()) == 0
 }
-func (MetaID metaID) Matches(key helpers.Key) bool {
-	switch value := key.(type) {
-	case metaID:
-		return bytes.Compare(MetaID.Bytes(), value.Bytes()) == 0
-	default:
-		return false
-	}
+func (metaID metaID) Matches(key helpers.Key) bool {
+	return metaID.Equals(metaIDFromInterface(key))
 }
 
 func GenerateMetaID(data types.Data) types.ID {

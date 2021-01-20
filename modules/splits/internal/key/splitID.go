@@ -7,13 +7,14 @@ package key
 
 import (
 	"bytes"
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
-	"strings"
 )
 
 type splitID struct {
@@ -24,44 +25,32 @@ type splitID struct {
 var _ types.ID = (*splitID)(nil)
 var _ helpers.Key = (*splitID)(nil)
 
-func (SplitID splitID) Bytes() []byte {
+func (splitID splitID) Bytes() []byte {
 	return append(
-		SplitID.OwnerID.Bytes(),
-		SplitID.OwnableID.Bytes()...)
-
+		splitID.OwnerID.Bytes(),
+		splitID.OwnableID.Bytes()...)
 }
-func (SplitID splitID) String() string {
+func (splitID splitID) String() string {
 	var values []string
-	values = append(values, SplitID.OwnerID.String())
-	values = append(values, SplitID.OwnableID.String())
+	values = append(values, splitID.OwnerID.String())
+	values = append(values, splitID.OwnableID.String())
+
 	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
-func (SplitID splitID) Equals(id types.ID) bool {
-	return bytes.Compare(SplitID.Bytes(), id.Bytes()) == 0
+func (splitID splitID) Equals(id types.ID) bool {
+	return bytes.Equal(splitID.Bytes(), id.Bytes())
 }
-func (SplitID splitID) GenerateStoreKeyBytes() []byte {
-	return module.StoreKeyPrefix.GenerateStoreKey(SplitID.Bytes())
+func (splitID splitID) GenerateStoreKeyBytes() []byte {
+	return module.StoreKeyPrefix.GenerateStoreKey(splitID.Bytes())
 }
 func (splitID) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, splitID{})
 }
-func (SplitID splitID) IsPartial() bool {
-	if len(SplitID.OwnableID.Bytes()) > 0 {
-		return false
-	}
-	return true
+func (splitID splitID) IsPartial() bool {
+	return len(splitID.OwnableID.Bytes()) == 0
 }
-func (SplitID splitID) Matches(key helpers.Key) bool {
-	switch value := key.(type) {
-	case splitID:
-		return bytes.Compare(SplitID.Bytes(), value.Bytes()) == 0
-	default:
-		return false
-	}
-}
-
-func New(id types.ID) helpers.Key {
-	return splitIDFromInterface(id)
+func (splitID splitID) Matches(key helpers.Key) bool {
+	return splitID.Equals(splitIDFromInterface(key))
 }
 
 func NewSplitID(ownerID types.ID, ownableID types.ID) types.ID {

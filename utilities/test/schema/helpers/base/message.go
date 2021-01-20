@@ -7,6 +7,7 @@ package base
 
 import (
 	"encoding/json"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -33,14 +34,15 @@ func (message TestMessage) GetSignBytes() []byte {
 	if err != nil {
 		panic(err)
 	}
+
 	return sdkTypes.MustSortJSON(bz)
 }
 func (message TestMessage) ValidateBasic() error { return nil }
 func (message TestMessage) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
-func (message TestMessage) RegisterCodec(Codec *codec.Codec) {
-	Codec.RegisterConcrete(TestMessage{}, "test/TestMessage", nil)
+func (message TestMessage) RegisterCodec(codec *codec.Codec) {
+	codec.RegisterConcrete(TestMessage{}, "test/TestMessage", nil)
 }
 
 func TestMessagePrototype() helpers.Message {

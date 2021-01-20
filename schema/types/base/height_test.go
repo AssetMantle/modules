@@ -6,14 +6,15 @@
 package base
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestHeight(t *testing.T) {
-	height := height{Height: 10}
+	height := height{Value: 10}
 	heightByFunction := NewHeight(10)
-	require.Equal(t, height.Height, heightByFunction.Get())
+	require.Equal(t, height.Value, heightByFunction.Get())
 	require.Equal(t, true, heightByFunction.IsGreaterThan(NewHeight(1)))
 	require.Equal(t, false, heightByFunction.IsGreaterThan(NewHeight(10)))
 	require.Equal(t, false, heightByFunction.IsGreaterThan(NewHeight(20)))

@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package signTx
+package sign
 
 import (
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -30,6 +30,7 @@ func newResponse(stdTx authTypes.StdTx, error error) helpers.Response {
 	if error != nil {
 		success = false
 	}
+
 	return response{
 		Success: success,
 		Error:   error,

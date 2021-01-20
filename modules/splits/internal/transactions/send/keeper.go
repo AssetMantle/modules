@@ -28,45 +28,59 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
+
 	if message.Split.LTE(sdkTypes.ZeroDec()) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
+
 	fromSplitID := key.NewSplitID(message.FromID, message.OwnableID)
-	splits := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(fromSplitID))
-	fromSplit := splits.Get(key.New(fromSplitID))
+	splits := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(fromSplitID))
+
+	fromSplit := splits.Get(key.FromID(fromSplitID))
 	if fromSplit == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
+
 	fromSplit = fromSplit.(mappables.Split).Send(message.Split).(mappables.Split)
-	if fromSplit.(mappables.Split).GetSplit().LT(sdkTypes.ZeroDec()) {
+
+	switch {
+	case fromSplit.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
 		return newTransactionResponse(errors.NotAuthorized)
-	} else if fromSplit.(mappables.Split).GetSplit().Equal(sdkTypes.ZeroDec()) {
+	case fromSplit.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):
 		splits.Remove(fromSplit)
-	} else {
+	default:
 		splits.Mutate(fromSplit)
 	}
 
 	toSplitID := key.NewSplitID(message.ToID, message.OwnableID)
-	toSplit := splits.Fetch(key.New(toSplitID)).Get(key.New(toSplitID))
+
+	toSplit := splits.Fetch(key.FromID(toSplitID)).Get(key.FromID(toSplitID))
 	if toSplit == nil {
 		splits.Add(mappable.NewSplit(toSplitID, message.Split))
 	} else {
 		splits.Mutate(toSplit.(mappables.Split).Receive(message.Split).(mappables.Split))
 	}
+
 	return newTransactionResponse(nil)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
+
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case verify.Auxiliary.GetName():
 				transactionKeeper.verifyAuxiliary = value
+			default:
+				panic(errors.UninitializedUsage)
 			}
+		default:
+			panic(errors.UninitializedUsage)
 		}
 	}
+
 	return transactionKeeper
 }
 func keeperPrototype() helpers.TransactionKeeper {

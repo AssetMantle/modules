@@ -37,6 +37,7 @@ func (genesis genesis) Validate() error {
 	if len(genesis.ParameterList) != len(genesis.defaultParameterList) {
 		return errors.InvalidParameter
 	}
+
 	for _, parameter := range genesis.ParameterList {
 		var isPresent bool
 		for _, defaultParameter := range genesis.defaultParameterList {
@@ -46,26 +47,32 @@ func (genesis genesis) Validate() error {
 				break
 			}
 		}
-		if isPresent != true {
+
+		if !isPresent {
 			return errors.InvalidParameter
 		}
+
 		if Error := parameter.Validate(); Error != nil {
 			return Error
 		}
 	}
+
 	_, Error := govalidator.ValidateStruct(genesis)
+
 	return Error
 }
 func (genesis genesis) Import(context sdkTypes.Context, mapper helpers.Mapper, parameters helpers.Parameters) {
 	for _, mappable := range genesis.MappableList {
 		mapper.Create(context, mappable)
 	}
+
 	for _, parameter := range genesis.ParameterList {
 		parameters.Mutate(context, parameter)
 	}
 }
 func (genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper, parameters helpers.Parameters) helpers.Genesis {
 	var mappableList []helpers.Mappable
+
 	appendMappableList := func(mappable helpers.Mappable) bool {
 		mappableList = append(mappableList, mappable)
 		return false
@@ -75,6 +82,7 @@ func (genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper, p
 	for _, defaultParameter := range genesis.defaultParameterList {
 		parameters = parameters.Fetch(context, defaultParameter.GetID())
 	}
+
 	return genesis.Initialize(mappableList, parameters.GetList())
 }
 func (genesis genesis) Encode() []byte {
@@ -82,6 +90,7 @@ func (genesis genesis) Encode() []byte {
 	if Error != nil {
 		panic(Error)
 	}
+
 	return bytes
 }
 func (genesis genesis) Decode(byte []byte) helpers.Genesis {
@@ -89,16 +98,17 @@ func (genesis genesis) Decode(byte []byte) helpers.Genesis {
 	if Error := genesis.codec.UnmarshalJSON(byte, &newGenesis); Error != nil {
 		panic(Error)
 	}
+
 	return NewGenesis(genesis.keyPrototype, genesis.mappablePrototype, genesis.defaultMappableList, genesis.defaultParameterList).Initialize(newGenesis.MappableList, newGenesis.ParameterList)
 }
 func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList []types.Parameter) helpers.Genesis {
-	if mappableList == nil || len(mappableList) == 0 {
+	if len(mappableList) == 0 {
 		genesis.MappableList = genesis.defaultMappableList
 	} else {
 		genesis.MappableList = mappableList
 	}
 
-	if parameterList == nil || len(parameterList) == 0 {
+	if len(parameterList) == 0 {
 		genesis.ParameterList = genesis.defaultParameterList
 	} else {
 		for _, defaultParameter := range genesis.defaultParameterList {
@@ -114,6 +124,7 @@ func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList
 	if Error := genesis.Validate(); Error != nil {
 		panic(Error)
 	}
+
 	return genesis
 }
 
@@ -130,6 +141,7 @@ func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helper
 	mappablePrototype().RegisterCodec(Codec)
 	schema.RegisterCodec(Codec)
 	Codec.Seal()
+
 	return genesis{
 		codec:                Codec,
 		keyPrototype:         keyPrototype,

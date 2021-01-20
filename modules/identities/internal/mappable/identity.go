@@ -43,9 +43,11 @@ func (identity identity) UnprovisionAddress(accAddress sdkTypes.AccAddress) mapp
 		if provisionedAddress.Equals(accAddress) {
 			identity.ProvisionedAddressList = append(identity.ProvisionedAddressList[:i], identity.ProvisionedAddressList[i+1:]...)
 			identity.UnprovisionedAddressList = append(identity.UnprovisionedAddressList, accAddress)
+
 			return identity
 		}
 	}
+
 	return identity
 }
 func (identity identity) GetImmutables() types.Immutables { return identity.Immutables }
@@ -56,6 +58,7 @@ func (identity identity) IsProvisioned(accAddress sdkTypes.AccAddress) bool {
 			return true
 		}
 	}
+
 	return false
 }
 func (identity identity) IsUnprovisioned(accAddress sdkTypes.AccAddress) bool {
@@ -64,6 +67,7 @@ func (identity identity) IsUnprovisioned(accAddress sdkTypes.AccAddress) bool {
 			return true
 		}
 	}
+
 	return false
 }
 func (identity identity) GetKey() helpers.Key {

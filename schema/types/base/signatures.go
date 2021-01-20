@@ -21,14 +21,11 @@ func (signatures signatures) Get(id types.ID) types.Signature {
 			return signature
 		}
 	}
+
 	return nil
 }
 func (signatures signatures) GetList() []types.Signature {
-	var signatureList []types.Signature
-	for _, signature := range signatures.SignatureList {
-		signatureList = append(signatureList, signature)
-	}
-	return signatureList
+	return signatures.SignatureList
 }
 func (signatures signatures) Add(signature types.Signature) types.Signatures {
 	signatures.SignatureList = append(signatures.SignatureList, signature)
@@ -41,6 +38,7 @@ func (signatures signatures) Remove(signature types.Signature) types.Signatures 
 			signatureList = append(signatureList[:i], signatureList[i+1:]...)
 		}
 	}
+
 	return NewSignatures(signatureList)
 }
 func (signatures signatures) Mutate(signature types.Signature) types.Signatures {
@@ -50,6 +48,7 @@ func (signatures signatures) Mutate(signature types.Signature) types.Signatures 
 			signatureList[i] = signature
 		}
 	}
+
 	return NewSignatures(signatureList)
 }
 func NewSignatures(signatureList []types.Signature) types.Signatures {

@@ -19,7 +19,6 @@ import (
 
 type transactionKeeper struct {
 	mapper          helpers.Mapper
-	parameters      helpers.Parameters
 	defineAuxiliary helpers.Auxiliary
 	scrubAuxiliary  helpers.Auxiliary
 }
@@ -28,27 +27,34 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
+
 	immutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(properties.NubID), base.NewMetaFact(base.NewIDData(message.NubID))))))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
+
 	immutables := base.NewImmutables(immutableProperties)
+
 	classificationID, Error := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(base.NewImmutables(base.NewProperties(base.NewProperty(base.NewID(properties.NubID), base.NewFact(base.NewIDData(base.NewID("")))))), base.NewMutables(base.NewProperties()))))
 	if classificationID == nil && Error != nil {
 		return newTransactionResponse(Error)
 	}
+
 	identityID := key.NewIdentityID(classificationID, immutables.GetHashID())
+
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(identityID))
 	if identities.Get(key.New(identityID)) != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
 	identities.Add(mappable.NewIdentity(identityID, []sdkTypes.AccAddress{message.From}, []sdkTypes.AccAddress{}, immutables, base.NewMutables(base.NewProperties())))
+
 	return newTransactionResponse(nil)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
+
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
@@ -58,8 +64,11 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			case scrub.Auxiliary.GetName():
 				transactionKeeper.scrubAuxiliary = value
 			}
+		default:
+			panic(errors.UninitializedUsage)
 		}
 	}
+
 	return transactionKeeper
 }
 

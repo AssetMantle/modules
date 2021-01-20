@@ -18,42 +18,51 @@ type decData struct {
 
 var _ types.Data = (*decData)(nil)
 
-func (DecData decData) String() string {
-	return DecData.Value.String()
+func (decData decData) String() string {
+	return decData.Value.String()
 }
-func (DecData decData) GetTypeID() types.ID {
+func (decData decData) GetTypeID() types.ID {
 	return NewID("D")
 }
-func (DecData decData) ZeroValue() types.Data {
+func (decData decData) ZeroValue() types.Data {
 	return NewDecData(sdkTypes.ZeroDec())
 }
-func (DecData decData) GenerateHashID() types.ID {
-	if DecData.Equal(DecData.ZeroValue()) {
+func (decData decData) GenerateHashID() types.ID {
+	if decData.Equal(decData.ZeroValue()) {
 		return NewID("")
 	}
-	return NewID(meta.Hash(DecData.Value.String()))
+
+	return NewID(meta.Hash(decData.Value.String()))
 }
-func (DecData decData) AsString() (string, error) {
+func (decData decData) AsString() (string, error) {
 	return "", errors.EntityNotFound
 }
-func (DecData decData) AsDec() (sdkTypes.Dec, error) {
-	return DecData.Value, nil
+func (decData decData) AsDec() (sdkTypes.Dec, error) {
+	return decData.Value, nil
 }
-func (DecData decData) AsHeight() (types.Height, error) {
+func (decData decData) AsHeight() (types.Height, error) {
 	return height{}, errors.EntityNotFound
 }
-func (DecData decData) AsID() (types.ID, error) {
+func (decData decData) AsID() (types.ID, error) {
 	return id{}, errors.EntityNotFound
 }
-func (DecData decData) Get() interface{} {
-	return DecData.Value
+func (decData decData) Get() interface{} {
+	return decData.Value
 }
-func (DecData decData) Equal(data types.Data) bool {
+func (decData decData) Equal(data types.Data) bool {
+	compareDecData, Error := decDataFromInterface(data)
+	if Error != nil {
+		return false
+	}
+
+	return decData.Value.Equal(compareDecData.Value)
+}
+func decDataFromInterface(data types.Data) (decData, error) {
 	switch value := data.(type) {
 	case decData:
-		return value.Value.Equal(DecData.Value)
+		return value, nil
 	default:
-		return false
+		return decData{}, errors.MetaDataError
 	}
 }
 
@@ -67,6 +76,7 @@ func ReadDecData(dataString string) (types.Data, error) {
 	if dataString == "" {
 		return decData{}.ZeroValue(), nil
 	}
+
 	dec, Error := sdkTypes.NewDecFromStr(dataString)
 	if Error != nil {
 		return decData{}.ZeroValue(), Error

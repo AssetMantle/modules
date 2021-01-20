@@ -7,12 +7,13 @@ package applications
 
 import (
 	"encoding/json"
+	"io"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	tendermintABCITypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintTypes "github.com/tendermint/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
-	"io"
 )
 
 type Application interface {

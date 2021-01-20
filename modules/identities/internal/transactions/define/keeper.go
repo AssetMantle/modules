@@ -19,7 +19,6 @@ import (
 
 type transactionKeeper struct {
 	mapper          helpers.Mapper
-	parameters      helpers.Parameters
 	defineAuxiliary helpers.Auxiliary
 	scrubAuxiliary  helpers.Auxiliary
 	superAuxiliary  helpers.Auxiliary
@@ -31,36 +30,44 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	message := messageFromInterface(msg)
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(message.FromID))
 	identity := identities.Get(key.New(message.FromID))
+
 	if identity == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
+
 	if !identity.(mappables.InterIdentity).IsProvisioned(message.From) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
+
 	immutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaTraits.GetMetaPropertyList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
+
 	immutableTraits := base.NewImmutables(base.NewProperties(append(immutableProperties.GetList(), message.ImmutableTraits.GetList()...)...))
 
 	mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaTraits.GetMetaPropertyList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
+
 	mutableTraits := base.NewMutables(base.NewProperties(append(mutableProperties.GetList(), message.MutableTraits.GetList()...)...))
 
 	classificationID, Error := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(immutableTraits, mutableTraits)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
+
 	if auxiliaryResponse := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.FromID, mutableTraits)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
+
 	return newTransactionResponse(nil)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
+
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
@@ -72,8 +79,11 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			case super.Auxiliary.GetName():
 				transactionKeeper.superAuxiliary = value
 			}
+		default:
+			panic(errors.UninitializedUsage)
 		}
 	}
+
 	return transactionKeeper
 }
 

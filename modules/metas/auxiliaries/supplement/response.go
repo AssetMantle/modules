@@ -31,22 +31,22 @@ func newAuxiliaryResponse(metaProperties types.MetaProperties, error error) help
 			Success: false,
 			Error:   error,
 		}
-	} else {
-		return auxiliaryResponse{
-			Success:        true,
-			MetaProperties: metaProperties,
-		}
+	}
+
+	return auxiliaryResponse{
+		Success:        true,
+		MetaProperties: metaProperties,
 	}
 }
 
-func GetMetaPropertiesFromResponse(AuxiliaryResponse helpers.AuxiliaryResponse) (types.MetaProperties, error) {
-	switch value := AuxiliaryResponse.(type) {
+func GetMetaPropertiesFromResponse(response helpers.AuxiliaryResponse) (types.MetaProperties, error) {
+	switch value := response.(type) {
 	case auxiliaryResponse:
 		if value.IsSuccessful() {
 			return value.MetaProperties, nil
-		} else {
-			return nil, value.GetError()
 		}
+
+		return nil, value.GetError()
 	default:
 		return nil, errors.InvalidRequest
 	}

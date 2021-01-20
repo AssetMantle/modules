@@ -19,19 +19,22 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
-	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
+func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	maintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.IdentityID)
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(maintainerID))
+
 	maintainer := maintainers.Get(key.New(maintainerID))
 	if maintainer == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
+
 	for _, maintainedProperty := range auxiliaryRequest.MaintainedMutables.Get().GetList() {
 		if !maintainer.(mappables.Maintainer).MaintainsTrait(maintainedProperty.GetID()) {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 	}
+
 	return newAuxiliaryResponse(nil)
 }
 
