@@ -12,7 +12,7 @@ import (
 
 type request struct {
 	Name     string `json:"name" valid:"required~required field to missing, matches(^[A-Za-z0-9]+$)~invalid field name"`
-	Mnemonic string `json:"mnemonic" valid:"matches(^[a-z ]+$)~invalid field mnemonic"`
+	Mnemonic string `json:"mnemonic" valid:"optional"`
 }
 
 var _ helpers.Request = request{}
