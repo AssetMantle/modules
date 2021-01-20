@@ -42,14 +42,15 @@ func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, err
 	if Error := common.Codec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
 		return nil, Error
 	}
+
 	return queryRequest, nil
 }
 func requestPrototype() helpers.QueryRequest {
 	return queryRequest{}
 }
 
-func queryRequestFromInterface(QueryRequest helpers.QueryRequest) queryRequest {
-	switch value := QueryRequest.(type) {
+func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
+	switch value := request.(type) {
 	case queryRequest:
 		return value
 	default:

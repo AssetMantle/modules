@@ -32,6 +32,7 @@ func (queryResponse queryResponse) Decode(bytes []byte) (helpers.QueryResponse, 
 	if Error := common.Codec.UnmarshalJSON(bytes, &queryResponse); Error != nil {
 		return nil, Error
 	}
+
 	return queryResponse, nil
 }
 func responsePrototype() helpers.QueryResponse {
@@ -42,6 +43,7 @@ func newQueryResponse(split sdkTypes.Dec, error error) helpers.QueryResponse {
 	if error != nil {
 		success = false
 	}
+
 	return queryResponse{
 		Success: success,
 		Error:   error,

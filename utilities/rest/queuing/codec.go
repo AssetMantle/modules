@@ -12,13 +12,11 @@ import (
 
 const moduleName = "queuing"
 
-// Register concrete types on codec
 func RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, KafkaCliCtx{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, KafkaMsg{})
 }
 
-// module codec
 var ModuleCdc *codec.Codec
 
 func init() {

@@ -41,6 +41,7 @@ func (maintainer maintainer) MaintainsTrait(id types.ID) bool {
 			return true
 		}
 	}
+
 	return false
 }
 func (maintainer maintainer) GetKey() helpers.Key {
@@ -50,9 +51,9 @@ func (maintainer maintainer) GetKey() helpers.Key {
 func (maintainer) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, maintainer{})
 }
-func NewMaintainer(ID types.ID, maintainedTraits types.Mutables, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) mappables.Maintainer {
+func NewMaintainer(id types.ID, maintainedTraits types.Mutables, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) mappables.Maintainer {
 	return maintainer{
-		ID:               ID,
+		ID:               id,
 		MaintainedTraits: maintainedTraits,
 		AddMaintainer:    addMaintainer,
 		RemoveMaintainer: removeMaintainer,

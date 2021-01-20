@@ -19,14 +19,17 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
-	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
+func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	maintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.IdentityID)
+
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(maintainerID))
 	if maintainers.Get(key.New(maintainerID)) != nil {
 		return newAuxiliaryResponse(errors.EntityAlreadyExists)
 	}
-	maintainers = maintainers.Add(mappable.NewMaintainer(maintainerID, auxiliaryRequest.MutableTraits, true, true, true))
+
+	maintainers.Add(mappable.NewMaintainer(maintainerID, auxiliaryRequest.MutableTraits, true, true, true))
+
 	return newAuxiliaryResponse(nil)
 }
 

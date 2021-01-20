@@ -32,35 +32,45 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
+
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(message.AssetID))
+
 	asset := assets.Get(key.New(message.AssetID))
 	if asset == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
+
 	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetBurn())))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
+
 	burnHeightMetaFact := metaProperties.GetMetaProperty(base.NewID(properties.Burn))
 	if burnHeightMetaFact == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
+
 	burnHeight, Error := burnHeightMetaFact.GetMetaFact().GetData().AsHeight()
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
+
 	if burnHeight.IsGreaterThan(base.NewHeight(context.BlockHeight())) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
+
 	if auxiliaryResponse := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.SmallestDec())); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
+
 	assets.Remove(asset)
+
 	return newTransactionResponse(nil)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
+
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
@@ -72,8 +82,11 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			case verify.Auxiliary.GetName():
 				transactionKeeper.verifyAuxiliary = value
 			}
+		default:
+			panic(errors.UninitializedUsage)
 		}
 	}
+
 	return transactionKeeper
 }
 

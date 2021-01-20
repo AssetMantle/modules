@@ -21,18 +21,16 @@ func (properties properties) Get(id types.ID) types.Property {
 			return property
 		}
 	}
+
 	return nil
 }
 func (properties properties) GetList() []types.Property {
-	var propertyList []types.Property
-	for _, baseProperty := range properties.PropertyList {
-		propertyList = append(propertyList, baseProperty)
-	}
-	return propertyList
+	return properties.PropertyList
 }
 func (properties properties) Add(property types.Property) types.Properties {
 	propertyList := properties.GetList()
 	propertyList = append(propertyList, property)
+
 	return NewProperties(propertyList...)
 }
 func (properties properties) Remove(property types.Property) types.Properties {
@@ -42,6 +40,7 @@ func (properties properties) Remove(property types.Property) types.Properties {
 			propertyList = append(propertyList[:i], propertyList[i+1:]...)
 		}
 	}
+
 	return NewProperties(propertyList...)
 }
 func (properties properties) Mutate(property types.Property) types.Properties {
@@ -51,6 +50,7 @@ func (properties properties) Mutate(property types.Property) types.Properties {
 			propertyList[i] = property
 		}
 	}
+
 	return NewProperties(propertyList...)
 }
 func NewProperties(propertyList ...types.Property) types.Properties {
@@ -58,10 +58,11 @@ func NewProperties(propertyList ...types.Property) types.Properties {
 		PropertyList: propertyList,
 	}
 }
-func ReadProperties(Properties string) (types.Properties, error) {
-	properties, Error := ReadMetaProperties(Properties)
+func ReadProperties(propertiesString string) (types.Properties, error) {
+	properties, Error := ReadMetaProperties(propertiesString)
 	if Error != nil {
 		return nil, Error
 	}
+
 	return properties.RemoveData(), nil
 }

@@ -7,6 +7,8 @@ package simulator
 
 import (
 	"fmt"
+	"math/rand"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -17,12 +19,11 @@ import (
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"math/rand"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
-
 	var data types.Data
+
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
 		dummy.ID.String(),

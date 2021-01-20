@@ -19,15 +19,12 @@ func (queries queries) Get(name string) helpers.Query {
 			return query
 		}
 	}
+
 	return nil
 }
 
 func (queries queries) GetList() []helpers.Query {
-	var queryList []helpers.Query
-	for _, query := range queries.queriesList {
-		queryList = append(queryList, query)
-	}
-	return queryList
+	return queries.queriesList
 }
 
 func NewQueries(queriesList ...helpers.Query) helpers.Queries {

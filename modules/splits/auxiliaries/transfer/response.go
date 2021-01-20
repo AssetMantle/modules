@@ -27,6 +27,7 @@ func newAuxiliaryResponse(error error) helpers.AuxiliaryResponse {
 	if error != nil {
 		success = false
 	}
+
 	return auxiliaryResponse{
 		Success: success,
 		Error:   error,

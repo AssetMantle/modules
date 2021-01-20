@@ -6,10 +6,11 @@
 package helpers
 
 import (
+	"math/rand"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"math/rand"
 )
 
 type Simulator interface {

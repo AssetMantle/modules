@@ -25,9 +25,11 @@ func (queryKeeper queryKeeper) Enquire(context sdkTypes.Context, queryRequest he
 		if key.ReadOwnableID(key.ToID(mappable.GetKey())).Equals(queryRequestFromInterface(queryRequest).OwnableID) {
 			split = split.Add(mappable.(mappables.Split).GetValue())
 		}
+
 		return false
 	}
 	queryKeeper.mapper.NewCollection(context).Iterate(key.FromID(base.NewID("")), accumulator)
+
 	return newQueryResponse(split, nil)
 }
 

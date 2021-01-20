@@ -6,10 +6,11 @@
 package key
 
 import (
+	"strings"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"strings"
 )
 
 func readMetaID(metaIDString string) types.ID {
@@ -20,13 +21,16 @@ func readMetaID(metaIDString string) types.ID {
 			HashID: base.NewID(idList[1]),
 		}
 	}
+
 	return metaID{TypeID: base.NewID(""), HashID: base.NewID("")}
 }
-func metaIDFromInterface(id types.ID) metaID {
-	switch value := id.(type) {
+func metaIDFromInterface(i interface{}) metaID {
+	switch value := i.(type) {
 	case metaID:
 		return value
+	case types.ID:
+		return metaIDFromInterface(readMetaID(value.String()))
 	default:
-		return metaIDFromInterface(readMetaID(id.String()))
+		panic(i)
 	}
 }

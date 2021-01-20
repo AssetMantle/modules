@@ -19,18 +19,20 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
-	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
+func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	identities := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(auxiliaryRequest.IdentityID))
+
 	identity := identities.Get(key.New(auxiliaryRequest.IdentityID))
 	if identity == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
-	if identity.(mappables.InterIdentity).IsProvisioned(auxiliaryRequest.Address) {
-		return newAuxiliaryResponse(nil)
-	} else {
+
+	if !identity.(mappables.InterIdentity).IsProvisioned(auxiliaryRequest.Address) {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
+
+	return newAuxiliaryResponse(nil)
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
