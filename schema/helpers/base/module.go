@@ -34,6 +34,7 @@ type module struct {
 	queriesPrototype      func() helpers.Queries
 	simulatorPrototype    func() helpers.Simulator
 	transactionsPrototype func() helpers.Transactions
+	blockPrototype        func() helpers.Block
 
 	auxiliaries  helpers.Auxiliaries
 	genesis      helpers.Genesis
@@ -41,6 +42,7 @@ type module struct {
 	parameters   helpers.Parameters
 	queries      helpers.Queries
 	transactions helpers.Transactions
+	block        helpers.Block
 }
 
 var _ helpers.Module = (*module)(nil)
@@ -181,9 +183,12 @@ func (module module) ExportGenesis(context sdkTypes.Context) json.RawMessage {
 
 	return module.genesisPrototype().Export(context, module.mapper, module.parameters).Encode()
 }
-func (module module) BeginBlock(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {}
+func (module module) BeginBlock(context sdkTypes.Context, beginBlockRequest abciTypes.RequestBeginBlock) {
+	module.block.Begin(context, beginBlockRequest)
+}
 
-func (module module) EndBlock(_ sdkTypes.Context, _ abciTypes.RequestEndBlock) []abciTypes.ValidatorUpdate {
+func (module module) EndBlock(context sdkTypes.Context, endBlockRequest abciTypes.RequestEndBlock) []abciTypes.ValidatorUpdate {
+	module.block.End(context, endBlockRequest)
 	return []abciTypes.ValidatorUpdate{}
 }
 func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
@@ -235,10 +240,12 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 
 	module.queries = NewQueries(queryList...)
 
+	module.block = module.blockPrototype().Initialize(module.mapper, module.parameters, auxiliaryList)
+
 	return module
 }
 
-func NewModule(name string, auxiliariesPrototype func() helpers.Auxiliaries, genesisPrototype func() helpers.Genesis, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.Parameters, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions) helpers.Module {
+func NewModule(name string, auxiliariesPrototype func() helpers.Auxiliaries, genesisPrototype func() helpers.Genesis, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.Parameters, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions, blockPrototype func() helpers.Block) helpers.Module {
 	return module{
 		name:                  name,
 		auxiliariesPrototype:  auxiliariesPrototype,
@@ -248,5 +255,6 @@ func NewModule(name string, auxiliariesPrototype func() helpers.Auxiliaries, gen
 		queriesPrototype:      queriesPrototype,
 		simulatorPrototype:    simulatorPrototype,
 		transactionsPrototype: transactionsPrototype,
+		blockPrototype:        blockPrototype,
 	}
 }

@@ -7,6 +7,7 @@ package orders
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/orders/auxiliaries"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/block"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
@@ -28,5 +29,6 @@ func Prototype() helpers.Module {
 		queries.Prototype,
 		simulator.Prototype,
 		transactions.Prototype,
+		block.Prototype,
 	)
 }

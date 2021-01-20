@@ -429,7 +429,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			wasmRouter,
 			wasmDir,
 			wasmConfig,
-			"staking",
+			staking.ModuleName,
 			&wasm.MessageEncoders{Custom: wasmUtilities.CustomEncoder(assets.Prototype(), classifications.Prototype(), identities.Prototype(), maintainers.Prototype(), metas.Prototype(), orders.Prototype(), splits.Prototype())},
 			nil)
 
@@ -475,6 +475,7 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			mint.ModuleName,
 			distribution.ModuleName,
 			slashing.ModuleName,
+			ordersModule.Name(),
 		)
 		application.moduleManager.SetOrderEndBlockers(
 			crisis.ModuleName,

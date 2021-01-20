@@ -7,6 +7,7 @@ package splits
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/block"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
@@ -28,5 +29,6 @@ func Prototype() helpers.Module {
 		queries.Prototype,
 		simulator.Prototype,
 		transactions.Prototype,
+		block.Prototype,
 	)
 }

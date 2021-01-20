@@ -7,6 +7,7 @@ package assets
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/auxiliaries"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/block"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
@@ -28,5 +29,6 @@ func Prototype() helpers.Module {
 		queries.Prototype,
 		simulator.Prototype,
 		transactions.Prototype,
+		block.Prototype,
 	)
 }

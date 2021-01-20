@@ -7,6 +7,7 @@ package metas
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/block"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/module"
@@ -28,5 +29,6 @@ func Prototype() helpers.Module {
 		queries.Prototype,
 		simulator.Prototype,
 		transactions.Prototype,
+		block.Prototype,
 	)
 }

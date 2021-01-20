@@ -7,6 +7,7 @@ package classifications
 
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/block"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
@@ -28,5 +29,6 @@ func Prototype() helpers.Module {
 		queries.Prototype,
 		simulator.Prototype,
 		transactions.Prototype,
+		block.Prototype,
 	)
 }
