@@ -14,5 +14,6 @@ const (
 	Lock              = "lock"
 	MakerOwnableSplit = "makerOwnableSplit"
 	NubID             = "nubID"
+	Split             = "split"
 	TakerID           = "takerID"
 )

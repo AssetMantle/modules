@@ -32,22 +32,22 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 	fromSplitID := key.NewSplitID(message.FromID, message.OwnableID)
-	splits := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(fromSplitID))
-	fromSplit := splits.Get(key.New(fromSplitID))
+	splits := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(fromSplitID))
+	fromSplit := splits.Get(key.FromID(fromSplitID))
 	if fromSplit == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 	fromSplit = fromSplit.(mappables.Split).Send(message.Split).(mappables.Split)
-	if fromSplit.(mappables.Split).GetSplit().LT(sdkTypes.ZeroDec()) {
+	if fromSplit.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()) {
 		return newTransactionResponse(errors.NotAuthorized)
-	} else if fromSplit.(mappables.Split).GetSplit().Equal(sdkTypes.ZeroDec()) {
+	} else if fromSplit.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()) {
 		splits.Remove(fromSplit)
 	} else {
 		splits.Mutate(fromSplit)
 	}
 
 	toSplitID := key.NewSplitID(message.ToID, message.OwnableID)
-	toSplit := splits.Fetch(key.New(toSplitID)).Get(key.New(toSplitID))
+	toSplit := splits.Fetch(key.FromID(toSplitID)).Get(key.FromID(toSplitID))
 	if toSplit == nil {
 		splits.Add(mappable.NewSplit(toSplitID, message.Split))
 	} else {

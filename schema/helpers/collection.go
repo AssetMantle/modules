@@ -14,6 +14,7 @@ type Collection interface {
 	Get(Key) Mappable
 	GetList() []Mappable
 
+	Iterate(Key, func(Mappable) bool)
 	Fetch(Key) Collection
 	Add(Mappable) Collection
 	Remove(Mappable) Collection

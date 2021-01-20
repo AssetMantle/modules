@@ -10,7 +10,7 @@ import (
 )
 
 type Transactional interface {
-	Splittable
+	GetValue() sdkTypes.Dec
 	Send(sdkTypes.Dec) Transactional
 	Receive(sdkTypes.Dec) Transactional
 

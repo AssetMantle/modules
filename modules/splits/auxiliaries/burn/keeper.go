@@ -22,15 +22,15 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, AuxiliaryRequest helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(AuxiliaryRequest)
 	splitID := key.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
-	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(splitID))
-	split := splits.Get(key.New(splitID))
+	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(splitID))
+	split := splits.Get(key.FromID(splitID))
 	if split == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 	split = split.(mappables.Split).Send(auxiliaryRequest.Split).(mappables.Split)
-	if split.(mappables.Split).GetSplit().LT(sdkTypes.ZeroDec()) {
+	if split.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()) {
 		return newAuxiliaryResponse(errors.InsufficientBalance)
-	} else if split.(mappables.Split).GetSplit().Equal(sdkTypes.ZeroDec()) {
+	} else if split.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()) {
 		splits.Remove(split)
 	} else {
 		splits.Mutate(split)

@@ -26,7 +26,7 @@ func Test_Split_Methods(t *testing.T) {
 	require.Equal(t, testSplitID, testSplit.GetID())
 	require.Equal(t, ownerID, testSplit.GetOwnerID())
 	require.Equal(t, ownableID, testSplit.GetOwnableID())
-	require.Equal(t, splitDec, testSplit.GetSplit())
+	require.Equal(t, splitDec, testSplit.GetValue())
 	require.Equal(t, NewSplit(testSplitID, sdkTypes.NewDec(11)).(split), testSplit.Send(sdkTypes.NewDec(1)))
 	require.Equal(t, NewSplit(testSplitID, sdkTypes.NewDec(13)).(split), testSplit.Receive(sdkTypes.NewDec(1)))
 	require.Equal(t, true, testSplit.CanSend(sdkTypes.NewDec(5)))

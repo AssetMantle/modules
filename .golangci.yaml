@@ -18,7 +18,7 @@ linters-settings:
   errcheck:
     ignore: fmt:.*,io/ioutil:^Read.*,github.com/spf13/cobra:MarkFlagRequired,github.com/spf13/viper:BindPFlag
   golint:
-    min-confidence: 1.1
+    min-confidence: 0.9
 issues:
   exclude:
     - composite
