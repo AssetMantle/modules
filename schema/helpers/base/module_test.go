@@ -7,6 +7,9 @@ package base
 
 import (
 	"encoding/json"
+	"math/rand"
+	"testing"
+
 	clientContext "github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
@@ -15,11 +18,10 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	helpersTestUtilities "github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers"
 	baseTestUtilities "github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"math/rand"
-	"testing"
 )
 
 var auxiliariesPrototype = func() helpers.Auxiliaries {
@@ -45,6 +47,7 @@ var transactionsPrototype = func() helpers.Transactions {
 	return transactions{[]helpers.Transaction{NewTransaction("TestMessage", "", "", baseTestUtilities.TestTransactionRequestPrototype, baseTestUtilities.TestMessagePrototype,
 		baseTestUtilities.TestTransactionKeeperPrototype)}}
 }
+var blockPrototype = func() helpers.Block { return helpersTestUtilities.TestBlockPrototype() }
 
 func TestModule(t *testing.T) {
 	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
@@ -52,7 +55,7 @@ func TestModule(t *testing.T) {
 	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test") //.WithKeyTable(parametersPrototype().GetKeyTable())
 	//subspace.SetParamSet(context, parametersPrototype())
 	Module := NewModule("test", auxiliariesPrototype, genesisPrototype,
-		mapperPrototype, parametersPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype).Initialize(storeKey, subspace).(module)
+		mapperPrototype, parametersPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype, blockPrototype).Initialize(storeKey, subspace).(module)
 
 	// AppModuleBasic
 	require.Equal(t, "test", Module.Name())
@@ -93,7 +96,8 @@ func TestModule(t *testing.T) {
 	require.NotNil(t, queryResponse)
 
 	Module.BeginBlock(context, abciTypes.RequestBeginBlock{})
-	Module.EndBlock(context, abciTypes.RequestEndBlock{})
+	endBlockResponse := Module.EndBlock(context, abciTypes.RequestEndBlock{})
+	require.Equal(t, []abciTypes.ValidatorUpdate{}, endBlockResponse)
 	//TODO	Module.InitGenesis(context, json.RawMessage{})
 	// Module.ExportGenesis(context)
 
