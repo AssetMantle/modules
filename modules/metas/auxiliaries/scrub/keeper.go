@@ -24,10 +24,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	scrubbedPropertyList := make([]types.Property, len(auxiliaryRequest.MetaPropertyList))
 
-	for _, metaProperty := range auxiliaryRequest.MetaPropertyList {
+	for i, metaProperty := range auxiliaryRequest.MetaPropertyList {
 		metas := auxiliaryKeeper.mapper.NewCollection(context)
 		metas.Add(mappable.NewMeta(metaProperty.GetMetaFact().GetData()))
-		scrubbedPropertyList = append(scrubbedPropertyList, metaProperty.RemoveData())
+		scrubbedPropertyList[i] = metaProperty.RemoveData()
 	}
 
 	return newAuxiliaryResponse(base.NewProperties(scrubbedPropertyList...), nil)

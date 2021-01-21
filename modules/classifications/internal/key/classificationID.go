@@ -62,14 +62,14 @@ func New(id types.ID) helpers.Key {
 func NewClassificationID(chainID types.ID, immutableTraits types.Immutables, mutableTraits types.Mutables) types.ID {
 	immutableIDStringList := make([]string, len(immutableTraits.Get().GetList()))
 
-	for _, immutable := range immutableTraits.Get().GetList() {
-		immutableIDStringList = append(immutableIDStringList, immutable.GetID().String())
+	for i, immutable := range immutableTraits.Get().GetList() {
+		immutableIDStringList[i] = immutable.GetID().String()
 	}
 
 	mutableIDStringList := make([]string, len(mutableTraits.Get().GetList()))
 
-	for _, mutable := range mutableTraits.Get().GetList() {
-		mutableIDStringList = append(mutableIDStringList, mutable.GetID().String())
+	for i, mutable := range mutableTraits.Get().GetList() {
+		mutableIDStringList[i] = mutable.GetID().String()
 	}
 
 	return classificationID{
