@@ -24,8 +24,8 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 
 	scrubbedPropertyList := make([]types.Property, len(auxiliaryRequest.MetaPropertyList))
 
-	for _, metaProperty := range auxiliaryRequest.MetaPropertyList {
-		scrubbedPropertyList = append(scrubbedPropertyList, metaProperty.RemoveData())
+	for i, metaProperty := range auxiliaryRequest.MetaPropertyList {
+		scrubbedPropertyList[i] = metaProperty.RemoveData()
 
 		if metaProperty.GetID().String() == "scrubError" {
 			return newAuxiliaryResponse(nil, errors.MockError)

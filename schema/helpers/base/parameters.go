@@ -23,8 +23,8 @@ var _ helpers.Parameters = (*parameters)(nil)
 
 func (parameters parameters) String() string {
 	parameterList := make([]string, len(parameters.parameterList))
-	for _, parameter := range parameters.parameterList {
-		parameterList = append(parameterList, parameter.String())
+	for i, parameter := range parameters.parameterList {
+		parameterList[i] = parameter.String()
 	}
 
 	return strings.Join(parameterList, "\n")
