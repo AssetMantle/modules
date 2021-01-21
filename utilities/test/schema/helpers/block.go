@@ -26,7 +26,7 @@ func (b block) End(_ sdkTypes.Context, _ abci.RequestEndBlock) {
 
 }
 
-func (b block) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, _ []helpers.Auxiliary) helpers.Block {
+func (b block) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, _ ...interface{}) helpers.Block {
 	return block{mapper, parameters}
 }
 
