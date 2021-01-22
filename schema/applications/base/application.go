@@ -390,7 +390,6 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 		ordersModule := orders.Prototype().Initialize(
 			keys[orders.Prototype().Name()],
 			paramsKeeper.Subspace(orders.Prototype().Name()),
-			bankKeeper,
 			classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 			classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
 			metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),

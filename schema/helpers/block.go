@@ -11,7 +11,7 @@ import (
 )
 
 type Block interface {
-	Begin(context sdkTypes.Context, beginBlockRequest abciTypes.RequestBeginBlock)
-	End(context sdkTypes.Context, endBlockRequest abciTypes.RequestEndBlock)
-	Initialize(mapper Mapper, parameters Parameters, auxiliaries []Auxiliary) Block
+	Begin(sdkTypes.Context, abciTypes.RequestBeginBlock)
+	End(sdkTypes.Context, abciTypes.RequestEndBlock)
+	Initialize(Mapper, Parameters, ...interface{}) Block
 }

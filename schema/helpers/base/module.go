@@ -100,8 +100,8 @@ func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 	}
 	commandList := make([]*cobra.Command, len(module.transactionsPrototype().GetList()))
 
-	for _, transaction := range module.transactionsPrototype().GetList() {
-		commandList = append(commandList, transaction.Command(codec))
+	for i, transaction := range module.transactionsPrototype().GetList() {
+		commandList[i] = transaction.Command(codec)
 	}
 
 	rootTransactionCommand.AddCommand(
@@ -120,8 +120,8 @@ func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 	}
 	commandList := make([]*cobra.Command, len(module.queriesPrototype().GetList()))
 
-	for _, query := range module.queriesPrototype().GetList() {
-		commandList = append(commandList, query.Command(codec))
+	for i, query := range module.queriesPrototype().GetList() {
+		commandList[i] = query.Command(codec)
 	}
 
 	rootQueryCommand.AddCommand(
@@ -218,29 +218,29 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 
 	auxiliaryList := make([]helpers.Auxiliary, len(module.auxiliariesPrototype().GetList()))
 
-	for _, auxiliary := range module.auxiliariesPrototype().GetList() {
-		auxiliaryList = append(auxiliaryList, auxiliary.Initialize(module.mapper, module.parameters, auxiliaryKeepers...))
+	for i, auxiliary := range module.auxiliariesPrototype().GetList() {
+		auxiliaryList[i] = auxiliary.Initialize(module.mapper, module.parameters, auxiliaryKeepers...)
 	}
 
 	module.auxiliaries = NewAuxiliaries(auxiliaryList...)
 
 	transactionList := make([]helpers.Transaction, len(module.transactionsPrototype().GetList()))
 
-	for _, transaction := range module.transactionsPrototype().GetList() {
-		transactionList = append(transactionList, transaction.InitializeKeeper(module.mapper, module.parameters, auxiliaryKeepers...))
+	for i, transaction := range module.transactionsPrototype().GetList() {
+		transactionList[i] = transaction.InitializeKeeper(module.mapper, module.parameters, auxiliaryKeepers...)
 	}
 
 	module.transactions = NewTransactions(transactionList...)
 
 	queryList := make([]helpers.Query, len(module.queriesPrototype().GetList()))
 
-	for _, query := range module.queriesPrototype().GetList() {
-		queryList = append(queryList, query.Initialize(module.mapper, module.parameters, auxiliaryKeepers...))
+	for i, query := range module.queriesPrototype().GetList() {
+		queryList[i] = query.Initialize(module.mapper, module.parameters, auxiliaryKeepers...)
 	}
 
 	module.queries = NewQueries(queryList...)
 
-	module.block = module.blockPrototype().Initialize(module.mapper, module.parameters, auxiliaryList)
+	module.block = module.blockPrototype().Initialize(module.mapper, module.parameters, auxiliaryKeepers...)
 
 	return module
 }

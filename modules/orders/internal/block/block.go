@@ -31,11 +31,11 @@ func (block block) End(_ sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 
 }
 
-func (block block) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []helpers.Auxiliary) helpers.Block {
+func (block block) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Block {
 	block.mapper, block.parameters = mapper, parameters
 
-	for _, auxiliary := range auxiliaries {
-		switch value := auxiliary.(type) {
+	for _, auxiliaryKeeper := range auxiliaryKeepers {
+		switch value := auxiliaryKeeper.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case supplement.Auxiliary.GetName():

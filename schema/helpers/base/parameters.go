@@ -23,8 +23,8 @@ var _ helpers.Parameters = (*parameters)(nil)
 
 func (parameters parameters) String() string {
 	parameterList := make([]string, len(parameters.parameterList))
-	for _, parameter := range parameters.parameterList {
-		parameterList = append(parameterList, parameter.String())
+	for i, parameter := range parameters.parameterList {
+		parameterList[i] = parameter.String()
 	}
 
 	return strings.Join(parameterList, "\n")
@@ -87,8 +87,8 @@ func (parameters parameters) Mutate(context sdkTypes.Context, newParameter types
 func (parameters parameters) ParamSetPairs() params.ParamSetPairs {
 	paramSetPairList := make([]params.ParamSetPair, len(parameters.parameterList))
 
-	for _, parameter := range parameters.parameterList {
-		paramSetPairList = append(paramSetPairList, params.NewParamSetPair(parameter.GetID().Bytes(), parameter.GetData(), parameter.GetValidator()))
+	for i, parameter := range parameters.parameterList {
+		paramSetPairList[i] = params.NewParamSetPair(parameter.GetID().Bytes(), parameter.GetData(), parameter.GetValidator())
 	}
 
 	return paramSetPairList
