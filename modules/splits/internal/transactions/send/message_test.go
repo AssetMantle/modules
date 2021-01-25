@@ -6,12 +6,13 @@
 package send
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Send_Message(t *testing.T) {
@@ -26,7 +27,7 @@ func Test_Send_Message(t *testing.T) {
 	require.Nil(t, Error)
 
 	testMessage := newMessage(fromAccAddress, testFromID, testToID, testOwnableID, testSplit)
-	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ToID: testToID, OwnableID: testOwnableID, Split: testSplit}, testMessage)
+	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ToID: testToID, OwnableID: testOwnableID, Value: testSplit}, testMessage)
 	require.Equal(t, module.Name, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
 	require.Equal(t, nil, testMessage.ValidateBasic())
