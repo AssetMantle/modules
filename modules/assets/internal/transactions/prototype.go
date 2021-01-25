@@ -10,6 +10,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/define"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/mutate"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/renumerate"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
@@ -20,5 +21,6 @@ func Prototype() helpers.Transactions {
 		define.Transaction,
 		mint.Transaction,
 		mutate.Transaction,
+		renumerate.Transaction,
 	)
 }
