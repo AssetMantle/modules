@@ -38,7 +38,7 @@ var (
 	OrderID                 = base.NewCLIFlag("orderID", "", "OrderID")
 	OwnableID               = base.NewCLIFlag("ownableID", "", "MakerOwnableID")
 	RemoveMaintainer        = base.NewCLIFlag("removeMaintainer", false, "RemoveMaintainer")
-	Split                   = base.NewCLIFlag("split", "0", "Split")
+	Value                   = base.NewCLIFlag("value", "0", "Value")
 	SplitID                 = base.NewCLIFlag("splitID", "", "SplitID")
 	To                      = base.NewCLIFlag("to", "", "To")
 	ToID                    = base.NewCLIFlag("toID", "", "ToID")
