@@ -8,6 +8,7 @@ package auxiliaries
 import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/renumerate"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -17,6 +18,7 @@ func Prototype() helpers.Auxiliaries {
 	return base.NewAuxiliaries(
 		burn.Auxiliary,
 		mint.Auxiliary,
+		renumerate.Auxiliary,
 		transfer.Auxiliary,
 	)
 }
