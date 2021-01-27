@@ -36,7 +36,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	for _, coin := range message.Coins {
-		if _, Error := utilities.SubtractSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, base.NewID(coin.Denom), sdkTypes.NewDecFromInt(coin.Amount)); Error != nil {
+		if _, Error := utilities.AddSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, base.NewID(coin.Denom), sdkTypes.NewDecFromInt(coin.Amount)); Error != nil {
 			return newTransactionResponse(Error)
 		}
 	}

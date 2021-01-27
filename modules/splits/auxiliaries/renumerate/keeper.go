@@ -24,11 +24,11 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	switch totalSplitsValue := utilities.GetOwnableTotalSplitsValue(splits, auxiliaryRequest.OwnableID); {
 	case totalSplitsValue.LT(auxiliaryRequest.Value):
-		if _, Error := utilities.AddSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value); Error != nil {
+		if _, Error := utilities.AddSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value.Sub(totalSplitsValue)); Error != nil {
 			return newAuxiliaryResponse(Error)
 		}
 	case totalSplitsValue.GT(auxiliaryRequest.Value):
-		if _, Error := utilities.SubtractSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value); Error != nil {
+		if _, Error := utilities.SubtractSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, totalSplitsValue.Sub(auxiliaryRequest.Value)); Error != nil {
 			return newAuxiliaryResponse(Error)
 		}
 	case totalSplitsValue.IsZero():
