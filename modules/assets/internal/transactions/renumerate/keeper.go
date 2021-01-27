@@ -11,6 +11,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/renumerate"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -20,6 +21,7 @@ import (
 
 type transactionKeeper struct {
 	mapper              helpers.Mapper
+	maintainAuxiliary   helpers.Auxiliary
 	renumerateAuxiliary helpers.Auxiliary
 	supplementAuxiliary helpers.Auxiliary
 	verifyAuxiliary     helpers.Auxiliary
@@ -38,6 +40,10 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	asset := assets.Get(key.New(message.AssetID))
 	if asset == nil {
 		return newTransactionResponse(errors.EntityNotFound)
+	}
+
+	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetClassificationID(), message.FromID, base.NewMutables(base.NewProperties(base.NewProperty(base.NewID(properties.Value), nil))))); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
 	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetValue())))
@@ -65,6 +71,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
+			case maintain.Auxiliary.GetName():
+				transactionKeeper.maintainAuxiliary = value
 			case renumerate.Auxiliary.GetName():
 				transactionKeeper.renumerateAuxiliary = value
 			case supplement.Auxiliary.GetName():
