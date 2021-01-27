@@ -40,7 +40,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetBurn())))
+	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetValue())))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
@@ -48,11 +48,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if valueMetaProperty := metaProperties.GetMetaProperty(base.NewID(properties.Value)); valueMetaProperty != nil {
 		if value, Error := valueMetaProperty.GetMetaFact().GetData().AsDec(); Error != nil {
 			return newTransactionResponse(Error)
-		} else {
-			if auxiliaryResponse := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, value)); !auxiliaryResponse.IsSuccessful() {
-				return newTransactionResponse(auxiliaryResponse.GetError())
-			}
+		} else if auxiliaryResponse := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, value)); !auxiliaryResponse.IsSuccessful() {
+			return newTransactionResponse(auxiliaryResponse.GetError())
 		}
+	} else {
+		return newTransactionResponse(errors.MetaDataError)
 	}
 
 	return newTransactionResponse(nil)
