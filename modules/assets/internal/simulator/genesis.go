@@ -35,10 +35,11 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { data = base.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	var mappableList []helpers.Mappable
-	for range simulationState.Accounts {
+	mappableList := make([]helpers.Mappable, len(simulationState.Accounts))
+
+	for i := range simulationState.Accounts {
 		immutables := GenerateRandomImmutables(simulationState.Rand)
-		mappableList = append(mappableList, mappable.NewAsset(key.NewAssetID(GenerateRandomID(simulationState.Rand), immutables), immutables, GenerateRandomMutables(simulationState.Rand)))
+		mappableList[i] = mappable.NewAsset(key.NewAssetID(GenerateRandomID(simulationState.Rand), immutables), immutables, GenerateRandomMutables(simulationState.Rand))
 	}
 	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, nil).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
 
@@ -82,9 +83,9 @@ func GenerateRandomProperty(r *rand.Rand) types.Property {
 
 func GenerateRandomProperties(r *rand.Rand) types.Properties {
 	randomPositiveInt := int(math.Abs(float64(r.Int()))) % 11
-	var propertyList []types.Property
+	propertyList := make([]types.Property, randomPositiveInt)
 	for i := 0; i <= randomPositiveInt; i++ {
-		propertyList = append(propertyList, GenerateRandomProperty(r))
+		propertyList[i] = GenerateRandomProperty(r)
 	}
 	return base.NewProperties(propertyList...)
 }
