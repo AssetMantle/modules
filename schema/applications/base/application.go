@@ -44,7 +44,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/orders"
 	"github.com/persistenceOne/persistenceSDK/modules/splits"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
-	auxiliariesMint "github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
+	splitsMint "github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/renumerate"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/applications"
 	wasmUtilities "github.com/persistenceOne/persistenceSDK/utilities/wasm"
@@ -384,21 +385,22 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
 			metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 			metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-			splitsModule.GetAuxiliary(auxiliariesMint.Auxiliary.GetName()),
+			splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
 			splitsModule.GetAuxiliary(burn.Auxiliary.GetName()),
+			splitsModule.GetAuxiliary(renumerate.Auxiliary.GetName()),
 		)
 		ordersModule := orders.Prototype().Initialize(
 			keys[orders.Prototype().Name()],
 			paramsKeeper.Subspace(orders.Prototype().Name()),
 			classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 			classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-			metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-			splitsModule.GetAuxiliary(auxiliariesMint.Auxiliary.GetName()),
+			identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
 			maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
 			maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
 			metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+			metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
+			splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
 			splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
-			identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
 		)
 
 		var wasmRouter = baseApp.Router()
