@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package transfer
+package renumerate
 
 import (
 	"testing"
@@ -13,14 +13,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_Transfer_Request(t *testing.T) {
-	fromID := base.NewID("fromID")
-	toID := base.NewID("toID")
-	ownableID := base.NewID("ownableID")
-	splits := sdkTypes.NewDec(10)
-	testAuxiliaryRequest := NewAuxiliaryRequest(fromID, toID, ownableID, splits)
+func Test_Burn_Request(t *testing.T) {
 
-	require.Equal(t, auxiliaryRequest{FromID: fromID, ToID: toID, OwnableID: ownableID, Value: splits}, testAuxiliaryRequest)
+	ownerID := base.NewID("ownerID")
+	ownableID := base.NewID("ownableID")
+	testValue := sdkTypes.NewDec(10)
+	testAuxiliaryRequest := NewAuxiliaryRequest(ownerID, ownableID, testValue)
+
+	require.Equal(t, auxiliaryRequest{OwnerID: ownerID, OwnableID: ownableID, Value: testValue}, testAuxiliaryRequest)
 	require.Equal(t, nil, testAuxiliaryRequest.Validate())
 	require.Equal(t, testAuxiliaryRequest, auxiliaryRequestFromInterface(testAuxiliaryRequest))
 	require.Equal(t, auxiliaryRequest{}, auxiliaryRequestFromInterface(nil))

@@ -10,10 +10,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/utilities"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 )
 
 type transactionKeeper struct {
@@ -31,31 +30,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	splitAmount := sdkTypes.NewDecFromInt(message.Split)
-	if splitAmount.LTE(sdkTypes.ZeroDec()) {
-		return newTransactionResponse(errors.NotAuthorized)
+	splits := transactionKeeper.mapper.NewCollection(context)
+	if _, Error := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, sdkTypes.NewDecFromInt(message.Value)); Error != nil {
+		return newTransactionResponse(Error)
 	}
 
-	splitID := key.NewSplitID(message.FromID, message.OwnableID)
-	splits := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(splitID))
-
-	split := splits.Get(key.FromID(splitID))
-	if split == nil {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
-
-	split = split.(mappables.Split).Send(splitAmount).(mappables.Split)
-
-	switch {
-	case split.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
-		return newTransactionResponse(errors.InsufficientBalance)
-	case split.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):
-		splits.Remove(split)
-	default:
-		splits.Mutate(split)
-	}
-
-	if Error := transactionKeeper.supplyKeeper.SendCoinsFromModuleToAccount(context, module.Name, message.From, sdkTypes.NewCoins(sdkTypes.NewCoin(message.OwnableID.String(), message.Split))); Error != nil {
+	if Error := transactionKeeper.supplyKeeper.SendCoinsFromModuleToAccount(context, module.Name, message.From, sdkTypes.NewCoins(sdkTypes.NewCoin(message.OwnableID.String(), message.Value))); Error != nil {
 		return newTransactionResponse(Error)
 	}
 

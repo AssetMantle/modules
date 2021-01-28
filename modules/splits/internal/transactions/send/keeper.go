@@ -10,10 +10,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/utilities"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 )
 
 type transactionKeeper struct {
@@ -30,36 +28,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if message.Split.LTE(sdkTypes.ZeroDec()) {
-		return newTransactionResponse(errors.NotAuthorized)
+	splits := transactionKeeper.mapper.NewCollection(context)
+
+	if _, Error := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, message.Value); Error != nil {
+		return newTransactionResponse(Error)
 	}
 
-	fromSplitID := key.NewSplitID(message.FromID, message.OwnableID)
-	splits := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(fromSplitID))
-
-	fromSplit := splits.Get(key.FromID(fromSplitID))
-	if fromSplit == nil {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
-
-	fromSplit = fromSplit.(mappables.Split).Send(message.Split).(mappables.Split)
-
-	switch {
-	case fromSplit.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
-		return newTransactionResponse(errors.NotAuthorized)
-	case fromSplit.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):
-		splits.Remove(fromSplit)
-	default:
-		splits.Mutate(fromSplit)
-	}
-
-	toSplitID := key.NewSplitID(message.ToID, message.OwnableID)
-
-	toSplit := splits.Fetch(key.FromID(toSplitID)).Get(key.FromID(toSplitID))
-	if toSplit == nil {
-		splits.Add(mappable.NewSplit(toSplitID, message.Split))
-	} else {
-		splits.Mutate(toSplit.(mappables.Split).Receive(message.Split).(mappables.Split))
+	if _, Error := utilities.AddSplits(splits, message.ToID, message.OwnableID, message.Value); Error != nil {
+		return newTransactionResponse(Error)
 	}
 
 	return newTransactionResponse(nil)

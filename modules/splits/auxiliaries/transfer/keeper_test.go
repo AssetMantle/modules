@@ -6,6 +6,9 @@
 package transfer
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -23,8 +26,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
 )
 
 type TestKeepers struct {
@@ -82,35 +83,35 @@ func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
 	splits := sdkTypes.NewDec(123)
 	keepers.SplitsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(defaultSplitID, splits))
 
-	t.Run("Positive case-  Split transfer", func(t *testing.T) {
+	t.Run("Positive case-  Value transfer", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
 		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, ownableID, sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	t.Run("Positive case-  Split transfer", func(t *testing.T) {
+	t.Run("Positive case-  Value transfer", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
 		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, ownableID, sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	t.Run("Positive case-  Split transfer", func(t *testing.T) {
+	t.Run("Positive case-  Value transfer", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
 		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(toID, ownerID, ownableID, sdkTypes.NewDec(2))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	t.Run("NegativeCase-0 Split transfer", func(t *testing.T) {
+	t.Run("NegativeCase-0 Value transfer", func(t *testing.T) {
 		want := newAuxiliaryResponse(errors.NotAuthorized)
 		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, ownableID, sdkTypes.NewDec(0))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	t.Run("NegativeCase-No Split Present", func(t *testing.T) {
+	t.Run("NegativeCase-No Value Present", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.EntityNotFound)
 		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, base.NewID("ownableIDNotPresent"), sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {

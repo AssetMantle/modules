@@ -3,31 +3,29 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package send
+package renumerate
 
 import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 	"github.com/stretchr/testify/require"
 )
 
-func Test_Send_Message(t *testing.T) {
+func Test_Renumerate_Message(t *testing.T) {
 
-	testToID := base.NewID("toID")
+	testAssetID := base.NewID("assetID")
 	testFromID := base.NewID("fromID")
-	testOwnableID := base.NewID("ownableID")
-	testSplit := sdkTypes.NewDec(2)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, Error)
 
-	testMessage := newMessage(fromAccAddress, testFromID, testToID, testOwnableID, testSplit)
-	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ToID: testToID, OwnableID: testOwnableID, Value: testSplit}, testMessage)
+	testMessage := newMessage(fromAccAddress, testFromID, testAssetID)
+	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, AssetID: testAssetID}, testMessage)
 	require.Equal(t, module.Name, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
 	require.Equal(t, nil, testMessage.ValidateBasic())

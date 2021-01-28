@@ -3,14 +3,13 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package burn
+package renumerate
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/utilities"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 )
 
 type auxiliaryKeeper struct {
@@ -21,21 +20,21 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	splitID := key.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
-	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(splitID))
+	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
-	split := splits.Get(key.FromID(splitID))
-	if split == nil {
+	switch totalSplitsValue := utilities.GetOwnableTotalSplitsValue(splits, auxiliaryRequest.OwnableID); {
+	case totalSplitsValue.LT(auxiliaryRequest.Value):
+		if _, Error := utilities.AddSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value.Sub(totalSplitsValue)); Error != nil {
+			return newAuxiliaryResponse(Error)
+		}
+	case totalSplitsValue.GT(auxiliaryRequest.Value):
+		if _, Error := utilities.SubtractSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, totalSplitsValue.Sub(auxiliaryRequest.Value)); Error != nil {
+			return newAuxiliaryResponse(Error)
+		}
+	case totalSplitsValue.IsZero():
 		return newAuxiliaryResponse(errors.EntityNotFound)
-	}
-
-	switch split = split.(mappables.Split).Send(auxiliaryRequest.Value).(mappables.Split); {
-	case split.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
-		return newAuxiliaryResponse(errors.InsufficientBalance)
-	case split.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):
-		splits.Remove(split)
 	default:
-		splits.Mutate(split)
+		return newAuxiliaryResponse(nil)
 	}
 
 	return newAuxiliaryResponse(nil)

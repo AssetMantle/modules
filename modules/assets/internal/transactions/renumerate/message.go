@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package unwrap
+package renumerate
 
 import (
 	"github.com/asaskevich/govalidator"
@@ -11,7 +11,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
@@ -19,13 +19,12 @@ import (
 )
 
 type message struct {
-	From      sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	FromID    types.ID            `json:"fromID" valid:"required~required field fromID missing"`
-	OwnableID types.ID            `json:"ownableID" valid:"required~required field ownableID missing"`
-	Value     sdkTypes.Int        `json:"value" valid:"required~required field value missing"`
+	From    sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
+	FromID  types.ID            `json:"fromID" valid:"required~required field fromID missing"`
+	AssetID types.ID            `json:"assetID" valid:"required~required field assetID missing"`
 }
 
-var _ sdkTypes.Msg = message{}
+var _ helpers.Message = message{}
 
 func (message message) Route() string { return module.Name }
 func (message message) Type() string  { return Transaction.GetName() }
@@ -57,12 +56,10 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 func messagePrototype() helpers.Message {
 	return message{}
 }
-
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, ownableID types.ID, value sdkTypes.Int) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, assetID types.ID) sdkTypes.Msg {
 	return message{
-		From:      from,
-		FromID:    fromID,
-		OwnableID: ownableID,
-		Value:     value,
+		From:    from,
+		FromID:  fromID,
+		AssetID: assetID,
 	}
 }

@@ -10,11 +10,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/utilities"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -38,14 +36,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	for _, coin := range message.Coins {
-		splitID := key.NewSplitID(message.FromID, base.NewID(coin.Denom))
-		splits := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(splitID))
-		split := splits.Get(key.FromID(splitID))
-
-		if split == nil {
-			splits.Add(mappable.NewSplit(splitID, sdkTypes.NewDecFromInt(coin.Amount)))
-		} else {
-			splits.Mutate(split.(mappables.Split).Receive(sdkTypes.NewDecFromInt(coin.Amount)).(mappables.Split))
+		if _, Error := utilities.AddSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, base.NewID(coin.Denom), sdkTypes.NewDecFromInt(coin.Amount)); Error != nil {
+			return newTransactionResponse(Error)
 		}
 	}
 

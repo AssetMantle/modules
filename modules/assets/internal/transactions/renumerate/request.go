@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package unwrap
+package renumerate
 
 import (
 	"encoding/json"
@@ -13,19 +13,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type transactionRequest struct {
-	BaseReq   rest.BaseReq `json:"baseReq"`
-	FromID    string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
-	OwnableID string       `json:"ownableID" valid:"required~required field ownableID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field ownableID"`
-	Value     string       `json:"value" valid:"required~required field value missing, matches(^[0-9]+$)~invalid field value"`
+	BaseReq rest.BaseReq `json:"baseReq"`
+	FromID  string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID "`
+	AssetID string       `json:"assetID" valid:"required~required field assetID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field assetID "`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -38,8 +36,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(flags.FromID),
-		cliCommand.ReadString(flags.OwnableID),
-		cliCommand.ReadString(flags.Value),
+		cliCommand.ReadString(flags.AssetID),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
@@ -58,16 +55,10 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, Error
 	}
 
-	value, ok := sdkTypes.NewIntFromString(transactionRequest.Value)
-	if !ok {
-		return nil, xprtErrors.InvalidRequest
-	}
-
 	return newMessage(
 		from,
 		base.NewID(transactionRequest.FromID),
-		base.NewID(transactionRequest.OwnableID),
-		value,
+		base.NewID(transactionRequest.AssetID),
 	), nil
 }
 func (transactionRequest) RegisterCodec(codec *codec.Codec) {
@@ -76,11 +67,10 @@ func (transactionRequest) RegisterCodec(codec *codec.Codec) {
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, ownableID string, value string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, assetID string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:   baseReq,
-		FromID:    fromID,
-		OwnableID: ownableID,
-		Value:     value,
+		BaseReq: baseReq,
+		FromID:  fromID,
+		AssetID: assetID,
 	}
 }

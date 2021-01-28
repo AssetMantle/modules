@@ -3,22 +3,18 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package unwrap
+package renumerate
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-var Transaction = base.NewTransaction(
-	"unwrap",
-	"",
-	"",
-
-	requestPrototype,
-	messagePrototype,
+var Auxiliary = base.NewAuxiliary(
+	"renumerate",
 	keeperPrototype,
-	flags.FromID,
-	flags.OwnableID,
-	flags.Value,
+)
+
+var AuxiliaryMock = base.NewAuxiliary(
+	"renumerate",
+	keeperPrototypeMock,
 )

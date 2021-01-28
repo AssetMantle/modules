@@ -56,13 +56,13 @@ func (asset asset) GetLock() types.Property {
 		return base.NewProperty(base.NewID(properties.Lock), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
 	}
 }
-func (asset asset) GetSplit() types.Property {
-	if splitProperty := asset.Immutables.Get().Get(base.NewID(properties.Split)); splitProperty != nil {
+func (asset asset) GetValue() types.Property {
+	if splitProperty := asset.Immutables.Get().Get(base.NewID(properties.Value)); splitProperty != nil {
 		return splitProperty
-	} else if splitProperty := asset.Mutables.Get().Get(base.NewID(properties.Split)); splitProperty != nil {
+	} else if splitProperty := asset.Mutables.Get().Get(base.NewID(properties.Value)); splitProperty != nil {
 		return splitProperty
 	} else {
-		return base.NewProperty(base.NewID(properties.Split), base.NewFact(base.NewDecData(sdkTypes.SmallestDec())))
+		return base.NewProperty(base.NewID(properties.Value), base.NewFact(base.NewDecData(sdkTypes.SmallestDec())))
 	}
 }
 func (asset asset) GetKey() helpers.Key {

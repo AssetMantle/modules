@@ -16,7 +16,7 @@ type auxiliaryRequest struct {
 	FromID    types.ID     `json:"fromID" valid:"required~required field fromID missing"`
 	ToID      types.ID     `json:"toID" valid:"required~required field toID missing"`
 	OwnableID types.ID     `json:"ownableID" valid:"required~required field ownableID missing"`
-	Split     sdkTypes.Dec `json:"split" valid:"required~required field split missing"`
+	Value     sdkTypes.Dec `json:"value" valid:"required~required field value missing"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -35,11 +35,11 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(fromID types.ID, toID types.ID, ownableID types.ID, split sdkTypes.Dec) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(fromID types.ID, toID types.ID, ownableID types.ID, value sdkTypes.Dec) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		FromID:    fromID,
 		ToID:      toID,
 		OwnableID: ownableID,
-		Split:     split,
+		Value:     value,
 	}
 }

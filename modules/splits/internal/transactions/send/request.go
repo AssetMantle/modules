@@ -25,7 +25,7 @@ type transactionRequest struct {
 	FromID    string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
 	ToID      string       `json:"toID" valid:"required~required field toID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field toID"`
 	OwnableID string       `json:"ownableID" valid:"required~required field ownableID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field ownableID"`
-	Split     string       `json:"split" valid:"required~required field split missing, matches(^[0-9.]+$)~invalid field split"`
+	Value     string       `json:"value" valid:"required~required field value missing, matches(^[0-9.]+$)~invalid field value"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -40,7 +40,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadString(flags.FromID),
 		cliCommand.ReadString(flags.ToID),
 		cliCommand.ReadString(flags.OwnableID),
-		cliCommand.ReadString(flags.Split),
+		cliCommand.ReadString(flags.Value),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
@@ -59,7 +59,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, Error
 	}
 
-	split, Error := sdkTypes.NewDecFromStr(transactionRequest.Split)
+	value, Error := sdkTypes.NewDecFromStr(transactionRequest.Value)
 	if Error != nil {
 		return nil, Error
 	}
@@ -69,7 +69,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		base.NewID(transactionRequest.FromID),
 		base.NewID(transactionRequest.ToID),
 		base.NewID(transactionRequest.OwnableID),
-		split,
+		value,
 	), nil
 }
 func (transactionRequest) RegisterCodec(codec *codec.Codec) {
@@ -78,12 +78,12 @@ func (transactionRequest) RegisterCodec(codec *codec.Codec) {
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, ownableID string, split string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, ownableID string, value string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:   baseReq,
 		FromID:    fromID,
 		ToID:      toID,
 		OwnableID: ownableID,
-		Split:     split,
+		Value:     value,
 	}
 }

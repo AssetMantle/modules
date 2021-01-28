@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package mint
+package renumerate
 
 import (
 	"fmt"

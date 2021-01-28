@@ -10,5 +10,5 @@ import (
 )
 
 type Splittable interface {
-	GetSplit() types.Property
+	GetValue() types.Property
 }

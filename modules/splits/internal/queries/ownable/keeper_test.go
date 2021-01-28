@@ -6,6 +6,8 @@
 package ownable
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -22,7 +24,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"testing"
 )
 
 func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
@@ -72,6 +73,6 @@ func Test_Query_Keeper_Split(t *testing.T) {
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(splitID, sdkTypes.NewDec(123)))
 
 	testQueryRequest := newQueryRequest(splitID)
-	require.Equal(t, queryResponse{Success: true, Split: sdkTypes.NewDec(123)}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
+	require.Equal(t, queryResponse{Success: true, Value: sdkTypes.NewDec(123)}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
 
 }

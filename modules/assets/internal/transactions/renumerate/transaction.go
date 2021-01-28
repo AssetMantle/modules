@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package unwrap
+package renumerate
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
@@ -11,14 +11,14 @@ import (
 )
 
 var Transaction = base.NewTransaction(
-	"unwrap",
+	"renumerate",
 	"",
 	"",
 
 	requestPrototype,
 	messagePrototype,
 	keeperPrototype,
+
 	flags.FromID,
-	flags.OwnableID,
-	flags.Value,
+	flags.AssetID,
 )
