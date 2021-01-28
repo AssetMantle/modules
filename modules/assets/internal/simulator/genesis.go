@@ -7,7 +7,6 @@ package simulator
 
 import (
 	"fmt"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"math"
 	"math/rand"
 
@@ -19,6 +18,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
 	assetsModule "github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters/dummy"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
