@@ -12,6 +12,7 @@ import (
 
 func GenerateRandomFact(r *rand.Rand) types.Fact {
 	randomPositiveInt := int(math.Abs(float64(r.Int())))
+
 	var data types.Data
 
 	switch randomPositiveInt % 4 {
