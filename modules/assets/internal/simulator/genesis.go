@@ -48,14 +48,17 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 }
 
 func GenerateRandomImmutables(r *rand.Rand) types.Immutables {
+
 	return base.NewImmutables(GenerateRandomProperties(r))
 }
 
 func GenerateRandomMutables(r *rand.Rand) types.Mutables {
+
 	return base.NewMutables(GenerateRandomProperties(r))
 }
 
 func GenerateRandomID(r *rand.Rand) types.ID {
+
 	return base.NewID(simulation.RandStringOfLength(r, r.Int()))
 }
 
@@ -74,10 +77,12 @@ func GenerateRandomFact(r *rand.Rand) types.Fact {
 	default:
 		return nil
 	}
+
 	return base.NewFact(data)
 }
 
 func GenerateRandomProperty(r *rand.Rand) types.Property {
+
 	return base.NewProperty(GenerateRandomID(r), GenerateRandomFact(r))
 }
 
@@ -87,5 +92,6 @@ func GenerateRandomProperties(r *rand.Rand) types.Properties {
 	for i := 0; i <= randomPositiveInt; i++ {
 		propertyList[i] = GenerateRandomProperty(r)
 	}
+
 	return base.NewProperties(propertyList...)
 }
