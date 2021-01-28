@@ -13,7 +13,7 @@ import (
 )
 
 type metaProperties struct {
-	MetaPropertyList []types.MetaProperty `json:"metaPropertyList"`
+	MetaPropertyList []types.MetaProperty `json:"metaPropertyList,omitempty"`
 }
 
 var _ types.MetaProperties = (*metaProperties)(nil)
