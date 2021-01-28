@@ -1,9 +1,10 @@
 package base
 
 import (
+	"math/rand"
+
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"math/rand"
 )
 
 func GenerateRandomImmutables(r *rand.Rand) types.Immutables {

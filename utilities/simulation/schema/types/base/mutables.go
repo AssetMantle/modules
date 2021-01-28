@@ -1,9 +1,10 @@
 package base
 
 import (
+	"math/rand"
+
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"math/rand"
 )
 
 func GenerateRandomMutables(r *rand.Rand) types.Mutables {

@@ -1,10 +1,11 @@
 package base
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"math"
 	"math/rand"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 func GenerateRandomProperties(r *rand.Rand) types.Properties {
