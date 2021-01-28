@@ -10,7 +10,7 @@ import (
 )
 
 type properties struct {
-	PropertyList []types.Property `json:"propertyList"`
+	PropertyList []types.Property `json:"propertyList,omitempty"`
 }
 
 var _ types.Properties = (*properties)(nil)
