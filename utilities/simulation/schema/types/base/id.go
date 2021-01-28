@@ -9,6 +9,5 @@ import (
 )
 
 func GenerateRandomID(r *rand.Rand) types.ID {
-
 	return base.NewID(simulation.RandStringOfLength(r, r.Int()))
 }

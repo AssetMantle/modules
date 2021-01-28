@@ -7,6 +7,5 @@ import (
 )
 
 func GenerateRandomMutables(r *rand.Rand) types.Mutables {
-
 	return base.NewMutables(GenerateRandomProperties(r))
 }
