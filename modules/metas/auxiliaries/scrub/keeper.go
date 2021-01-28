@@ -23,10 +23,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
 	scrubbedPropertyList := make([]types.Property, len(auxiliaryRequest.MetaPropertyList))
+	metas := auxiliaryKeeper.mapper.NewCollection(context)
 
 	for i, metaProperty := range auxiliaryRequest.MetaPropertyList {
-		metas := auxiliaryKeeper.mapper.NewCollection(context)
-		metas.Add(mappable.NewMeta(metaProperty.GetMetaFact().GetData()))
+		if !metaProperty.GetFact().GetHashID().Equals(base.NewID("")) {
+			metas.Add(mappable.NewMeta(metaProperty.GetMetaFact().GetData()))
+		}
+
 		scrubbedPropertyList[i] = metaProperty.RemoveData()
 	}
 
