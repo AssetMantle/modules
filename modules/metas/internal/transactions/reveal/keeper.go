@@ -11,6 +11,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -30,7 +31,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	metas.Add(mappable.NewMeta(message.MetaFact.GetData()))
+	if !message.MetaFact.GetHashID().Equals(base.NewID("")) {
+		metas.Add(mappable.NewMeta(message.MetaFact.GetData()))
+	}
 
 	return newTransactionResponse(nil)
 }
