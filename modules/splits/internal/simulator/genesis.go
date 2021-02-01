@@ -9,6 +9,10 @@ import (
 	"fmt"
 	"math/rand"
 
+	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	baseSimulation "github.com/persistenceOne/persistenceSDK/utilities/simulation/schema/types/base"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -32,7 +36,12 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { data = base.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	// TODO add assetList
+	mappableList := make([]helpers.Mappable, simulationState.Rand.Int())
+
+	for i := range mappableList {
+		mappableList[i] = mappable.NewSplit(key.NewSplitID(baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand)), simulation.RandomDecAmount(simulationState.Rand, sdkTypes.NewDec(9999999999)))
+	}
+
 	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, nil).Initialize(nil, []types.Parameter{dummy.Parameter.Mutate(data)})
 
 	fmt.Printf("Selected randomly generated minting parameters:\n%s\n", codec.MustMarshalJSONIndent(simulationState.Cdc, genesisState))

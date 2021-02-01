@@ -34,9 +34,9 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { data = base.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	mappableList := make([]helpers.Mappable, len(simulationState.Accounts))
+	mappableList := make([]helpers.Mappable, simulationState.Rand.Int())
 
-	for i := range simulationState.Accounts {
+	for i := range mappableList {
 		immutables := baseSimulation.GenerateRandomImmutables(simulationState.Rand)
 		mappableList[i] = mappable.NewAsset(key.NewAssetID(baseSimulation.GenerateRandomID(simulationState.Rand), immutables), immutables, baseSimulation.GenerateRandomMutables(simulationState.Rand))
 	}
