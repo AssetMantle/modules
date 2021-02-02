@@ -41,7 +41,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		immutables := baseSimulation.GenerateRandomImmutables(simulationState.Rand)
 		provisionedAddresses := simulation.GenerateRandomAddresses(simulationState.Rand)
 		unprovisionedAddresses := simulation.GenerateRandomAddresses(simulationState.Rand)
-		mappableList[i] = mappable.NewIdentity(key.NewIdentityID(baseSimulation.GenerateRandomID(simulationState.Rand), immutables.GetHashID()), provisionedAddresses, unprovisionedAddresses, immutables, baseSimulation.GenerateRandomMutables(simulationState.Rand))
+		mappableList[i] = mappable.NewIdentity(key.NewIdentityID(baseSimulation.GenerateRandomID(simulationState.Rand), immutables), provisionedAddresses, unprovisionedAddresses, immutables, baseSimulation.GenerateRandomMutables(simulationState.Rand))
 	}
 
 	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, nil).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})

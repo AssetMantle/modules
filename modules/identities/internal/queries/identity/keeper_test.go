@@ -6,6 +6,8 @@
 package identity
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -22,7 +24,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"testing"
 )
 
 func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
@@ -65,17 +66,16 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 func Test_Query_Keeper_Identity(t *testing.T) {
 
 	context, keepers := CreateTestInput2(t)
-	immutableTraits, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, Error)
-	mutableTraits, Error2 := base.ReadProperties("burn:S|100")
+	mutableProperties, Error2 := base.ReadProperties("burn:S|100")
 	require.Equal(t, nil, Error2)
 
 	classificationID := base.NewID("ClassificationID")
-	hashID := base.NewID("HashID")
-	identityID := key.NewIdentityID(classificationID, hashID)
+	identityID := key.NewIdentityID(classificationID, base.NewImmutables(immutableProperties))
 	provisionedAddr := sdkTypes.AccAddress("addr")
 	unprovisionedAddr := sdkTypes.AccAddress("unProvisionedAddr")
-	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(identityID, []sdkTypes.AccAddress{provisionedAddr}, []sdkTypes.AccAddress{unprovisionedAddr}, base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits)))
+	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(identityID, []sdkTypes.AccAddress{provisionedAddr}, []sdkTypes.AccAddress{unprovisionedAddr}, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 
 	testQueryRequest := newQueryRequest(classificationID)
 	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.New(identityID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))

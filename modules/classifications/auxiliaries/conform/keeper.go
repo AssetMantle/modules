@@ -29,25 +29,25 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 
-	if auxiliaryRequest.Immutables != nil {
-		if len(auxiliaryRequest.Immutables.Get().GetList()) != len(classification.(mappables.Classification).GetImmutables().Get().GetList()) {
+	if auxiliaryRequest.ImmutableProperties != nil {
+		if len(auxiliaryRequest.ImmutableProperties.GetList()) != len(classification.(mappables.Classification).GetImmutableProperties().GetList()) {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 
-		for _, immutableProperty := range auxiliaryRequest.Immutables.Get().GetList() {
-			if trait := classification.(mappables.Classification).GetImmutables().Get().Get(immutableProperty.GetID()); trait == nil || !trait.GetFact().GetTypeID().Equals(immutableProperty.GetFact().GetTypeID()) || !trait.GetFact().GetHashID().Equals(base.NewID("")) && trait.GetFact().GetHashID() != immutableProperty.GetFact().GetHashID() {
+		for _, immutableProperty := range auxiliaryRequest.ImmutableProperties.GetList() {
+			if property := classification.(mappables.Classification).GetImmutableProperties().Get(immutableProperty.GetID()); property == nil || !property.GetFact().GetTypeID().Equals(immutableProperty.GetFact().GetTypeID()) || !property.GetFact().GetHashID().Equals(base.NewID("")) && property.GetFact().GetHashID() != immutableProperty.GetFact().GetHashID() {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}
 	}
 
-	if auxiliaryRequest.Mutables != nil {
-		if len(auxiliaryRequest.Mutables.Get().GetList()) > len(classification.(mappables.Classification).GetMutables().Get().GetList()) {
+	if auxiliaryRequest.MutableProperties != nil {
+		if len(auxiliaryRequest.MutableProperties.GetList()) > len(classification.(mappables.Classification).GetMutableProperties().GetList()) {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 
-		for _, mutableProperty := range auxiliaryRequest.Mutables.Get().GetList() {
-			if trait := classification.(mappables.Classification).GetMutables().Get().Get(mutableProperty.GetID()); trait == nil || !trait.GetFact().GetTypeID().Equals(mutableProperty.GetFact().GetTypeID()) {
+		for _, mutableProperty := range auxiliaryRequest.MutableProperties.GetList() {
+			if property := classification.(mappables.Classification).GetMutableProperties().Get(mutableProperty.GetID()); property == nil || !property.GetFact().GetTypeID().Equals(mutableProperty.GetFact().GetTypeID()) {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}
