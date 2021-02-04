@@ -18,11 +18,12 @@ var Transaction = base.NewTransaction(
 	requestPrototype,
 	messagePrototype,
 	keeperPrototype,
-	flags.ToID,
+
 	flags.FromID,
+	flags.ToID,
 	flags.ClassificationID,
-	flags.ImmutableMetaProperties,
-	flags.ImmutableProperties,
-	flags.MutableMetaProperties,
-	flags.MutableProperties,
+	flags.MaintainedProperties,
+	flags.AddMaintainer,
+	flags.RemoveMaintainer,
+	flags.MutateMaintainer,
 )
