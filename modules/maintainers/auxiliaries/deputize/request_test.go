@@ -16,11 +16,11 @@ func Test_Deputize_Request(t *testing.T) {
 
 	classificationID := base.NewID("classificationID")
 	identityID := base.NewID("identityID")
-	mutables := base.NewMutables(base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("Data1")))))
+	maintainedProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("Data1"))))
 
-	testAuxiliaryRequest := NewAuxiliaryRequest(classificationID, identityID, mutables)
+	testAuxiliaryRequest := NewAuxiliaryRequest(identityID, identityID, classificationID, maintainedProperties, false, false, false)
 
-	require.Equal(t, auxiliaryRequest{ClassificationID: classificationID, IdentityID: identityID, MutableProperties: mutables}, testAuxiliaryRequest)
+	require.Equal(t, auxiliaryRequest{ClassificationID: classificationID, MaintainedProperties: maintainedProperties}, testAuxiliaryRequest)
 	require.Equal(t, nil, testAuxiliaryRequest.Validate())
 	require.Equal(t, testAuxiliaryRequest, auxiliaryRequestFromInterface(testAuxiliaryRequest))
 	require.Equal(t, auxiliaryRequest{}, auxiliaryRequestFromInterface(nil))
