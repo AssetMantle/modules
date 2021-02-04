@@ -47,7 +47,8 @@ type module struct {
 
 var _ helpers.Module = (*module)(nil)
 
-func (module module) GenerateGenesisState(_ *sdkTypesModule.SimulationState) {
+func (module module) GenerateGenesisState(simulationState *sdkTypesModule.SimulationState) {
+	module.simulatorPrototype().RandomizedGenesisState(simulationState)
 }
 
 func (module module) ProposalContents(_ sdkTypesModule.SimulationState) []simulation.WeightedProposalContent {

@@ -6,18 +6,19 @@
 package simulator
 
 import (
-	"fmt"
 	"math/rand"
 
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/common"
+
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseSimulation "github.com/persistenceOne/persistenceSDK/utilities/simulation/schema/types/base"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mappable"
-	assetsModule "github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
+	classificationsModule "github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/parameters/dummy"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -35,7 +36,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { data = base.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	mappableList := make([]helpers.Mappable, simulationState.Rand.Int())
+	mappableList := make([]helpers.Mappable, simulationState.Rand.Intn(99))
 
 	for i := range mappableList {
 		immutables := baseSimulation.GenerateRandomImmutables(simulationState.Rand)
@@ -43,9 +44,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewClassification(key.NewClassificationID(baseSimulation.GenerateRandomID(simulationState.Rand), immutables, mutables), immutables, mutables)
 	}
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, nil).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
+	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
 
-	fmt.Printf("Selected randomly generated minting parameters:\n%s\n", codec.MustMarshalJSONIndent(simulationState.Cdc, genesisState))
-
-	simulationState.GenState[assetsModule.Name] = simulationState.Cdc.MustMarshalJSON(genesisState)
+	simulationState.GenState[classificationsModule.Name] = common.Codec.MustMarshalJSON(genesisState)
 }
