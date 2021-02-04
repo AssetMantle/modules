@@ -6,6 +6,8 @@
 package classification
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -22,7 +24,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"testing"
 )
 
 func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
@@ -65,14 +66,14 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 func Test_Query_Keeper_Classification(t *testing.T) {
 
 	context, keepers := CreateTestInput2(t)
-	immutableTraits, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, Error)
-	mutableTraits, Error2 := base.ReadProperties("burn:S|100")
+	mutableProperties, Error2 := base.ReadProperties("burn:S|100")
 	require.Equal(t, nil, Error2)
 	chainID := base.NewID("ChainID")
 
-	classificationID := key.NewClassificationID(chainID, base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits))
-	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewClassification(classificationID, base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits)))
+	classificationID := key.NewClassificationID(chainID, immutableProperties, mutableProperties)
+	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewClassification(classificationID, immutableProperties, mutableProperties))
 
 	testQueryRequest := newQueryRequest(classificationID)
 	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.New(classificationID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))

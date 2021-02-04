@@ -6,6 +6,8 @@
 package asset
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -22,7 +24,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"testing"
 )
 
 func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
@@ -65,13 +66,13 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 func Test_Query_Keeper_Asset(t *testing.T) {
 
 	context, keepers := CreateTestInput2(t)
-	immutableTraits, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, Error)
-	mutableTraits, Error2 := base.ReadProperties("burn:S|100")
+	mutableProperties, Error2 := base.ReadProperties("burn:S|100")
 	require.Equal(t, nil, Error2)
 	classificationID := base.NewID("ClassificationID")
-	assetID := key.NewAssetID(classificationID, base.NewImmutables(immutableTraits))
-	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewAsset(assetID, base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits)))
+	assetID := key.NewAssetID(classificationID, base.NewImmutables(immutableProperties))
+	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewAsset(assetID, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 
 	testQueryRequest := newQueryRequest(assetID)
 	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.New(assetID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))

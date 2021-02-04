@@ -12,8 +12,8 @@ import (
 )
 
 type auxiliaryRequest struct {
-	ImmutableTraits types.Immutables `json:"immutableTraits" valid:"required~required field immutableTraits missing"`
-	MutableTraits   types.Mutables   `json:"mutableTraits" valid:"required~required field mutableTraits missing"`
+	ImmutableProperties types.Properties `json:"immutableProperties" valid:"required~required field immutableProperties missing"`
+	MutableProperties   types.Properties `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -32,9 +32,9 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(immutableTraits types.Immutables, mutableTraits types.Mutables) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(immutableProperties types.Properties, mutableProperties types.Properties) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		ImmutableTraits: immutableTraits,
-		MutableTraits:   mutableTraits,
+		ImmutableProperties: immutableProperties,
+		MutableProperties:   mutableProperties,
 	}
 }

@@ -6,6 +6,9 @@
 package mutate
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -27,8 +30,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
 )
 
 type TestKeepers struct {
@@ -85,29 +86,29 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
 
-	immutableTraits, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, Error)
-	mutableMetaTraits, Error := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, Error := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, Error)
-	mutableTraits, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, Error)
-	scrubMockErrorTraits, Error := base.ReadMetaProperties("scrubError:S|mockError")
+	scrubMockErrorProperties, Error := base.ReadMetaProperties("scrubError:S|mockError")
 	require.Equal(t, nil, Error)
-	conformMockErrorTraits, Error := base.ReadMetaProperties("conformError:S|mockError")
+	conformMockErrorProperties, Error := base.ReadMetaProperties("conformError:S|mockError")
 	require.Equal(t, nil, Error)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultIdentityID := base.NewID("fromIdentityID")
 	maintainIdentityMockError := base.NewID("maintainError")
 	classificationID := base.NewID("ClassificationID")
-	assetID := key.NewAssetID(classificationID, base.NewImmutables(immutableTraits))
+	assetID := key.NewAssetID(classificationID, base.NewImmutables(immutableProperties))
 	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewAsset(assetID,
-		base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits)))
+		base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, assetID,
-			mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
+			mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -116,7 +117,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, assetID,
-			mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
+			mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -125,7 +126,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.EntityNotFound)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, base.NewID("assetID"),
-			mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
+			mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -134,7 +135,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, assetID,
-			scrubMockErrorTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
+			scrubMockErrorProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -142,7 +143,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, assetID,
-			conformMockErrorTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
+			conformMockErrorProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -150,7 +151,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, maintainIdentityMockError, assetID,
-			mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
+			mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

@@ -42,22 +42,22 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetMetaPropertyList()...)))
+	mutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetMetaPropertyList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
 
-	mutables := base.NewMutables(base.NewProperties(append(mutableProperties.GetList(), message.MutableProperties.GetList()...)...))
+	mutableProperties := base.NewProperties(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetClassificationID(), nil, mutables)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetClassificationID(), nil, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetClassificationID(), message.FromID, mutables)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetClassificationID(), message.FromID, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	assets.Mutate(mappable.NewAsset(asset.(mappables.InterNFT).GetID(), asset.(mappables.InterNFT).GetImmutables(), asset.(mappables.InterNFT).GetMutables().Mutate(mutables.Get().GetList()...)))
+	assets.Mutate(mappable.NewAsset(asset.(mappables.InterNFT).GetID(), asset.(mappables.InterNFT).GetImmutables(), asset.(mappables.InterNFT).GetMutables().Mutate(mutableProperties.GetList()...)))
 
 	return newTransactionResponse(nil)
 }

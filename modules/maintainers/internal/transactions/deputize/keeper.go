@@ -10,11 +10,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -32,32 +28,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	maintainers := transactionKeeper.mapper.NewCollection(context)
-
-	fromMaintainerID := key.NewMaintainerID(message.ClassificationID, message.FromID)
-
-	fromMaintainer := maintainers.Fetch(key.New(fromMaintainerID)).Get(key.New(fromMaintainerID))
-	if fromMaintainer == nil || !fromMaintainer.(mappables.Maintainer).CanAddMaintainer() {
-		return newTransactionResponse(errors.NotAuthorized)
-	}
-
-	toMaintainerID := key.NewMaintainerID(message.ClassificationID, message.ToID)
-
-	toMaintainer := maintainers.Fetch(key.New(toMaintainerID)).Get(key.New(toMaintainerID))
-	if toMaintainer != nil {
-		return newTransactionResponse(errors.EntityAlreadyExists)
-	}
-
-	mutableTraits := base.NewMutables(message.MaintainedTraits)
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, nil, mutableTraits)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
-
-	maintainers.Add(mappable.NewMaintainer(toMaintainerID, mutableTraits, message.AddMaintainer, message.RemoveMaintainer, message.MutateMaintainer))
-
 	return newTransactionResponse(nil)
 }
-
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
 

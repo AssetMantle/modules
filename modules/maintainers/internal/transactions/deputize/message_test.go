@@ -6,12 +6,13 @@
 package deputize
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Deputize_Message(t *testing.T) {
@@ -24,12 +25,12 @@ func Test_Deputize_Message(t *testing.T) {
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, Error)
 
-	maintainedTrait := "maintainedTraits:S|maintainedTraits"
-	maintainedProperties, Error := base.ReadProperties(maintainedTrait)
+	maintainedProperty := "maintainedProperty:S|maintainedProperty"
+	maintainedProperties, Error := base.ReadProperties(maintainedProperty)
 	require.Equal(t, nil, Error)
 
 	testMessage := newMessage(fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false)
-	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ToID: testToID, ClassificationID: testClassificationID, MaintainedTraits: maintainedProperties, AddMaintainer: false, RemoveMaintainer: false, MutateMaintainer: false}, testMessage)
+	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ToID: testToID, ClassificationID: testClassificationID, MaintainedProperties: maintainedProperties, AddMaintainer: false, RemoveMaintainer: false, MutateMaintainer: false}, testMessage)
 	require.Equal(t, module.Name, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
 	require.Equal(t, nil, testMessage.ValidateBasic())

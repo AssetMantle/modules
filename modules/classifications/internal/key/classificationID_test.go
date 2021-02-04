@@ -6,22 +6,23 @@
 package key
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 	"github.com/stretchr/testify/require"
-	"strings"
-	"testing"
 )
 
 func Test_ClassificationID_Methods(t *testing.T) {
 	chainID := base.NewID("chainID")
-	immutables := base.NewImmutables(base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData")))))
-	mutables := base.NewMutables(base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("MutableData")))))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
+	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("MutableData"))))
 
-	testClassificationID := NewClassificationID(chainID, immutables, mutables).(classificationID)
-	require.Equal(t, classificationID{ChainID: chainID, HashID: base.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), immutables.GetHashID().String()))}, testClassificationID)
-	require.Equal(t, strings.Join([]string{chainID.String(), base.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), immutables.GetHashID().String())).String()}, constants.IDSeparator), testClassificationID.String())
+	testClassificationID := NewClassificationID(chainID, immutableProperties, mutableProperties).(classificationID)
+	require.Equal(t, classificationID{ChainID: chainID, HashID: base.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), base.NewImmutables(immutableProperties).GenerateHashID().String()))}, testClassificationID)
+	require.Equal(t, strings.Join([]string{chainID.String(), base.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), base.NewImmutables(immutableProperties).GenerateHashID().String())).String()}, constants.IDSeparator), testClassificationID.String())
 	require.Equal(t, false, testClassificationID.Matches(classificationID{ChainID: base.NewID("chainID"), HashID: base.NewID("hashID")}))
 	require.Equal(t, false, testClassificationID.Matches(nil))
 	require.Equal(t, false, testClassificationID.Equals(base.NewID("id")))

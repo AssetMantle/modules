@@ -18,6 +18,6 @@ type Maintainer interface {
 	CanRemoveMaintainer() bool
 	CanMutateMaintainer() bool
 
-	MaintainsTrait(types.ID) bool
+	MaintainsProperty(types.ID) bool
 	helpers.Mappable
 }

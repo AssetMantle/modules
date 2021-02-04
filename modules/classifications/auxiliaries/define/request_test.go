@@ -6,19 +6,20 @@
 package define
 
 import (
+	"testing"
+
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Define_Request(t *testing.T) {
 
-	mutables := base.NewMutables(base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("Data1")))))
-	immutables := base.NewImmutables(base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("Data2")))))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("Data2"))))
+	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("Data1"))))
 
-	testAuxiliaryRequest := NewAuxiliaryRequest(immutables, mutables)
+	testAuxiliaryRequest := NewAuxiliaryRequest(immutableProperties, mutableProperties)
 
-	require.Equal(t, auxiliaryRequest{ImmutableTraits: immutables, MutableTraits: mutables}, testAuxiliaryRequest)
+	require.Equal(t, auxiliaryRequest{ImmutableProperties: immutableProperties, MutableProperties: mutableProperties}, testAuxiliaryRequest)
 	require.Equal(t, nil, testAuxiliaryRequest.Validate())
 	require.Equal(t, testAuxiliaryRequest, auxiliaryRequestFromInterface(testAuxiliaryRequest))
 	require.Equal(t, auxiliaryRequest{}, auxiliaryRequestFromInterface(nil))
