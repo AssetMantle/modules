@@ -30,6 +30,7 @@ func (immutables immutables) GenerateHashID() types.ID {
 
 	return NewID(metaUtilities.Hash(metaList...))
 }
+
 func NewImmutables(properties types.Properties) types.Immutables {
 	return immutables{Properties: properties}
 }
