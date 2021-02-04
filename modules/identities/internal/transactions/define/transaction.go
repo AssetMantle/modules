@@ -20,8 +20,8 @@ var Transaction = base.NewTransaction(
 	keeperPrototype,
 
 	flags.FromID,
-	flags.ImmutableMetaTraits,
-	flags.ImmutableTraits,
-	flags.MutableMetaTraits,
-	flags.MutableTraits,
+	flags.ImmutableMetaProperties,
+	flags.ImmutableProperties,
+	flags.MutableMetaProperties,
+	flags.MutableProperties,
 )

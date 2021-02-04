@@ -16,19 +16,19 @@ import (
 )
 
 type classification struct {
-	ID              types.ID         `json:"id" valid:"required~required field id missing"`
-	ImmutableTraits types.Immutables `json:"immutableTraits" valid:"required field immutableTraits missing"`
-	MutableTraits   types.Mutables   `json:"mutableTraits" valid:"required~required field mutableTraits missing"`
+	ID                  types.ID         `json:"id" valid:"required~required field id missing"`
+	ImmutableProperties types.Properties `json:"immutableProperties" valid:"required field immutableProperties missing"`
+	MutableProperties   types.Properties `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
 }
 
 var _ mappables.Classification = (*classification)(nil)
 
 func (classification classification) GetID() types.ID { return classification.ID }
-func (classification classification) GetImmutables() types.Immutables {
-	return classification.ImmutableTraits
+func (classification classification) GetImmutableProperties() types.Properties {
+	return classification.ImmutableProperties
 }
-func (classification classification) GetMutables() types.Mutables {
-	return classification.MutableTraits
+func (classification classification) GetMutableProperties() types.Properties {
+	return classification.MutableProperties
 }
 func (classification classification) GetKey() helpers.Key {
 	return key.New(classification.ID)
@@ -38,10 +38,10 @@ func (classification) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, classification{})
 }
 
-func NewClassification(id types.ID, immutableTraits types.Immutables, mutableTraits types.Mutables) mappables.Classification {
+func NewClassification(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Classification {
 	return classification{
-		ID:              id,
-		ImmutableTraits: immutableTraits,
-		MutableTraits:   mutableTraits,
+		ID:                  id,
+		ImmutableProperties: immutableProperties,
+		MutableProperties:   mutableProperties,
 	}
 }

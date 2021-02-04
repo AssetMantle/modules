@@ -62,6 +62,6 @@ func New(id types.ID) helpers.Key {
 func NewAssetID(classificationID types.ID, immutables types.Immutables) types.ID {
 	return assetID{
 		ClassificationID: classificationID,
-		HashID:           immutables.GetHashID(),
+		HashID:           immutables.GenerateHashID(),
 	}
 }

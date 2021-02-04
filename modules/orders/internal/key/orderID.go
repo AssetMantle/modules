@@ -74,6 +74,6 @@ func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnable
 		MakerOwnableID:   makerOwnableID,
 		TakerOwnableID:   takerOwnableID,
 		MakerID:          makerID,
-		HashID:           immutables.GetHashID(),
+		HashID:           immutables.GenerateHashID(),
 	}
 }

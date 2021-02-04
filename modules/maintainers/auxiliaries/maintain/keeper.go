@@ -29,8 +29,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 
-	for _, maintainedProperty := range auxiliaryRequest.MaintainedMutables.Get().GetList() {
-		if !maintainer.(mappables.Maintainer).MaintainsTrait(maintainedProperty.GetID()) {
+	for _, maintainedProperty := range auxiliaryRequest.MaintainedProperties.GetList() {
+		if !maintainer.(mappables.Maintainer).MaintainsProperty(maintainedProperty.GetID()) {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 	}

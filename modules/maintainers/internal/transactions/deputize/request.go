@@ -21,14 +21,14 @@ import (
 )
 
 type transactionRequest struct {
-	BaseReq          rest.BaseReq `json:"baseReq"`
-	FromID           string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
-	ToID             string       `json:"toID" valid:"required~required field toID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field toID"`
-	ClassificationID string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^[A-Za-z0-9-_=.]+$)~invalid field classificationID"`
-	MaintainedTraits string       `json:"maintainedTraits" valid:"required~required field maintainedTraits missing, matches(^.*$)~invalid field maintainedTraits"`
-	AddMaintainer    bool         `json:"addMaintainer" valid:"required~required field addMaintainer missing"`
-	RemoveMaintainer bool         `json:"removeMaintainer" valid:"required~required field removeMaintainer missing"`
-	MutateMaintainer bool         `json:"mutateMaintainer" valid:"required~required field mutateMaintainer missing"`
+	BaseReq              rest.BaseReq `json:"baseReq"`
+	FromID               string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
+	ToID                 string       `json:"toID" valid:"required~required field toID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field toID"`
+	ClassificationID     string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^[A-Za-z0-9-_=.]+$)~invalid field classificationID"`
+	MaintainedProperties string       `json:"maintainedProperties" valid:"required~required field maintainedProperties missing, matches(^.*$)~invalid field maintainedProperties"`
+	AddMaintainer        bool         `json:"addMaintainer" valid:"required~required field addMaintainer missing"`
+	RemoveMaintainer     bool         `json:"removeMaintainer" valid:"required~required field removeMaintainer missing"`
+	MutateMaintainer     bool         `json:"mutateMaintainer" valid:"required~required field mutateMaintainer missing"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -43,7 +43,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadString(flags.FromID),
 		cliCommand.ReadString(flags.ToID),
 		cliCommand.ReadString(flags.ClassificationID),
-		cliCommand.ReadString(flags.MaintainedTraits),
+		cliCommand.ReadString(flags.MaintainedProperties),
 		cliCommand.ReadBool(flags.AddMaintainer),
 		cliCommand.ReadBool(flags.RemoveMaintainer),
 		cliCommand.ReadBool(flags.MutateMaintainer),
@@ -65,7 +65,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, Error
 	}
 
-	maintainedTraits, Error := base.ReadProperties(transactionRequest.MaintainedTraits)
+	maintainedProperties, Error := base.ReadProperties(transactionRequest.MaintainedProperties)
 	if Error != nil {
 		return nil, Error
 	}
@@ -75,7 +75,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		base.NewID(transactionRequest.FromID),
 		base.NewID(transactionRequest.ToID),
 		base.NewID(transactionRequest.ClassificationID),
-		maintainedTraits,
+		maintainedProperties,
 		transactionRequest.AddMaintainer,
 		transactionRequest.RemoveMaintainer,
 		transactionRequest.MutateMaintainer,
@@ -88,15 +88,15 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainedTraits string, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainedProperties string, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:          baseReq,
-		FromID:           fromID,
-		ToID:             toID,
-		ClassificationID: classificationID,
-		MaintainedTraits: maintainedTraits,
-		AddMaintainer:    addMaintainer,
-		RemoveMaintainer: removeMaintainer,
-		MutateMaintainer: mutateMaintainer,
+		BaseReq:              baseReq,
+		FromID:               fromID,
+		ToID:                 toID,
+		ClassificationID:     classificationID,
+		MaintainedProperties: maintainedProperties,
+		AddMaintainer:        addMaintainer,
+		RemoveMaintainer:     removeMaintainer,
+		MutateMaintainer:     mutateMaintainer,
 	}
 }

@@ -81,9 +81,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	ctx, keepers := CreateTestInput(t)
 	ctx = ctx.WithBlockHeight(2)
-	immutableTraits, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, Error)
-	mutableTraits, Error := base.ReadProperties("")
+	mutableProperties, Error := base.ReadProperties("")
 	require.Equal(t, nil, Error)
 	supplementError, Error := base.ReadMetaProperties("supplementError:S|mockError")
 	require.Equal(t, nil, Error)
@@ -91,15 +91,15 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultIdentityID := base.NewID("fromIdentityID")
 	classificationID := base.NewID("ClassificationID")
-	assetID := key.NewAssetID(classificationID, base.NewImmutables(immutableTraits))
-	assetID2 := key.NewAssetID(base.NewID("ClassificationID2"), base.NewImmutables(immutableTraits))
-	assetID3 := key.NewAssetID(base.NewID("ClassificationID3"), base.NewImmutables(immutableTraits))
+	assetID := key.NewAssetID(classificationID, base.NewImmutables(immutableProperties))
+	assetID2 := key.NewAssetID(base.NewID("ClassificationID2"), base.NewImmutables(immutableProperties))
+	assetID3 := key.NewAssetID(base.NewID("ClassificationID3"), base.NewImmutables(immutableProperties))
 	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID,
-		base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits)))
+		base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID2,
-		base.NewImmutables(immutableTraits), base.NewMutables(supplementError)))
+		base.NewImmutables(immutableProperties), base.NewMutables(supplementError)))
 	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID3,
-		base.NewImmutables(immutableTraits), base.NewMutables(mutableTraits)))
+		base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

@@ -6,18 +6,19 @@
 package mappable
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Identity_Methods(t *testing.T) {
 
 	classificationID := base.NewID("classificationID")
-	hashID := base.NewID("hashID")
-	testIdentityID := key.NewIdentityID(classificationID, hashID)
+	immutableProperties, _ := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	testIdentityID := key.NewIdentityID(classificationID, base.NewImmutables(immutableProperties))
 	provisionedAddressList := []sdkTypes.AccAddress{sdkTypes.AccAddress("provAddr")}
 	unProvisionedAddressList := []sdkTypes.AccAddress{sdkTypes.AccAddress("unProvAddr")}
 	immutables := base.NewImmutables(base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData")))))
