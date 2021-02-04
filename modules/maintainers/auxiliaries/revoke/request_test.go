@@ -13,14 +13,10 @@ import (
 )
 
 func Test_Revoke_Request(t *testing.T) {
-
-	classificationID := base.NewID("classificationID")
 	identityID := base.NewID("identityID")
-	mutables := base.NewMutables(base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("Data1")))))
+	testAuxiliaryRequest := NewAuxiliaryRequest(identityID)
 
-	testAuxiliaryRequest := NewAuxiliaryRequest(classificationID, identityID, mutables)
-
-	require.Equal(t, auxiliaryRequest{MaintainerID: classificationID, IdentityID: identityID, MutableProperties: mutables}, testAuxiliaryRequest)
+	require.Equal(t, auxiliaryRequest{MaintainerID: identityID}, testAuxiliaryRequest)
 	require.Equal(t, nil, testAuxiliaryRequest.Validate())
 	require.Equal(t, testAuxiliaryRequest, auxiliaryRequestFromInterface(testAuxiliaryRequest))
 	require.Equal(t, auxiliaryRequest{}, auxiliaryRequestFromInterface(nil))

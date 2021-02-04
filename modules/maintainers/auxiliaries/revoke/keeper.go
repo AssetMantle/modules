@@ -9,7 +9,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
@@ -21,14 +20,15 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	maintainerID := key.NewMaintainerID(auxiliaryRequest.MaintainerID, auxiliaryRequest.IdentityID)
 
-	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(maintainerID))
-	if maintainers.Get(key.New(maintainerID)) != nil {
-		return newAuxiliaryResponse(errors.EntityAlreadyExists)
+	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(auxiliaryRequest.MaintainerID))
+
+	maintainer := maintainers.Get(key.New(auxiliaryRequest.MaintainerID))
+	if maintainer == nil {
+		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 
-	maintainers.Add(mappable.NewMaintainer(maintainerID, auxiliaryRequest.MutableProperties, true, true, true))
+	maintainers.Remove(maintainer)
 
 	return newAuxiliaryResponse(nil)
 }
