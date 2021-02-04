@@ -1,13 +1,11 @@
 package simapp
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
-
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
-
-	"github.com/cosmos/cosmos-sdk/codec"
 )
 
 // Setup initializes a new SimulationApplication. A Nop logger is set in SimulationApplication.

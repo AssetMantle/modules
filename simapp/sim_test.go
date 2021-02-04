@@ -8,22 +8,8 @@ import (
 	"testing"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	"github.com/persistenceOne/persistenceSDK/modules/assets"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications"
-	"github.com/persistenceOne/persistenceSDK/modules/identities"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers"
-	"github.com/persistenceOne/persistenceSDK/modules/metas"
-	"github.com/persistenceOne/persistenceSDK/modules/orders"
-	"github.com/persistenceOne/persistenceSDK/modules/splits"
-
-	"github.com/cosmos/cosmos-sdk/simapp"
-
-	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	dbm "github.com/tendermint/tm-db"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -36,6 +22,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
+	"github.com/persistenceOne/persistenceSDK/modules/assets"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications"
+	"github.com/persistenceOne/persistenceSDK/modules/identities"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers"
+	"github.com/persistenceOne/persistenceSDK/modules/metas"
+	"github.com/persistenceOne/persistenceSDK/modules/orders"
+	"github.com/persistenceOne/persistenceSDK/modules/splits"
+	"github.com/stretchr/testify/require"
+	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	dbm "github.com/tendermint/tm-db"
 )
 
 // Get flags every time the simulator is run

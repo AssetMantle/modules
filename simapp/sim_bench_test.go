@@ -6,10 +6,8 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
-
-	abci "github.com/tendermint/tendermint/abci/types"
-
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // Profile with:
