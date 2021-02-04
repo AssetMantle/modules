@@ -35,9 +35,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(message.OrderID))
+	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.OrderID))
 
-	order := orders.Get(key.New(message.OrderID))
+	order := orders.Get(key.FromID(message.OrderID))
 	if order == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}

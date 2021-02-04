@@ -55,17 +55,6 @@ func (metaID metaID) Matches(key helpers.Key) bool {
 	return metaID.Equals(metaIDFromInterface(key))
 }
 
-func GenerateMetaID(data types.Data) types.ID {
-	return metaID{
-		TypeID: data.GetTypeID(),
-		HashID: data.GenerateHashID(),
-	}
-}
-
-func New(id types.ID) helpers.Key {
-	return metaIDFromInterface(id)
-}
-
 func NewMetaID(typeID types.ID, hashID types.ID) types.ID {
 	return metaID{
 		TypeID: typeID,

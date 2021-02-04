@@ -45,8 +45,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	assetID := key.NewAssetID(message.ClassificationID, base.NewImmutables(immutableProperties))
 
-	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(assetID))
-	if assets.Get(key.New(assetID)) != nil {
+	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(assetID))
+	if assets.Get(key.FromID(assetID)) != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 

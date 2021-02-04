@@ -54,11 +54,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	immutableProperties := base.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
 
 	orderID := key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, message.FromID, base.NewImmutables(immutableProperties))
-	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(orderID))
+	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(orderID))
 
 	makerOwnableSplit := message.MakerOwnableSplit
 
-	order := orders.Get(key.New(orderID))
+	order := orders.Get(key.FromID(orderID))
 	if order != nil {
 		metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetMakerOwnableSplit())))
 		if Error != nil {

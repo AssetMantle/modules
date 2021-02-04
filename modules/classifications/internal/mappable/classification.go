@@ -31,7 +31,7 @@ func (classification classification) GetMutableProperties() types.Properties {
 	return classification.MutableProperties
 }
 func (classification classification) GetKey() helpers.Key {
-	return key.New(classification.ID)
+	return key.FromID(classification.ID)
 }
 
 func (classification) RegisterCodec(codec *codec.Codec) {

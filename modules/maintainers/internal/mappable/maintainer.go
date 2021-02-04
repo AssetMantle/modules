@@ -45,7 +45,7 @@ func (maintainer maintainer) MaintainsProperty(id types.ID) bool {
 	return false
 }
 func (maintainer maintainer) GetKey() helpers.Key {
-	return key.New(maintainer.ID)
+	return key.FromID(maintainer.ID)
 }
 
 func (maintainer) RegisterCodec(codec *codec.Codec) {

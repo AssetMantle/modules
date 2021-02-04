@@ -38,8 +38,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 			}
 		} else {
 			metaID := key.NewMetaID(property.GetFact().GetTypeID(), property.GetFact().GetHashID())
-			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(metaID))
-			meta = metas.Get(key.New(metaID))
+			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(metaID))
+			meta = metas.Get(key.FromID(metaID))
 		}
 
 		if meta != nil {

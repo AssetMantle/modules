@@ -36,8 +36,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	identityID := key.NewIdentityID(message.ClassificationID, base.NewImmutables(immutableProperties))
 
-	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(identityID))
-	if identities.Get(key.New(identityID)) != nil {
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
+	if identities.Get(key.FromID(identityID)) != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
