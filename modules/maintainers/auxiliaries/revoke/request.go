@@ -12,7 +12,9 @@ import (
 )
 
 type auxiliaryRequest struct {
-	MaintainerID types.ID `json:"maintainerID" valid:"required~required field maintainerID missing"`
+	FromID           types.ID `json:"fromID" valid:"required~required field fromID missing"`
+	ToID             types.ID `json:"toID" valid:"required~required field toID missing"`
+	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID missing"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -21,7 +23,6 @@ func (auxiliaryRequest auxiliaryRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(auxiliaryRequest)
 	return Error
 }
-
 func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
 	switch value := request.(type) {
 	case auxiliaryRequest:
@@ -31,8 +32,10 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(maintainerID types.ID) helpers.AuxiliaryRequest {
-	return auxiliaryRequest{
-		MaintainerID: maintainerID,
+func NewAuxiliaryRequest(fromID types.ID, toID types.ID, classificationID types.ID) helpers.AuxiliaryRequest {
+	return &auxiliaryRequest{
+		FromID:           fromID,
+		ToID:             toID,
+		ClassificationID: classificationID,
 	}
 }
