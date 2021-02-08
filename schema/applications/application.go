@@ -17,9 +17,10 @@ import (
 )
 
 type Application interface {
+	tendermintABCITypes.Application
+
 	LoadHeight(int64) error
 	ExportApplicationStateAndValidators(bool, []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error)
-	tendermintABCITypes.Application
-}
 
-type NewApplication func(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) Application
+	Initialize(log.Logger, tendermintDB.DB, io.Writer, bool, uint, map[int64]bool, string, ...func(*baseapp.BaseApp)) Application
+}
