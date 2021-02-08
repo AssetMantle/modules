@@ -6,11 +6,12 @@
 package base
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_DecData(t *testing.T) {

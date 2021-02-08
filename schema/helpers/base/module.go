@@ -52,11 +52,11 @@ func (module module) GenerateGenesisState(simulationState *sdkTypesModule.Simula
 }
 
 func (module module) ProposalContents(_ sdkTypesModule.SimulationState) []simulation.WeightedProposalContent {
-	return nil
+	return module.simulatorPrototype().WeightedProposalContentList()
 }
 
-func (module module) RandomizedParams(_ *rand.Rand) []simulation.ParamChange {
-	return nil
+func (module module) RandomizedParams(r *rand.Rand) []simulation.ParamChange {
+	return module.simulatorPrototype().ParamChangeList(r)
 }
 
 func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDecoderRegistry) {
