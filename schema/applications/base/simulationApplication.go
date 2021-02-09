@@ -529,11 +529,11 @@ func (simulationApplication simulationApplication) InitChainer(ctx sdkTypes.Cont
 }
 
 func (simulationApplication simulationApplication) ExportAppStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
-	panic("implement me")
+	return simulationApplication.application.ExportApplicationStateAndValidators(forZeroHeight, jailWhiteList)
 }
 
 func (simulationApplication simulationApplication) ModuleAccountAddrs() map[string]bool {
-	panic("implement me")
+	return simulationApplication.tokenReceiveAllowedModules
 }
 
 func (simulationApplication simulationApplication) SimulationManager() *module.SimulationManager {
