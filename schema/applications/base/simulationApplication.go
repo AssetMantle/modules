@@ -10,6 +10,19 @@ import (
 	"io"
 	"testing"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
+	"github.com/cosmos/cosmos-sdk/x/auth"
+	"github.com/cosmos/cosmos-sdk/x/bank"
+	"github.com/cosmos/cosmos-sdk/x/crisis"
+	distr "github.com/cosmos/cosmos-sdk/x/distribution"
+	"github.com/cosmos/cosmos-sdk/x/evidence"
+	"github.com/cosmos/cosmos-sdk/x/gov"
+	"github.com/cosmos/cosmos-sdk/x/mint"
+	"github.com/cosmos/cosmos-sdk/x/slashing"
+	"github.com/cosmos/cosmos-sdk/x/staking"
+	"github.com/cosmos/cosmos-sdk/x/supply"
+	"github.com/cosmos/cosmos-sdk/x/upgrade"
+
 	"github.com/cosmos/cosmos-sdk/x/auth/exported"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
@@ -25,7 +38,23 @@ import (
 )
 
 type simulationApplication struct {
-	application application
+	application   application
+	transientKeys map[string]*sdkTypes.TransientStoreKey
+	sm            *module.SimulationManager
+	subspaces     map[string]params.Subspace
+
+	AccountKeeper  auth.AccountKeeper
+	BankKeeper     bank.Keeper
+	SupplyKeeper   supply.Keeper
+	StakingKeeper  staking.Keeper
+	SlashingKeeper slashing.Keeper
+	MintKeeper     mint.Keeper
+	DistrKeeper    distr.Keeper
+	GovKeeper      gov.Keeper
+	CrisisKeeper   crisis.Keeper
+	UpgradeKeeper  upgrade.Keeper
+	ParamsKeeper   params.Keeper
+	EvidenceKeeper evidence.Keeper
 }
 
 func (simulationApplication simulationApplication) Info(info abciTypes.RequestInfo) abciTypes.ResponseInfo {
@@ -64,11 +93,15 @@ func (simulationApplication simulationApplication) Commit() abciTypes.ResponseCo
 	panic("implement me")
 }
 
+func (simulationApplication simulationApplication) LoadHeight(i int64) error {
+	panic("implement me")
+}
+
 func (simulationApplication simulationApplication) ExportApplicationStateAndValidators(b bool, strings []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
 	panic("implement me")
 }
 
-func (simulationApplication simulationApplication) Initialize(logger log.Logger, db tendermintDB.DB, writer io.Writer, b bool, u uint, m map[int64]bool, s string, f ...func(*baseapp.BaseApp)) applications.Application {
+func (simulationApplication simulationApplication) Initialize(applicationName string, codec *codec.Codec, enabledProposals []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool, logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
 	panic("implement me")
 }
 
@@ -89,10 +122,6 @@ func (simulationApplication simulationApplication) EndBlocker(ctx sdkTypes.Conte
 }
 
 func (simulationApplication simulationApplication) InitChainer(ctx sdkTypes.Context, req abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
-	panic("implement me")
-}
-
-func (simulationApplication simulationApplication) LoadHeight(height int64) error {
 	panic("implement me")
 }
 

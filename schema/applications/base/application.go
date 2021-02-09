@@ -10,6 +10,8 @@ import (
 	"io"
 	"path/filepath"
 
+	"github.com/tendermint/tendermint/libs/log"
+
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -51,7 +53,6 @@ import (
 	wasmUtilities "github.com/persistenceOne/persistenceSDK/utilities/wasm"
 	"github.com/spf13/viper"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
 	tendermintOS "github.com/tendermint/tendermint/libs/os"
 	tendermintTypes "github.com/tendermint/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
@@ -74,11 +75,47 @@ type application struct {
 
 var _ applications.Application = (*application)(nil)
 
+func (application *application) Info(requestInfo abciTypes.RequestInfo) abciTypes.ResponseInfo {
+	return application.baseApp.Info(requestInfo)
+}
+
+func (application *application) SetOption(requestSetOption abciTypes.RequestSetOption) abciTypes.ResponseSetOption {
+	return application.baseApp.SetOption(requestSetOption)
+}
+
+func (application *application) Query(requestQuery abciTypes.RequestQuery) abciTypes.ResponseQuery {
+	return application.baseApp.Query(requestQuery)
+}
+
+func (application *application) CheckTx(requestCheckTx abciTypes.RequestCheckTx) abciTypes.ResponseCheckTx {
+	return application.baseApp.CheckTx(requestCheckTx)
+}
+
+func (application *application) InitChain(requestInitChain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
+	return application.baseApp.InitChain(requestInitChain)
+}
+
+func (application *application) BeginBlock(requestBeginBlock abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
+	return application.baseApp.BeginBlock(requestBeginBlock)
+}
+
+func (application *application) DeliverTx(requestDeliverTx abciTypes.RequestDeliverTx) abciTypes.ResponseDeliverTx {
+	return application.baseApp.DeliverTx(requestDeliverTx)
+}
+
+func (application *application) EndBlock(requestEndBlock abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock {
+	return application.baseApp.EndBlock(requestEndBlock)
+}
+
+func (application *application) Commit() abciTypes.ResponseCommit {
+	return application.baseApp.Commit()
+}
+
 func (application *application) LoadHeight(height int64) error {
-	return application.LoadVersion(height, application.keys[baseapp.MainStoreKey])
+	return application.baseApp.LoadVersion(height, application.keys[baseapp.MainStoreKey])
 }
 func (application *application) ExportApplicationStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
-	context := application.NewContext(true, abciTypes.Header{Height: application.LastBlockHeight()})
+	context := application.baseApp.NewContext(true, abciTypes.Header{Height: application.baseApp.LastBlockHeight()})
 
 	if forZeroHeight {
 		applyWhiteList := false
@@ -196,13 +233,12 @@ func (application *application) ExportApplicationStateAndValidators(forZeroHeigh
 	return applicationState, staking.WriteValidators(context, application.stakingKeeper), nil
 }
 
-func (application *application) Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
-
+func (application *application) Initialize(applicationName string, codec *codec.Codec, enabledProposals []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool, logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
 	baseApp := baseapp.NewBaseApp(
 		applicationName,
 		logger,
 		db,
-		auth.DefaultTxDecoder(codec),
+		auth.DefaultTxDecoder(application.codec),
 		baseAppOptions...,
 	)
 	baseApp.SetCommitMultiStoreTracer(traceStore)
@@ -232,11 +268,9 @@ func (application *application) Initialize(logger log.Logger, db tendermintDB.DB
 
 	transientStoreKeys := sdkTypes.NewTransientStoreKeys(params.TStoreKey)
 
-	var application = &application{
-		BaseApp: baseApp,
-		codec:   codec,
-		keys:    keys,
-	}
+	application.baseApp = baseApp
+	application.codec = codec
+	application.keys = keys
 
 	paramsKeeper := params.NewKeeper(
 		codec,
@@ -448,7 +482,7 @@ func (application *application) Initialize(logger log.Logger, db tendermintDB.DB
 	)
 
 	application.moduleManager = sdkTypesModule.NewManager(
-		genutil.NewAppModule(accountKeeper, application.stakingKeeper, application.BaseApp.DeliverTx),
+		genutil.NewAppModule(accountKeeper, application.stakingKeeper, application.baseApp.DeliverTx),
 		auth.NewAppModule(accountKeeper),
 		bank.NewAppModule(bankKeeper, accountKeeper),
 		crisis.NewAppModule(&application.crisisKeeper),
@@ -505,7 +539,7 @@ func (application *application) Initialize(logger log.Logger, db tendermintDB.DB
 		splits.Prototype().Name(),
 	)
 	application.moduleManager.RegisterInvariants(&application.crisisKeeper)
-	application.moduleManager.RegisterRoutes(application.Router(), application.QueryRouter())
+	application.moduleManager.RegisterRoutes(application.baseApp.Router(), application.baseApp.QueryRouter())
 
 	simulationManager := sdkTypesModule.NewSimulationManager(
 		auth.NewAppModule(accountKeeper),
@@ -528,20 +562,20 @@ func (application *application) Initialize(logger log.Logger, db tendermintDB.DB
 
 	simulationManager.RegisterStoreDecoders()
 
-	application.MountKVStores(keys)
-	application.MountTransientStores(transientStoreKeys)
+	application.baseApp.MountKVStores(keys)
+	application.baseApp.MountTransientStores(transientStoreKeys)
 
-	application.SetBeginBlocker(application.moduleManager.BeginBlock)
-	application.SetEndBlocker(application.moduleManager.EndBlock)
-	application.SetInitChainer(func(context sdkTypes.Context, requestInitChain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
+	application.baseApp.SetBeginBlocker(application.moduleManager.BeginBlock)
+	application.baseApp.SetEndBlocker(application.moduleManager.EndBlock)
+	application.baseApp.SetInitChainer(func(context sdkTypes.Context, requestInitChain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
 		var genesisState map[string]json.RawMessage
 		codec.MustUnmarshalJSON(requestInitChain.AppStateBytes, &genesisState)
 		return application.moduleManager.InitGenesis(context, genesisState)
 	})
-	application.SetAnteHandler(auth.NewAnteHandler(accountKeeper, supplyKeeper, ante.DefaultSigVerificationGasConsumer))
+	application.baseApp.SetAnteHandler(auth.NewAnteHandler(accountKeeper, supplyKeeper, ante.DefaultSigVerificationGasConsumer))
 
 	if loadLatest {
-		err := application.LoadLatestVersion(application.keys[baseapp.MainStoreKey])
+		err := application.baseApp.LoadLatestVersion(application.keys[baseapp.MainStoreKey])
 		if err != nil {
 			tendermintOS.Exit(err.Error())
 		}
@@ -549,7 +583,7 @@ func (application *application) Initialize(logger log.Logger, db tendermintDB.DB
 
 	return application
 }
-}
 
-func NewApplication(applicationName string, codec *codec.Codec, enabledProposals []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.NewApplication {
+func NewApplication() applications.Application {
+	return &application{}
 }
