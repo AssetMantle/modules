@@ -25,6 +25,10 @@ import (
 	dbm "github.com/tendermint/tm-db"
 )
 
+func init() {
+	simapp.GetSimulatorFlags()
+}
+
 func TestAppStateDeterminism(t *testing.T) {
 	if !simapp.FlagEnabledValue {
 		t.Skip("skipping application simulation")
