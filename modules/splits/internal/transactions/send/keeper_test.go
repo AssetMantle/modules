@@ -6,6 +6,9 @@
 package send
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -24,8 +27,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
 )
 
 type TestKeepers struct {
@@ -107,7 +108,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase-Negative Split exchange", func(t *testing.T) {
+	t.Run("NegativeCase-Negative Value exchange", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.NotAuthorized)
 		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, fromID, toID, ownableID, sdkTypes.NewDec(-1))); !reflect.DeepEqual(got, want) {
@@ -115,7 +116,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase-Split not found", func(t *testing.T) {
+	t.Run("NegativeCase-Value not found", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.EntityNotFound)
 		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, base.NewID("fakeFromID"), toID, ownableID, sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {

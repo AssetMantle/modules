@@ -77,9 +77,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	sendTakerOwnableSplit := makerOwnableSplit.Mul(exchangeRate)
 	sendMakerOwnableSplit := message.TakerOwnableSplit.Quo(exchangeRate)
-	updatedMakerOwnableSplit := makerOwnableSplit.Sub(sendMakerOwnableSplit)
 
-	switch {
+	switch updatedMakerOwnableSplit := makerOwnableSplit.Sub(sendMakerOwnableSplit); {
 	case updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()):
 		if message.TakerOwnableSplit.LT(sendTakerOwnableSplit) {
 			return newTransactionResponse(errors.InsufficientBalance)

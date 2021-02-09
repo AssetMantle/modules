@@ -6,11 +6,12 @@
 package key
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"strings"
-	"testing"
 )
 
 func Test_AssetID_Methods(t *testing.T) {
@@ -18,8 +19,8 @@ func Test_AssetID_Methods(t *testing.T) {
 	immutables := base.NewImmutables(base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData")))))
 
 	testAssetID := NewAssetID(classificationID, immutables).(assetID)
-	require.Equal(t, assetID{ClassificationID: classificationID, HashID: immutables.GetHashID()}, testAssetID)
-	require.Equal(t, strings.Join([]string{classificationID.String(), immutables.GetHashID().String()}, constants.FirstOrderCompositeIDSeparator), testAssetID.String())
+	require.Equal(t, assetID{ClassificationID: classificationID, HashID: immutables.GenerateHashID()}, testAssetID)
+	require.Equal(t, strings.Join([]string{classificationID.String(), immutables.GenerateHashID().String()}, constants.FirstOrderCompositeIDSeparator), testAssetID.String())
 	require.Equal(t, false, testAssetID.IsPartial())
 	require.Equal(t, true, assetID{ClassificationID: classificationID, HashID: base.NewID("")}.IsPartial())
 	require.Equal(t, true, testAssetID.Equals(testAssetID))

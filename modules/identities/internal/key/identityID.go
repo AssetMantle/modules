@@ -58,9 +58,9 @@ func New(id types.ID) helpers.Key {
 	return identityIDFromInterface(id)
 }
 
-func NewIdentityID(classificationID types.ID, hashID types.ID) types.ID {
+func NewIdentityID(classificationID types.ID, immutables types.Immutables) types.ID {
 	return identityID{
 		ClassificationID: classificationID,
-		HashID:           hashID,
+		HashID:           immutables.GenerateHashID(),
 	}
 }

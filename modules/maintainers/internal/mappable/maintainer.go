@@ -16,11 +16,11 @@ import (
 )
 
 type maintainer struct {
-	ID               types.ID       `json:"key" valid:"required field key missing"`
-	MaintainedTraits types.Mutables `json:"maintainedTraits" valid:"required field maintainedTraits missing"`
-	AddMaintainer    bool           `json:"addMaintainer" valid:"required field addMaintainer missing"`
-	RemoveMaintainer bool           `json:"removeMaintainer" valid:"required field removeMaintainer missing"`
-	MutateMaintainer bool           `json:"mutateMaintainer" valid:"required field mutateMaintainer missing"`
+	ID                   types.ID         `json:"key" valid:"required field key missing"`
+	MaintainedProperties types.Properties `json:"maintainedProperties" valid:"required field maintainedProperties missing"`
+	AddMaintainer        bool             `json:"addMaintainer" valid:"required field addMaintainer missing"`
+	RemoveMaintainer     bool             `json:"removeMaintainer" valid:"required field removeMaintainer missing"`
+	MutateMaintainer     bool             `json:"mutateMaintainer" valid:"required field mutateMaintainer missing"`
 }
 
 var _ mappables.Maintainer = (*maintainer)(nil)
@@ -35,9 +35,9 @@ func (maintainer maintainer) GetIdentityID() types.ID {
 func (maintainer maintainer) CanAddMaintainer() bool    { return maintainer.AddMaintainer }
 func (maintainer maintainer) CanRemoveMaintainer() bool { return maintainer.RemoveMaintainer }
 func (maintainer maintainer) CanMutateMaintainer() bool { return maintainer.MutateMaintainer }
-func (maintainer maintainer) MaintainsTrait(id types.ID) bool {
-	for _, trait := range maintainer.MaintainedTraits.Get().GetList() {
-		if trait.GetID().Equals(id) {
+func (maintainer maintainer) MaintainsProperty(id types.ID) bool {
+	for _, property := range maintainer.MaintainedProperties.GetList() {
+		if property.GetID().Equals(id) {
 			return true
 		}
 	}
@@ -51,12 +51,12 @@ func (maintainer maintainer) GetKey() helpers.Key {
 func (maintainer) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, maintainer{})
 }
-func NewMaintainer(id types.ID, maintainedTraits types.Mutables, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) mappables.Maintainer {
+func NewMaintainer(id types.ID, maintainedProperties types.Properties, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) mappables.Maintainer {
 	return maintainer{
-		ID:               id,
-		MaintainedTraits: maintainedTraits,
-		AddMaintainer:    addMaintainer,
-		RemoveMaintainer: removeMaintainer,
-		MutateMaintainer: mutateMaintainer,
+		ID:                   id,
+		MaintainedProperties: maintainedProperties,
+		AddMaintainer:        addMaintainer,
+		RemoveMaintainer:     removeMaintainer,
+		MutateMaintainer:     mutateMaintainer,
 	}
 }

@@ -22,7 +22,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	if auxiliaryRequest.Split.LTE(sdkTypes.ZeroDec()) {
+	if auxiliaryRequest.Value.LTE(sdkTypes.ZeroDec()) {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
 
@@ -34,9 +34,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 
-	fromSplit = fromSplit.(mappables.Split).Send(auxiliaryRequest.Split).(mappables.Split)
-
-	switch {
+	switch fromSplit = fromSplit.(mappables.Split).Send(auxiliaryRequest.Value).(mappables.Split); {
 	case fromSplit.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	case fromSplit.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):
@@ -49,9 +47,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	toSplit, ok := splits.Fetch(key.FromID(toSplitID)).Get(key.FromID(toSplitID)).(mappables.Split)
 
 	if !ok {
-		splits.Add(mappable.NewSplit(toSplitID, auxiliaryRequest.Split))
+		splits.Add(mappable.NewSplit(toSplitID, auxiliaryRequest.Value))
 	} else {
-		splits.Mutate(toSplit.Receive(auxiliaryRequest.Split).(mappables.Split))
+		splits.Mutate(toSplit.Receive(auxiliaryRequest.Value).(mappables.Split))
 	}
 
 	return newAuxiliaryResponse(nil)

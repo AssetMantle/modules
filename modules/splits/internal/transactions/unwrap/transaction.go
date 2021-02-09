@@ -20,5 +20,5 @@ var Transaction = base.NewTransaction(
 	keeperPrototype,
 	flags.FromID,
 	flags.OwnableID,
-	flags.Split,
+	flags.Value,
 )

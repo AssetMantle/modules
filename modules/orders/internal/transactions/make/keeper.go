@@ -46,12 +46,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	immutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetMetaPropertyList()...)))
+	immutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetMetaPropertyList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
 
-	immutables := base.NewImmutables(base.NewProperties(append(immutableProperties.GetList(), message.ImmutableProperties.GetList()...)...))
+	immutableProperties := base.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
 
 	makerTakerIDs := []string{message.MakerOwnableID.String(), message.TakerOwnableID.String()}
 	sort.Strings(makerTakerIDs)
@@ -59,9 +59,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	var orderID types.ID
 
 	if makerTakerIDs[0] == message.MakerOwnableID.String() {
-		orderID = key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, base.NewDecID(message.ExchangeRate), base.NewHeightID(context.BlockHeight()), message.FromID, immutables)
+		orderID = key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, base.NewDecID(message.ExchangeRate), base.NewHeightID(context.BlockHeight()), message.FromID, base.NewImmutables(immutableProperties))
 	} else {
-		orderID = key.NewOrderID(message.ClassificationID, message.TakerOwnableID, message.MakerOwnableID, base.NewDecID(message.ExchangeRate.Neg()), base.NewHeightID(context.BlockHeight()), message.FromID, immutables)
+		orderID = key.NewOrderID(message.ClassificationID, message.TakerOwnableID, message.MakerOwnableID, base.NewDecID(message.ExchangeRate.Neg()), base.NewHeightID(context.BlockHeight()), message.FromID, base.NewImmutables(immutableProperties))
 	}
 
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(orderID))
@@ -90,14 +90,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	mutableMetaProperties := message.MutableMetaProperties.AddMetaProperty(base.NewMetaProperty(base.NewID(properties.Expiry), base.NewMetaFact(base.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight())))))
 	mutableMetaProperties = mutableMetaProperties.AddMetaProperty(base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(makerOwnableSplit))))
 
-	mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetMetaPropertyList()...)))
+	scrubbedMutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetMetaPropertyList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
 
-	mutables := base.NewMutables(base.NewProperties(append(mutableProperties.GetList(), message.MutableProperties.GetList()...)...))
+	mutableProperties := base.NewProperties(append(scrubbedMutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutableProperties, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
@@ -108,11 +108,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	if order != nil {
-		order = mappable.NewOrder(orderID, immutables, order.(mappables.Order).GetMutables().Mutate(mutables.Get().GetList()...))
-		orders = orders.Mutate(order)
+		orders = orders.Mutate(mappable.NewOrder(orderID, base.NewImmutables(immutableProperties), order.(mappables.Order).GetMutables().Mutate(mutableProperties.GetList()...)))
 	} else {
-		order = mappable.NewOrder(orderID, immutables, mutables)
-		orders = orders.Add(order)
+		orders = orders.Add(mappable.NewOrder(orderID, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 	}
 
 	if message.OrderType == module.ImmediateExecution {

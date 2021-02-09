@@ -128,6 +128,13 @@ func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList
 	return genesis
 }
 
+func (genesis genesis) GetParameterList() []types.Parameter {
+	return genesis.ParameterList
+}
+func (genesis genesis) GetMappableList() []helpers.Mappable {
+	return genesis.MappableList
+}
+
 func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable, defaultMappableList []helpers.Mappable, defaultParameterList []types.Parameter) helpers.Genesis {
 	Codec := codec.New()
 	keyPrototype().RegisterCodec(Codec)

@@ -21,5 +21,5 @@ var Transaction = base.NewTransaction(
 	flags.FromID,
 	flags.ToID,
 	flags.OwnableID,
-	flags.Split,
+	flags.Value,
 )

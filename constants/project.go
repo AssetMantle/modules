@@ -16,4 +16,4 @@ const PropertyIDAndDataSeparator = ":"
 const DataTypeAndValueSeparator = "|"
 const ToHashSeparator = "_"
 
-const MaxTraitCount = 22
+const MaxPropertyCount = 22

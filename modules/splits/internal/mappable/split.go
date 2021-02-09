@@ -19,7 +19,7 @@ import (
 
 type split struct {
 	ID    types.ID     `json:"key" valid:"required field key missing"`
-	Split sdkTypes.Dec `json:"split" valid:"required~required field split missing, matches(^[0-9]$)~invalid field split"`
+	Value sdkTypes.Dec `json:"value" valid:"required~required field value missing, matches(^[0-9]$)~invalid field value"`
 }
 
 var _ mappables.Split = (*split)(nil)
@@ -32,18 +32,18 @@ func (split split) GetOwnableID() types.ID {
 	return key.ReadOwnableID(split.ID)
 }
 func (split split) GetValue() sdkTypes.Dec {
-	return split.Split
+	return split.Value
 }
-func (split split) Send(outSplit sdkTypes.Dec) traits.Transactional {
-	split.Split = split.Split.Sub(outSplit)
+func (split split) Send(outValue sdkTypes.Dec) traits.Transactional {
+	split.Value = split.Value.Sub(outValue)
 	return split
 }
-func (split split) Receive(inSplit sdkTypes.Dec) traits.Transactional {
-	split.Split = split.Split.Add(inSplit)
+func (split split) Receive(inValue sdkTypes.Dec) traits.Transactional {
+	split.Value = split.Value.Add(inValue)
 	return split
 }
-func (split split) CanSend(outSplit sdkTypes.Dec) bool {
-	return split.Split.GTE(outSplit)
+func (split split) CanSend(outValue sdkTypes.Dec) bool {
+	return split.Value.GTE(outValue)
 }
 func (split split) GetKey() helpers.Key {
 	return key.FromID(split.ID)
@@ -52,9 +52,9 @@ func (split) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, split{})
 }
 
-func NewSplit(splitID types.ID, spl sdkTypes.Dec) mappables.Split {
+func NewSplit(splitID types.ID, value sdkTypes.Dec) mappables.Split {
 	return split{
 		ID:    splitID,
-		Split: spl,
+		Value: value,
 	}
 }

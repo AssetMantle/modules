@@ -33,17 +33,17 @@ func Test_Make_Message(t *testing.T) {
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, Error)
 
-	immutableMetaTraits, Error := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, Error := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, Error)
-	immutableTraits, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, Error)
-	mutableMetaTraits, Error := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, Error := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, Error)
-	mutableTraits, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, Error)
 
-	testMessage := newMessage(fromAccAddress, testFromID, testClassificationID, testMakerOwnableID, testTakerOwnableID, testExpiresIn, testMakerOwnableSplit, testExchangeRate, module.ImmediateExecution, immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits)
-	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ClassificationID: testClassificationID, MakerOwnableID: testMakerOwnableID, TakerOwnableID: testTakerOwnableID, ExpiresIn: testExpiresIn, ExchangeRate: testExchangeRate, OrderType: module.ImmediateExecution, MakerOwnableSplit: testMakerOwnableSplit, ImmutableMetaProperties: immutableMetaTraits, ImmutableProperties: immutableTraits, MutableMetaProperties: mutableMetaTraits, MutableProperties: mutableTraits}, testMessage)
+	testMessage := newMessage(fromAccAddress, testFromID, testClassificationID, testMakerOwnableID, testTakerOwnableID, testExpiresIn, testMakerOwnableSplit, testExchangeRate, module.ImmediateExecution, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
+	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ClassificationID: testClassificationID, MakerOwnableID: testMakerOwnableID, TakerOwnableID: testTakerOwnableID, ExpiresIn: testExpiresIn, ExchangeRate: testExchangeRate, OrderType: module.ImmediateExecution, MakerOwnableSplit: testMakerOwnableSplit, ImmutableMetaProperties: immutableMetaProperties, ImmutableProperties: immutableProperties, MutableMetaProperties: mutableMetaProperties, MutableProperties: mutableProperties}, testMessage)
 	require.Equal(t, module.Name, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
 	require.Equal(t, nil, testMessage.ValidateBasic())
@@ -53,7 +53,7 @@ func Test_Make_Message(t *testing.T) {
 	require.Equal(t, testMessage, messageFromInterface(testMessage))
 	require.Equal(t, message{}, messageFromInterface(nil))
 	require.Equal(t, message{}, messagePrototype())
-	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, testFromID, testClassificationID, testMakerOwnableID, testTakerOwnableID, testExpiresIn, testMakerOwnableSplit, zeroExchangeRate, module.ImmediateExecution, immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).ValidateBasic())
-	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, testFromID, testClassificationID, testMakerOwnableID, testMakerOwnableID, testExpiresIn, testMakerOwnableSplit, testExchangeRate, module.ImmediateExecution, immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).ValidateBasic())
+	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, testFromID, testClassificationID, testMakerOwnableID, testTakerOwnableID, testExpiresIn, testMakerOwnableSplit, zeroExchangeRate, module.ImmediateExecution, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).ValidateBasic())
+	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, testFromID, testClassificationID, testMakerOwnableID, testMakerOwnableID, testExpiresIn, testMakerOwnableSplit, testExchangeRate, module.ImmediateExecution, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).ValidateBasic())
 
 }

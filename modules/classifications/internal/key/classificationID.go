@@ -59,21 +59,29 @@ func New(id types.ID) helpers.Key {
 	return classificationIDFromInterface(id)
 }
 
-func NewClassificationID(chainID types.ID, immutableTraits types.Immutables, mutableTraits types.Mutables) types.ID {
-	immutableIDStringList := make([]string, len(immutableTraits.Get().GetList()))
+func NewClassificationID(chainID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) types.ID {
+	immutableIDStringList := make([]string, len(immutableProperties.GetList()))
 
-	for i, immutable := range immutableTraits.Get().GetList() {
+	for i, immutable := range immutableProperties.GetList() {
 		immutableIDStringList[i] = immutable.GetID().String()
 	}
 
-	mutableIDStringList := make([]string, len(mutableTraits.Get().GetList()))
+	mutableIDStringList := make([]string, len(mutableProperties.GetList()))
 
-	for i, mutable := range mutableTraits.Get().GetList() {
+	for i, mutable := range mutableProperties.GetList() {
 		mutableIDStringList[i] = mutable.GetID().String()
+	}
+
+	defaultImmutableStringList := make([]string, len(immutableProperties.GetList()))
+
+	for i, mutable := range mutableProperties.GetList() {
+		if hashID := mutable.GetFact().GetHashID(); !hashID.Equals(base.NewID("")) {
+			defaultImmutableStringList[i] = hashID.String()
+		}
 	}
 
 	return classificationID{
 		ChainID: chainID,
-		HashID:  base.NewID(metaUtilities.Hash(metaUtilities.Hash(immutableIDStringList...), metaUtilities.Hash(mutableIDStringList...), immutableTraits.GetHashID().String())),
+		HashID:  base.NewID(metaUtilities.Hash(metaUtilities.Hash(immutableIDStringList...), metaUtilities.Hash(mutableIDStringList...), metaUtilities.Hash(defaultImmutableStringList...))),
 	}
 }

@@ -6,7 +6,9 @@
 package auxiliaries
 
 import (
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -14,7 +16,9 @@ import (
 
 func Prototype() helpers.Auxiliaries {
 	return base.NewAuxiliaries(
+		deputize.Auxiliary,
 		maintain.Auxiliary,
+		revoke.Auxiliary,
 		super.Auxiliary,
 	)
 }

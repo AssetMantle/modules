@@ -6,6 +6,9 @@
 package deputize
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -25,8 +28,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
 )
 
 type TestKeepers struct {
@@ -79,9 +80,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
-	maintainedTraits, Error := base.ReadProperties("maintainedTraits:S|maintainedTraits")
+	maintainedProperties, Error := base.ReadProperties("maintainedProperties:S|maintainedProperties")
 	require.Equal(t, nil, Error)
-	conformMockErrorTraits, Error := base.ReadProperties("conformError:S|mockError")
+	conformMockErrorProperties, Error := base.ReadProperties("conformError:S|mockError")
 	require.Equal(t, nil, Error)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
@@ -92,12 +93,12 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	classificationID := base.NewID("ClassificationID")
 
 	keepers.MaintainersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(key.NewMaintainerID(classificationID, defaultIdentityID),
-		base.NewMutables(maintainedTraits), true, true, true))
+		maintainedProperties, true, true, true))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
 		if got := keepers.MaintainersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID,
-			maintainedTraits, true, true, true)); !reflect.DeepEqual(got, want) {
+			maintainedProperties, true, true, true)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -106,7 +107,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.NotAuthorized)
 		if got := keepers.MaintainersKeeper.Transact(context, newMessage(defaultAddr, fakeFromID, toID, classificationID,
-			maintainedTraits, true, true, true)); !reflect.DeepEqual(got, want) {
+			maintainedProperties, true, true, true)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -114,21 +115,21 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - verify identity fail", func(t *testing.T) {
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.MaintainersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, toID, classificationID,
-			maintainedTraits, true, true, true)); !reflect.DeepEqual(got, want) {
+			maintainedProperties, true, true, true)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 	t.Run("NegativeCase - ReAdd same maintainer", func(t *testing.T) {
 		want := newTransactionResponse(errors.EntityAlreadyExists)
 		if got := keepers.MaintainersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID,
-			maintainedTraits, true, true, true)); !reflect.DeepEqual(got, want) {
+			maintainedProperties, true, true, true)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 	t.Run("NegativeCase - conform mock error", func(t *testing.T) {
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.MaintainersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID2, classificationID,
-			conformMockErrorTraits, true, true, true)); !reflect.DeepEqual(got, want) {
+			conformMockErrorProperties, true, true, true)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

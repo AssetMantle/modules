@@ -29,9 +29,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 
-	split = split.(mappables.Split).Send(auxiliaryRequest.Split).(mappables.Split)
-
-	switch {
+	switch split = split.(mappables.Split).Send(auxiliaryRequest.Value).(mappables.Split); {
 	case split.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
 		return newAuxiliaryResponse(errors.InsufficientBalance)
 	case split.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):

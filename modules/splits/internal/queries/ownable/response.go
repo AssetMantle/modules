@@ -14,7 +14,7 @@ import (
 type queryResponse struct {
 	Success bool         `json:"success"`
 	Error   error        `json:"error"`
-	Split   sdkTypes.Dec `json:"split"`
+	Value   sdkTypes.Dec `json:"value"`
 }
 
 var _ helpers.QueryResponse = (*queryResponse)(nil)
@@ -38,7 +38,7 @@ func (queryResponse queryResponse) Decode(bytes []byte) (helpers.QueryResponse, 
 func responsePrototype() helpers.QueryResponse {
 	return queryResponse{}
 }
-func newQueryResponse(split sdkTypes.Dec, error error) helpers.QueryResponse {
+func newQueryResponse(value sdkTypes.Dec, error error) helpers.QueryResponse {
 	success := true
 	if error != nil {
 		success = false
@@ -47,6 +47,6 @@ func newQueryResponse(split sdkTypes.Dec, error error) helpers.QueryResponse {
 	return queryResponse{
 		Success: success,
 		Error:   error,
-		Split:   split,
+		Value:   value,
 	}
 }

@@ -19,14 +19,14 @@ import (
 )
 
 type message struct {
-	From             sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	FromID           types.ID            `json:"fromID" valid:"required~required field fromID missing"`
-	ToID             types.ID            `json:"toID" valid:"required~required field toID missing"`
-	ClassificationID types.ID            `json:"classificationID" valid:"required~required field classificationID missing"`
-	MaintainedTraits types.Properties    `json:"maintainedTraits" valid:"required~required field maintainedTraits missing"`
-	AddMaintainer    bool                `json:"addMaintainer" valid:"required~required field addMaintainer missing"`
-	RemoveMaintainer bool                `json:"removeMaintainer" valid:"required~required field removeMaintainer missing"`
-	MutateMaintainer bool                `json:"mutateMaintainer" valid:"required~required field mutateMaintainer missing"`
+	From                 sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
+	FromID               types.ID            `json:"fromID" valid:"required~required field fromID missing"`
+	ToID                 types.ID            `json:"toID" valid:"required~required field toID missing"`
+	ClassificationID     types.ID            `json:"classificationID" valid:"required~required field classificationID missing"`
+	MaintainedProperties types.Properties    `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
+	AddMaintainer        bool                `json:"addMaintainer" valid:"required~required field addMaintainer missing"`
+	RemoveMaintainer     bool                `json:"removeMaintainer" valid:"required~required field removeMaintainer missing"`
+	MutateMaintainer     bool                `json:"mutateMaintainer" valid:"required~required field mutateMaintainer missing"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -62,15 +62,15 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, toID types.ID, classificationID types.ID, maintainedTraits types.Properties, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, toID types.ID, classificationID types.ID, maintainedProperties types.Properties, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) sdkTypes.Msg {
 	return message{
-		From:             from,
-		FromID:           fromID,
-		ToID:             toID,
-		ClassificationID: classificationID,
-		MaintainedTraits: maintainedTraits,
-		AddMaintainer:    addMaintainer,
-		RemoveMaintainer: removeMaintainer,
-		MutateMaintainer: mutateMaintainer,
+		From:                 from,
+		FromID:               fromID,
+		ToID:                 toID,
+		ClassificationID:     classificationID,
+		MaintainedProperties: maintainedProperties,
+		AddMaintainer:        addMaintainer,
+		RemoveMaintainer:     removeMaintainer,
+		MutateMaintainer:     mutateMaintainer,
 	}
 }

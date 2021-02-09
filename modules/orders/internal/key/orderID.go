@@ -58,7 +58,6 @@ func (orderID orderID) Equals(id types.ID) bool {
 	return bytes.Equal(orderID.Bytes(), id.Bytes())
 }
 func (orderID orderID) GenerateStoreKeyBytes() []byte {
-	// 	return GetStoreKeyPrefix(orderID).GenerateStoreKey(orderID.Bytes())
 	return module.StoreKeyPrefix.GenerateStoreKey(orderID.Bytes())
 }
 func (orderID) RegisterCodec(codec *codec.Codec) {
@@ -83,6 +82,6 @@ func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnable
 		ExchangeRate:     exchangeRateID,
 		CreationHeight:   creationHeightID,
 		MakerID:          makerID,
-		HashID:           immutables.GetHashID(),
+		HashID:           immutables.GenerateHashID(),
 	}
 }

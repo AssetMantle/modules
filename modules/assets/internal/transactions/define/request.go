@@ -21,12 +21,12 @@ import (
 )
 
 type transactionRequest struct {
-	BaseReq             rest.BaseReq `json:"baseReq"`
-	FromID              string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
-	ImmutableMetaTraits string       `json:"immutableMetaTraits" valid:"required~required field immutableMetaTraits missing, matches(^.*$)~invalid field immutableMetaProperties"`
-	ImmutableTraits     string       `json:"immutableTraits" valid:"required~required field immutableTraits missing, matches(^.*$)~invalid field immutableProperties"`
-	MutableMetaTraits   string       `json:"mutableMetaTraits" valid:"required~required field mutableMetaTraits missing, matches(^.*$)~invalid field mutableMetaProperties"`
-	MutableTraits       string       `json:"mutableTraits" valid:"required~required field mutableTraits missing, matches(^.*$)~invalid field mutableProperties"`
+	BaseReq                 rest.BaseReq `json:"baseReq"`
+	FromID                  string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
+	ImmutableMetaProperties string       `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing, matches(^.*$)~invalid field immutableMetaProperties"`
+	ImmutableProperties     string       `json:"immutableProperties" valid:"required~required field immutableProperties missing, matches(^.*$)~invalid field immutableProperties"`
+	MutableMetaProperties   string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing, matches(^.*$)~invalid field mutableMetaProperties"`
+	MutableProperties       string       `json:"mutableProperties" valid:"required~required field mutableProperties missing, matches(^.*$)~invalid field mutableProperties"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -39,10 +39,10 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(flags.FromID),
-		cliCommand.ReadString(flags.ImmutableMetaTraits),
-		cliCommand.ReadString(flags.ImmutableTraits),
-		cliCommand.ReadString(flags.MutableMetaTraits),
-		cliCommand.ReadString(flags.MutableTraits),
+		cliCommand.ReadString(flags.ImmutableMetaProperties),
+		cliCommand.ReadString(flags.ImmutableProperties),
+		cliCommand.ReadString(flags.MutableMetaProperties),
+		cliCommand.ReadString(flags.MutableProperties),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
@@ -61,22 +61,22 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, Error
 	}
 
-	immutableMetaTraits, Error := base.ReadMetaProperties(transactionRequest.ImmutableMetaTraits)
+	immutableMetaProperties, Error := base.ReadMetaProperties(transactionRequest.ImmutableMetaProperties)
 	if Error != nil {
 		return nil, Error
 	}
 
-	immutableTraits, Error := base.ReadProperties(transactionRequest.ImmutableTraits)
+	immutableProperties, Error := base.ReadProperties(transactionRequest.ImmutableProperties)
 	if Error != nil {
 		return nil, Error
 	}
 
-	mutableMetaTraits, Error := base.ReadMetaProperties(transactionRequest.MutableMetaTraits)
+	mutableMetaProperties, Error := base.ReadMetaProperties(transactionRequest.MutableMetaProperties)
 	if Error != nil {
 		return nil, Error
 	}
 
-	mutableTraits, Error := base.ReadProperties(transactionRequest.MutableTraits)
+	mutableProperties, Error := base.ReadProperties(transactionRequest.MutableProperties)
 	if Error != nil {
 		return nil, Error
 	}
@@ -84,10 +84,10 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	return newMessage(
 		from,
 		base.NewID(transactionRequest.FromID),
-		immutableMetaTraits,
-		immutableTraits,
-		mutableMetaTraits,
-		mutableTraits,
+		immutableMetaProperties,
+		immutableProperties,
+		mutableMetaProperties,
+		mutableProperties,
 	), nil
 }
 func (transactionRequest) RegisterCodec(codec *codec.Codec) {
@@ -97,13 +97,13 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, immutableMetaTraits string, immutableTraits string, mutableMetaTraits string, mutableTraits string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:             baseReq,
-		FromID:              fromID,
-		ImmutableMetaTraits: immutableMetaTraits,
-		ImmutableTraits:     immutableTraits,
-		MutableMetaTraits:   mutableMetaTraits,
-		MutableTraits:       mutableTraits,
+		BaseReq:                 baseReq,
+		FromID:                  fromID,
+		ImmutableMetaProperties: immutableMetaProperties,
+		ImmutableProperties:     immutableProperties,
+		MutableMetaProperties:   mutableMetaProperties,
+		MutableProperties:       mutableProperties,
 	}
 }
