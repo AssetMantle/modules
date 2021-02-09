@@ -9,7 +9,13 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/version"
+	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+	"github.com/spf13/viper"
+	tendermintOS "github.com/tendermint/tendermint/libs/os"
 
 	wasmClient "github.com/CosmWasm/wasmd/x/wasm/client"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
@@ -17,11 +23,23 @@ import (
 	upgradeClient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	"github.com/persistenceOne/persistenceSDK/modules/assets"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/define"
 	"github.com/persistenceOne/persistenceSDK/modules/identities"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
 	"github.com/persistenceOne/persistenceSDK/modules/metas"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/orders"
 	"github.com/persistenceOne/persistenceSDK/modules/splits"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
+	splitsMint "github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/renumerate"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
+	wasmUtilities "github.com/persistenceOne/persistenceSDK/utilities/wasm"
 
 	authVesting "github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/persistenceOne/persistenceSDK/schema"
@@ -52,6 +70,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/schema/applications"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
@@ -59,23 +78,26 @@ import (
 )
 
 type simulationApplication struct {
-	application   *application
-	transientKeys map[string]*sdkTypes.TransientStoreKey
-	sm            *module.SimulationManager
-	subspaces     map[string]params.Subspace
+	application        *application
+	transientStoreKeys map[string]*sdkTypes.TransientStoreKey
+	sm                 *module.SimulationManager
+	subspaces          map[string]params.Subspace
 
-	AccountKeeper  auth.AccountKeeper
-	BankKeeper     bank.Keeper
-	SupplyKeeper   supply.Keeper
-	StakingKeeper  staking.Keeper
-	SlashingKeeper slashing.Keeper
-	MintKeeper     mint.Keeper
-	DistrKeeper    distribution.Keeper
-	GovKeeper      gov.Keeper
-	CrisisKeeper   crisis.Keeper
-	UpgradeKeeper  upgrade.Keeper
-	ParamsKeeper   params.Keeper
-	EvidenceKeeper evidence.Keeper
+	moduleAddressPermissions   map[string][]string
+	tokenReceiveAllowedModules map[string]bool
+
+	AccountKeeper      auth.AccountKeeper
+	BankKeeper         bank.Keeper
+	SupplyKeeper       supply.Keeper
+	StakingKeeper      staking.Keeper
+	SlashingKeeper     slashing.Keeper
+	MintKeeper         mint.Keeper
+	DistributionKeeper distribution.Keeper
+	GovKeeper          gov.Keeper
+	CrisisKeeper       crisis.Keeper
+	UpgradeKeeper      upgrade.Keeper
+	ParamsKeeper       params.Keeper
+	EvidenceKeeper     evidence.Keeper
 }
 
 var _ applications.SimulationApplication = (*simulationApplication)(nil)
@@ -117,15 +139,371 @@ func (simulationApplication simulationApplication) Commit() abciTypes.ResponseCo
 }
 
 func (simulationApplication simulationApplication) LoadHeight(i int64) error {
-	panic("implement me")
+	return simulationApplication.application.LoadHeight(i)
 }
 
 func (simulationApplication simulationApplication) ExportApplicationStateAndValidators(b bool, strings []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
-	panic("implement me")
+	return simulationApplication.application.ExportApplicationStateAndValidators(b, strings)
 }
 
 func (simulationApplication simulationApplication) Initialize(applicationName string, codec *codec.Codec, enabledProposals []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool, logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
-	panic("implement me")
+
+	//simulationApplication.moduleAddressPermissions = moduleAccountPermissions
+	//simulationApplication.tokenReceiveAllowedModules = tokenReceiveAllowedModules
+	baseApp := baseapp.NewBaseApp(
+		applicationName,
+		logger,
+		db,
+		auth.DefaultTxDecoder(codec),
+		baseAppOptions...,
+	)
+	baseApp.SetCommitMultiStoreTracer(traceStore)
+	baseApp.SetAppVersion(version.Version)
+
+	simulationApplication.application.keys = sdkTypes.NewKVStoreKeys(
+		baseapp.MainStoreKey,
+		auth.StoreKey,
+		supply.StoreKey,
+		staking.StoreKey,
+		mint.StoreKey,
+		distribution.StoreKey,
+		slashing.StoreKey,
+		gov.StoreKey,
+		params.StoreKey,
+		upgrade.StoreKey,
+		evidence.StoreKey,
+		wasm.StoreKey,
+		assets.Prototype().Name(),
+		classifications.Prototype().Name(),
+		identities.Prototype().Name(),
+		maintainers.Prototype().Name(),
+		metas.Prototype().Name(),
+		orders.Prototype().Name(),
+		splits.Prototype().Name(),
+	)
+
+	simulationApplication.transientStoreKeys = sdkTypes.NewTransientStoreKeys(params.TStoreKey)
+
+	simulationApplication.application.baseApp = baseApp
+	simulationApplication.application.codec = codec
+
+	simulationApplication.ParamsKeeper = params.NewKeeper(
+		codec,
+		simulationApplication.application.keys[params.StoreKey],
+		simulationApplication.transientStoreKeys[params.TStoreKey],
+	)
+
+	simulationApplication.AccountKeeper = auth.NewAccountKeeper(
+		codec,
+		simulationApplication.application.keys[auth.StoreKey],
+		simulationApplication.ParamsKeeper.Subspace(auth.DefaultParamspace),
+		auth.ProtoBaseAccount,
+	)
+
+	blacklistedAddresses := make(map[string]bool)
+	for account := range moduleAccountPermissions {
+		blacklistedAddresses[supply.NewModuleAddress(account).String()] = !tokenReceiveAllowedModules[account]
+	}
+
+	simulationApplication.BankKeeper = bank.NewBaseKeeper(
+		simulationApplication.AccountKeeper,
+		simulationApplication.ParamsKeeper.Subspace(bank.DefaultParamspace),
+		blacklistedAddresses,
+	)
+
+	simulationApplication.SupplyKeeper = supply.NewKeeper(
+		codec,
+		simulationApplication.application.keys[supply.StoreKey],
+		simulationApplication.AccountKeeper,
+		simulationApplication.BankKeeper,
+		moduleAccountPermissions,
+	)
+
+	simulationApplication.application.stakingKeeper = staking.NewKeeper(
+		codec,
+		simulationApplication.application.keys[staking.StoreKey],
+		simulationApplication.SupplyKeeper,
+		simulationApplication.ParamsKeeper.Subspace(staking.DefaultParamspace),
+	)
+	simulationApplication.StakingKeeper = simulationApplication.application.stakingKeeper
+
+	simulationApplication.MintKeeper = mint.NewKeeper(
+		codec,
+		simulationApplication.application.keys[mint.StoreKey],
+		simulationApplication.ParamsKeeper.Subspace(mint.DefaultParamspace),
+		&simulationApplication.StakingKeeper,
+		simulationApplication.SupplyKeeper,
+		auth.FeeCollectorName,
+	)
+
+	blackListedModuleAddresses := make(map[string]bool)
+	for moduleAccount := range moduleAccountPermissions {
+		blackListedModuleAddresses[supply.NewModuleAddress(moduleAccount).String()] = true
+	}
+
+	simulationApplication.application.distributionKeeper = distribution.NewKeeper(
+		codec,
+		simulationApplication.application.keys[distribution.StoreKey],
+		simulationApplication.ParamsKeeper.Subspace(distribution.DefaultParamspace),
+		&simulationApplication.application.stakingKeeper,
+		simulationApplication.SupplyKeeper,
+		auth.FeeCollectorName,
+		blackListedModuleAddresses,
+	)
+	simulationApplication.DistributionKeeper = simulationApplication.application.distributionKeeper
+
+	simulationApplication.application.slashingKeeper = slashing.NewKeeper(
+		codec,
+		simulationApplication.application.keys[slashing.StoreKey],
+		&simulationApplication.application.stakingKeeper,
+		simulationApplication.ParamsKeeper.Subspace(slashing.DefaultParamspace),
+	)
+	simulationApplication.SlashingKeeper = simulationApplication.application.slashingKeeper
+
+	simulationApplication.application.crisisKeeper = crisis.NewKeeper(
+		simulationApplication.ParamsKeeper.Subspace(crisis.DefaultParamspace),
+		invCheckPeriod,
+		simulationApplication.SupplyKeeper,
+		auth.FeeCollectorName,
+	)
+	simulationApplication.CrisisKeeper = simulationApplication.application.crisisKeeper
+
+	simulationApplication.UpgradeKeeper = upgrade.NewKeeper(
+		skipUpgradeHeights,
+		simulationApplication.application.keys[upgrade.StoreKey],
+		codec,
+	)
+
+	evidenceKeeper := evidence.NewKeeper(
+		codec,
+		simulationApplication.application.keys[evidence.StoreKey],
+		simulationApplication.ParamsKeeper.Subspace(evidence.DefaultParamspace),
+		&simulationApplication.application.stakingKeeper,
+		simulationApplication.application.slashingKeeper,
+	)
+	evidenceRouter := evidence.NewRouter()
+	evidenceKeeper.SetRouter(evidenceRouter)
+	simulationApplication.EvidenceKeeper = *evidenceKeeper
+	govRouter := gov.NewRouter()
+	govRouter.AddRoute(
+		gov.RouterKey,
+		gov.ProposalHandler,
+	).AddRoute(
+		params.RouterKey,
+		params.NewParamChangeProposalHandler(simulationApplication.ParamsKeeper),
+	).AddRoute(
+		distribution.RouterKey,
+		distribution.NewCommunityPoolSpendProposalHandler(simulationApplication.application.distributionKeeper),
+	).AddRoute(
+		upgrade.RouterKey,
+		upgrade.NewSoftwareUpgradeProposalHandler(simulationApplication.UpgradeKeeper),
+	)
+
+	simulationApplication.application.stakingKeeper = *simulationApplication.application.stakingKeeper.SetHooks(
+		staking.NewMultiStakingHooks(simulationApplication.application.distributionKeeper.Hooks(), simulationApplication.application.slashingKeeper.Hooks()),
+	)
+
+	metasModule := metas.Prototype().Initialize(
+		simulationApplication.application.keys[metas.Prototype().Name()],
+		simulationApplication.ParamsKeeper.Subspace(metas.Prototype().Name()),
+	)
+	maintainersModule := maintainers.Prototype().Initialize(
+		simulationApplication.application.keys[metas.Prototype().Name()],
+		simulationApplication.ParamsKeeper.Subspace(maintainers.Prototype().Name()),
+	)
+	classificationsModule := classifications.Prototype().Initialize(
+		simulationApplication.application.keys[classifications.Prototype().Name()],
+		simulationApplication.ParamsKeeper.Subspace(classifications.Prototype().Name()),
+		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+	)
+	identitiesModule := identities.Prototype().Initialize(
+		simulationApplication.application.keys[identities.Prototype().Name()],
+		simulationApplication.ParamsKeeper.Subspace(identities.Prototype().Name()),
+		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
+		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+	)
+	splitsModule := splits.Prototype().Initialize(
+		simulationApplication.application.keys[splits.Prototype().Name()],
+		simulationApplication.ParamsKeeper.Subspace(splits.Prototype().Name()),
+		simulationApplication.SupplyKeeper,
+		identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
+	)
+	assetsModule := assets.Prototype().Initialize(
+		simulationApplication.application.keys[assets.Prototype().Name()],
+		simulationApplication.ParamsKeeper.Subspace(assets.Prototype().Name()),
+		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
+		identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
+		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
+		splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
+		splitsModule.GetAuxiliary(burn.Auxiliary.GetName()),
+		splitsModule.GetAuxiliary(renumerate.Auxiliary.GetName()),
+	)
+	ordersModule := orders.Prototype().Initialize(
+		simulationApplication.application.keys[orders.Prototype().Name()],
+		simulationApplication.ParamsKeeper.Subspace(orders.Prototype().Name()),
+		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
+		identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
+		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
+		splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
+		splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
+	)
+
+	var wasmRouter = baseApp.Router()
+
+	wasmDir := filepath.Join(home, wasm.ModuleName)
+
+	wasmWrap := struct {
+		Wasm wasm.WasmConfig `mapstructure:"wasm"`
+	}{
+		Wasm: wasm.DefaultWasmConfig(),
+	}
+
+	err := viper.Unmarshal(&wasmWrap)
+	if err != nil {
+		panic("error while reading wasm config: " + err.Error())
+	}
+
+	wasmConfig := wasmWrap.Wasm
+
+	wasmKeeper := wasm.NewKeeper(
+		codec,
+		simulationApplication.application.keys[wasm.StoreKey],
+		simulationApplication.ParamsKeeper.Subspace(wasm.DefaultParamspace),
+		simulationApplication.AccountKeeper,
+		simulationApplication.BankKeeper,
+		simulationApplication.application.stakingKeeper,
+		wasmRouter,
+		wasmDir,
+		wasmConfig,
+		staking.ModuleName,
+		&wasm.MessageEncoders{Custom: wasmUtilities.CustomEncoder(assets.Prototype(), classifications.Prototype(), identities.Prototype(), maintainers.Prototype(), metas.Prototype(), orders.Prototype(), splits.Prototype())},
+		nil)
+
+	if len(enabledProposals) != 0 {
+		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(wasmKeeper, enabledProposals))
+	}
+
+	simulationApplication.GovKeeper = gov.NewKeeper(
+		codec,
+		simulationApplication.application.keys[gov.StoreKey],
+		simulationApplication.ParamsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable()),
+		simulationApplication.SupplyKeeper,
+		&simulationApplication.application.stakingKeeper,
+		govRouter,
+	)
+
+	simulationApplication.application.moduleManager = sdkTypesModule.NewManager(
+		genutil.NewAppModule(simulationApplication.AccountKeeper, simulationApplication.application.stakingKeeper, simulationApplication.application.baseApp.DeliverTx),
+		auth.NewAppModule(simulationApplication.AccountKeeper),
+		bank.NewAppModule(simulationApplication.BankKeeper, simulationApplication.AccountKeeper),
+		crisis.NewAppModule(&simulationApplication.application.crisisKeeper),
+		supply.NewAppModule(simulationApplication.SupplyKeeper, simulationApplication.AccountKeeper),
+		gov.NewAppModule(simulationApplication.GovKeeper, simulationApplication.AccountKeeper, simulationApplication.SupplyKeeper),
+		mint.NewAppModule(simulationApplication.MintKeeper),
+		slashing.NewAppModule(simulationApplication.application.slashingKeeper, simulationApplication.AccountKeeper, simulationApplication.application.stakingKeeper),
+		distribution.NewAppModule(simulationApplication.application.distributionKeeper, simulationApplication.AccountKeeper, simulationApplication.SupplyKeeper, simulationApplication.application.stakingKeeper),
+		staking.NewAppModule(simulationApplication.application.stakingKeeper, simulationApplication.AccountKeeper, simulationApplication.SupplyKeeper),
+		upgrade.NewAppModule(simulationApplication.UpgradeKeeper),
+		wasm.NewAppModule(wasmKeeper),
+		evidence.NewAppModule(*evidenceKeeper),
+
+		assetsModule,
+		classificationsModule,
+		identitiesModule,
+		maintainersModule,
+		metasModule,
+		ordersModule,
+		splitsModule,
+	)
+
+	simulationApplication.application.moduleManager.SetOrderBeginBlockers(
+		upgrade.ModuleName,
+		mint.ModuleName,
+		distribution.ModuleName,
+		slashing.ModuleName,
+		ordersModule.Name(),
+	)
+	simulationApplication.application.moduleManager.SetOrderEndBlockers(
+		crisis.ModuleName,
+		gov.ModuleName,
+		staking.ModuleName,
+	)
+	simulationApplication.application.moduleManager.SetOrderInitGenesis(
+		auth.ModuleName,
+		distribution.ModuleName,
+		staking.ModuleName,
+		bank.ModuleName,
+		slashing.ModuleName,
+		gov.ModuleName,
+		mint.ModuleName,
+		supply.ModuleName,
+		crisis.ModuleName,
+		genutil.ModuleName,
+		evidence.ModuleName,
+		wasm.ModuleName,
+		assets.Prototype().Name(),
+		classifications.Prototype().Name(),
+		identities.Prototype().Name(),
+		maintainers.Prototype().Name(),
+		metas.Prototype().Name(),
+		orders.Prototype().Name(),
+		splits.Prototype().Name(),
+	)
+	simulationApplication.application.moduleManager.RegisterInvariants(&simulationApplication.application.crisisKeeper)
+	simulationApplication.application.moduleManager.RegisterRoutes(simulationApplication.application.baseApp.Router(), simulationApplication.application.baseApp.QueryRouter())
+
+	simulationApplication.sm = sdkTypesModule.NewSimulationManager(
+		auth.NewAppModule(simulationApplication.AccountKeeper),
+		bank.NewAppModule(simulationApplication.BankKeeper, simulationApplication.AccountKeeper),
+		supply.NewAppModule(simulationApplication.SupplyKeeper, simulationApplication.AccountKeeper),
+		gov.NewAppModule(simulationApplication.GovKeeper, simulationApplication.AccountKeeper, simulationApplication.SupplyKeeper),
+		mint.NewAppModule(simulationApplication.MintKeeper),
+		staking.NewAppModule(simulationApplication.application.stakingKeeper, simulationApplication.AccountKeeper, simulationApplication.SupplyKeeper),
+		distribution.NewAppModule(simulationApplication.application.distributionKeeper, simulationApplication.AccountKeeper, simulationApplication.SupplyKeeper, simulationApplication.application.stakingKeeper),
+		slashing.NewAppModule(simulationApplication.application.slashingKeeper, simulationApplication.AccountKeeper, simulationApplication.application.stakingKeeper),
+		params.NewAppModule(),
+		assets.Prototype(),
+		classifications.Prototype(),
+		identities.Prototype(),
+		maintainers.Prototype(),
+		metas.Prototype(),
+		orders.Prototype(),
+		splits.Prototype(),
+	)
+
+	simulationApplication.sm.RegisterStoreDecoders()
+
+	simulationApplication.application.baseApp.MountKVStores(simulationApplication.application.keys)
+	simulationApplication.application.baseApp.MountTransientStores(simulationApplication.transientStoreKeys)
+
+	simulationApplication.application.baseApp.SetBeginBlocker(simulationApplication.application.moduleManager.BeginBlock)
+	simulationApplication.application.baseApp.SetEndBlocker(simulationApplication.application.moduleManager.EndBlock)
+	simulationApplication.application.baseApp.SetInitChainer(func(context sdkTypes.Context, requestInitChain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
+		var genesisState map[string]json.RawMessage
+		codec.MustUnmarshalJSON(requestInitChain.AppStateBytes, &genesisState)
+		return simulationApplication.application.moduleManager.InitGenesis(context, genesisState)
+	})
+	simulationApplication.application.baseApp.SetAnteHandler(auth.NewAnteHandler(simulationApplication.AccountKeeper, simulationApplication.SupplyKeeper, ante.DefaultSigVerificationGasConsumer))
+
+	if loadLatest {
+		err := simulationApplication.application.baseApp.LoadLatestVersion(simulationApplication.application.keys[baseapp.MainStoreKey])
+		if err != nil {
+			tendermintOS.Exit(err.Error())
+		}
+	}
+
+	return simulationApplication
 }
 
 func (simulationApplication simulationApplication) Name() string {
@@ -171,7 +549,7 @@ func (simulationApplication simulationApplication) GetKey(storeKey string) *sdkT
 }
 
 func (simulationApplication simulationApplication) GetTKey(storeKey string) *sdkTypes.TransientStoreKey {
-	return simulationApplication.transientKeys[storeKey]
+	return simulationApplication.transientStoreKeys[storeKey]
 }
 
 func (simulationApplication simulationApplication) GetSubspace(moduleName string) params.Subspace {
@@ -179,11 +557,16 @@ func (simulationApplication simulationApplication) GetSubspace(moduleName string
 }
 
 func (simulationApplication simulationApplication) GetMaccPerms() map[string][]string {
-	panic("implement me")
+	return simulationApplication.moduleAddressPermissions
 }
 
 func (simulationApplication simulationApplication) BlacklistedAccAddrs() map[string]bool {
-	panic("implement me")
+	blacklistedAddrs := make(map[string]bool)
+	for acc := range maccPerms {
+		blacklistedAddrs[supply.NewModuleAddress(acc).String()] = !allowedReceivingModAcc[acc]
+	}
+
+	return blacklistedAddrs
 }
 
 func (simulationApplication simulationApplication) CheckBalance(t *testing.T, address sdkTypes.AccAddress, coins sdkTypes.Coins) {
@@ -275,10 +658,7 @@ func (simulationApplication simulationApplication) NewTestApplication(isCheckTx 
 }
 
 func NewSimApp(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) simulationApplication {
-	app := NewApplication().Initialize(app, MakeCodec(), wasm.EnableAllProposals, maccPerms, allowedReceivingModAcc, logger, db, traceStore, loadLatest, invCheckPeriod, skipUpgradeHeights, home, baseAppOptions...)
-	return simulationApplication{
-		application: app.(*application),
-	}
+	return simulationApplication{}
 }
 
 var (

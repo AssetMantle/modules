@@ -75,46 +75,46 @@ type application struct {
 
 var _ applications.Application = (*application)(nil)
 
-func (application *application) Info(requestInfo abciTypes.RequestInfo) abciTypes.ResponseInfo {
+func (application application) Info(requestInfo abciTypes.RequestInfo) abciTypes.ResponseInfo {
 	return application.baseApp.Info(requestInfo)
 }
 
-func (application *application) SetOption(requestSetOption abciTypes.RequestSetOption) abciTypes.ResponseSetOption {
+func (application application) SetOption(requestSetOption abciTypes.RequestSetOption) abciTypes.ResponseSetOption {
 	return application.baseApp.SetOption(requestSetOption)
 }
 
-func (application *application) Query(requestQuery abciTypes.RequestQuery) abciTypes.ResponseQuery {
+func (application application) Query(requestQuery abciTypes.RequestQuery) abciTypes.ResponseQuery {
 	return application.baseApp.Query(requestQuery)
 }
 
-func (application *application) CheckTx(requestCheckTx abciTypes.RequestCheckTx) abciTypes.ResponseCheckTx {
+func (application application) CheckTx(requestCheckTx abciTypes.RequestCheckTx) abciTypes.ResponseCheckTx {
 	return application.baseApp.CheckTx(requestCheckTx)
 }
 
-func (application *application) InitChain(requestInitChain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
+func (application application) InitChain(requestInitChain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
 	return application.baseApp.InitChain(requestInitChain)
 }
 
-func (application *application) BeginBlock(requestBeginBlock abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
+func (application application) BeginBlock(requestBeginBlock abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
 	return application.baseApp.BeginBlock(requestBeginBlock)
 }
 
-func (application *application) DeliverTx(requestDeliverTx abciTypes.RequestDeliverTx) abciTypes.ResponseDeliverTx {
+func (application application) DeliverTx(requestDeliverTx abciTypes.RequestDeliverTx) abciTypes.ResponseDeliverTx {
 	return application.baseApp.DeliverTx(requestDeliverTx)
 }
 
-func (application *application) EndBlock(requestEndBlock abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock {
+func (application application) EndBlock(requestEndBlock abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock {
 	return application.baseApp.EndBlock(requestEndBlock)
 }
 
-func (application *application) Commit() abciTypes.ResponseCommit {
+func (application application) Commit() abciTypes.ResponseCommit {
 	return application.baseApp.Commit()
 }
 
-func (application *application) LoadHeight(height int64) error {
+func (application application) LoadHeight(height int64) error {
 	return application.baseApp.LoadVersion(height, application.keys[baseapp.MainStoreKey])
 }
-func (application *application) ExportApplicationStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
+func (application application) ExportApplicationStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
 	context := application.baseApp.NewContext(true, abciTypes.Header{Height: application.baseApp.LastBlockHeight()})
 
 	if forZeroHeight {
@@ -233,12 +233,12 @@ func (application *application) ExportApplicationStateAndValidators(forZeroHeigh
 	return applicationState, staking.WriteValidators(context, application.stakingKeeper), nil
 }
 
-func (application *application) Initialize(applicationName string, codec *codec.Codec, enabledProposals []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool, logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
+func (application application) Initialize(applicationName string, codec *codec.Codec, enabledProposals []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool, logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
 	baseApp := baseapp.NewBaseApp(
 		applicationName,
 		logger,
 		db,
-		auth.DefaultTxDecoder(application.codec),
+		auth.DefaultTxDecoder(codec),
 		baseAppOptions...,
 	)
 	baseApp.SetCommitMultiStoreTracer(traceStore)
