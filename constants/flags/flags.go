@@ -44,4 +44,5 @@ var (
 	ToID                    = base.NewCLIFlag("toID", "", "ToID")
 	TakerOwnableID          = base.NewCLIFlag("takerOwnableID", "", "TakerOwnableID")
 	TakerOwnableSplit       = base.NewCLIFlag("takerOwnableSplit", "0", "TakerOwnableSplit")
+	OrderType               = base.NewCLIFlag("orderType", 1, "OrderType")
 )

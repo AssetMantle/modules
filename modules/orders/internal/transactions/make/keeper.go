@@ -6,6 +6,8 @@
 package make
 
 import (
+	"sort"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
@@ -13,6 +15,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/execution"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
@@ -20,6 +23,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -42,10 +46,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, base.NewID(module.Name), message.MakerOwnableID, message.MakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
-
 	immutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetMetaPropertyList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)
@@ -53,12 +53,21 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	immutables := base.NewImmutables(base.NewProperties(append(immutableProperties.GetList(), message.ImmutableProperties.GetList()...)...))
 
-	orderID := key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, message.FromID, immutables)
+	makerTakerIDs := []string{message.MakerOwnableID.String(), message.TakerOwnableID.String()}
+	sort.Strings(makerTakerIDs)
+
+	var orderID types.ID
+
+	if makerTakerIDs[0] == message.MakerOwnableID.String() {
+		orderID = key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, base.NewDecID(message.ExchangeRate), base.NewHeightID(context.BlockHeight()), message.FromID, immutables)
+	} else {
+		orderID = key.NewOrderID(message.ClassificationID, message.TakerOwnableID, message.MakerOwnableID, base.NewDecID(message.ExchangeRate.Neg()), base.NewHeightID(context.BlockHeight()), message.FromID, immutables)
+	}
+
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(orderID))
-
 	makerOwnableSplit := message.MakerOwnableSplit
-
 	order := orders.Get(key.New(orderID))
+
 	if order != nil {
 		metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetMakerOwnableSplit())))
 		if Error != nil {
@@ -92,10 +101,25 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
+	if (order != nil && !message.MakerOwnableSplit.IsZero()) || order == nil {
+		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, base.NewID(module.Name), message.MakerOwnableID, message.MakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+			return newTransactionResponse(auxiliaryResponse.GetError())
+		}
+	}
+
 	if order != nil {
-		orders.Mutate(mappable.NewOrder(orderID, immutables, order.(mappables.Order).GetMutables().Mutate(mutables.Get().GetList()...)))
+		order = mappable.NewOrder(orderID, immutables, order.(mappables.Order).GetMutables().Mutate(mutables.Get().GetList()...))
+		orders = orders.Mutate(order)
 	} else {
-		orders.Add(mappable.NewOrder(orderID, immutables, mutables))
+		order = mappable.NewOrder(orderID, immutables, mutables)
+		orders = orders.Add(order)
+	}
+
+	if message.OrderType == module.ImmediateExecution {
+		Error = execution.ExecuteImmediately(orderID, orders, context, transactionKeeper.supplementAuxiliary, transactionKeeper.transferAuxiliary, transactionKeeper.scrubAuxiliary)
+		if Error != nil {
+			return newTransactionResponse(Error)
+		}
 	}
 
 	return newTransactionResponse(nil)

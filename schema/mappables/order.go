@@ -12,13 +12,16 @@ import (
 )
 
 type Order interface {
+	GetID() types.ID
 	GetClassificationID() types.ID
+	GetExchangeRate() types.Data
+	GetCreationHeight() types.Data
 	GetMakerOwnableID() types.ID
 	GetTakerOwnableID() types.ID
 	GetMakerID() types.ID
+	GetKey() helpers.Key
 
 	GetTakerID() types.Property
-	GetExchangeRate() types.Property
 	GetCreation() types.Property
 	GetExpiry() types.Property
 	GetMakerOwnableSplit() types.Property

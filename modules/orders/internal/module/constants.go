@@ -12,3 +12,4 @@ import (
 
 const Name = names.Orders
 const StoreKeyPrefix = keys.Orders
+const ImmediateExecution = 1

@@ -30,4 +30,6 @@ func RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, signature{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, signatures{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, stringData{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, decID{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, heightID{})
 }

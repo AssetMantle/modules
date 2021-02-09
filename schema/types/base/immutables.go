@@ -20,6 +20,10 @@ func (immutables immutables) Get() types.Properties {
 	return immutables.Properties
 }
 func (immutables immutables) GetHashID() types.ID {
+	if len(immutables.Properties.GetList()) == 0 {
+		return NewID("")
+	}
+
 	metaList := make([]string, len(immutables.Properties.GetList()))
 	for i, immutableProperty := range immutables.Properties.GetList() {
 		metaList[i] = immutableProperty.GetFact().GetHashID().String()

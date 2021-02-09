@@ -61,7 +61,18 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), message.FromID, order.(mappables.Order).GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+	returnOwnableID := order.(mappables.Order).GetMakerOwnableID()
+	exchangeRate, Error := order.(mappables.Order).GetExchangeRate().AsDec()
+
+	if Error != nil {
+		return newTransactionResponse(Error)
+	}
+
+	if exchangeRate.IsNegative() {
+		returnOwnableID = order.(mappables.Order).GetTakerOwnableID()
+	}
+
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), message.FromID, returnOwnableID, makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 

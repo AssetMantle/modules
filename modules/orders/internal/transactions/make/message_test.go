@@ -6,12 +6,16 @@
 package make
 
 import (
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/types/errors"
+	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Make_Message(t *testing.T) {
@@ -22,6 +26,8 @@ func Test_Make_Message(t *testing.T) {
 	testTakerOwnableID := base.NewID("takerOwnableID")
 	testExpiresIn := base.NewHeight(12)
 	testMakerOwnableSplit := sdkTypes.NewDec(2)
+	testExchangeRate, _ := sdkTypes.NewDecFromStr("2000000000000000000")
+	zeroExchangeRate, _ := sdkTypes.NewDecFromStr("0")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -36,8 +42,8 @@ func Test_Make_Message(t *testing.T) {
 	mutableTraits, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, Error)
 
-	testMessage := newMessage(fromAccAddress, testFromID, testClassificationID, testMakerOwnableID, testTakerOwnableID, testExpiresIn, testMakerOwnableSplit, immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits)
-	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ClassificationID: testClassificationID, MakerOwnableID: testMakerOwnableID, TakerOwnableID: testTakerOwnableID, ExpiresIn: testExpiresIn, MakerOwnableSplit: testMakerOwnableSplit, ImmutableMetaProperties: immutableMetaTraits, ImmutableProperties: immutableTraits, MutableMetaProperties: mutableMetaTraits, MutableProperties: mutableTraits}, testMessage)
+	testMessage := newMessage(fromAccAddress, testFromID, testClassificationID, testMakerOwnableID, testTakerOwnableID, testExpiresIn, testMakerOwnableSplit, testExchangeRate, module.ImmediateExecution, immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits)
+	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ClassificationID: testClassificationID, MakerOwnableID: testMakerOwnableID, TakerOwnableID: testTakerOwnableID, ExpiresIn: testExpiresIn, ExchangeRate: testExchangeRate, OrderType: module.ImmediateExecution, MakerOwnableSplit: testMakerOwnableSplit, ImmutableMetaProperties: immutableMetaTraits, ImmutableProperties: immutableTraits, MutableMetaProperties: mutableMetaTraits, MutableProperties: mutableTraits}, testMessage)
 	require.Equal(t, module.Name, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
 	require.Equal(t, nil, testMessage.ValidateBasic())
@@ -47,5 +53,7 @@ func Test_Make_Message(t *testing.T) {
 	require.Equal(t, testMessage, messageFromInterface(testMessage))
 	require.Equal(t, message{}, messageFromInterface(nil))
 	require.Equal(t, message{}, messagePrototype())
+	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, testFromID, testClassificationID, testMakerOwnableID, testTakerOwnableID, testExpiresIn, testMakerOwnableSplit, zeroExchangeRate, module.ImmediateExecution, immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).ValidateBasic())
+	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, testFromID, testClassificationID, testMakerOwnableID, testMakerOwnableID, testExpiresIn, testMakerOwnableSplit, testExchangeRate, module.ImmediateExecution, immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).ValidateBasic())
 
 }

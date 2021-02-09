@@ -7,18 +7,20 @@ package make
 
 import (
 	"encoding/json"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Define_Request(t *testing.T) {
@@ -30,7 +32,7 @@ func Test_Define_Request(t *testing.T) {
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.FromID, flags.ClassificationID, flags.MakerOwnableSplit, flags.MakerOwnableID, flags.TakerOwnableID, flags.ExpiresIn, flags.ImmutableMetaProperties, flags.ImmutableProperties, flags.MutableMetaProperties, flags.MutableProperties})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.FromID, flags.ClassificationID, flags.MakerOwnableSplit, flags.MakerOwnableID, flags.TakerOwnableID, flags.ExpiresIn, flags.ExchangeRate, flags.OrderType, flags.ImmutableMetaProperties, flags.ImmutableProperties, flags.MutableMetaProperties, flags.MutableProperties})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	immutableMetaTraits := "defaultImmutableMeta1:S|defaultImmutableMeta1"
@@ -52,9 +54,9 @@ func Test_Define_Request(t *testing.T) {
 	require.Nil(t, Error)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
-	testTransactionRequest := newTransactionRequest(testBaseReq, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits)
+	testTransactionRequest := newTransactionRequest(testBaseReq, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", sdkTypes.OneDec().String(), module.ImmediateExecution, immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits)
 
-	require.Equal(t, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", ClassificationID: "classificationID", MakerOwnableID: "makerOwnableID", TakerOwnableID: "takerOwnableID", ExpiresIn: 123, MakerOwnableSplit: "2", ImmutableMetaProperties: immutableMetaTraits, ImmutableProperties: immutableTraits, MutableMetaProperties: mutableMetaTraits, MutableProperties: mutableTraits}, testTransactionRequest)
+	require.Equal(t, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", ClassificationID: "classificationID", MakerOwnableID: "makerOwnableID", TakerOwnableID: "takerOwnableID", ExpiresIn: 123, MakerOwnableSplit: "2", ExchangeRate: sdkTypes.OneDec().String(), OrderType: module.ImmediateExecution, ImmutableMetaProperties: immutableMetaTraits, ImmutableProperties: immutableTraits, MutableMetaProperties: mutableMetaTraits, MutableProperties: mutableTraits}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
 	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, cliContext)
@@ -73,30 +75,34 @@ func Test_Define_Request(t *testing.T) {
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
 	msg, Error := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), base.NewID("classificationID"), base.NewID("makerOwnableID"), base.NewID("takerOwnableID"), base.NewHeight(123), sdkTypes.NewDec(2), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
+	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), base.NewID("classificationID"), base.NewID("makerOwnableID"), base.NewID("takerOwnableID"), base.NewHeight(123), sdkTypes.NewDec(2), sdkTypes.OneDec(), module.ImmediateExecution, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
 	require.Nil(t, Error)
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
+	msg, Error = newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", sdkTypes.OneDec().String(), module.ImmediateExecution, immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
 	require.Equal(t, nil, msg)
 	require.NotNil(t, Error)
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: fromAddress, ChainID: "test"}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "randomInput", immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
+	msg, Error = newTransactionRequest(rest.BaseReq{From: fromAddress, ChainID: "test"}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "randomInput", sdkTypes.OneDec().String(), module.ImmediateExecution, immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
 	require.Equal(t, nil, msg)
 	require.NotNil(t, Error)
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", "randomString", immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
+	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", sdkTypes.OneDec().String(), module.ImmediateExecution, "randomString", immutableTraits, mutableMetaTraits, mutableTraits).MakeMsg()
 	require.Equal(t, nil, msg)
 	require.NotNil(t, Error)
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", immutableMetaTraits, "randomString", mutableMetaTraits, mutableTraits).MakeMsg()
+	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", sdkTypes.OneDec().String(), module.ImmediateExecution, immutableMetaTraits, "randomString", mutableMetaTraits, mutableTraits).MakeMsg()
 	require.Equal(t, nil, msg)
 	require.NotNil(t, Error)
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", immutableMetaTraits, immutableTraits, "randomString", mutableTraits).MakeMsg()
+	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", sdkTypes.OneDec().String(), module.ImmediateExecution, immutableMetaTraits, immutableTraits, "randomString", mutableTraits).MakeMsg()
 	require.Equal(t, nil, msg)
 	require.NotNil(t, Error)
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", immutableMetaTraits, immutableTraits, mutableMetaTraits, "randomString").MakeMsg()
+	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", sdkTypes.OneDec().String(), module.ImmediateExecution, immutableMetaTraits, immutableTraits, mutableMetaTraits, "randomString").MakeMsg()
+	require.Equal(t, nil, msg)
+	require.NotNil(t, Error)
+
+	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", "test", module.ImmediateExecution, immutableMetaTraits, immutableTraits, mutableMetaTraits, "randomString").MakeMsg()
 	require.Equal(t, nil, msg)
 	require.NotNil(t, Error)
 

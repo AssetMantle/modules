@@ -21,6 +21,8 @@ type orderID struct {
 	ClassificationID types.ID `json:"classificationID"`
 	MakerOwnableID   types.ID `json:"makerOwnableID"`
 	TakerOwnableID   types.ID `json:"takerOwnableID"`
+	ExchangeRate     types.ID `json:"exchangeRate"`
+	CreationHeight   types.ID `json:"creationHeight"`
 	MakerID          types.ID `json:"makerID"`
 	HashID           types.ID `json:"hashID"`
 }
@@ -33,6 +35,8 @@ func (orderID orderID) Bytes() []byte {
 	Bytes = append(Bytes, orderID.ClassificationID.Bytes()...)
 	Bytes = append(Bytes, orderID.MakerOwnableID.Bytes()...)
 	Bytes = append(Bytes, orderID.TakerOwnableID.Bytes()...)
+	Bytes = append(Bytes, orderID.ExchangeRate.Bytes()...)
+	Bytes = append(Bytes, orderID.CreationHeight.Bytes()...)
 	Bytes = append(Bytes, orderID.MakerID.Bytes()...)
 	Bytes = append(Bytes, orderID.HashID.Bytes()...)
 
@@ -43,6 +47,8 @@ func (orderID orderID) String() string {
 	values = append(values, orderID.ClassificationID.String())
 	values = append(values, orderID.MakerOwnableID.String())
 	values = append(values, orderID.TakerOwnableID.String())
+	values = append(values, orderID.ExchangeRate.String())
+	values = append(values, orderID.CreationHeight.String())
 	values = append(values, orderID.MakerID.String())
 	values = append(values, orderID.HashID.String())
 
@@ -52,6 +58,7 @@ func (orderID orderID) Equals(id types.ID) bool {
 	return bytes.Equal(orderID.Bytes(), id.Bytes())
 }
 func (orderID orderID) GenerateStoreKeyBytes() []byte {
+	// 	return GetStoreKeyPrefix(orderID).GenerateStoreKey(orderID.Bytes())
 	return module.StoreKeyPrefix.GenerateStoreKey(orderID.Bytes())
 }
 func (orderID) RegisterCodec(codec *codec.Codec) {
@@ -68,11 +75,13 @@ func New(id types.ID) helpers.Key {
 	return orderIDFromInterface(id)
 }
 
-func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, makerID types.ID, immutables types.Immutables) types.ID {
+func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, exchangeRateID types.ID, creationHeightID types.ID, makerID types.ID, immutables types.Immutables) types.ID {
 	return orderID{
 		ClassificationID: classificationID,
 		MakerOwnableID:   makerOwnableID,
 		TakerOwnableID:   takerOwnableID,
+		ExchangeRate:     exchangeRateID,
+		CreationHeight:   creationHeightID,
 		MakerID:          makerID,
 		HashID:           immutables.GetHashID(),
 	}

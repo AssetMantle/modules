@@ -6,6 +6,8 @@
 package mappable
 
 import (
+	"strconv"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
@@ -29,6 +31,22 @@ var _ mappables.Order = (*order)(nil)
 func (order order) GetClassificationID() types.ID {
 	return key.ReadClassificationID(order.ID)
 }
+func (order order) GetExchangeRate() types.Data {
+	decValue, Error := sdkTypes.NewDecFromStr(key.ReadExchangeRate(order.ID).String())
+	if Error != nil {
+		return base.NewDecData(sdkTypes.ZeroDec())
+	}
+
+	return base.NewDecData(decValue)
+}
+func (order order) GetCreationHeight() types.Data {
+	heightValue, Error := strconv.ParseInt(key.ReadCreationHeight(order.ID).String(), 10, 64)
+	if Error != nil {
+		base.NewHeightData(base.NewHeight(0))
+	}
+
+	return base.NewHeightData(base.NewHeight(heightValue))
+}
 func (order order) GetMakerOwnableID() types.ID {
 	return key.ReadMakerOwnableID(order.ID)
 }
@@ -46,16 +64,6 @@ func (order order) GetTakerID() types.Property {
 	} else {
 		data, _ := base.ReadIDData("")
 		return base.NewProperty(base.NewID(properties.TakerID), base.NewFact(data))
-	}
-}
-func (order order) GetExchangeRate() types.Property {
-	if exchangeRate := order.Immutables.Get().Get(base.NewID(properties.ExchangeRate)); exchangeRate != nil {
-		return exchangeRate
-	} else if exchangeRate := order.Mutables.Get().Get(base.NewID(properties.ExchangeRate)); exchangeRate != nil {
-		return exchangeRate
-	} else {
-		data := base.NewDecData(sdkTypes.OneDec())
-		return base.NewProperty(base.NewID(properties.ExchangeRate), base.NewFact(data))
 	}
 }
 func (order order) GetCreation() types.Property {

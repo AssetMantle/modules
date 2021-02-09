@@ -6,6 +6,9 @@
 package make
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -29,8 +32,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
 )
 
 type TestKeepers struct {
@@ -107,13 +108,13 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
 	orderID := key.NewOrderID(classificationID, makerOwnableID,
-		takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
+		takerOwnableID, base.NewDecID(sdkTypes.OneDec()), base.NewHeightID(100), defaultIdentityID, base.NewImmutables(base.NewProperties()))
 	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
-			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(),
+			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(), 10,
 			immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -121,7 +122,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("PositiveCase- ReAdd order", func(t *testing.T) {
 		want := newTransactionResponse(nil)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
-			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(),
+			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(), 10,
 			immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -131,7 +132,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, classificationID,
-			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(),
+			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(), 10,
 			immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -141,7 +142,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
-			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(),
+			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(), 10,
 			immutableMetaTraits, immutableTraits, mutableMetaTraits, conformMockErrorTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -151,7 +152,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
-			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(),
+			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(), 10,
 			immutableMetaTraits, immutableTraits, scrubMockErrorTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -161,7 +162,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
-			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(),
+			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(), 10,
 			scrubMockErrorTraits, immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -171,7 +172,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
-			base.NewID("transferError"), takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(),
+			base.NewID("transferError"), takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(), 10,
 			immutableMetaTraits, immutableTraits, mutableMetaTraits, mutableTraits)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
