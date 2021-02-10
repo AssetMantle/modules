@@ -32,6 +32,9 @@ func (maintainer maintainer) GetClassificationID() types.ID {
 func (maintainer maintainer) GetIdentityID() types.ID {
 	return key.ReadIdentityID(maintainer.ID)
 }
+func (maintainer maintainer) GetMaintainedProperties() types.Properties {
+	return maintainer.MaintainedProperties
+}
 func (maintainer maintainer) CanAddMaintainer() bool    { return maintainer.AddMaintainer }
 func (maintainer maintainer) CanRemoveMaintainer() bool { return maintainer.RemoveMaintainer }
 func (maintainer maintainer) CanMutateMaintainer() bool { return maintainer.MutateMaintainer }
