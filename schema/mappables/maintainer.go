@@ -13,6 +13,7 @@ import (
 type Maintainer interface {
 	GetClassificationID() types.ID
 	GetIdentityID() types.ID
+	GetMaintainedProperties() types.Properties
 
 	CanAddMaintainer() bool
 	CanRemoveMaintainer() bool
