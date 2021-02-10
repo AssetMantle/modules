@@ -12,6 +12,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
+
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	"github.com/spf13/viper"
@@ -70,14 +72,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/schema/applications"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	tendermintTypes "github.com/tendermint/tendermint/types"
 )
 
-type simulationApplication struct {
+type SimulationApplication struct {
 	application        *application
 	transientStoreKeys map[string]*sdkTypes.TransientStoreKey
 	sm                 *module.SimulationManager
@@ -100,56 +101,56 @@ type simulationApplication struct {
 	EvidenceKeeper     evidence.Keeper
 }
 
-var _ applications.SimulationApplication = (*simulationApplication)(nil)
+var _ applications.SimulationApplication = (*SimulationApplication)(nil)
 
-func (simulationApplication simulationApplication) Info(info abciTypes.RequestInfo) abciTypes.ResponseInfo {
+func (simulationApplication SimulationApplication) Info(info abciTypes.RequestInfo) abciTypes.ResponseInfo {
 	return simulationApplication.application.baseApp.Info(info)
 }
 
-func (simulationApplication simulationApplication) SetOption(option abciTypes.RequestSetOption) abciTypes.ResponseSetOption {
+func (simulationApplication SimulationApplication) SetOption(option abciTypes.RequestSetOption) abciTypes.ResponseSetOption {
 	return simulationApplication.application.baseApp.SetOption(option)
 }
 
-func (simulationApplication simulationApplication) Query(query abciTypes.RequestQuery) abciTypes.ResponseQuery {
+func (simulationApplication SimulationApplication) Query(query abciTypes.RequestQuery) abciTypes.ResponseQuery {
 	return simulationApplication.application.baseApp.Query(query)
 }
 
-func (simulationApplication simulationApplication) CheckTx(tx abciTypes.RequestCheckTx) abciTypes.ResponseCheckTx {
+func (simulationApplication SimulationApplication) CheckTx(tx abciTypes.RequestCheckTx) abciTypes.ResponseCheckTx {
 	return simulationApplication.application.baseApp.CheckTx(tx)
 }
 
-func (simulationApplication simulationApplication) InitChain(chain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
+func (simulationApplication SimulationApplication) InitChain(chain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
 	return simulationApplication.application.baseApp.InitChain(chain)
 }
 
-func (simulationApplication simulationApplication) BeginBlock(block abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
+func (simulationApplication SimulationApplication) BeginBlock(block abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
 	return simulationApplication.application.baseApp.BeginBlock(block)
 }
 
-func (simulationApplication simulationApplication) DeliverTx(tx abciTypes.RequestDeliverTx) abciTypes.ResponseDeliverTx {
+func (simulationApplication SimulationApplication) DeliverTx(tx abciTypes.RequestDeliverTx) abciTypes.ResponseDeliverTx {
 	return simulationApplication.application.baseApp.DeliverTx(tx)
 }
 
-func (simulationApplication simulationApplication) EndBlock(block abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock {
+func (simulationApplication SimulationApplication) EndBlock(block abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock {
 	return simulationApplication.application.baseApp.EndBlock(block)
 }
 
-func (simulationApplication simulationApplication) Commit() abciTypes.ResponseCommit {
+func (simulationApplication SimulationApplication) Commit() abciTypes.ResponseCommit {
 	return simulationApplication.application.baseApp.Commit()
 }
 
-func (simulationApplication simulationApplication) LoadHeight(i int64) error {
+func (simulationApplication SimulationApplication) LoadHeight(i int64) error {
 	return simulationApplication.application.LoadHeight(i)
 }
 
-func (simulationApplication simulationApplication) ExportApplicationStateAndValidators(b bool, strings []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
+func (simulationApplication SimulationApplication) ExportApplicationStateAndValidators(b bool, strings []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
 	return simulationApplication.application.ExportApplicationStateAndValidators(b, strings)
 }
 
-func (simulationApplication simulationApplication) Initialize(applicationName string, codec *codec.Codec, enabledProposals []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool, logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
+func (simulationApplication SimulationApplication) Initialize(applicationName string, codec *codec.Codec, enabledProposals []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool, logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
+	simulationApplication.moduleAddressPermissions = moduleAccountPermissions
+	simulationApplication.tokenReceiveAllowedModules = tokenReceiveAllowedModules
 
-	//simulationApplication.moduleAddressPermissions = moduleAccountPermissions
-	//simulationApplication.tokenReceiveAllowedModules = tokenReceiveAllowedModules
 	baseApp := baseapp.NewBaseApp(
 		applicationName,
 		logger,
@@ -160,6 +161,7 @@ func (simulationApplication simulationApplication) Initialize(applicationName st
 	baseApp.SetCommitMultiStoreTracer(traceStore)
 	baseApp.SetAppVersion(version.Version)
 
+	simulationApplication.application = &application{}
 	simulationApplication.application.keys = sdkTypes.NewKVStoreKeys(
 		baseapp.MainStoreKey,
 		auth.StoreKey,
@@ -403,7 +405,7 @@ func (simulationApplication simulationApplication) Initialize(applicationName st
 		govRouter,
 	)
 
-	simulationApplication.application.moduleManager = sdkTypesModule.NewManager(
+	simulationApplication.application.moduleManager = module.NewManager(
 		genutil.NewAppModule(simulationApplication.AccountKeeper, simulationApplication.application.stakingKeeper, simulationApplication.application.baseApp.DeliverTx),
 		auth.NewAppModule(simulationApplication.AccountKeeper),
 		bank.NewAppModule(simulationApplication.BankKeeper, simulationApplication.AccountKeeper),
@@ -463,7 +465,7 @@ func (simulationApplication simulationApplication) Initialize(applicationName st
 	simulationApplication.application.moduleManager.RegisterInvariants(&simulationApplication.application.crisisKeeper)
 	simulationApplication.application.moduleManager.RegisterRoutes(simulationApplication.application.baseApp.Router(), simulationApplication.application.baseApp.QueryRouter())
 
-	simulationApplication.sm = sdkTypesModule.NewSimulationManager(
+	simulationApplication.sm = module.NewSimulationManager(
 		auth.NewAppModule(simulationApplication.AccountKeeper),
 		bank.NewAppModule(simulationApplication.BankKeeper, simulationApplication.AccountKeeper),
 		supply.NewAppModule(simulationApplication.SupplyKeeper, simulationApplication.AccountKeeper),
@@ -506,77 +508,79 @@ func (simulationApplication simulationApplication) Initialize(applicationName st
 	return simulationApplication
 }
 
-func (simulationApplication simulationApplication) Name() string {
+func (simulationApplication SimulationApplication) Name() string {
 	return simulationApplication.application.baseApp.Name()
 }
 
-func (simulationApplication simulationApplication) Codec() *codec.Codec {
+func (simulationApplication SimulationApplication) Codec() *codec.Codec {
 	return simulationApplication.application.codec
 }
 
-func (simulationApplication simulationApplication) BeginBlocker(ctx sdkTypes.Context, req abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
+func (simulationApplication SimulationApplication) BeginBlocker(ctx sdkTypes.Context, req abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
 	return simulationApplication.application.moduleManager.BeginBlock(ctx, req)
 }
 
-func (simulationApplication simulationApplication) EndBlocker(ctx sdkTypes.Context, req abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock {
+func (simulationApplication SimulationApplication) EndBlocker(ctx sdkTypes.Context, req abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock {
 	return simulationApplication.application.moduleManager.EndBlock(ctx, req)
 }
 
-func (simulationApplication simulationApplication) InitChainer(ctx sdkTypes.Context, req abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
+func (simulationApplication SimulationApplication) InitChainer(ctx sdkTypes.Context, req abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
 	var genesisState simapp.GenesisState
+
 	simulationApplication.application.codec.MustUnmarshalJSON(req.AppStateBytes, &genesisState)
+
 	return simulationApplication.application.moduleManager.InitGenesis(ctx, genesisState)
 }
 
-func (simulationApplication simulationApplication) ExportAppStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
+func (simulationApplication SimulationApplication) ExportAppStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
 	return simulationApplication.application.ExportApplicationStateAndValidators(forZeroHeight, jailWhiteList)
 }
 
-func (simulationApplication simulationApplication) ModuleAccountAddrs() map[string]bool {
+func (simulationApplication SimulationApplication) ModuleAccountAddrs() map[string]bool {
 	return simulationApplication.tokenReceiveAllowedModules
 }
 
-func (simulationApplication simulationApplication) SimulationManager() *module.SimulationManager {
+func (simulationApplication SimulationApplication) SimulationManager() *module.SimulationManager {
 	return simulationApplication.sm
 }
 
-func (simulationApplication simulationApplication) GetBaseApp() *baseapp.BaseApp {
+func (simulationApplication SimulationApplication) GetBaseApp() *baseapp.BaseApp {
 	return simulationApplication.application.baseApp
 }
 
-func (simulationApplication simulationApplication) GetKey(storeKey string) *sdkTypes.KVStoreKey {
+func (simulationApplication SimulationApplication) GetKey(storeKey string) *sdkTypes.KVStoreKey {
 	return simulationApplication.application.keys[storeKey]
 }
 
-func (simulationApplication simulationApplication) GetTKey(storeKey string) *sdkTypes.TransientStoreKey {
+func (simulationApplication SimulationApplication) GetTKey(storeKey string) *sdkTypes.TransientStoreKey {
 	return simulationApplication.transientStoreKeys[storeKey]
 }
 
-func (simulationApplication simulationApplication) GetSubspace(moduleName string) params.Subspace {
+func (simulationApplication SimulationApplication) GetSubspace(moduleName string) params.Subspace {
 	return simulationApplication.subspaces[moduleName]
 }
 
-func (simulationApplication simulationApplication) GetMaccPerms() map[string][]string {
+func (simulationApplication SimulationApplication) GetMaccPerms() map[string][]string {
 	return simulationApplication.moduleAddressPermissions
 }
 
-func (simulationApplication simulationApplication) BlacklistedAccAddrs() map[string]bool {
+func (simulationApplication SimulationApplication) BlacklistedAccAddrs() map[string]bool {
 	blacklistedAddrs := make(map[string]bool)
-	for acc := range maccPerms {
-		blacklistedAddrs[supply.NewModuleAddress(acc).String()] = !allowedReceivingModAcc[acc]
+	for acc := range ModuleAccountPermissions {
+		blacklistedAddrs[supply.NewModuleAddress(acc).String()] = !AllowedReceivingModuleAccounts[acc]
 	}
 
 	return blacklistedAddrs
 }
 
-func (simulationApplication simulationApplication) CheckBalance(t *testing.T, address sdkTypes.AccAddress, coins sdkTypes.Coins) {
+func (simulationApplication SimulationApplication) CheckBalance(t *testing.T, address sdkTypes.AccAddress, coins sdkTypes.Coins) {
 	ctxCheck := simulationApplication.application.baseApp.NewContext(true, abciTypes.Header{})
 	res := simulationApplication.AccountKeeper.GetAccount(ctxCheck, address)
 
 	require.True(t, coins.IsEqual(res.GetCoins()))
 }
 
-func (simulationApplication simulationApplication) AddTestAddresses(context sdkTypes.Context, i int, s sdkTypes.Int) []sdkTypes.AccAddress {
+func (simulationApplication SimulationApplication) AddTestAddresses(context sdkTypes.Context, i int, s sdkTypes.Int) []sdkTypes.AccAddress {
 	testAddrs := make([]sdkTypes.AccAddress, i)
 	for i := 0; i < i; i++ {
 		pk := ed25519.GenPrivKey().PubKey()
@@ -595,15 +599,18 @@ func (simulationApplication simulationApplication) AddTestAddresses(context sdkT
 			panic(err)
 		}
 	}
+
 	return testAddrs
 }
 
-func (simulationApplication simulationApplication) Setup(isCheckTx bool) applications.SimulationApplication {
+func (simulationApplication SimulationApplication) Setup(isCheckTx bool) applications.SimulationApplication {
 	db := tendermintDB.NewMemDB()
-	app := NewSimApp(log.NewNopLogger(), db, nil, true, 0, map[int64]bool{}, DefaultNodeHome)
+	app := NewSimApp().Initialize(ApplicationName, base.MakeCodec(), wasm.EnableAllProposals, ModuleAccountPermissions, AllowedReceivingModuleAccounts, log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, 0, map[int64]bool{}, DefaultNodeHome)
+
 	if !isCheckTx {
 		// init chain must be called to stop deliverState from being nil
 		genesisState := ModuleBasics.DefaultGenesis()
+
 		stateBytes, err := codec.MarshalJSONIndent(simulationApplication.Codec(), genesisState)
 		if err != nil {
 			panic(err)
@@ -618,12 +625,12 @@ func (simulationApplication simulationApplication) Setup(isCheckTx bool) applica
 		)
 	}
 
-	return app
+	return app.(SimulationApplication)
 }
 
-func (simulationApplication simulationApplication) SetupWithGenesisAccounts(accounts []exported.GenesisAccount) applications.SimulationApplication {
+func (simulationApplication SimulationApplication) SetupWithGenesisAccounts(accounts []exported.GenesisAccount) applications.SimulationApplication {
 	db := tendermintDB.NewMemDB()
-	app := NewSimApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, 0, map[int64]bool{}, DefaultNodeHome)
+	app := NewSimApp().Initialize(ApplicationName, base.MakeCodec(), wasm.EnableAllProposals, ModuleAccountPermissions, AllowedReceivingModuleAccounts, log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, 0, map[int64]bool{}, DefaultNodeHome)
 
 	// initialize the chain with the passed in genesis accounts
 	genesisState := ModuleBasics.DefaultGenesis()
@@ -648,21 +655,22 @@ func (simulationApplication simulationApplication) SetupWithGenesisAccounts(acco
 	simulationApplication.Commit()
 	simulationApplication.BeginBlock(abciTypes.RequestBeginBlock{Header: abciTypes.Header{Height: simulationApplication.application.baseApp.LastBlockHeight() + 1}})
 
-	return app
+	return app.(SimulationApplication)
 }
 
-func (simulationApplication simulationApplication) NewTestApplication(isCheckTx bool) (applications.SimulationApplication, sdkTypes.Context) {
+func (simulationApplication SimulationApplication) NewTestApplication(isCheckTx bool) (applications.SimulationApplication, sdkTypes.Context) {
 	app := simulationApplication.Setup(isCheckTx)
 	ctx := simulationApplication.GetBaseApp().NewContext(isCheckTx, abciTypes.Header{})
+
 	return app, ctx
 }
 
-func NewSimApp(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) simulationApplication {
-	return simulationApplication{}
+func NewSimApp() SimulationApplication {
+	return SimulationApplication{}
 }
 
 var (
-	app             = "simapp"
+	ApplicationName = "simapp"
 	DefaultCLIHome  = os.ExpandEnv("$HOME/.simapp")
 	DefaultNodeHome = os.ExpandEnv("$HOME/.simapp")
 
@@ -692,7 +700,7 @@ var (
 	)
 
 	// module account permissions
-	maccPerms = map[string][]string{
+	ModuleAccountPermissions = map[string][]string{
 		auth.FeeCollectorName:     nil,
 		distribution.ModuleName:   nil,
 		mint.ModuleName:           {supply.Minter},
@@ -702,18 +710,20 @@ var (
 	}
 
 	// module accounts that are allowed to receive tokens
-	allowedReceivingModAcc = map[string]bool{
+	AllowedReceivingModuleAccounts = map[string]bool{
 		distribution.ModuleName: true,
 	}
 )
 
 func MakeCodec() *codec.Codec {
 	Codec := codec.New()
+
 	ModuleBasics.RegisterCodec(Codec)
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	authVesting.RegisterCodec(Codec)
+
 	return Codec
 }
