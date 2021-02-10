@@ -7,7 +7,6 @@ package execution
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	moduleConstants "github.com/persistenceOne/persistenceSDK/constants/modules"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
@@ -24,7 +23,7 @@ import (
 func ExecuteImmediately(orderID types.ID, orders helpers.Collection, context sdkTypes.Context, supplementAuxiliary helpers.Auxiliary, transferAuxiliary helpers.Auxiliary, scrubAuxiliary helpers.Auxiliary) error {
 	order := orders.Get(key.New(orderID)).(mappables.Order)
 
-	orderExchangeRate, Error := order.(mappables.Order).GetExchangeRate().AsDec()
+	orderExchangeRate, Error := order.(mappables.Order).GetExchangeRate().(types.MetaProperty).GetMetaFact().GetData().AsDec()
 	if Error != nil {
 		return Error
 	}
@@ -36,14 +35,14 @@ func ExecuteImmediately(orderID types.ID, orders helpers.Collection, context sdk
 
 	orderMutated := false
 
-	// Assuming ExchangeRate is positive
+	// Assuming RateID is positive
 	orderTakerOwnableID := order.GetTakerOwnableID()
-	executableTakerOwnableID := order.GetMakerOwnableID()
+	executableOrderTakerOwnableID := order.GetMakerOwnableID()
 
 	accumulator := func(mappableOrder helpers.Mappable) bool {
 		executableOrder := mappableOrder.(mappables.Order)
 
-		executableOrderExchangeRate, Error := executableOrder.GetExchangeRate().AsDec()
+		executableOrderExchangeRate, Error := executableOrder.GetExchangeRate().(types.MetaProperty).GetMetaFact().GetData().AsDec()
 		if Error != nil {
 			panic(Error)
 		}
@@ -65,7 +64,7 @@ func ExecuteImmediately(orderID types.ID, orders helpers.Collection, context sdk
 						panic(auxiliaryResponse.GetError())
 					}
 					// sending to executableOrder
-					if auxiliaryResponse := transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), executableOrder.GetMakerID(), executableTakerOwnableID, executableOrderTakerOwnableSplitDemanded)); !auxiliaryResponse.IsSuccessful() {
+					if auxiliaryResponse := transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), executableOrder.GetMakerID(), executableOrderTakerOwnableID, executableOrderTakerOwnableSplitDemanded)); !auxiliaryResponse.IsSuccessful() {
 						panic(auxiliaryResponse.GetError())
 					}
 
@@ -78,7 +77,7 @@ func ExecuteImmediately(orderID types.ID, orders helpers.Collection, context sdk
 						panic(auxiliaryResponse.GetError())
 					}
 					// sending to executableOrder
-					if auxiliaryResponse := transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), executableOrder.GetMakerID(), executableTakerOwnableID, orderLeftOverMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+					if auxiliaryResponse := transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), executableOrder.GetMakerID(), executableOrderTakerOwnableID, orderLeftOverMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 						panic(auxiliaryResponse.GetError())
 					}
 
@@ -97,7 +96,7 @@ func ExecuteImmediately(orderID types.ID, orders helpers.Collection, context sdk
 						panic(auxiliaryResponse.GetError())
 					}
 					// sending to seller
-					if auxiliaryResponse := transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), executableOrder.GetMakerID(), executableTakerOwnableID, orderLeftOverMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+					if auxiliaryResponse := transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), executableOrder.GetMakerID(), executableOrderTakerOwnableID, orderLeftOverMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 						panic(auxiliaryResponse.GetError())
 					}
 
@@ -119,13 +118,7 @@ func ExecuteImmediately(orderID types.ID, orders helpers.Collection, context sdk
 		return false
 	}
 
-	if orderExchangeRate.IsPositive() {
-		orders.Iterate(key.New(key.NewOrderID(order.GetClassificationID(), order.GetMakerOwnableID(), order.GetTakerOwnableID(), base.NewID(string(moduleConstants.NegativeExchangeRate)), base.NewID(""), base.NewID(""), base.NewImmutables(base.NewProperties()))), accumulator)
-	} else {
-		orderTakerOwnableID = order.GetMakerOwnableID()
-		executableTakerOwnableID = order.GetTakerOwnableID()
-		orders.Iterate(key.New(key.NewOrderID(order.GetClassificationID(), order.GetMakerOwnableID(), order.GetTakerOwnableID(), base.NewID(string(moduleConstants.PositiveExchangeRate)), base.NewID(""), base.NewID(""), base.NewImmutables(base.NewProperties()))), accumulator)
-	}
+	orders.Iterate(key.New(key.NewOrderID(order.GetClassificationID(), order.GetTakerOwnableID(), order.GetMakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewImmutables(base.NewProperties()))), accumulator)
 
 	if !orderLeftOverMakerOwnableSplit.Equal(sdkTypes.ZeroDec()) && orderMutated {
 		mutableProperties, Error := scrub.GetPropertiesFromResponse(scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(orderLeftOverMakerOwnableSplit))))))

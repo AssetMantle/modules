@@ -18,6 +18,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -60,7 +61,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		}
 	}
 
-	exchangeRate, Error := order.(mappables.Order).GetExchangeRate().AsDec()
+	exchangeRate, Error := order.(mappables.Order).GetExchangeRate().(types.MetaProperty).GetMetaFact().GetData().AsDec()
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}

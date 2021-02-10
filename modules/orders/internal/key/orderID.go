@@ -7,7 +7,10 @@ package key
 
 import (
 	"bytes"
+	"strconv"
 	"strings"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/constants"
@@ -21,8 +24,8 @@ type orderID struct {
 	ClassificationID types.ID `json:"classificationID"`
 	MakerOwnableID   types.ID `json:"makerOwnableID"`
 	TakerOwnableID   types.ID `json:"takerOwnableID"`
-	ExchangeRate     types.ID `json:"exchangeRate"`
-	CreationHeight   types.ID `json:"creationHeight"`
+	RateID           types.ID `json:"rateID"`
+	CreationID       types.ID `json:"creationID"`
 	MakerID          types.ID `json:"makerID"`
 	HashID           types.ID `json:"hashID"`
 }
@@ -32,11 +35,22 @@ var _ helpers.Key = (*orderID)(nil)
 
 func (orderID orderID) Bytes() []byte {
 	var Bytes []byte
+
+	rateIDBytes, Error := orderID.getRateIDBytes()
+	if Error != nil {
+		return Bytes
+	}
+
+	creationIDBytes, Error := orderID.getCreationHeightBytes()
+	if Error != nil {
+		return Bytes
+	}
+
 	Bytes = append(Bytes, orderID.ClassificationID.Bytes()...)
 	Bytes = append(Bytes, orderID.MakerOwnableID.Bytes()...)
 	Bytes = append(Bytes, orderID.TakerOwnableID.Bytes()...)
-	Bytes = append(Bytes, orderID.ExchangeRate.Bytes()...)
-	Bytes = append(Bytes, orderID.CreationHeight.Bytes()...)
+	Bytes = append(Bytes, rateIDBytes...)
+	Bytes = append(Bytes, creationIDBytes...)
 	Bytes = append(Bytes, orderID.MakerID.Bytes()...)
 	Bytes = append(Bytes, orderID.HashID.Bytes()...)
 
@@ -47,8 +61,8 @@ func (orderID orderID) String() string {
 	values = append(values, orderID.ClassificationID.String())
 	values = append(values, orderID.MakerOwnableID.String())
 	values = append(values, orderID.TakerOwnableID.String())
-	values = append(values, orderID.ExchangeRate.String())
-	values = append(values, orderID.CreationHeight.String())
+	values = append(values, orderID.RateID.String())
+	values = append(values, orderID.CreationID.String())
 	values = append(values, orderID.MakerID.String())
 	values = append(values, orderID.HashID.String())
 
@@ -70,17 +84,45 @@ func (orderID orderID) Matches(key helpers.Key) bool {
 	return orderID.Equals(orderIDFromInterface(key))
 }
 
+func (orderID orderID) getRateIDBytes() ([]byte, error) {
+	var Bytes []byte
+
+	exchangeRate, Error := sdkTypes.NewDecFromStr(orderID.RateID.String())
+	if Error != nil {
+		return Bytes, Error
+	}
+
+	Bytes = append(Bytes, uint8(len(strings.Split(exchangeRate.String(), ".")[0])))
+	Bytes = append(Bytes, []byte(exchangeRate.String())...)
+
+	return Bytes, Error
+}
+
+func (orderID orderID) getCreationHeightBytes() ([]byte, error) {
+	var Bytes []byte
+
+	height, Error := strconv.ParseInt(orderID.CreationID.String(), 10, 64)
+	if Error != nil {
+		return Bytes, Error
+	}
+
+	Bytes = append(Bytes, uint8(len(orderID.CreationID.String())))
+	Bytes = append(Bytes, []byte(strconv.FormatInt(height, 10))...)
+
+	return Bytes, Error
+}
+
 func New(id types.ID) helpers.Key {
 	return orderIDFromInterface(id)
 }
 
-func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, exchangeRateID types.ID, creationHeightID types.ID, makerID types.ID, immutables types.Immutables) types.ID {
+func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, rateID types.ID, creationHeightID types.ID, makerID types.ID, immutables types.Immutables) types.ID {
 	return orderID{
 		ClassificationID: classificationID,
 		MakerOwnableID:   makerOwnableID,
 		TakerOwnableID:   takerOwnableID,
-		ExchangeRate:     exchangeRateID,
-		CreationHeight:   creationHeightID,
+		RateID:           rateID,
+		CreationID:       creationHeightID,
 		MakerID:          makerID,
 		HashID:           immutables.GenerateHashID(),
 	}

@@ -14,8 +14,8 @@ import (
 type Order interface {
 	GetID() types.ID
 	GetClassificationID() types.ID
-	GetExchangeRate() types.Data
-	GetCreationHeight() types.Data
+	GetRateID() types.ID
+	GetCreationID() types.ID
 	GetMakerOwnableID() types.ID
 	GetTakerOwnableID() types.ID
 	GetMakerID() types.ID
@@ -23,6 +23,7 @@ type Order interface {
 
 	GetTakerID() types.Property
 	GetCreation() types.Property
+	GetExchangeRate() types.Property
 	GetExpiry() types.Property
 	GetMakerOwnableSplit() types.Property
 

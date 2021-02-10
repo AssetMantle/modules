@@ -6,7 +6,7 @@
 package make
 
 import (
-	"sort"
+	"strconv"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
@@ -23,7 +23,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -52,18 +51,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	immutableProperties := base.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
-
-	makerTakerIDs := []string{message.MakerOwnableID.String(), message.TakerOwnableID.String()}
-	sort.Strings(makerTakerIDs)
-
-	var orderID types.ID
-
-	if makerTakerIDs[0] == message.MakerOwnableID.String() {
-		orderID = key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, base.NewDecID(message.ExchangeRate), base.NewHeightID(context.BlockHeight()), message.FromID, base.NewImmutables(immutableProperties))
-	} else {
-		orderID = key.NewOrderID(message.ClassificationID, message.TakerOwnableID, message.MakerOwnableID, base.NewDecID(message.ExchangeRate.Neg()), base.NewHeightID(context.BlockHeight()), message.FromID, base.NewImmutables(immutableProperties))
-	}
-
+	orderID := key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, base.NewID(message.ExchangeRate.String()), base.NewID(strconv.FormatInt(context.BlockHeight(), 10)), message.FromID, base.NewImmutables(immutableProperties))
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(orderID))
 	makerOwnableSplit := message.MakerOwnableSplit
 	order := orders.Get(key.New(orderID))

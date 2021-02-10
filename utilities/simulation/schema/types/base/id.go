@@ -15,10 +15,10 @@ func GenerateRandomID(r *rand.Rand) types.ID {
 	return base.NewID(simulation.RandStringOfLength(r, r.Int()))
 }
 
-func GenerateRandomDecID(r *rand.Rand) types.ID {
-	return base.NewDecID(sdkTypes.MustNewDecFromStr(strconv.FormatInt(r.Int63(), 10)))
+func GenerateRandomIDWithDec(r *rand.Rand) types.ID {
+	return base.NewID(sdkTypes.MustNewDecFromStr(strconv.FormatInt(r.Int63(), 10)).String())
 }
 
-func GenerateRandomHeightID(r *rand.Rand) types.ID {
-	return base.NewHeightID(r.Int63())
+func GenerateRandomIDWithInt64(r *rand.Rand) types.ID {
+	return base.NewID(strconv.FormatInt(r.Int63(), 10))
 }

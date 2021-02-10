@@ -20,32 +20,28 @@ func readOrderID(orderIDString string) types.ID {
 	idList := strings.Split(orderIDString, constants.SecondOrderCompositeIDSeparator)
 
 	if len(idList) == 7 {
-		exchangeRateID := base.NewID("")
 		exchangeRate, Error := sdkTypes.NewDecFromStr(idList[3])
-
-		if Error == nil && !exchangeRate.Equal(sdkTypes.ZeroDec()) {
-			exchangeRateID = base.NewDecID(exchangeRate)
+		if Error != nil {
+			return orderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), RateID: base.NewID(""), CreationID: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}
 		}
 
-		heightID := base.NewID("")
 		height, Error := strconv.ParseInt(idList[4], 10, 64)
-
-		if Error == nil && height != 0 {
-			heightID = base.NewHeightID(height)
+		if Error != nil {
+			return orderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), RateID: base.NewID(""), CreationID: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}
 		}
 
 		return orderID{
 			ClassificationID: base.NewID(idList[0]),
 			MakerOwnableID:   base.NewID(idList[1]),
 			TakerOwnableID:   base.NewID(idList[2]),
-			ExchangeRate:     exchangeRateID,
-			CreationHeight:   heightID,
+			RateID:           base.NewID(exchangeRate.String()),
+			CreationID:       base.NewID(strconv.FormatInt(height, 10)),
 			MakerID:          base.NewID(idList[5]),
 			HashID:           base.NewID(idList[6]),
 		}
 	}
 
-	return orderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), ExchangeRate: base.NewID(""), CreationHeight: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}
+	return orderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), RateID: base.NewID(""), CreationID: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}
 }
 func orderIDFromInterface(i interface{}) orderID {
 	switch value := i.(type) {
@@ -62,12 +58,12 @@ func ReadClassificationID(orderID types.ID) types.ID {
 	return orderIDFromInterface(orderID).ClassificationID
 }
 
-func ReadExchangeRate(orderID types.ID) types.ID {
-	return orderIDFromInterface(orderID).ExchangeRate
+func ReadRateID(orderID types.ID) types.ID {
+	return orderIDFromInterface(orderID).RateID
 }
 
-func ReadCreationHeight(orderID types.ID) types.ID {
-	return orderIDFromInterface(orderID).CreationHeight
+func ReadCreationID(orderID types.ID) types.ID {
+	return orderIDFromInterface(orderID).CreationID
 }
 
 func ReadMakerOwnableID(orderID types.ID) types.ID {

@@ -31,21 +31,11 @@ var _ mappables.Order = (*order)(nil)
 func (order order) GetClassificationID() types.ID {
 	return key.ReadClassificationID(order.ID)
 }
-func (order order) GetExchangeRate() types.Data {
-	decValue, Error := sdkTypes.NewDecFromStr(key.ReadExchangeRate(order.ID).String())
-	if Error != nil {
-		return base.NewDecData(sdkTypes.ZeroDec())
-	}
-
-	return base.NewDecData(decValue)
+func (order order) GetRateID() types.ID {
+	return key.ReadRateID(order.ID)
 }
-func (order order) GetCreationHeight() types.Data {
-	heightValue, Error := strconv.ParseInt(key.ReadCreationHeight(order.ID).String(), 10, 64)
-	if Error != nil {
-		base.NewHeightData(base.NewHeight(0))
-	}
-
-	return base.NewHeightData(base.NewHeight(heightValue))
+func (order order) GetCreationID() types.ID {
+	return key.ReadCreationID(order.ID)
 }
 func (order order) GetMakerOwnableID() types.ID {
 	return key.ReadMakerOwnableID(order.ID)
@@ -67,14 +57,12 @@ func (order order) GetTakerID() types.Property {
 	}
 }
 func (order order) GetCreation() types.Property {
-	if creation := order.Immutables.Get().Get(base.NewID(properties.Creation)); creation != nil {
-		return creation
-	} else if creation := order.Mutables.Get().Get(base.NewID(properties.Creation)); creation != nil {
-		return creation
-	} else {
-		data, _ := base.ReadHeightData("")
-		return base.NewProperty(base.NewID(properties.Creation), base.NewFact(data))
+	heightValue, Error := strconv.ParseInt(key.ReadCreationID(order.ID).String(), 10, 64)
+	if Error != nil {
+		return base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewHeightData(base.NewHeight(0))))
 	}
+
+	return base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewHeightData(base.NewHeight(heightValue))))
 }
 func (order order) GetExpiry() types.Property {
 	if expiry := order.Immutables.Get().Get(base.NewID(properties.Expiry)); expiry != nil {
@@ -95,6 +83,14 @@ func (order order) GetMakerOwnableSplit() types.Property {
 		data, _ := base.ReadDecData("")
 		return base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(data))
 	}
+}
+func (order order) GetExchangeRate() types.Property {
+	decValue, Error := sdkTypes.NewDecFromStr(key.ReadRateID(order.ID).String())
+	if Error != nil {
+		return base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewDecData(sdkTypes.ZeroDec())))
+	}
+
+	return base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewDecData(decValue)))
 }
 func (order order) GetImmutables() types.Immutables {
 	return order.Immutables
