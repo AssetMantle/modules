@@ -5,7 +5,9 @@
 
 package types
 
-import sdkTypes "github.com/cosmos/cosmos-sdk/types"
+import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+)
 
 type Data interface {
 	String() string
@@ -22,6 +24,12 @@ type Data interface {
 	AsID() (ID, error)
 
 	Get() interface{}
+
+	MarshalJSON() ([]byte, error)
+	UnmarshalJSON(bz []byte) error
+
+	MarshalAmino() (string, error)
+	UnmarshalAmino(text string) (err error)
 
 	Equal(Data) bool
 }
