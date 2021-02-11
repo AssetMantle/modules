@@ -35,6 +35,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(sdkTypes.SmallestDec().MulInt64(2)))))
 	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.TakerID), base.NewMetaFact(base.NewIDData(base.NewID("fromID")))))
 	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewDecData(sdkTypes.SmallestDec()))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.Expiry), base.NewMetaFact(base.NewHeightData(base.NewHeight(10000000)))))
 
 	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList), nil)
 }

@@ -87,6 +87,10 @@ func (orderID orderID) Matches(key helpers.Key) bool {
 func (orderID orderID) getRateIDBytes() ([]byte, error) {
 	var Bytes []byte
 
+	if orderID.RateID.String() == "" {
+		return Bytes, nil
+	}
+
 	exchangeRate, Error := sdkTypes.NewDecFromStr(orderID.RateID.String())
 	if Error != nil {
 		return Bytes, Error
@@ -100,6 +104,10 @@ func (orderID orderID) getRateIDBytes() ([]byte, error) {
 
 func (orderID orderID) getCreationHeightBytes() ([]byte, error) {
 	var Bytes []byte
+
+	if orderID.CreationID.String() == "" {
+		return Bytes, nil
+	}
 
 	height, Error := strconv.ParseInt(orderID.CreationID.String(), 10, 64)
 	if Error != nil {

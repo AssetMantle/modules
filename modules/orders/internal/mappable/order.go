@@ -67,8 +67,8 @@ func (order order) GetCreation() types.Property {
 func (order order) GetExpiry() types.Property {
 	if expiry := order.Immutables.Get().Get(base.NewID(properties.Expiry)); expiry != nil {
 		return expiry
-	} else if creation := order.Mutables.Get().Get(base.NewID(properties.Expiry)); creation != nil {
-		return creation
+	} else if expiry := order.Mutables.Get().Get(base.NewID(properties.Expiry)); expiry != nil {
+		return expiry
 	} else {
 		data, _ := base.ReadHeightData("")
 		return base.NewProperty(base.NewID(properties.Expiry), base.NewFact(data))

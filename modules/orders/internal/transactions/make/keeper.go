@@ -15,7 +15,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/execution"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
@@ -96,16 +95,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	if order != nil {
-		orders = orders.Mutate(mappable.NewOrder(orderID, base.NewImmutables(immutableProperties), order.(mappables.Order).GetMutables().Mutate(mutableProperties.GetList()...)))
+		orders.Mutate(mappable.NewOrder(orderID, base.NewImmutables(immutableProperties), order.(mappables.Order).GetMutables().Mutate(mutableProperties.GetList()...)))
 	} else {
-		orders = orders.Add(mappable.NewOrder(orderID, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
-	}
-
-	if message.OrderType == module.ImmediateExecution {
-		Error = execution.ExecuteImmediately(orderID, orders, context, transactionKeeper.supplementAuxiliary, transactionKeeper.transferAuxiliary, transactionKeeper.scrubAuxiliary)
-		if Error != nil {
-			return newTransactionResponse(Error)
-		}
+		orders.Add(mappable.NewOrder(orderID, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 	}
 
 	return newTransactionResponse(nil)
