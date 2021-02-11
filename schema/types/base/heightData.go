@@ -6,7 +6,6 @@
 package base
 
 import (
-	"encoding/json"
 	"strconv"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -30,11 +29,13 @@ func (heightData *heightData) UnmarshalAmino(text string) (err error) {
 }
 
 func (heightData heightData) MarshalJSON() ([]byte, error) {
-	return json.Marshal(heightData)
+	//return NewCodec().MarshalJSON(heightData)
+	panic("impl me")
 }
 
 func (heightData *heightData) UnmarshalJSON(bz []byte) error {
-	return json.Unmarshal(bz, &heightData)
+	//return NewCodec().UnmarshalJSON(bz, &heightData)
+	panic("impl me")
 }
 
 var _ types.Data = (*heightData)(nil)

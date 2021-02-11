@@ -6,8 +6,6 @@
 package base
 
 import (
-	"encoding/json"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -28,11 +26,13 @@ func (stringData *stringData) UnmarshalAmino(text string) (err error) {
 }
 
 func (stringData stringData) MarshalJSON() ([]byte, error) {
-	return json.Marshal(stringData)
+	//return NewCodec().MarshalJSON(stringData)
+	panic("impl me")
 }
 
 func (stringData *stringData) UnmarshalJSON(bz []byte) error {
-	return json.Unmarshal(bz, &stringData)
+	//return NewCodec().UnmarshalJSON(bz, &stringData)
+	panic("impl me")
 }
 
 var _ types.Data = (*stringData)(nil)

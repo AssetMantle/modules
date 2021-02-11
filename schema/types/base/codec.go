@@ -7,6 +7,7 @@ package base
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
@@ -30,4 +31,11 @@ func RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, signature{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, signatures{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, stringData{})
+}
+
+func NewCodec() *codec.Codec {
+	cdc := codec.New()
+	RegisterCodec(cdc)
+	types.RegisterCodec(cdc)
+	return cdc
 }
