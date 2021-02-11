@@ -6,6 +6,8 @@
 package base
 
 import (
+	"encoding/json"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 
@@ -15,6 +17,27 @@ import (
 
 type idData struct {
 	Value types.ID `json:"value"`
+}
+
+func (idData idData) MarshalAmino() (string, error) {
+	return idData.Value.String(), nil
+}
+
+func (idData *idData) UnmarshalAmino(text string) (err error) {
+	idData.Value = NewID(text)
+	return nil
+}
+
+func (idData idData) MarshalJSON() ([]byte, error) {
+	return json.Marshal(idData.Value.String())
+}
+
+func (idData *idData) UnmarshalJSON(bz []byte) error {
+	var text string
+
+	err := json.Unmarshal(bz, &text)
+	idData.Value = NewID(text)
+	return err
 }
 
 var _ types.Data = (*idData)(nil)
@@ -58,17 +81,17 @@ func (idData idData) Equal(data types.Data) bool {
 
 	return idData.Value.Equals(compareIDData.Value)
 }
-func idDataFromInterface(data types.Data) (idData, error) {
+func idDataFromInterface(data types.Data) (*idData, error) {
 	switch value := data.(type) {
-	case idData:
+	case *idData:
 		return value, nil
 	default:
-		return idData{}, errors.MetaDataError
+		return &idData{}, errors.MetaDataError
 	}
 }
 
 func NewIDData(value types.ID) types.Data {
-	return idData{
+	return &idData{
 		Value: value,
 	}
 }

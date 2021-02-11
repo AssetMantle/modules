@@ -6,6 +6,7 @@
 package base
 
 import (
+	"encoding/json"
 	"strconv"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -16,6 +17,24 @@ import (
 
 type heightData struct {
 	Value types.Height `json:"value"`
+}
+
+func (heightData heightData) MarshalAmino() (string, error) {
+	return heightData.String(), nil
+}
+
+func (heightData *heightData) UnmarshalAmino(text string) (err error) {
+	height, Error := strconv.ParseInt(text, 10, 64)
+	heightData.Value = NewHeight(height)
+	return Error
+}
+
+func (heightData heightData) MarshalJSON() ([]byte, error) {
+	return json.Marshal(heightData)
+}
+
+func (heightData *heightData) UnmarshalJSON(bz []byte) error {
+	return json.Unmarshal(bz, &heightData)
 }
 
 var _ types.Data = (*heightData)(nil)
@@ -59,17 +78,17 @@ func (heightData heightData) Equal(data types.Data) bool {
 
 	return heightData.Value.Get() == compareHeightData.Value.Get()
 }
-func heightDataFromInterface(data types.Data) (heightData, error) {
+func heightDataFromInterface(data types.Data) (*heightData, error) {
 	switch value := data.(type) {
-	case heightData:
+	case *heightData:
 		return value, nil
 	default:
-		return heightData{}, errors.MetaDataError
+		return &heightData{}, errors.MetaDataError
 	}
 }
 
 func NewHeightData(value types.Height) types.Data {
-	return heightData{
+	return &heightData{
 		Value: value,
 	}
 }

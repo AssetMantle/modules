@@ -6,6 +6,8 @@
 package base
 
 import (
+	"encoding/json"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -14,6 +16,23 @@ import (
 
 type stringData struct {
 	Value string `json:"value"`
+}
+
+func (stringData stringData) MarshalAmino() (string, error) {
+	return stringData.String(), nil
+}
+
+func (stringData *stringData) UnmarshalAmino(text string) (err error) {
+	stringData.Value = text
+	return nil
+}
+
+func (stringData stringData) MarshalJSON() ([]byte, error) {
+	return json.Marshal(stringData)
+}
+
+func (stringData *stringData) UnmarshalJSON(bz []byte) error {
+	return json.Unmarshal(bz, &stringData)
 }
 
 var _ types.Data = (*stringData)(nil)
@@ -57,17 +76,17 @@ func (stringData stringData) Equal(data types.Data) bool {
 
 	return stringData.Value == compareStringData.Value
 }
-func stringDataFromInterface(data types.Data) (stringData, error) {
+func stringDataFromInterface(data types.Data) (*stringData, error) {
 	switch value := data.(type) {
-	case stringData:
+	case *stringData:
 		return value, nil
 	default:
-		return stringData{}, errors.MetaDataError
+		return &stringData{}, errors.MetaDataError
 	}
 }
 
 func NewStringData(value string) types.Data {
-	return stringData{
+	return &stringData{
 		Value: value,
 	}
 }
