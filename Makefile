@@ -13,7 +13,7 @@ export GO111MODULE = on
 all: build test
 
 # The below include contains the tools and runsim targets.
-include contrib/devtools/Makefile
+include utilities/simulation/make/Makefile
 #include github.com/cosmos/cosmos-sdk/contrib/devtools/Makefile
 
 ########################################
