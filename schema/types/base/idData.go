@@ -17,31 +17,6 @@ type idData struct {
 	Value types.ID `json:"value"`
 }
 
-func (idData idData) MarshalAmino() (string, error) {
-	return idData.Value.String(), nil
-}
-
-func (idData *idData) UnmarshalAmino(text string) (err error) {
-	idData.Value = NewID(text)
-	return nil
-}
-
-func (idData idData) MarshalJSON() ([]byte, error) {
-	return NewCodec().MarshalJSON(idData.Value)
-	//return []byte("mi"), nil
-}
-
-func (i *idData) UnmarshalJSON(bz []byte) error {
-	//var text string
-	//
-	//err := NewCodec().UnmarshalJSON(bz, &text)
-	//idData.Value = NewID(text)
-	//return err
-
-	i = &idData{NewID("dummy")}
-	return nil
-}
-
 var _ types.Data = (*idData)(nil)
 
 func (idData idData) String() string {
@@ -83,17 +58,17 @@ func (idData idData) Equal(data types.Data) bool {
 
 	return idData.Value.Equals(compareIDData.Value)
 }
-func idDataFromInterface(data types.Data) (*idData, error) {
+func idDataFromInterface(data types.Data) (idData, error) {
 	switch value := data.(type) {
-	case *idData:
+	case idData:
 		return value, nil
 	default:
-		return &idData{}, errors.MetaDataError
+		return idData{}, errors.MetaDataError
 	}
 }
 
 func NewIDData(value types.ID) types.Data {
-	return &idData{
+	return idData{
 		Value: value,
 	}
 }

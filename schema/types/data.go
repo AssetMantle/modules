@@ -25,11 +25,5 @@ type Data interface {
 
 	Get() interface{}
 
-	MarshalJSON() ([]byte, error)
-	UnmarshalJSON(bz []byte) error
-
-	MarshalAmino() (string, error)
-	UnmarshalAmino(text string) (err error)
-
 	Equal(Data) bool
 }

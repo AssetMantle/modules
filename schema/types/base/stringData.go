@@ -16,25 +16,6 @@ type stringData struct {
 	Value string `json:"value"`
 }
 
-func (stringData stringData) MarshalAmino() (string, error) {
-	return stringData.String(), nil
-}
-
-func (stringData *stringData) UnmarshalAmino(text string) (err error) {
-	stringData.Value = text
-	return nil
-}
-
-func (stringData stringData) MarshalJSON() ([]byte, error) {
-	//return NewCodec().MarshalJSON(stringData)
-	panic("impl me")
-}
-
-func (stringData *stringData) UnmarshalJSON(bz []byte) error {
-	//return NewCodec().UnmarshalJSON(bz, &stringData)
-	panic("impl me")
-}
-
 var _ types.Data = (*stringData)(nil)
 
 func (stringData stringData) String() string {
