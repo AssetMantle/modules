@@ -8,6 +8,8 @@ package applications
 import (
 	"testing"
 
+	"github.com/cosmos/cosmos-sdk/types/module"
+
 	"github.com/cosmos/cosmos-sdk/x/auth/exported"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -25,8 +27,9 @@ type SimulationApplication interface {
 	GetKey(storeKey string) *sdk.KVStoreKey
 	GetTKey(storeKey string) *sdk.TransientStoreKey
 	GetSubspace(moduleName string) params.Subspace
-	GetMaccPerms() map[string][]string
-	BlacklistedAccAddrs() map[string]bool
+	GetModuleAccountPermissions() map[string][]string
+	GetBlackListedAddresses() map[string]bool
+	ModuleManager() *module.Manager
 
 	CheckBalance(*testing.T, sdk.AccAddress, sdk.Coins)
 

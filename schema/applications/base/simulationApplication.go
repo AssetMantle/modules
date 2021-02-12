@@ -103,36 +103,36 @@ type SimulationApplication struct {
 
 var _ applications.SimulationApplication = (*SimulationApplication)(nil)
 
-func (simulationApplication SimulationApplication) Info(info abciTypes.RequestInfo) abciTypes.ResponseInfo {
-	return simulationApplication.application.baseApp.Info(info)
+func (simulationApplication SimulationApplication) Info(requestInfo abciTypes.RequestInfo) abciTypes.ResponseInfo {
+	return simulationApplication.application.baseApp.Info(requestInfo)
 }
 
-func (simulationApplication SimulationApplication) SetOption(option abciTypes.RequestSetOption) abciTypes.ResponseSetOption {
-	return simulationApplication.application.baseApp.SetOption(option)
+func (simulationApplication SimulationApplication) SetOption(requestSetOption abciTypes.RequestSetOption) abciTypes.ResponseSetOption {
+	return simulationApplication.application.baseApp.SetOption(requestSetOption)
 }
 
-func (simulationApplication SimulationApplication) Query(query abciTypes.RequestQuery) abciTypes.ResponseQuery {
-	return simulationApplication.application.baseApp.Query(query)
+func (simulationApplication SimulationApplication) Query(requestQuery abciTypes.RequestQuery) abciTypes.ResponseQuery {
+	return simulationApplication.application.baseApp.Query(requestQuery)
 }
 
-func (simulationApplication SimulationApplication) CheckTx(tx abciTypes.RequestCheckTx) abciTypes.ResponseCheckTx {
-	return simulationApplication.application.baseApp.CheckTx(tx)
+func (simulationApplication SimulationApplication) CheckTx(requestCheckTx abciTypes.RequestCheckTx) abciTypes.ResponseCheckTx {
+	return simulationApplication.application.baseApp.CheckTx(requestCheckTx)
 }
 
-func (simulationApplication SimulationApplication) InitChain(chain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
-	return simulationApplication.application.baseApp.InitChain(chain)
+func (simulationApplication SimulationApplication) InitChain(requestInitChain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
+	return simulationApplication.application.baseApp.InitChain(requestInitChain)
 }
 
-func (simulationApplication SimulationApplication) BeginBlock(block abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
-	return simulationApplication.application.baseApp.BeginBlock(block)
+func (simulationApplication SimulationApplication) BeginBlock(requestBeginBlock abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
+	return simulationApplication.application.baseApp.BeginBlock(requestBeginBlock)
 }
 
-func (simulationApplication SimulationApplication) DeliverTx(tx abciTypes.RequestDeliverTx) abciTypes.ResponseDeliverTx {
-	return simulationApplication.application.baseApp.DeliverTx(tx)
+func (simulationApplication SimulationApplication) DeliverTx(requestDeliverTx abciTypes.RequestDeliverTx) abciTypes.ResponseDeliverTx {
+	return simulationApplication.application.baseApp.DeliverTx(requestDeliverTx)
 }
 
-func (simulationApplication SimulationApplication) EndBlock(block abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock {
-	return simulationApplication.application.baseApp.EndBlock(block)
+func (simulationApplication SimulationApplication) EndBlock(requestEndBlock abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock {
+	return simulationApplication.application.baseApp.EndBlock(requestEndBlock)
 }
 
 func (simulationApplication SimulationApplication) Commit() abciTypes.ResponseCommit {
@@ -143,8 +143,8 @@ func (simulationApplication SimulationApplication) LoadHeight(i int64) error {
 	return simulationApplication.application.LoadHeight(i)
 }
 
-func (simulationApplication SimulationApplication) ExportApplicationStateAndValidators(b bool, strings []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
-	return simulationApplication.application.ExportApplicationStateAndValidators(b, strings)
+func (simulationApplication SimulationApplication) ExportApplicationStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
+	return simulationApplication.application.ExportApplicationStateAndValidators(forZeroHeight, jailWhiteList)
 }
 
 func (simulationApplication SimulationApplication) Initialize(applicationName string, codec *codec.Codec, enabledProposals []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool, logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
@@ -544,6 +544,10 @@ func (simulationApplication SimulationApplication) SimulationManager() *module.S
 	return simulationApplication.sm
 }
 
+func (simulationApplication SimulationApplication) ModuleManager() *module.Manager {
+	return simulationApplication.application.moduleManager
+}
+
 func (simulationApplication SimulationApplication) GetBaseApp() *baseapp.BaseApp {
 	return simulationApplication.application.baseApp
 }
@@ -560,11 +564,11 @@ func (simulationApplication SimulationApplication) GetSubspace(moduleName string
 	return simulationApplication.subspaces[moduleName]
 }
 
-func (simulationApplication SimulationApplication) GetMaccPerms() map[string][]string {
+func (simulationApplication SimulationApplication) GetModuleAccountPermissions() map[string][]string {
 	return simulationApplication.moduleAddressPermissions
 }
 
-func (simulationApplication SimulationApplication) BlacklistedAccAddrs() map[string]bool {
+func (simulationApplication SimulationApplication) GetBlackListedAddresses() map[string]bool {
 	blacklistedAddrs := make(map[string]bool)
 	for acc := range ModuleAccountPermissions {
 		blacklistedAddrs[supply.NewModuleAddress(acc).String()] = !AllowedReceivingModuleAccounts[acc]
@@ -580,27 +584,28 @@ func (simulationApplication SimulationApplication) CheckBalance(t *testing.T, ad
 	require.True(t, coins.IsEqual(res.GetCoins()))
 }
 
-func (simulationApplication SimulationApplication) AddTestAddresses(context sdkTypes.Context, i int, s sdkTypes.Int) []sdkTypes.AccAddress {
-	testAddrs := make([]sdkTypes.AccAddress, i)
-	for i := 0; i < i; i++ {
+func (simulationApplication SimulationApplication) AddTestAddresses(context sdkTypes.Context, accountNumber int, amount sdkTypes.Int) []sdkTypes.AccAddress {
+	testAddresses := make([]sdkTypes.AccAddress, accountNumber)
+
+	for i := 0; i < accountNumber; i++ {
 		pk := ed25519.GenPrivKey().PubKey()
-		testAddrs[i] = sdkTypes.AccAddress(pk.Address())
+		testAddresses[i] = sdkTypes.AccAddress(pk.Address())
 	}
 
-	initCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(simulationApplication.StakingKeeper.BondDenom(context), s))
-	totalSupply := sdkTypes.NewCoins(sdkTypes.NewCoin(simulationApplication.StakingKeeper.BondDenom(context), s.MulRaw(int64(len(testAddrs)))))
+	initCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(simulationApplication.StakingKeeper.BondDenom(context), amount))
+	totalSupply := sdkTypes.NewCoins(sdkTypes.NewCoin(simulationApplication.StakingKeeper.BondDenom(context), amount.MulRaw(int64(len(testAddresses)))))
 	prevSupply := simulationApplication.SupplyKeeper.GetSupply(context)
 	simulationApplication.SupplyKeeper.SetSupply(context, supply.NewSupply(prevSupply.GetTotal().Add(totalSupply...)))
 
 	// fill all the addresses with some coins, set the loose pool tokens simultaneously
-	for _, addr := range testAddrs {
+	for _, addr := range testAddresses {
 		_, err := simulationApplication.BankKeeper.AddCoins(context, addr, initCoins)
 		if err != nil {
 			panic(err)
 		}
 	}
 
-	return testAddrs
+	return testAddresses
 }
 
 func (simulationApplication SimulationApplication) Setup(isCheckTx bool) applications.SimulationApplication {
@@ -670,8 +675,7 @@ func NewSimApp() SimulationApplication {
 }
 
 var (
-	ApplicationName = "simapp"
-	DefaultCLIHome  = os.ExpandEnv("$HOME/.simapp")
+	ApplicationName = "SimulationApplication"
 	DefaultNodeHome = os.ExpandEnv("$HOME/.simapp")
 
 	ModuleBasics = module.NewBasicManager(
@@ -699,7 +703,7 @@ var (
 		splits.Prototype(),
 	)
 
-	// module account permissions
+	// ModuleAccountPermissions module account permissions
 	ModuleAccountPermissions = map[string][]string{
 		auth.FeeCollectorName:     nil,
 		distribution.ModuleName:   nil,
@@ -709,7 +713,7 @@ var (
 		gov.ModuleName:            {supply.Burner},
 	}
 
-	// module accounts that are allowed to receive tokens
+	// AllowedReceivingModuleAccounts module accounts that are allowed to receive tokens
 	AllowedReceivingModuleAccounts = map[string]bool{
 		distribution.ModuleName: true,
 	}
