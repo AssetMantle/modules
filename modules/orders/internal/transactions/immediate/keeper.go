@@ -20,7 +20,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
@@ -31,7 +30,6 @@ type transactionKeeper struct {
 	mapper              helpers.Mapper
 	parameters          helpers.Parameters
 	conformAuxiliary    helpers.Auxiliary
-	mintAuxiliary       helpers.Auxiliary
 	scrubAuxiliary      helpers.Auxiliary
 	supplementAuxiliary helpers.Auxiliary
 	transferAuxiliary   helpers.Auxiliary
@@ -238,8 +236,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			switch value.GetName() {
 			case conform.Auxiliary.GetName():
 				transactionKeeper.conformAuxiliary = value
-			case mint.Auxiliary.GetName():
-				transactionKeeper.mintAuxiliary = value
 			case scrub.Auxiliary.GetName():
 				transactionKeeper.scrubAuxiliary = value
 			case supplement.Auxiliary.GetName():

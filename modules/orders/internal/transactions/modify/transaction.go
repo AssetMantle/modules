@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package make
+package modify
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
@@ -11,19 +11,17 @@ import (
 )
 
 var Transaction = base.NewTransaction(
-	"make",
+	"modify",
 	"",
 	"",
 
 	requestPrototype,
 	messagePrototype,
 	keeperPrototype,
-	flags.ClassificationID,
 	flags.FromID,
+	flags.OrderID,
 	flags.MakerOwnableSplit,
-	flags.MakerOwnableID,
 	flags.ExchangeRate,
-	flags.TakerOwnableID,
 	flags.ExpiresIn,
 	flags.ImmutableMetaProperties,
 	flags.ImmutableProperties,

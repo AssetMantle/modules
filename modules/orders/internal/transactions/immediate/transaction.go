@@ -20,7 +20,6 @@ var Transaction = base.NewTransaction(
 	keeperPrototype,
 	flags.ClassificationID,
 	flags.FromID,
-	flags.ToID,
 	flags.MakerOwnableSplit,
 	flags.MakerOwnableID,
 	flags.ExchangeRate,

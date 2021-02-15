@@ -399,7 +399,6 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
 			metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 			metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-			splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
 			splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
 		)
 
@@ -476,12 +475,12 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			mint.ModuleName,
 			distribution.ModuleName,
 			slashing.ModuleName,
-			ordersModule.Name(),
 		)
 		application.moduleManager.SetOrderEndBlockers(
 			crisis.ModuleName,
 			gov.ModuleName,
 			staking.ModuleName,
+			ordersModule.Name(),
 		)
 		application.moduleManager.SetOrderInitGenesis(
 			auth.ModuleName,

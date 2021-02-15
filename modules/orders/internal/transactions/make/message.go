@@ -51,6 +51,10 @@ func (message message) ValidateBasic() error {
 		return errors.Wrap(xprtErrors.IncorrectMessage, "MakerOwnableID and TakerOwnableID cannot be same")
 	}
 
+	if message.MakerOwnableSplit.LT(sdkTypes.ZeroDec()) {
+		return errors.Wrap(xprtErrors.IncorrectMessage, "MakerOwnableSplit cannot be less than 0")
+	}
+
 	return nil
 }
 func (message message) GetSignBytes() []byte {

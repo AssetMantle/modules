@@ -124,13 +124,13 @@ func New(id types.ID) helpers.Key {
 	return orderIDFromInterface(id)
 }
 
-func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, rateID types.ID, creationHeightID types.ID, makerID types.ID, immutables types.Immutables) types.ID {
+func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, rateID types.ID, creationID types.ID, makerID types.ID, immutables types.Immutables) types.ID {
 	return orderID{
 		ClassificationID: classificationID,
 		MakerOwnableID:   makerOwnableID,
 		TakerOwnableID:   takerOwnableID,
 		RateID:           rateID,
-		CreationID:       creationHeightID,
+		CreationID:       creationID,
 		MakerID:          makerID,
 		HashID:           immutables.GenerateHashID(),
 	}

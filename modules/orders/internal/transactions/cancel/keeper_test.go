@@ -6,6 +6,9 @@
 package cancel
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -27,8 +30,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
 )
 
 type TestKeepers struct {
@@ -89,12 +90,15 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	classificationID := base.NewID("classificationID")
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
+	rateID := base.NewID(sdkTypes.MustNewDecFromStr("0.001").String())
+	creationID := base.NewID("100")
+	makerID := base.NewID("makerID")
 	metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 		"," + properties.TakerID + ":I|fromID" + "," +
 		properties.ExchangeRate + ":D|0.000000000000000001")
 	require.Equal(t, nil, Error)
 	orderID := key.NewOrderID(classificationID, makerOwnableID,
-		takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
+		takerOwnableID, rateID, creationID, makerID, base.NewImmutables(base.NewProperties()))
 	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
 
 	t.Run("PositiveCase", func(t *testing.T) {
@@ -131,7 +135,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - transferMock Error", func(t *testing.T) {
 		t.Parallel()
 		transferErrorID := key.NewOrderID(classificationID, base.NewID("transferError"),
-			takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
+			takerOwnableID, base.NewID("1.0"), base.NewID("1"), base.NewID("makerID"), base.NewImmutables(base.NewProperties()))
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
 
 		want := newTransactionResponse(errors.MockError)
