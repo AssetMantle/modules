@@ -29,10 +29,6 @@ func (idData idData) GetTypeID() types.ID {
 	return NewID("I")
 }
 func (idData idData) GenerateHashID() types.ID {
-	if idData.Value.String() == "" {
-		return NewID("")
-	}
-
 	return NewID(meta.Hash(idData.Value.String()))
 }
 func (idData idData) AsString() (string, error) {

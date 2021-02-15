@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"reflect"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -91,6 +92,8 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		transactionRequest := transaction.requestPrototype()
 		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &transactionRequest) {
+			return
+		} else if reflect.TypeOf(transaction.requestPrototype()) != reflect.TypeOf(transactionRequest) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
