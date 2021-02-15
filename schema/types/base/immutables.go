@@ -23,9 +23,7 @@ func (immutables immutables) GenerateHashID() types.ID {
 	metaList := make([]string, len(immutables.Properties.GetList()))
 
 	for i, immutableProperty := range immutables.Properties.GetList() {
-		if hashID := immutableProperty.GetFact().GetHashID(); hashID.Equals(NewID("")) {
-			metaList[i] = immutableProperty.GetFact().GetHashID().String()
-		}
+		metaList[i] = immutableProperty.GetFact().GetHashID().String()
 	}
 
 	return NewID(metaUtilities.Hash(metaList...))

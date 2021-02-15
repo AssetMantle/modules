@@ -6,11 +6,12 @@
 package base
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_IDData(t *testing.T) {
@@ -22,6 +23,7 @@ func Test_IDData(t *testing.T) {
 	require.Equal(t, "ID", testIDData.String())
 	require.Equal(t, NewID(meta.Hash("ID")), testIDData.GenerateHashID())
 	require.Equal(t, NewID(""), testIDData2.GenerateHashID())
+	require.Equal(t, NewID("I"), testIDData.GetTypeID())
 
 	dataAsString, Error := testIDData.AsString()
 	require.Equal(t, "", dataAsString)

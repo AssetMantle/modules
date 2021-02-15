@@ -19,4 +19,5 @@ func Test_Immutables(t *testing.T) {
 	require.Equal(t, immutables{Properties: NewProperties(testProperty)}, testImmutables)
 	require.Equal(t, NewProperties(testProperty), testImmutables.Get())
 	require.Equal(t, id{IDString: metaUtilities.Hash([]string{testProperty.GetFact().GetHashID().String()}...)}, testImmutables.GenerateHashID())
+	require.Equal(t, NewID(""), NewImmutables(NewProperties()).GenerateHashID())
 }
