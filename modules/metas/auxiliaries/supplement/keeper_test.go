@@ -6,6 +6,9 @@
 package supplement
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -23,8 +26,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
 )
 
 type TestKeepers struct {
@@ -91,8 +92,8 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	keepers.MetasKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(decData)).Add(mappable.NewMeta(base.NewDecData(dec)))
 
 	t.Run("Positive Case", func(t *testing.T) {
-		want := newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList), nil)
-		if got := keepers.MetasKeeper.Help(context, NewAuxiliaryRequest(property1, property2, property3, property4, property5)); !reflect.DeepEqual(got, want) {
+		want := newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
+		if got := keepers.MetasKeeper.Help(context, NewAuxiliaryRequest(property1.RemoveData(), property2.RemoveData(), property3.RemoveData(), property4.RemoveData(), property5.RemoveData())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

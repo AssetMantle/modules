@@ -46,7 +46,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	immutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetMetaPropertyList()...)))
+	immutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
@@ -65,7 +65,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return newTransactionResponse(Error)
 		}
 
-		oldMakerOwnableSplitMetaProperty := metaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit))
+		oldMakerOwnableSplitMetaProperty := metaProperties.Get(base.NewID(properties.MakerOwnableSplit))
 		if oldMakerOwnableSplitMetaProperty == nil {
 			return newTransactionResponse(errors.MetaDataError)
 		}
@@ -78,10 +78,10 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		}
 	}
 
-	mutableMetaProperties := message.MutableMetaProperties.AddMetaProperty(base.NewMetaProperty(base.NewID(properties.Expiry), base.NewMetaFact(base.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight())))))
-	mutableMetaProperties = mutableMetaProperties.AddMetaProperty(base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(makerOwnableSplit))))
+	mutableMetaProperties := message.MutableMetaProperties.Add(base.NewMetaProperty(base.NewID(properties.Expiry), base.NewMetaFact(base.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight())))))
+	mutableMetaProperties = mutableMetaProperties.Add(base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(makerOwnableSplit))))
 
-	scrubbedMutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetMetaPropertyList()...)))
+	scrubbedMutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}

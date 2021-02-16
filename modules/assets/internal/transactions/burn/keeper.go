@@ -45,7 +45,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	burnHeightMetaFact := metaProperties.GetMetaProperty(base.NewID(properties.Burn))
+	burnHeightMetaFact := metaProperties.Get(base.NewID(properties.Burn))
 	if burnHeightMetaFact == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
