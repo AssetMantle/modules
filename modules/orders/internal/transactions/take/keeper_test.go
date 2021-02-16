@@ -118,23 +118,6 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		}
 	})
 
-	t.Run("Negative Case - Order expired", func(t *testing.T) {
-		context = context.WithBlockHeight(1000)
-		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
-			"," + properties.TakerID + ":I|fromID" + "," +
-			properties.ExchangeRate + ":D|1," +
-			properties.Expiry + ":H|900")
-		require.Equal(t, nil, Error)
-		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
-
-		want := newTransactionResponse(errors.NotAuthorized)
-		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec(),
-			orderID)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	context = context.WithBlockHeight(100)
 	t.Run("NegativeCase - Identity mock error", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.EntityNotFound)

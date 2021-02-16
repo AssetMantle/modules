@@ -51,15 +51,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		newTransactionResponse(Error)
 	}
 
-	if expiryProperty := metaProperties.GetMetaProperty(base.NewID(properties.Expiry)); expiryProperty != nil {
-		expiry, Error := expiryProperty.GetMetaFact().GetData().AsHeight()
-		if Error != nil {
-			return newTransactionResponse(errors.MetaDataError)
-		} else if !expiry.IsGreaterThan(base.NewHeight(context.BlockHeight())) {
-			return newTransactionResponse(errors.NotAuthorized)
-		}
-	}
-
 	if takerIDProperty := metaProperties.GetMetaProperty(base.NewID(properties.TakerID)); takerIDProperty != nil {
 		takerID, Error := takerIDProperty.GetMetaFact().GetData().AsID()
 		if Error != nil {
