@@ -33,7 +33,7 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 }
 
 func NewAuxiliaryRequest(fromID types.ID, toID types.ID, classificationID types.ID) helpers.AuxiliaryRequest {
-	return &auxiliaryRequest{
+	return auxiliaryRequest{
 		FromID:           fromID,
 		ToID:             toID,
 		ClassificationID: classificationID,
