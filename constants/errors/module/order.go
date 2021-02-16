@@ -13,5 +13,5 @@ import (
 )
 
 var (
-	OrderExpired = errors.Register(constants.ProjectRoute+"/"+names.Orders, uint32(keys.Orders), "OrderExpired")
+	OrderExpired = errors.Register(constants.ProjectRoute+"/"+names.Orders, uint32(keys.Orders)*100+1, "OrderExpired")
 )
