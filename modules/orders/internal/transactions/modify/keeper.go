@@ -45,7 +45,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	order := orders.Get(key.New(message.OrderID))
 	if order == nil {
-		newTransactionResponse(errors.EntityNotFound)
+		return newTransactionResponse(errors.EntityNotFound)
 	}
 
 	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetMakerOwnableSplit())))

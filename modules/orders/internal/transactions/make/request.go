@@ -28,7 +28,7 @@ type transactionRequest struct {
 	TakerOwnableID          string       `json:"takerOwnableID" valid:"required~required field takerOwnableID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field takerOwnableID"`
 	ExpiresIn               int64        `json:"expiresIn" valid:"required~required field expiresIn missing, matches(^[0-9]+$)~invalid field expiresIn"`
 	MakerOwnableSplit       string       `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing, matches(^[0-9.]+$)~invalid field makerOwnableSplit"`
-	ExchangeRate            string       `json:"exchangeRate" valid:"required~required field exchangeRate missing, matches(^[-]?[0-9.]+$)~invalid field exchangeRate"`
+	ExchangeRate            string       `json:"exchangeRate" valid:"required~required field exchangeRate missing, matches(^[0-9]{1,255}(\.{1}[0-9]{1,18})?$)~invalid field exchangeRate"` //nolint:govet
 	ImmutableMetaProperties string       `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing, matches(^.*$)~invalid field immutableMetaProperties"`
 	ImmutableProperties     string       `json:"immutableProperties" valid:"required~required field immutableProperties missing, matches(^.*$)~invalid field immutableProperties"`
 	MutableMetaProperties   string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing, matches(^.*$)~invalid field mutableMetaProperties"`

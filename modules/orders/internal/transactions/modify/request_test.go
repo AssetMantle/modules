@@ -79,18 +79,18 @@ func Test_Define_Request(t *testing.T) {
 	require.Equal(t, nil, msg)
 	require.NotNil(t, Error)
 
-	//msg, Error = newTransactionRequest(rest.BaseReq{From: fromAddress, ChainID: "test"}, "fromID", "orderID", sdkTypes.OneDec().String(), sdkTypes.OneDec().String(), 123, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
-	//require.Equal(t, nil, msg)
-	//require.NotNil(t, Error)
-	//
-	//msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "orderID", sdkTypes.OneDec().String(), sdkTypes.OneDec().String(), 123, "randomString", mutableMetaPropertiesString).MakeMsg()
-	//require.Equal(t, nil, msg)
-	//require.NotNil(t, Error)
-	//
-	//msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "orderID", sdkTypes.OneDec().String(), sdkTypes.OneDec().String(), 123, mutablePropertiesString, "randomString").MakeMsg()
-	//require.Equal(t, nil, msg)
-	//require.NotNil(t, Error)
-	//
+	msg, Error = newTransactionRequest(testBaseReq, "fromID", "orderID", "aa", "2.0", 123, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
+	require.Equal(t, nil, msg)
+	require.NotNil(t, Error)
+
+	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "orderID", sdkTypes.OneDec().String(), sdkTypes.OneDec().String(), 123, "randomString", mutableMetaPropertiesString).MakeMsg()
+	require.Equal(t, nil, msg)
+	require.NotNil(t, Error)
+
+	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "orderID", sdkTypes.OneDec().String(), sdkTypes.OneDec().String(), 123, mutablePropertiesString, "randomString").MakeMsg()
+	require.Equal(t, nil, msg)
+	require.NotNil(t, Error)
+
 	//require.Equal(t, transactionRequest{}, requestPrototype())
 	//require.NotPanics(t, func() {
 	//	requestPrototype().RegisterCodec(codec.New())

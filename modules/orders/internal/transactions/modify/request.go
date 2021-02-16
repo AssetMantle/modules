@@ -24,7 +24,7 @@ type transactionRequest struct {
 	BaseReq               rest.BaseReq `json:"baseReq"`
 	FromID                string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
 	OrderID               string       `json:"orderID" valid:"required~required field orderID missing, matches(^[A-Za-z0-9-_|=.*]+$)~invalid field orderID"`
-	ExchangeRate          string       `json:"exchangeRate" valid:"required~required field exchangeRate missing, matches(^[0-9]{1,255}([.]{1}[0-9]{1,18})?$)~invalid field exchangeRate"`
+	ExchangeRate          string       `json:"exchangeRate" valid:"required~required field exchangeRate missing, matches(^[0-9]{1,255}(\.{1}[0-9]{1,18})?$)~invalid field exchangeRate"` //nolint:govet
 	MakerOwnableSplit     string       `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing, matches(^[0-9.]+$)~invalid field makerOwnableSplit"`
 	ExpiresIn             int64        `json:"expiresIn" valid:"required~required field expiresIn missing, matches(^[0-9]+$)~invalid field expiresIn"`
 	MutableMetaProperties string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing, matches(^.*$)~invalid field mutableMetaProperties"`
