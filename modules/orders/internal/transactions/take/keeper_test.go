@@ -9,8 +9,6 @@ import (
 	"reflect"
 	"testing"
 
-	moduleErrors "github.com/persistenceOne/persistenceSDK/constants/errors/module"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -129,7 +127,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		require.Equal(t, nil, Error)
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
 
-		want := newTransactionResponse(moduleErrors.OrderExpired)
+		want := newTransactionResponse(errors.NotAuthorized)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec(),
 			orderID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)

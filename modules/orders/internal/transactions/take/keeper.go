@@ -8,7 +8,6 @@ package take
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	moduleErrors "github.com/persistenceOne/persistenceSDK/constants/errors/module"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
@@ -57,7 +56,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		if Error != nil {
 			return newTransactionResponse(errors.MetaDataError)
 		} else if !expiry.IsGreaterThan(base.NewHeight(context.BlockHeight())) {
-			return newTransactionResponse(moduleErrors.OrderExpired)
+			return newTransactionResponse(errors.NotAuthorized)
 		}
 	}
 
