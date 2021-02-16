@@ -23,6 +23,7 @@ func Test_HeightData(t *testing.T) {
 	require.Equal(t, "123", testHeightData.String())
 	require.Equal(t, NewID(meta.Hash("123")), testHeightData.GenerateHashID())
 	require.Equal(t, NewID(""), testHeightData2.GenerateHashID())
+	require.Equal(t, NewID("H"), testHeightData.GetTypeID())
 
 	dataAsString, Error := testHeightData.AsString()
 	require.Equal(t, "", dataAsString)
