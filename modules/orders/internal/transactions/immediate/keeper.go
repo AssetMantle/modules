@@ -138,77 +138,62 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			panic(errors.MetaDataError)
 		}
 
-		var executableOrderExpiry types.Height
+		executableOrderTakerOwnableSplitDemanded := executableOrderExchangeRate.Abs().Mul(executableOrderMakerOwnableSplit).MulTruncate(sdkTypes.SmallestDec())
 
-		if expiryProperty := executableOrderMetaProperties.GetMetaProperty(base.NewID(properties.Expiry)); expiryProperty != nil {
-			executableOrderExpiry, Error = expiryProperty.GetMetaFact().GetData().AsHeight()
-			if Error != nil {
-				panic(Error)
-			}
-		} else {
-			panic(errors.MetaDataError)
-		}
-
-		if executableOrderExpiry.Get() >= context.BlockHeight() {
-			orderLeftOverTakerOwnableSplitDemanded := orderExchangeRate.Abs().Mul(orderLeftOverMakerOwnableSplit).MulTruncate(sdkTypes.SmallestDec())
-			executableOrderTakerOwnableSplitDemanded := executableOrderExchangeRate.Abs().Mul(executableOrderMakerOwnableSplit).MulTruncate(sdkTypes.SmallestDec())
-
-			if orderLeftOverMakerOwnableSplit.Mul(executableOrderMakerOwnableSplit).GTE(orderLeftOverTakerOwnableSplitDemanded.Mul(executableOrderTakerOwnableSplitDemanded)) {
-				switch {
-				case orderLeftOverMakerOwnableSplit.GT(executableOrderTakerOwnableSplitDemanded):
-					// sending to buyer
-					if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetTakerOwnableID(), executableOrderMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
-						panic(auxiliaryResponse.GetError())
-					}
-					// sending to executableOrder
-					if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), executableOrder.GetMakerID(), order.(mappables.Order).GetMakerOwnableID(), executableOrderTakerOwnableSplitDemanded)); !auxiliaryResponse.IsSuccessful() {
-						panic(auxiliaryResponse.GetError())
-					}
-
-					orderLeftOverMakerOwnableSplit = orderLeftOverMakerOwnableSplit.Sub(executableOrderTakerOwnableSplitDemanded)
-
-					orders.Remove(executableOrder)
-				case orderLeftOverMakerOwnableSplit.LT(executableOrderTakerOwnableSplitDemanded):
-					// sending to buyer
-					if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetTakerOwnableID(), orderLeftOverTakerOwnableSplitDemanded)); !auxiliaryResponse.IsSuccessful() {
-						panic(auxiliaryResponse.GetError())
-					}
-					// sending to executableOrder
-					if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), executableOrder.GetMakerID(), order.(mappables.Order).GetMakerOwnableID(), orderLeftOverMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
-						panic(auxiliaryResponse.GetError())
-					}
-
-					mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(executableOrderMakerOwnableSplit.Sub(orderLeftOverTakerOwnableSplitDemanded)))))))
-					if Error != nil {
-						panic(Error)
-					}
-
-					orders.Mutate(mappable.NewOrder(executableOrder.GetID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(mutableProperties.GetList()...)))
-
-					orderLeftOverMakerOwnableSplit = sdkTypes.ZeroDec()
-				default:
-					// case orderLeftOverMakerOwnableSplit.Equal(executableOrderTakerOwnableSplitDemanded):
-					// sending to buyer
-					if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetTakerOwnableID(), executableOrderMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
-						panic(auxiliaryResponse.GetError())
-					}
-					// sending to seller
-					if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), executableOrder.GetMakerID(), order.(mappables.Order).GetMakerOwnableID(), orderLeftOverMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
-						panic(auxiliaryResponse.GetError())
-					}
-
-					orders.Remove(executableOrder)
-
-					orderLeftOverMakerOwnableSplit = sdkTypes.ZeroDec()
+		if orderExchangeRate.Mul(executableOrderExchangeRate).LTE(sdkTypes.OneDec()) {
+			switch {
+			case orderLeftOverMakerOwnableSplit.GT(executableOrderTakerOwnableSplitDemanded):
+				// sending to buyer
+				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetTakerOwnableID(), executableOrderMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+					panic(auxiliaryResponse.GetError())
+				}
+				// sending to executableOrder
+				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), executableOrder.GetMakerID(), order.(mappables.Order).GetMakerOwnableID(), executableOrderTakerOwnableSplitDemanded)); !auxiliaryResponse.IsSuccessful() {
+					panic(auxiliaryResponse.GetError())
 				}
 
-				orderMutated = true
+				orderLeftOverMakerOwnableSplit = orderLeftOverMakerOwnableSplit.Sub(executableOrderTakerOwnableSplitDemanded)
+
+				orders.Remove(executableOrder)
+			case orderLeftOverMakerOwnableSplit.LT(executableOrderTakerOwnableSplitDemanded):
+				// sending to buyer
+				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetTakerOwnableID(), orderLeftOverMakerOwnableSplit.QuoTruncate(executableOrderExchangeRate))); !auxiliaryResponse.IsSuccessful() {
+					panic(auxiliaryResponse.GetError())
+				}
+				// sending to executableOrder
+				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), executableOrder.GetMakerID(), order.(mappables.Order).GetMakerOwnableID(), orderLeftOverMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+					panic(auxiliaryResponse.GetError())
+				}
+
+				mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(executableOrderMakerOwnableSplit.Sub(orderLeftOverMakerOwnableSplit.QuoTruncate(executableOrderExchangeRate))))))))
+				if Error != nil {
+					panic(Error)
+				}
+
+				orders.Mutate(mappable.NewOrder(executableOrder.GetID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(mutableProperties.GetList()...)))
+
+				orderLeftOverMakerOwnableSplit = sdkTypes.ZeroDec()
+			default:
+				// case orderLeftOverMakerOwnableSplit.Equal(executableOrderTakerOwnableSplitDemanded):
+				// sending to buyer
+				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetTakerOwnableID(), executableOrderMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+					panic(auxiliaryResponse.GetError())
+				}
+				// sending to seller
+				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), executableOrder.GetMakerID(), order.(mappables.Order).GetMakerOwnableID(), orderLeftOverMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+					panic(auxiliaryResponse.GetError())
+				}
+
+				orders.Remove(executableOrder)
+
+				orderLeftOverMakerOwnableSplit = sdkTypes.ZeroDec()
 			}
+
+			orderMutated = true
 		}
 
 		if orderLeftOverMakerOwnableSplit.Equal(sdkTypes.ZeroDec()) {
 			orders.Remove(order)
-
 			return true
 		}
 
