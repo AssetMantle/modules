@@ -23,7 +23,7 @@ var Transaction = base.NewTransaction(
 	flags.ToID,
 	flags.MakerOwnableSplit,
 	flags.MakerOwnableID,
-	flags.ExchangeRate,
+	flags.TakerOwnableSplit,
 	flags.TakerOwnableID,
 	flags.ExpiresIn,
 	flags.ImmutableMetaProperties,

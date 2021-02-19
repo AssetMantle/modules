@@ -50,7 +50,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	immutableProperties := base.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
-	orderID := key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, base.NewID(message.ExchangeRate.String()), base.NewID(strconv.FormatInt(context.BlockHeight(), 10)), message.FromID, base.NewImmutables(immutableProperties))
+	exchangeRate := (message.TakerOwnableSplit.Mul(sdkTypes.MaxSortableDec)).QuoTruncate(message.MakerOwnableSplit)
+	orderID := key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, base.NewID(exchangeRate.String()), base.NewID(strconv.FormatInt(context.BlockHeight(), 10)), message.FromID, base.NewImmutables(immutableProperties))
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(orderID))
 	makerOwnableSplit := message.MakerOwnableSplit
 	order := orders.Get(key.New(orderID))
