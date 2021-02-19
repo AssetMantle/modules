@@ -23,6 +23,7 @@ func Test_DecData(t *testing.T) {
 	require.Equal(t, decValue.String(), testDecData.String())
 	require.Equal(t, NewID(meta.Hash(decValue.String())), testDecData.GenerateHashID())
 	require.Equal(t, NewID(""), testDecData2.GenerateHashID())
+	require.Equal(t, NewID("D"), testDecData.GetTypeID())
 
 	dataAsString, Error := testDecData.AsString()
 	require.Equal(t, "", dataAsString)

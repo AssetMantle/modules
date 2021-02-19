@@ -15,8 +15,20 @@ import (
 )
 
 func Hash(meta ...string) string {
-	sort.Strings(meta)
-	toDigest := strings.Join(meta, constants.ToHashSeparator)
+	var filteredMetaList []string
+
+	for _, value := range meta {
+		if value != "" {
+			filteredMetaList = append(filteredMetaList, value)
+		}
+	}
+
+	if len(filteredMetaList) == 0 {
+		return ""
+	}
+
+	sort.Strings(filteredMetaList)
+	toDigest := strings.Join(filteredMetaList, constants.ToHashSeparator)
 	hash := sha256.New()
 
 	if _, Error := hash.Write([]byte(toDigest)); Error != nil {

@@ -28,10 +28,6 @@ func (stringData stringData) ZeroValue() types.Data {
 	return NewStringData("")
 }
 func (stringData stringData) GenerateHashID() types.ID {
-	if stringData.Equal(stringData.ZeroValue()) {
-		return NewID("")
-	}
-
 	return NewID(meta.Hash(stringData.Value))
 }
 func (stringData stringData) AsString() (string, error) {
