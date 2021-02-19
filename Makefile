@@ -14,7 +14,6 @@ all: build test
 
 # The below include contains the tools and runsim targets.
 include utilities/simulation/make/Makefile
-#include github.com/cosmos/cosmos-sdk/contrib/devtools/Makefile
 
 ########################################
 ### Build
