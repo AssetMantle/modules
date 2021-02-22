@@ -53,10 +53,6 @@ func (maintainerID maintainerID) Matches(key helpers.Key) bool {
 	return maintainerID.Equals(maintainerIDFromInterface(key))
 }
 
-func New(id types.ID) helpers.Key {
-	return maintainerIDFromInterface(id)
-}
-
 func NewMaintainerID(classificationID types.ID, identityID types.ID) types.ID {
 	return maintainerID{
 		ClassificationID: classificationID,

@@ -18,8 +18,8 @@ type metaProperties struct {
 
 var _ types.MetaProperties = (*metaProperties)(nil)
 
-func (metaProperties metaProperties) GetMetaProperty(id types.ID) types.MetaProperty {
-	for _, metaProperty := range metaProperties.GetMetaPropertyList() {
+func (metaProperties metaProperties) Get(id types.ID) types.MetaProperty {
+	for _, metaProperty := range metaProperties.GetList() {
 		if metaProperty.GetID().Equals(id) {
 			return metaProperty
 		}
@@ -27,96 +27,58 @@ func (metaProperties metaProperties) GetMetaProperty(id types.ID) types.MetaProp
 
 	return nil
 }
-
-func (metaProperties metaProperties) GetMetaPropertyList() []types.MetaProperty {
+func (metaProperties metaProperties) GetList() []types.MetaProperty {
 	return metaProperties.MetaPropertyList
 }
+func (metaProperties metaProperties) Add(metaPropertyList ...types.MetaProperty) types.MetaProperties {
+	newMetaPropertyList := metaProperties.GetList()
 
-func (metaProperties metaProperties) AddMetaProperty(metaProperty types.MetaProperty) types.MetaProperties {
-	metaPropertyList := metaProperties.GetMetaPropertyList()
-	metaPropertyList = append(metaPropertyList, metaProperty)
-
-	return NewMetaProperties(metaPropertyList)
-}
-
-func (metaProperties metaProperties) RemoveMetaProperty(metaProperty types.MetaProperty) types.MetaProperties {
-	metaPropertyList := metaProperties.GetMetaPropertyList()
-	for i, oldMetaProperty := range metaPropertyList {
-		if oldMetaProperty.GetID().Equals(metaProperty.GetID()) {
-			metaPropertyList = append(metaPropertyList[:i], metaPropertyList[i+1:]...)
+	for _, addMetaProperty := range metaPropertyList {
+		if metaProperties.Get(addMetaProperty.GetID()) == nil {
+			newMetaPropertyList = append(newMetaPropertyList, addMetaProperty)
 		}
 	}
 
-	return NewMetaProperties(metaPropertyList)
+	return NewMetaProperties(newMetaPropertyList...)
 }
+func (metaProperties metaProperties) Remove(metaPropertyList ...types.MetaProperty) types.MetaProperties {
+	newMetaPropertyList := metaProperties.GetList()
 
-func (metaProperties metaProperties) MutateMetaProperty(metaProperty types.MetaProperty) types.MetaProperties {
-	metaPropertyList := metaProperties.GetMetaPropertyList()
-	for i, oldProperty := range metaPropertyList {
-		if oldProperty.GetID().Equals(metaProperty.GetID()) {
-			metaPropertyList[i] = metaProperty
+	for _, removeMetaProperty := range metaPropertyList {
+		for i, oldMetaProperty := range newMetaPropertyList {
+			if oldMetaProperty.GetID().Equals(removeMetaProperty.GetID()) {
+				newMetaPropertyList = append(newMetaPropertyList[:i], newMetaPropertyList[i+1:]...)
+				break
+			}
 		}
 	}
 
-	return NewMetaProperties(metaPropertyList)
+	return NewMetaProperties(newMetaPropertyList...)
 }
+func (metaProperties metaProperties) Mutate(metaPropertyList ...types.MetaProperty) types.MetaProperties {
+	newMetaPropertyList := metaProperties.GetList()
 
-func (metaProperties metaProperties) Get(id types.ID) types.Property {
-	if metaProperty := metaProperties.GetMetaProperty(id); metaProperty != nil {
-		return metaProperty.RemoveData()
-	}
-
-	return nil
-}
-
-func (metaProperties metaProperties) GetList() []types.Property {
-	propertyList := make([]types.Property, len(metaProperties.MetaPropertyList))
-	for i, metaProperty := range metaProperties.MetaPropertyList {
-		propertyList[i] = metaProperty
-	}
-
-	return propertyList
-}
-
-func (metaProperties metaProperties) Add(property types.Property) types.Properties {
-	propertyList := metaProperties.GetList()
-	propertyList = append(propertyList, property)
-
-	return NewProperties(propertyList...)
-}
-
-func (metaProperties metaProperties) Remove(property types.Property) types.Properties {
-	propertyList := metaProperties.GetList()
-	for i, oldProperty := range propertyList {
-		if oldProperty.GetID().Equals(property.GetID()) {
-			propertyList = append(propertyList[:i], propertyList[i+1:]...)
+	for _, mutateMetaProperty := range metaPropertyList {
+		for i, oldMetaProperty := range newMetaPropertyList {
+			if oldMetaProperty.GetID().Equals(mutateMetaProperty.GetID()) {
+				newMetaPropertyList[i] = mutateMetaProperty
+				break
+			}
 		}
 	}
 
-	return NewProperties(propertyList...)
+	return NewMetaProperties(newMetaPropertyList...)
 }
-
-func (metaProperties metaProperties) Mutate(property types.Property) types.Properties {
-	propertyList := metaProperties.GetList()
-	for i, oldProperty := range propertyList {
-		if oldProperty.GetID().Equals(property.GetID()) {
-			propertyList[i] = property
-		}
-	}
-
-	return NewProperties(propertyList...)
-}
-
 func (metaProperties metaProperties) RemoveData() types.Properties {
-	propertyList := make([]types.Property, len(metaProperties.GetMetaPropertyList()))
-	for i, oldMetaProperty := range metaProperties.GetMetaPropertyList() {
+	propertyList := make([]types.Property, len(metaProperties.GetList()))
+	for i, oldMetaProperty := range metaProperties.GetList() {
 		propertyList[i] = oldMetaProperty.RemoveData()
 	}
 
 	return NewProperties(propertyList...)
 }
 
-func NewMetaProperties(metaPropertyList []types.MetaProperty) types.MetaProperties {
+func NewMetaProperties(metaPropertyList ...types.MetaProperty) types.MetaProperties {
 	return metaProperties{
 		MetaPropertyList: metaPropertyList,
 	}
@@ -137,5 +99,5 @@ func ReadMetaProperties(metaPropertiesString string) (types.MetaProperties, erro
 		}
 	}
 
-	return NewMetaProperties(metaPropertyList), nil
+	return NewMetaProperties(metaPropertyList...), nil
 }

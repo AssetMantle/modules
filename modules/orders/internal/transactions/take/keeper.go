@@ -39,8 +39,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	orderID := message.OrderID
-	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(orderID))
-	order := orders.Get(key.New(orderID))
+	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(orderID))
+	order := orders.Get(key.FromID(orderID))
 
 	if order == nil {
 		return newTransactionResponse(errors.EntityNotFound)
@@ -51,7 +51,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		newTransactionResponse(Error)
 	}
 
-	if takerIDProperty := metaProperties.GetMetaProperty(base.NewID(properties.TakerID)); takerIDProperty != nil {
+	if takerIDProperty := metaProperties.Get(base.NewID(properties.TakerID)); takerIDProperty != nil {
 		takerID, Error := takerIDProperty.GetMetaFact().GetData().AsID()
 		if Error != nil {
 			return newTransactionResponse(errors.MetaDataError)
@@ -60,7 +60,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		}
 	}
 
-	exchangeRateProperty := metaProperties.GetMetaProperty(base.NewID(properties.ExchangeRate))
+	exchangeRateProperty := metaProperties.Get(base.NewID(properties.ExchangeRate))
 	if exchangeRateProperty == nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}
@@ -70,7 +70,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.MetaDataError)
 	}
 
-	makerOwnableSplitProperty := metaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit))
+	makerOwnableSplitProperty := metaProperties.Get(base.NewID(properties.MakerOwnableSplit))
 	if makerOwnableSplitProperty == nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}

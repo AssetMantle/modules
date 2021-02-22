@@ -64,10 +64,6 @@ func (orderID orderID) Matches(key helpers.Key) bool {
 	return orderID.Equals(orderIDFromInterface(key))
 }
 
-func New(id types.ID) helpers.Key {
-	return orderIDFromInterface(id)
-}
-
 func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, makerID types.ID, immutables types.Immutables) types.ID {
 	return orderID{
 		ClassificationID: classificationID,

@@ -35,8 +35,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	classificationID := key.NewClassificationID(base.NewID(context.ChainID()), auxiliaryRequest.ImmutableProperties, auxiliaryRequest.MutableProperties)
 
-	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(classificationID))
-	if classifications.Get(key.New(classificationID)) != nil {
+	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(classificationID))
+	if classifications.Get(key.FromID(classificationID)) != nil {
 		return newAuxiliaryResponse(base.NewID(classificationID.String()), errors.EntityAlreadyExists)
 	}
 

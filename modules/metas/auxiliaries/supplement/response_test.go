@@ -6,17 +6,18 @@
 package supplement
 
 import (
+	"testing"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Super_Response(t *testing.T) {
 
 	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewMetaFact(base.NewStringData("Data")))
-	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty})
+	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty}...)
 
 	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList, nil)
 	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, MetaProperties: metaPropertyList}, testAuxiliaryResponse)

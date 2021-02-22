@@ -8,6 +8,8 @@ package key
 import (
 	"strings"
 
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -34,4 +36,8 @@ func identityIDFromInterface(i interface{}) identityID {
 	default:
 		panic(i)
 	}
+}
+
+func FromID(id types.ID) helpers.Key {
+	return identityIDFromInterface(id)
 }
