@@ -17,6 +17,9 @@ func (height height) Get() int64 { return height.Value }
 func (height height) IsGreaterThan(compareHeight types.Height) bool {
 	return height.Get() > compareHeight.Get()
 }
+func (height height) Equals(compareHeight types.Height) bool {
+	return height.Get() == compareHeight.Get()
+}
 func NewHeight(value int64) types.Height {
 	return height{Value: value}
 }
