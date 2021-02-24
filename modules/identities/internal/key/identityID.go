@@ -54,10 +54,6 @@ func (identityID identityID) Matches(key helpers.Key) bool {
 	return identityID.Equals(identityIDFromInterface(key))
 }
 
-func New(id types.ID) helpers.Key {
-	return identityIDFromInterface(id)
-}
-
 func NewIdentityID(classificationID types.ID, immutables types.Immutables) types.ID {
 	return identityID{
 		ClassificationID: classificationID,

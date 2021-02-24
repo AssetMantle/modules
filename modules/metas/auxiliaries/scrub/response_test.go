@@ -6,24 +6,25 @@
 package scrub
 
 import (
+	"testing"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Super_Response(t *testing.T) {
 
 	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewMetaFact(base.NewStringData("Data")))
-	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty})
+	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty}...)
 
-	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList, nil)
-	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, Properties: metaPropertyList}, testAuxiliaryResponse)
+	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList.RemoveData(), nil)
+	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, Properties: metaPropertyList.RemoveData()}, testAuxiliaryResponse)
 	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())
 	require.Equal(t, nil, testAuxiliaryResponse.GetError())
 
-	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList, errors.IncorrectFormat)
+	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList.RemoveData(), errors.IncorrectFormat)
 	require.Equal(t, auxiliaryResponse{Success: false, Error: errors.IncorrectFormat, Properties: nil}, testAuxiliaryResponse2)
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
 	require.Equal(t, errors.IncorrectFormat, testAuxiliaryResponse2.GetError())

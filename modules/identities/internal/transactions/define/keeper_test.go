@@ -160,7 +160,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(sdkTypes.AccAddress("addr"), defaultIdentityID, immutableMetaProperties,
-			immutableProperties, mutableMetaProperties, superMockErrorProperties)); !reflect.DeepEqual(got, want) {
+			immutableProperties, mutableMetaProperties, superMockErrorProperties.RemoveData())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

@@ -10,7 +10,7 @@ type Properties interface {
 
 	GetList() []Property
 
-	Add(Property) Properties
-	Remove(Property) Properties
-	Mutate(Property) Properties
+	Add(...Property) Properties
+	Remove(...Property) Properties
+	Mutate(...Property) Properties
 }

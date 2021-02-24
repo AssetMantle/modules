@@ -8,6 +8,8 @@ package key
 import (
 	"strings"
 
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -33,4 +35,8 @@ func classificationIDFromInterface(i interface{}) classificationID {
 	default:
 		panic(i)
 	}
+}
+
+func FromID(id types.ID) helpers.Key {
+	return classificationIDFromInterface(id)
 }

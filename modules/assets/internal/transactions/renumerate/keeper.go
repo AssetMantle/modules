@@ -35,9 +35,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(message.AssetID))
+	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.AssetID))
 
-	asset := assets.Get(key.New(message.AssetID))
+	asset := assets.Get(key.FromID(message.AssetID))
 	if asset == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
@@ -51,7 +51,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	if valueMetaProperty := metaProperties.GetMetaProperty(base.NewID(properties.Value)); valueMetaProperty != nil {
+	if valueMetaProperty := metaProperties.Get(base.NewID(properties.Value)); valueMetaProperty != nil {
 		if value, Error := valueMetaProperty.GetMetaFact().GetData().AsDec(); Error != nil {
 			return newTransactionResponse(Error)
 		} else if auxiliaryResponse := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, value)); !auxiliaryResponse.IsSuccessful() {

@@ -21,9 +21,10 @@ type Order interface {
 	GetMakerID() types.ID
 	GetKey() helpers.Key
 
+	GetCreation() types.MetaProperty
+	GetExchangeRate() types.MetaProperty
+
 	GetTakerID() types.Property
-	GetCreation() types.Property
-	GetExchangeRate() types.Property
 	GetExpiry() types.Property
 	GetMakerOwnableSplit() types.Property
 
