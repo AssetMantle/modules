@@ -68,6 +68,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
+		Height:  100,
 	}, false, log.NewNopLogger())
 
 	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(Mapper, Parameters)
@@ -98,7 +99,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
 	metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 		"," + properties.TakerID + ":I|fromID" + "," +
-		properties.ExchangeRate + ":D|0.000000000000000001")
+		properties.ExchangeRate + ":D|1")
 	require.Equal(t, nil, Error)
 
 	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(nonTakingOrderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties.RemoveData())))
@@ -106,7 +107,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("PositiveCase", func(t *testing.T) {
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
-			properties.ExchangeRate + ":D|0.000000000000000001")
+			properties.ExchangeRate + ":D|1")
 		require.Equal(t, nil, Error)
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties.RemoveData())))
 
@@ -142,7 +143,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 			base.NewID("transferError"), defaultIdentityID, base.NewImmutables(base.NewProperties()))
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
-			properties.ExchangeRate + ":D|0.000000000000000001")
+			properties.ExchangeRate + ":D|1")
 		require.Equal(t, nil, Error)
 
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties.RemoveData())))
@@ -160,7 +161,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 			takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
-			properties.ExchangeRate + ":D|0.000000000000000001")
+			properties.ExchangeRate + ":D|1")
 		require.Equal(t, nil, Error)
 
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties.RemoveData())))

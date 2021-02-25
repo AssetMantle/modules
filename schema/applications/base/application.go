@@ -482,12 +482,12 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			mint.ModuleName,
 			distribution.ModuleName,
 			slashing.ModuleName,
-			ordersModule.Name(),
 		)
 		application.moduleManager.SetOrderEndBlockers(
 			crisis.ModuleName,
 			gov.ModuleName,
 			staking.ModuleName,
+			ordersModule.Name(),
 		)
 		application.moduleManager.SetOrderInitGenesis(
 			auth.ModuleName,
