@@ -34,38 +34,32 @@ func (block block) Begin(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {
 
 func (block block) End(context sdkTypes.Context, endBlockRequest abciTypes.RequestEndBlock) {
 	orders := block.mapper.NewCollection(context)
-
 	orders.Iterate(
-		key.New(base.NewID("")),
+		key.FromID(base.NewID("")),
 		func(order helpers.Mappable) bool {
 			metaProperties, Error := supplement.GetMetaPropertiesFromResponse(block.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetExpiry(), order.(mappables.Order).GetMakerOwnableSplit())))
 			if Error != nil {
 				panic(Error)
 			}
-
-			if expiryProperty := metaProperties.GetMetaProperty(base.NewID(properties.Expiry)); expiryProperty != nil {
+			if expiryProperty := metaProperties.Get(base.NewID(properties.Expiry)); expiryProperty != nil {
 				expiry, Error := expiryProperty.GetMetaFact().GetData().AsHeight()
 				if Error != nil {
 					panic(Error)
 				} else if !expiry.IsGreaterThan(base.NewHeight(endBlockRequest.Height)) {
-					makerOwnableSplitProperty := metaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit))
+					makerOwnableSplitProperty := metaProperties.Get(base.NewID(properties.MakerOwnableSplit))
 					if makerOwnableSplitProperty == nil {
 						panic(errors.MetaDataError)
 					}
-
 					makerOwnableSplit, Error := makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
 					if Error != nil {
 						panic(Error)
 					}
-
 					if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 						panic(auxiliaryResponse.GetError())
 					}
-
 					orders.Remove(order)
 				}
 			}
-
 			return false
 		},
 	)
