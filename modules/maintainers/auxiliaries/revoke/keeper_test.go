@@ -83,7 +83,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
-		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(maintainerID)); !reflect.DeepEqual(got, want) {
+		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(identityID, identityID, classificationID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -91,7 +91,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Maintainer not present", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.EntityAlreadyExists)
-		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(maintainerID)); !reflect.DeepEqual(got, want) {
+		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(identityID, identityID, classificationID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

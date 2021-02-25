@@ -8,6 +8,8 @@ package key
 import (
 	"strings"
 
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -24,7 +26,6 @@ func readAssetID(assetIDString string) types.ID {
 
 	return assetID{ClassificationID: base.NewID(""), HashID: base.NewID("")}
 }
-
 func assetIDFromInterface(i interface{}) assetID {
 	switch value := i.(type) {
 	case assetID:
@@ -38,4 +39,8 @@ func assetIDFromInterface(i interface{}) assetID {
 
 func ReadClassificationID(assetID types.ID) types.ID {
 	return assetIDFromInterface(assetID).ClassificationID
+}
+
+func FromID(id types.ID) helpers.Key {
+	return assetIDFromInterface(id)
 }

@@ -6,15 +6,13 @@
 package types
 
 type MetaProperties interface {
-	GetMetaProperty(ID) MetaProperty
+	Get(ID) MetaProperty
 
-	GetMetaPropertyList() []MetaProperty
+	GetList() []MetaProperty
 
-	AddMetaProperty(MetaProperty) MetaProperties
-	RemoveMetaProperty(MetaProperty) MetaProperties
-	MutateMetaProperty(MetaProperty) MetaProperties
+	Add(...MetaProperty) MetaProperties
+	Remove(...MetaProperty) MetaProperties
+	Mutate(...MetaProperty) MetaProperties
 
 	RemoveData() Properties
-
-	Properties
 }

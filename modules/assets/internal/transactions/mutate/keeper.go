@@ -35,14 +35,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(message.AssetID))
+	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.AssetID))
 
-	asset := assets.Get(key.New(message.AssetID))
+	asset := assets.Get(key.FromID(message.AssetID))
 	if asset == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	mutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetMetaPropertyList()...)))
+	mutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}

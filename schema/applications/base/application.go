@@ -10,6 +10,9 @@ import (
 	"io"
 	"path/filepath"
 
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
+
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -351,14 +354,15 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			keys[metas.Prototype().Name()],
 			paramsKeeper.Subspace(metas.Prototype().Name()),
 		)
-		maintainersModule := maintainers.Prototype().Initialize(
-			keys[metas.Prototype().Name()],
-			paramsKeeper.Subspace(maintainers.Prototype().Name()),
-		)
 		classificationsModule := classifications.Prototype().Initialize(
 			keys[classifications.Prototype().Name()],
 			paramsKeeper.Subspace(classifications.Prototype().Name()),
 			metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+		)
+		maintainersModule := maintainers.Prototype().Initialize(
+			keys[metas.Prototype().Name()],
+			paramsKeeper.Subspace(maintainers.Prototype().Name()),
+			classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		)
 		identitiesModule := identities.Prototype().Initialize(
 			keys[identities.Prototype().Name()],
@@ -381,8 +385,10 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 			classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
 			identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
-			maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+			maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
 			maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
+			maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
+			maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
 			metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 			metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
 			splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
