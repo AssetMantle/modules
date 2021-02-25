@@ -46,7 +46,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetTakerID(), order.(mappables.Order).GetExchangeRate(), order.(mappables.Order).GetMakerOwnableSplit(), order.(mappables.Order).GetExpiry())))
+	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetTakerID(), order.(mappables.Order).GetMakerOwnableSplit())))
 	if Error != nil {
 		newTransactionResponse(Error)
 	}
@@ -60,14 +60,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		}
 	}
 
-	exchangeRateProperty := metaProperties.Get(base.NewID(properties.ExchangeRate))
-	if exchangeRateProperty == nil {
-		return newTransactionResponse(errors.MetaDataError)
-	}
-
-	exchangeRate, Error := exchangeRateProperty.GetMetaFact().GetData().AsDec()
+	exchangeRate, Error := order.(mappables.Order).GetExchangeRate().GetMetaFact().GetData().AsDec()
 	if Error != nil {
-		return newTransactionResponse(errors.MetaDataError)
+		return newTransactionResponse(Error)
 	}
 
 	makerOwnableSplitProperty := metaProperties.Get(base.NewID(properties.MakerOwnableSplit))

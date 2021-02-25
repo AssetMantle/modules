@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package make
+package immediate
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
@@ -11,7 +11,7 @@ import (
 )
 
 var Transaction = base.NewTransaction(
-	"make",
+	"immediate",
 	"",
 	"",
 

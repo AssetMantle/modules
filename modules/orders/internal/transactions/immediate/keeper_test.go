@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package make
+package immediate
 
 import (
 	"reflect"
@@ -107,22 +107,23 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	classificationID := base.NewID("classificationID")
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
+	makerOwnableSplit := sdkTypes.MustNewDecFromStr("1000")
 	orderID := key.NewOrderID(classificationID, makerOwnableID,
 		takerOwnableID, base.NewID(sdkTypes.OneDec().String()), base.NewID("100"), defaultIdentityID, base.NewImmutables(base.NewProperties()))
 	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
 
-	t.Run("PositiveCase", func(t *testing.T) {
+	t.Run("PositiveCase Adding Order without execution", func(t *testing.T) {
 		want := newTransactionResponse(nil)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
-			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(),
+			makerOwnableID, takerOwnableID, base.NewHeight(0), makerOwnableSplit, sdkTypes.OneDec(),
 			immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
-	t.Run("PositiveCase- ReAdd order", func(t *testing.T) {
+	t.Run("PositiveCase- ReAdd order without execution", func(t *testing.T) {
 		want := newTransactionResponse(nil)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
-			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(),
+			makerOwnableID, takerOwnableID, base.NewHeight(0), makerOwnableSplit, sdkTypes.OneDec(),
 			immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -143,7 +144,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(),
-			immutableMetaProperties, immutableProperties, mutableMetaProperties, conformMockErrorProperties.RemoveData())); !reflect.DeepEqual(got, want) {
+			immutableMetaProperties, immutableProperties, mutableMetaProperties, conformMockErrorProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

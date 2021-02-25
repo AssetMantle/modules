@@ -93,10 +93,12 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	classificationID := base.NewID("classificationID")
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
+	rateID := base.NewID(sdkTypes.OneDec().String())
+	creationID := base.NewID("100")
 	orderID := key.NewOrderID(classificationID, makerOwnableID,
-		takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
+		takerOwnableID, rateID, creationID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
 	nonTakingOrderID := key.NewOrderID(base.NewID(""), makerOwnableID,
-		takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
+		takerOwnableID, rateID, creationID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
 	metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 		"," + properties.TakerID + ":I|fromID" + "," +
 		properties.ExchangeRate + ":D|1")
@@ -140,7 +142,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - transfer mock fail", func(t *testing.T) {
 		t.Parallel()
 		transferErrorID := key.NewOrderID(classificationID, makerOwnableID,
-			base.NewID("transferError"), defaultIdentityID, base.NewImmutables(base.NewProperties()))
+			base.NewID("transferError"), rateID, creationID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
 			properties.ExchangeRate + ":D|1")
@@ -158,7 +160,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - transfer mock fail", func(t *testing.T) {
 		t.Parallel()
 		transferErrorID := key.NewOrderID(classificationID, base.NewID("transferError"),
-			takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
+			takerOwnableID, rateID, creationID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
 			properties.ExchangeRate + ":D|1")
@@ -185,7 +187,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("Positive Case - take more than make order", func(t *testing.T) {
 		t.Parallel()
 		orderID := key.NewOrderID(classificationID, makerOwnableID,
-			takerOwnableID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
+			takerOwnableID, rateID, creationID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
 			properties.ExchangeRate + ":D|1")
