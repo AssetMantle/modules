@@ -45,5 +45,6 @@ func Test_OrderID_Methods(t *testing.T) {
 	require.Equal(t, rateID, ReadRateID(testOrderID))
 	require.Equal(t, creationID, ReadCreationID(testOrderID))
 	require.Equal(t, makerID, ReadMakerID(testOrderID))
+	require.Equal(t, true, FromID(base.NewID("")).IsPartial())
 
 }

@@ -21,7 +21,7 @@ import (
 )
 
 type order struct {
-	ID         types.ID         `json:"key" valid:"required~required field key missing"`
+	ID         types.ID         `json:"id" valid:"required~required field key missing"`
 	Immutables types.Immutables `json:"immutables" valid:"required field immutables missing"`
 	Mutables   types.Mutables   `json:"mutables" valid:"required~required field mutables missing"`
 }

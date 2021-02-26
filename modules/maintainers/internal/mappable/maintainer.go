@@ -16,7 +16,7 @@ import (
 )
 
 type maintainer struct {
-	ID                   types.ID         `json:"key" valid:"required field key missing"`
+	ID                   types.ID         `json:"id" valid:"required field key missing"`
 	MaintainedProperties types.Properties `json:"maintainedProperties" valid:"required field maintainedProperties missing"`
 	AddMaintainer        bool             `json:"addMaintainer" valid:"required field addMaintainer missing"`
 	RemoveMaintainer     bool             `json:"removeMaintainer" valid:"required field removeMaintainer missing"`
