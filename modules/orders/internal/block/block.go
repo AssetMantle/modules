@@ -32,7 +32,7 @@ func (block block) Begin(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {
 
 }
 
-func (block block) End(context sdkTypes.Context, endBlockRequest abciTypes.RequestEndBlock) {
+func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 	orders := block.mapper.NewCollection(context)
 	orders.Iterate(
 		key.FromID(base.NewID("")),
@@ -45,7 +45,7 @@ func (block block) End(context sdkTypes.Context, endBlockRequest abciTypes.Reque
 				expiry, Error := expiryProperty.GetMetaFact().GetData().AsHeight()
 				if Error != nil {
 					panic(Error)
-				} else if !expiry.IsGreaterThan(base.NewHeight(endBlockRequest.Height)) {
+				} else if !expiry.IsGreaterThan(base.NewHeight(context.BlockHeight())) {
 					makerOwnableSplitProperty := metaProperties.Get(base.NewID(properties.MakerOwnableSplit))
 					if makerOwnableSplitProperty == nil {
 						panic(errors.MetaDataError)
