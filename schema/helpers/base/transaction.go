@@ -8,7 +8,6 @@ package base
 import (
 	"bufio"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"reflect"
@@ -165,7 +164,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 
 		fromAddress, fromName, Error := context.GetFromFields(strings.NewReader(keys.DefaultKeyPass), baseReq.From, viper.GetBool(flags.FlagGenerateOnly))
 		if Error != nil {
-			fmt.Printf("failed to get from fields: %v\n", Error)
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
 

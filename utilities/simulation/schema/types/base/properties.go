@@ -13,7 +13,7 @@ func GenerateRandomProperties(r *rand.Rand) types.Properties {
 
 	propertyList := make([]types.Property, randomPositiveInt)
 
-	for i := 0; i <= randomPositiveInt; i++ {
+	for i := 0; i < randomPositiveInt; i++ {
 		propertyList[i] = GenerateRandomProperty(r)
 	}
 

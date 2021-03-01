@@ -70,7 +70,7 @@ func NewClassificationID(chainID types.ID, immutableProperties types.Properties,
 
 	defaultImmutableStringList := make([]string, len(immutableProperties.GetList()))
 
-	for i, mutable := range mutableProperties.GetList() {
+	for i, mutable := range immutableProperties.GetList() {
 		if hashID := mutable.GetFact().GetHashID(); !hashID.Equals(base.NewID("")) {
 			defaultImmutableStringList[i] = hashID.String()
 		}

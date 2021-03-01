@@ -12,7 +12,7 @@ import (
 )
 
 func GenerateRandomID(r *rand.Rand) types.ID {
-	return base.NewID(simulation.RandStringOfLength(r, r.Int()))
+	return base.NewID(simulation.RandStringOfLength(r, r.Intn(99)))
 }
 
 func GenerateRandomIDWithDec(r *rand.Rand) types.ID {
