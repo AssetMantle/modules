@@ -78,6 +78,6 @@ func Test_Query_Keeper_Identity(t *testing.T) {
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(identityID, []sdkTypes.AccAddress{provisionedAddr}, []sdkTypes.AccAddress{unprovisionedAddr}, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 
 	testQueryRequest := newQueryRequest(classificationID)
-	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.New(identityID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
+	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.FromID(identityID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
 
 }

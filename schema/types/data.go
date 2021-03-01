@@ -5,7 +5,9 @@
 
 package types
 
-import sdkTypes "github.com/cosmos/cosmos-sdk/types"
+import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+)
 
 type Data interface {
 	String() string

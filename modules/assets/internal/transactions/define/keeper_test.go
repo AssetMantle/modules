@@ -149,7 +149,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.InvalidRequest)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, immutableMetaProperties,
-			immutableProperties, mutableMetaProperties, gt22Properties)); !reflect.DeepEqual(got, want) {
+			immutableProperties, mutableMetaProperties, gt22Properties.RemoveData())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -157,7 +157,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, immutableMetaProperties,
-			immutableProperties, mutableMetaProperties, superMockErrorProperties)); !reflect.DeepEqual(got, want) {
+			immutableProperties, mutableMetaProperties, superMockErrorProperties.RemoveData())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

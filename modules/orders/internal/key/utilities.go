@@ -11,6 +11,8 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -76,4 +78,8 @@ func ReadTakerOwnableID(orderID types.ID) types.ID {
 
 func ReadMakerID(orderID types.ID) types.ID {
 	return orderIDFromInterface(orderID).MakerID
+}
+
+func FromID(id types.ID) helpers.Key {
+	return orderIDFromInterface(id)
 }

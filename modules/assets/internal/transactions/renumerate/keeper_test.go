@@ -97,7 +97,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID,
 		base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID2,
-		base.NewImmutables(immutableProperties), base.NewMutables(supplementError)))
+		base.NewImmutables(immutableProperties), base.NewMutables(supplementError.RemoveData())))
 	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID3,
 		base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 

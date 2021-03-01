@@ -16,7 +16,7 @@ import (
 )
 
 type maintainer struct {
-	ID                   types.ID         `json:"key" valid:"required field key missing"`
+	ID                   types.ID         `json:"id" valid:"required field key missing"`
 	MaintainedProperties types.Properties `json:"maintainedProperties" valid:"required field maintainedProperties missing"`
 	AddMaintainer        bool             `json:"addMaintainer" valid:"required field addMaintainer missing"`
 	RemoveMaintainer     bool             `json:"removeMaintainer" valid:"required field removeMaintainer missing"`
@@ -32,6 +32,9 @@ func (maintainer maintainer) GetClassificationID() types.ID {
 func (maintainer maintainer) GetIdentityID() types.ID {
 	return key.ReadIdentityID(maintainer.ID)
 }
+func (maintainer maintainer) GetMaintainedProperties() types.Properties {
+	return maintainer.MaintainedProperties
+}
 func (maintainer maintainer) CanAddMaintainer() bool    { return maintainer.AddMaintainer }
 func (maintainer maintainer) CanRemoveMaintainer() bool { return maintainer.RemoveMaintainer }
 func (maintainer maintainer) CanMutateMaintainer() bool { return maintainer.MutateMaintainer }
@@ -45,7 +48,7 @@ func (maintainer maintainer) MaintainsProperty(id types.ID) bool {
 	return false
 }
 func (maintainer maintainer) GetKey() helpers.Key {
-	return key.New(maintainer.ID)
+	return key.FromID(maintainer.ID)
 }
 
 func (maintainer) RegisterCodec(codec *codec.Codec) {

@@ -120,10 +120,6 @@ func (orderID orderID) getCreationHeightBytes() ([]byte, error) {
 	return Bytes, Error
 }
 
-func New(id types.ID) helpers.Key {
-	return orderIDFromInterface(id)
-}
-
 func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, rateID types.ID, creationID types.ID, makerID types.ID, immutables types.Immutables) types.ID {
 	return orderID{
 		ClassificationID: classificationID,

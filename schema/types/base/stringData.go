@@ -53,17 +53,17 @@ func (stringData stringData) Equal(data types.Data) bool {
 
 	return stringData.Value == compareStringData.Value
 }
-func stringDataFromInterface(data types.Data) (stringData, error) {
+func stringDataFromInterface(data types.Data) (*stringData, error) {
 	switch value := data.(type) {
-	case stringData:
+	case *stringData:
 		return value, nil
 	default:
-		return stringData{}, errors.MetaDataError
+		return &stringData{}, errors.MetaDataError
 	}
 }
 
 func NewStringData(value string) types.Data {
-	return stringData{
+	return &stringData{
 		Value: value,
 	}
 }

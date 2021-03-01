@@ -26,7 +26,7 @@ type message struct {
 	TakerOwnableID          types.ID             `json:"takerOwnableID" valid:"required~required field takerOwnableID missing"`
 	ExpiresIn               types.Height         `json:"expiresIn" valid:"required~required field expiresIn missing"`
 	MakerOwnableSplit       sdkTypes.Dec         `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing"`
-	ExchangeRate            sdkTypes.Dec         `json:"exchangeRate" valid:"required~required field exchangeRate missing"`
+	TakerOwnableSplit       sdkTypes.Dec         `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
 	ImmutableMetaProperties types.MetaProperties `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing"`
 	ImmutableProperties     types.Properties     `json:"immutableProperties" valid:"required~required field immutableProperties missing"`
 	MutableMetaProperties   types.MetaProperties `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
@@ -41,10 +41,6 @@ func (message message) ValidateBasic() error {
 	var _, Error = govalidator.ValidateStruct(message)
 	if Error != nil {
 		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
-	}
-
-	if message.ExchangeRate.LTE(sdkTypes.ZeroDec()) {
-		return errors.Wrap(xprtErrors.IncorrectMessage, "Exchange rate cannot be less than equal to 0.")
 	}
 
 	if message.MakerOwnableID.Equals(message.TakerOwnableID) {
@@ -78,7 +74,7 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, expiresIn types.Height, makerOwnableSplit sdkTypes.Dec, exchangeRate sdkTypes.Dec, immutableMetaProperties types.MetaProperties, immutableProperties types.Properties, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, expiresIn types.Height, makerOwnableSplit sdkTypes.Dec, takerOwnableSplit sdkTypes.Dec, immutableMetaProperties types.MetaProperties, immutableProperties types.Properties, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
 	return message{
 		From:                    from,
 		FromID:                  fromID,
@@ -87,7 +83,7 @@ func newMessage(from sdkTypes.AccAddress, fromID types.ID, classificationID type
 		TakerOwnableID:          takerOwnableID,
 		ExpiresIn:               expiresIn,
 		MakerOwnableSplit:       makerOwnableSplit,
-		ExchangeRate:            exchangeRate,
+		TakerOwnableSplit:       takerOwnableSplit,
 		ImmutableMetaProperties: immutableMetaProperties,
 		ImmutableProperties:     immutableProperties,
 		MutableMetaProperties:   mutableMetaProperties,

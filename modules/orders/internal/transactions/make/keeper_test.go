@@ -143,7 +143,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(),
-			immutableMetaProperties, immutableProperties, mutableMetaProperties, conformMockErrorProperties)); !reflect.DeepEqual(got, want) {
+			immutableMetaProperties, immutableProperties, mutableMetaProperties, conformMockErrorProperties.RemoveData())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

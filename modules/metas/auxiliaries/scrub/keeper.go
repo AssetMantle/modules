@@ -26,7 +26,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	metas := auxiliaryKeeper.mapper.NewCollection(context)
 
 	for i, metaProperty := range auxiliaryRequest.MetaPropertyList {
-		if !metaProperty.GetFact().GetHashID().Equals(base.NewID("")) {
+		if !metaProperty.GetMetaFact().GetHashID().Equals(base.NewID("")) {
 			metas.Add(mappable.NewMeta(metaProperty.GetMetaFact().GetData()))
 		}
 

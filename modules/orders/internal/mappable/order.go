@@ -21,7 +21,7 @@ import (
 )
 
 type order struct {
-	ID         types.ID         `json:"key" valid:"required~required field key missing"`
+	ID         types.ID         `json:"id" valid:"required~required field key missing"`
 	Immutables types.Immutables `json:"immutables" valid:"required field immutables missing"`
 	Mutables   types.Mutables   `json:"mutables" valid:"required~required field mutables missing"`
 }
@@ -56,7 +56,7 @@ func (order order) GetTakerID() types.Property {
 		return base.NewProperty(base.NewID(properties.TakerID), base.NewFact(data))
 	}
 }
-func (order order) GetCreation() types.Property {
+func (order order) GetCreation() types.MetaProperty {
 	heightValue, Error := strconv.ParseInt(key.ReadCreationID(order.ID).String(), 10, 64)
 	if Error != nil {
 		return base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewHeightData(base.NewHeight(0))))
@@ -84,7 +84,7 @@ func (order order) GetMakerOwnableSplit() types.Property {
 		return base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(data))
 	}
 }
-func (order order) GetExchangeRate() types.Property {
+func (order order) GetExchangeRate() types.MetaProperty {
 	decValue, Error := sdkTypes.NewDecFromStr(key.ReadRateID(order.ID).String())
 	if Error != nil {
 		return base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewDecData(sdkTypes.ZeroDec())))
@@ -102,7 +102,7 @@ func (order order) GetID() types.ID {
 	return order.ID
 }
 func (order order) GetKey() helpers.Key {
-	return key.New(order.ID)
+	return key.FromID(order.ID)
 }
 func (order) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, order{})

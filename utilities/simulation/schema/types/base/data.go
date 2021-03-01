@@ -17,9 +17,9 @@ func GenerateRandomData(r *rand.Rand) types.Data {
 	case 0:
 		return base.NewIDData(GenerateRandomID(r))
 	case 1:
-		return base.NewStringData(simulation.RandStringOfLength(r, r.Int()))
+		return base.NewStringData(simulation.RandStringOfLength(r, r.Intn(99)))
 	case 2:
-		return base.NewDecData(simulation.RandomDecAmount(r, sdkTypes.NewDec(9999999999)))
+		return base.NewDecData(simulation.RandomDecAmount(r, sdkTypes.NewDec(99)))
 	case 3:
 		return base.NewHeightData(base.NewHeight(r.Int63()))
 	default:

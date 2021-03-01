@@ -6,10 +6,11 @@
 package key
 
 import (
+	"testing"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_MetaID_Methods(t *testing.T) {
@@ -24,6 +25,6 @@ func Test_MetaID_Methods(t *testing.T) {
 	require.Equal(t, true, metaID{HashID: base.NewID("")}.IsPartial())
 	require.Equal(t, true, testMetaID.Matches(testMetaID))
 	require.Equal(t, false, testMetaID.Matches(nil))
-	require.Equal(t, testMetaID, New(testMetaID))
-	require.Equal(t, NewMetaID(base.NewID(""), base.NewID("")), New(base.NewID("")))
+	require.Equal(t, testMetaID, FromID(testMetaID))
+	require.Equal(t, NewMetaID(base.NewID(""), base.NewID("")), FromID(base.NewID("")))
 }

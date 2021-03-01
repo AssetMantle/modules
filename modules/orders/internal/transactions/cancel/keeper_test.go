@@ -99,7 +99,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, Error)
 	orderID := key.NewOrderID(classificationID, makerOwnableID,
 		takerOwnableID, rateID, creationID, makerID, base.NewImmutables(base.NewProperties()))
-	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties.RemoveData())))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
@@ -126,7 +126,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Cancel with different makerID", func(t *testing.T) {
 		t.Parallel()
-		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties.RemoveData())))
 		want := newTransactionResponse(errors.NotAuthorized)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, base.NewID("id"), orderID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -136,7 +136,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		transferErrorID := key.NewOrderID(classificationID, base.NewID("transferError"),
 			takerOwnableID, base.NewID("1.0"), base.NewID("1"), base.NewID("makerID"), base.NewImmutables(base.NewProperties()))
-		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties.RemoveData())))
 
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, transferErrorID)); !reflect.DeepEqual(got, want) {

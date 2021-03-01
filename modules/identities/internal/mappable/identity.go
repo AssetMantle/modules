@@ -71,7 +71,7 @@ func (identity identity) IsUnprovisioned(accAddress sdkTypes.AccAddress) bool {
 	return false
 }
 func (identity identity) GetKey() helpers.Key {
-	return key.New(identity.ID)
+	return key.FromID(identity.ID)
 }
 func (identity) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, identity{})

@@ -68,6 +68,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
+		Height:  100,
 	}, false, log.NewNopLogger())
 
 	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(Mapper, Parameters)
@@ -100,17 +101,17 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		takerOwnableID, rateID, creationID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
 	metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 		"," + properties.TakerID + ":I|fromID" + "," +
-		properties.ExchangeRate + ":D|0.000000000000000001")
+		properties.ExchangeRate + ":D|1")
 	require.Equal(t, nil, Error)
 
-	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(nonTakingOrderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(nonTakingOrderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties.RemoveData())))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
-			properties.ExchangeRate + ":D|0.000000000000000001")
+			properties.ExchangeRate + ":D|1")
 		require.Equal(t, nil, Error)
-		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties.RemoveData())))
 
 		want := newTransactionResponse(nil)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec(),
@@ -144,10 +145,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 			base.NewID("transferError"), rateID, creationID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
-			properties.ExchangeRate + ":D|0.000000000000000001")
+			properties.ExchangeRate + ":D|1")
 		require.Equal(t, nil, Error)
 
-		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties.RemoveData())))
 
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec(),
@@ -162,10 +163,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 			takerOwnableID, rateID, creationID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
-			properties.ExchangeRate + ":D|0.000000000000000001")
+			properties.ExchangeRate + ":D|1")
 		require.Equal(t, nil, Error)
 
-		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties.RemoveData())))
 
 		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec(),
@@ -192,14 +193,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 			properties.ExchangeRate + ":D|1")
 		require.Equal(t, nil, Error)
 
-		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties.RemoveData())))
 
 		want := newTransactionResponse(nil)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec().MulInt64(1),
 			orderID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
-		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties)))
+		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(metaProperties.RemoveData())))
 		want = newTransactionResponse(nil)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec().MulInt64(10),
 			orderID)); !reflect.DeepEqual(got, want) {

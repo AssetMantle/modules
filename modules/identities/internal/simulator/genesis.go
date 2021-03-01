@@ -6,15 +6,16 @@
 package simulator
 
 import (
-	"fmt"
 	"math/rand"
 
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/common"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
-	assetsModule "github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
+	identitiesModule "github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters/dummy"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -44,9 +45,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewIdentity(key.NewIdentityID(baseSimulation.GenerateRandomID(simulationState.Rand), immutables), provisionedAddresses, unprovisionedAddresses, immutables, baseSimulation.GenerateRandomMutables(simulationState.Rand))
 	}
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, nil).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
+	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
 
-	fmt.Printf("Selected randomly generated minting parameters:\n%s\n", codec.MustMarshalJSONIndent(simulationState.Cdc, genesisState))
-
-	simulationState.GenState[assetsModule.Name] = simulationState.Cdc.MustMarshalJSON(genesisState)
+	simulationState.GenState[identitiesModule.Name] = common.Codec.MustMarshalJSON(genesisState)
 }

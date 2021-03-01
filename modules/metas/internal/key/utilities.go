@@ -8,6 +8,8 @@ package key
 import (
 	"strings"
 
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -33,4 +35,15 @@ func metaIDFromInterface(i interface{}) metaID {
 	default:
 		panic(i)
 	}
+}
+
+func GenerateMetaID(data types.Data) types.ID {
+	return metaID{
+		TypeID: data.GetTypeID(),
+		HashID: data.GenerateHashID(),
+	}
+}
+
+func FromID(id types.ID) helpers.Key {
+	return metaIDFromInterface(id)
 }

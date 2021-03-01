@@ -59,17 +59,17 @@ func (heightData heightData) Equal(data types.Data) bool {
 
 	return heightData.Value.Get() == compareHeightData.Value.Get()
 }
-func heightDataFromInterface(data types.Data) (heightData, error) {
+func heightDataFromInterface(data types.Data) (*heightData, error) {
 	switch value := data.(type) {
-	case heightData:
+	case *heightData:
 		return value, nil
 	default:
-		return heightData{}, errors.MetaDataError
+		return &heightData{}, errors.MetaDataError
 	}
 }
 
 func NewHeightData(value types.Height) types.Data {
-	return heightData{
+	return &heightData{
 		Value: value,
 	}
 }

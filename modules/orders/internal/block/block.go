@@ -40,7 +40,37 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 	executeOrders := make(map[types.ID]bool)
 	orders := block.mapper.NewCollection(context)
 
-	orders.Iterate(key.New(base.NewID("")), func(order helpers.Mappable) bool {
+	orders.Iterate(
+		key.FromID(base.NewID("")),
+		func(order helpers.Mappable) bool {
+			metaProperties, Error := supplement.GetMetaPropertiesFromResponse(block.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetExpiry(), order.(mappables.Order).GetMakerOwnableSplit())))
+			if Error != nil {
+				panic(Error)
+			}
+			if expiryProperty := metaProperties.Get(base.NewID(properties.Expiry)); expiryProperty != nil {
+				expiry, Error := expiryProperty.GetMetaFact().GetData().AsHeight()
+				if Error != nil {
+					panic(Error)
+				} else if !expiry.IsGreaterThan(base.NewHeight(context.BlockHeight())) {
+					makerOwnableSplitProperty := metaProperties.Get(base.NewID(properties.MakerOwnableSplit))
+					if makerOwnableSplitProperty == nil {
+						panic(errors.MetaDataError)
+					}
+					makerOwnableSplit, Error := makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
+					if Error != nil {
+						panic(Error)
+					}
+					if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+						panic(auxiliaryResponse.GetError())
+					}
+					orders.Remove(order)
+				}
+			}
+			return false
+		},
+	)
+
+	orders.Iterate(key.FromID(base.NewID("")), func(order helpers.Mappable) bool {
 		id1 := key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetMakerOwnableID(), order.(mappables.Order).GetTakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewImmutables(base.NewProperties()))
 		id2 := key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetTakerOwnableID(), order.(mappables.Order).GetMakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewImmutables(base.NewProperties()))
 		if !executeOrders[id1] && !executeOrders[id2] {
@@ -52,9 +82,9 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 	for partialOrderID := range executeOrders {
 		nextPartialOrderID := false
 
-		orders.Iterate(key.New(partialOrderID), func(orderMappable helpers.Mappable) bool {
+		orders.Iterate(key.FromID(partialOrderID), func(orderMappable helpers.Mappable) bool {
 			orders.Iterate(
-				key.New(key.NewOrderID(orderMappable.(mappables.Order).GetClassificationID(), orderMappable.(mappables.Order).GetTakerOwnableID(), orderMappable.(mappables.Order).GetMakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewImmutables(base.NewProperties()))),
+				key.FromID(key.NewOrderID(orderMappable.(mappables.Order).GetClassificationID(), orderMappable.(mappables.Order).GetTakerOwnableID(), orderMappable.(mappables.Order).GetMakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewImmutables(base.NewProperties()))),
 				func(executableMappableOrder helpers.Mappable) bool {
 
 					var leftOrder mappables.Order
@@ -204,7 +234,7 @@ func getMakerOwnableSplit(context sdkTypes.Context, order mappables.Order, suppl
 		panic(Error)
 	}
 
-	makerOwnableSplit, Error := metaProperties.GetMetaProperty(base.NewID(properties.MakerOwnableSplit)).GetMetaFact().GetData().AsDec()
+	makerOwnableSplit, Error := metaProperties.Get(base.NewID(properties.MakerOwnableSplit)).GetMetaFact().GetData().AsDec()
 
 	return makerOwnableSplit, Error
 }

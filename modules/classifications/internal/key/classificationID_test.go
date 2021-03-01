@@ -29,7 +29,7 @@ func Test_ClassificationID_Methods(t *testing.T) {
 	require.Equal(t, true, testClassificationID.Equals(testClassificationID))
 	require.Equal(t, false, testClassificationID.IsPartial())
 	require.Equal(t, true, classificationID{ChainID: chainID, HashID: base.NewID("")}.IsPartial())
-	require.Equal(t, testClassificationID, New(testClassificationID))
-	require.Equal(t, classificationID{ChainID: base.NewID(""), HashID: base.NewID("")}, New(base.NewID("tempID")))
+	require.Equal(t, testClassificationID, FromID(testClassificationID))
+	require.Equal(t, classificationID{ChainID: base.NewID(""), HashID: base.NewID("")}, FromID(base.NewID("tempID")))
 	require.Equal(t, testClassificationID, readClassificationID(testClassificationID.String()))
 }

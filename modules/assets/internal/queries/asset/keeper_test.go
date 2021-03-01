@@ -75,6 +75,6 @@ func Test_Query_Keeper_Asset(t *testing.T) {
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewAsset(assetID, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 
 	testQueryRequest := newQueryRequest(assetID)
-	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.New(assetID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
+	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.FromID(assetID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
 
 }

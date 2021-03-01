@@ -55,10 +55,6 @@ func (classificationID classificationID) Matches(key helpers.Key) bool {
 	return classificationID.Equals(classificationIDFromInterface(key))
 }
 
-func New(id types.ID) helpers.Key {
-	return classificationIDFromInterface(id)
-}
-
 func NewClassificationID(chainID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) types.ID {
 	immutableIDStringList := make([]string, len(immutableProperties.GetList()))
 
@@ -74,7 +70,7 @@ func NewClassificationID(chainID types.ID, immutableProperties types.Properties,
 
 	defaultImmutableStringList := make([]string, len(immutableProperties.GetList()))
 
-	for i, mutable := range mutableProperties.GetList() {
+	for i, mutable := range immutableProperties.GetList() {
 		if hashID := mutable.GetFact().GetHashID(); !hashID.Equals(base.NewID("")) {
 			defaultImmutableStringList[i] = hashID.String()
 		}

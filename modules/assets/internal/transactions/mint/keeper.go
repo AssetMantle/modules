@@ -36,7 +36,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	immutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetMetaPropertyList()...)))
+	immutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
@@ -45,12 +45,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	assetID := key.NewAssetID(message.ClassificationID, base.NewImmutables(immutableProperties))
 
-	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.New(assetID))
-	if assets.Get(key.New(assetID)) != nil {
+	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(assetID))
+	if assets.Get(key.FromID(assetID)) != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	mutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetMetaPropertyList()...)))
+	mutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
@@ -63,8 +63,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	split := sdkTypes.SmallestDec()
 
-	if metaProperties := base.NewMetaProperties(append(message.ImmutableMetaProperties.GetMetaPropertyList(), message.MutableMetaProperties.GetMetaPropertyList()...)); metaProperties.Get(base.NewID(propertiesConstants.Lock)) != nil {
-		if split, Error = metaProperties.GetMetaProperty(base.NewID(propertiesConstants.Lock)).GetMetaFact().GetData().AsDec(); Error != nil {
+	if metaProperties := base.NewMetaProperties(append(message.ImmutableMetaProperties.GetList(), message.MutableMetaProperties.GetList()...)...); metaProperties.Get(base.NewID(propertiesConstants.Lock)) != nil {
+		if split, Error = metaProperties.Get(base.NewID(propertiesConstants.Lock)).GetMetaFact().GetData().AsDec(); Error != nil {
 			return newTransactionResponse(errors.MetaDataError)
 		}
 	}

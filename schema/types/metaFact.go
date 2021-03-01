@@ -5,8 +5,14 @@
 
 package types
 
+import "github.com/99designs/keyring"
+
 type MetaFact interface {
+	GetHashID() ID
+	GetTypeID() ID
 	GetData() Data
+	GetSignatures() Signatures
+
+	Sign(keyring.Keyring) MetaFact
 	RemoveData() Fact
-	Fact
 }
