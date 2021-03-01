@@ -51,7 +51,9 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 				expiry, Error := expiryProperty.GetMetaFact().GetData().AsHeight()
 				if Error != nil {
 					panic(Error)
-				} else if !expiry.IsGreaterThan(base.NewHeight(context.BlockHeight())) {
+				}
+
+				if !expiry.IsGreaterThan(base.NewHeight(context.BlockHeight())) {
 					makerOwnableSplitProperty := metaProperties.Get(base.NewID(properties.MakerOwnableSplit))
 					if makerOwnableSplitProperty == nil {
 						panic(errors.MetaDataError)
@@ -64,20 +66,17 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 						panic(auxiliaryResponse.GetError())
 					}
 					orders.Remove(order)
+				} else {
+					id1 := key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetMakerOwnableID(), order.(mappables.Order).GetTakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewImmutables(base.NewProperties()))
+					id2 := key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetTakerOwnableID(), order.(mappables.Order).GetMakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewImmutables(base.NewProperties()))
+					if !executeOrders[id1] && !executeOrders[id2] {
+						executeOrders[id1] = true
+					}
 				}
 			}
 			return false
 		},
 	)
-
-	orders.Iterate(key.FromID(base.NewID("")), func(order helpers.Mappable) bool {
-		id1 := key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetMakerOwnableID(), order.(mappables.Order).GetTakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewImmutables(base.NewProperties()))
-		id2 := key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetTakerOwnableID(), order.(mappables.Order).GetMakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewImmutables(base.NewProperties()))
-		if !executeOrders[id1] && !executeOrders[id2] {
-			executeOrders[id1] = true
-		}
-		return false
-	})
 
 	for partialOrderID := range executeOrders {
 		nextPartialOrderID := false
