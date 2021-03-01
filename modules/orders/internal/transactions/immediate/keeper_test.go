@@ -97,7 +97,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, Error)
 	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, Error)
-	conformMockErrorProperties, Error := base.ReadMetaProperties("conformError:S|mockError")
+	conformMockErrorProperties, Error := base.ReadProperties("conformError:S|mockError")
 	require.Equal(t, nil, Error)
 	scrubMockErrorProperties, Error := base.ReadMetaProperties("scrubError:S|mockError")
 	require.Equal(t, nil, Error)
