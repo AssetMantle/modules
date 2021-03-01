@@ -55,10 +55,6 @@ func (assetID assetID) Matches(key helpers.Key) bool {
 	return assetID.Equals(assetIDFromInterface(key))
 }
 
-func New(id types.ID) helpers.Key {
-	return assetIDFromInterface(id)
-}
-
 func NewAssetID(classificationID types.ID, immutables types.Immutables) types.ID {
 	return assetID{
 		ClassificationID: classificationID,

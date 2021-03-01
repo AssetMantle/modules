@@ -74,12 +74,14 @@ func Test_Query_Keeper_Order(t *testing.T) {
 	classificationID := base.NewID("classificationID")
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
+	exchangeRateID := base.NewID(sdkTypes.OneDec().String())
+	creationHeightID := base.NewID("0")
 	makerID := base.NewID("makerID")
 
-	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, makerID, base.NewImmutables(immutableProperties))
+	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, exchangeRateID, creationHeightID, makerID, base.NewImmutables(immutableProperties))
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 
 	testQueryRequest := newQueryRequest(classificationID)
-	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.New(orderID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
+	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.FromID(orderID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
 
 }

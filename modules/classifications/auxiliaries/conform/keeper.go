@@ -22,9 +22,9 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(auxiliaryRequest.ClassificationID))
+	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(auxiliaryRequest.ClassificationID))
 
-	classification := classifications.Get(key.New(auxiliaryRequest.ClassificationID))
+	classification := classifications.Get(key.FromID(auxiliaryRequest.ClassificationID))
 	if classification == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}

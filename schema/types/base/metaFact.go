@@ -21,16 +21,15 @@ type metaFact struct {
 
 var _ types.MetaFact = (*metaFact)(nil)
 
-func (metaFact metaFact) GetData() types.Data             { return metaFact.Data }
-func (metaFact metaFact) RemoveData() types.Fact          { return NewFact(metaFact.Data) }
 func (metaFact metaFact) GetHashID() types.ID             { return metaFact.Data.GenerateHashID() }
 func (metaFact metaFact) GetTypeID() types.ID             { return metaFact.Data.GetTypeID() }
 func (metaFact metaFact) GetSignatures() types.Signatures { return metaFact.Signatures }
-
-func (metaFact metaFact) Sign(_ keyring.Keyring) types.Fact {
+func (metaFact metaFact) Sign(_ keyring.Keyring) types.MetaFact {
 	// TODO implement signing
 	return metaFact
 }
+func (metaFact metaFact) GetData() types.Data    { return metaFact.Data }
+func (metaFact metaFact) RemoveData() types.Fact { return NewFact(metaFact.Data) }
 
 func NewMetaFact(data types.Data) types.MetaFact {
 	return metaFact{

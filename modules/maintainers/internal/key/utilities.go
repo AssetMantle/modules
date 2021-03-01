@@ -8,6 +8,8 @@ package key
 import (
 	"strings"
 
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -41,4 +43,8 @@ func ReadClassificationID(assetID types.ID) types.ID {
 
 func ReadIdentityID(assetID types.ID) types.ID {
 	return maintainerIDFromInterface(assetID).IdentityID
+}
+
+func FromID(id types.ID) helpers.Key {
+	return maintainerIDFromInterface(id)
 }

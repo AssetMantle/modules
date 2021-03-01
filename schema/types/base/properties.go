@@ -27,31 +27,44 @@ func (properties properties) Get(id types.ID) types.Property {
 func (properties properties) GetList() []types.Property {
 	return properties.PropertyList
 }
-func (properties properties) Add(property types.Property) types.Properties {
-	propertyList := properties.GetList()
-	propertyList = append(propertyList, property)
+func (properties properties) Add(propertyList ...types.Property) types.Properties {
+	newPropertyList := properties.GetList()
 
-	return NewProperties(propertyList...)
-}
-func (properties properties) Remove(property types.Property) types.Properties {
-	propertyList := properties.GetList()
-	for i, oldProperty := range propertyList {
-		if oldProperty.GetID().Equals(property.GetID()) {
-			propertyList = append(propertyList[:i], propertyList[i+1:]...)
+	for _, addProperty := range propertyList {
+		if properties.Get(addProperty.GetID()) == nil {
+			newPropertyList = append(newPropertyList, addProperty)
 		}
 	}
 
-	return NewProperties(propertyList...)
+	return NewProperties(newPropertyList...)
 }
-func (properties properties) Mutate(property types.Property) types.Properties {
-	propertyList := properties.GetList()
-	for i, oldProperty := range propertyList {
-		if oldProperty.GetID().Equals(property.GetID()) {
-			propertyList[i] = property
+func (properties properties) Remove(propertyList ...types.Property) types.Properties {
+	newPropertyList := properties.GetList()
+
+	for _, removeProperty := range propertyList {
+		for i, oldProperty := range newPropertyList {
+			if oldProperty.GetID().Equals(removeProperty.GetID()) {
+				newPropertyList = append(newPropertyList[:i], newPropertyList[i+1:]...)
+				break
+			}
 		}
 	}
 
-	return NewProperties(propertyList...)
+	return NewProperties(newPropertyList...)
+}
+func (properties properties) Mutate(propertyList ...types.Property) types.Properties {
+	newPropertyList := properties.GetList()
+
+	for _, mutateProperty := range propertyList {
+		for i, oldProperty := range newPropertyList {
+			if oldProperty.GetID().Equals(mutateProperty.GetID()) {
+				newPropertyList[i] = mutateProperty
+				break
+			}
+		}
+	}
+
+	return NewProperties(newPropertyList...)
 }
 func NewProperties(propertyList ...types.Property) types.Properties {
 	return properties{

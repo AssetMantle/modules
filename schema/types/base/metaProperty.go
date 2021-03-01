@@ -21,14 +21,10 @@ type metaProperty struct {
 var _ types.MetaProperty = (*metaProperty)(nil)
 
 func (metaProperty metaProperty) GetMetaFact() types.MetaFact { return metaProperty.MetaFact }
-
+func (metaProperty metaProperty) GetID() types.ID             { return metaProperty.ID }
 func (metaProperty metaProperty) RemoveData() types.Property {
 	return NewProperty(metaProperty.ID, metaProperty.MetaFact.RemoveData())
 }
-
-func (metaProperty metaProperty) GetID() types.ID { return metaProperty.ID }
-
-func (metaProperty metaProperty) GetFact() types.Fact { return metaProperty.MetaFact }
 
 func NewMetaProperty(id types.ID, metaFact types.MetaFact) types.MetaProperty {
 	return metaProperty{

@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package deputize
+package revoke
 
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
@@ -11,18 +11,19 @@ import (
 )
 
 var Transaction = base.NewTransaction(
-	"deputize",
+	"revoke",
 	"",
 	"",
 
 	requestPrototype,
 	messagePrototype,
 	keeperPrototype,
-	flags.ToID,
+
 	flags.FromID,
+	flags.ToID,
 	flags.ClassificationID,
-	flags.ImmutableMetaProperties,
-	flags.ImmutableProperties,
-	flags.MutableMetaProperties,
-	flags.MutableProperties,
+	flags.MaintainedProperties,
+	flags.AddMaintainer,
+	flags.RemoveMaintainer,
+	flags.MutateMaintainer,
 )

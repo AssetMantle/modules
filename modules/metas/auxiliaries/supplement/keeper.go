@@ -38,8 +38,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 			}
 		} else {
 			metaID := key.NewMetaID(property.GetFact().GetTypeID(), property.GetFact().GetHashID())
-			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.New(metaID))
-			meta = metas.Get(key.New(metaID))
+			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(metaID))
+			meta = metas.Get(key.FromID(metaID))
 		}
 
 		if meta != nil {
@@ -47,7 +47,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		}
 	}
 
-	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList), nil)
+	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

@@ -6,12 +6,13 @@
 package mappable
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Order_Methods(t *testing.T) {
@@ -20,10 +21,12 @@ func Test_Order_Methods(t *testing.T) {
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
 	makerID := base.NewID("makerID")
+	rateID := base.NewID(sdkTypes.OneDec().String())
+	creationID := base.NewID("100")
 
 	takerIDImmutableProperty := base.NewProperty(base.NewID(properties.TakerID), base.NewFact(base.NewStringData("takerIDImmutableProperty")))
-	exchangeRateImmutableProperty := base.NewProperty(base.NewID(properties.ExchangeRate), base.NewFact(base.NewStringData("exchangeRateImmutableProperty")))
-	creationImmutableProperty := base.NewProperty(base.NewID(properties.Creation), base.NewFact(base.NewStringData("creationImmutableProperty")))
+	exchangeRateImmutableProperty := base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewStringData("exchangeRateImmutableProperty")))
+	creationImmutableProperty := base.NewMetaProperty(base.NewID(properties.Creation), base.NewMetaFact(base.NewStringData("creationImmutableProperty")))
 	expiryImmutableProperty := base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewStringData("expiryImmutableProperty")))
 	makerOwnableSplitImmutableProperty := base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(base.NewStringData("makerOwnableSplitImmutableProperty")))
 
@@ -33,9 +36,9 @@ func Test_Order_Methods(t *testing.T) {
 	expiryMutableProperty := base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewStringData("expiryMutableProperty")))
 	makerOwnableSplitMutableProperty := base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(base.NewStringData("makerOwnableSplitMutableProperty")))
 
-	immutables := base.NewImmutables(base.NewProperties(takerIDImmutableProperty, exchangeRateImmutableProperty, creationImmutableProperty, expiryImmutableProperty, makerOwnableSplitImmutableProperty))
+	immutables := base.NewImmutables(base.NewProperties(takerIDImmutableProperty, exchangeRateImmutableProperty.RemoveData(), creationImmutableProperty.RemoveData(), expiryImmutableProperty, makerOwnableSplitImmutableProperty))
 	mutables := base.NewMutables(base.NewProperties(takerIDMutableProperty, exchangeRateMutableProperty, creationMutableProperty, expiryMutableProperty, makerOwnableSplitMutableProperty))
-	testOrderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, makerID, immutables)
+	testOrderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, makerID, immutables)
 	testOrder := NewOrder(testOrderID, immutables, base.NewMutables(base.NewProperties())).(order)
 	testOrder2 := NewOrder(testOrderID, base.NewImmutables(base.NewProperties()), mutables).(order)
 	testOrder3 := NewOrder(testOrderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())).(order)

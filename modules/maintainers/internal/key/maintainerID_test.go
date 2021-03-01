@@ -6,11 +6,12 @@
 package key
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"strings"
-	"testing"
 )
 
 func Test_MaintainerID_Methods(t *testing.T) {
@@ -27,7 +28,7 @@ func Test_MaintainerID_Methods(t *testing.T) {
 	require.Equal(t, true, testMaintainerID.Matches(testMaintainerID))
 	require.Equal(t, false, testMaintainerID.Matches(maintainerID{ClassificationID: base.NewID(""), IdentityID: base.NewID("")}))
 	require.Equal(t, false, testMaintainerID.Matches(nil))
-	require.Equal(t, testMaintainerID, New(testMaintainerID))
-	require.Equal(t, maintainerID{ClassificationID: base.NewID(""), IdentityID: base.NewID("")}, New(base.NewID("")))
+	require.Equal(t, testMaintainerID, FromID(testMaintainerID))
+	require.Equal(t, maintainerID{ClassificationID: base.NewID(""), IdentityID: base.NewID("")}, FromID(base.NewID("")))
 	require.Equal(t, testMaintainerID, readMaintainerID(testMaintainerID.String()))
 }
