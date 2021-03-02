@@ -11,6 +11,8 @@ import (
 )
 
 type Chain interface {
+	GetID() types.ID
 	GetTrustHeight() types.Height
+
 	helpers.Mappable
 }
