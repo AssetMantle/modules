@@ -9,6 +9,8 @@ import (
 	"strings"
 	"testing"
 
+	base2 "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
@@ -16,7 +18,7 @@ import (
 
 func Test_AssetID_Methods(t *testing.T) {
 	classificationID := base.NewID("classificationID")
-	immutables := base.NewImmutables(base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData")))))
+	immutables := base2.NewImmutables(base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData")))))
 
 	testAssetID := NewAssetID(classificationID, immutables).(assetID)
 	require.Equal(t, assetID{ClassificationID: classificationID, HashID: immutables.GenerateHashID()}, testAssetID)
