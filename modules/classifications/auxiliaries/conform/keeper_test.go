@@ -103,7 +103,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase-Immutables list length mismatch", func(t *testing.T) {
+	t.Run("NegativeCase-Properties list length mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, base.NewProperties(), mutableProperties)); !reflect.DeepEqual(got, want) {
@@ -111,7 +111,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase-Immutables mismatch", func(t *testing.T) {
+	t.Run("NegativeCase-Properties mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("Data3")))), mutableProperties)); !reflect.DeepEqual(got, want) {
@@ -119,7 +119,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase-Mutables list length mismatch", func(t *testing.T) {
+	t.Run("NegativeCase-Properties list length mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, immutableProperties, base.NewProperties(base.NewProperty(base.NewID("ID4"), base.NewFact(base.NewStringData("Data4"))), base.NewProperty(base.NewID("ID5"), base.NewFact(base.NewStringData("Data5")))))); !reflect.DeepEqual(got, want) {
@@ -127,7 +127,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase-Mutables mismatch", func(t *testing.T) {
+	t.Run("NegativeCase-Properties mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, immutableProperties, base.NewProperties(base.NewProperty(base.NewID("ID6"), base.NewFact(base.NewStringData("Data3")))))); !reflect.DeepEqual(got, want) {
