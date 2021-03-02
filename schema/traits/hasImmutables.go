@@ -10,5 +10,7 @@ import (
 )
 
 type HasImmutables interface {
-	GetImmutables() types.Immutables
+	GetImmutables() types.Properties
+
+	GenerateHashID() types.ID
 }
