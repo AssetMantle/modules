@@ -6,29 +6,27 @@
 package base
 
 import (
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
-type immutables struct {
+type Immutables struct {
 	Properties types.Properties `json:"properties"`
 }
 
-var _ types.Immutables = (*immutables)(nil)
+var _ traits.HasImmutables = (*Immutables)(nil)
 
-func (immutables immutables) Get() types.Properties {
+func (immutables Immutables) GetImmutables() types.Properties {
 	return immutables.Properties
 }
-func (immutables immutables) GenerateHashID() types.ID {
+func (immutables Immutables) GenerateHashID() types.ID {
 	metaList := make([]string, len(immutables.Properties.GetList()))
 
 	for i, immutableProperty := range immutables.Properties.GetList() {
 		metaList[i] = immutableProperty.GetFact().GetHashID().String()
 	}
 
-	return NewID(metaUtilities.Hash(metaList...))
-}
-
-func NewImmutables(properties types.Properties) types.Immutables {
-	return immutables{Properties: properties}
+	return base.NewID(metaUtilities.Hash(metaList...))
 }
