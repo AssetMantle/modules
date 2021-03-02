@@ -369,8 +369,10 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			paramsKeeper.Subspace(identities.Prototype().Name()),
 			classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 			classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-			maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+			maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
 			maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
+			maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
+			maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
 			metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 		)
 		splitsModule := splits.Prototype().Initialize(
