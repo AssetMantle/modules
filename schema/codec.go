@@ -9,14 +9,18 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*error)(nil), nil)
 	types.RegisterCodec(codec)
-	base.RegisterCodec(codec)
+	baseTypes.RegisterCodec(codec)
+	traits.RegisterCodec(codec)
+	baseTraits.RegisterCodec(codec)
 	mappables.RegisterCodec(codec)
 	helpers.RegisterCodec(codec)
 }
