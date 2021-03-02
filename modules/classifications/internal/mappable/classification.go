@@ -11,15 +11,15 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	base2 "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type classification struct {
 	ID types.ID `json:"id" valid:"required~required field id missing"`
-	base2.Immutables
-	base2.Mutables
+	baseTraits.Immutables
+	baseTraits.Mutables
 }
 
 var _ mappables.Classification = (*classification)(nil)
@@ -36,7 +36,7 @@ func (classification) RegisterCodec(codec *codec.Codec) {
 func NewClassification(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Classification {
 	return classification{
 		ID:         id,
-		Immutables: base2.Immutables{Properties: immutableProperties},
-		Mutables:   base2.Mutables{Properties: mutableProperties},
+		Immutables: baseTraits.Immutables{Properties: immutableProperties},
+		Mutables:   baseTraits.Mutables{Properties: mutableProperties},
 	}
 }

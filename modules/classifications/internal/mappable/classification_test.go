@@ -8,7 +8,7 @@ package mappable
 import (
 	"testing"
 
-	base2 "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -24,7 +24,7 @@ func Test_Classification_Methods(t *testing.T) {
 	id := key.NewClassificationID(chainID, immutableProperties, mutableProperties)
 
 	testClassification := NewClassification(id, immutableProperties, mutableProperties)
-	require.Equal(t, classification{ID: id, Immutables: base2.Immutables{Properties: immutableProperties}, Mutables: base2.Mutables{Properties: mutableProperties}}, testClassification)
+	require.Equal(t, classification{ID: id, Immutables: baseTraits.Immutables{Properties: immutableProperties}, Mutables: baseTraits.Mutables{Properties: mutableProperties}}, testClassification)
 	require.Equal(t, immutableProperties, testClassification.GetImmutableProperties())
 	require.Equal(t, mutableProperties, testClassification.GetMutableProperties())
 	require.Equal(t, key.FromID(id), testClassification.GetKey())
