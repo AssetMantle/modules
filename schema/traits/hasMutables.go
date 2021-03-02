@@ -10,5 +10,7 @@ import (
 )
 
 type HasMutables interface {
-	GetMutables() types.Mutables
+	GetMutables() types.Properties
+
+	Mutate(propertyList ...types.Property) HasMutables
 }
