@@ -94,15 +94,12 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	defaultIdentityID := base.NewID("fromIdentityID")
 	burnMockErrorIdentity := base.NewID("burnError")
 	classificationID := base.NewID("ClassificationID")
-	assetID := key.NewAssetID(classificationID, base.NewImmutables(immutableProperties))
-	assetID2 := key.NewAssetID(base.NewID("ClassificationID2"), base.NewImmutables(immutableProperties))
-	assetID3 := key.NewAssetID(base.NewID("ClassificationID3"), base.NewImmutables(immutableProperties))
-	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID,
-		base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
-	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID2,
-		base.NewImmutables(immutableProperties), base.NewMutables(supplementError.RemoveData())))
-	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID3,
-		base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
+	assetID := key.NewAssetID(classificationID, immutableProperties)
+	assetID2 := key.NewAssetID(base.NewID("ClassificationID2"), immutableProperties)
+	assetID3 := key.NewAssetID(base.NewID("ClassificationID3"), immutableProperties)
+	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID, immutableProperties, mutableProperties))
+	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID2, immutableProperties, supplementError.RemoveData()))
+	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID3, immutableProperties, mutableProperties))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

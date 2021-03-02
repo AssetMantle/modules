@@ -6,6 +6,8 @@
 package asset
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -18,7 +20,6 @@ import (
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Asset_Request(t *testing.T) {
@@ -31,7 +32,7 @@ func Test_Asset_Request(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
 	classificationID := base.NewID("classificationID")
-	immutables := base.NewImmutables(base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData")))))
+	immutables := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
 
 	testAssetID := key.NewAssetID(classificationID, immutables)
 	testQueryRequest := newQueryRequest(testAssetID)
