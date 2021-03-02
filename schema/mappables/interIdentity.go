@@ -6,22 +6,13 @@
 package mappables
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type InterIdentity interface {
-	GetProvisionedAddressList() []sdkTypes.AccAddress
-	GetUnprovisionedAddressList() []sdkTypes.AccAddress
+	GetProvisionedAddresses() types.Property
+	GetUnprovisionedAddresses() types.Property
+	GetExpiry() types.Property
 
-	ProvisionAddress(sdkTypes.AccAddress) InterIdentity
-	UnprovisionAddress(sdkTypes.AccAddress) InterIdentity
-
-	IsProvisioned(sdkTypes.AccAddress) bool
-	IsUnprovisioned(sdkTypes.AccAddress) bool
-
-	traits.HasImmutables
-	traits.HasMutables
-	helpers.Mappable
+	Document
 }
