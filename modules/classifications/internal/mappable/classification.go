@@ -18,8 +18,8 @@ import (
 
 type classification struct {
 	ID types.ID `json:"id" valid:"required~required field id missing"`
-	baseTraits.Immutables
-	baseTraits.Mutables
+	baseTraits.HasImmutables
+	baseTraits.HasMutables
 }
 
 var _ mappables.Classification = (*classification)(nil)
@@ -35,8 +35,8 @@ func (classification) RegisterCodec(codec *codec.Codec) {
 
 func NewClassification(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Classification {
 	return classification{
-		ID:         id,
-		Immutables: baseTraits.Immutables{Properties: immutableProperties},
-		Mutables:   baseTraits.Mutables{Properties: mutableProperties},
+		ID:            id,
+		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
+		HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
 	}
 }
