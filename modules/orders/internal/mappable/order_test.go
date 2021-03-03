@@ -6,12 +6,14 @@
 package mappable
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Order_Methods(t *testing.T) {
@@ -33,12 +35,12 @@ func Test_Order_Methods(t *testing.T) {
 	expiryMutableProperty := base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewStringData("expiryMutableProperty")))
 	makerOwnableSplitMutableProperty := base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(base.NewStringData("makerOwnableSplitMutableProperty")))
 
-	immutables := base.NewImmutables(base.NewProperties(takerIDImmutableProperty, exchangeRateImmutableProperty, creationImmutableProperty, expiryImmutableProperty, makerOwnableSplitImmutableProperty))
-	mutables := base.NewMutables(base.NewProperties(takerIDMutableProperty, exchangeRateMutableProperty, creationMutableProperty, expiryMutableProperty, makerOwnableSplitMutableProperty))
-	testOrderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, makerID, immutables)
-	testOrder := NewOrder(testOrderID, immutables, base.NewMutables(base.NewProperties())).(order)
-	testOrder2 := NewOrder(testOrderID, base.NewImmutables(base.NewProperties()), mutables).(order)
-	testOrder3 := NewOrder(testOrderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())).(order)
+	immutableProperties := base.NewProperties(takerIDImmutableProperty, exchangeRateImmutableProperty, creationImmutableProperty, expiryImmutableProperty, makerOwnableSplitImmutableProperty)
+	mutableProperties := base.NewProperties(takerIDMutableProperty, exchangeRateMutableProperty, creationMutableProperty, expiryMutableProperty, makerOwnableSplitMutableProperty)
+	testOrderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, makerID, immutableProperties)
+	testOrder := NewOrder(testOrderID, immutableProperties, base.NewProperties()).(order)
+	testOrder2 := NewOrder(testOrderID, base.NewProperties(), mutableProperties).(order)
+	testOrder3 := NewOrder(testOrderID, base.NewProperties(), base.NewProperties()).(order)
 
 	data, _ := base.ReadIDData("")
 	defaultTakerProperty := base.NewProperty(base.NewID(properties.TakerID), base.NewFact(data))
@@ -49,7 +51,7 @@ func Test_Order_Methods(t *testing.T) {
 	data, _ = base.ReadDecData("")
 	defaultMakerOwnableSplitProperty := base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(data))
 
-	require.Equal(t, order{ID: testOrderID, Immutables: immutables, Mutables: base.NewMutables(base.NewProperties())}, testOrder)
+	require.Equal(t, order{ID: testOrderID, HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties}, HasMutables: baseTraits.HasMutables{Properties: base.NewProperties()}}, testOrder)
 	require.Equal(t, testOrderID, testOrder.GetID())
 	require.Equal(t, testOrderID, testOrder.GetKey())
 	require.Equal(t, classificationID, testOrder.GetClassificationID())
@@ -81,8 +83,8 @@ func Test_Order_Methods(t *testing.T) {
 	require.Equal(t, makerOwnableSplitMutableProperty, testOrder2.GetMakerOwnableSplit())
 	require.Equal(t, defaultMakerOwnableSplitProperty, testOrder3.GetMakerOwnableSplit())
 
-	require.Equal(t, immutables, testOrder.GetImmutables())
-	require.Equal(t, mutables, testOrder2.GetMutables())
+	require.Equal(t, immutableProperties, testOrder.GetImmutableProperties())
+	require.Equal(t, mutableProperties, testOrder2.GetMutableProperties())
 	require.Equal(t, testOrderID, testOrder2.GetID())
 	require.Equal(t, testOrderID, testOrder2.GetKey())
 

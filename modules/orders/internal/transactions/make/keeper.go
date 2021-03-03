@@ -53,7 +53,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	immutableProperties := base.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
 
-	orderID := key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, message.FromID, base.NewImmutables(immutableProperties))
+	orderID := key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, message.FromID, immutableProperties)
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(orderID))
 
 	makerOwnableSplit := message.MakerOwnableSplit
@@ -93,9 +93,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	if order != nil {
-		orders.Mutate(mappable.NewOrder(orderID, base.NewImmutables(immutableProperties), order.(mappables.Order).GetMutables().Mutate(mutableProperties.GetList()...)))
+		orders.Mutate(mappable.NewOrder(orderID, immutableProperties, order.(mappables.Order).GetImmutableProperties().Mutate(mutableProperties.GetList()...)))
 	} else {
-		orders.Add(mappable.NewOrder(orderID, base.NewImmutables(immutableProperties), base.NewMutables(scrubbedMutableMetaProperties)))
+		orders.Add(mappable.NewOrder(orderID, immutableProperties, scrubbedMutableMetaProperties))
 	}
 
 	return newTransactionResponse(nil)

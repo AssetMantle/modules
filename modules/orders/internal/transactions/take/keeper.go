@@ -106,7 +106,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return newTransactionResponse(Error)
 		}
 
-		order = mappable.NewOrder(orderID, order.(mappables.Order).GetImmutables(), order.(mappables.Order).GetMutables().Mutate(mutableProperties.GetList()...))
+		order = mappable.NewOrder(orderID, order.(mappables.Order).GetImmutableProperties(), order.(mappables.Order).GetImmutableProperties().Mutate(mutableProperties.GetList()...))
 		orders.Mutate(order)
 	}
 
