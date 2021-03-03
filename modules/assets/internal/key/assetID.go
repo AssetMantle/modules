@@ -57,9 +57,9 @@ func (assetID assetID) Matches(key helpers.Key) bool {
 	return assetID.Equals(assetIDFromInterface(key))
 }
 
-func NewAssetID(classificationID types.ID, immutables types.Properties) types.ID {
+func NewAssetID(classificationID types.ID, immutableProperties types.Properties) types.ID {
 	return assetID{
 		ClassificationID: classificationID,
-		HashID:           base.Immutables{Properties: immutables}.GenerateHashID(),
+		HashID:           base.HasImmutables{Properties: immutableProperties}.GenerateHashID(),
 	}
 }

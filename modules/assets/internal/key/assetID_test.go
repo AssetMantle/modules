@@ -18,11 +18,11 @@ import (
 
 func Test_AssetID_Methods(t *testing.T) {
 	classificationID := base.NewID("classificationID")
-	immutables := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
 
-	testAssetID := NewAssetID(classificationID, immutables).(assetID)
-	require.Equal(t, assetID{ClassificationID: classificationID, HashID: baseTraits.Immutables{Properties: immutables}.GenerateHashID()}, testAssetID)
-	require.Equal(t, strings.Join([]string{classificationID.String(), baseTraits.Immutables{Properties: immutables}.GenerateHashID().String()}, constants.FirstOrderCompositeIDSeparator), testAssetID.String())
+	testAssetID := NewAssetID(classificationID, immutableProperties).(assetID)
+	require.Equal(t, assetID{ClassificationID: classificationID, HashID: baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID()}, testAssetID)
+	require.Equal(t, strings.Join([]string{classificationID.String(), baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID().String()}, constants.FirstOrderCompositeIDSeparator), testAssetID.String())
 	require.Equal(t, false, testAssetID.IsPartial())
 	require.Equal(t, true, assetID{ClassificationID: classificationID, HashID: base.NewID("")}.IsPartial())
 	require.Equal(t, true, testAssetID.Equals(testAssetID))
