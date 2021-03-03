@@ -12,16 +12,16 @@ import (
 	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
-type Immutables struct {
+type HasImmutables struct {
 	Properties types.Properties `json:"properties"`
 }
 
-var _ traits.HasImmutables = (*Immutables)(nil)
+var _ traits.HasImmutables = (*HasImmutables)(nil)
 
-func (immutables Immutables) GetImmutables() types.Properties {
+func (immutables HasImmutables) GetImmutableProperties() types.Properties {
 	return immutables.Properties
 }
-func (immutables Immutables) GenerateHashID() types.ID {
+func (immutables HasImmutables) GenerateHashID() types.ID {
 	metaList := make([]string, len(immutables.Properties.GetList()))
 
 	for i, immutableProperty := range immutables.Properties.GetList() {
