@@ -23,8 +23,8 @@ func Test_ClassificationID_Methods(t *testing.T) {
 	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("MutableData"))))
 
 	testClassificationID := NewClassificationID(chainID, immutableProperties, mutableProperties).(classificationID)
-	require.Equal(t, classificationID{ChainID: chainID, HashID: base.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseTraits.Immutables{Properties: immutableProperties}.GenerateHashID().String()))}, testClassificationID)
-	require.Equal(t, strings.Join([]string{chainID.String(), base.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseTraits.Immutables{Properties: immutableProperties}.GenerateHashID().String())).String()}, constants.IDSeparator), testClassificationID.String())
+	require.Equal(t, classificationID{ChainID: chainID, HashID: base.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID().String()))}, testClassificationID)
+	require.Equal(t, strings.Join([]string{chainID.String(), base.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID().String())).String()}, constants.IDSeparator), testClassificationID.String())
 	require.Equal(t, false, testClassificationID.Matches(classificationID{ChainID: base.NewID("chainID"), HashID: base.NewID("hashID")}))
 	require.Equal(t, false, testClassificationID.Matches(nil))
 	require.Equal(t, false, testClassificationID.Equals(base.NewID("id")))
