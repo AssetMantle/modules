@@ -10,8 +10,7 @@ import (
 )
 
 type InterIdentity interface {
-	GetProvisionedAddresses() types.Property
-	GetUnprovisionedAddresses() types.Property
+	GetAuthentication() types.Property
 	GetExpiry() types.Property
 
 	Document
