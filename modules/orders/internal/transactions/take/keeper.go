@@ -75,8 +75,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.MetaDataError)
 	}
 
-	makerReceiveTakerOwnableSplit := makerOwnableSplit.Mul(exchangeRate.MulTruncate(sdkTypes.SmallestDec()))
-	takerReceiveMakerOwnableSplit := message.TakerOwnableSplit.Quo(exchangeRate.MulTruncate(sdkTypes.SmallestDec()))
+	makerReceiveTakerOwnableSplit := makerOwnableSplit.MulTruncate(exchangeRate).MulTruncate(sdkTypes.SmallestDec())
+	takerReceiveMakerOwnableSplit := message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(exchangeRate)
 
 	switch updatedMakerOwnableSplit := makerOwnableSplit.Sub(takerReceiveMakerOwnableSplit); {
 	case updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()):
