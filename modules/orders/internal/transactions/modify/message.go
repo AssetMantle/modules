@@ -23,8 +23,8 @@ type message struct {
 	From                  sdkTypes.AccAddress  `json:"from" valid:"required~required field from missing"`
 	FromID                types.ID             `json:"fromID" valid:"required~required field fromID missing"`
 	OrderID               types.ID             `json:"orderID" valid:"required~required field orderID missing"`
-	ExchangeRate          sdkTypes.Dec         `json:"exchangeRate" valid:"required~required field exchangeRate missing"`
 	MakerOwnableSplit     sdkTypes.Dec         `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing"`
+	TakerOwnableSplit     sdkTypes.Dec         `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
 	ExpiresIn             types.Height         `json:"expiresIn" valid:"required~required field expiresIn missing"`
 	MutableMetaProperties types.MetaProperties `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
 	MutableProperties     types.Properties     `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
@@ -40,7 +40,7 @@ func (message message) ValidateBasic() error {
 		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
 	}
 
-	if message.ExchangeRate.LTE(sdkTypes.ZeroDec()) {
+	if message.TakerOwnableSplit.LTE(sdkTypes.ZeroDec()) || message.MakerOwnableSplit.LTE(sdkTypes.ZeroDec()) {
 		return errors.Wrap(xprtErrors.IncorrectMessage, "")
 	}
 
@@ -71,12 +71,12 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, orderID types.ID, exchangeRate sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn types.Height, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, orderID types.ID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn types.Height, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
 	return message{
 		From:                  from,
 		FromID:                fromID,
 		OrderID:               orderID,
-		ExchangeRate:          exchangeRate,
+		TakerOwnableSplit:     takerOwnableSplit,
 		MakerOwnableSplit:     makerOwnableSplit,
 		ExpiresIn:             expiresIn,
 		MutableMetaProperties: mutableMetaProperties,

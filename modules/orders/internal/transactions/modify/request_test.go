@@ -31,7 +31,7 @@ func Test_Define_Request(t *testing.T) {
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.FromID, flags.OrderID, flags.MakerOwnableSplit, flags.ExpiresIn, flags.ExchangeRate, flags.MutableMetaProperties, flags.MutableProperties})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.FromID, flags.OrderID, flags.MakerOwnableSplit, flags.ExpiresIn, flags.TakerOwnableSplit, flags.MutableMetaProperties, flags.MutableProperties})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
@@ -49,7 +49,7 @@ func Test_Define_Request(t *testing.T) {
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	testTransactionRequest := newTransactionRequest(testBaseReq, "fromID", "orderID", sdkTypes.OneDec().String(), "1.0", 123, mutableMetaPropertiesString, mutablePropertiesString)
 
-	require.Equal(t, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", OrderID: "orderID", ExpiresIn: 123, MakerOwnableSplit: "1.0", ExchangeRate: sdkTypes.OneDec().String(), MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, testTransactionRequest)
+	require.Equal(t, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", OrderID: "orderID", ExpiresIn: 123, MakerOwnableSplit: "1.0", TakerOwnableSplit: sdkTypes.OneDec().String(), MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
 	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, cliContext)

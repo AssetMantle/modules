@@ -24,7 +24,7 @@ type transactionRequest struct {
 	BaseReq               rest.BaseReq `json:"baseReq"`
 	FromID                string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
 	OrderID               string       `json:"orderID" valid:"required~required field orderID missing, matches(^[A-Za-z0-9-_|=.*]+$)~invalid field orderID"`
-	ExchangeRate          string       `json:"exchangeRate" valid:"required~required field exchangeRate missing, matches(^[0-9]{1,255}(\.{1}[0-9]{1,18})?$)~invalid field exchangeRate"` //nolint:govet
+	TakerOwnableSplit     string       `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing, matches(^[0-9]{1,255}(.{1}[0-9]{1,18})?$)~invalid field takerOwnableSplit"`
 	MakerOwnableSplit     string       `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing, matches(^[0-9.]+$)~invalid field makerOwnableSplit"`
 	ExpiresIn             int64        `json:"expiresIn" valid:"required~required field expiresIn missing, matches(^[0-9]+$)~invalid field expiresIn"`
 	MutableMetaProperties string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing, matches(^.*$)~invalid field mutableMetaProperties"`
@@ -42,7 +42,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(flags.FromID),
 		cliCommand.ReadString(flags.OrderID),
-		cliCommand.ReadString(flags.ExchangeRate),
+		cliCommand.ReadString(flags.TakerOwnableSplit),
 		cliCommand.ReadString(flags.MakerOwnableSplit),
 		cliCommand.ReadInt64(flags.ExpiresIn),
 		cliCommand.ReadString(flags.MutableMetaProperties),
@@ -71,7 +71,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, Error
 	}
 
-	exchangeRate, Error := sdkTypes.NewDecFromStr(transactionRequest.ExchangeRate)
+	takerOwnableSplit, Error := sdkTypes.NewDecFromStr(transactionRequest.TakerOwnableSplit)
 	if Error != nil {
 		return nil, Error
 	}
@@ -90,7 +90,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		from,
 		base.NewID(transactionRequest.FromID),
 		base.NewID(transactionRequest.OrderID),
-		exchangeRate,
+		takerOwnableSplit,
 		makerOwnableSplit,
 		base.NewHeight(transactionRequest.ExpiresIn),
 		mutableMetaProperties,
@@ -104,12 +104,12 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, orderID string, exchangeRate string, makerOwnableSplit string, expiresIn int64, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, orderID string, takerOwnableSplit string, makerOwnableSplit string, expiresIn int64, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:               baseReq,
 		FromID:                fromID,
 		OrderID:               orderID,
-		ExchangeRate:          exchangeRate,
+		TakerOwnableSplit:     takerOwnableSplit,
 		MakerOwnableSplit:     makerOwnableSplit,
 		ExpiresIn:             expiresIn,
 		MutableMetaProperties: mutableMetaProperties,

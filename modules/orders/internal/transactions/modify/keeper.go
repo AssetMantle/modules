@@ -19,7 +19,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -92,7 +91,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	orders.Remove(order)
 	orders.Add(mappable.NewOrder(
-		key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetMakerOwnableID(), order.(mappables.Order).GetTakerOwnableID(), base.NewID(message.ExchangeRate.String()), base.NewID(order.(mappables.Order).GetCreation().(types.MetaProperty).GetMetaFact().GetData().String()), order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetImmutables()),
+		key.NewOrderID(
+			order.(mappables.Order).GetClassificationID(),
+			order.(mappables.Order).GetMakerOwnableID(),
+			order.(mappables.Order).GetTakerOwnableID(),
+			base.NewID(message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(message.MakerOwnableSplit).String()),
+			base.NewID(order.(mappables.Order).GetCreation().GetMetaFact().GetData().String()),
+			order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetImmutables(),
+		),
 		order.(mappables.Order).GetImmutables(),
 		updatedMutables),
 	)

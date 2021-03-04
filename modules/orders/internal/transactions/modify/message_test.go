@@ -43,7 +43,7 @@ func Test_Make_Message(t *testing.T) {
 	require.Nil(t, Error)
 
 	testMessage := newMessage(fromAccAddress, fromID, orderID, sdkTypes.OneDec(), makerOwnableSplit, expiresIn, mutableMetaProperties, mutableProperties)
-	require.Equal(t, message{From: fromAccAddress, FromID: fromID, OrderID: orderID, ExchangeRate: sdkTypes.OneDec(), MakerOwnableSplit: makerOwnableSplit, ExpiresIn: expiresIn, MutableMetaProperties: mutableMetaProperties, MutableProperties: mutableProperties}, testMessage)
+	require.Equal(t, message{From: fromAccAddress, FromID: fromID, OrderID: orderID, TakerOwnableSplit: sdkTypes.OneDec(), MakerOwnableSplit: makerOwnableSplit, ExpiresIn: expiresIn, MutableMetaProperties: mutableMetaProperties, MutableProperties: mutableProperties}, testMessage)
 	require.Equal(t, module.Name, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
 	require.Equal(t, nil, testMessage.ValidateBasic())

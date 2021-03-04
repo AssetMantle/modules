@@ -47,8 +47,8 @@ func (message message) ValidateBasic() error {
 		return errors.Wrap(xprtErrors.IncorrectMessage, "MakerOwnableID and TakerOwnableID cannot be same")
 	}
 
-	if message.MakerOwnableSplit.LT(sdkTypes.ZeroDec()) {
-		return errors.Wrap(xprtErrors.IncorrectMessage, "MakerOwnableSplit cannot be less than 0")
+	if message.TakerOwnableSplit.LTE(sdkTypes.ZeroDec()) || message.MakerOwnableSplit.LTE(sdkTypes.ZeroDec()) {
+		return errors.Wrap(xprtErrors.IncorrectMessage, "")
 	}
 
 	return nil
