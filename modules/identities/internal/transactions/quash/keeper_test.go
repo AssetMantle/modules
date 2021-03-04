@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package issue
+package quash
 
 import (
 	"reflect"
@@ -15,11 +15,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -35,7 +35,6 @@ type TestKeepers struct {
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
-
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
@@ -47,7 +46,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
 	paramsKeeper := params.NewKeeper(
 		Codec,
 		paramsStoreKey,
@@ -67,12 +66,12 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(Mapper, Parameters)
-	conformAuxiliary := conform.AuxiliaryMock.Initialize(Mapper, Parameters)
+	supplementAuxiliary := supplement.AuxiliaryMock.Initialize(mapper, Parameters)
+	verifyAuxiliary := verify.AuxiliaryMock.Initialize(mapper, Parameters)
 	keepers := TestKeepers{
-		IdentitiesKeeper: keeperPrototype().Initialize(Mapper, Parameters,
-			[]interface{}{scrubAuxiliary,
-				conformAuxiliary}).(helpers.TransactionKeeper),
+		IdentitiesKeeper: keeperPrototype().Initialize(mapper, Parameters,
+			[]interface{}{supplementAuxiliary,
+				verifyAuxiliary}).(helpers.TransactionKeeper),
 	}
 
 	return context, keepers
@@ -80,65 +79,68 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 func Test_transactionKeeper_Transact(t *testing.T) {
 
-	context, keepers := CreateTestInput(t)
-
-	immutableMetaProperties, Error := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
-	require.Equal(t, nil, Error)
+	ctx, keepers := CreateTestInput(t)
+	ctx = ctx.WithBlockHeight(2)
 	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, Error)
-	mutableMetaProperties, Error := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableProperties, Error := base.ReadProperties("quash:H|100")
 	require.Equal(t, nil, Error)
-	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, Error)
-	scrubMockErrorProperties, Error := base.ReadMetaProperties("scrubError:S|mockError")
-	require.Equal(t, nil, Error)
-	conformMockErrorProperties, Error := base.ReadMetaProperties("conformError:S|mockError")
+	supplementError, Error := base.ReadMetaProperties("supplementError:S|mockError")
 	require.Equal(t, nil, Error)
 	defaultAddr := sdkTypes.AccAddress("addr")
-	defaultClassificationID := base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
-	defaultIdentityID := key.NewIdentityID(defaultClassificationID, immutableProperties)
-	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(defaultIdentityID, base.NewProperties(), base.NewProperties()))
+	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
+	defaultIdentityID := base.NewID("fromIdentityID")
+	quashMockErrorIdentity := base.NewID("quashError")
+	classificationID := base.NewID("ClassificationID")
+	identityID := key.NewIdentityID(classificationID, immutableProperties)
+	identityID2 := key.NewIdentityID(base.NewID("ClassificationID2"), immutableProperties)
+	identityID3 := key.NewIdentityID(base.NewID("ClassificationID3"), immutableProperties)
+	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewIdentity(identityID, immutableProperties, mutableProperties))
+	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewIdentity(identityID2, immutableProperties, supplementError.RemoveData()))
+	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewIdentity(identityID3, immutableProperties, mutableProperties))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
-		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, defaultAddr, defaultIdentityID, defaultClassificationID,
-			immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, identityID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	t.Run("NegativeCase-DuplicateIdentity", func(t *testing.T) {
-		t.Parallel()
-		want := newTransactionResponse(errors.EntityAlreadyExists)
-		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, defaultAddr, defaultIdentityID, defaultClassificationID,
-			immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase-ImmutableScrub Error", func(t *testing.T) {
+	t.Run("NegativeCase - verify identity mock error", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
-		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, defaultAddr, defaultIdentityID, defaultClassificationID,
-			scrubMockErrorProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(verifyMockErrorAddress, defaultIdentityID, identityID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	t.Run("NegativeCase-MutableScrubError", func(t *testing.T) {
+	t.Run("NegativeCase - unMinted identity", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
-		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, defaultAddr, defaultIdentityID, base.NewID("newClassificationID"),
-			immutableMetaProperties, immutableProperties, scrubMockErrorProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
+		want := newTransactionResponse(errors.EntityNotFound)
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, base.NewID(""))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	t.Run("NegativeCase-ConformError", func(t *testing.T) {
+	t.Run("NegativeCase - supplement mock error", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.MockError)
-		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, defaultAddr, defaultIdentityID, base.NewID("newClassificationID"),
-			immutableMetaProperties, immutableProperties, conformMockErrorProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, identityID2)); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("NegativeCase - quash mock error", func(t *testing.T) {
+		t.Parallel()
+		want := newTransactionResponse(errors.MockError)
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(defaultAddr, quashMockErrorIdentity, identityID3)); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+	t.Run("NegativeCase - quash height error", func(t *testing.T) {
+		ctx2 := ctx.WithBlockHeight(-20)
+		want := newTransactionResponse(errors.NotAuthorized)
+		if got := keepers.IdentitiesKeeper.Transact(ctx2, newMessage(defaultAddr, quashMockErrorIdentity, identityID3)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

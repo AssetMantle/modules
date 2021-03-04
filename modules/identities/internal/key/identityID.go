@@ -9,6 +9,8 @@ import (
 	"bytes"
 	"strings"
 
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
@@ -54,9 +56,9 @@ func (identityID identityID) Matches(key helpers.Key) bool {
 	return identityID.Equals(identityIDFromInterface(key))
 }
 
-func NewIdentityID(classificationID types.ID, immutables types.Immutables) types.ID {
+func NewIdentityID(classificationID types.ID, immutableProperties types.Properties) types.ID {
 	return identityID{
 		ClassificationID: classificationID,
-		HashID:           immutables.GenerateHashID(),
+		HashID:           baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID(),
 	}
 }
