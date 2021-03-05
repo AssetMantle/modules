@@ -7,7 +7,7 @@ package scrub
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/constants/test"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -28,7 +28,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 		scrubbedPropertyList[i] = metaProperty.RemoveData()
 
 		if metaProperty.GetID().String() == "scrubError" {
-			return newAuxiliaryResponse(nil, errors.MockError)
+			return newAuxiliaryResponse(nil, test.MockError)
 		}
 	}
 

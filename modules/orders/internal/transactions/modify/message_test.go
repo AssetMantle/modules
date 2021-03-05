@@ -8,6 +8,8 @@ package modify
 import (
 	"testing"
 
+	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
+
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
 
 	"github.com/cosmos/cosmos-sdk/types/errors"
@@ -36,7 +38,7 @@ func Test_Make_Message(t *testing.T) {
 	require.Equal(t, nil, Error)
 	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, Error)
-	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationId, makerID, base.NewImmutables(immutableProperties))
+	orderID := base.NewID(key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationId, makerID, base.NewImmutables(immutableProperties)).String())
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -48,6 +50,7 @@ func Test_Make_Message(t *testing.T) {
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
 	require.Equal(t, nil, testMessage.ValidateBasic())
 	require.NotNil(t, message{}.ValidateBasic())
+	require.Equal(t, sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(testMessage)), testMessage.GetSignBytes())
 	require.Equal(t, []sdkTypes.AccAddress{fromAccAddress}, testMessage.GetSigners())
 	require.Equal(t, testMessage, messageFromInterface(testMessage))
 	require.Equal(t, message{}, messageFromInterface(nil))
