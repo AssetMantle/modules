@@ -18,7 +18,7 @@ import (
 )
 
 type split struct {
-	ID    types.ID     `json:"key" valid:"required field key missing"`
+	ID    types.ID     `json:"id" valid:"required field key missing"`
 	Value sdkTypes.Dec `json:"value" valid:"required~required field value missing, matches(^[0-9]$)~invalid field value"`
 }
 

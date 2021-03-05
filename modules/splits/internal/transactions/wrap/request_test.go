@@ -7,7 +7,8 @@ package wrap
 
 import (
 	"encoding/json"
-	"fmt"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -19,8 +20,6 @@ import (
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"regexp"
-	"testing"
 )
 
 func Test_Unwrap_Request(t *testing.T) {
@@ -40,9 +39,6 @@ func Test_Unwrap_Request(t *testing.T) {
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	testTransactionRequest := newTransactionRequest(testBaseReq, "fromID", "2 stake")
-
-	fmt.Println(transactionRequest{BaseReq: testBaseReq, FromID: "fromID", Coins: "2sta"}.Validate())
-	fmt.Println(regexp.Match(`(^[0-9]+[A-Za-z]+(?:,([0-9]+[A-Za-z]+))*$)`, []byte("10stake,123stake")))
 
 	require.Equal(t, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", Coins: "2 stake"}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())

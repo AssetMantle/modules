@@ -68,6 +68,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
+		Height:  100,
 	}, false, log.NewNopLogger())
 
 	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(Mapper, Parameters)
@@ -92,9 +93,11 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	classificationID := base.NewID("classificationID")
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
-	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, defaultIdentityID, base.NewProperties())
-	nonTakingOrderID := key.NewOrderID(base.NewID(""), makerOwnableID, takerOwnableID, defaultIdentityID, base.NewProperties())
-	metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" + "," + properties.TakerID + ":I|fromID" + "," + properties.ExchangeRate + ":D|0.000000000000000001")
+	rateID := base.NewID(sdkTypes.OneDec().String())
+	creationID := base.NewID("100")
+	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, defaultIdentityID, base.NewProperties())
+	nonTakingOrderID := key.NewOrderID(base.NewID(""), makerOwnableID, takerOwnableID, rateID, creationID, defaultIdentityID, base.NewProperties())
+	metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" + "," + properties.TakerID + ":I|fromID" + "," + properties.ExchangeRate + ":D|1")
 	require.Equal(t, nil, Error)
 
 	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(nonTakingOrderID, base.NewProperties(), metaProperties.RemoveData()))
@@ -102,7 +105,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("PositiveCase", func(t *testing.T) {
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
-			properties.ExchangeRate + ":D|0.000000000000000001")
+			properties.ExchangeRate + ":D|1")
 		require.Equal(t, nil, Error)
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewProperties(), metaProperties.RemoveData()))
 
@@ -135,10 +138,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - transfer mock fail", func(t *testing.T) {
 		t.Parallel()
 		transferErrorID := key.NewOrderID(classificationID, makerOwnableID,
-			base.NewID("transferError"), defaultIdentityID, base.NewProperties())
+			base.NewID("transferError"), rateID, creationID, defaultIdentityID, base.NewProperties())
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
-			properties.ExchangeRate + ":D|0.000000000000000001")
+			properties.ExchangeRate + ":D|1")
 		require.Equal(t, nil, Error)
 
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewProperties(), metaProperties.RemoveData()))
@@ -153,10 +156,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - transfer mock fail", func(t *testing.T) {
 		t.Parallel()
 		transferErrorID := key.NewOrderID(classificationID, base.NewID("transferError"),
-			takerOwnableID, defaultIdentityID, base.NewProperties())
+			takerOwnableID, rateID, creationID, defaultIdentityID, base.NewProperties())
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
-			properties.ExchangeRate + ":D|0.000000000000000001")
+			properties.ExchangeRate + ":D|1")
 		require.Equal(t, nil, Error)
 
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewProperties(), metaProperties.RemoveData()))
@@ -180,7 +183,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("Positive Case - take more than make order", func(t *testing.T) {
 		t.Parallel()
 		orderID := key.NewOrderID(classificationID, makerOwnableID,
-			takerOwnableID, defaultIdentityID, base.NewProperties())
+			takerOwnableID, rateID, creationID, defaultIdentityID, base.NewProperties())
 		metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 			"," + properties.TakerID + ":I|fromID" + "," +
 			properties.ExchangeRate + ":D|1")

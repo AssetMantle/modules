@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package base
 
 import (
@@ -13,7 +18,7 @@ func GenerateRandomProperties(r *rand.Rand) types.Properties {
 
 	propertyList := make([]types.Property, randomPositiveInt)
 
-	for i := 0; i <= randomPositiveInt; i++ {
+	for i := 0; i < randomPositiveInt; i++ {
 		propertyList[i] = GenerateRandomProperty(r)
 	}
 

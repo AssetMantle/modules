@@ -22,10 +22,12 @@ func Test_Order_Methods(t *testing.T) {
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
 	makerID := base.NewID("makerID")
+	rateID := base.NewID(sdkTypes.OneDec().String())
+	creationID := base.NewID("100")
 
 	takerIDImmutableProperty := base.NewProperty(base.NewID(properties.TakerID), base.NewFact(base.NewStringData("takerIDImmutableProperty")))
-	exchangeRateImmutableProperty := base.NewProperty(base.NewID(properties.ExchangeRate), base.NewFact(base.NewStringData("exchangeRateImmutableProperty")))
-	creationImmutableProperty := base.NewProperty(base.NewID(properties.Creation), base.NewFact(base.NewStringData("creationImmutableProperty")))
+	exchangeRateImmutableProperty := base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewStringData("exchangeRateImmutableProperty")))
+	creationImmutableProperty := base.NewMetaProperty(base.NewID(properties.Creation), base.NewMetaFact(base.NewStringData("creationImmutableProperty")))
 	expiryImmutableProperty := base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewStringData("expiryImmutableProperty")))
 	makerOwnableSplitImmutableProperty := base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(base.NewStringData("makerOwnableSplitImmutableProperty")))
 
@@ -35,9 +37,9 @@ func Test_Order_Methods(t *testing.T) {
 	expiryMutableProperty := base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewStringData("expiryMutableProperty")))
 	makerOwnableSplitMutableProperty := base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(base.NewStringData("makerOwnableSplitMutableProperty")))
 
-	immutableProperties := base.NewProperties(takerIDImmutableProperty, exchangeRateImmutableProperty, creationImmutableProperty, expiryImmutableProperty, makerOwnableSplitImmutableProperty)
+	immutableProperties := base.NewProperties(takerIDImmutableProperty, exchangeRateImmutableProperty.RemoveData(), creationImmutableProperty.RemoveData(), expiryImmutableProperty, makerOwnableSplitImmutableProperty)
 	mutableProperties := base.NewProperties(takerIDMutableProperty, exchangeRateMutableProperty, creationMutableProperty, expiryMutableProperty, makerOwnableSplitMutableProperty)
-	testOrderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, makerID, immutableProperties)
+	testOrderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, makerID, immutableProperties)
 	testOrder := NewOrder(testOrderID, immutableProperties, base.NewProperties()).(order)
 	testOrder2 := NewOrder(testOrderID, base.NewProperties(), mutableProperties).(order)
 	testOrder3 := NewOrder(testOrderID, base.NewProperties(), base.NewProperties()).(order)

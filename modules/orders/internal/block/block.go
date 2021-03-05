@@ -8,9 +8,14 @@ package block
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -27,8 +32,37 @@ func (block block) Begin(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {
 
 }
 
-func (block block) End(_ sdkTypes.Context, _ abciTypes.RequestEndBlock) {
-
+func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
+	orders := block.mapper.NewCollection(context)
+	orders.Iterate(
+		key.FromID(base.NewID("")),
+		func(order helpers.Mappable) bool {
+			metaProperties, Error := supplement.GetMetaPropertiesFromResponse(block.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetExpiry(), order.(mappables.Order).GetMakerOwnableSplit())))
+			if Error != nil {
+				panic(Error)
+			}
+			if expiryProperty := metaProperties.Get(base.NewID(properties.Expiry)); expiryProperty != nil {
+				expiry, Error := expiryProperty.GetMetaFact().GetData().AsHeight()
+				if Error != nil {
+					panic(Error)
+				} else if !expiry.IsGreaterThan(base.NewHeight(context.BlockHeight())) {
+					makerOwnableSplitProperty := metaProperties.Get(base.NewID(properties.MakerOwnableSplit))
+					if makerOwnableSplitProperty == nil {
+						panic(errors.MetaDataError)
+					}
+					makerOwnableSplit, Error := makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
+					if Error != nil {
+						panic(Error)
+					}
+					if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+						panic(auxiliaryResponse.GetError())
+					}
+					orders.Remove(order)
+				}
+			}
+			return false
+		},
+	)
 }
 
 func (block block) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Block {

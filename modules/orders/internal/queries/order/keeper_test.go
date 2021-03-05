@@ -74,9 +74,11 @@ func Test_Query_Keeper_Order(t *testing.T) {
 	classificationID := base.NewID("classificationID")
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
+	exchangeRateID := base.NewID(sdkTypes.OneDec().String())
+	creationHeightID := base.NewID("0")
 	makerID := base.NewID("makerID")
 
-	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, makerID, immutableProperties)
+	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, exchangeRateID, creationHeightID, makerID, immutableProperties)
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, immutableProperties, mutableProperties))
 
 	testQueryRequest := newQueryRequest(classificationID)

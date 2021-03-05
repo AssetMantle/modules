@@ -1,3 +1,8 @@
+/*
+ Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
 package simulation
 
 import (
@@ -8,11 +13,11 @@ import (
 )
 
 func RandomBool(r *rand.Rand) bool {
-	return r.Int()%2 == 0
+	return r.Intn(2) == 0
 }
 
 func GenerateRandomAddresses(r *rand.Rand) []sdkTypes.AccAddress {
-	randomAccounts := simulation.RandomAccounts(r, r.Int())
+	randomAccounts := simulation.RandomAccounts(r, r.Intn(99))
 
 	addresses := make([]sdkTypes.AccAddress, len(randomAccounts))
 	for i, account := range randomAccounts {

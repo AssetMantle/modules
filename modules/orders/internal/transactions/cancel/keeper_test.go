@@ -90,11 +90,13 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	classificationID := base.NewID("classificationID")
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
+	rateID := base.NewID(sdkTypes.OneDec().String())
+	creationID := base.NewID("100")
 	metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
 		"," + properties.TakerID + ":I|fromID" + "," +
 		properties.ExchangeRate + ":D|0.000000000000000001")
 	require.Equal(t, nil, Error)
-	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, defaultIdentityID, base.NewProperties())
+	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, defaultIdentityID, base.NewProperties())
 	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewProperties(), metaProperties.RemoveData()))
 
 	t.Run("PositiveCase", func(t *testing.T) {
@@ -130,7 +132,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	})
 	t.Run("NegativeCase - transferMock Error", func(t *testing.T) {
 		t.Parallel()
-		transferErrorID := key.NewOrderID(classificationID, base.NewID("transferError"), takerOwnableID, defaultIdentityID, base.NewProperties())
+		transferErrorID := key.NewOrderID(classificationID, base.NewID("transferError"), takerOwnableID, rateID, creationID, defaultIdentityID, base.NewProperties())
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewProperties(), metaProperties.RemoveData()))
 
 		want := newTransactionResponse(errors.MockError)

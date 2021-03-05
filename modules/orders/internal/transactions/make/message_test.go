@@ -9,6 +9,8 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
+	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
@@ -17,12 +19,14 @@ import (
 
 func Test_Make_Message(t *testing.T) {
 
-	testFromID := base.NewID("fromID")
-	testClassificationID := base.NewID("classificationID")
-	testMakerOwnableID := base.NewID("makerOwnableID")
-	testTakerOwnableID := base.NewID("takerOwnableID")
-	testExpiresIn := base.NewHeight(12)
-	testMakerOwnableSplit := sdkTypes.NewDec(2)
+	FromID := base.NewID("fromID")
+	classificationID := base.NewID("classificationID")
+	makerOwnableID := base.NewID("makerOwnableID")
+	takerOwnableID := base.NewID("takerOwnableID")
+	expiresIn := base.NewHeight(12)
+	makerOwnableSplit := sdkTypes.NewDec(2)
+	takerOwnableSplit := sdkTypes.NewDec(1)
+	zeroTakerOwnableSplit := sdkTypes.ZeroDec()
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -37,8 +41,8 @@ func Test_Make_Message(t *testing.T) {
 	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, Error)
 
-	testMessage := newMessage(fromAccAddress, testFromID, testClassificationID, testMakerOwnableID, testTakerOwnableID, testExpiresIn, testMakerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
-	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ClassificationID: testClassificationID, MakerOwnableID: testMakerOwnableID, TakerOwnableID: testTakerOwnableID, ExpiresIn: testExpiresIn, MakerOwnableSplit: testMakerOwnableSplit, ImmutableMetaProperties: immutableMetaProperties, ImmutableProperties: immutableProperties, MutableMetaProperties: mutableMetaProperties, MutableProperties: mutableProperties}, testMessage)
+	testMessage := newMessage(fromAccAddress, FromID, classificationID, makerOwnableID, takerOwnableID, expiresIn, makerOwnableSplit, takerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
+	require.Equal(t, message{From: fromAccAddress, FromID: FromID, ClassificationID: classificationID, MakerOwnableID: makerOwnableID, TakerOwnableID: takerOwnableID, ExpiresIn: expiresIn, TakerOwnableSplit: takerOwnableSplit, MakerOwnableSplit: makerOwnableSplit, ImmutableMetaProperties: immutableMetaProperties, ImmutableProperties: immutableProperties, MutableMetaProperties: mutableMetaProperties, MutableProperties: mutableProperties}, testMessage)
 	require.Equal(t, module.Name, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
 	require.Equal(t, nil, testMessage.ValidateBasic())
@@ -48,5 +52,7 @@ func Test_Make_Message(t *testing.T) {
 	require.Equal(t, testMessage, messageFromInterface(testMessage))
 	require.Equal(t, message{}, messageFromInterface(nil))
 	require.Equal(t, message{}, messagePrototype())
+	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, FromID, classificationID, makerOwnableID, takerOwnableID, expiresIn, makerOwnableSplit, zeroTakerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).ValidateBasic())
+	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, FromID, classificationID, makerOwnableID, makerOwnableID, expiresIn, makerOwnableSplit, takerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).ValidateBasic())
 
 }
