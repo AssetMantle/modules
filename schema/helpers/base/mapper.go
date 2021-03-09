@@ -77,6 +77,22 @@ func (mapper mapper) Iterate(context sdkTypes.Context, partialKey helpers.Key, a
 		}
 	}
 }
+func (mapper mapper) ReverseIterate(context sdkTypes.Context, partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
+	store := context.KVStore(mapper.kvStoreKey)
+	kvStoreReversePrefixIterator := sdkTypes.KVStoreReversePrefixIterator(store, partialKey.GenerateStoreKeyBytes())
+
+	defer kvStoreReversePrefixIterator.Close()
+
+	for ; kvStoreReversePrefixIterator.Valid(); kvStoreReversePrefixIterator.Next() {
+		var mappable helpers.Mappable
+
+		mapper.codec.MustUnmarshalBinaryBare(kvStoreReversePrefixIterator.Value(), &mappable)
+
+		if accumulator(mappable) {
+			break
+		}
+	}
+}
 func (mapper mapper) StoreDecoder(_ *codec.Codec, kvA kv.Pair, kvB kv.Pair) string {
 	if bytes.Equal(kvA.Key[:1], mapper.keyPrototype().GenerateStoreKeyBytes()) {
 		var mappableA helpers.Mappable

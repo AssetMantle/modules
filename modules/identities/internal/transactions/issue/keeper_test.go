@@ -9,6 +9,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/persistenceOne/persistenceSDK/constants/test"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -119,7 +121,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-ImmutableScrub Error", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(test.MockError)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, defaultAddr, defaultIdentityID, defaultClassificationID,
 			scrubMockErrorProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -128,7 +130,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-MutableScrubError", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(test.MockError)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, defaultAddr, defaultIdentityID, base.NewID("newClassificationID"),
 			immutableMetaProperties, immutableProperties, scrubMockErrorProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -137,7 +139,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-ConformError", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(test.MockError)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, defaultAddr, defaultIdentityID, base.NewID("newClassificationID"),
 			immutableMetaProperties, immutableProperties, conformMockErrorProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)

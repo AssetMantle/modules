@@ -9,6 +9,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/persistenceOne/persistenceSDK/constants/test"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -102,7 +104,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-Verify Identity Failure", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(test.MockError)
 		if got := keepers.SplitsKeeper.Transact(context, newMessage(verifyMockErrorAddress, fromID, toID, ownableID, sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
