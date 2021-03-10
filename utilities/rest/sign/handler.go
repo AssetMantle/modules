@@ -11,20 +11,24 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/cosmos/cosmos-sdk/client/tx"
+
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 )
 
-func handler(cliContext context.CLIContext) http.HandlerFunc {
+func handler(cliContext client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		var request request
-		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
+		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.LegacyAmino, &request) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
@@ -37,42 +41,52 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			}
 		}
 
-		fromAddress, fromName, Error := context.GetFromFields(strings.NewReader(keys.DefaultKeyPass), request.BaseRequest.From, false)
+		kr, Error := keyring.New(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+			return
+		}
+		fromAddress, fromName, _, Error := client.GetFromFields(kr, request.BaseRequest.From, viper.GetBool(flags.FlagGenerateOnly))
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+			return
+		}
+		cliContext.FromAddress = fromAddress
+		cliContext.FromName = fromName
+		cliContext.From = request.BaseRequest.From
+
+		txf := tx.Factory{}.
+			WithAccountNumber(request.BaseRequest.AccountNumber).
+			WithSequence(request.BaseRequest.Sequence).
+			WithMemo(request.BaseRequest.Memo).
+			WithChainID(request.BaseRequest.ChainID).
+			WithSimulateAndExecute(request.BaseRequest.Simulate).
+			WithTxConfig(cliContext.TxConfig).
+			WithTimeoutHeight(request.BaseRequest.TimeoutHeight).
+			WithFees(request.BaseRequest.Fees.String()).
+			WithGasPrices(request.BaseRequest.GasPrices.String())
+
+		txf, Error = tx.PrepareFactory(cliContext, txf)
+		if rest.CheckBadRequestError(responseWriter, Error) {
+			return
+		}
+
+		txBuilder, Error := tx.BuildUnsignedTx(txf, request.StdTx.Msgs...)
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+			return
+		}
+		Error = authClient.SignTx(txf, cliContext, fromName, txBuilder, false, false)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
 
-		txBuilder := types.NewTxBuilder(
-			authClient.GetTxEncoder(cliContext.Codec), request.BaseRequest.AccountNumber, request.BaseRequest.Sequence, 0, 0,
-			request.BaseRequest.Simulate, request.BaseRequest.ChainID, request.BaseRequest.Memo, request.BaseRequest.Fees, request.BaseRequest.GasPrices,
-		)
-
-		accountNumber, sequence, Error := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+		signers := txBuilder.GetTx().GetSigners()
+		pubicKeys := txBuilder.GetTx().GetPubKeys()
+		if rest.CheckBadRequestError(responseWriter, Error) {
 			return
 		}
-
-		txBuilder = txBuilder.WithAccountNumber(accountNumber)
-		txBuilder = txBuilder.WithSequence(sequence)
-
-		stdSignature, Error := types.MakeSignature(txBuilder.Keybase(), fromName, keys.DefaultKeyPass, types.StdSignMsg{
-			ChainID:       txBuilder.ChainID(),
-			AccountNumber: txBuilder.AccountNumber(),
-			Sequence:      txBuilder.Sequence(),
-			Fee:           request.StdTx.Fee,
-			Msgs:          request.StdTx.GetMsgs(),
-			Memo:          request.StdTx.GetMemo(),
-		})
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
-			return
-		}
-
-		signers := request.StdTx.GetSigners()
-		request.StdTx.Signatures = append(request.StdTx.Signatures, stdSignature)
-		pubicKeys := request.StdTx.GetPubKeys()
 
 		if len(pubicKeys) > len(signers) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "cannot add more signatures than signers")
@@ -91,6 +105,6 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 	}
 }
 
-func RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
+func RegisterRESTRoutes(cliContext client.Context, router *mux.Router) {
 	router.HandleFunc("/sign", handler(cliContext)).Methods("POST")
 }

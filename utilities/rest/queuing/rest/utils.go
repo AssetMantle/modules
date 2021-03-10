@@ -27,7 +27,7 @@ func ParseFloat64OrReturnBadRequest(s string, defaultIfEmpty float64) (float64, 
 	return n, http.StatusAccepted, nil
 }
 
-func SimulationResponse(cdc *codec.Codec, gas uint64) ([]byte, error) {
+func SimulationResponse(cdc *codec.LegacyAmino, gas uint64) ([]byte, error) {
 	gasEst := rest.GasEstimateResponse{GasEstimate: gas}
 	resp, err := cdc.MarshalJSON(gasEst)
 

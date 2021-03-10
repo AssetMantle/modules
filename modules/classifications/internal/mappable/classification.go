@@ -34,7 +34,7 @@ func (classification classification) GetKey() helpers.Key {
 	return key.FromID(classification.ID)
 }
 
-func (classification) RegisterCodec(codec *codec.Codec) {
+func (classification) RegisterCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, classification{})
 }
 

@@ -8,13 +8,15 @@ package simulator
 import (
 	"math/rand"
 
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
-func (simulator) WeightedOperations(appParams simulation.AppParams, codec *codec.Codec) simulation.WeightedOperations {
+func (simulator) WeightedOperations(appParams simulationTypes.AppParams, codec codec.JSONMarshaler) simulation.WeightedOperations {
 	var weightMsg int
 
 	appParams.GetOrGenerate(codec, OpWeightMsg, &weightMsg, nil,
@@ -31,8 +33,8 @@ func (simulator) WeightedOperations(appParams simulation.AppParams, codec *codec
 	}
 }
 
-func simulateMsg() simulation.Operation {
-	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulation.Account, chainID string) (simulation.OperationMsg, []simulation.FutureOperation, error) {
-		return simulation.NewOperationMsg(nil, true, ""), nil, nil
+func simulateMsg() simulationTypes.Operation {
+	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
+		return simulationTypes.NewOperationMsg(nil, true, ""), nil, nil
 	}
 }

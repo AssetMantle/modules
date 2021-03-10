@@ -9,7 +9,7 @@ import "github.com/cosmos/cosmos-sdk/codec"
 
 type Key interface {
 	GenerateStoreKeyBytes() []byte
-	RegisterCodec(*codec.Codec)
+	RegisterCodec(*codec.LegacyAmino)
 	IsPartial() bool
 	Matches(Key) bool
 }

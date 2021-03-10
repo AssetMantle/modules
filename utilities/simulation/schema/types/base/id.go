@@ -4,15 +4,16 @@ import (
 	"math/rand"
 	"strconv"
 
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 func GenerateRandomID(r *rand.Rand) types.ID {
-	return base.NewID(simulation.RandStringOfLength(r, r.Intn(99)))
+	return base.NewID(simulationTypes.RandStringOfLength(r, r.Intn(99)))
 }
 
 func GenerateRandomIDWithDec(r *rand.Rand) types.ID {

@@ -7,7 +7,7 @@ package queuing
 
 import (
 	"github.com/Shopify/sarama"
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	dbm "github.com/tendermint/tm-db"
@@ -25,7 +25,7 @@ type KafkaMsg struct {
 }
 
 // NewKafkaMsgFromRest : makes a msg to send to kafka queue
-func NewKafkaMsgFromRest(msg sdk.Msg, ticketID Ticket, baseRequest rest.BaseReq, cliCtx context.CLIContext) KafkaMsg {
+func NewKafkaMsgFromRest(msg sdk.Msg, ticketID Ticket, baseRequest rest.BaseReq, cliCtx client.Context) KafkaMsg {
 	kafkaCli := KafkaCliCtx{
 		OutputFormat:  cliCtx.OutputFormat,
 		ChainID:       cliCtx.ChainID,
@@ -33,14 +33,12 @@ func NewKafkaMsgFromRest(msg sdk.Msg, ticketID Ticket, baseRequest rest.BaseReq,
 		HomeDir:       cliCtx.HomeDir,
 		NodeURI:       cliCtx.NodeURI,
 		From:          cliCtx.From,
-		TrustNode:     cliCtx.TrustNode,
 		UseLedger:     cliCtx.UseLedger,
 		BroadcastMode: cliCtx.BroadcastMode,
 		Simulate:      cliCtx.Simulate,
 		GenerateOnly:  cliCtx.GenerateOnly,
 		FromAddress:   cliCtx.FromAddress,
 		FromName:      cliCtx.FromName,
-		Indent:        cliCtx.Indent,
 		SkipConfirm:   cliCtx.SkipConfirm,
 	}
 
@@ -53,21 +51,19 @@ func NewKafkaMsgFromRest(msg sdk.Msg, ticketID Ticket, baseRequest rest.BaseReq,
 }
 
 // CliCtxFromKafkaMsg : sets the transaction and cli contexts again to consume
-func CliCtxFromKafkaMsg(kafkaMsg KafkaMsg, cliContext context.CLIContext) context.CLIContext {
+func CliCtxFromKafkaMsg(kafkaMsg KafkaMsg, cliContext client.Context) client.Context {
 	cliContext.OutputFormat = kafkaMsg.KafkaCli.OutputFormat
 	cliContext.ChainID = kafkaMsg.KafkaCli.ChainID
 	cliContext.Height = kafkaMsg.KafkaCli.Height
 	cliContext.HomeDir = kafkaMsg.KafkaCli.HomeDir
 	cliContext.NodeURI = kafkaMsg.KafkaCli.NodeURI
 	cliContext.From = kafkaMsg.KafkaCli.From
-	cliContext.TrustNode = kafkaMsg.KafkaCli.TrustNode
 	cliContext.UseLedger = kafkaMsg.KafkaCli.UseLedger
 	cliContext.BroadcastMode = kafkaMsg.KafkaCli.BroadcastMode
 	cliContext.Simulate = kafkaMsg.KafkaCli.Simulate
 	cliContext.GenerateOnly = kafkaMsg.KafkaCli.GenerateOnly
 	cliContext.FromAddress = kafkaMsg.KafkaCli.FromAddress
 	cliContext.FromName = kafkaMsg.KafkaCli.FromName
-	cliContext.Indent = kafkaMsg.KafkaCli.Indent
 	cliContext.SkipConfirm = kafkaMsg.KafkaCli.SkipConfirm
 
 	return cliContext

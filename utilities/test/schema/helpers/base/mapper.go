@@ -9,14 +9,19 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/cosmos/cosmos-sdk/codec/types"
+	cryptoCodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	"github.com/cosmos/cosmos-sdk/x/auth/tx"
+	vestingTypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
+	"github.com/persistenceOne/persistenceSDK/schema/applications"
+	tendermintProto "github.com/tendermint/tendermint/proto/tendermint/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 )
@@ -34,23 +39,38 @@ func SetupTest(t *testing.T) (sdkTypes.Context, *sdkTypes.KVStoreKey, *sdkTypes.
 	Error := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, Error)
 
-	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
+	context := sdkTypes.NewContext(commitMultiStore, tendermintProto.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
 	return context, storeKey, paramsTransientStoreKeys
 }
 
-func MakeCodec() *codec.Codec {
-	var Codec = codec.New()
+func MakeCodec() *codec.LegacyAmino {
+	var Codec = codec.NewLegacyAmino()
 
 	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
+	vestingTypes.RegisterLegacyAminoCodec(Codec)
 
 	return Codec
+}
+
+// MakeEncodingConfig creates an EncodingConfig for an amino based test configuration.
+func MakeEncodingConfig() applications.EncodingConfig {
+	amino := codec.NewLegacyAmino()
+	interfaceRegistry := types.NewInterfaceRegistry()
+	marshaler := codec.NewProtoCodec(interfaceRegistry)
+	txCfg := tx.NewTxConfig(marshaler, tx.DefaultSignModes)
+
+	return applications.EncodingConfig{
+		InterfaceRegistry: interfaceRegistry,
+		Marshaler:         marshaler,
+		TxConfig:          txCfg,
+		Amino:             amino,
+	}
 }
 
 // key struct, implements helpers.Key
@@ -64,7 +84,7 @@ func (t testKey) GenerateStoreKeyBytes() []byte {
 	return append([]byte{0x11}, []byte(t.ID)...)
 }
 
-func (t testKey) RegisterCodec(codec *codec.Codec) {
+func (t testKey) RegisterCodec(codec *codec.LegacyAmino) {
 	codec.RegisterConcrete(testKey{}, "test/testKey", nil)
 }
 
@@ -96,7 +116,7 @@ func (t testMappable) GetKey() helpers.Key {
 	return NewKey(t.ID)
 }
 
-func (t testMappable) RegisterCodec(c *codec.Codec) {
+func (t testMappable) RegisterCodec(c *codec.LegacyAmino) {
 	c.RegisterConcrete(testMappable{}, "test/testMappable", nil)
 }
 

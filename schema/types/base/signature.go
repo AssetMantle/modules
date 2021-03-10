@@ -26,7 +26,7 @@ func (baseSignature signature) String() string {
 func (baseSignature signature) Bytes() []byte   { return baseSignature.SignatureBytes }
 func (baseSignature signature) GetID() types.ID { return baseSignature.ID }
 func (baseSignature signature) Verify(pubKey crypto.PubKey, bytes []byte) bool {
-	return pubKey.VerifyBytes(bytes, baseSignature.Bytes())
+	return pubKey.VerifySignature(bytes, baseSignature.Bytes())
 }
 func (baseSignature signature) GetValidityHeight() types.Height {
 	return baseSignature.ValidityHeight

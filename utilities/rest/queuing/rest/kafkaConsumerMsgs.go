@@ -8,17 +8,17 @@ package rest
 import (
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/utilities/rest/queuing"
 )
 
 // KafkaConsumerMessages : messages to consume 5 second delay
-func KafkaConsumerMessages(cliCtx context.CLIContext, kafkaState queuing.KafkaState) {
+func KafkaConsumerMessages(cliCtx client.Context, kafkaState queuing.KafkaState) {
 	quit := make(chan bool)
 
-	var cliContextList []context.CLIContext
+	var cliContextList []client.Context
 
 	var baseRequestList []rest.BaseReq
 
@@ -32,7 +32,7 @@ func KafkaConsumerMessages(cliCtx context.CLIContext, kafkaState queuing.KafkaSt
 			case <-quit:
 				return
 			default:
-				kafkaMsg := queuing.KafkaTopicConsumer("Topic", kafkaState.Consumers, cliCtx.Codec)
+				kafkaMsg := queuing.KafkaTopicConsumer("Topic", kafkaState.Consumers, cliCtx.LegacyAmino)
 				if kafkaMsg.Msg != nil {
 					cliContextList = append(cliContextList, queuing.CliCtxFromKafkaMsg(kafkaMsg, cliCtx))
 					baseRequestList = append(baseRequestList, kafkaMsg.BaseRequest)
@@ -52,7 +52,7 @@ func KafkaConsumerMessages(cliCtx context.CLIContext, kafkaState queuing.KafkaSt
 
 	output, err := SignAndBroadcastMultiple(baseRequestList, cliContextList, msgList)
 	if err != nil {
-		jsonError, e := cliCtx.Codec.MarshalJSON(struct {
+		jsonError, e := cliCtx.LegacyAmino.MarshalJSON(struct {
 			Error string `json:"error"`
 		}{Error: err.Error()})
 		if e != nil {
@@ -60,13 +60,13 @@ func KafkaConsumerMessages(cliCtx context.CLIContext, kafkaState queuing.KafkaSt
 		}
 
 		for _, ticketID := range ticketIDList {
-			queuing.AddResponseToDB(ticketID, jsonError, kafkaState.KafkaDB, cliCtx.Codec)
+			queuing.AddResponseToDB(ticketID, jsonError, kafkaState.KafkaDB, cliCtx.LegacyAmino)
 		}
 
 		return
 	}
 
 	for _, ticketID := range ticketIDList {
-		queuing.AddResponseToDB(ticketID, output, kafkaState.KafkaDB, cliCtx.Codec)
+		queuing.AddResponseToDB(ticketID, output, kafkaState.KafkaDB, cliCtx.LegacyAmino)
 	}
 }

@@ -8,15 +8,16 @@ package base
 import (
 	"strings"
 
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type parameters struct {
 	parameterList  []types.Parameter
-	paramsSubspace params.Subspace
+	paramsSubspace paramsTypes.Subspace
 }
 
 var _ helpers.Parameters = (*parameters)(nil)
@@ -84,19 +85,19 @@ func (parameters parameters) Mutate(context sdkTypes.Context, newParameter types
 
 	return parameters
 }
-func (parameters parameters) ParamSetPairs() params.ParamSetPairs {
-	paramSetPairList := make([]params.ParamSetPair, len(parameters.parameterList))
+func (parameters parameters) ParamSetPairs() paramsTypes.ParamSetPairs {
+	paramSetPairList := make([]paramsTypes.ParamSetPair, len(parameters.parameterList))
 
 	for i, parameter := range parameters.parameterList {
-		paramSetPairList[i] = params.NewParamSetPair(parameter.GetID().Bytes(), parameter.GetData(), parameter.GetValidator())
+		paramSetPairList[i] = paramsTypes.NewParamSetPair(parameter.GetID().Bytes(), parameter.GetData(), parameter.GetValidator())
 	}
 
 	return paramSetPairList
 }
-func (parameters parameters) GetKeyTable() params.KeyTable {
-	return params.NewKeyTable().RegisterParamSet(parameters)
+func (parameters parameters) GetKeyTable() paramsTypes.KeyTable {
+	return paramsTypes.NewKeyTable().RegisterParamSet(parameters)
 }
-func (parameters parameters) Initialize(paramsSubspace params.Subspace) helpers.Parameters {
+func (parameters parameters) Initialize(paramsSubspace paramsTypes.Subspace) helpers.Parameters {
 	parameters.paramsSubspace = paramsSubspace
 	return parameters
 }

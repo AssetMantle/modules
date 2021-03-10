@@ -51,7 +51,7 @@ func (maintainer maintainer) GetKey() helpers.Key {
 	return key.FromID(maintainer.ID)
 }
 
-func (maintainer) RegisterCodec(codec *codec.Codec) {
+func (maintainer) RegisterCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, maintainer{})
 }
 func NewMaintainer(id types.ID, maintainedProperties types.Properties, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) mappables.Maintainer {

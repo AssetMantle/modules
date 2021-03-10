@@ -7,52 +7,56 @@ package sign
 
 import (
 	"bytes"
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+
+	"github.com/cosmos/cosmos-sdk/client"
+
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
-	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
+	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/gorilla/mux"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
-	"net/http"
-	"net/http/httptest"
-	"strings"
-	"testing"
 )
 
 func TestHandler(t *testing.T) {
-	Codec := codec.New()
+	Codec := codec.NewLegacyAmino()
 	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
 	Codec.RegisterConcrete(request{}, "request", nil)
 	Codec.RegisterConcrete(response{}, "response", nil)
 	base.TestMessagePrototype().RegisterCodec(Codec)
 
-	clientContext := context.NewCLIContext().WithCodec(Codec)
+	clientContext := client.Context{}.WithLegacyAmino(Codec)
 	handler := handler(clientContext)
 	viper.Set(flags.FlagKeyringBackend, cryptoKeys.BackendTest)
 	viper.Set(flags.FlagHome, t.TempDir())
 
-	keyring, Error := cryptoKeys.NewKeyring(sdk.KeyringServiceName(), cryptoKeys.BackendTest, viper.GetString(flags.FlagHome), strings.NewReader(""))
+	keyring, Error := cryptoKeys.New(sdk.KeyringServiceName(), cryptoKeys.BackendTest, viper.GetString(flags.FlagHome), strings.NewReader(""))
 	require.NoError(t, Error)
 
 	router := mux.NewRouter()
 	RegisterRESTRoutes(clientContext, router)
 
 	t.Cleanup(func() {
-		_ = keyring.Delete("keyName1", "", true)
-		_ = keyring.Delete("keyName2", "", true)
-		_ = keyring.Delete("keyName3", "", true)
+		_ = keyring.Delete("keyName1")
+		_ = keyring.Delete("keyName2")
+		_ = keyring.Delete("keyName3")
 	})
-	_, Error = keyring.CreateAccount("keyName1", "wage thunder live sense resemble foil apple course spin horse glass mansion midnight laundry acoustic rhythm loan scale talent push green direct brick please",
-		cryptoKeys.DefaultBIP39Passphrase, keys.DefaultKeyPass, sdkTypes.FullFundraiserPath, cryptoKeys.Secp256k1)
+	_, Error = keyring.NewAccount("keyName1", "wage thunder live sense resemble foil apple course spin horse glass mansion midnight laundry acoustic rhythm loan scale talent push green direct brick please",
+		cryptoKeys.DefaultBIP39Passphrase, sdkTypes.FullFundraiserPath, hd.Secp256k1)
 	require.Nil(t, Error)
 
 	address := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
@@ -62,7 +66,7 @@ func TestHandler(t *testing.T) {
 	requestBody1, Error := Codec.MarshalJSON(request{
 		BaseRequest: rest.BaseReq{From: address},
 		Type:        "cosmos-sdk/StdTx",
-		StdTx:       auth.NewStdTx([]sdkTypes.Msg{base.NewTestMessage(sdkAddress, "id")}, auth.NewStdFee(10, sdkTypes.NewCoins()), nil, ""),
+		StdTx:       legacytx.NewStdTx([]sdkTypes.Msg{base.NewTestMessage(sdkAddress, "id")}, legacytx.NewStdFee(10, sdkTypes.NewCoins()), nil, ""),
 	})
 	require.Nil(t, Error)
 	testRequest1, Error := http.NewRequest("POST", "/sign", bytes.NewBuffer(requestBody1))
@@ -76,7 +80,7 @@ func TestHandler(t *testing.T) {
 	requestBody2, Error := Codec.MarshalJSON(request{
 		BaseRequest: rest.BaseReq{From: "address", ChainID: "test"},
 		Type:        "cosmos-sdk/StdTx",
-		StdTx:       auth.NewStdTx([]sdkTypes.Msg{base.NewTestMessage(sdkAddress, "id")}, auth.NewStdFee(20, sdkTypes.NewCoins()), nil, ""),
+		StdTx:       legacytx.NewStdTx([]sdkTypes.Msg{base.NewTestMessage(sdkAddress, "id")}, legacytx.NewStdFee(20, sdkTypes.NewCoins()), nil, ""),
 	})
 	require.Nil(t, Error)
 	testRequest2, Error := http.NewRequest("POST", "/sign", bytes.NewBuffer(requestBody2))
@@ -90,7 +94,7 @@ func TestHandler(t *testing.T) {
 	requestBody3, Error := Codec.MarshalJSON(request{
 		BaseRequest: rest.BaseReq{From: address, ChainID: "test"},
 		Type:        "cosmos-sdk/StdTx",
-		StdTx:       auth.NewStdTx([]sdkTypes.Msg{base.NewTestMessage(sdkAddress, "id")}, auth.NewStdFee(30, sdkTypes.NewCoins()), nil, ""),
+		StdTx:       legacytx.NewStdTx([]sdkTypes.Msg{base.NewTestMessage(sdkAddress, "id")}, legacytx.NewStdFee(30, sdkTypes.NewCoins()), nil, ""),
 	})
 	require.Nil(t, Error)
 	testRequest3, Error := http.NewRequest("POST", "/sign", bytes.NewBuffer(requestBody3))

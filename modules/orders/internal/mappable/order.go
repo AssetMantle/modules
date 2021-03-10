@@ -104,7 +104,7 @@ func (order order) GetID() types.ID {
 func (order order) GetKey() helpers.Key {
 	return key.FromID(order.ID)
 }
-func (order) RegisterCodec(codec *codec.Codec) {
+func (order) RegisterCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, order{})
 }
 

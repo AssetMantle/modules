@@ -8,21 +8,21 @@ package rest
 import (
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/types/errors"
+
+	"github.com/cosmos/cosmos-sdk/client/tx"
+
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
-	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
+	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
-func SignAndBroadcastMultiple(brs []rest.BaseReq, cliContextList []context.CLIContext, msgList []sdkTypes.Msg) ([]byte, error) {
-	var stdTxs types.StdTx
+func SignAndBroadcastMultiple(brs []rest.BaseReq, cliContextList []client.Context, msgList []sdkTypes.Msg) ([]byte, error) {
+	var stdTxs client.TxBuilder
 
 	var txBytes []byte
 
@@ -32,82 +32,88 @@ func SignAndBroadcastMultiple(brs []rest.BaseReq, cliContextList []context.CLICo
 			return nil, Error
 		}
 
-		simAndExec, gas, Error := flags.ParseGas(brs[i].Gas)
-
+		gasSetting, Error := flags.ParseGasSetting(brs[0].Gas)
 		if Error != nil {
 			return nil, Error
 		}
 
-		keyBase, Error := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
+		keyBase, Error := cryptoKeys.New(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
 		if Error != nil {
 			return nil, Error
 		}
 
-		accountNumber, sequence, Error := types.NewAccountRetriever(cliContextList[i]).GetAccountNumberSequence(cliContextList[i].FromAddress)
+		accountNumber, sequence, Error := cliContextList[i].AccountRetriever.GetAccountNumberSequence(cliContextList[i], cliContextList[i].FromAddress)
 		if Error != nil {
 			return nil, Error
 		}
-
 		brs[i].AccountNumber = accountNumber
-
 		var count = uint64(0)
-
 		for j := 0; j < i; j++ {
 			if accountNumber == brs[j].AccountNumber {
 				count++
+				break
 			}
 		}
+		if count > 0 {
+			continue
+		}
 
-		sequence += count
-		txBuilder := types.NewTxBuilder(
-			authClient.GetTxEncoder(cliContextList[i].Codec), accountNumber, sequence, gas, gasAdj,
-			brs[i].Simulate, brs[i].ChainID, brs[i].Memo, brs[i].Fees, brs[i].GasPrices,
-		)
+		txf := tx.Factory{}.
+			WithAccountNumber(accountNumber).
+			WithSequence(sequence).
+			WithGas(gasSetting.Gas).
+			WithGasAdjustment(gasAdj).
+			WithMemo(brs[i].Memo).
+			WithChainID(brs[i].ChainID).
+			WithSimulateAndExecute(brs[i].Simulate).
+			WithTxConfig(cliContextList[i].TxConfig).
+			WithTimeoutHeight(brs[i].TimeoutHeight).
+			WithFees(brs[i].Fees.String()).
+			WithGasPrices(brs[i].GasPrices.String()).
+			WithKeybase(keyBase)
 
-		txBuilder = txBuilder.WithKeybase(keyBase)
-
-		if brs[i].Simulate || simAndExec {
+		if brs[i].Simulate || gasSetting.Simulate {
 			if gasAdj < 0 {
-				return nil, errors.New("Error invalid gas adjustment")
+				return nil, errors.ErrorInvalidGasAdjustment
 			}
 
-			txBuilder, Error = authClient.EnrichWithGas(txBuilder, cliContextList[i], []sdkTypes.Msg{msgList[i]})
-			if Error != nil {
-				return nil, Error
-			}
+			_, adjusted, err := tx.CalculateGas(cliContextList[i].QueryWithData, txf, msgList...)
+			return nil, err
+
+			txf = txf.WithGas(adjusted)
 
 			if brs[i].Simulate {
-				val, _ := SimulationResponse(cliContextList[i].Codec, txBuilder.Gas())
-				return val, nil
+				val, Error := SimulationResponse(cliContextList[i].LegacyAmino, txf.Gas())
+				return val, Error
 			}
 		}
 
-		stdMsg, Error := txBuilder.BuildSignMsg(msgList)
-		if Error != nil {
-			return nil, Error
+		txBuilder, err := tx.BuildUnsignedTx(txf, msgList...)
+		if err != nil {
+			return nil, err
 		}
-
-		stdTx := auth.NewStdTx(stdMsg.Msgs, stdMsg.Fee, nil, stdMsg.Memo)
-
-		stdTx, Error = txBuilder.SignStdTx(cliContextList[i].FromName, keys.DefaultKeyPass, stdTx, true)
-		if Error != nil {
-			return nil, Error
+		err = tx.Sign(txf, cliContextList[i].FromName, txBuilder, false)
+		if err != nil {
+			return nil, err
 		}
 
 		if i == 0 {
-			stdTxs.Msgs = stdTx.Msgs
-			stdTxs.Fee = stdTx.Fee
-			stdTxs.Memo = stdTx.Memo
+			stdTxs.SetMsgs(txBuilder.GetTx().GetMsgs()...)
+			stdTxs.SetGasLimit(txBuilder.GetTx().GetGas())
+			stdTxs.SetFeeAmount(txBuilder.GetTx().GetFee())
+			stdTxs.SetMemo(txBuilder.GetTx().GetMemo())
+			stdTxs.SetTimeoutHeight(txBuilder.GetTx().GetTimeoutHeight())
 		}
-
-		if count == 0 {
-			stdTxs.Signatures = append(stdTxs.Signatures, stdTx.Signatures...)
+		signaturesV2, Error := txBuilder.GetTx().GetSignaturesV2()
+		if err != nil {
+			return nil, err
 		}
+		stdTxs.SetSignatures(signaturesV2...)
 
 		if i == len(brs)-1 {
-			txBytes, Error = txBuilder.TxEncoder()(stdTxs)
-			if Error != nil {
-				return nil, Error
+			txBytes, err = cliContextList[i].TxConfig.TxEncoder()(stdTxs.GetTx())
+			if err != nil {
+				return txBytes, err
 			}
 		}
 	}
@@ -117,9 +123,16 @@ func SignAndBroadcastMultiple(brs []rest.BaseReq, cliContextList []context.CLICo
 		return nil, Error
 	}
 
-	output, Error := cliContextList[0].Codec.MarshalJSON(response)
+	responseBytes, Error := cliContextList[0].LegacyAmino.MarshalJSON(response)
 	if Error != nil {
-		return nil, Error
+		return responseBytes, Error
+	}
+
+	wrappedResponse := rest.NewResponseWithHeight(cliContextList[0].Height, responseBytes)
+
+	output, Error := cliContextList[0].LegacyAmino.MarshalJSON(wrappedResponse)
+	if Error != nil {
+		return output, Error
 	}
 
 	return output, nil

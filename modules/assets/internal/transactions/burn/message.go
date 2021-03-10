@@ -10,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/gogo/protobuf/proto"
 	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -26,23 +27,26 @@ type message struct {
 
 var _ helpers.Message = message{}
 
-func (message message) Route() string { return module.Name }
-func (message message) Type() string  { return Transaction.GetName() }
-func (message message) ValidateBasic() error {
-	var _, Error = govalidator.ValidateStruct(message)
+func (Message message) Reset()         { Message = message{} }
+func (Message message) String() string { return proto.CompactTextString(Message) }
+func (Message message) ProtoMessage()  {}
+func (Message message) Route() string  { return module.Name }
+func (Message message) Type() string   { return Transaction.GetName() }
+func (Message message) ValidateBasic() error {
+	var _, Error = govalidator.ValidateStruct(Message)
 	if Error != nil {
 		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
 	}
 
 	return nil
 }
-func (message message) GetSignBytes() []byte {
-	return sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message))
+func (Message message) GetSignBytes() []byte {
+	return sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(Message))
 }
-func (message message) GetSigners() []sdkTypes.AccAddress {
-	return []sdkTypes.AccAddress{message.From}
+func (Message message) GetSigners() []sdkTypes.AccAddress {
+	return []sdkTypes.AccAddress{Message.From}
 }
-func (message) RegisterCodec(codec *codec.Codec) {
+func (message) RegisterCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, message{})
 }
 func messageFromInterface(msg sdkTypes.Msg) message {

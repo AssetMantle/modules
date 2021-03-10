@@ -43,7 +43,7 @@ func (maintainerID maintainerID) Equals(id types.ID) bool {
 func (maintainerID maintainerID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(maintainerID.Bytes())
 }
-func (maintainerID) RegisterCodec(codec *codec.Codec) {
+func (maintainerID) RegisterCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, maintainerID{})
 }
 func (maintainerID maintainerID) IsPartial() bool {

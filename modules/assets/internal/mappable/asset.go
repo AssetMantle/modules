@@ -68,7 +68,7 @@ func (asset asset) GetValue() types.Property {
 func (asset asset) GetKey() helpers.Key {
 	return key.FromID(asset.ID)
 }
-func (asset) RegisterCodec(codec *codec.Codec) {
+func (asset) RegisterCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, asset{})
 }
 

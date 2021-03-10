@@ -45,7 +45,7 @@ func (classificationID classificationID) Equals(id types.ID) bool {
 func (classificationID classificationID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(classificationID.Bytes())
 }
-func (classificationID) RegisterCodec(codec *codec.Codec) {
+func (classificationID) RegisterCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, classificationID{})
 }
 func (classificationID classificationID) IsPartial() bool {

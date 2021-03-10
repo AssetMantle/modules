@@ -6,9 +6,8 @@
 package helpers
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/libs/kv"
+	"github.com/cosmos/cosmos-sdk/types/kv"
 )
 
 type Mapper interface {
@@ -20,7 +19,7 @@ type Mapper interface {
 	Delete(sdkTypes.Context, Key)
 	Iterate(sdkTypes.Context, Key, func(Mappable) bool)
 
-	StoreDecoder(*codec.Codec, kv.Pair, kv.Pair) string
+	StoreDecoder(kv.Pair, kv.Pair) string
 
 	Initialize(*sdkTypes.KVStoreKey) Mapper
 }

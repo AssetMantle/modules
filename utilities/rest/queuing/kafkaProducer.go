@@ -22,7 +22,7 @@ func NewProducer(kafkaPorts []string) sarama.SyncProducer {
 }
 
 // KafkaProducerDeliverMessage : delivers messages to kafka
-func KafkaProducerDeliverMessage(msg KafkaMsg, topic string, producer sarama.SyncProducer, cdc *codec.Codec) error {
+func KafkaProducerDeliverMessage(msg KafkaMsg, topic string, producer sarama.SyncProducer, cdc *codec.LegacyAmino) error {
 	kafkaStoreBytes, err := cdc.MarshalJSON(msg)
 
 	if err != nil {
@@ -43,7 +43,7 @@ func KafkaProducerDeliverMessage(msg KafkaMsg, topic string, producer sarama.Syn
 }
 
 // SendToKafka : handles sending message to kafka
-func SendToKafka(msg KafkaMsg, kafkaState KafkaState, cdc *codec.Codec) []byte {
+func SendToKafka(msg KafkaMsg, kafkaState KafkaState, cdc *codec.LegacyAmino) []byte {
 	Error := KafkaProducerDeliverMessage(msg, "Topic", kafkaState.Producer, cdc)
 	if Error != nil {
 		jsonResponse, Error := cdc.MarshalJSON(struct {

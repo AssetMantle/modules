@@ -8,14 +8,14 @@ package sign
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
 type request struct {
-	BaseRequest rest.BaseReq    `json:"baseReq"`
-	Type        string          `json:"type" valid:"required~required field to missing, matches(^.*$)~invalid field type"`
-	StdTx       authTypes.StdTx `json:"value"`
+	BaseRequest rest.BaseReq   `json:"baseReq"`
+	Type        string         `json:"type" valid:"required~required field to missing, matches(^.*$)~invalid field type"`
+	StdTx       legacytx.StdTx `json:"value"`
 }
 
 var _ helpers.Request = request{}

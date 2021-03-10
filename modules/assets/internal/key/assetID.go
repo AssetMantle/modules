@@ -45,7 +45,7 @@ func (assetID assetID) Equals(id types.ID) bool {
 func (assetID assetID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(assetID.Bytes())
 }
-func (assetID) RegisterCodec(codec *codec.Codec) {
+func (assetID) RegisterCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, assetID{})
 }
 func (assetID assetID) IsPartial() bool {
