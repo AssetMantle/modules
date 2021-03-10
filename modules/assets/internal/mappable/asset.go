@@ -22,7 +22,7 @@ import (
 type asset struct {
 	ID types.ID `json:"id" valid:"required~required field id missing"`
 	baseTraits.HasImmutables
-	baseTraits.HasMutables
+	baseTraits.HasMutables //nolint:govet
 }
 
 var _ mappables.InterNFT = (*asset)(nil)
