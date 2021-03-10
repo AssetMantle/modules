@@ -118,9 +118,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		base.NewID(sdkTypes.OneDec().String()),
 		base.NewID("100"),
 		defaultIdentityID,
-		base.NewImmutables(base.NewProperties()),
+		base.NewProperties(),
 	)
-	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
+	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewProperties(), base.NewProperties()))
 
 	t.Run("PositiveCase Adding Order without execution", func(t *testing.T) {
 		want := newTransactionResponse(nil)

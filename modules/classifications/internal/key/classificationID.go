@@ -58,20 +58,20 @@ func (classificationID classificationID) Matches(key helpers.Key) bool {
 func NewClassificationID(chainID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) types.ID {
 	immutableIDStringList := make([]string, len(immutableProperties.GetList()))
 
-	for i, immutable := range immutableProperties.GetList() {
-		immutableIDStringList[i] = immutable.GetID().String()
+	for i, property := range immutableProperties.GetList() {
+		immutableIDStringList[i] = property.GetID().String()
 	}
 
 	mutableIDStringList := make([]string, len(mutableProperties.GetList()))
 
-	for i, mutable := range mutableProperties.GetList() {
-		mutableIDStringList[i] = mutable.GetID().String()
+	for i, property := range mutableProperties.GetList() {
+		mutableIDStringList[i] = property.GetID().String()
 	}
 
 	defaultImmutableStringList := make([]string, len(immutableProperties.GetList()))
 
-	for i, mutable := range immutableProperties.GetList() {
-		if hashID := mutable.GetFact().GetHashID(); !hashID.Equals(base.NewID("")) {
+	for i, property := range immutableProperties.GetList() {
+		if hashID := property.GetFact().GetHashID(); !hashID.Equals(base.NewID("")) {
 			defaultImmutableStringList[i] = hashID.String()
 		}
 	}

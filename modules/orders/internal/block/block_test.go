@@ -8,23 +8,20 @@ package block
 import (
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-
-	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-
-	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/parameters"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -81,8 +78,8 @@ func Test_Block_Methods(t *testing.T) {
 	takerOwnableID := base.NewID("takerOwnableID")
 	rateID := base.NewID(sdkTypes.OneDec().String())
 	creationID := base.NewID("100")
-	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
+	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, defaultIdentityID, base.NewProperties())
 	orders := mapper.NewCollection(context)
-	orders.Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
+	orders.Add(mappable.NewOrder(orderID, base.NewProperties(), base.NewProperties()))
 	block.End(context, abciTypes.RequestEndBlock{})
 }

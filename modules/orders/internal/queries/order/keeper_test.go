@@ -78,8 +78,8 @@ func Test_Query_Keeper_Order(t *testing.T) {
 	creationHeightID := base.NewID("0")
 	makerID := base.NewID("makerID")
 
-	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, exchangeRateID, creationHeightID, makerID, base.NewImmutables(immutableProperties))
-	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
+	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, exchangeRateID, creationHeightID, makerID, immutableProperties)
+	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, immutableProperties, mutableProperties))
 
 	testQueryRequest := newQueryRequest(classificationID)
 	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.FromID(orderID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))

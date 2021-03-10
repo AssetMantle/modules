@@ -13,8 +13,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
 
-	"github.com/tendermint/tendermint/libs/log"
-
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -56,6 +54,7 @@ import (
 	wasmUtilities "github.com/persistenceOne/persistenceSDK/utilities/wasm"
 	"github.com/spf13/viper"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
 	tendermintOS "github.com/tendermint/tendermint/libs/os"
 	tendermintTypes "github.com/tendermint/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
@@ -403,8 +402,11 @@ func (application application) Initialize(applicationName string, codec *codec.C
 		paramsKeeper.Subspace(identities.Prototype().Name()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+
 		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 	)
 	splitsModule := splits.Prototype().Initialize(

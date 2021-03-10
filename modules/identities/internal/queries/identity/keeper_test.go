@@ -72,10 +72,8 @@ func Test_Query_Keeper_Identity(t *testing.T) {
 	require.Equal(t, nil, Error2)
 
 	classificationID := base.NewID("ClassificationID")
-	identityID := key.NewIdentityID(classificationID, base.NewImmutables(immutableProperties))
-	provisionedAddr := sdkTypes.AccAddress("addr")
-	unprovisionedAddr := sdkTypes.AccAddress("unProvisionedAddr")
-	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(identityID, []sdkTypes.AccAddress{provisionedAddr}, []sdkTypes.AccAddress{unprovisionedAddr}, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
+	identityID := key.NewIdentityID(classificationID, immutableProperties)
+	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(identityID, immutableProperties, mutableProperties))
 
 	testQueryRequest := newQueryRequest(classificationID)
 	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.FromID(identityID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))

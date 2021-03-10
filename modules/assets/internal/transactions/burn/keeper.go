@@ -11,6 +11,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -21,6 +22,7 @@ import (
 type transactionKeeper struct {
 	mapper              helpers.Mapper
 	burnAuxiliary       helpers.Auxiliary
+	maintainAuxiliary   helpers.Auxiliary
 	supplementAuxiliary helpers.Auxiliary
 	verifyAuxiliary     helpers.Auxiliary
 }
@@ -77,6 +79,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			switch value.GetName() {
 			case burn.Auxiliary.GetName():
 				transactionKeeper.burnAuxiliary = value
+			case maintain.Auxiliary.GetName():
+				transactionKeeper.maintainAuxiliary = value
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
 			case verify.Auxiliary.GetName():

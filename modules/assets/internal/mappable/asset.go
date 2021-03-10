@@ -13,15 +13,16 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type asset struct {
-	ID         types.ID         `json:"id" valid:"required~required field id missing"`
-	Immutables types.Immutables `json:"immutables" valid:"required field immutables missing"`
-	Mutables   types.Mutables   `json:"mutables" valid:"required~required field mutables missing"`
+	ID types.ID `json:"id" valid:"required~required field id missing"`
+	baseTraits.HasImmutables
+	baseTraits.HasMutables
 }
 
 var _ mappables.InterNFT = (*asset)(nil)
@@ -32,34 +33,28 @@ func (asset asset) GetID() types.ID {
 func (asset asset) GetClassificationID() types.ID {
 	return key.ReadClassificationID(asset.ID)
 }
-func (asset asset) GetImmutables() types.Immutables {
-	return asset.Immutables
-}
-func (asset asset) GetMutables() types.Mutables {
-	return asset.Mutables
-}
 func (asset asset) GetBurn() types.Property {
-	if burnProperty := asset.Immutables.Get().Get(base.NewID(properties.Burn)); burnProperty != nil {
+	if burnProperty := asset.HasImmutables.GetImmutableProperties().Get(base.NewID(properties.Burn)); burnProperty != nil {
 		return burnProperty
-	} else if burnProperty := asset.Mutables.Get().Get(base.NewID(properties.Burn)); burnProperty != nil {
+	} else if burnProperty := asset.HasMutables.GetMutableProperties().Get(base.NewID(properties.Burn)); burnProperty != nil {
 		return burnProperty
 	} else {
 		return base.NewProperty(base.NewID(properties.Burn), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
 	}
 }
 func (asset asset) GetLock() types.Property {
-	if lockProperty := asset.Immutables.Get().Get(base.NewID(properties.Lock)); lockProperty != nil {
+	if lockProperty := asset.HasImmutables.GetImmutableProperties().Get(base.NewID(properties.Lock)); lockProperty != nil {
 		return lockProperty
-	} else if lockProperty := asset.Mutables.Get().Get(base.NewID(properties.Lock)); lockProperty != nil {
+	} else if lockProperty := asset.HasMutables.GetMutableProperties().Get(base.NewID(properties.Lock)); lockProperty != nil {
 		return lockProperty
 	} else {
 		return base.NewProperty(base.NewID(properties.Lock), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
 	}
 }
 func (asset asset) GetValue() types.Property {
-	if splitProperty := asset.Immutables.Get().Get(base.NewID(properties.Value)); splitProperty != nil {
+	if splitProperty := asset.HasImmutables.GetImmutableProperties().Get(base.NewID(properties.Value)); splitProperty != nil {
 		return splitProperty
-	} else if splitProperty := asset.Mutables.Get().Get(base.NewID(properties.Value)); splitProperty != nil {
+	} else if splitProperty := asset.HasMutables.GetMutableProperties().Get(base.NewID(properties.Value)); splitProperty != nil {
 		return splitProperty
 	} else {
 		return base.NewProperty(base.NewID(properties.Value), base.NewFact(base.NewDecData(sdkTypes.SmallestDec())))
@@ -72,10 +67,10 @@ func (asset) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, asset{})
 }
 
-func NewAsset(assetID types.ID, immutables types.Immutables, mutables types.Mutables) mappables.InterNFT {
+func NewAsset(assetID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.InterNFT {
 	return asset{
-		ID:         assetID,
-		Immutables: immutables,
-		Mutables:   mutables,
+		ID:            assetID,
+		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
+		HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
 	}
 }

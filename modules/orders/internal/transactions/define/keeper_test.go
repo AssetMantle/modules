@@ -106,9 +106,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	defaultIdentityID := base.NewID("fromID")
 	rateID := base.NewID(sdkTypes.OneDec().String())
 	creationID := base.NewID("0")
-	orderID := key.NewOrderID(base.NewID("classificationID"), base.NewID("makerOwnableID"),
-		base.NewID("takerOwnableID"), rateID, creationID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
-	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
+	orderID := key.NewOrderID(base.NewID("classificationID"), base.NewID("makerOwnableID"), base.NewID("takerOwnableID"), rateID, creationID, defaultIdentityID, base.NewProperties())
+	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewProperties(), base.NewProperties()))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

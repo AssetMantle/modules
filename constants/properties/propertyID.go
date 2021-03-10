@@ -7,6 +7,7 @@ package properties
 
 //Note: Arranged alphabetically
 const (
+	Authentication    = "authentication"
 	Burn              = "burn"
 	ExchangeRate      = "exchangeRate"
 	Creation          = "creation"

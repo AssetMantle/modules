@@ -8,21 +8,20 @@ package simulator
 import (
 	"math/rand"
 
-	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/common"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseSimulation "github.com/persistenceOne/persistenceSDK/utilities/simulation/schema/types/base"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/common"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
 	splitsModule "github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters/dummy"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseSimulation "github.com/persistenceOne/persistenceSDK/utilities/simulation/schema/types/base"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {

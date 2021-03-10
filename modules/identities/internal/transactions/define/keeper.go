@@ -13,7 +13,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -35,9 +34,10 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	if !identity.(mappables.InterIdentity).IsProvisioned(message.From) {
-		return newTransactionResponse(errors.NotAuthorized)
-	}
+	// TODO define is provisioned utility
+	//if !identity.(mappables.InterIdentity).IsProvisioned(message.From) {
+	//	return newTransactionResponse(errors.NotAuthorized)
+	//}
 
 	immutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetList()...)))
 	if Error != nil {

@@ -33,21 +33,19 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	immutables := base.NewImmutables(immutableMetaProperties)
-
 	classificationID, Error := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(base.NewProperties(base.NewProperty(base.NewID(properties.NubID), base.NewFact(base.NewIDData(base.NewID(""))))), base.NewProperties())))
 	if classificationID == nil && Error != nil {
 		return newTransactionResponse(Error)
 	}
 
-	identityID := key.NewIdentityID(classificationID, immutables)
+	identityID := key.NewIdentityID(classificationID, immutableMetaProperties)
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
 	if identities.Get(key.FromID(identityID)) != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	identities.Add(mappable.NewIdentity(identityID, []sdkTypes.AccAddress{message.From}, []sdkTypes.AccAddress{}, immutables, base.NewMutables(base.NewProperties())))
+	identities.Add(mappable.NewIdentity(identityID, immutableMetaProperties, base.NewProperties()))
 
 	return newTransactionResponse(nil)
 }

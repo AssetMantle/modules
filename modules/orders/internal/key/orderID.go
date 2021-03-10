@@ -10,12 +10,12 @@ import (
 	"strconv"
 	"strings"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
@@ -120,7 +120,7 @@ func (orderID orderID) getCreationHeightBytes() ([]byte, error) {
 	return Bytes, Error
 }
 
-func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, rateID types.ID, creationID types.ID, makerID types.ID, immutables types.Immutables) types.ID {
+func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, rateID types.ID, creationID types.ID, makerID types.ID, immutableProperties types.Properties) types.ID {
 	return orderID{
 		ClassificationID: classificationID,
 		MakerOwnableID:   makerOwnableID,
@@ -128,6 +128,6 @@ func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnable
 		RateID:           rateID,
 		CreationID:       creationID,
 		MakerID:          makerID,
-		HashID:           immutables.GenerateHashID(),
+		HashID:           baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID(),
 	}
 }

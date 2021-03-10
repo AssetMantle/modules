@@ -34,7 +34,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	immutableProperties := base.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
 
-	identityID := key.NewIdentityID(message.ClassificationID, base.NewImmutables(immutableProperties))
+	identityID := key.NewIdentityID(message.ClassificationID, immutableProperties)
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
 	if identities.Get(key.FromID(identityID)) != nil {
@@ -52,7 +52,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	identities.Add(mappable.NewIdentity(identityID, []sdkTypes.AccAddress{message.To}, []sdkTypes.AccAddress{}, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
+	identities.Add(mappable.NewIdentity(identityID, immutableProperties, mutableProperties))
 
 	return newTransactionResponse(nil)
 }
