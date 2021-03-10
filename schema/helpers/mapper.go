@@ -18,6 +18,7 @@ type Mapper interface {
 	Update(sdkTypes.Context, Mappable)
 	Delete(sdkTypes.Context, Key)
 	Iterate(sdkTypes.Context, Key, func(Mappable) bool)
+	ReverseIterate(sdkTypes.Context, Key, func(Mappable) bool)
 
 	StoreDecoder(kv.Pair, kv.Pair) string
 

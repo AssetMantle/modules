@@ -3,25 +3,26 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package immediate
+package modify
 
 import (
 	"reflect"
 	"testing"
 
-	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-
-	"github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/cosmos/cosmos-sdk/std"
-	"github.com/cosmos/cosmos-sdk/x/auth/tx"
-	"github.com/persistenceOne/persistenceSDK/constants/test"
-	"github.com/persistenceOne/persistenceSDK/schema/applications"
 	tendermintProto "github.com/tendermint/tendermint/proto/tendermint/types"
 
+	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+
+	"github.com/persistenceOne/persistenceSDK/constants/test"
+
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/auth/tx"
 	vestingTypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
@@ -32,6 +33,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/applications"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -106,42 +108,50 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
-	immutableMetaProperties, Error := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
-	require.Equal(t, nil, Error)
 	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, Error)
-	mutableMetaProperties, Error := base.ReadMetaProperties("makerOwnableSplit:D|1")
 	require.Equal(t, nil, Error)
 	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, Error)
-	conformMockErrorProperties, Error := base.ReadProperties("conformError:S|mockError")
-	require.Equal(t, nil, Error)
-	scrubMockErrorProperties, Error := base.ReadMetaProperties("scrubError:S|mockError")
+	mutablePropertiesUpdated, Error := base.ReadMetaProperties("defaultMutable1:S|defaultMutable2")
 	require.Equal(t, nil, Error)
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultAddr := sdkTypes.AccAddress("addr")
 	defaultIdentityID := base.NewID("fromID")
 	classificationID := base.NewID("classificationID")
 	makerOwnableID := base.NewID("makerOwnableID")
+	rateID := base.NewID(sdkTypes.OneDec().String())
+	updatedRate := sdkTypes.MustNewDecFromStr("0.002")
+	creationID := base.NewID("100")
+	//makerID := base.NewID("makerID")
 	takerOwnableID := base.NewID("takerOwnableID")
-	makerOwnableSplit := sdkTypes.MustNewDecFromStr("1000")
-	orderID := key.NewOrderID(classificationID, makerOwnableID,
-		takerOwnableID, base.NewID(sdkTypes.OneDec().String()), base.NewID("100"), defaultIdentityID, base.NewImmutables(base.NewProperties()))
-	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
+	makerOwnableSplit := sdkTypes.SmallestDec().MulInt64(2)
+	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, defaultIdentityID, base.NewImmutables(immutableProperties))
+	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 
-	t.Run("PositiveCase Adding Order without execution", func(t *testing.T) {
+	t.Run("PositiveCase Modifying Order - Changing TakerOwnableSplit, mutableProperty and subtracting makerOwnableSplit", func(t *testing.T) {
 		want := newTransactionResponse(nil)
-		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
-			makerOwnableID, takerOwnableID, base.NewHeight(0), makerOwnableSplit, sdkTypes.OneDec(),
-			immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, orderID,
+			updatedRate, makerOwnableSplit.Sub(sdkTypes.SmallestDec()), base.NewHeight(100),
+			base.NewMetaProperties(), mutablePropertiesUpdated.RemoveData())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
-	t.Run("PositiveCase- ReAdd order without execution", func(t *testing.T) {
+
+	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
+	t.Run("PositiveCase Modifying Order - Changing TakerOwnableSplit, mutableProperty and adding makerOwnableSplit", func(t *testing.T) {
 		want := newTransactionResponse(nil)
-		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
-			makerOwnableID, takerOwnableID, base.NewHeight(0), makerOwnableSplit, sdkTypes.OneDec(),
-			immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, orderID,
+			updatedRate, makerOwnableSplit.Add(sdkTypes.SmallestDec()), base.NewHeight(100),
+			base.NewMetaProperties(), mutablePropertiesUpdated.RemoveData())); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("NegativeCase Modifying Order - Order not found", func(t *testing.T) {
+		want := newTransactionResponse(errors.EntityNotFound)
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, base.NewID("orderID"),
+			updatedRate, makerOwnableSplit, base.NewHeight(100),
+			base.NewMetaProperties(), mutablePropertiesUpdated.RemoveData())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -149,49 +159,29 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - Identity mock error", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(test.MockError)
-		if got := keepers.OrdersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, classificationID,
-			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(),
-			immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, orderID,
+			updatedRate, makerOwnableSplit, base.NewHeight(100), base.NewMetaProperties(),
+			mutablePropertiesUpdated.RemoveData())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	t.Run("NegativeCase - conform mock fail", func(t *testing.T) {
-		t.Parallel()
+	orderID = key.NewOrderID(classificationID, base.NewID("transferError"), takerOwnableID, rateID, creationID, defaultIdentityID, base.NewImmutables(immutableProperties))
+	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
+	t.Run("NegativeCase Modifying Order - transferError", func(t *testing.T) {
 		want := newTransactionResponse(test.MockError)
-		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
-			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(),
-			immutableMetaProperties, immutableProperties, mutableMetaProperties, conformMockErrorProperties)); !reflect.DeepEqual(got, want) {
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, orderID,
+			updatedRate, makerOwnableSplit.Sub(sdkTypes.SmallestDec()), base.NewHeight(100),
+			base.NewMetaProperties(), mutablePropertiesUpdated.RemoveData())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	t.Run("NegativeCase - mutables scrub mock fail", func(t *testing.T) {
-		t.Parallel()
+	t.Run("NegativeCase Modifying Order - Changing TakerOwnableSplit, mutableProperty and adding makerOwnableSplit", func(t *testing.T) {
 		want := newTransactionResponse(test.MockError)
-		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
-			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(),
-			immutableMetaProperties, immutableProperties, scrubMockErrorProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase - immutables scrub mock fail", func(t *testing.T) {
-		t.Parallel()
-		want := newTransactionResponse(test.MockError)
-		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
-			makerOwnableID, takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(),
-			scrubMockErrorProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase - Transfer mock fail", func(t *testing.T) {
-		t.Parallel()
-		want := newTransactionResponse(test.MockError)
-		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
-			base.NewID("transferError"), takerOwnableID, base.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(),
-			immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, orderID,
+			updatedRate, makerOwnableSplit.Add(sdkTypes.SmallestDec()), base.NewHeight(100),
+			base.NewMetaProperties(), mutablePropertiesUpdated.RemoveData())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

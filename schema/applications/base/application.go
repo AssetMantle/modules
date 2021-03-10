@@ -541,7 +541,6 @@ func (application application) Initialize(applicationName string, encodingConfig
 		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-		splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
 		splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
 	)
 

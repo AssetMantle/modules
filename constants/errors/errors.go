@@ -23,6 +23,4 @@ var (
 	NotAuthorized        = errors.Register(constants.ProjectRoute, 110, "NotAuthorized")
 	UninitializedUsage   = errors.Register(constants.ProjectRoute, 111, "UninitializedUsage")
 	UnsupportedParameter = errors.Register(constants.ProjectRoute, 112, "UnsupportedParameter")
-
-	MockError = errors.Register(constants.ProjectRoute, 999, "MockError")
 )
