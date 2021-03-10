@@ -27,7 +27,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 
-	// TODO implement
+	//  TODO implement
 	//if !identity.(mappables.InterIdentity).IsProvisioned(auxiliaryRequest.Address) {
 	//	return newAuxiliaryResponse(errors.NotAuthorized)
 	//}
