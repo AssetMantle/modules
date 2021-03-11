@@ -10,9 +10,6 @@ import (
 	"io"
 	"path/filepath"
 
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
-
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -39,7 +36,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
 	"github.com/persistenceOne/persistenceSDK/modules/metas"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
@@ -62,8 +61,15 @@ import (
 )
 
 type application struct {
-	baseApp *baseapp.BaseApp
-	codec   *codec.Codec
+	name string
+
+	baseapp.BaseApp
+
+	codec *codec.Codec
+
+	enabledWasmProposalTypeList []wasm.ProposalType
+	moduleAccountPermissions    map[string][]string
+	tokenReceiveAllowedModules  map[string]bool
 
 	keys map[string]*sdkTypes.KVStoreKey
 
@@ -77,47 +83,11 @@ type application struct {
 
 var _ applications.Application = (*application)(nil)
 
-func (application application) Info(requestInfo abciTypes.RequestInfo) abciTypes.ResponseInfo {
-	return application.baseApp.Info(requestInfo)
-}
-
-func (application application) SetOption(requestSetOption abciTypes.RequestSetOption) abciTypes.ResponseSetOption {
-	return application.baseApp.SetOption(requestSetOption)
-}
-
-func (application application) Query(requestQuery abciTypes.RequestQuery) abciTypes.ResponseQuery {
-	return application.baseApp.Query(requestQuery)
-}
-
-func (application application) CheckTx(requestCheckTx abciTypes.RequestCheckTx) abciTypes.ResponseCheckTx {
-	return application.baseApp.CheckTx(requestCheckTx)
-}
-
-func (application application) InitChain(requestInitChain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
-	return application.baseApp.InitChain(requestInitChain)
-}
-
-func (application application) BeginBlock(requestBeginBlock abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
-	return application.baseApp.BeginBlock(requestBeginBlock)
-}
-
-func (application application) DeliverTx(requestDeliverTx abciTypes.RequestDeliverTx) abciTypes.ResponseDeliverTx {
-	return application.baseApp.DeliverTx(requestDeliverTx)
-}
-
-func (application application) EndBlock(requestEndBlock abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock {
-	return application.baseApp.EndBlock(requestEndBlock)
-}
-
-func (application application) Commit() abciTypes.ResponseCommit {
-	return application.baseApp.Commit()
-}
-
 func (application application) LoadHeight(height int64) error {
-	return application.baseApp.LoadVersion(height, application.keys[baseapp.MainStoreKey])
+	return application.LoadVersion(height, application.keys[baseapp.MainStoreKey])
 }
 func (application application) ExportApplicationStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
-	context := application.baseApp.NewContext(true, abciTypes.Header{Height: application.baseApp.LastBlockHeight()})
+	context := application.NewContext(true, abciTypes.Header{Height: application.LastBlockHeight()})
 
 	if forZeroHeight {
 		applyWhiteList := false
@@ -235,18 +205,18 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 	return applicationState, staking.WriteValidators(context, application.stakingKeeper), nil
 }
 
-func (application application) Initialize(applicationName string, codec *codec.Codec, enabledProposals []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool, logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
-	baseApp := baseapp.NewBaseApp(
-		applicationName,
+func (application application) Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
+	application.BaseApp = *baseapp.NewBaseApp(
+		application.name,
 		logger,
 		db,
-		auth.DefaultTxDecoder(codec),
+		auth.DefaultTxDecoder(application.codec),
 		baseAppOptions...,
 	)
-	baseApp.SetCommitMultiStoreTracer(traceStore)
-	baseApp.SetAppVersion(version.Version)
+	application.SetCommitMultiStoreTracer(traceStore)
+	application.SetAppVersion(version.Version)
 
-	keys := sdkTypes.NewKVStoreKeys(
+	application.keys = sdkTypes.NewKVStoreKeys(
 		baseapp.MainStoreKey,
 		auth.StoreKey,
 		supply.StoreKey,
@@ -270,26 +240,22 @@ func (application application) Initialize(applicationName string, codec *codec.C
 
 	transientStoreKeys := sdkTypes.NewTransientStoreKeys(params.TStoreKey)
 
-	application.baseApp = baseApp
-	application.codec = codec
-	application.keys = keys
-
 	paramsKeeper := params.NewKeeper(
-		codec,
-		keys[params.StoreKey],
+		application.codec,
+		application.keys[params.StoreKey],
 		transientStoreKeys[params.TStoreKey],
 	)
 
 	accountKeeper := auth.NewAccountKeeper(
-		codec,
-		keys[auth.StoreKey],
+		application.codec,
+		application.keys[auth.StoreKey],
 		paramsKeeper.Subspace(auth.DefaultParamspace),
 		auth.ProtoBaseAccount,
 	)
 
 	blacklistedAddresses := make(map[string]bool)
-	for account := range moduleAccountPermissions {
-		blacklistedAddresses[supply.NewModuleAddress(account).String()] = !tokenReceiveAllowedModules[account]
+	for account := range application.moduleAccountPermissions {
+		blacklistedAddresses[supply.NewModuleAddress(account).String()] = !application.tokenReceiveAllowedModules[account]
 	}
 
 	bankKeeper := bank.NewBaseKeeper(
@@ -299,23 +265,23 @@ func (application application) Initialize(applicationName string, codec *codec.C
 	)
 
 	supplyKeeper := supply.NewKeeper(
-		codec,
-		keys[supply.StoreKey],
+		application.codec,
+		application.keys[supply.StoreKey],
 		accountKeeper,
 		bankKeeper,
-		moduleAccountPermissions,
+		application.moduleAccountPermissions,
 	)
 
 	stakingKeeper := staking.NewKeeper(
-		codec,
-		keys[staking.StoreKey],
+		application.codec,
+		application.keys[staking.StoreKey],
 		supplyKeeper,
 		paramsKeeper.Subspace(staking.DefaultParamspace),
 	)
 
 	mintKeeper := mint.NewKeeper(
-		codec,
-		keys[mint.StoreKey],
+		application.codec,
+		application.keys[mint.StoreKey],
 		paramsKeeper.Subspace(mint.DefaultParamspace),
 		&stakingKeeper,
 		supplyKeeper,
@@ -323,13 +289,13 @@ func (application application) Initialize(applicationName string, codec *codec.C
 	)
 
 	blackListedModuleAddresses := make(map[string]bool)
-	for moduleAccount := range moduleAccountPermissions {
+	for moduleAccount := range application.moduleAccountPermissions {
 		blackListedModuleAddresses[supply.NewModuleAddress(moduleAccount).String()] = true
 	}
 
 	application.distributionKeeper = distribution.NewKeeper(
-		codec,
-		keys[distribution.StoreKey],
+		application.codec,
+		application.keys[distribution.StoreKey],
 		paramsKeeper.Subspace(distribution.DefaultParamspace),
 		&stakingKeeper,
 		supplyKeeper,
@@ -337,8 +303,8 @@ func (application application) Initialize(applicationName string, codec *codec.C
 		blackListedModuleAddresses,
 	)
 	application.slashingKeeper = slashing.NewKeeper(
-		codec,
-		keys[slashing.StoreKey],
+		application.codec,
+		application.keys[slashing.StoreKey],
 		&stakingKeeper,
 		paramsKeeper.Subspace(slashing.DefaultParamspace),
 	)
@@ -350,13 +316,13 @@ func (application application) Initialize(applicationName string, codec *codec.C
 	)
 	upgradeKeeper := upgrade.NewKeeper(
 		skipUpgradeHeights,
-		keys[upgrade.StoreKey],
-		codec,
+		application.keys[upgrade.StoreKey],
+		application.codec,
 	)
 
 	evidenceKeeper := evidence.NewKeeper(
-		codec,
-		keys[evidence.StoreKey],
+		application.codec,
+		application.keys[evidence.StoreKey],
 		paramsKeeper.Subspace(evidence.DefaultParamspace),
 		&stakingKeeper,
 		application.slashingKeeper,
@@ -364,41 +330,26 @@ func (application application) Initialize(applicationName string, codec *codec.C
 	evidenceRouter := evidence.NewRouter()
 	evidenceKeeper.SetRouter(evidenceRouter)
 
-	govRouter := gov.NewRouter()
-	govRouter.AddRoute(
-		gov.RouterKey,
-		gov.ProposalHandler,
-	).AddRoute(
-		params.RouterKey,
-		params.NewParamChangeProposalHandler(paramsKeeper),
-	).AddRoute(
-		distribution.RouterKey,
-		distribution.NewCommunityPoolSpendProposalHandler(application.distributionKeeper),
-	).AddRoute(
-		upgrade.RouterKey,
-		upgrade.NewSoftwareUpgradeProposalHandler(upgradeKeeper),
-	)
-
 	application.stakingKeeper = *stakingKeeper.SetHooks(
 		staking.NewMultiStakingHooks(application.distributionKeeper.Hooks(), application.slashingKeeper.Hooks()),
 	)
 
 	metasModule := metas.Prototype().Initialize(
-		keys[metas.Prototype().Name()],
+		application.keys[metas.Prototype().Name()],
 		paramsKeeper.Subspace(metas.Prototype().Name()),
 	)
 	classificationsModule := classifications.Prototype().Initialize(
-		keys[classifications.Prototype().Name()],
+		application.keys[classifications.Prototype().Name()],
 		paramsKeeper.Subspace(classifications.Prototype().Name()),
 		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 	)
 	maintainersModule := maintainers.Prototype().Initialize(
-		keys[metas.Prototype().Name()],
+		application.keys[metas.Prototype().Name()],
 		paramsKeeper.Subspace(maintainers.Prototype().Name()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 	)
 	identitiesModule := identities.Prototype().Initialize(
-		keys[identities.Prototype().Name()],
+		application.keys[identities.Prototype().Name()],
 		paramsKeeper.Subspace(identities.Prototype().Name()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
@@ -410,13 +361,13 @@ func (application application) Initialize(applicationName string, codec *codec.C
 		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 	)
 	splitsModule := splits.Prototype().Initialize(
-		keys[splits.Prototype().Name()],
+		application.keys[splits.Prototype().Name()],
 		paramsKeeper.Subspace(splits.Prototype().Name()),
 		supplyKeeper,
 		identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
 	)
 	assetsModule := assets.Prototype().Initialize(
-		keys[assets.Prototype().Name()],
+		application.keys[assets.Prototype().Name()],
 		paramsKeeper.Subspace(assets.Prototype().Name()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
@@ -432,7 +383,7 @@ func (application application) Initialize(applicationName string, codec *codec.C
 		splitsModule.GetAuxiliary(renumerate.Auxiliary.GetName()),
 	)
 	ordersModule := orders.Prototype().Initialize(
-		keys[orders.Prototype().Name()],
+		application.keys[orders.Prototype().Name()],
 		paramsKeeper.Subspace(orders.Prototype().Name()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
@@ -444,7 +395,7 @@ func (application application) Initialize(applicationName string, codec *codec.C
 		splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
 	)
 
-	var wasmRouter = baseApp.Router()
+	var wasmRouter = application.Router()
 
 	wasmDir := filepath.Join(home, wasm.ModuleName)
 
@@ -462,8 +413,8 @@ func (application application) Initialize(applicationName string, codec *codec.C
 	wasmConfig := wasmWrap.Wasm
 
 	wasmKeeper := wasm.NewKeeper(
-		codec,
-		keys[wasm.StoreKey],
+		application.codec,
+		application.keys[wasm.StoreKey],
 		paramsKeeper.Subspace(wasm.DefaultParamspace),
 		accountKeeper,
 		bankKeeper,
@@ -475,13 +426,27 @@ func (application application) Initialize(applicationName string, codec *codec.C
 		&wasm.MessageEncoders{Custom: wasmUtilities.CustomEncoder(assets.Prototype(), classifications.Prototype(), identities.Prototype(), maintainers.Prototype(), metas.Prototype(), orders.Prototype(), splits.Prototype())},
 		nil)
 
-	if len(enabledProposals) != 0 {
-		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(wasmKeeper, enabledProposals))
+	govRouter := gov.NewRouter().AddRoute(
+		gov.RouterKey,
+		gov.ProposalHandler,
+	).AddRoute(
+		params.RouterKey,
+		params.NewParamChangeProposalHandler(paramsKeeper),
+	).AddRoute(
+		distribution.RouterKey,
+		distribution.NewCommunityPoolSpendProposalHandler(application.distributionKeeper),
+	).AddRoute(
+		upgrade.RouterKey,
+		upgrade.NewSoftwareUpgradeProposalHandler(upgradeKeeper),
+	)
+
+	if len(application.enabledWasmProposalTypeList) != 0 {
+		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(wasmKeeper, application.enabledWasmProposalTypeList))
 	}
 
 	govKeeper := gov.NewKeeper(
-		codec,
-		keys[gov.StoreKey],
+		application.codec,
+		application.keys[gov.StoreKey],
 		paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable()),
 		supplyKeeper,
 		&stakingKeeper,
@@ -489,7 +454,7 @@ func (application application) Initialize(applicationName string, codec *codec.C
 	)
 
 	application.moduleManager = sdkTypesModule.NewManager(
-		genutil.NewAppModule(accountKeeper, application.stakingKeeper, application.baseApp.DeliverTx),
+		genutil.NewAppModule(accountKeeper, application.stakingKeeper, application.DeliverTx),
 		auth.NewAppModule(accountKeeper),
 		bank.NewAppModule(bankKeeper, accountKeeper),
 		crisis.NewAppModule(&application.crisisKeeper),
@@ -546,9 +511,9 @@ func (application application) Initialize(applicationName string, codec *codec.C
 		splits.Prototype().Name(),
 	)
 	application.moduleManager.RegisterInvariants(&application.crisisKeeper)
-	application.moduleManager.RegisterRoutes(application.baseApp.Router(), application.baseApp.QueryRouter())
+	application.moduleManager.RegisterRoutes(application.Router(), application.QueryRouter())
 
-	simulationManager := sdkTypesModule.NewSimulationManager(
+	sdkTypesModule.NewSimulationManager(
 		auth.NewAppModule(accountKeeper),
 		bank.NewAppModule(bankKeeper, accountKeeper),
 		supply.NewAppModule(supplyKeeper, accountKeeper),
@@ -565,32 +530,36 @@ func (application application) Initialize(applicationName string, codec *codec.C
 		metas.Prototype(),
 		orders.Prototype(),
 		splits.Prototype(),
-	)
+	).RegisterStoreDecoders()
 
-	simulationManager.RegisterStoreDecoders()
+	application.MountKVStores(application.keys)
+	application.MountTransientStores(transientStoreKeys)
 
-	application.baseApp.MountKVStores(keys)
-	application.baseApp.MountTransientStores(transientStoreKeys)
-
-	application.baseApp.SetBeginBlocker(application.moduleManager.BeginBlock)
-	application.baseApp.SetEndBlocker(application.moduleManager.EndBlock)
-	application.baseApp.SetInitChainer(func(context sdkTypes.Context, requestInitChain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
+	application.SetBeginBlocker(application.moduleManager.BeginBlock)
+	application.SetEndBlocker(application.moduleManager.EndBlock)
+	application.SetInitChainer(func(context sdkTypes.Context, requestInitChain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
 		var genesisState map[string]json.RawMessage
-		codec.MustUnmarshalJSON(requestInitChain.AppStateBytes, &genesisState)
+		application.codec.MustUnmarshalJSON(requestInitChain.AppStateBytes, &genesisState)
 		return application.moduleManager.InitGenesis(context, genesisState)
 	})
-	application.baseApp.SetAnteHandler(auth.NewAnteHandler(accountKeeper, supplyKeeper, ante.DefaultSigVerificationGasConsumer))
+	application.SetAnteHandler(auth.NewAnteHandler(accountKeeper, supplyKeeper, ante.DefaultSigVerificationGasConsumer))
 
 	if loadLatest {
-		err := application.baseApp.LoadLatestVersion(application.keys[baseapp.MainStoreKey])
+		err := application.LoadLatestVersion(application.keys[baseapp.MainStoreKey])
 		if err != nil {
 			tendermintOS.Exit(err.Error())
 		}
 	}
 
-	return application
+	return &application
 }
 
-func NewApplication() applications.Application {
-	return &application{}
+func NewApplication(name string, codec *codec.Codec, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.Application {
+	return &application{
+		name:                        name,
+		codec:                       codec,
+		enabledWasmProposalTypeList: enabledWasmProposalTypeList,
+		moduleAccountPermissions:    moduleAccountPermissions,
+		tokenReceiveAllowedModules:  tokenReceiveAllowedModules,
+	}
 }
