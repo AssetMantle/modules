@@ -10,10 +10,9 @@ import (
 	"testing"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
-
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
 )
 
 // Profile with:

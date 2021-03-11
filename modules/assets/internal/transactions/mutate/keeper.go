@@ -57,7 +57,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	assets.Mutate(mappable.NewAsset(asset.(mappables.InterNFT).GetID(), asset.(mappables.InterNFT).GetImmutables(), asset.(mappables.InterNFT).GetMutables().Mutate(mutableProperties.GetList()...)))
+	assets.Mutate(mappable.NewAsset(asset.(mappables.InterNFT).GetID(), asset.(mappables.InterNFT).GetImmutableProperties(), asset.(mappables.InterNFT).GetImmutableProperties().Mutate(mutableProperties.GetList()...)))
 
 	return newTransactionResponse(nil)
 }

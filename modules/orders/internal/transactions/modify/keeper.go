@@ -83,9 +83,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	updatedMutables := order.(mappables.Order).GetMutables().Mutate(append(scrubbedMutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
+	updatedMutables := order.(mappables.Order).GetMutableProperties().Mutate(append(scrubbedMutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetImmutables().Get(), updatedMutables.Get())); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetImmutableProperties(), updatedMutables)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
@@ -97,9 +97,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			order.(mappables.Order).GetTakerOwnableID(),
 			base.NewID(message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(message.MakerOwnableSplit).String()),
 			base.NewID(order.(mappables.Order).GetCreation().GetMetaFact().GetData().String()),
-			order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetImmutables(),
+			order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetImmutableProperties(),
 		),
-		order.(mappables.Order).GetImmutables(),
+		order.(mappables.Order).GetImmutableProperties(),
 		updatedMutables),
 	)
 

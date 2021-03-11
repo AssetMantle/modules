@@ -7,76 +7,57 @@ package base
 
 import (
 	"encoding/json"
-
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/server/api"
-	"github.com/cosmos/cosmos-sdk/server/config"
-	"github.com/gogo/protobuf/grpc"
-
-	authKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	evidenceKeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
-	govKeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
-	mintKeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
-	upgradeKeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
-
-	bankTypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	capabilityTypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	crisisTypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
-	distributionTypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	evidenceTypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
-	govTypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	ibctransferTypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
-	ibchost "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
-	mintTypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	paramsProposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
-	upgradeTypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-
-	"io"
-	"log"
-	"path/filepath"
-
-	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-
-	"github.com/cosmos/cosmos-sdk/codec/types"
-
-	slashingTypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-
-	stakingTypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	tendermintProto "github.com/tendermint/tendermint/proto/tendermint/types"
-
-	serverTypes "github.com/cosmos/cosmos-sdk/server/types"
-	crisisKeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
-	distributionKeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
-	genutilTypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
-	slashingKeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
-	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
-
-	tendermintLog "github.com/tendermint/tendermint/libs/log"
-
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/server/api"
+	"github.com/cosmos/cosmos-sdk/server/config"
+	serverTypes "github.com/cosmos/cosmos-sdk/server/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+	authKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/bank"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	bankTypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	capabilityTypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
+	crisisKeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
+	crisisTypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	"github.com/cosmos/cosmos-sdk/x/distribution"
+	distributionKeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
+	distributionTypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/cosmos/cosmos-sdk/x/evidence"
+	evidenceKeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
+	evidenceTypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
+	genutilTypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	"github.com/cosmos/cosmos-sdk/x/gov"
+	govKeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
+	govTypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	ibctransferTypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
+	ibchost "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 	"github.com/cosmos/cosmos-sdk/x/mint"
+	mintKeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
+	mintTypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
+	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	paramsProposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
+	slashingKeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
+	slashingTypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
+	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	stakingTypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
+	upgradeKeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
+	upgradeTypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	"github.com/gogo/protobuf/grpc"
 	"github.com/persistenceOne/persistenceSDK/modules/assets"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
@@ -84,7 +65,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
 	"github.com/persistenceOne/persistenceSDK/modules/metas"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
@@ -98,9 +81,14 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/applications"
 	wasmUtilities "github.com/persistenceOne/persistenceSDK/utilities/wasm"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+	tendermintLog "github.com/tendermint/tendermint/libs/log"
 	tendermintOS "github.com/tendermint/tendermint/libs/os"
+	tendermintProto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 	"honnef.co/go/tools/version"
+	"io"
+	"log"
+	"path/filepath"
 )
 
 type application struct {
@@ -505,8 +493,11 @@ func (application application) Initialize(applicationName string, encodingConfig
 		paramsKeeper.Subspace(identities.Prototype().Name()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+
 		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 	)
 	splitsModule := splits.Prototype().Initialize(

@@ -10,7 +10,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 )
 
 type auxiliaryKeeper struct {
@@ -28,9 +27,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 
-	if !identity.(mappables.InterIdentity).IsProvisioned(auxiliaryRequest.Address) {
-		return newAuxiliaryResponse(errors.NotAuthorized)
-	}
+	//  TODO implement
+	//if !identity.(mappables.InterIdentity).IsProvisioned(auxiliaryRequest.Address) {
+	//	return newAuxiliaryResponse(errors.NotAuthorized)
+	//}
 
 	return newAuxiliaryResponse(nil)
 }

@@ -6,6 +6,7 @@
 package immediate
 
 import (
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"reflect"
 	"testing"
 
@@ -125,9 +126,16 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
 	makerOwnableSplit := sdkTypes.MustNewDecFromStr("1000")
-	orderID := key.NewOrderID(classificationID, makerOwnableID,
-		takerOwnableID, base.NewID(sdkTypes.OneDec().String()), base.NewID("100"), defaultIdentityID, base.NewImmutables(base.NewProperties()))
-	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
+	orderID := key.NewOrderID(
+		classificationID,
+		makerOwnableID,
+		takerOwnableID,
+		base.NewID(sdkTypes.OneDec().String()),
+		base.NewID("100"),
+		defaultIdentityID,
+		base.NewProperties(),
+	)
+	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewProperties(), base.NewProperties()))
 
 	t.Run("PositiveCase Adding Order without execution", func(t *testing.T) {
 		want := newTransactionResponse(nil)
@@ -137,8 +145,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
-	t.Run("PositiveCase- ReAdd order without execution", func(t *testing.T) {
-		want := newTransactionResponse(nil)
+	t.Run("NegativeCase - Order already exists", func(t *testing.T) {
+		want := newTransactionResponse(errors.EntityAlreadyExists)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			makerOwnableID, takerOwnableID, base.NewHeight(0), makerOwnableSplit, sdkTypes.OneDec(),
 			immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {

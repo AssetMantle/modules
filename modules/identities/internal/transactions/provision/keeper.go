@@ -10,7 +10,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 )
 
 type transactionKeeper struct {
@@ -29,19 +28,20 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	if !identity.(mappables.InterIdentity).IsProvisioned(message.From) {
-		return newTransactionResponse(errors.NotAuthorized)
-	}
-
-	if identity.(mappables.InterIdentity).IsProvisioned(message.To) {
-		return newTransactionResponse(errors.EntityAlreadyExists)
-	}
-
-	if identity.(mappables.InterIdentity).IsUnprovisioned(message.To) {
-		return newTransactionResponse(errors.DeletionNotAllowed)
-	}
-
-	identities.Mutate(identity.(mappables.InterIdentity).ProvisionAddress(message.To))
+	//   TODO implement
+	// if !identity.(mappables.InterIdentity).IsProvisioned(message.From) {
+	//	return newTransactionResponse(errors.NotAuthorized)
+	//}
+	//
+	//if identity.(mappables.InterIdentity).IsProvisioned(message.To) {
+	//	return newTransactionResponse(errors.EntityAlreadyExists)
+	//}
+	//
+	//if identity.(mappables.InterIdentity).IsUnprovisioned(message.To) {
+	//	return newTransactionResponse(errors.DeletionNotAllowed)
+	//}
+	//
+	//identities.Mutate(identity.(mappables.InterIdentity).ProvisionAddress(message.To))
 
 	return newTransactionResponse(nil)
 }

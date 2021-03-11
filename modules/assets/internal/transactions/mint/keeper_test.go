@@ -147,7 +147,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase - Immutables Scrub Auxiliary fail", func(t *testing.T) {
+	t.Run("NegativeCase - Properties Scrub Auxiliary fail", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(test.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID,
@@ -156,7 +156,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase - Mutables Scrub Auxiliary fail", func(t *testing.T) {
+	t.Run("NegativeCase - Properties Scrub Auxiliary fail", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(test.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID,

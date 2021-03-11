@@ -6,27 +6,23 @@
 package base
 
 import (
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type mutables struct {
+type HasMutables struct {
 	Properties types.Properties `json:"properties"`
 }
 
-var _ types.Mutables = (*mutables)(nil)
+var _ traits.HasMutables = (*HasMutables)(nil)
 
-func (mutables mutables) Get() types.Properties {
+func (mutables HasMutables) GetMutableProperties() types.Properties {
 	return mutables.Properties
 }
-func (mutables mutables) Mutate(propertyList ...types.Property) types.Mutables {
+func (mutables HasMutables) Mutate(propertyList ...types.Property) traits.HasMutables {
 	for _, property := range propertyList {
 		mutables.Properties = mutables.Properties.Mutate(property)
 	}
 
 	return mutables
-}
-func NewMutables(properties types.Properties) types.Mutables {
-	return mutables{
-		Properties: properties,
-	}
 }

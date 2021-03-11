@@ -67,8 +67,8 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 					}
 					orders.Remove(order)
 				} else {
-					id1 := key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetMakerOwnableID(), order.(mappables.Order).GetTakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewImmutables(base.NewProperties()))
-					id2 := key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetTakerOwnableID(), order.(mappables.Order).GetMakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewImmutables(base.NewProperties()))
+					id1 := key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetMakerOwnableID(), order.(mappables.Order).GetTakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewProperties())
+					id2 := key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetTakerOwnableID(), order.(mappables.Order).GetMakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewProperties())
 					if !executeOrders[id1] && !executeOrders[id2] {
 						executeOrders[id1] = true
 					}
@@ -83,7 +83,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 
 		orders.Iterate(key.FromID(partialOrderID), func(orderMappable helpers.Mappable) bool {
 			orders.Iterate(
-				key.FromID(key.NewOrderID(orderMappable.(mappables.Order).GetClassificationID(), orderMappable.(mappables.Order).GetTakerOwnableID(), orderMappable.(mappables.Order).GetMakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewImmutables(base.NewProperties()))),
+				key.FromID(key.NewOrderID(orderMappable.(mappables.Order).GetClassificationID(), orderMappable.(mappables.Order).GetTakerOwnableID(), orderMappable.(mappables.Order).GetMakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewProperties())),
 				func(executableMappableOrder helpers.Mappable) bool {
 
 					var leftOrder mappables.Order
@@ -159,7 +159,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								panic(Error)
 							}
 
-							orders.Mutate(mappable.NewOrder(leftOrder.GetID(), leftOrder.GetImmutables(), leftOrder.GetMutables().Mutate(mutableProperties.GetList()...)))
+							orders.Mutate(mappable.NewOrder(leftOrder.GetID(), leftOrder.GetImmutableProperties(), leftOrder.GetMutableProperties().Mutate(mutableProperties.GetList()...)))
 							orders.Remove(rightOrder)
 
 							if executableOrderHeight.IsGreaterThan(orderHeight) {
@@ -179,7 +179,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								panic(Error)
 							}
 
-							orders.Mutate(mappable.NewOrder(rightOrder.GetID(), rightOrder.GetImmutables(), rightOrder.GetMutables().Mutate(mutableProperties.GetList()...)))
+							orders.Mutate(mappable.NewOrder(rightOrder.GetID(), rightOrder.GetImmutableProperties(), rightOrder.GetMutableProperties().Mutate(mutableProperties.GetList()...)))
 							orders.Remove(leftOrder)
 
 							if orderHeight.IsGreaterThan(executableOrderHeight) || orderHeight.Equals(executableOrderHeight) {

@@ -8,10 +8,9 @@ package simulator
 import (
 	"math/rand"
 
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/common"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/common"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
 	maintainersModule "github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/module"

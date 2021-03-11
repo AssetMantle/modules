@@ -121,11 +121,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultAddr := sdkTypes.AccAddress("addr")
 	defaultIdentityID := base.NewID("fromID")
-	exchangeRateID := base.NewID(sdkTypes.OneDec().String())
-	creationHeightID := base.NewID("0")
-	orderID := key.NewOrderID(base.NewID("classificationID"), base.NewID("makerOwnableID"),
-		base.NewID("takerOwnableID"), exchangeRateID, creationHeightID, defaultIdentityID, base.NewImmutables(base.NewProperties()))
-	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewImmutables(base.NewProperties()), base.NewMutables(base.NewProperties())))
+	rateID := base.NewID(sdkTypes.OneDec().String())
+	creationID := base.NewID("0")
+	orderID := key.NewOrderID(base.NewID("classificationID"), base.NewID("makerOwnableID"), base.NewID("takerOwnableID"), rateID, creationID, defaultIdentityID, base.NewProperties())
+	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewProperties(), base.NewProperties()))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

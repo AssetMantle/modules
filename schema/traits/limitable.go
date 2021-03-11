@@ -3,9 +3,4 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package types
-
-type Mutables interface {
-	Get() Properties
-	Mutate(...Property) Mutables
-}
+package traits
