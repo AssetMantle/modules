@@ -8,15 +8,17 @@ package base
 import (
 	"encoding/json"
 	"io"
+	"os"
 	"path/filepath"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	"github.com/cosmos/cosmos-sdk/x/distribution"
@@ -49,6 +51,7 @@ import (
 	splitsMint "github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/renumerate"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
+	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/applications"
 	wasmUtilities "github.com/persistenceOne/persistenceSDK/utilities/wasm"
 	"github.com/spf13/viper"
@@ -63,7 +66,7 @@ import (
 type application struct {
 	name string
 
-	baseapp.BaseApp
+	moduleBasicManager module.BasicManager
 
 	codec *codec.Codec
 
@@ -78,11 +81,25 @@ type application struct {
 	distributionKeeper distribution.Keeper
 	crisisKeeper       crisis.Keeper
 
-	moduleManager *sdkTypesModule.Manager
+	moduleManager *module.Manager
+
+	baseapp.BaseApp
 }
 
 var _ applications.Application = (*application)(nil)
 
+func (application application) GetDefaultNodeHome() string {
+	return os.ExpandEnv("$HOME/." + application.Name() + "/Node")
+}
+func (application application) GetDefaultClientHome() string {
+	return os.ExpandEnv("$HOME/." + application.Name() + "/Client")
+}
+func (application application) GetModuleBasicManager() module.BasicManager {
+	return application.moduleBasicManager
+}
+func (application application) GetCodec() *codec.Codec {
+	return application.codec
+}
 func (application application) LoadHeight(height int64) error {
 	return application.LoadVersion(height, application.keys[baseapp.MainStoreKey])
 }
@@ -453,7 +470,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		govRouter,
 	)
 
-	application.moduleManager = sdkTypesModule.NewManager(
+	application.moduleManager = module.NewManager(
 		genutil.NewAppModule(accountKeeper, application.stakingKeeper, application.DeliverTx),
 		auth.NewAppModule(accountKeeper),
 		bank.NewAppModule(bankKeeper, accountKeeper),
@@ -513,7 +530,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 	application.moduleManager.RegisterInvariants(&application.crisisKeeper)
 	application.moduleManager.RegisterRoutes(application.Router(), application.QueryRouter())
 
-	sdkTypesModule.NewSimulationManager(
+	module.NewSimulationManager(
 		auth.NewAppModule(accountKeeper),
 		bank.NewAppModule(bankKeeper, accountKeeper),
 		supply.NewAppModule(supplyKeeper, accountKeeper),
@@ -553,11 +570,24 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 
 	return &application
 }
+func makeCodec(moduleBasicManager module.BasicManager) *codec.Codec {
+	Codec := codec.New()
+	moduleBasicManager.RegisterCodec(Codec)
+	schema.RegisterCodec(Codec)
+	sdkTypes.RegisterCodec(Codec)
+	codec.RegisterCrypto(Codec)
+	codec.RegisterEvidences(Codec)
+	vesting.RegisterCodec(Codec)
+	Codec.Seal()
 
-func NewApplication(name string, codec *codec.Codec, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.Application {
+	return Codec
+}
+
+func NewApplication(name string, moduleBasicManager module.BasicManager, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.Application {
 	return &application{
 		name:                        name,
-		codec:                       codec,
+		moduleBasicManager:          moduleBasicManager,
+		codec:                       makeCodec(moduleBasicManager),
 		enabledWasmProposalTypeList: enabledWasmProposalTypeList,
 		moduleAccountPermissions:    moduleAccountPermissions,
 		tokenReceiveAllowedModules:  tokenReceiveAllowedModules,
