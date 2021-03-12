@@ -30,7 +30,7 @@ func TestFullAppSimulation(t *testing.T) {
 		require.NoError(t, os.RemoveAll(dir))
 	}()
 
-	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, ModuleAccountPermissions, TokenReceiveAllowedModules)
+	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, moduleAccountPermissions, tokenReceiveAllowedModules)
 	simulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), fauxMerkleModeOpt).(*base.SimulationApplication)
 	require.Equal(t, "SimulationApplication", simulationApplication.Name())
 
