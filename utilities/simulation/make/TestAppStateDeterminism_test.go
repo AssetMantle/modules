@@ -54,21 +54,22 @@ func TestAppStateDeterminism(t *testing.T) {
 
 			db := dbm.NewMemDB()
 
-			app := base.NewSimApp().Initialize(base.ApplicationName, base.MakeCodec(), wasm.EnableAllProposals, base.ModuleAccountPermissions, base.AllowedReceivingModuleAccounts, logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, base.DefaultNodeHome, interBlockCacheOpt()).(base.SimulationApplication)
+			prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, ModuleAccountPermissions, TokenReceiveAllowedModules)
+			simulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), interBlockCacheOpt()).(*base.SimulationApplication)
 
 			fmt.Printf(
 				"running non-determinism simulation; seed %d: %d/%d, attempt: %d/%d\n",
 				config.Seed, i+1, numSeeds, j+1, numTimesToRunPerSeed,
 			)
 
-			_, _, err := simulation.SimulateFromSeed(t, os.Stdout, app.GetBaseApp(), simapp.AppStateFn(app.Codec(), app.SimulationManager()), simapp.SimulationOperations(app, app.Codec(), config), app.ModuleAccountAddrs(), config)
+			_, _, err := simulation.SimulateFromSeed(t, os.Stdout, simulationApplication.GetBaseApp(), simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()), simapp.SimulationOperations(simulationApplication, simulationApplication.Codec(), config), simulationApplication.ModuleAccountAddrs(), config)
 			require.NoError(t, err)
 
 			if config.Commit {
 				simapp.PrintStats(db)
 			}
 
-			appHash := app.GetBaseApp().LastCommitID().Hash
+			appHash := simulationApplication.GetBaseApp().LastCommitID().Hash
 			appHashList[j] = appHash
 
 			if j != 0 {

@@ -30,18 +30,19 @@ func TestFullAppSimulation(t *testing.T) {
 		require.NoError(t, os.RemoveAll(dir))
 	}()
 
-	app := base.NewSimApp().Initialize(base.ApplicationName, base.MakeCodec(), wasm.EnableAllProposals, base.ModuleAccountPermissions, base.AllowedReceivingModuleAccounts, logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, base.DefaultNodeHome, fauxMerkleModeOpt).(base.SimulationApplication)
-	require.Equal(t, "SimulationApplication", app.Name())
+	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, ModuleAccountPermissions, TokenReceiveAllowedModules)
+	simulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), fauxMerkleModeOpt).(*base.SimulationApplication)
+	require.Equal(t, "SimulationApplication", simulationApplication.Name())
 
 	// run randomized simulation
 	_, simParams, simErr := simulation.SimulateFromSeed(
-		t, os.Stdout, app.GetBaseApp(), simapp.AppStateFn(app.Codec(), app.SimulationManager()),
-		simapp.SimulationOperations(app, app.Codec(), config),
-		app.ModuleAccountAddrs(), config,
+		t, os.Stdout, simulationApplication.GetBaseApp(), simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()),
+		simapp.SimulationOperations(simulationApplication, simulationApplication.Codec(), config),
+		simulationApplication.ModuleAccountAddrs(), config,
 	)
 
 	// export state and simParams before the simulation error is checked
-	err = simapp.CheckExportSimulation(app, config, simParams)
+	err = simapp.CheckExportSimulation(simulationApplication, config, simParams)
 	require.NoError(t, err)
 	require.NoError(t, simErr)
 

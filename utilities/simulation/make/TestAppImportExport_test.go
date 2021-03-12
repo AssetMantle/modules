@@ -72,18 +72,19 @@ func TestAppImportExport(t *testing.T) {
 		require.NoError(t, os.RemoveAll(dir))
 	}()
 
-	app := base.NewSimApp().Initialize(base.ApplicationName, base.MakeCodec(), wasm.EnableAllProposals, base.ModuleAccountPermissions, base.AllowedReceivingModuleAccounts, logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, base.DefaultNodeHome, fauxMerkleModeOpt).(base.SimulationApplication)
-	require.Equal(t, "SimulationApplication", app.Name())
+	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, ModuleAccountPermissions, TokenReceiveAllowedModules)
+	simulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), fauxMerkleModeOpt).(*base.SimulationApplication)
+	require.Equal(t, "SimulationApplication", simulationApplication.Name())
 
 	// Run randomized simulation
 	_, simParams, simErr := simulation.SimulateFromSeed(
-		t, os.Stdout, app.GetBaseApp(), simapp.AppStateFn(app.Codec(), app.SimulationManager()),
-		simapp.SimulationOperations(app, app.Codec(), config),
-		app.ModuleAccountAddrs(), config,
+		t, os.Stdout, simulationApplication.GetBaseApp(), simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()),
+		simapp.SimulationOperations(simulationApplication, simulationApplication.Codec(), config),
+		simulationApplication.ModuleAccountAddrs(), config,
 	)
 
 	// export state and simParams before the simulation error is checked
-	err = simapp.CheckExportSimulation(app, config, simParams)
+	err = simapp.CheckExportSimulation(simulationApplication, config, simParams)
 	require.NoError(t, err)
 	require.NoError(t, simErr)
 
@@ -93,7 +94,7 @@ func TestAppImportExport(t *testing.T) {
 
 	fmt.Printf("exporting genesis...\n")
 
-	appState, _, err := app.ExportAppStateAndValidators(false, []string{})
+	appState, _, err := simulationApplication.ExportAppStateAndValidators(false, []string{})
 	require.NoError(t, err)
 
 	fmt.Printf("importing genesis...\n")
@@ -107,40 +108,40 @@ func TestAppImportExport(t *testing.T) {
 		require.NoError(t, os.RemoveAll(newDir))
 	}()
 
-	newApp := base.NewSimApp().Initialize(base.ApplicationName, base.MakeCodec(), wasm.EnableAllProposals, base.ModuleAccountPermissions, base.AllowedReceivingModuleAccounts, logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, base.DefaultNodeHome).(base.SimulationApplication)
-	require.Equal(t, "SimulationApplication", newApp.Name())
+	newSimulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome()).(*base.SimulationApplication)
+	require.Equal(t, "SimulationApplication", newSimulationApplication.Name())
 
 	var genesisState simapp.GenesisState
-	err = app.Codec().UnmarshalJSON(appState, &genesisState)
+	err = simulationApplication.Codec().UnmarshalJSON(appState, &genesisState)
 	require.NoError(t, err)
 
-	ctxA := app.GetBaseApp().NewContext(true, abci.Header{Height: app.GetBaseApp().LastBlockHeight()})
-	ctxB := newApp.GetBaseApp().NewContext(true, abci.Header{Height: app.GetBaseApp().LastBlockHeight()})
-	newApp.ModuleManager().InitGenesis(ctxB, genesisState)
+	ctxA := simulationApplication.GetBaseApp().NewContext(true, abci.Header{Height: simulationApplication.GetBaseApp().LastBlockHeight()})
+	ctxB := newSimulationApplication.GetBaseApp().NewContext(true, abci.Header{Height: simulationApplication.GetBaseApp().LastBlockHeight()})
+	newSimulationApplication.ModuleManager().InitGenesis(ctxB, genesisState)
 
 	fmt.Printf("comparing stores...\n")
 
 	storeKeysPrefixes := []StoreKeysPrefixes{
-		{app.GetKey(baseapp.MainStoreKey), newApp.GetKey(baseapp.MainStoreKey), [][]byte{}},
-		{app.GetKey(auth.StoreKey), newApp.GetKey(auth.StoreKey), [][]byte{}},
-		{app.GetKey(staking.StoreKey), newApp.GetKey(staking.StoreKey),
+		{simulationApplication.GetKey(baseapp.MainStoreKey), newSimulationApplication.GetKey(baseapp.MainStoreKey), [][]byte{}},
+		{simulationApplication.GetKey(auth.StoreKey), newSimulationApplication.GetKey(auth.StoreKey), [][]byte{}},
+		{simulationApplication.GetKey(staking.StoreKey), newSimulationApplication.GetKey(staking.StoreKey),
 			[][]byte{
 				staking.UnbondingQueueKey, staking.RedelegationQueueKey, staking.ValidatorQueueKey,
 			}}, // ordering may change but it doesn't matter
-		{app.GetKey(slashing.StoreKey), newApp.GetKey(slashing.StoreKey), [][]byte{}},
-		{app.GetKey(mint.StoreKey), newApp.GetKey(mint.StoreKey), [][]byte{}},
-		{app.GetKey(distribution.StoreKey), newApp.GetKey(distribution.StoreKey), [][]byte{}},
-		{app.GetKey(supply.StoreKey), newApp.GetKey(supply.StoreKey), [][]byte{}},
-		{app.GetKey(params.StoreKey), newApp.GetKey(params.StoreKey), [][]byte{}},
-		{app.GetKey(gov.StoreKey), newApp.GetKey(gov.StoreKey), [][]byte{}},
-		{app.GetKey(wasm.StoreKey), newApp.GetKey(wasm.StoreKey), [][]byte{}},
-		{app.GetKey(assets.Prototype().Name()), newApp.GetKey(assets.Prototype().Name()), [][]byte{}},
-		{app.GetKey(classifications.Prototype().Name()), newApp.GetKey(classifications.Prototype().Name()), [][]byte{}},
-		{app.GetKey(identities.Prototype().Name()), newApp.GetKey(identities.Prototype().Name()), [][]byte{}},
-		{app.GetKey(maintainers.Prototype().Name()), newApp.GetKey(maintainers.Prototype().Name()), [][]byte{}},
-		{app.GetKey(metas.Prototype().Name()), newApp.GetKey(metas.Prototype().Name()), [][]byte{}},
-		{app.GetKey(orders.Prototype().Name()), newApp.GetKey(orders.Prototype().Name()), [][]byte{}},
-		{app.GetKey(splits.Prototype().Name()), newApp.GetKey(splits.Prototype().Name()), [][]byte{}},
+		{simulationApplication.GetKey(slashing.StoreKey), newSimulationApplication.GetKey(slashing.StoreKey), [][]byte{}},
+		{simulationApplication.GetKey(mint.StoreKey), newSimulationApplication.GetKey(mint.StoreKey), [][]byte{}},
+		{simulationApplication.GetKey(distribution.StoreKey), newSimulationApplication.GetKey(distribution.StoreKey), [][]byte{}},
+		{simulationApplication.GetKey(supply.StoreKey), newSimulationApplication.GetKey(supply.StoreKey), [][]byte{}},
+		{simulationApplication.GetKey(params.StoreKey), newSimulationApplication.GetKey(params.StoreKey), [][]byte{}},
+		{simulationApplication.GetKey(gov.StoreKey), newSimulationApplication.GetKey(gov.StoreKey), [][]byte{}},
+		{simulationApplication.GetKey(wasm.StoreKey), newSimulationApplication.GetKey(wasm.StoreKey), [][]byte{}},
+		{simulationApplication.GetKey(assets.Prototype().Name()), newSimulationApplication.GetKey(assets.Prototype().Name()), [][]byte{}},
+		{simulationApplication.GetKey(classifications.Prototype().Name()), newSimulationApplication.GetKey(classifications.Prototype().Name()), [][]byte{}},
+		{simulationApplication.GetKey(identities.Prototype().Name()), newSimulationApplication.GetKey(identities.Prototype().Name()), [][]byte{}},
+		{simulationApplication.GetKey(maintainers.Prototype().Name()), newSimulationApplication.GetKey(maintainers.Prototype().Name()), [][]byte{}},
+		{simulationApplication.GetKey(metas.Prototype().Name()), newSimulationApplication.GetKey(metas.Prototype().Name()), [][]byte{}},
+		{simulationApplication.GetKey(orders.Prototype().Name()), newSimulationApplication.GetKey(orders.Prototype().Name()), [][]byte{}},
+		{simulationApplication.GetKey(splits.Prototype().Name()), newSimulationApplication.GetKey(splits.Prototype().Name()), [][]byte{}},
 	}
 
 	for _, skp := range storeKeysPrefixes {
@@ -151,6 +152,6 @@ func TestAppImportExport(t *testing.T) {
 		require.Equal(t, len(failedKVAs), len(failedKVBs), "unequal sets of key-values to compare")
 
 		fmt.Printf("compared %d key/value pairs between %s and %s\n", len(failedKVAs), skp.A, skp.B)
-		require.Equal(t, len(failedKVAs), 0, simapp.GetSimulationLog(skp.A.Name(), app.SimulationManager().StoreDecoders, app.Codec(), failedKVAs, failedKVBs))
+		require.Equal(t, len(failedKVAs), 0, simapp.GetSimulationLog(skp.A.Name(), simulationApplication.SimulationManager().StoreDecoders, simulationApplication.Codec(), failedKVAs, failedKVBs))
 	}
 }
