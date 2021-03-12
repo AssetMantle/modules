@@ -29,19 +29,19 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	//   TODO implement
-	// if !identity.(mappables.InterIdentity).IsProvisioned(message.From) {
-	//	return newTransactionResponse(errors.NotAuthorized)
-	//}
+	//   if !identity.(mappables.InterIdentity).IsProvisioned(message.From) {
+	//	 return newTransactionResponse(errors.NotAuthorized)
+	//   }
 	//
-	//if identity.(mappables.InterIdentity).IsProvisioned(message.To) {
-	//	return newTransactionResponse(errors.EntityAlreadyExists)
-	//}
+	//   if identity.(mappables.InterIdentity).IsProvisioned(message.To) {
+	//	 return newTransactionResponse(errors.EntityAlreadyExists)
+	//   }
 	//
-	//if identity.(mappables.InterIdentity).IsUnprovisioned(message.To) {
-	//	return newTransactionResponse(errors.DeletionNotAllowed)
-	//}
+	//   if identity.(mappables.InterIdentity).IsUnprovisioned(message.To) {
+	//	 return newTransactionResponse(errors.DeletionNotAllowed)
+	//   }
 	//
-	//identities.Mutate(identity.(mappables.InterIdentity).ProvisionAddress(message.To))
+	//   identities.Mutate(identity.(mappables.InterIdentity).ProvisionAddress(message.To))
 
 	return newTransactionResponse(nil)
 }
