@@ -59,7 +59,7 @@ var moduleBasicManager = module.NewBasicManager(
 	orders.Prototype(),
 	splits.Prototype(),
 )
-var ModuleAccountPermissions = map[string][]string{
+var moduleAccountPermissions = map[string][]string{
 	auth.FeeCollectorName:     nil,
 	distribution.ModuleName:   nil,
 	mint.ModuleName:           {supply.Minter},
@@ -68,6 +68,6 @@ var ModuleAccountPermissions = map[string][]string{
 	gov.ModuleName:            {supply.Burner},
 	splits.Prototype().Name(): nil,
 }
-var TokenReceiveAllowedModules = map[string]bool{
+var tokenReceiveAllowedModules = map[string]bool{
 	distribution.ModuleName: true,
 }

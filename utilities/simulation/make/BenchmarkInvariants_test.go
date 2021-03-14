@@ -35,7 +35,7 @@ func BenchmarkInvariants(b *testing.B) {
 		}
 	}()
 
-	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, ModuleAccountPermissions, TokenReceiveAllowedModules)
+	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, moduleAccountPermissions, tokenReceiveAllowedModules)
 	simulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), interBlockCacheOpt()).(*base.SimulationApplication)
 
 	// run randomized simulation
