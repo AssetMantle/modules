@@ -34,17 +34,24 @@ func (decData decData) GenerateHashID() types.ID {
 
 	return NewID(meta.Hash(decData.Value.String()))
 }
+func (decData decData) AsAccAddressData() (sdkTypes.AccAddress, error) {
+	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddressData()
+	return zeroValue, errors.IncorrectFormat
+}
 func (decData decData) AsString() (string, error) {
-	return "", errors.EntityNotFound
+	zeroValue, _ := stringData{}.ZeroValue().AsString()
+	return zeroValue, errors.IncorrectFormat
 }
 func (decData decData) AsDec() (sdkTypes.Dec, error) {
 	return decData.Value, nil
 }
 func (decData decData) AsHeight() (types.Height, error) {
-	return height{}, errors.EntityNotFound
+	zeroValue, _ := heightData{}.ZeroValue().AsHeight()
+	return zeroValue, errors.IncorrectFormat
 }
 func (decData decData) AsID() (types.ID, error) {
-	return id{}, errors.EntityNotFound
+	zeroValue, _ := idData{}.ZeroValue().AsID()
+	return zeroValue, errors.IncorrectFormat
 }
 func (decData decData) Get() interface{} {
 	return decData.Value
