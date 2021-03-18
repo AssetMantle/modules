@@ -38,6 +38,10 @@ func (decData decData) AsAccAddressData() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddressData()
 	return zeroValue, errors.IncorrectFormat
 }
+func (decData decData) AsAccAddressListData() ([]sdkTypes.AccAddress, error) {
+	zeroValue, _ := accAddressListData{}.ZeroValue().AsAccAddressListData()
+	return zeroValue, errors.IncorrectFormat
+}
 func (decData decData) AsString() (string, error) {
 	zeroValue, _ := stringData{}.ZeroValue().AsString()
 	return zeroValue, errors.IncorrectFormat

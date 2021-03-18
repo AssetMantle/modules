@@ -19,6 +19,7 @@ type Data interface {
 	GenerateHashID() ID
 
 	AsAccAddressData() (sdkTypes.AccAddress, error)
+	AsAccAddressListData() ([]sdkTypes.AccAddress, error)
 	AsString() (string, error)
 	AsDec() (sdkTypes.Dec, error)
 	AsHeight() (Height, error)

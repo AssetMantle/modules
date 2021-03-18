@@ -40,6 +40,10 @@ func (heightData heightData) AsAccAddressData() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddressData()
 	return zeroValue, errors.IncorrectFormat
 }
+func (heightData heightData) AsAccAddressListData() ([]sdkTypes.AccAddress, error) {
+	zeroValue, _ := accAddressListData{}.ZeroValue().AsAccAddressListData()
+	return zeroValue, errors.IncorrectFormat
+}
 func (heightData heightData) AsString() (string, error) {
 	zeroValue, _ := stringData{}.ZeroValue().AsString()
 	return zeroValue, errors.IncorrectFormat
