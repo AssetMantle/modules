@@ -36,20 +36,27 @@ func (heightData heightData) GenerateHashID() types.ID {
 
 	return NewID(meta.Hash(strconv.FormatInt(heightData.Value.Get(), 10)))
 }
+func (heightData heightData) AsAccAddressData() (sdkTypes.AccAddress, error) {
+	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddressData()
+	return zeroValue, errors.IncorrectFormat
+}
 func (heightData heightData) AsString() (string, error) {
-	return "", errors.EntityNotFound
+	zeroValue, _ := stringData{}.ZeroValue().AsString()
+	return zeroValue, errors.IncorrectFormat
 }
 func (heightData heightData) AsDec() (sdkTypes.Dec, error) {
-	return sdkTypes.Dec{}, errors.EntityNotFound
+	zeroValue, _ := decData{}.ZeroValue().AsDec()
+	return zeroValue, errors.IncorrectFormat
 }
 func (heightData heightData) AsHeight() (types.Height, error) {
 	return heightData.Value, nil
 }
+func (heightData heightData) AsID() (types.ID, error) {
+	zeroValue, _ := idData{}.ZeroValue().AsID()
+	return zeroValue, errors.IncorrectFormat
+}
 func (heightData heightData) Get() interface{} {
 	return heightData.Value
-}
-func (heightData heightData) AsID() (types.ID, error) {
-	return id{}, errors.EntityNotFound
 }
 func (heightData heightData) Equal(data types.Data) bool {
 	compareHeightData, Error := heightDataFromInterface(data)
