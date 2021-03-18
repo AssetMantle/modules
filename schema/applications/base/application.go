@@ -374,8 +374,8 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-
 		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
 	)
 	splitsModule := splits.Prototype().Initialize(
 		application.keys[splits.Prototype().Name()],
