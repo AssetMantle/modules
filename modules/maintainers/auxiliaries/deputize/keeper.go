@@ -86,7 +86,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpe
 			case conform.Auxiliary.GetName():
 				auxiliaryKeeper.conformAuxiliary = value
 			default:
-				panic(errors.UninitializedUsage)
+				break
 			}
 		default:
 			panic(errors.UninitializedUsage)

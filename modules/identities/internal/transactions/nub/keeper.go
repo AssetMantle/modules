@@ -28,24 +28,33 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 
-	immutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(properties.NubID), base.NewMetaFact(base.NewIDData(message.NubID))))))
+	nubIDProperty := base.NewMetaProperty(base.NewID(properties.NubID), base.NewMetaFact(base.NewIDData(message.NubID)))
+
+	immutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(nubIDProperty)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
 
-	classificationID, Error := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(base.NewProperties(base.NewProperty(base.NewID(properties.NubID), base.NewFact(base.NewIDData(base.NewID(""))))), base.NewProperties())))
+	authenticationProperty := base.NewMetaProperty(base.NewID(properties.Authentication), base.NewMetaFact(base.NewAccAddressData(message.From)))
+
+	mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(authenticationProperty)))
+	if Error != nil {
+		return newTransactionResponse(Error)
+	}
+
+	classificationID, Error := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(base.NewProperties(base.NewProperty(base.NewID(properties.NubID), base.NewFact(base.NewIDData(base.NewID(""))))), base.NewProperties(base.NewProperty(base.NewID(properties.Authentication), base.NewFact(base.NewAccAddressData(nil).ZeroValue()))))))
 	if classificationID == nil && Error != nil {
 		return newTransactionResponse(Error)
 	}
 
-	identityID := key.NewIdentityID(classificationID, immutableMetaProperties)
+	identityID := key.NewIdentityID(classificationID, immutableProperties)
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
 	if identities.Get(key.FromID(identityID)) != nil {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	identities.Add(mappable.NewIdentity(identityID, immutableMetaProperties, base.NewProperties()))
+	identities.Add(mappable.NewIdentity(identityID, immutableProperties, mutableProperties))
 
 	return newTransactionResponse(nil)
 }

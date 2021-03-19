@@ -13,6 +13,7 @@ import (
 const moduleName = "types"
 
 func RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, accAddressData{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, decData{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, fact{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, height{})
