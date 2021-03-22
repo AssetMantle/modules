@@ -13,6 +13,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -38,12 +39,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(Error)
 	}
 
-	accAddress, Error := metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().AsAccAddressListData()
-	if Error != nil {
-		return newAuxiliaryResponse(Error)
+	accAddressListData, ok := metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().(types.ListData)
+	if !ok {
+		panic(errors.IncorrectFormat)
 	}
 
-	if !accAddress[0].Equals(auxiliaryRequest.Address) {
+	if !accAddressListData.IsPresent(base.NewAccAddressData(auxiliaryRequest.Address)) {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
 
