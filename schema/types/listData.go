@@ -11,5 +11,5 @@ type ListData interface {
 	Add(...Data) ListData
 	Remove(...Data) ListData
 
-	IsPresent(...Data) bool
+	IsPresent(Data) bool
 }
