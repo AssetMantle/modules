@@ -38,12 +38,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(Error)
 	}
 
-	accAddress, Error := metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().AsAccAddressData()
+	accAddress, Error := metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().AsAccAddressListData()
 	if Error != nil {
 		return newAuxiliaryResponse(Error)
 	}
 
-	if !accAddress.Equals(auxiliaryRequest.Address) {
+	if !accAddress[0].Equals(auxiliaryRequest.Address) {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
 
