@@ -20,7 +20,7 @@ type accAddressListData struct {
 	Value []sdkTypes.AccAddress `json:"value"`
 }
 
-var _ types.Data = (*accAddressListData)(nil)
+var _ types.ListData = (*accAddressListData)(nil)
 
 func (accAddressListData accAddressListData) String() string {
 	accAddressDataStringList := make([]string, len(accAddressListData.Value))
@@ -83,6 +83,18 @@ func (accAddressListData accAddressListData) Equal(data types.Data) bool {
 	}
 
 	return accAddressListData.GenerateHashID().Equals(compareAccAddressListData.GenerateHashID())
+}
+func (accAddressListData accAddressListData) Add(data ...types.Data) types.ListData {
+	//if data.GetTypeID().Equals(accAddressData{}.GetTypeID()) {
+	//
+	//}
+	return nil
+}
+func (accAddressListData accAddressListData) Remove(data ...types.Data) types.ListData {
+	panic("implement me")
+}
+func (accAddressListData accAddressListData) IsPresent(data ...types.Data) bool {
+	panic("implement me")
 }
 func accAddressListDataFromInterface(data types.Data) (accAddressListData, error) {
 	switch value := data.(type) {
