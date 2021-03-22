@@ -31,12 +31,12 @@ func (idData idData) GetTypeID() types.ID {
 func (idData idData) GenerateHashID() types.ID {
 	return NewID(meta.Hash(idData.Value.String()))
 }
-func (idData idData) AsAccAddressData() (sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddressData()
+func (idData idData) AsAccAddress() (sdkTypes.AccAddress, error) {
+	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
 	return zeroValue, errors.EntityNotFound
 }
-func (idData idData) AsAccAddressListData() ([]sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressListData{}.ZeroValue().AsAccAddressListData()
+func (idData idData) AsAccAddressList() ([]sdkTypes.AccAddress, error) {
+	zeroValue, _ := accAddressListData{}.ZeroValue().AsAccAddressList()
 	return zeroValue, errors.IncorrectFormat
 }
 func (idData idData) AsString() (string, error) {

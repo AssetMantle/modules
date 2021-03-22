@@ -34,11 +34,11 @@ func (accAddressData accAddressData) GenerateHashID() types.ID {
 
 	return NewID(meta.Hash(accAddressData.Value.String()))
 }
-func (accAddressData accAddressData) AsAccAddressData() (sdkTypes.AccAddress, error) {
+func (accAddressData accAddressData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	return accAddressData.Value, nil
 }
-func (accAddressData accAddressData) AsAccAddressListData() ([]sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressListData{}.ZeroValue().AsAccAddressListData()
+func (accAddressData accAddressData) AsAccAddressList() ([]sdkTypes.AccAddress, error) {
+	zeroValue, _ := accAddressListData{}.ZeroValue().AsAccAddressList()
 	return zeroValue, errors.IncorrectFormat
 }
 func (accAddressData accAddressData) AsString() (string, error) {

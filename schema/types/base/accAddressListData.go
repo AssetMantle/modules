@@ -6,6 +6,7 @@
 package base
 
 import (
+	"bytes"
 	"sort"
 	"strings"
 
@@ -17,7 +18,7 @@ import (
 )
 
 type accAddressListData struct {
-	Value []sdkTypes.AccAddress `json:"value"`
+	Value accAddresses `json:"value"`
 }
 
 var _ types.ListData = (*accAddressListData)(nil)
@@ -28,8 +29,6 @@ func (accAddressListData accAddressListData) String() string {
 	for i, accAddress := range accAddressListData.Value {
 		accAddressDataStringList[i] = accAddress.String()
 	}
-
-	sort.Strings(accAddressDataStringList)
 
 	return strings.Join(accAddressDataStringList, constants.ListDataStringSeparator)
 }
@@ -46,11 +45,11 @@ func (accAddressListData accAddressListData) GenerateHashID() types.ID {
 
 	return NewID(meta.Hash(accAddressListData.String()))
 }
-func (accAddressListData accAddressListData) AsAccAddressData() (sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddressData()
+func (accAddressListData accAddressListData) AsAccAddress() (sdkTypes.AccAddress, error) {
+	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
 	return zeroValue, errors.IncorrectFormat
 }
-func (accAddressListData accAddressListData) AsAccAddressListData() ([]sdkTypes.AccAddress, error) {
+func (accAddressListData accAddressListData) AsAccAddressList() ([]sdkTypes.AccAddress, error) {
 	return accAddressListData.Value, nil
 }
 func (accAddressListData accAddressListData) AsString() (string, error) {
@@ -84,17 +83,68 @@ func (accAddressListData accAddressListData) Equal(data types.Data) bool {
 
 	return accAddressListData.GenerateHashID().Equals(compareAccAddressListData.GenerateHashID())
 }
-func (accAddressListData accAddressListData) Add(data ...types.Data) types.ListData {
-	//if data.GetTypeID().Equals(accAddressData{}.GetTypeID()) {
-	//
-	//}
-	return nil
+func (accAddressListData accAddressListData) Add(dataList ...types.Data) types.ListData {
+	for _, data := range dataList {
+		accAddressData, Error := accAddressDataFromInterface(data)
+		if Error != nil {
+			panic(Error)
+		}
+
+		if accAddressListData.IsPresent(accAddressData) {
+			continue
+		}
+
+		index := sort.Search(
+			accAddressListData.Value.Len(),
+			func(i int) bool {
+				return bytes.Compare(accAddressListData.Value[i].Bytes(), accAddressData.Value.Bytes()) < 0
+			},
+		)
+
+		accAddressListData.Value = append(accAddressListData.Value, sdkTypes.AccAddress{})
+		copy(accAddressListData.Value[index+1:], accAddressListData.Value[index:])
+		accAddressListData.Value[index] = accAddressData.Value
+	}
+
+	return accAddressListData
 }
-func (accAddressListData accAddressListData) Remove(data ...types.Data) types.ListData {
-	panic("implement me")
+func (accAddressListData accAddressListData) Remove(dataList ...types.Data) types.ListData {
+	for _, data := range dataList {
+		accAddressData, Error := accAddressDataFromInterface(data)
+		if Error != nil {
+			panic(Error)
+		}
+
+		index := sort.Search(
+			accAddressListData.Value.Len(),
+			func(i int) bool {
+				return bytes.Equal(accAddressListData.Value[i].Bytes(), accAddressData.Value.Bytes())
+			},
+		)
+
+		if index == accAddressListData.Value.Len() {
+			continue
+		}
+
+		accAddressListData.Value = append(accAddressListData.Value[:index], accAddressListData.Value[index+1:]...)
+	}
+
+	return accAddressListData
 }
-func (accAddressListData accAddressListData) IsPresent(data ...types.Data) bool {
-	panic("implement me")
+func (accAddressListData accAddressListData) IsPresent(data types.Data) bool {
+	accAddressData, Error := accAddressDataFromInterface(data)
+	if Error != nil {
+		panic(Error)
+	}
+
+	index := sort.Search(
+		accAddressListData.Value.Len(),
+		func(i int) bool {
+			return bytes.Equal(accAddressListData.Value[i].Bytes(), accAddressData.Value.Bytes())
+		},
+	)
+
+	return index != accAddressListData.Value.Len()
 }
 func accAddressListDataFromInterface(data types.Data) (accAddressListData, error) {
 	switch value := data.(type) {
@@ -106,6 +156,8 @@ func accAddressListDataFromInterface(data types.Data) (accAddressListData, error
 }
 
 func NewAccAddressListData(value ...sdkTypes.AccAddress) types.Data {
+	sort.Sort(accAddresses(value))
+
 	return accAddressListData{
 		Value: value,
 	}
@@ -127,6 +179,8 @@ func ReadAccAddressListData(dataString string) (types.Data, error) {
 
 		accAddressList[i] = accAddress
 	}
+
+	sort.Sort(accAddresses(accAddressList))
 
 	return NewAccAddressListData(accAddressList...), nil
 }

@@ -34,12 +34,12 @@ func (decData decData) GenerateHashID() types.ID {
 
 	return NewID(meta.Hash(decData.Value.String()))
 }
-func (decData decData) AsAccAddressData() (sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddressData()
+func (decData decData) AsAccAddress() (sdkTypes.AccAddress, error) {
+	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
 	return zeroValue, errors.IncorrectFormat
 }
-func (decData decData) AsAccAddressListData() ([]sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressListData{}.ZeroValue().AsAccAddressListData()
+func (decData decData) AsAccAddressList() ([]sdkTypes.AccAddress, error) {
+	zeroValue, _ := accAddressListData{}.ZeroValue().AsAccAddressList()
 	return zeroValue, errors.IncorrectFormat
 }
 func (decData decData) AsString() (string, error) {

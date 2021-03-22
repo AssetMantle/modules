@@ -36,12 +36,12 @@ func (heightData heightData) GenerateHashID() types.ID {
 
 	return NewID(meta.Hash(strconv.FormatInt(heightData.Value.Get(), 10)))
 }
-func (heightData heightData) AsAccAddressData() (sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddressData()
+func (heightData heightData) AsAccAddress() (sdkTypes.AccAddress, error) {
+	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
 	return zeroValue, errors.IncorrectFormat
 }
-func (heightData heightData) AsAccAddressListData() ([]sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressListData{}.ZeroValue().AsAccAddressListData()
+func (heightData heightData) AsAccAddressList() ([]sdkTypes.AccAddress, error) {
+	zeroValue, _ := accAddressListData{}.ZeroValue().AsAccAddressList()
 	return zeroValue, errors.IncorrectFormat
 }
 func (heightData heightData) AsString() (string, error) {
