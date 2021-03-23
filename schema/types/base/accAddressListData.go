@@ -6,8 +6,6 @@
 package base
 
 import (
-	"bytes"
-	"sort"
 	"strings"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -18,7 +16,7 @@ import (
 )
 
 type accAddressListData struct {
-	Value accAddresses `json:"value"`
+	Value sortedAccAddresses `json:"value"`
 }
 
 var _ types.ListData = (*accAddressListData)(nil)
@@ -90,20 +88,7 @@ func (accAddressListData accAddressListData) Add(dataList ...types.Data) types.L
 			panic(Error)
 		}
 
-		if accAddressListData.IsPresent(accAddressData) {
-			continue
-		}
-
-		index := sort.Search(
-			accAddressListData.Value.Len(),
-			func(i int) bool {
-				return bytes.Compare(accAddressListData.Value[i].Bytes(), accAddressData.Value.Bytes()) < 0
-			},
-		)
-
-		accAddressListData.Value = append(accAddressListData.Value, sdkTypes.AccAddress{})
-		copy(accAddressListData.Value[index+1:], accAddressListData.Value[index:])
-		accAddressListData.Value[index] = accAddressData.Value
+		accAddressListData.Value = accAddressListData.Value.Insert(accAddressData.Value).(sortedAccAddresses)
 	}
 
 	return accAddressListData
@@ -115,18 +100,7 @@ func (accAddressListData accAddressListData) Remove(dataList ...types.Data) type
 			panic(Error)
 		}
 
-		index := sort.Search(
-			accAddressListData.Value.Len(),
-			func(i int) bool {
-				return bytes.Equal(accAddressListData.Value[i].Bytes(), accAddressData.Value.Bytes())
-			},
-		)
-
-		if index == accAddressListData.Value.Len() {
-			continue
-		}
-
-		accAddressListData.Value = append(accAddressListData.Value[:index], accAddressListData.Value[index+1:]...)
+		accAddressListData.Value = accAddressListData.Value.Delete(accAddressData.Value).(sortedAccAddresses)
 	}
 
 	return accAddressListData
@@ -137,14 +111,7 @@ func (accAddressListData accAddressListData) IsPresent(data types.Data) bool {
 		panic(Error)
 	}
 
-	index := sort.Search(
-		accAddressListData.Value.Len(),
-		func(i int) bool {
-			return bytes.Equal(accAddressListData.Value[i].Bytes(), accAddressData.Value.Bytes())
-		},
-	)
-
-	return index != accAddressListData.Value.Len()
+	return accAddressListData.Value.Search(accAddressData.Value) != accAddressListData.Value.Len()
 }
 func accAddressListDataFromInterface(data types.Data) (accAddressListData, error) {
 	switch value := data.(type) {
@@ -156,10 +123,8 @@ func accAddressListDataFromInterface(data types.Data) (accAddressListData, error
 }
 
 func NewAccAddressListData(value ...sdkTypes.AccAddress) types.Data {
-	sort.Sort(accAddresses(value))
-
 	return accAddressListData{
-		Value: value,
+		Value: sortedAccAddresses(value).Sort().(sortedAccAddresses),
 	}
 }
 
@@ -179,8 +144,6 @@ func ReadAccAddressListData(dataString string) (types.Data, error) {
 
 		accAddressList[i] = accAddress
 	}
-
-	sort.Sort(accAddresses(accAddressList))
 
 	return NewAccAddressListData(accAddressList...), nil
 }
