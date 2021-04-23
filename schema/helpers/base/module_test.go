@@ -114,7 +114,7 @@ func TestModule(t *testing.T) {
 
 	require.Equal(t, Module.DefaultGenesis(), Module.ExportGenesis(context))
 	// AppModuleSimulation
-	require.NotPanics(t, func() {
+	require.Panics(t, func() {
 		Module.GenerateGenesisState(&sdkModule.SimulationState{})
 		Module.ProposalContents(sdkModule.SimulationState{})
 		Module.RandomizedParams(&rand.Rand{})
