@@ -102,33 +102,42 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
-		if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, assetID)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
+		require.Panics(t, func() {
+			if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, assetID)); !reflect.DeepEqual(got, want) {
+				t.Errorf("Transact() = %v, want %v", got, want)
+			}
+		})
 	})
 
 	t.Run("NegativeCase - verify identity mock error", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(test.MockError)
-		if got := keepers.AssetsKeeper.Transact(ctx, newMessage(verifyMockErrorAddress, defaultIdentityID, assetID)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
+		require.NotPanics(t, func() {
+			if got := keepers.AssetsKeeper.Transact(ctx, newMessage(verifyMockErrorAddress, defaultIdentityID, assetID)); !reflect.DeepEqual(got, want) {
+				t.Errorf("Transact() = %v, want %v", got, want)
+			}
+		})
 	})
 
 	t.Run("NegativeCase - unMinted asset", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.EntityNotFound)
-		if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, base.NewID(""))); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
+		require.NotPanics(t, func() {
+			if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, base.NewID(""))); !reflect.DeepEqual(got, want) {
+				t.Errorf("Transact() = %v, want %v", got, want)
+			}
+		})
 	})
 
 	t.Run("NegativeCase - supplement mock error", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(test.MockError)
-		if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, assetID2)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
+		require.Panics(t, func() {
+			if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, assetID2)); !reflect.DeepEqual(got, want) {
+				t.Errorf("Transact() = %v, want %v", got, want)
+			}
+		})
 	})
+
 
 }
