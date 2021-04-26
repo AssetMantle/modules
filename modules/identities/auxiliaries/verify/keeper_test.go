@@ -84,9 +84,11 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
-		if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(defaultAddr, defaultIdentityID)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
+		require.Panics(t, func() {
+			if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(defaultAddr, defaultIdentityID)); !reflect.DeepEqual(got, want) {
+				t.Errorf("Transact() = %v, want %v", got, want)
+			}
+		})
 	})
 
 	t.Run("NegativeCase-Nil Identity", func(t *testing.T) {
@@ -100,9 +102,11 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Unprovisioned Address", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
-		if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(unprovisionedAddr, defaultIdentityID)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
+		require.Panics(t, func() {
+			if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(unprovisionedAddr, defaultIdentityID)); !reflect.DeepEqual(got, want) {
+				t.Errorf("Transact() = %v, want %v", got, want)
+			}
+		})
 	})
 
 }

@@ -84,17 +84,21 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
-		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(base.NewID("identityID1"), base.NewID("identityID2"), base.NewID("classificationID1"), base.NewProperties(), false, false, false)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
+		require.Panics(t, func() {
+			if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(base.NewID("identityID"), base.NewID("identityID"), base.NewID("classificationID"), base.NewProperties(), false, false, false)); !reflect.DeepEqual(got, want) {
+				t.Errorf("Transact() = %v, want %v", got, want)
+			}
+		})
 	})
 
 	t.Run("NegativeCase-Maintainer not present", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.EntityAlreadyExists)
-		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(identityID, identityID, classificationID, maintainedProperties, false, false, false)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
+		require.Panics(t, func() {
+			if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(identityID, identityID, classificationID, maintainedProperties, false, false, false)); !reflect.DeepEqual(got, want) {
+				t.Errorf("Transact() = %v, want %v", got, want)
+			}
+		})
 	})
 
 }
