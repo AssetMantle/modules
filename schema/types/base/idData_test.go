@@ -27,7 +27,7 @@ func Test_IDData(t *testing.T) {
 
 	dataAsString, Error := testIDData.AsString()
 	require.Equal(t, "", dataAsString)
-	require.Equal(t, errors.EntityNotFound, Error)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
 	dataAsID, Error := testIDData.AsID()
 	require.Equal(t, idValue, dataAsID)
@@ -35,11 +35,11 @@ func Test_IDData(t *testing.T) {
 
 	dataAsHeight, Error := testIDData.AsHeight()
 	require.Equal(t, height{}, dataAsHeight)
-	require.Equal(t, errors.EntityNotFound, Error)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
 	dataAsDec, Error := testIDData.AsDec()
-	require.Equal(t, sdkTypes.Dec{}, dataAsDec)
-	require.Equal(t, errors.EntityNotFound, Error)
+	require.Equal(t, sdkTypes.ZeroDec(), dataAsDec)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
 	require.Equal(t, idValue, testIDData.Get())
 
