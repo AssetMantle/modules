@@ -18,6 +18,8 @@ func Test_Super_Response(t *testing.T) {
 
 	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewMetaFact(base.NewStringData("Data")))
 	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty}...)
+	property := base.NewProperty(base.NewID("id"),base.NewFact(base.NewStringData("Data")))
+	propertyList := base.NewProperties([]types.Property{property}...)
 
 	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList.RemoveData(), nil)
 	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, Properties: metaPropertyList.RemoveData()}, testAuxiliaryResponse)
@@ -30,7 +32,7 @@ func Test_Super_Response(t *testing.T) {
 	require.Equal(t, errors.IncorrectFormat, testAuxiliaryResponse2.GetError())
 
 	propertiesFromResponse, Error := GetPropertiesFromResponse(testAuxiliaryResponse)
-	require.Equal(t, metaPropertyList, propertiesFromResponse)
+	require.Equal(t, propertyList, propertiesFromResponse)
 	require.Equal(t, nil, Error)
 
 	propertiesFromResponse2, Error := GetPropertiesFromResponse(testAuxiliaryResponse2)
