@@ -31,15 +31,15 @@ func Test_MetaProperties(t *testing.T) {
 	newMetaProperty := NewMetaProperty(NewID("ID"), NewMetaFact(NewDecData(sdkTypes.NewDec(12))))
 	require.Equal(t, metaProperties{MetaPropertyList: []types.MetaProperty{newMetaProperty}}, testMetaProperties.Mutate(newMetaProperty))
 
-	require.Equal(t, testMetaProperty.RemoveData(), testMetaProperties.Get(NewID("ID")))
-	require.Equal(t, []types.Property{testMetaProperty.RemoveData()}, testMetaProperties.GetList())
+	require.Equal(t, testMetaProperty, newTestMetaProperties.Get(NewID("ID")))
+	require.Equal(t, []types.MetaProperty{testMetaProperty}, newTestMetaProperties.Remove(testMetaProperty2).GetList())
 
 	newProperty := NewMetaProperty(NewID("ID3"), NewMetaFact(NewStringData("Data3")))
 	newTestMetaProperties2 := testMetaProperties.Add(newProperty)
 	propertyMutated := NewMetaProperty(NewID("ID"), NewMetaFact(NewDecData(sdkTypes.NewDec(34))))
-	require.Equal(t, properties{PropertyList: []types.Property{testMetaProperty.RemoveData(), newProperty.RemoveData()}}, newTestMetaProperties2)
-	require.Equal(t, properties{PropertyList: []types.Property{testMetaProperty2.RemoveData()}}, newTestMetaProperties.Remove(testMetaProperty))
-	require.Equal(t, properties{PropertyList: []types.Property{propertyMutated.RemoveData(), testMetaProperty2.RemoveData()}}, newTestMetaProperties.Mutate(propertyMutated))
-	require.Equal(t, properties{PropertyList: []types.Property{testMetaProperty.RemoveData(), testMetaProperty2.RemoveData()}}, newTestMetaProperties.RemoveData())
+	require.Equal(t, properties{PropertyList: []types.Property{newMetaProperty.RemoveData(), newProperty.RemoveData()}}, newTestMetaProperties2.RemoveData())
+	require.Equal(t, properties{PropertyList: []types.Property{testMetaProperty2.RemoveData()}}, newTestMetaProperties.Remove(testMetaProperty).RemoveData())
+	require.Equal(t, properties{PropertyList: []types.Property{propertyMutated.RemoveData(), newProperty.RemoveData()}}, newTestMetaProperties2.Mutate(propertyMutated).RemoveData())
+	require.Equal(t, properties{PropertyList: []types.Property{testMetaProperty2.RemoveData()}}, newTestMetaProperties.Remove(testMetaProperty2).RemoveData())
 
 }
