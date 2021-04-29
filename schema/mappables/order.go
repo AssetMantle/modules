@@ -17,8 +17,8 @@ type Order interface {
 	GetTakerOwnableID() types.ID
 	GetMakerID() types.ID
 
-	GetCreation() types.MetaProperty
-	GetExchangeRate() types.MetaProperty
+	GetCreation() types.Property
+	GetExchangeRate() types.Property
 
 	GetTakerID() types.Property
 	GetExpiry() types.Property

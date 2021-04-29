@@ -6,10 +6,7 @@
 package mappable
 
 import (
-	"strconv"
-
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
@@ -51,21 +48,25 @@ func (order order) GetTakerOwnableID() types.ID {
 func (order order) GetMakerID() types.ID {
 	return key.ReadMakerID(order.ID)
 }
-func (order order) GetCreation() types.MetaProperty {
-	heightValue, Error := strconv.ParseInt(key.ReadCreationID(order.ID).String(), 10, 64)
-	if Error != nil {
-		return base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewHeightData(base.NewHeight(0))))
+func (order order) GetCreation() types.Property {
+	if creationID := order.HasImmutables.GetImmutableProperties().Get(base.NewID(properties.Creation)); creationID != nil {
+		return creationID
+	} else if creationID := order.HasMutables.GetMutableProperties().Get(base.NewID(properties.Creation)); creationID != nil {
+		return creationID
+	} else {
+		data, _ := base.ReadHeightData("")
+		return base.NewProperty(base.NewID(properties.Creation), base.NewFact(data))
 	}
-
-	return base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewHeightData(base.NewHeight(heightValue))))
 }
-func (order order) GetExchangeRate() types.MetaProperty {
-	decValue, Error := sdkTypes.NewDecFromStr(key.ReadRateID(order.ID).String())
-	if Error != nil {
-		return base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewDecData(sdkTypes.ZeroDec())))
+func (order order) GetExchangeRate() types.Property {
+	if rateID := order.HasImmutables.GetImmutableProperties().Get(base.NewID(properties.ExchangeRate)); rateID != nil {
+		return rateID
+	} else if rateID := order.HasMutables.GetMutableProperties().Get(base.NewID(properties.ExchangeRate)); rateID != nil {
+		return rateID
+	} else {
+		data, _ := base.ReadIDData("")
+		return base.NewProperty(base.NewID(properties.ExchangeRate), base.NewFact(data))
 	}
-
-	return base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewDecData(decValue)))
 }
 func (order order) GetTakerID() types.Property {
 	if takerID := order.HasImmutables.GetImmutableProperties().Get(base.NewID(properties.TakerID)); takerID != nil {
@@ -83,7 +84,9 @@ func (order order) GetExpiry() types.Property {
 	} else if property := order.HasMutables.GetMutableProperties().Get(base.NewID(properties.Expiry)); property != nil {
 		return property
 	} else {
-		return base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
+		data, _ := base.ReadHeightData("")
+
+		return base.NewProperty(base.NewID(properties.Expiry), base.NewFact(data))
 	}
 }
 func (order order) GetMakerOwnableSplit() types.Property {

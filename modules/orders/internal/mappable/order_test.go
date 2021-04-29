@@ -26,8 +26,8 @@ func Test_Order_Methods(t *testing.T) {
 	creationID := base.NewID("100")
 
 	takerIDImmutableProperty := base.NewProperty(base.NewID(properties.TakerID), base.NewFact(base.NewStringData("takerIDImmutableProperty")))
-	exchangeRateImmutableProperty := base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewStringData("exchangeRateImmutableProperty")))
-	creationImmutableProperty := base.NewMetaProperty(base.NewID(properties.Creation), base.NewMetaFact(base.NewStringData("creationImmutableProperty")))
+	exchangeRateImmutableProperty := base.NewProperty(base.NewID(properties.ExchangeRate), base.NewFact(base.NewStringData("exchangeRateImmutableProperty")))
+	creationImmutableProperty := base.NewProperty(base.NewID(properties.Creation), base.NewFact(base.NewStringData("creationImmutableProperty")))
 	expiryImmutableProperty := base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewStringData("expiryImmutableProperty")))
 	makerOwnableSplitImmutableProperty := base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(base.NewStringData("makerOwnableSplitImmutableProperty")))
 
@@ -37,7 +37,7 @@ func Test_Order_Methods(t *testing.T) {
 	expiryMutableProperty := base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewStringData("expiryMutableProperty")))
 	makerOwnableSplitMutableProperty := base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(base.NewStringData("makerOwnableSplitMutableProperty")))
 
-	immutableProperties := base.NewProperties(takerIDImmutableProperty, exchangeRateImmutableProperty.RemoveData(), creationImmutableProperty.RemoveData(), expiryImmutableProperty, makerOwnableSplitImmutableProperty)
+	immutableProperties := base.NewProperties(takerIDImmutableProperty, exchangeRateImmutableProperty, creationImmutableProperty, expiryImmutableProperty, makerOwnableSplitImmutableProperty)
 	mutableProperties := base.NewProperties(takerIDMutableProperty, exchangeRateMutableProperty, creationMutableProperty, expiryMutableProperty, makerOwnableSplitMutableProperty)
 	testOrderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, makerID, immutableProperties)
 	testOrder := NewOrder(testOrderID, immutableProperties, base.NewProperties()).(order)
@@ -46,7 +46,7 @@ func Test_Order_Methods(t *testing.T) {
 
 	data, _ := base.ReadIDData("")
 	defaultTakerProperty := base.NewProperty(base.NewID(properties.TakerID), base.NewFact(data))
-	defaultExchangeRateProperty := base.NewProperty(base.NewID(properties.ExchangeRate), base.NewFact(base.NewDecData(sdkTypes.OneDec())))
+	defaultExchangeRateProperty := base.NewProperty(base.NewID(properties.ExchangeRate), base.NewFact(data))
 	data, _ = base.ReadHeightData("")
 	defaultCreationProperty := base.NewProperty(base.NewID(properties.Creation), base.NewFact(data))
 	defaultExpiryProperty := base.NewProperty(base.NewID(properties.Expiry), base.NewFact(data))
