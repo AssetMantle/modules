@@ -27,7 +27,7 @@ func Test_DecData(t *testing.T) {
 
 	dataAsString, Error := testDecData.AsString()
 	require.Equal(t, "", dataAsString)
-	require.Equal(t, errors.EntityNotFound, Error)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
 	dataAsDec, Error := testDecData.AsDec()
 	require.Equal(t, decValue, dataAsDec)
@@ -35,12 +35,11 @@ func Test_DecData(t *testing.T) {
 
 	dataAsHeight, Error := testDecData.AsHeight()
 	require.Equal(t, height{}, dataAsHeight)
-	require.Equal(t, errors.EntityNotFound, Error)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
 	dataAsID, Error := testDecData.AsID()
 	require.Equal(t, id{}, dataAsID)
-	require.Equal(t, errors.EntityNotFound, Error)
-
+	require.Equal(t, errors.IncorrectFormat, Error)
 	require.Equal(t, decValue, testDecData.Get())
 
 	data, Error := ReadDecData("")

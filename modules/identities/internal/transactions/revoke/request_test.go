@@ -69,8 +69,8 @@ func Test_Revoke_Request(t *testing.T) {
 	require.Nil(t, msg2)
 
 	msg2, Error = newTransactionRequest(testBaseReq, "fromID", "toID", "classificationID").MakeMsg()
-	require.NotNil(t, Error)
-	require.Nil(t, msg2)
+	require.Nil(t, Error)
+	require.NotNil(t, msg2)
 
 	require.Equal(t, transactionRequest{}, requestPrototype())
 	require.NotPanics(t, func() {

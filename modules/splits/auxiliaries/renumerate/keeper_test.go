@@ -105,7 +105,7 @@ func Test_Burn_Aux_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Nil Value", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.EntityNotFound)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(base.NewID("negativeTestOwner"), base.NewID("negativeTestOwnable"), sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(base.NewID("negativeTestOwner"), base.NewID("negativeTestOwnable"), sdkTypes.NewDec(-1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

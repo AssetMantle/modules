@@ -27,6 +27,6 @@ func Test_Identity_Methods(t *testing.T) {
 	require.Equal(t, testIdentity, identity{ID: testIdentityID, HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties}, HasMutables: baseTraits.HasMutables{Properties: mutableProperties}})
 	require.Equal(t, testIdentity.(identity).GetID(), testIdentityID)
 	require.Equal(t, testIdentity.GetImmutableProperties(), immutableProperties)
-	require.Equal(t, testIdentity.GetImmutableProperties(), mutableProperties)
+	require.Equal(t, testIdentity.GetMutableProperties(), mutableProperties)
 	require.Equal(t, testIdentity.GetKey(), testIdentityID)
 }

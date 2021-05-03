@@ -150,7 +150,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase-Send More than own Balance", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.InsufficientBalance)
-		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, fromID, ownableID, sdkTypes.NewInt(10000))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, fromID, ownableID, sdkTypes.NewInt(790))); !reflect.DeepEqual(got.IsSuccessful(), want.IsSuccessful()) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

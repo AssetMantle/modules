@@ -37,10 +37,12 @@ func Test_Split_Request(t *testing.T) {
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.SplitID})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
-	require.Equal(t, newQueryRequest(base.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
+	require.Panics(t, func() {
+		require.Equal(t, newQueryRequest(base.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
+	})
 
 	vars := make(map[string]string)
-	vars["splits"] = "randomString"
+	vars["ownables"] = "randomString"
 	require.Equal(t, newQueryRequest(base.NewID("randomString")), queryRequest{}.FromMap(vars))
 
 	encodedRequest, Error := testQueryRequest.Encode()

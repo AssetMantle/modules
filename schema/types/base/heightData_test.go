@@ -27,19 +27,19 @@ func Test_HeightData(t *testing.T) {
 
 	dataAsString, Error := testHeightData.AsString()
 	require.Equal(t, "", dataAsString)
-	require.Equal(t, errors.EntityNotFound, Error)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
 	dataAsHeight, Error := testHeightData.AsHeight()
 	require.Equal(t, heightValue, dataAsHeight)
 	require.Equal(t, nil, Error)
 
 	dataAsDec, Error := testHeightData.AsDec()
-	require.Equal(t, sdkTypes.Dec{}, dataAsDec)
-	require.Equal(t, errors.EntityNotFound, Error)
+	require.Equal(t, sdkTypes.ZeroDec(), dataAsDec)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
 	dataAsID, Error := testHeightData.AsID()
 	require.Equal(t, id{}, dataAsID)
-	require.Equal(t, errors.EntityNotFound, Error)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
 	require.Equal(t, heightValue, testHeightData.Get())
 
