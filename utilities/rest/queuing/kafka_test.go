@@ -56,16 +56,19 @@ func Test_Kafka(t *testing.T) {
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test"}
 	ticketID := TicketIDGenerator("ticket")
 	kafkaPorts := []string{"localhost:9092"}
-	testKafkaState := NewKafkaState(kafkaPorts)
-	bank.RegisterCodec(Codec)
-	message := bank.NewMsgSend(fromAccAddress, fromAccAddress, sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(123))))
-	cliContext := context.NewCLIContext().WithCodec(Codec)
+	require.Panics(t, func() {
+		testKafkaState := NewKafkaState(kafkaPorts)
+		bank.RegisterCodec(Codec)
+		message := bank.NewMsgSend(fromAccAddress, fromAccAddress, sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(123))))
+		cliContext := context.NewCLIContext().WithCodec(Codec)
 
-	testKafkaMsg := NewKafkaMsgFromRest(message, ticketID, testBaseReq, cliContext)
-	SendToKafka(testKafkaMsg, testKafkaState, Codec)
+		testKafkaMsg := NewKafkaMsgFromRest(message, ticketID, testBaseReq, cliContext)
+		SendToKafka(testKafkaMsg, testKafkaState, Codec)
 
-	kafkaMsg := KafkaTopicConsumer("Topic", testKafkaState.Consumers, Codec)
-	require.Equal(t, testKafkaMsg.TicketID, kafkaMsg.TicketID)
-	require.Equal(t, testKafkaMsg.BaseRequest, kafkaMsg.BaseRequest)
+		kafkaMsg := KafkaTopicConsumer("Topic", testKafkaState.Consumers, Codec)
+		require.Equal(t, testKafkaMsg.TicketID, kafkaMsg.TicketID)
+		require.Equal(t, testKafkaMsg.BaseRequest, kafkaMsg.BaseRequest)
+	})
+
 
 }

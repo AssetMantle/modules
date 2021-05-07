@@ -121,6 +121,6 @@ func TestHandler(t *testing.T) {
 	responseRecorder = httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest5)
 	require.Equal(t, http.StatusInternalServerError, responseRecorder.Code)
-	require.Equal(t, `{"error":"Account for keyName testKey1 already exists"}`, responseRecorder.Body.String())
+	require.Equal(t, `{"error":"Account for keyname testKey1 already exists"}`, responseRecorder.Body.String())
 
 }
