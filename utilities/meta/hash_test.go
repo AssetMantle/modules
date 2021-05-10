@@ -22,7 +22,7 @@ func TestHash(t *testing.T) {
 		panic(Error)
 	}
 
-	require.Equal(t, Hash(""),"")
+	require.Equal(t, Hash(""), "")
 	require.Equal(t, Hash("123"), base64.URLEncoding.EncodeToString(hash.Sum(nil)))
 
 }

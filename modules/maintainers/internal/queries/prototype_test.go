@@ -9,7 +9,7 @@ import (
 
 func TestPrototype(t *testing.T) {
 	require.Panics(t, func() {
-		require.Equal(t, Prototype().Get("maintainer").GetName(),base.NewQueries(
+		require.Equal(t, Prototype().Get("maintainer").GetName(), base.NewQueries(
 			maintainer.Query,
 		).Get("maintainer").GetName())
 	})

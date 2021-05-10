@@ -5,7 +5,6 @@ import (
 	"testing"
 )
 
-
 func TestRegisterCodec(t *testing.T) {
 	require.Panics(t, func() {
 		require.Equal(t, RegisterCodec(nil), nil)

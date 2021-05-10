@@ -12,5 +12,5 @@ func TestPrototype(t *testing.T) {
 	require.Equal(t, base.NewAuxiliaries(
 		conform.Auxiliary,
 		define.Auxiliary,
-	).Get(""),Prototype().Get(""))
+	).Get(""), Prototype().Get(""))
 }

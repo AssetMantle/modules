@@ -14,7 +14,7 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	want  := base.NewTransactions(burn.Transaction,
+	want := base.NewTransactions(burn.Transaction,
 		define.Transaction,
 		deputize.Transaction,
 		mint.Transaction,
@@ -23,6 +23,5 @@ func TestPrototype(t *testing.T) {
 		revoke.Transaction)
 
 	require.Equal(t, Prototype().Get(""), want.Get(""))
-
 
 }

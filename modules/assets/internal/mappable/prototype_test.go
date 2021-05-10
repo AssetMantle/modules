@@ -6,5 +6,5 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype(),asset{})
+	require.Equal(t, Prototype(), asset{})
 }

@@ -8,7 +8,7 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("verify").GetName(),base.NewAuxiliaries(
+	require.Equal(t, Prototype().Get("verify").GetName(), base.NewAuxiliaries(
 		verify.Auxiliary,
 	).Get("verify").GetName())
 }

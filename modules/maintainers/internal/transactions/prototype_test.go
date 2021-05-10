@@ -7,5 +7,5 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype(),base.NewTransactions())
+	require.Equal(t, Prototype(), base.NewTransactions())
 }

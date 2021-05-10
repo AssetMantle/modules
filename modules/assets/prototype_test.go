@@ -16,7 +16,7 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Name(),base.NewModule(
+	require.Equal(t, Prototype().Name(), base.NewModule(
 		module.Name,
 		auxiliaries.Prototype,
 		genesis.Prototype,

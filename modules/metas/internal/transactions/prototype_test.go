@@ -8,7 +8,7 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("reveal").GetName(),base.NewTransactions(
+	require.Equal(t, Prototype().Get("reveal").GetName(), base.NewTransactions(
 		reveal.Transaction,
 	).Get("reveal").GetName())
 }

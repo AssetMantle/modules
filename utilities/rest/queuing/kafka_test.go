@@ -70,5 +70,4 @@ func Test_Kafka(t *testing.T) {
 		require.Equal(t, testKafkaMsg.BaseRequest, kafkaMsg.BaseRequest)
 	})
 
-
 }

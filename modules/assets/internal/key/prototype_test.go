@@ -7,5 +7,5 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype(),assetIDFromInterface(base.NewID("")))
+	require.Equal(t, Prototype(), assetIDFromInterface(base.NewID("")))
 }

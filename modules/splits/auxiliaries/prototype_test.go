@@ -11,7 +11,7 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("transfer").GetName(),base.NewAuxiliaries(
+	require.Equal(t, Prototype().Get("transfer").GetName(), base.NewAuxiliaries(
 		burn.Auxiliary,
 		mint.Auxiliary,
 		renumerate.Auxiliary,

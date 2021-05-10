@@ -43,7 +43,6 @@ func TestNewConsumer(t *testing.T) {
 	if Error != nil {
 	}
 	require.Panics(t, func() {
-		require.Equal(t, NewConsumer(consumers),consumer)
+		require.Equal(t, NewConsumer(consumers), consumer)
 	})
 }
-

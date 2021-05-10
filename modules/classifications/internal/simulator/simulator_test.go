@@ -6,5 +6,5 @@ import (
 )
 
 func Test_newSimulator(t *testing.T) {
-	require.Equal(t, newSimulator(),simulator{})
+	require.Equal(t, newSimulator(), simulator{})
 }
