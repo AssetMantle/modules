@@ -39,7 +39,7 @@ func TestKafkaTopicConsumer(t *testing.T) {
 
 func TestNewConsumer(t *testing.T) {
 	consumers := []string{"testconsumer"}
-	
+
 	config := sarama.NewConfig()
 
 	consumer, Error := sarama.NewConsumer(consumers, config)

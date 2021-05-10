@@ -19,6 +19,7 @@ import (
 func CustomEncoder(moduleList ...helpers.Module) wasm.CustomEncoder {
 	return func(sender sdkTypes.AccAddress, rawMessage json.RawMessage) ([]sdkTypes.Msg, error) {
 		wasmMessage := base.WasmMessagePrototype()
+
 		Error := json.Unmarshal(rawMessage, &wasmMessage)
 
 		if Error != nil {
