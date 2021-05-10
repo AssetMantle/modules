@@ -21,15 +21,14 @@ func TestKafkaTopicConsumer(t *testing.T) {
 
 	require.Panics(t, func() {
 		testKafkaState := NewKafkaState(tconsumers)
-
 		partitionConsumer := testKafkaState.Consumers["Topic"]
 		var kafkaStore KafkaMsg
 		if len(partitionConsumer.Messages()) == 0 {
 			kafkaStore = KafkaMsg{Msg: nil}
 		}
 		kafkaMsg := <-partitionConsumer.Messages()
-
 		err := Codec.UnmarshalJSON(kafkaMsg.Value, &kafkaStore)
+
 		if err != nil {
 			panic(err)
 		}
@@ -39,10 +38,9 @@ func TestKafkaTopicConsumer(t *testing.T) {
 
 func TestNewConsumer(t *testing.T) {
 	consumers := []string{"testconsumer"}
-
 	config := sarama.NewConfig()
-
 	consumer, Error := sarama.NewConsumer(consumers, config)
+
 	if Error != nil {
 	}
 	require.Panics(t, func() {
