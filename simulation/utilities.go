@@ -18,8 +18,8 @@ func RandomBool(r *rand.Rand) bool {
 
 func GenerateRandomAddresses(r *rand.Rand) []sdkTypes.AccAddress {
 	randomAccounts := simulation.RandomAccounts(r, r.Intn(99))
-
 	addresses := make([]sdkTypes.AccAddress, len(randomAccounts))
+
 	for i, account := range randomAccounts {
 		addresses[i] = account.Address
 	}

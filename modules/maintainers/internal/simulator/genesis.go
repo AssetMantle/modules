@@ -20,8 +20,8 @@ import (
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/persistenceOne/persistenceSDK/utilities/simulation"
-	baseSimulation "github.com/persistenceOne/persistenceSDK/utilities/simulation/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/simulation"
+	baseSimulation "github.com/persistenceOne/persistenceSDK/simulation/schema/types/base"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {

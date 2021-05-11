@@ -139,5 +139,4 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		})
 	})
 
-
 }

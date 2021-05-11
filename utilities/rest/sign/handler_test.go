@@ -36,6 +36,7 @@ func TestHandler(t *testing.T) {
 	base.TestMessagePrototype().RegisterCodec(Codec)
 
 	clientContext := context.NewCLIContext().WithCodec(Codec)
+
 	handler := handler(clientContext)
 	viper.Set(flags.FlagKeyringBackend, cryptoKeys.BackendTest)
 	viper.Set(flags.FlagHome, t.TempDir())
@@ -56,6 +57,7 @@ func TestHandler(t *testing.T) {
 	require.Nil(t, Error)
 
 	address := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
+
 	sdkAddress, Error := sdkTypes.AccAddressFromBech32(address)
 
 	// signWithout chainID
