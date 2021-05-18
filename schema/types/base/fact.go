@@ -35,6 +35,7 @@ func (fact fact) Sign(_ keyring.Keyring) types.Fact {
 		ValidityHeight: height{clicont.Height},
 	}
 	fact.GetSignatures().Add(Signature)
+	
 	return fact
 }
 
