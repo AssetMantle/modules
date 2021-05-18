@@ -27,15 +27,15 @@ func (fact fact) IsMeta() bool {
 	return false
 }
 func (fact fact) Sign(_ keyring.Keyring) types.Fact {
- 	clicont := context.NewCLIContext()
+	clicont := context.NewCLIContext()
 	sign, _, _ := clicont.Keybase.Sign(clicont.FromName, keys.DefaultKeyPass, fact.HashID.Bytes())
 	Signature := signature{
-		ID: id{IDString: fact.HashID.String()},
+		ID:             id{IDString: fact.HashID.String()},
 		SignatureBytes: sign,
 		ValidityHeight: height{clicont.Height},
 	}
 	fact.GetSignatures().Add(Signature)
-	
+
 	return fact
 }
 
