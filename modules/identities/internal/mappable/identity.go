@@ -12,7 +12,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
@@ -88,11 +87,12 @@ func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 }
 
 func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
-	accAddressListData, ok := identity.HasMutables.GetMutableProperties().(types.ListData)
-	if !ok {
-		panic(errors.IncorrectFormat)
-	}
-	accAddressListData.Remove(base.NewAccAddressData(address))
-
-	return accAddressListData.
+	//accAddressListData, ok := identity.HasMutables.GetMutableProperties().(types.ListData)
+	//if !ok {
+	//	panic(errors.IncorrectFormat)
+	//}
+	//accAddressListData.Remove(base.NewAccAddressData(address))
+	//
+	//return mappables.
+	panic("implement")
 }
