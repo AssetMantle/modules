@@ -68,9 +68,10 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	if !ok {
 		panic(errors.IncorrectFormat)
 	}
-	if address.Empty() && !accAddressListData.IsPresent(base.NewAccAddressData(address)){
+	if address.Empty() && !accAddressListData.IsPresent(base.NewAccAddressData(address)) {
 		flag = true
 	}
+
 	return flag
 }
 
@@ -80,19 +81,19 @@ func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 	if !ok {
 		panic(errors.IncorrectFormat)
 	}
-	if !address.Empty() && accAddressListData.IsPresent(base.NewAccAddressData(address)){
+	if !address.Empty() && accAddressListData.IsPresent(base.NewAccAddressData(address)) {
 		flag = true
 	}
+
 	return flag
 }
 
 func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
-	//accAddressListData, ok := identity.HasMutables.GetMutableProperties().(types.ListData)
-	//if !ok {
-	//	panic(errors.IncorrectFormat)
-	//}
-	//accAddressListData.Remove(base.NewAccAddressData(address))
-	//
-	//return mappables.
-	panic("implement")
+	accAddressListData, ok := identity.HasMutables.GetMutableProperties().(types.ListData)
+	if !ok {
+		panic(errors.IncorrectFormat)
+	}
+	accAddressListData.Remove(base.NewAccAddressData(address))
+
+	return mappables.InterIdentity(identity)
 }
