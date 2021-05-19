@@ -35,7 +35,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	authenticationProperty := base.NewMetaProperty(base.NewID(properties.Authentication), base.NewMetaFact(base.NewAccAddressData(message.From)))
+	authenticationProperty := base.NewMetaProperty(base.NewID(properties.Authentication), base.NewMetaFact(base.NewAccAddressListData(message.From)))
 
 	mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(authenticationProperty)))
 	if Error != nil {
