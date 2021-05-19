@@ -26,7 +26,6 @@ type identity struct {
 	baseTraits.HasMutables //nolint:govet
 }
 
-
 var _ mappables.InterIdentity = (*identity)(nil)
 
 func (identity identity) GetID() types.ID { return identity.ID }
@@ -65,7 +64,6 @@ func NewIdentity(id types.ID, immutableProperties types.Properties, mutablePrope
 
 func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	flag := false
-
 	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
 
 	if !ok {
@@ -80,12 +78,12 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 
 func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 	flag := false
-
 	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
 
 	if !ok {
 		panic(errors.IncorrectFormat)
 	}
+
 	if !address.Empty() && accAddressListData.IsPresent(base.NewAccAddressData(address)) {
 		flag = true
 	}
