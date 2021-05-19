@@ -8,9 +8,11 @@ package mappable
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
@@ -63,7 +65,11 @@ func NewIdentity(id types.ID, immutableProperties types.Properties, mutablePrope
 
 func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	flag := false
-	if address.Empty() && base.acc{
+	accAddressListData, ok := identity.HasMutables.GetMutableProperties().(types.ListData)
+	if !ok {
+		panic(errors.IncorrectFormat)
+	}
+	if address.Empty() && !accAddressListData.IsPresent(base.NewAccAddressData(address)){
 		flag = true
 	}
 	return flag
@@ -71,12 +77,22 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 
 func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 	flag := false
-	if !address.Empty(){
+	accAddressListData, ok := identity.HasMutables.GetMutableProperties().(types.ListData)
+	if !ok {
+		panic(errors.IncorrectFormat)
+	}
+	if !address.Empty() && accAddressListData.IsPresent(base.NewAccAddressData(address)){
 		flag = true
 	}
 	return flag
 }
 
 func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
-	panic("implement me")
+	accAddressListData, ok := identity.HasMutables.GetMutableProperties().(types.ListData)
+	if !ok {
+		panic(errors.IncorrectFormat)
+	}
+	accAddressListData.Remove(base.NewAccAddressData(address))
+
+	return accAddressListData.
 }
