@@ -7,6 +7,7 @@ package mappable
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
@@ -58,4 +59,24 @@ func NewIdentity(id types.ID, immutableProperties types.Properties, mutablePrope
 		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
 		HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
 	}
+}
+
+func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
+	flag := false
+	if address.Empty() && base.acc{
+		flag = true
+	}
+	return flag
+}
+
+func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
+	flag := false
+	if !address.Empty(){
+		flag = true
+	}
+	return flag
+}
+
+func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
+	panic("implement me")
 }
