@@ -16,6 +16,7 @@ type InterIdentity interface {
 	GetExpiry() types.Property
 	IsProvisioned(address sdkTypes.AccAddress) bool
 	IsUnprovisioned(address sdkTypes.AccAddress) bool
+	ProvisionAddress(address sdkTypes.AccAddress) helpers.Mappable
 	UnprovisionAddress(address sdkTypes.AccAddress) helpers.Mappable
 	Document
 }

@@ -26,6 +26,7 @@ type identity struct {
 	baseTraits.HasMutables //nolint:govet
 }
 
+
 var _ mappables.InterIdentity = (*identity)(nil)
 
 func (identity identity) GetID() types.ID { return identity.ID }
@@ -94,6 +95,16 @@ func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers
 		panic(errors.IncorrectFormat)
 	}
 	accAddressListData.Remove(base.NewAccAddressData(address))
+
+	return mappables.InterIdentity(identity)
+}
+
+func (identity identity) ProvisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
+	accAddressListData, ok := identity.HasMutables.GetMutableProperties().(types.ListData)
+	if !ok {
+		panic(errors.IncorrectFormat)
+	}
+	accAddressListData.Add(base.NewAccAddressData(address))
 
 	return mappables.InterIdentity(identity)
 }
