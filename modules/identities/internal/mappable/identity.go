@@ -80,7 +80,7 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 	flag := false
 	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
-	
+
 	if !ok {
 		panic(errors.IncorrectFormat)
 	}
