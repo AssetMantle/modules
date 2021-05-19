@@ -69,6 +69,7 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	if !ok {
 		panic(errors.IncorrectFormat)
 	}
+
 	if address.Empty() && !accAddressListData.IsPresent(base.NewAccAddressData(address)) {
 		flag = true
 	}
