@@ -65,7 +65,6 @@ func NewIdentity(id types.ID, immutableProperties types.Properties, mutablePrope
 func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	flag := false
 	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
-
 	if !ok {
 		panic(errors.IncorrectFormat)
 	}
@@ -80,7 +79,6 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 	flag := false
 	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
-
 	if !ok {
 		panic(errors.IncorrectFormat)
 	}
@@ -94,7 +92,6 @@ func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 
 func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
 	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
-
 	if !ok {
 		panic(errors.IncorrectFormat)
 	}
@@ -106,10 +103,10 @@ func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers
 
 func (identity identity) ProvisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
 	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
-
 	if !ok {
 		panic(errors.IncorrectFormat)
 	}
+
 	accAddressListData.Add(base.NewAccAddressData(address))
 
 	return mappables.InterIdentity(identity)

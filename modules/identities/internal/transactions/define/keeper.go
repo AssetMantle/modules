@@ -35,7 +35,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	 if !identity.(mappables.InterIdentity).IsProvisioned(message.From) {
+	if !identity.(mappables.InterIdentity).IsProvisioned(message.From) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 
