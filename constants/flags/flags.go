@@ -40,6 +40,4 @@ var (
 	ToID                    = base.NewCLIFlag("toID", "", "ToID")
 	TakerOwnableID          = base.NewCLIFlag("takerOwnableID", "", "TakerOwnableID")
 	TakerOwnableSplit       = base.NewCLIFlag("takerOwnableSplit", "0", "TakerOwnableSplit")
-	KafkaBoolFlag           = base.NewCLIFlag("kafkaBool", false, "KafkaBool")
-
 )

@@ -25,7 +25,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/utilities/rest/queuing"
-	cliflags "github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -38,8 +37,6 @@ type transaction struct {
 	messagePrototype func() helpers.Message
 	keeperPrototype  func() helpers.TransactionKeeper
 }
-
-// TODO remove
 
 var KafkaState queuing.KafkaState
 
@@ -171,7 +168,8 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		cliContext = cliContext.WithFromAddress(fromAddress)
 		cliContext = cliContext.WithFromName(fromName)
 		cliContext = cliContext.WithBroadcastMode(viper.GetString(flags.FlagBroadcastMode))
-		KafkaBool  := viper.GetBool(cliflags.KafkaBoolFlag.GetName())
+		//Todo
+		KafkaBool := viper.GetBool("kafka")
 
 		if KafkaBool {
 			ticketID := queuing.TicketIDGenerator(transaction.name)
