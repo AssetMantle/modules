@@ -53,7 +53,6 @@ func (identity identity) GetKey() helpers.Key {
 func (identity) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, identity{})
 }
-
 func NewIdentity(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.InterIdentity {
 	return identity{
 		ID:            id,
@@ -61,7 +60,6 @@ func NewIdentity(id types.ID, immutableProperties types.Properties, mutablePrope
 		HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
 	}
 }
-
 func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	flag := false
 	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
@@ -76,7 +74,6 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 
 	return flag
 }
-
 func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 	flag := false
 	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
@@ -91,18 +88,6 @@ func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 
 	return flag
 }
-
-func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
-	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
-	if !ok {
-		panic(errors.IncorrectFormat)
-	}
-
-	accAddressListData.Remove(base.NewAccAddressData(address))
-
-	return mappables.InterIdentity(identity)
-}
-
 func (identity identity) ProvisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
 	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
 	if !ok {
@@ -110,6 +95,16 @@ func (identity identity) ProvisionAddress(address sdkTypes.AccAddress) helpers.M
 	}
 
 	accAddressListData.Add(base.NewAccAddressData(address))
+
+	return mappables.InterIdentity(identity)
+}
+func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
+	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
+	if !ok {
+		panic(errors.IncorrectFormat)
+	}
+
+	accAddressListData.Remove(base.NewAccAddressData(address))
 
 	return mappables.InterIdentity(identity)
 }
