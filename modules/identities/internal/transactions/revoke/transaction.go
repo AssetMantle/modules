@@ -22,8 +22,4 @@ var Transaction = base.NewTransaction(
 	flags.FromID,
 	flags.ToID,
 	flags.ClassificationID,
-	flags.MaintainedProperties,
-	flags.AddMaintainer,
-	flags.RemoveMaintainer,
-	flags.MutateMaintainer,
 )
