@@ -11,7 +11,7 @@ import (
 )
 
 func TestKafkaTopicConsumer(t *testing.T) {
-	tconsumers := []string{"testconsumer"}
+	testConsumers := []string{"testConsumers"}
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
@@ -20,7 +20,7 @@ func TestKafkaTopicConsumer(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 
 	require.Panics(t, func() {
-		testKafkaState := NewKafkaState(tconsumers)
+		testKafkaState := NewKafkaState(testConsumers)
 		partitionConsumer := testKafkaState.Consumers["Topic"]
 		var kafkaStore KafkaMsg
 		if len(partitionConsumer.Messages()) == 0 {
@@ -37,7 +37,7 @@ func TestKafkaTopicConsumer(t *testing.T) {
 }
 
 func TestNewConsumer(t *testing.T) {
-	consumers := []string{"testconsumer"}
+	consumers := []string{"testConsumers"}
 	config := sarama.NewConfig()
 	consumer, Error := sarama.NewConsumer(consumers, config)
 

@@ -1,6 +1,7 @@
 package key
 
 import (
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -10,9 +11,18 @@ func TestFromID(t *testing.T) {
 
 	classificationID := base.NewID("classificationID")
 	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
-	assetID := NewAssetID(classificationID, immutableProperties)
-	require.Equal(t, assetIDFromInterface(assetID), FromID(assetID))
+	newAssetID := NewAssetID(classificationID, immutableProperties)
+	require.Equal(t, assetIDFromInterface(newAssetID), FromID(newAssetID))
 
+	id := base.NewID("")
+	testAssetID := assetID{ClassificationID: base.NewID(""), HashID: base.NewID("")}
+	require.Equal(t, FromID(id), testAssetID)
+
+	testString1 := "string1"
+	testString2 := "string2"
+	id2 := base.NewID(testString1 + constants.FirstOrderCompositeIDSeparator + testString2)
+	testAssetID2 := assetID{ClassificationID: base.NewID(testString1), HashID: base.NewID(testString2)}
+	require.Equal(t, FromID(id2), testAssetID2)
 }
 
 func TestReadClassificationID(t *testing.T) {
@@ -22,29 +32,4 @@ func TestReadClassificationID(t *testing.T) {
 
 	require.Equal(t, assetIDFromInterface(assetID).ClassificationID, ReadClassificationID(assetID))
 
-}
-
-func Test_assetIDFromInterface(t *testing.T) {
-	type args struct {
-		i interface{}
-	}
-	var tests []struct {
-		name string
-		args args
-		want assetID
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			require.Equal(t, assetIDFromInterface(tt.args.i), FromID(base.NewID("")))
-		})
-	}
-}
-
-func Test_readAssetID(t *testing.T) {
-	classificationID := base.NewID("")
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID(""), base.NewFact(base.NewStringData(""))))
-	tassetID := NewAssetID(classificationID, immutableProperties)
-	assetID2 := assetID{ClassificationID: base.NewID(""), HashID: base.NewID("")}
-
-	require.Equal(t, tassetID, assetID2)
 }
