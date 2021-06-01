@@ -68,7 +68,6 @@ func (accAddresses sortedAccAddresses) Search(i interface{}) int {
 	return sort.Search(
 		accAddresses.Len(),
 		func(i int) bool {
-
 			return bytes.Equal(accAddresses[i].Bytes(), accAddress.Bytes())
 		},
 	)
