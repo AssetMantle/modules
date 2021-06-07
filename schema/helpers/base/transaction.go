@@ -39,9 +39,10 @@ type transaction struct {
 }
 
 type embContext struct {
-	context context.CLIContext
+	context   context.CLIContext
 	kafkaBool bool
 }
+
 var KafkaState queuing.KafkaState
 
 var _ helpers.Transaction = (*transaction)(nil)
