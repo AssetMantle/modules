@@ -64,6 +64,7 @@ func (accAddresses sortedAccAddresses) Delete(i interface{}) types.SortedList {
 }
 func (accAddresses sortedAccAddresses) Search(i interface{}) int {
 	accAddress := accAddressFromInterface(i)
+
 	return sort.Search(
 		accAddresses.Len(),
 		func(i int) bool {
