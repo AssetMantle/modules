@@ -91,10 +91,6 @@ func (transaction transaction) HandleMessage(context sdkTypes.Context, message s
 
 func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
-		cont := &embContext{
-			cliContext,
-			viper.GetBool("kafka"),
-		}
 		transactionRequest := transaction.requestPrototype()
 		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &transactionRequest) {
 			return
@@ -178,7 +174,9 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		cliContext = cliContext.WithFromName(fromName)
 		cliContext = cliContext.WithBroadcastMode(viper.GetString(flags.FlagBroadcastMode))
 
-		if cont.kafkaBool {
+		kafkaBool := getBoolCliFLag("kafka")
+
+		if kafkaBool {
 			ticketID := queuing.TicketIDGenerator(transaction.name)
 			jsonResponse := queuing.SendToKafka(queuing.NewKafkaMsgFromRest(msg, ticketID, baseReq, cliContext), KafkaState, cliContext.Codec)
 

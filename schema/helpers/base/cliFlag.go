@@ -7,6 +7,7 @@ package base
 
 import (
 	"fmt"
+	flags "github.com/persistenceOne/persistenceSDK/constants/flags"
 
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
@@ -61,4 +62,14 @@ func NewCLIFlag(name string, value interface{}, usage string) helpers.CLIFlag {
 		value: value,
 		usage: usage,
 	}
+}
+
+func getBoolCliFLag(name string) bool {
+	cflags := []helpers.CLIFlag{flags.RemoveMaintainer, flags.MutateMaintainer, flags.KafkaBool, flags.AddMaintainer}
+	for _, flag := range cflags{
+		if name == flag.GetName(){
+			return viper.GetBool(flag.GetName())
+		}
+	}
+	panic("The flag doesn't exist")
 }
