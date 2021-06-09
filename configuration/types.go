@@ -1,8 +1,8 @@
 package configuration
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 type Config struct {
@@ -22,6 +22,6 @@ type KafkaConfig struct {
 
 func NewKafkaConfig() KafkaConfig {
 	return KafkaConfig{
-		KafkaBool: flags.KafkaBool,
+		KafkaBool: base.NewCLIFlag("kafka", false, "kafka"),
 	}
 }
