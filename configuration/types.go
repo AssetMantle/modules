@@ -1,9 +1,6 @@
 package configuration
 
-import (
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-)
+import "github.com/spf13/viper"
 
 type Config struct {
 	Kafka KafkaConfig
@@ -16,12 +13,12 @@ func NewConfig() Config {
 }
 
 type KafkaConfig struct {
-	KafkaBool helpers.CLIFlag
+	KafkaBool bool
 
 }
 
 func NewKafkaConfig() KafkaConfig {
 	return KafkaConfig{
-		KafkaBool: base.NewCLIFlag("kafka", false, "kafka"),
+		KafkaBool: viper.GetBool("kafka"),
 	}
 }

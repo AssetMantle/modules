@@ -172,7 +172,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 
 		kafka := configuration.NewKafkaConfig()
 
-		if kafka.KafkaBool.ReadCLIValue().(bool) {
+		if kafka.KafkaBool {
 			ticketID := queuing.TicketIDGenerator(transaction.name)
 			jsonResponse := queuing.SendToKafka(queuing.NewKafkaMsgFromRest(msg, ticketID, baseReq, cliContext), KafkaState, cliContext.Codec)
 
