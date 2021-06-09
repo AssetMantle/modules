@@ -23,5 +23,5 @@ func GetValue(name string) interface{} {
 		}
 	}
 
-	panic("Flag is not present")
+	return nil
 }
