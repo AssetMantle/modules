@@ -8,6 +8,7 @@ package base
 import (
 	"bufio"
 	"encoding/json"
+	"github.com/persistenceOne/persistenceSDK/configuration"
 	"log"
 	"net/http"
 	"reflect"
@@ -24,7 +25,6 @@ import (
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	tbase "github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/rest/queuing"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -37,11 +37,6 @@ type transaction struct {
 	requestPrototype func() helpers.TransactionRequest
 	messagePrototype func() helpers.Message
 	keeperPrototype  func() helpers.TransactionKeeper
-}
-
-type embContext struct {
-	context   context.CLIContext
-	kafkaBool bool
 }
 
 var KafkaState queuing.KafkaState
@@ -175,9 +170,9 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		cliContext = cliContext.WithFromName(fromName)
 		cliContext = cliContext.WithBroadcastMode(viper.GetString(flags.FlagBroadcastMode))
 
-		kafkaBool := tbase.GetValue("kafka")
+		kafka := configuration.NewKafkaConfig()
 
-		if kafkaBool.(bool) {
+		if kafka.KafkaBool.ReadCLIValue().(bool) {
 			ticketID := queuing.TicketIDGenerator(transaction.name)
 			jsonResponse := queuing.SendToKafka(queuing.NewKafkaMsgFromRest(msg, ticketID, baseReq, cliContext), KafkaState, cliContext.Codec)
 

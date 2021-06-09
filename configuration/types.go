@@ -17,6 +17,7 @@ func NewConfig() Config {
 
 type KafkaConfig struct {
 	KafkaBool helpers.CLIFlag
+
 }
 
 func NewKafkaConfig() KafkaConfig {
