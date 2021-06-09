@@ -21,7 +21,7 @@ var (
 	IdentityID              = base.NewCLIFlag("identityID", "", "IdentityID")
 	ImmutableMetaProperties = base.NewCLIFlag("immutableMetaProperties", "", "immutableMetaProperties")
 	ImmutableProperties     = base.NewCLIFlag("immutableProperties", "", "immutableProperties")
-	KafkaBool				= base.NewCLIFlag("kafka", false, "kafka")
+	KafkaBool               = base.NewCLIFlag("kafka", false, "kafka")
 	MetaFact                = base.NewCLIFlag("metaFact", "", "MetaFact")
 	MaintainerID            = base.NewCLIFlag("maintainerID", "", "MaintainerID")
 	MaintainedProperties    = base.NewCLIFlag("maintainedProperties", "", "MaintainedProperties")

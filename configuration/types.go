@@ -14,7 +14,6 @@ func NewConfig() Config {
 
 type KafkaConfig struct {
 	KafkaBool bool
-
 }
 
 func NewKafkaConfig() KafkaConfig {
