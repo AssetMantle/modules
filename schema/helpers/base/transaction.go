@@ -23,6 +23,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/persistenceOne/persistenceSDK/configuration"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/utilities/rest/queuing"
 	"github.com/spf13/cobra"
@@ -168,10 +169,10 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		cliContext = cliContext.WithFromAddress(fromAddress)
 		cliContext = cliContext.WithFromName(fromName)
 		cliContext = cliContext.WithBroadcastMode(viper.GetString(flags.FlagBroadcastMode))
-		//Todo
-		KafkaBool := viper.GetBool("kafka")
 
-		if KafkaBool {
+		kafka := configuration.NewKafkaConfig()
+
+		if kafka.KafkaBool {
 			ticketID := queuing.TicketIDGenerator(transaction.name)
 			jsonResponse := queuing.SendToKafka(queuing.NewKafkaMsgFromRest(msg, ticketID, baseReq, cliContext), KafkaState, cliContext.Codec)
 
