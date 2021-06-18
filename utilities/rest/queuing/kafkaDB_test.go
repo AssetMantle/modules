@@ -11,6 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/utilities/random"
 	"github.com/stretchr/testify/require"
 	dbm "github.com/tendermint/tm-db"
 	"testing"
@@ -25,7 +26,7 @@ func Test_Kafka_DB(t *testing.T) {
 		codec.RegisterEvidences(Codec)
 		vesting.RegisterCodec(Codec)
 		Codec.Seal()
-		ticketID := TicketIDGenerator("name")
+		ticketID := TicketID(random.GenerateID("name"))
 		kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", DefaultCLIHome)
 		SetTicketIDtoDB(ticketID, kafkaDB, Codec, []byte{})
 		AddResponseToDB(ticketID, base.NewID("").Bytes(), kafkaDB, Codec)

@@ -12,6 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/persistenceOne/persistenceSDK/schema"
+	"github.com/persistenceOne/persistenceSDK/utilities/random"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -32,8 +33,7 @@ func Test_Kafka_Types(t *testing.T) {
 
 	testMessage := sdkTypes.NewTestMsg()
 
-	//testMsg:=newMessage(burn)
-	ticketID := TicketIDGenerator("name")
+	ticketID := TicketID(random.GenerateID("name"))
 	testKafkaMsg := NewKafkaMsgFromRest(testMessage, ticketID, testBaseReq, cliContext)
 	kafkaCli := KafkaCliCtx{
 		OutputFormat:  cliContext.OutputFormat,
