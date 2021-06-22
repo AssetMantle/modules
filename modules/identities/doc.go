@@ -3,5 +3,5 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-// identities package defines the identities module.
+// Package identities defines the identities module.
 package identities

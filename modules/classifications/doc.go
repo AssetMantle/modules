@@ -3,5 +3,5 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-// classifications package defines the classifications module.
+// Package classifications defines the classifications module.
 package classifications

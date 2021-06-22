@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package rest
+package queuing
 
 import (
 	"time"
@@ -11,18 +11,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/persistenceOne/persistenceSDK/utilities/rest/queuing"
 )
 
 // KafkaConsumerMessages : messages to consume 5 second delay
-func KafkaConsumerMessages(cliCtx context.CLIContext, kafkaState queuing.KafkaState) {
+func KafkaConsumerMessages(cliCtx context.CLIContext, kafkaState kafkaState) {
 	quit := make(chan bool)
 
 	var cliContextList []context.CLIContext
 
 	var baseRequestList []rest.BaseReq
 
-	var ticketIDList []queuing.Ticket
+	var ticketIDList []TicketID
 
 	var msgList []sdkTypes.Msg
 
@@ -32,9 +31,9 @@ func KafkaConsumerMessages(cliCtx context.CLIContext, kafkaState queuing.KafkaSt
 			case <-quit:
 				return
 			default:
-				kafkaMsg := queuing.KafkaTopicConsumer("Topic", kafkaState.Consumers, cliCtx.Codec)
+				kafkaMsg := KafkaTopicConsumer("Topic", kafkaState.Consumers, cliCtx.Codec)
 				if kafkaMsg.Msg != nil {
-					cliContextList = append(cliContextList, queuing.CliCtxFromKafkaMsg(kafkaMsg, cliCtx))
+					cliContextList = append(cliContextList, CliCtxFromKafkaMsg(kafkaMsg, cliCtx))
 					baseRequestList = append(baseRequestList, kafkaMsg.BaseRequest)
 					ticketIDList = append(ticketIDList, kafkaMsg.TicketID)
 					msgList = append(msgList, kafkaMsg.Msg)
@@ -43,7 +42,7 @@ func KafkaConsumerMessages(cliCtx context.CLIContext, kafkaState queuing.KafkaSt
 		}
 	}()
 
-	time.Sleep(queuing.SleepTimer)
+	time.Sleep(SleepTimer)
 	quit <- true
 
 	if len(msgList) == 0 {
@@ -60,13 +59,13 @@ func KafkaConsumerMessages(cliCtx context.CLIContext, kafkaState queuing.KafkaSt
 		}
 
 		for _, ticketID := range ticketIDList {
-			queuing.AddResponseToDB(ticketID, jsonError, kafkaState.KafkaDB, cliCtx.Codec)
+			AddResponseToDB(ticketID, jsonError, kafkaState.KafkaDB, cliCtx.Codec)
 		}
 
 		return
 	}
 
 	for _, ticketID := range ticketIDList {
-		queuing.AddResponseToDB(ticketID, output, kafkaState.KafkaDB, cliCtx.Codec)
+		AddResponseToDB(ticketID, output, kafkaState.KafkaDB, cliCtx.Codec)
 	}
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"github.com/persistenceOne/persistenceSDK/utilities/random"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -54,7 +55,7 @@ func Test_Kafka(t *testing.T) {
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, Error)
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test"}
-	ticketID := TicketIDGenerator("ticket")
+	ticketID := TicketID(random.GenerateID("ticket"))
 	kafkaPorts := []string{"localhost:9092"}
 	require.Panics(t, func() {
 		testKafkaState := NewKafkaState(kafkaPorts)
@@ -63,7 +64,7 @@ func Test_Kafka(t *testing.T) {
 		cliContext := context.NewCLIContext().WithCodec(Codec)
 
 		testKafkaMsg := NewKafkaMsgFromRest(message, ticketID, testBaseReq, cliContext)
-		SendToKafka(testKafkaMsg, testKafkaState, Codec)
+		SendToKafka(testKafkaMsg, *testKafkaState, Codec)
 
 		kafkaMsg := KafkaTopicConsumer("Topic", testKafkaState.Consumers, Codec)
 		require.Equal(t, testKafkaMsg.TicketID, kafkaMsg.TicketID)

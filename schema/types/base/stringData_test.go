@@ -45,8 +45,8 @@ func Test_StringData(t *testing.T) {
 	require.Equal(t, value, testStringData.Get())
 
 	data, Error := ReadStringData("testString")
-	require.Equal(t, stringData{Value: "testString"}.String(), data.String())
 	require.Nil(t, Error)
+	require.Equal(t, stringData{Value: "testString"}.String(), data.String())
 
 	require.Equal(t, false, testStringData.Equal(testStringData2))
 	require.Equal(t, true, testStringData.Equal(testStringData))

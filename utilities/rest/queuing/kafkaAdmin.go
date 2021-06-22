@@ -10,22 +10,14 @@ import (
 )
 
 // KafkaAdmin : is admin to create topics
-func KafkaAdmin(kafkaPorts []string) sarama.ClusterAdmin {
+func KafkaAdmin(kafkaNodes []string) sarama.ClusterAdmin {
 	config := sarama.NewConfig()
 	config.Version = sarama.V0_11_0_0 // hardcoded
 
-	admin, Error := sarama.NewClusterAdmin(kafkaPorts, config)
+	admin, Error := sarama.NewClusterAdmin(kafkaNodes, config)
 	if Error != nil {
 		panic(Error)
 	}
 
 	return admin
-}
-
-// TopicsInit : is needed to initialise topics
-func TopicsInit(admin sarama.ClusterAdmin, topic string) {
-	err := admin.CreateTopic(topic, &topicDetail, true)
-	if err != nil {
-		panic(err)
-	}
 }

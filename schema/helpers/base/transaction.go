@@ -8,6 +8,7 @@ package base
 import (
 	"bufio"
 	"encoding/json"
+	"github.com/persistenceOne/persistenceSDK/utilities/random"
 	"log"
 	"net/http"
 	"reflect"
@@ -23,7 +24,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/persistenceOne/persistenceSDK/configuration"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/utilities/rest/queuing"
 	"github.com/spf13/cobra"
@@ -38,8 +38,6 @@ type transaction struct {
 	messagePrototype func() helpers.Message
 	keeperPrototype  func() helpers.TransactionKeeper
 }
-
-var KafkaState queuing.KafkaState
 
 var _ helpers.Transaction = (*transaction)(nil)
 
@@ -170,11 +168,9 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		cliContext = cliContext.WithFromName(fromName)
 		cliContext = cliContext.WithBroadcastMode(viper.GetString(flags.FlagBroadcastMode))
 
-		kafka := configuration.NewKafkaConfig()
-
-		if kafka.KafkaBool {
-			ticketID := queuing.TicketIDGenerator(transaction.name)
-			jsonResponse := queuing.SendToKafka(queuing.NewKafkaMsgFromRest(msg, ticketID, baseReq, cliContext), KafkaState, cliContext.Codec)
+		if queuing.KafkaState.IsEnabled {
+			ticketID := queuing.TicketID(random.GenerateID(transaction.name))
+			jsonResponse := queuing.SendToKafka(queuing.NewKafkaMsgFromRest(msg, ticketID, baseReq, cliContext), queuing.KafkaState, cliContext.Codec)
 
 			responseWriter.WriteHeader(http.StatusAccepted)
 			_, _ = responseWriter.Write(jsonResponse)

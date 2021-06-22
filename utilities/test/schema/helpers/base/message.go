@@ -13,7 +13,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
-// msg type for testing
+// TestMessage msg type for testing
 type TestMessage struct {
 	From sdkTypes.AccAddress
 	ID   string

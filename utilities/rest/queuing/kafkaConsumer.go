@@ -11,10 +11,10 @@ import (
 )
 
 // NewConsumer : is a consumer which is needed to create child consumers to consume topics
-func NewConsumer(kafkaPorts []string) sarama.Consumer {
+func NewConsumer(kafkaNodes []string) sarama.Consumer {
 	config := sarama.NewConfig()
 
-	consumer, Error := sarama.NewConsumer(kafkaPorts, config)
+	consumer, Error := sarama.NewConsumer(kafkaNodes, config)
 	if Error != nil {
 		panic(Error)
 	}
