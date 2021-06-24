@@ -1,15 +1,20 @@
 package cuckoo
 
 import (
+	"bytes"
 	"crypto/sha1"
 	"encoding/binary"
+	"errors"
 	"math"
+	"math/rand"
 )
 
 type bucket []fingerprint
 type fingerprint []byte
 
 var hasher = sha1.New()
+
+const retries = 500
 
 type Cuckoo struct {
 	buckets []bucket
@@ -35,6 +40,85 @@ func NewCuckoo(n uint, fp float64) *Cuckoo {
 		n:       n,
 	}
 }
+
+
+func (c *Cuckoo) delete(needle string) {
+	i1, i2, f := c.hashes(needle)
+	// try to remove from f1
+	b1 := c.buckets[i1%c.m]
+	if ind, ok := b1.contains(f); ok {
+		b1[ind] = nil
+		return
+	}
+
+	b2 := c.buckets[i2%c.m]
+	if ind, ok := b2.contains(f); ok {
+		b2[ind] = nil
+		return
+	}
+}
+
+// lookup needle in the cuckoo filter
+func (c *Cuckoo) lookup(needle string) bool {
+	i1, i2, f := c.hashes(needle)
+	_, b1 := c.buckets[i1%c.m].contains(f)
+	_, b2 := c.buckets[i2%c.m].contains(f)
+	return b1 || b2
+}
+
+func (b bucket) contains(f fingerprint) (int, bool) {
+	for i, x := range b {
+		if bytes.Equal(x, f) {
+			return i, true
+		}
+	}
+	return -1, false
+}
+
+func (c *Cuckoo) insert(input string) {
+	i1, i2, f := c.hashes(input)
+	// first try bucket one
+	b1 := c.buckets[i1%c.m]
+	if i, err := b1.nextIndex(); err == nil {
+		b1[i] = f
+		return
+	}
+
+	b2 := c.buckets[i2%c.m]
+	if i, err := b2.nextIndex(); err == nil {
+		b2[i] = f
+		return
+	}
+
+	// else we need to start relocating items
+	i := i1
+	for r := 0; r < retries; r++ {
+		index := i % c.m
+		entryIndex := rand.Intn(int(c.b))
+		// swap
+		f, c.buckets[index][entryIndex] = c.buckets[index][entryIndex], f
+		i = i ^ uint(binary.BigEndian.Uint32(hash(f)))
+		b := c.buckets[i%c.m]
+		if idx, err := b.nextIndex(); err == nil {
+			b[idx] = f
+			return
+		}
+	}
+	panic("cuckoo filter full")
+}
+
+// nextIndex returns the next index for entry, or an error if the bucket is full
+func (b bucket) nextIndex() (int, error) {
+	for i, f := range b {
+		if f == nil {
+			return i, nil
+		}
+	}
+	return -1, errors.New("bucket full")
+}
+
+
+
 
 
 func (c *Cuckoo) hashes(data string) (uint, uint, fingerprint) {
