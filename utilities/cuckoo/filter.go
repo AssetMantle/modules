@@ -5,6 +5,7 @@ import (
 	"crypto/sha1"
 	"encoding/binary"
 	"errors"
+	"github.com/persistenceOne/persistenceSDK/utilities/cuckoo"
 	"math"
 	"math/rand"
 )
@@ -42,8 +43,8 @@ func NewCuckoo(n uint, fp float64) *Cuckoo {
 }
 
 
-func (c *Cuckoo) delete(needle string) {
-	i1, i2, f := c.hashes(needle)
+func (c *Cuckoo) delete(needle cuckoo.id) {
+	i1, i2, f := c.hashes(needle.IDString)
 	// try to remove from f1
 	b1 := c.buckets[i1%c.m]
 	if ind, ok := b1.contains(f); ok {
@@ -59,8 +60,8 @@ func (c *Cuckoo) delete(needle string) {
 }
 
 // lookup needle in the cuckoo filter
-func (c *Cuckoo) lookup(needle string) bool {
-	i1, i2, f := c.hashes(needle)
+func (c *Cuckoo) lookup(needle cuckoo.id) bool {
+	i1, i2, f := c.hashes(needle.IDString)
 	_, b1 := c.buckets[i1%c.m].contains(f)
 	_, b2 := c.buckets[i2%c.m].contains(f)
 	return b1 || b2
@@ -75,8 +76,8 @@ func (b bucket) contains(f fingerprint) (int, bool) {
 	return -1, false
 }
 
-func (c *Cuckoo) insert(input string) {
-	i1, i2, f := c.hashes(input)
+func (c *Cuckoo) insert(input cuckoo.id) {
+	i1, i2, f := c.hashes(input.IDString)
 	// first try bucket one
 	b1 := c.buckets[i1%c.m]
 	if i, err := b1.nextIndex(); err == nil {
@@ -126,7 +127,7 @@ func (c *Cuckoo) hashes(data string) (uint, uint, fingerprint) {
 	f := h[0:c.f]
 	i1 := uint(binary.BigEndian.Uint32(h))
 	i2 := i1 ^ uint(binary.BigEndian.Uint32(hash(f)))
-	return i1, i2, fingerprint(f)
+	return i1, i2, f
 }
 
 
