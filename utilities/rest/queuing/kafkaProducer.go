@@ -11,8 +11,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
-// NewProducer is a producer to send messages to kafka
-func NewProducer(kafkaNodes []string) sarama.SyncProducer {
+// newProducer is a producer to send messages to kafka
+func newProducer(kafkaNodes []string) sarama.SyncProducer {
 	producer, err := sarama.NewSyncProducer(kafkaNodes, nil)
 	if err != nil {
 		panic(err)
@@ -21,8 +21,8 @@ func NewProducer(kafkaNodes []string) sarama.SyncProducer {
 	return producer
 }
 
-// KafkaProducerDeliverMessage : delivers messages to kafka
-func KafkaProducerDeliverMessage(kafkaMsg KafkaMsg, topic string, producer sarama.SyncProducer, Codec *codec.Codec) error {
+// kafkaProducerDeliverMessage : delivers messages to kafka
+func kafkaProducerDeliverMessage(kafkaMsg kafkaMsg, topic string, producer sarama.SyncProducer, Codec *codec.Codec) error {
 	kafkaStoreBytes, err := Codec.MarshalJSON(kafkaMsg)
 	if err != nil {
 		panic(err)
@@ -42,8 +42,8 @@ func KafkaProducerDeliverMessage(kafkaMsg KafkaMsg, topic string, producer saram
 }
 
 // SendToKafka : handles sending message to kafka
-func SendToKafka(kafkaMsg KafkaMsg, kafkaState kafkaState, Codec *codec.Codec) []byte {
-	Error := KafkaProducerDeliverMessage(kafkaMsg, "Topic", kafkaState.Producer, Codec)
+func SendToKafka(kafkaMsg kafkaMsg, Codec *codec.Codec) []byte {
+	Error := kafkaProducerDeliverMessage(kafkaMsg, "Topic", KafkaState.Producer, Codec)
 	if Error != nil {
 		jsonResponse, Error := Codec.MarshalJSON(struct {
 			Response string `json:"response"`
@@ -52,7 +52,7 @@ func SendToKafka(kafkaMsg KafkaMsg, kafkaState kafkaState, Codec *codec.Codec) [
 			panic(Error)
 		}
 
-		SetTicketIDtoDB(kafkaMsg.TicketID, kafkaState.KafkaDB, Codec, jsonResponse)
+		setTicketIDtoDB(kafkaMsg.TicketID, KafkaState.KafkaDB, Codec, jsonResponse)
 	} else {
 		jsonResponse, err := Codec.MarshalJSON(struct {
 			Error string `json:"error"`
@@ -60,11 +60,11 @@ func SendToKafka(kafkaMsg KafkaMsg, kafkaState kafkaState, Codec *codec.Codec) [
 		if err != nil {
 			panic(err)
 		}
-		SetTicketIDtoDB(kafkaMsg.TicketID, kafkaState.KafkaDB, Codec, jsonResponse)
+		setTicketIDtoDB(kafkaMsg.TicketID, KafkaState.KafkaDB, Codec, jsonResponse)
 	}
 
 	jsonResponse, Error := Codec.MarshalJSON(struct {
-		TicketID TicketID `json:"ticketID"`
+		TicketID TicketID `json:"TicketID"`
 	}{TicketID: kafkaMsg.TicketID})
 	if Error != nil {
 		panic(Error)

@@ -102,6 +102,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		baseReq := transactionRequest.GetBaseReq()
 
 		msg, Error := transactionRequest.MakeMsg()
+		// TODO write one method
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
@@ -169,11 +170,19 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		cliContext = cliContext.WithBroadcastMode(viper.GetString(flags.FlagBroadcastMode))
 
 		if queuing.KafkaState.IsEnabled {
-			ticketID := queuing.TicketID(random.GenerateID(transaction.name))
-			jsonResponse := queuing.SendToKafka(queuing.NewKafkaMsgFromRest(msg, ticketID, baseReq, cliContext), queuing.KafkaState, cliContext.Codec)
-
 			responseWriter.WriteHeader(http.StatusAccepted)
-			_, _ = responseWriter.Write(jsonResponse)
+
+			output := queuing.SendToKafka(queuing.NewKafkaMsgFromRest(
+				msg,
+				queuing.TicketID(random.GenerateID(transaction.name)),
+				baseReq,
+				cliContext),
+				cliContext.Codec,
+			)
+
+			if _, Error := responseWriter.Write(output); Error != nil {
+				log.Printf("could not write response: %v", Error)
+			}
 		} else {
 			accountNumber, sequence, Error := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
 			if Error != nil {

@@ -14,7 +14,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func ParseFloat64OrReturnBadRequest(s string, defaultIfEmpty float64) (float64, int, error) {
+func parseFloat64OrReturnBadRequest(s string, defaultIfEmpty float64) (float64, int, error) {
 	if len(s) == 0 {
 		return defaultIfEmpty, http.StatusAccepted, nil
 	}
@@ -27,7 +27,7 @@ func ParseFloat64OrReturnBadRequest(s string, defaultIfEmpty float64) (float64, 
 	return n, http.StatusAccepted, nil
 }
 
-func SimulationResponse(cdc *codec.Codec, gas uint64) ([]byte, error) {
+func simulationResponse(cdc *codec.Codec, gas uint64) ([]byte, error) {
 	gasEst := rest.GasEstimateResponse{GasEstimate: gas}
 	resp, err := cdc.MarshalJSON(gasEst)
 

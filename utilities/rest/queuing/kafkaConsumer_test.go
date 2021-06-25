@@ -22,9 +22,9 @@ func TestKafkaTopicConsumer(t *testing.T) {
 	require.Panics(t, func() {
 		testKafkaState := NewKafkaState(testConsumers)
 		partitionConsumer := testKafkaState.Consumers["Topic"]
-		var kafkaStore KafkaMsg
+		var kafkaStore kafkaMsg
 		if len(partitionConsumer.Messages()) == 0 {
-			kafkaStore = KafkaMsg{Msg: nil}
+			kafkaStore = kafkaMsg{Msg: nil}
 		}
 		kafkaMsg := <-partitionConsumer.Messages()
 		err := Codec.UnmarshalJSON(kafkaMsg.Value, &kafkaStore)
@@ -32,7 +32,7 @@ func TestKafkaTopicConsumer(t *testing.T) {
 		if err != nil {
 			panic(err)
 		}
-		require.Equal(t, KafkaTopicConsumer("Topic", testKafkaState.Consumers, Codec), kafkaStore)
+		require.Equal(t, kafkaTopicConsumer("Topic", testKafkaState.Consumers, Codec), kafkaStore)
 	})
 }
 
@@ -44,6 +44,6 @@ func TestNewConsumer(t *testing.T) {
 	if Error != nil {
 	}
 	require.Panics(t, func() {
-		require.Equal(t, NewConsumer(consumers), consumer)
+		require.Equal(t, newConsumer(consumers), consumer)
 	})
 }

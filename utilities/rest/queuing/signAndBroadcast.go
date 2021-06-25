@@ -21,13 +21,13 @@ import (
 	"github.com/spf13/viper"
 )
 
-func SignAndBroadcastMultiple(brs []rest.BaseReq, cliContextList []context.CLIContext, msgList []sdkTypes.Msg) ([]byte, error) {
+func signAndBroadcastMultiple(brs []rest.BaseReq, cliContextList []context.CLIContext, msgList []sdkTypes.Msg) ([]byte, error) {
 	var stdTxs types.StdTx
 
 	var txBytes []byte
 
 	for i := range brs {
-		gasAdj, _, Error := ParseFloat64OrReturnBadRequest(brs[i].GasAdjustment, flags.DefaultGasAdjustment)
+		gasAdj, _, Error := parseFloat64OrReturnBadRequest(brs[i].GasAdjustment, flags.DefaultGasAdjustment)
 		if Error != nil {
 			return nil, Error
 		}
@@ -77,7 +77,7 @@ func SignAndBroadcastMultiple(brs []rest.BaseReq, cliContextList []context.CLICo
 			}
 
 			if brs[i].Simulate {
-				val, _ := SimulationResponse(cliContextList[i].Codec, txBuilder.Gas())
+				val, _ := simulationResponse(cliContextList[i].Codec, txBuilder.Gas())
 				return val, nil
 			}
 		}

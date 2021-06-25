@@ -16,17 +16,17 @@ import (
 // TicketID : is a type that implements string
 type TicketID string
 
-// KafkaMsg : is a store that can be stored in kafka queues
-type KafkaMsg struct {
+// kafkaMsg : is a store that can be stored in kafka queues
+type kafkaMsg struct {
 	Msg         sdk.Msg      `json:"msg"`
-	TicketID    TicketID     `json:"ticketID"`
+	TicketID    TicketID     `json:"TicketID"`
 	BaseRequest rest.BaseReq `json:"base_req"`
-	KafkaCli    KafkaCliCtx  `json:"kafkaCliCtx"`
+	KafkaCli    kafkaCliCtx  `json:"kafkaCliCtx"`
 }
 
 // NewKafkaMsgFromRest : makes a msg to send to kafka queue
-func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseReq, cliCtx context.CLIContext) KafkaMsg {
-	kafkaCli := KafkaCliCtx{
+func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseReq, cliCtx context.CLIContext) kafkaMsg {
+	kafkaCli := kafkaCliCtx{
 		OutputFormat:  cliCtx.OutputFormat,
 		ChainID:       cliCtx.ChainID,
 		Height:        cliCtx.Height,
@@ -44,7 +44,7 @@ func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseRe
 		SkipConfirm:   cliCtx.SkipConfirm,
 	}
 
-	return KafkaMsg{
+	return kafkaMsg{
 		Msg:         msg,
 		TicketID:    ticketID,
 		BaseRequest: baseRequest,
@@ -52,8 +52,8 @@ func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseRe
 	}
 }
 
-// CliCtxFromKafkaMsg : sets the transaction and cli contexts again to consume
-func CliCtxFromKafkaMsg(kafkaMsg KafkaMsg, cliContext context.CLIContext) context.CLIContext {
+// cliCtxFromKafkaMsg : sets the transaction and cli contexts again to consume
+func cliCtxFromKafkaMsg(kafkaMsg kafkaMsg, cliContext context.CLIContext) context.CLIContext {
 	cliContext.OutputFormat = kafkaMsg.KafkaCli.OutputFormat
 	cliContext.ChainID = kafkaMsg.KafkaCli.ChainID
 	cliContext.Height = kafkaMsg.KafkaCli.Height
@@ -73,8 +73,8 @@ func CliCtxFromKafkaMsg(kafkaMsg KafkaMsg, cliContext context.CLIContext) contex
 	return cliContext
 }
 
-// KafkaCliCtx : client tx without codec
-type KafkaCliCtx struct {
+// kafkaCliCtx : client tx without codec
+type kafkaCliCtx struct {
 	FromAddress   sdk.AccAddress
 	OutputFormat  string
 	ChainID       string
@@ -93,11 +93,6 @@ type KafkaCliCtx struct {
 	SkipConfirm   bool
 }
 
-// TicketIDResponse : is a json structure to send TicketID to user
-type TicketIDResponse struct {
-	TicketID TicketID `json:"ticketID" valid:"required~ticketID is mandatory,length(20)~ticketID length should be 20" `
-}
-
 // kafkaState : is a struct showing the state of kafka
 type kafkaState struct {
 	KafkaDB   *dbm.GoLevelDB
@@ -111,15 +106,15 @@ type kafkaState struct {
 
 // NewKafkaState : returns a kafka state
 func NewKafkaState(kafkaPorts []string) *kafkaState {
-	kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", DefaultCLIHome)
-	admin := KafkaAdmin(kafkaPorts)
-	producer := NewProducer(kafkaPorts)
-	consumer := NewConsumer(kafkaPorts)
+	kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", defaultCLIHome)
+	admin := kafkaAdmin(kafkaPorts)
+	producer := newProducer(kafkaPorts)
+	consumer := newConsumer(kafkaPorts)
 
 	var consumers = make(map[string]sarama.PartitionConsumer)
 
-	for _, topic := range Topics {
-		partitionConsumer := PartitionConsumers(consumer, topic)
+	for _, topic := range topics {
+		partitionConsumer := partitionConsumers(consumer, topic)
 		consumers[topic] = partitionConsumer
 	}
 
@@ -129,7 +124,7 @@ func NewKafkaState(kafkaPorts []string) *kafkaState {
 		Consumer:  consumer,
 		Consumers: consumers,
 		Producer:  producer,
-		Topics:    Topics,
+		Topics:    topics,
 		IsEnabled: true,
 	}
 }

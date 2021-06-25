@@ -10,19 +10,19 @@ import (
 	"time"
 )
 
-// SleepTimer : the time the kafka messages are to be taken in
-const SleepTimer = time.Duration(1000000000)
+// sleepTimer : the time the kafka messages are to be taken in
+const sleepTimer = time.Duration(1000000000)
 
-// SleepRoutine : the time the kafka messages are to be taken in
-const SleepRoutine = time.Duration(2500000000)
+// sleepRoutine : the time the kafka messages are to be taken in
+const sleepRoutine = time.Duration(2500000000)
 
-// DefaultCLIHome : is the home path
-var DefaultCLIHome = os.ExpandEnv("$HOME/.kafka")
+// defaultCLIHome : is the home path
+var defaultCLIHome = os.ExpandEnv("$HOME/.kafka")
 
 const partition = int32(0)
 const offset = int64(0)
 
-// Topics : is list of topics
-var Topics = []string{
+// topics : is list of topics
+var topics = []string{
 	"Topic",
 }
