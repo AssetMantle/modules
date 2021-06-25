@@ -19,11 +19,11 @@ func TestKafkaProducerDeliverMessage(t *testing.T) {
 		codec.RegisterCrypto(Codec)
 		codec.RegisterEvidences(Codec)
 		vesting.RegisterCodec(Codec)
-		testKafkaMessage := KafkaMsg{Msg: nil}
+		testKafkaMessage := kafkaMsg{Msg: nil}
 		producer, err := sarama.NewSyncProducer(testProducer, nil)
 		if err != nil {
 		}
-		require.Equal(t, KafkaProducerDeliverMessage(testKafkaMessage, "Topic", producer, Codec), nil)
+		require.Equal(t, kafkaProducerDeliverMessage(testKafkaMessage, "Topic", producer, Codec), nil)
 	})
 
 }
@@ -35,6 +35,6 @@ func TestNewProducer(t *testing.T) {
 	if err != nil {
 	}
 	require.Panics(t, func() {
-		require.Equal(t, NewProducer(testProducer), producer)
+		require.Equal(t, newProducer(testProducer), producer)
 	})
 }

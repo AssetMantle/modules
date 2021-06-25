@@ -35,7 +35,7 @@ func Test_Kafka_Types(t *testing.T) {
 
 	ticketID := TicketID(random.GenerateID("name"))
 	testKafkaMsg := NewKafkaMsgFromRest(testMessage, ticketID, testBaseReq, cliContext)
-	kafkaCli := KafkaCliCtx{
+	kafkaCli := kafkaCliCtx{
 		OutputFormat:  cliContext.OutputFormat,
 		ChainID:       cliContext.ChainID,
 		Height:        cliContext.Height,
@@ -52,7 +52,7 @@ func Test_Kafka_Types(t *testing.T) {
 		Indent:        cliContext.Indent,
 		SkipConfirm:   cliContext.SkipConfirm,
 	}
-	require.Equal(t, KafkaMsg{Msg: testMessage, TicketID: ticketID, BaseRequest: testBaseReq, KafkaCli: kafkaCli}, testKafkaMsg)
-	require.Equal(t, cliContext, CliCtxFromKafkaMsg(testKafkaMsg, cliContext))
+	require.Equal(t, kafkaMsg{Msg: testMessage, TicketID: ticketID, BaseRequest: testBaseReq, KafkaCli: kafkaCli}, testKafkaMsg)
+	require.Equal(t, cliContext, cliCtxFromKafkaMsg(testKafkaMsg, cliContext))
 	//require
 }

@@ -6,14 +6,13 @@
 package queuing
 
 import (
+	clientContext "github.com/cosmos/cosmos-sdk/client/context"
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -21,19 +20,25 @@ import (
 	"github.com/spf13/viper"
 )
 
-func SignAndBroadcastMultiple(brs []rest.BaseReq, cliContextList []context.CLIContext, msgList []sdkTypes.Msg) ([]byte, error) {
+func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, cliContext clientContext.CLIContext) ([]byte, error) {
 	var stdTxs types.StdTx
 
 	var txBytes []byte
 
-	for i := range brs {
-		gasAdj, _, Error := ParseFloat64OrReturnBadRequest(brs[i].GasAdjustment, flags.DefaultGasAdjustment)
+	var msgList []sdkTypes.Msg
+	for _, kafkaMsg := range kafkaMsgList {
+		msgList = append(msgList, kafkaMsg.Msg)
+	}
+
+	for i, kafkaMsg := range kafkaMsgList {
+		msgCLIContext := cliCtxFromKafkaMsg(kafkaMsg, cliContext)
+
+		gasAdj, Error := parseGasAdjustment(kafkaMsg.BaseRequest.GasAdjustment)
 		if Error != nil {
 			return nil, Error
 		}
 
-		simAndExec, gas, Error := flags.ParseGas(brs[i].Gas)
-
+		simAndExec, gas, Error := flags.ParseGas(kafkaMsg.BaseRequest.Gas)
 		if Error != nil {
 			return nil, Error
 		}
@@ -43,41 +48,41 @@ func SignAndBroadcastMultiple(brs []rest.BaseReq, cliContextList []context.CLICo
 			return nil, Error
 		}
 
-		accountNumber, sequence, Error := types.NewAccountRetriever(cliContextList[i]).GetAccountNumberSequence(cliContextList[i].FromAddress)
+		accountNumber, sequence, Error := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(msgCLIContext.FromAddress)
 		if Error != nil {
 			return nil, Error
 		}
 
-		brs[i].AccountNumber = accountNumber
+		kafkaMsg.BaseRequest.AccountNumber = accountNumber
 
 		var count = uint64(0)
 
 		for j := 0; j < i; j++ {
-			if accountNumber == brs[j].AccountNumber {
+			if accountNumber == kafkaMsgList[j].BaseRequest.AccountNumber {
 				count++
 			}
 		}
 
 		sequence += count
 		txBuilder := types.NewTxBuilder(
-			authClient.GetTxEncoder(cliContextList[i].Codec), accountNumber, sequence, gas, gasAdj,
-			brs[i].Simulate, brs[i].ChainID, brs[i].Memo, brs[i].Fees, brs[i].GasPrices,
+			authClient.GetTxEncoder(cliContext.Codec), accountNumber, sequence, gas, gasAdj,
+			kafkaMsg.BaseRequest.Simulate, kafkaMsg.BaseRequest.ChainID, kafkaMsg.BaseRequest.Memo, kafkaMsg.BaseRequest.Fees, kafkaMsg.BaseRequest.GasPrices,
 		)
 
 		txBuilder = txBuilder.WithKeybase(keyBase)
 
-		if brs[i].Simulate || simAndExec {
+		if kafkaMsg.BaseRequest.Simulate || simAndExec {
 			if gasAdj < 0 {
 				return nil, errors.New("Error invalid gas adjustment")
 			}
 
-			txBuilder, Error = authClient.EnrichWithGas(txBuilder, cliContextList[i], []sdkTypes.Msg{msgList[i]})
+			txBuilder, Error = authClient.EnrichWithGas(txBuilder, cliContext, []sdkTypes.Msg{kafkaMsg.Msg})
 			if Error != nil {
 				return nil, Error
 			}
 
-			if brs[i].Simulate {
-				val, _ := SimulationResponse(cliContextList[i].Codec, txBuilder.Gas())
+			if kafkaMsg.BaseRequest.Simulate {
+				val, _ := simulationResponse(cliContext.Codec, txBuilder.Gas())
 				return val, nil
 			}
 		}
@@ -89,7 +94,7 @@ func SignAndBroadcastMultiple(brs []rest.BaseReq, cliContextList []context.CLICo
 
 		stdTx := auth.NewStdTx(stdMsg.Msgs, stdMsg.Fee, nil, stdMsg.Memo)
 
-		stdTx, Error = txBuilder.SignStdTx(cliContextList[i].FromName, keys.DefaultKeyPass, stdTx, true)
+		stdTx, Error = txBuilder.SignStdTx(msgCLIContext.FromName, keys.DefaultKeyPass, stdTx, true)
 		if Error != nil {
 			return nil, Error
 		}
@@ -104,7 +109,7 @@ func SignAndBroadcastMultiple(brs []rest.BaseReq, cliContextList []context.CLICo
 			stdTxs.Signatures = append(stdTxs.Signatures, stdTx.Signatures...)
 		}
 
-		if i == len(brs)-1 {
+		if i == len(kafkaMsgList)-1 {
 			txBytes, Error = txBuilder.TxEncoder()(stdTxs)
 			if Error != nil {
 				return nil, Error
@@ -112,12 +117,12 @@ func SignAndBroadcastMultiple(brs []rest.BaseReq, cliContextList []context.CLICo
 		}
 	}
 
-	response, Error := cliContextList[0].BroadcastTx(txBytes)
+	response, Error := cliCtxFromKafkaMsg(kafkaMsgList[0], cliContext).BroadcastTx(txBytes)
 	if Error != nil {
 		return nil, Error
 	}
 
-	output, Error := cliContextList[0].Codec.MarshalJSON(response)
+	output, Error := cliCtxFromKafkaMsg(kafkaMsgList[0], cliContext).Codec.MarshalJSON(response)
 	if Error != nil {
 		return nil, Error
 	}
