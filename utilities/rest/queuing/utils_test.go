@@ -6,31 +6,28 @@
 package queuing
 
 import (
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/stretchr/testify/require"
-	"net/http"
 	"testing"
 )
 
 func Test_Rest_Utils(t *testing.T) {
 
-	value, status, Error := parseFloat64OrReturnBadRequest("", 0.4)
-	require.Equal(t, 0.4, value)
-	require.Equal(t, http.StatusAccepted, status)
+	value, Error := parseGasAdjustment("")
+	require.Equal(t, flags.DefaultGasAdjustment, value)
 	require.Equal(t, nil, Error)
 
-	value2, status2, error2 := parseFloat64OrReturnBadRequest("test", 0.5)
+	value2, error2 := parseGasAdjustment("test")
 	require.Equal(t, float64(0), value2)
-	require.Equal(t, http.StatusBadRequest, status2)
 	require.NotNil(t, error2)
 
-	value3, status3, error3 := parseFloat64OrReturnBadRequest("0.3", 0.4)
+	value3, error3 := parseGasAdjustment("0.3")
 	require.Equal(t, 0.3, value3)
-	require.Equal(t, http.StatusAccepted, status3)
 	require.Equal(t, nil, error3)
 
 	var Codec = codec.New()

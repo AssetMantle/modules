@@ -38,8 +38,7 @@ func kafkaTopicConsumer(topic string, consumers map[string]sarama.PartitionConsu
 	partitionConsumer := consumers[topic]
 
 	if len(partitionConsumer.Messages()) == 0 {
-		var kafkaStore = kafkaMsg{Msg: nil}
-		return kafkaStore
+		return kafkaMsg{Msg: nil}
 	}
 
 	var consumedKafkaMsg kafkaMsg

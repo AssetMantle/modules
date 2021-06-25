@@ -9,21 +9,13 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
 // kafkaConsumerMessages : messages to consume 5 second delay
 func kafkaConsumerMessages(cliCtx context.CLIContext) {
 	quit := make(chan bool)
 
-	var cliContextList []context.CLIContext
-
-	var baseRequestList []rest.BaseReq
-
-	var ticketIDList []TicketID
-
-	var msgList []sdkTypes.Msg
+	var kafkaMsgList []kafkaMsg
 
 	go func() {
 		for {
@@ -33,10 +25,7 @@ func kafkaConsumerMessages(cliCtx context.CLIContext) {
 			default:
 				kafkaMsg := kafkaTopicConsumer("Topic", KafkaState.Consumers, cliCtx.Codec)
 				if kafkaMsg.Msg != nil {
-					cliContextList = append(cliContextList, cliCtxFromKafkaMsg(kafkaMsg, cliCtx))
-					baseRequestList = append(baseRequestList, kafkaMsg.BaseRequest)
-					ticketIDList = append(ticketIDList, kafkaMsg.TicketID)
-					msgList = append(msgList, kafkaMsg.Msg)
+					kafkaMsgList = append(kafkaMsgList, kafkaMsg)
 				}
 			}
 		}
@@ -45,11 +34,11 @@ func kafkaConsumerMessages(cliCtx context.CLIContext) {
 	time.Sleep(sleepTimer)
 	quit <- true
 
-	if len(msgList) == 0 {
+	if len(kafkaMsgList) == 0 {
 		return
 	}
 
-	output, err := signAndBroadcastMultiple(baseRequestList, cliContextList, msgList)
+	output, err := signAndBroadcastMultiple(kafkaMsgList, cliCtx)
 	if err != nil {
 		jsonError, e := cliCtx.Codec.MarshalJSON(struct {
 			Error string `json:"error"`
@@ -58,14 +47,14 @@ func kafkaConsumerMessages(cliCtx context.CLIContext) {
 			panic(err)
 		}
 
-		for _, ticketID := range ticketIDList {
-			addResponseToDB(ticketID, jsonError, KafkaState.KafkaDB, cliCtx.Codec)
+		for _, kafkaMsg := range kafkaMsgList {
+			addResponseToDB(kafkaMsg.TicketID, jsonError, KafkaState.KafkaDB, cliCtx.Codec)
 		}
 
 		return
 	}
 
-	for _, ticketID := range ticketIDList {
-		addResponseToDB(ticketID, output, KafkaState.KafkaDB, cliCtx.Codec)
+	for _, kafkaMsg := range kafkaMsgList {
+		addResponseToDB(kafkaMsg.TicketID, output, KafkaState.KafkaDB, cliCtx.Codec)
 	}
 }
