@@ -58,14 +58,14 @@ func queryDB(cdc *codec.Codec) http.HandlerFunc {
 
 		vars := mux.Vars(r)
 
-		iDByte, err := cdc.MarshalJSON(vars["TicketID"])
+		ticketIDBytes, err := cdc.MarshalJSON(vars["TicketID"])
 		if err != nil {
 			panic(err)
 		}
 
 		var response []byte
 
-		check, _ := KafkaState.KafkaDB.Has(iDByte)
+		check, _ := KafkaState.KafkaDB.Has(ticketIDBytes)
 		if check {
 			response = getResponseFromDB(TicketID(vars["TicketID"]), KafkaState.KafkaDB, cdc)
 		} else {

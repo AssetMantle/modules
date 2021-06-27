@@ -21,12 +21,12 @@ type kafkaMsg struct {
 	Msg         sdk.Msg      `json:"msg"`
 	TicketID    TicketID     `json:"TicketID"`
 	BaseRequest rest.BaseReq `json:"base_req"`
-	KafkaCli    kafkaCliCtx  `json:"kafkaCliCtx"`
+	KafkaCliCtx kafkaCliCtx  `json:"kafkaCliCtx"`
 }
 
 // NewKafkaMsgFromRest : makes a msg to send to kafka queue
 func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseReq, cliCtx context.CLIContext) kafkaMsg {
-	kafkaCli := kafkaCliCtx{
+	kafkaCliCtx := kafkaCliCtx{
 		OutputFormat:  cliCtx.OutputFormat,
 		ChainID:       cliCtx.ChainID,
 		Height:        cliCtx.Height,
@@ -48,27 +48,27 @@ func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseRe
 		Msg:         msg,
 		TicketID:    ticketID,
 		BaseRequest: baseRequest,
-		KafkaCli:    kafkaCli,
+		KafkaCliCtx: kafkaCliCtx,
 	}
 }
 
 // cliCtxFromKafkaMsg : sets the transaction and cli contexts again to consume
 func cliCtxFromKafkaMsg(kafkaMsg kafkaMsg, cliContext context.CLIContext) context.CLIContext {
-	cliContext.OutputFormat = kafkaMsg.KafkaCli.OutputFormat
-	cliContext.ChainID = kafkaMsg.KafkaCli.ChainID
-	cliContext.Height = kafkaMsg.KafkaCli.Height
-	cliContext.HomeDir = kafkaMsg.KafkaCli.HomeDir
-	cliContext.NodeURI = kafkaMsg.KafkaCli.NodeURI
-	cliContext.From = kafkaMsg.KafkaCli.From
-	cliContext.TrustNode = kafkaMsg.KafkaCli.TrustNode
-	cliContext.UseLedger = kafkaMsg.KafkaCli.UseLedger
-	cliContext.BroadcastMode = kafkaMsg.KafkaCli.BroadcastMode
-	cliContext.Simulate = kafkaMsg.KafkaCli.Simulate
-	cliContext.GenerateOnly = kafkaMsg.KafkaCli.GenerateOnly
-	cliContext.FromAddress = kafkaMsg.KafkaCli.FromAddress
-	cliContext.FromName = kafkaMsg.KafkaCli.FromName
-	cliContext.Indent = kafkaMsg.KafkaCli.Indent
-	cliContext.SkipConfirm = kafkaMsg.KafkaCli.SkipConfirm
+	cliContext.OutputFormat = kafkaMsg.KafkaCliCtx.OutputFormat
+	cliContext.ChainID = kafkaMsg.KafkaCliCtx.ChainID
+	cliContext.Height = kafkaMsg.KafkaCliCtx.Height
+	cliContext.HomeDir = kafkaMsg.KafkaCliCtx.HomeDir
+	cliContext.NodeURI = kafkaMsg.KafkaCliCtx.NodeURI
+	cliContext.From = kafkaMsg.KafkaCliCtx.From
+	cliContext.TrustNode = kafkaMsg.KafkaCliCtx.TrustNode
+	cliContext.UseLedger = kafkaMsg.KafkaCliCtx.UseLedger
+	cliContext.BroadcastMode = kafkaMsg.KafkaCliCtx.BroadcastMode
+	cliContext.Simulate = kafkaMsg.KafkaCliCtx.Simulate
+	cliContext.GenerateOnly = kafkaMsg.KafkaCliCtx.GenerateOnly
+	cliContext.FromAddress = kafkaMsg.KafkaCliCtx.FromAddress
+	cliContext.FromName = kafkaMsg.KafkaCliCtx.FromName
+	cliContext.Indent = kafkaMsg.KafkaCliCtx.Indent
+	cliContext.SkipConfirm = kafkaMsg.KafkaCliCtx.SkipConfirm
 
 	return cliContext
 }

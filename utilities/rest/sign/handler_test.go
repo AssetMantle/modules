@@ -39,7 +39,6 @@ func TestHandler(t *testing.T) {
 
 	handler := handler(clientContext)
 	viper.Set(flags.FlagKeyringBackend, cryptoKeys.BackendTest)
-	viper.Set(flags.FlagHome, t.TempDir())
 
 	keyring, Error := cryptoKeys.NewKeyring(sdk.KeyringServiceName(), cryptoKeys.BackendTest, viper.GetString(flags.FlagHome), strings.NewReader(""))
 	require.NoError(t, Error)
