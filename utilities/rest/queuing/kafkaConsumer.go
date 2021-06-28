@@ -24,7 +24,7 @@ func newConsumer(kafkaNodes []string) sarama.Consumer {
 
 // partitionConsumers : is a child consumer
 func partitionConsumers(consumer sarama.Consumer, topic string) sarama.PartitionConsumer {
-	// partition and offset defined in CONSTANTS.go
+	// partition and offset defined in configurations.go
 	partitionConsumer, Error := consumer.ConsumePartition(topic, partition, offset)
 	if Error != nil {
 		panic(Error)
