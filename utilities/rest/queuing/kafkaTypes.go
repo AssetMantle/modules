@@ -105,11 +105,11 @@ type kafkaState struct {
 }
 
 // NewKafkaState : returns a kafka state
-func NewKafkaState(kafkaPorts []string) *kafkaState {
+func NewKafkaState(nodeList []string) *kafkaState {
 	kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", defaultCLIHome)
-	admin := kafkaAdmin(kafkaPorts)
-	producer := newProducer(kafkaPorts)
-	consumer := newConsumer(kafkaPorts)
+	admin := kafkaAdmin(nodeList)
+	producer := newProducer(nodeList)
+	consumer := newConsumer(nodeList)
 
 	var consumers = make(map[string]sarama.PartitionConsumer)
 
