@@ -37,10 +37,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	if identity.(mappables.InterIdentity).IsUnprovisioned(message.To) {
-		return newTransactionResponse(errors.DeletionNotAllowed)
-	}
-
 	identities.Mutate(identity.(mappables.InterIdentity).UnprovisionAddress(message.To))
 
 	return newTransactionResponse(nil)
