@@ -2,18 +2,20 @@ package cuckoo
 
 import (
 	"bytes"
-	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/binary"
 	"errors"
+	"strings"
+
 	//"github.com/persistenceOne/persistenceSDK/utilities/cuckoo"
 	"math"
 	"math/rand"
 )
 
-type bucket []fingerprint
+type bucket []byte
 type fingerprint []byte
 
-var hasher = sha1.New()
+var hasher = sha256.New()
 
 const retries = 500
 
@@ -30,9 +32,9 @@ func NewCuckoo(n uint, fp float64) *Cuckoo {
 	f := fingerprintLength(b, fp)
 	m := nextPower(n / f * 8)
 	buckets := make([]bucket, m)
-	for i := uint(0); i < m; i++ {
-		buckets[i] = make(bucket, b)
-	}
+	//for i := uint(0); i < m; i++ {
+	//	buckets[i] = make(bucket, b)
+	//}
 	return &Cuckoo{
 		buckets: buckets,
 		m:       m,
@@ -68,8 +70,8 @@ func (c *Cuckoo) lookup(needle id) bool {
 }
 
 func (b bucket) contains(f fingerprint) (int, bool) {
-	for i, x := range b {
-		if bytes.Equal(x, f) {
+	for i, x := range strings.Split(string(b), "|") {
+		if bytes.Equal([]byte(x), f) {
 			return i, true
 		}
 	}
