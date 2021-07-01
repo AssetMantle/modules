@@ -3,20 +3,19 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package deputize
+package revoke
 
 import (
-	"fmt"
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 	"github.com/stretchr/testify/require"
 )
 
-func Test_Deputize_Message(t *testing.T) {
+func Test_Revoke_Message(t *testing.T) {
 
 	testFromID := base.NewID("fromID")
 	testToID := base.NewID("toID")
@@ -26,15 +25,12 @@ func Test_Deputize_Message(t *testing.T) {
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, Error)
 
-	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, Error := base.ReadProperties(maintainedProperty)
 	require.Equal(t, nil, Error)
 
-	testMessage := newMessage(fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, true, true, false)
-	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ToID: testToID, ClassificationID: testClassificationID, MaintainedProperties: maintainedProperties, AddMaintainer: true, RemoveMaintainer: true, MutateMaintainer: false}, testMessage)
+	testMessage := newMessage(fromAccAddress, testFromID, testToID, testClassificationID)
+	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ToID: testToID, ClassificationID: testClassificationID}, testMessage)
 	require.Equal(t, module.Name, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
-	fmt.Print(testMessage)
 	require.Equal(t, nil, testMessage.ValidateBasic())
 	require.NotNil(t, message{}.ValidateBasic())
 	require.Equal(t, sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(testMessage)), testMessage.GetSignBytes())
@@ -42,5 +38,4 @@ func Test_Deputize_Message(t *testing.T) {
 	require.Equal(t, testMessage, messageFromInterface(testMessage))
 	require.Equal(t, message{}, messageFromInterface(nil))
 	require.Equal(t, message{}, messagePrototype())
-
 }

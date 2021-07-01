@@ -81,7 +81,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	immutableProperties, _ := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	defaultClassificationID := base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
 	defaultIdentityID := key.NewIdentityID(defaultClassificationID, immutableProperties)
-	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(defaultIdentityID, base.NewProperties(), base.NewProperties()))
+	testIdentity := mappable.NewIdentity(defaultIdentityID, base.NewProperties(), base.NewProperties()).ProvisionAddress(defaultAddr)
+	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(context).Add(testIdentity)
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
