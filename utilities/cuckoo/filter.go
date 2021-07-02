@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
-	"errors"
+	_ "errors"
 	"strings"
 
 	//"github.com/persistenceOne/persistenceSDK/utilities/cuckoo"
@@ -49,14 +49,15 @@ func (c *Cuckoo) delete(needle id) {
 	i1, i2, f := c.hashes(needle.IDString)
 	// try to remove from f1
 	b1 := c.buckets[i1%c.m]
-	if ind, ok := b1.contains(f); ok {
-		b1[ind] = nil
+
+	if _, ok := b1.contains(f); ok {
+		b1 = []byte(strings.ReplaceAll(string(b1), string(f), ""))
 		return
 	}
 
 	b2 := c.buckets[i2%c.m]
-	if ind, ok := b2.contains(f); ok {
-		b2[ind] = nil
+	if _, ok := b2.contains(f); ok {
+		b1 = []byte(strings.ReplaceAll(string(b1), string(f), ""))
 		return
 	}
 }
@@ -82,14 +83,19 @@ func (c *Cuckoo) insert(input id) {
 	i1, i2, f := c.hashes(input.IDString)
 	// first try bucket one
 	b1 := c.buckets[i1%c.m]
-	if i, err := b1.nextIndex(); err == nil {
-		b1[i] = f
+
+	if len(b1) < int(c.b*c.f){
+		b1 = append(b1, []byte(f)...)
+		b1 = append(b1, '|')
 		return
 	}
 
+
 	b2 := c.buckets[i2%c.m]
-	if i, err := b2.nextIndex(); err == nil {
-		b2[i] = f
+
+	if len(b2) < int(c.b*c.f){
+		b2 = append(b2, []byte(f)...)
+		b2 = append(b2, '|')
 		return
 	}
 
@@ -99,29 +105,24 @@ func (c *Cuckoo) insert(input id) {
 		index := i % c.m
 		entryIndex := rand.Intn(int(c.b))
 		// swap
-		f, c.buckets[index][entryIndex] = c.buckets[index][entryIndex], f
+		b := c.buckets[index]
+
+		f, b = fingerprint(strings.Split(string(b), "|")[entryIndex]),
+		append(b, []byte(f)...)
+		f1 := append(f, '|')
+		b = []byte(strings.ReplaceAll(string(b), string(f1), ""))
+
 		i = i ^ uint(binary.BigEndian.Uint32(hash(f)))
-		b := c.buckets[i%c.m]
-		if idx, err := b.nextIndex(); err == nil {
-			b[idx] = f
+		b = c.buckets[i%c.m]
+
+		if len(b) < int(c.b*c.f){
+			b = append(b1, []byte(f1)...)
+			//b = append(b1, '|')
 			return
 		}
 	}
 	panic("cuckoo filter full")
 }
-
-// nextIndex returns the next index for entry, or an error if the bucket is full
-func (b bucket) nextIndex() (int, error) {
-	for i, f := range b {
-		if f == nil {
-			return i, nil
-		}
-	}
-	return -1, errors.New("bucket full")
-}
-
-
-
 
 
 func (c *Cuckoo) hashes(data string) (uint, uint, fingerprint) {
