@@ -6,7 +6,6 @@
 package deputize
 
 import (
-	"fmt"
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -30,11 +29,10 @@ func Test_Deputize_Message(t *testing.T) {
 	maintainedProperties, Error := base.ReadProperties(maintainedProperty)
 	require.Equal(t, nil, Error)
 
-	testMessage := newMessage(fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, true, true, false)
-	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ToID: testToID, ClassificationID: testClassificationID, MaintainedProperties: maintainedProperties, AddMaintainer: true, RemoveMaintainer: true, MutateMaintainer: false}, testMessage)
+	testMessage := newMessage(fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false)
+	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ToID: testToID, ClassificationID: testClassificationID, MaintainedProperties: maintainedProperties, AddMaintainer: false, RemoveMaintainer: false, MutateMaintainer: false}, testMessage)
 	require.Equal(t, module.Name, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
-	fmt.Print(testMessage)
 	require.Equal(t, nil, testMessage.ValidateBasic())
 	require.NotNil(t, message{}.ValidateBasic())
 	require.Equal(t, sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(testMessage)), testMessage.GetSignBytes())
