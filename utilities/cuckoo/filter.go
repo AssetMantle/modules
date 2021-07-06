@@ -45,7 +45,7 @@ func NewCuckoo(n uint, fp float64) *Cuckoo {
 }
 
 
-func (c *Cuckoo) delete(needle id) {
+func (c *Cuckoo) delete(needle *id) {
 	i1, i2, f := c.hashes(needle.IDString)
 	// try to remove from f1
 	b1 := c.buckets[i1%c.m]
@@ -63,7 +63,7 @@ func (c *Cuckoo) delete(needle id) {
 }
 
 // lookup needle in the cuckoo filter
-func (c *Cuckoo) lookup(needle id) bool {
+func (c *Cuckoo) lookup(needle *id) bool {
 	i1, i2, f := c.hashes(needle.IDString)
 	_, b1 := c.buckets[i1%c.m].contains(f)
 	_, b2 := c.buckets[i2%c.m].contains(f)
@@ -79,7 +79,7 @@ func (b bucket) contains(f fingerprint) (int, bool) {
 	return -1, false
 }
 
-func (c *Cuckoo) insert(input id) {
+func (c *Cuckoo) insert(input *id) {
 	i1, i2, f := c.hashes(input.IDString)
 	// first try bucket one
 	b1 := c.buckets[i1%c.m]
