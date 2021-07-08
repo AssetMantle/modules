@@ -20,11 +20,10 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper          	helpers.Mapper
-	parameters      	helpers.Parameters
-	revokeAuxiliary 	helpers.Auxiliary
+	mapper              helpers.Mapper
+	parameters          helpers.Parameters
+	revokeAuxiliary     helpers.Auxiliary
 	supplementAuxiliary helpers.Auxiliary
-
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -54,7 +53,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.NotAuthorized)
 
 	}
-
 
 	if auxiliaryResponse := transactionKeeper.revokeAuxiliary.GetKeeper().Help(context, revoke.NewAuxiliaryRequest(message.FromID, message.ToID, message.ClassificationID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())

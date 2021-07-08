@@ -50,7 +50,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	}
 
-
 	expiryHeightMetaFact := metaProperties.Get(base.NewID(properties.Expiry))
 	if expiryHeightMetaFact == nil {
 		return newTransactionResponse(errors.EntityNotFound)
