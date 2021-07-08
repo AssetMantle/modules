@@ -14,6 +14,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -27,10 +28,6 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
-
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.IdentityID))
 
 	identity := identities.Get(key.FromID(message.IdentityID))
@@ -42,6 +39,17 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
+
+	accAddressListData, ok := metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().(types.ListData)
+	if !ok {
+		return newTransactionResponse(errors.EntityNotFound)
+	}
+
+	if !accAddressListData.IsPresent(base.NewAccAddressData(message.From)) {
+		return newTransactionResponse(errors.NotAuthorized)
+
+	}
+
 
 	expiryHeightMetaFact := metaProperties.Get(base.NewID(properties.Expiry))
 	if expiryHeightMetaFact == nil {
