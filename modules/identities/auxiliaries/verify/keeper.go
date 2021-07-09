@@ -41,7 +41,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	accAddressListData, ok := metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().(types.ListData)
 	if !ok {
-		panic(errors.IncorrectFormat)
+		return newAuxiliaryResponse(errors.IncorrectFormat)
 	}
 
 	if !accAddressListData.IsPresent(base.NewAccAddressData(auxiliaryRequest.Address)) {
