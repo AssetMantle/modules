@@ -63,15 +63,15 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	mutableProperties := base.NewProperties(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(identity.(mappables.InterNFT).GetClassificationID(), nil, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(identity.(mappables.InterIdentity).GetClassificationID(), nil, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(identity.(mappables.InterNFT).GetClassificationID(), message.FromID, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(identity.(mappables.InterIdentity).GetClassificationID(), message.FromID, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	identities.Mutate(mappable.NewIdentity(identity.(mappables.InterIdentity).GetID(), identity.(mappables.InterNFT).GetImmutableProperties(), identity.(mappables.InterNFT).GetImmutableProperties().Mutate(mutableProperties.GetList()...)))
+	identities.Mutate(mappable.NewIdentity(identity.(mappables.InterIdentity).GetID(), identity.(mappables.InterIdentity).GetImmutableProperties(), identity.(mappables.InterIdentity).GetImmutableProperties().Mutate(mutableProperties.GetList()...)))
 
 	return newTransactionResponse(nil)
 }
