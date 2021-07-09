@@ -40,7 +40,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	accAddressListData, ok := metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().(types.ListData)
+	authMetaProperties, Error:= supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.InterIdentity).GetAuthentication())))
+	if Error != nil {
+		return newTransactionResponse(Error)
+	}
+
+	accAddressListData, ok := authMetaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().(types.ListData)
 	if !ok {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
