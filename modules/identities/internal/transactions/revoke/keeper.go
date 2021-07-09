@@ -9,7 +9,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
@@ -69,7 +68,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			switch value.GetName() {
 			case revoke.Auxiliary.GetName():
 				transactionKeeper.revokeAuxiliary = value
-			case verify.Auxiliary.GetName():
+			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
 			}
 		default:

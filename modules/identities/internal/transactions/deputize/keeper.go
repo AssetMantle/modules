@@ -9,7 +9,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
@@ -51,11 +50,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if !accAddressListData.IsPresent(base.NewAccAddressData(message.From)) {
 		return newTransactionResponse(errors.NotAuthorized)
 
-	}
-
-	if auxiliaryResponse := transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-
-		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
 	if auxiliaryResponse := transactionKeeper.deputizeAuxiliary.GetKeeper().Help(context, deputize.NewAuxiliaryRequest(message.FromID, message.ToID, message.ClassificationID, message.MaintainedProperties, message.AddMaintainer, message.RemoveMaintainer, message.MutateMaintainer)); !auxiliaryResponse.IsSuccessful() {
