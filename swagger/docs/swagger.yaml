@@ -1,0 +1,11 @@
+host: localhost:1317
+info:
+  contact: {}
+  description: API Documentation of Persistence custom modules
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Persistence Swagger Documentation
+  version: 0.1.0
+paths: {}
+swagger: "2.0"
