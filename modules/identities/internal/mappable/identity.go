@@ -73,7 +73,7 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 		panic(errors.IncorrectFormat)
 	}
 
-	if address.Empty() && !accAddressListData.IsPresent(base.NewAccAddressData(address)) {
+	if !address.Empty() && accAddressListData.IsPresent(base.NewAccAddressData(address)) {
 		flag = true
 	}
 
@@ -87,7 +87,7 @@ func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 		panic(errors.IncorrectFormat)
 	}
 
-	if !address.Empty() && accAddressListData.IsPresent(base.NewAccAddressData(address)) {
+	if !address.Empty() && !accAddressListData.IsPresent(base.NewAccAddressData(address)) {
 		flag = true
 	}
 

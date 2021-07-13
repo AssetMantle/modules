@@ -14,7 +14,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/parameters"
@@ -77,6 +76,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	classificationID := base.NewID("classificationID")
 	identityID := base.NewID("identityID")
+	toID := base.NewID("toID")
 
 	maintainedProperties := base.NewProperties()
 	maintainerID := key.NewMaintainerID(classificationID, identityID)
@@ -85,7 +85,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
 		require.Panics(t, func() {
-			if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(base.NewID("identityID"), base.NewID("identityID"), base.NewID("classificationID"), base.NewProperties(), false, false, false)); !reflect.DeepEqual(got, want) {
+			if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(identityID, toID, classificationID, base.NewProperties(), false, false, false)); !reflect.DeepEqual(got, want) {
 				t.Errorf("Transact() = %v, want %v", got, want)
 			}
 		})
@@ -93,7 +93,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-Maintainer not present", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(errors.EntityAlreadyExists)
+		want := newAuxiliaryResponse(nil)
 		require.Panics(t, func() {
 			if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(identityID, identityID, classificationID, maintainedProperties, false, false, false)); !reflect.DeepEqual(got, want) {
 				t.Errorf("Transact() = %v, want %v", got, want)
