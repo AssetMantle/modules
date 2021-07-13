@@ -22,8 +22,8 @@ func newProducer(kafkaNodes []string) sarama.SyncProducer {
 }
 
 // kafkaProducerDeliverMessage : delivers messages to kafka
-func kafkaProducerDeliverMessage(kafkaMsg kafkaMsg, topic string, producer sarama.SyncProducer, Codec *codec.Codec) error {
-	kafkaStoreBytes, err := Codec.MarshalJSON(kafkaMsg)
+func kafkaProducerDeliverMessage(kafkaMsg kafkaMsg, topic string, producer sarama.SyncProducer, codec *codec.Codec) error {
+	kafkaStoreBytes, err := codec.MarshalJSON(kafkaMsg)
 	if err != nil {
 		panic(err)
 	}
@@ -42,28 +42,28 @@ func kafkaProducerDeliverMessage(kafkaMsg kafkaMsg, topic string, producer saram
 }
 
 // SendToKafka : handles sending message to kafka
-func SendToKafka(kafkaMsg kafkaMsg, Codec *codec.Codec) []byte {
-	Error := kafkaProducerDeliverMessage(kafkaMsg, "Topic", KafkaState.Producer, Codec)
+func SendToKafka(kafkaMsg kafkaMsg, codec *codec.Codec) []byte {
+	Error := kafkaProducerDeliverMessage(kafkaMsg, "Topic", KafkaState.Producer, codec)
 	if Error != nil {
-		jsonResponse, Error := Codec.MarshalJSON(struct {
+		jsonResponse, Error := codec.MarshalJSON(struct {
 			Response string `json:"response"`
 		}{Response: "Something is up with kafka server, restart rest and kafka."})
 		if Error != nil {
 			panic(Error)
 		}
 
-		setTicketIDtoDB(kafkaMsg.TicketID, KafkaState.KafkaDB, Codec, jsonResponse)
+		setTicketIDtoDB(kafkaMsg.TicketID, KafkaState.KafkaDB, codec, jsonResponse)
 	} else {
-		jsonResponse, err := Codec.MarshalJSON(struct {
+		jsonResponse, err := codec.MarshalJSON(struct {
 			Error string `json:"error"`
 		}{Error: "Request in process, wait and try after some time"})
 		if err != nil {
 			panic(err)
 		}
-		setTicketIDtoDB(kafkaMsg.TicketID, KafkaState.KafkaDB, Codec, jsonResponse)
+		setTicketIDtoDB(kafkaMsg.TicketID, KafkaState.KafkaDB, codec, jsonResponse)
 	}
 
-	jsonResponse, Error := Codec.MarshalJSON(struct {
+	jsonResponse, Error := codec.MarshalJSON(struct {
 		TicketID TicketID `json:"TicketID"`
 	}{TicketID: kafkaMsg.TicketID})
 	if Error != nil {

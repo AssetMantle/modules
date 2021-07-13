@@ -81,6 +81,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			switch value.GetName() {
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
+			default:
+				panic(errors.UninitializedUsage)
 			}
 		default:
 			panic(errors.UninitializedUsage)
