@@ -12,7 +12,7 @@ import (
 
 type queryResponse struct {
 	Success bool               `json:"success"`
-	Error   error              `json:"error"`
+	Error   error              `json:"error" swaggertype:"string"`
 	List    []helpers.Mappable `json:"list"`
 }
 
