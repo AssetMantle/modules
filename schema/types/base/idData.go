@@ -35,8 +35,8 @@ func (idData idData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
 	return zeroValue, errors.EntityNotFound
 }
-func (idData idData) AsAccAddressList() ([]sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressListData{}.ZeroValue().AsAccAddressList()
+func (idData idData) AsListData() (types.ListData, error) {
+	zeroValue, _ := listData{}.ZeroValue().AsListData()
 	return zeroValue, errors.IncorrectFormat
 }
 func (idData idData) AsString() (string, error) {

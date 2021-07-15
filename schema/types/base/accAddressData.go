@@ -37,8 +37,8 @@ func (accAddressData accAddressData) GenerateHashID() types.ID {
 func (accAddressData accAddressData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	return accAddressData.Value, nil
 }
-func (accAddressData accAddressData) AsAccAddressList() ([]sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressListData{}.ZeroValue().AsAccAddressList()
+func (accAddressData accAddressData) AsListData() (types.ListData, error) {
+	zeroValue, _ := listData{}.ZeroValue().AsListData()
 	return zeroValue, errors.IncorrectFormat
 }
 func (accAddressData accAddressData) AsString() (string, error) {
