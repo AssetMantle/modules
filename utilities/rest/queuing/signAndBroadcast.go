@@ -6,9 +6,9 @@
 package queuing
 
 import (
-	clientContext "github.com/cosmos/cosmos-sdk/client/context"
 	"strings"
 
+	clientContext "github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"

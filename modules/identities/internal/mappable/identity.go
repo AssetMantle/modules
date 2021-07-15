@@ -29,6 +29,9 @@ type identity struct {
 var _ mappables.InterIdentity = (*identity)(nil)
 
 func (identity identity) GetID() types.ID { return identity.ID }
+func (identity identity) GetClassificationID() types.ID {
+	return key.ReadClassificationID(identity.ID)
+}
 func (identity identity) GetExpiry() types.Property {
 	if property := identity.HasImmutables.GetImmutableProperties().Get(base.NewID(properties.Expiry)); property != nil {
 		return property
@@ -44,7 +47,9 @@ func (identity identity) GetAuthentication() types.Property {
 	} else if property := identity.HasMutables.GetMutableProperties().Get(base.NewID(properties.Authentication)); property != nil {
 		return property
 	} else {
-		return base.NewProperty(base.NewID(properties.Authentication), base.NewFact(base.NewAccAddressData(nil).ZeroValue()))
+		data, _ := base.ReadAccAddressListData("")
+
+		return base.NewProperty(base.NewID(properties.Authentication), base.NewFact(data))
 	}
 }
 func (identity identity) GetKey() helpers.Key {
