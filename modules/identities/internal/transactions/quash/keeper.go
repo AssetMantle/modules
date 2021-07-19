@@ -9,23 +9,30 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
 	mapper              helpers.Mapper
 	supplementAuxiliary helpers.Auxiliary
+	verifyAuxiliary   	helpers.Auxiliary
+
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
+
+	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
+	}
+
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.IdentityID))
 
 	identity := identities.Get(key.FromID(message.IdentityID))
@@ -36,21 +43,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.InterIdentity).GetExpiry())))
 	if Error != nil {
 		return newTransactionResponse(Error)
-	}
-
-	authMetaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.InterIdentity).GetAuthentication())))
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
-
-	accAddressListData, ok := authMetaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().(types.ListData)
-	if !ok {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
-
-	if !accAddressListData.IsPresent(base.NewAccAddressData(message.From)) {
-		return newTransactionResponse(errors.NotAuthorized)
-
 	}
 
 	expiryHeightMetaFact := metaProperties.Get(base.NewID(properties.Expiry))
@@ -81,6 +73,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			switch value.GetName() {
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
+			case verify.Auxiliary.GetName():
+				transactionKeeper.verifyAuxiliary = value
 			default:
 				panic(errors.UninitializedUsage)
 			}
