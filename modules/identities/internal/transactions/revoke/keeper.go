@@ -8,49 +8,24 @@ package revoke
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/constants/properties"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
 	mapper              helpers.Mapper
 	parameters          helpers.Parameters
 	revokeAuxiliary     helpers.Auxiliary
-	supplementAuxiliary helpers.Auxiliary
+	verifyAuxiliary   	helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.FromID))
-	identity := identities.Get(key.FromID(message.FromID))
-
-	if identity == nil {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
-	if identity == nil {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.InterIdentity).GetAuthentication())))
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
-
-	accAddressListData, ok := metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().(types.ListData)
-	if !ok {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
-
-	if !accAddressListData.IsPresent(base.NewAccAddressData(message.From)) {
-		return newTransactionResponse(errors.NotAuthorized)
-
+	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
 	if auxiliaryResponse := transactionKeeper.revokeAuxiliary.GetKeeper().Help(context, revoke.NewAuxiliaryRequest(message.FromID, message.ToID, message.ClassificationID)); !auxiliaryResponse.IsSuccessful() {
@@ -68,8 +43,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			switch value.GetName() {
 			case revoke.Auxiliary.GetName():
 				transactionKeeper.revokeAuxiliary = value
-			case supplement.Auxiliary.GetName():
-				transactionKeeper.supplementAuxiliary = value
+			case verify.Auxiliary.GetName():
+				transactionKeeper.verifyAuxiliary = value
 			}
 		default:
 			panic(errors.UninitializedUsage)
