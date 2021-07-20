@@ -45,10 +45,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(auxiliaryResponse.GetError())
 	}
 
-	removeMaintainedProperties := fromMaintainer.(mappables.Maintainer).GetMaintainedProperties()
+	removeMaintainedProperties := fromMaintainer.GetMaintainedProperties()
 
 	for _, maintainedProperty := range auxiliaryRequest.MaintainedProperties.GetList() {
-		if !fromMaintainer.(mappables.Maintainer).MaintainsProperty(maintainedProperty.GetID()) {
+		if !fromMaintainer.MaintainsProperty(maintainedProperty.GetID()) {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 
@@ -59,13 +59,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	toMaintainer := maintainers.Fetch(key.FromID(toMaintainerID)).Get(key.FromID(toMaintainerID))
 	if toMaintainer == nil {
-		if !fromMaintainer.(mappables.Maintainer).CanAddMaintainer() {
+		if !fromMaintainer.CanAddMaintainer() {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 
 		maintainers.Add(mappable.NewMaintainer(toMaintainerID, auxiliaryRequest.MaintainedProperties, auxiliaryRequest.AddMaintainer, auxiliaryRequest.RemoveMaintainer, auxiliaryRequest.MutateMaintainer))
 	} else {
-		if !fromMaintainer.(mappables.Maintainer).CanMutateMaintainer() {
+		if !fromMaintainer.CanMutateMaintainer() {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 
