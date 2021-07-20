@@ -6,6 +6,7 @@
 package base
 
 import (
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"strings"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -16,11 +17,24 @@ import (
 )
 
 type listData struct {
-	Value []types.Data `json:"value"`
+	Value sortedDataList `json:"value"`
 }
 
 var _ types.ListData = (*listData)(nil)
 
+func (listData listData) Compare(sortable traits.Sortable) int {
+	compareListData, Error := listDataFromSortable(sortable)
+	if Error != nil {
+		panic(Error)
+	}
+
+	difference := 0
+	for i, compareData := range compareListData.Value {
+		difference += listData.Value[i].Compare(compareData)
+	}
+
+	return difference
+}
 func (listData listData) String() string {
 	dataStringList := make([]string, len(listData.Value))
 
@@ -70,7 +84,7 @@ func (listData listData) Get() interface{} {
 	return listData.Value
 }
 func (listData listData) Equal(data types.Data) bool {
-	compareAccAddressListData, Error := listDataFromInterface(data)
+	compareAccAddressListData, Error := listDataFromData(data)
 	if Error != nil {
 		return false
 	}
@@ -83,38 +97,30 @@ func (listData listData) Equal(data types.Data) bool {
 }
 func (listData listData) Add(dataList ...types.Data) types.ListData {
 	for _, data := range dataList {
-		accAddressData, Error := accAddressDataFromInterface(data)
-		if Error != nil {
-			panic(Error)
-		}
-
-		listData.Value = listData.Value.Insert(accAddressData.Value).(sortedList)
+		listData.Value.Insert(data)
 	}
-
 	return listData
 }
 func (listData listData) Remove(dataList ...types.Data) types.ListData {
 	for _, data := range dataList {
-		accAddressData, Error := accAddressDataFromInterface(data)
-		if Error != nil {
-			panic(Error)
-		}
-
-		listData.Value = listData.Value.Delete(accAddressData.Value).(sortedList)
+		listData.Value.Delete(data)
 	}
-
 	return listData
 }
-func (listData listData) IsPresent(data types.Data) bool {
-	accAddressData, Error := accAddressDataFromInterface(data)
-	if Error != nil {
-		panic(Error)
-	}
 
-	return listData.Value.Search(accAddressData.Value) != listData.Value.Len()
+func (listData listData) IsPresent(data types.Data) bool {
+	return listData.Value.Search(data) != len(listData.Value)
 }
-func listDataFromInterface(data types.Data) (listData, error) {
+func listDataFromData(data types.Data) (listData, error) {
 	switch value := data.(type) {
+	case listData:
+		return value, nil
+	default:
+		return listData{}, errors.MetaDataError
+	}
+}
+func listDataFromSortable(sortable traits.Sortable) (listData, error) {
+	switch value := sortable.(type) {
 	case listData:
 		return value, nil
 	default:
