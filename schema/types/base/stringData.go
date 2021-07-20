@@ -6,6 +6,8 @@
 package base
 
 import (
+	"strings"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -18,6 +20,14 @@ type stringData struct {
 
 var _ types.Data = (*stringData)(nil)
 
+func (stringData stringData) Compare(data types.Data) int {
+	compareStringData, Error := stringDataFromInterface(data)
+	if Error != nil {
+		panic(Error)
+	}
+
+	return strings.Compare(stringData.Value, compareStringData.Value) % 2
+}
 func (stringData stringData) String() string {
 	return stringData.Value
 }
@@ -56,25 +66,17 @@ func (stringData stringData) AsID() (types.ID, error) {
 func (stringData stringData) Get() interface{} {
 	return stringData.Value
 }
-func (stringData stringData) Equal(data types.Data) bool {
-	compareStringData, Error := stringDataFromInterface(data)
-	if Error != nil {
-		return false
-	}
-
-	return stringData.Value == compareStringData.Value
-}
-func stringDataFromInterface(data types.Data) (*stringData, error) {
+func stringDataFromInterface(data types.Data) (stringData, error) {
 	switch value := data.(type) {
-	case *stringData:
+	case stringData:
 		return value, nil
 	default:
-		return &stringData{}, errors.MetaDataError
+		return stringData{}, errors.MetaDataError
 	}
 }
 
 func NewStringData(value string) types.Data {
-	return &stringData{
+	return stringData{
 		Value: value,
 	}
 }

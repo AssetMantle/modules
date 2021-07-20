@@ -20,6 +20,20 @@ type heightData struct {
 
 var _ types.Data = (*heightData)(nil)
 
+func (heightData heightData) Compare(data types.Data) int {
+	compareHeightData, Error := heightDataFromInterface(data)
+	if Error != nil {
+		panic(Error)
+	}
+
+	if heightData.Value.IsGreaterThan(compareHeightData.Value) {
+		return 1
+	} else if heightData.Value.Equals(compareHeightData.Value) {
+		return 0
+	}
+
+	return -1
+}
 func (heightData heightData) String() string {
 	return strconv.FormatInt(heightData.Value.Get(), 10)
 }
@@ -30,7 +44,7 @@ func (heightData heightData) ZeroValue() types.Data {
 	return NewHeightData(NewHeight(0))
 }
 func (heightData heightData) GenerateHashID() types.ID {
-	if heightData.Equal(heightData.ZeroValue()) {
+	if heightData.Compare(heightData.ZeroValue()) == 0 {
 		return NewID("")
 	}
 
@@ -40,7 +54,7 @@ func (heightData heightData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
 	return zeroValue, errors.IncorrectFormat
 }
-func (heightData heightData) AsListData() ([]sdkTypes.AccAddress, error) {
+func (heightData heightData) AsListData() (types.ListData, error) {
 	zeroValue, _ := listData{}.ZeroValue().AsListData()
 	return zeroValue, errors.IncorrectFormat
 }
@@ -61,14 +75,6 @@ func (heightData heightData) AsID() (types.ID, error) {
 }
 func (heightData heightData) Get() interface{} {
 	return heightData.Value
-}
-func (heightData heightData) Equal(data types.Data) bool {
-	compareHeightData, Error := heightDataFromInterface(data)
-	if Error != nil {
-		return false
-	}
-
-	return heightData.Value.Get() == compareHeightData.Value.Get()
 }
 func heightDataFromInterface(data types.Data) (heightData, error) {
 	switch value := data.(type) {

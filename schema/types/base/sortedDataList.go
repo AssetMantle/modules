@@ -6,8 +6,9 @@
 package base
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"sort"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type sortedDataList []types.Data
@@ -26,11 +27,11 @@ func (sortedDataList sortedDataList) Insert(data types.Data) types.SortedDataLis
 		},
 	)
 
-	newSortedList := append(sortedDataList, data)
-	copy(newSortedList[index+1:], newSortedList[index:])
-	newSortedList[index] = data
+	sortedDataList = append(sortedDataList, data)
+	copy(sortedDataList[index+1:], sortedDataList[index:])
+	sortedDataList[index] = data
 
-	return newSortedList
+	return sortedDataList
 }
 func (sortedDataList sortedDataList) Delete(data types.Data) types.SortedDataList {
 	index := sortedDataList.Search(data)

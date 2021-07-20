@@ -7,11 +7,13 @@ package types
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 )
 
 type Data interface {
-	traits.Sortable
+	// Compare returns 1 if this > parameter
+	// returns -1 if this < parameter
+	// returns 0 if this = parameter
+	Compare(Data) int
 
 	String() string
 
@@ -29,6 +31,4 @@ type Data interface {
 	AsID() (ID, error)
 
 	Get() interface{}
-
-	Equal(Data) bool
 }

@@ -6,7 +6,6 @@
 package base
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"strings"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -22,8 +21,8 @@ type listData struct {
 
 var _ types.ListData = (*listData)(nil)
 
-func (listData listData) Compare(sortable traits.Sortable) int {
-	compareListData, Error := listDataFromSortable(sortable)
+func (listData listData) Compare(data types.Data) int {
+	compareListData, Error := listDataFromData(data)
 	if Error != nil {
 		panic(Error)
 	}
@@ -33,7 +32,7 @@ func (listData listData) Compare(sortable traits.Sortable) int {
 		difference += listData.Value[i].Compare(compareData)
 	}
 
-	return difference
+	return difference % 2
 }
 func (listData listData) String() string {
 	dataStringList := make([]string, len(listData.Value))
@@ -83,28 +82,18 @@ func (listData listData) AsID() (types.ID, error) {
 func (listData listData) Get() interface{} {
 	return listData.Value
 }
-func (listData listData) Equal(data types.Data) bool {
-	compareAccAddressListData, Error := listDataFromData(data)
-	if Error != nil {
-		return false
-	}
-
-	if len(listData.Value) != len(compareAccAddressListData.Value) {
-		return false
-	}
-
-	return listData.GenerateHashID().Equals(compareAccAddressListData.GenerateHashID())
-}
 func (listData listData) Add(dataList ...types.Data) types.ListData {
 	for _, data := range dataList {
 		listData.Value.Insert(data)
 	}
+
 	return listData
 }
 func (listData listData) Remove(dataList ...types.Data) types.ListData {
 	for _, data := range dataList {
 		listData.Value.Delete(data)
 	}
+
 	return listData
 }
 
@@ -113,14 +102,6 @@ func (listData listData) IsPresent(data types.Data) bool {
 }
 func listDataFromData(data types.Data) (listData, error) {
 	switch value := data.(type) {
-	case listData:
-		return value, nil
-	default:
-		return listData{}, errors.MetaDataError
-	}
-}
-func listDataFromSortable(sortable traits.Sortable) (listData, error) {
-	switch value := sortable.(type) {
 	case listData:
 		return value, nil
 	default:

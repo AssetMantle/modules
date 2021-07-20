@@ -6,9 +6,10 @@
 package base
 
 import (
+	"bytes"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
@@ -19,6 +20,14 @@ type idData struct {
 
 var _ types.Data = (*idData)(nil)
 
+func (idData idData) Compare(data types.Data) int {
+	compareIDData, Error := idDataFromInterface(data)
+	if Error != nil {
+		panic(Error)
+	}
+
+	return bytes.Compare(idData.Value.Bytes(), compareIDData.Value.Bytes()) % 2
+}
 func (idData idData) String() string {
 	return idData.Value.String()
 }
@@ -56,14 +65,6 @@ func (idData idData) AsID() (types.ID, error) {
 }
 func (idData idData) Get() interface{} {
 	return idData.Value
-}
-func (idData idData) Equal(data types.Data) bool {
-	compareIDData, Error := idDataFromInterface(data)
-	if Error != nil {
-		return false
-	}
-
-	return idData.Value.Equals(compareIDData.Value)
 }
 func idDataFromInterface(data types.Data) (idData, error) {
 	switch value := data.(type) {
