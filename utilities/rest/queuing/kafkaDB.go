@@ -7,11 +7,11 @@ package queuing
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
-	dbm "github.com/tendermint/tm-db"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/gorilla/mux"
+	dbm "github.com/tendermint/tm-db"
 )
 
 // setTicketIDtoDB : initiates TicketID in Database
