@@ -225,6 +225,10 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 
 	module.auxiliaries = NewAuxiliaries(auxiliaryList...)
 
+	for _, auxiliary := range auxiliaryList {
+		auxiliaryKeepers = append(auxiliaryKeepers, auxiliary)
+	}
+
 	transactionList := make([]helpers.Transaction, len(module.transactionsPrototype().GetList()))
 
 	for i, transaction := range module.transactionsPrototype().GetList() {

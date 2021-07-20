@@ -16,8 +16,8 @@ import (
 type transactionKeeper struct {
 	mapper          helpers.Mapper
 	parameters      helpers.Parameters
-	verifyAuxiliary helpers.Auxiliary
 	revokeAuxiliary helpers.Auxiliary
+	verifyAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
