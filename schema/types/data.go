@@ -7,9 +7,12 @@ package types
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
 )
 
 type Data interface {
+	traits.Sortable
+
 	String() string
 
 	GetTypeID() ID
