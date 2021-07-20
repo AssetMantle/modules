@@ -5,17 +5,8 @@
 
 package types
 
-import (
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
-	"sort"
-)
-
-type SortedList interface {
-	sort.Interface
-
-	Sort() SortedList
-
-	Insert(sortable traits.Sortable) SortedList
-	Delete(sortable traits.Sortable) SortedList
-	Search(sortable traits.Sortable) int
+type SortedDataList interface {
+	Insert(Data) SortedDataList
+	Delete(Data) SortedDataList
+	Search(Data) int
 }
