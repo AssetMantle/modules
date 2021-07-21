@@ -44,7 +44,6 @@ func NewCuckoo(n uint, fp float64) *Cuckoo {
 	}
 }
 
-
 func (c *Cuckoo) delete(needle *id) {
 	i1, i2, f := c.hashes(needle.IDString)
 	// try to remove from f1
@@ -84,16 +83,15 @@ func (c *Cuckoo) insert(input *id) {
 	// first try bucket one
 	b1 := c.buckets[i1%c.m]
 
-	if len(b1) < int(c.b*c.f){
+	if len(b1) < int(c.b*c.f) {
 		b1 = append(b1, []byte(f)...)
 		b1 = append(b1, '|')
 		return
 	}
 
-
 	b2 := c.buckets[i2%c.m]
 
-	if len(b2) < int(c.b*c.f){
+	if len(b2) < int(c.b*c.f) {
 		b2 = append(b2, []byte(f)...)
 		b2 = append(b2, '|')
 		return
@@ -108,14 +106,14 @@ func (c *Cuckoo) insert(input *id) {
 		b := c.buckets[index]
 
 		f, b = fingerprint(strings.Split(string(b), "|")[entryIndex]),
-		append(b, []byte(f)...)
+			append(b, []byte(f)...)
 		f1 := append(f, '|')
 		b = []byte(strings.ReplaceAll(string(b), string(f1), ""))
 
 		i = i ^ uint(binary.BigEndian.Uint32(hash(f)))
 		b = c.buckets[i%c.m]
 
-		if len(b) < int(c.b*c.f){
+		if len(b) < int(c.b*c.f) {
 			b = append(b1, []byte(f1)...)
 			//b = append(b1, '|')
 			return
@@ -123,7 +121,6 @@ func (c *Cuckoo) insert(input *id) {
 	}
 	panic("cuckoo filter full")
 }
-
 
 func (c *Cuckoo) hashes(data string) (uint, uint, fingerprint) {
 	h := hash([]byte(data))
@@ -133,14 +130,12 @@ func (c *Cuckoo) hashes(data string) (uint, uint, fingerprint) {
 	return i1, i2, f
 }
 
-
 func hash(data []byte) []byte {
 	hasher.Write([]byte(data))
 	hash := hasher.Sum(nil)
 	hasher.Reset()
 	return hash
 }
-
 
 func fingerprintLength(b uint, e float64) uint {
 	f := uint(math.Ceil(math.Log(2 * float64(b) / e)))
@@ -150,7 +145,6 @@ func fingerprintLength(b uint, e float64) uint {
 	}
 	return f
 }
-
 
 func nextPower(i uint) uint {
 	i--

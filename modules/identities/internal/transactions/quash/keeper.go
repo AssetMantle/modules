@@ -20,8 +20,7 @@ import (
 type transactionKeeper struct {
 	mapper              helpers.Mapper
 	supplementAuxiliary helpers.Auxiliary
-	verifyAuxiliary   	helpers.Auxiliary
-
+	verifyAuxiliary     helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)

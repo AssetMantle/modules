@@ -27,9 +27,8 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	identities := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(auxiliaryRequest.IdentityID))
 
-	identity := identities.Get(key.FromID(auxiliaryRequest.IdentityID))
+	identity := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(auxiliaryRequest.IdentityID)).Get(key.FromID(auxiliaryRequest.IdentityID))
 	if identity == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
@@ -39,12 +38,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(Error)
 	}
 
-	accAddressListData, ok := metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().(types.ListData)
-	if !ok {
-		return newAuxiliaryResponse(errors.IncorrectFormat)
-	}
-
-	if !accAddressListData.IsPresent(base.NewAccAddressData(auxiliaryRequest.Address)) {
+	if !metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().(types.ListData).IsPresent(base.NewAccAddressData(auxiliaryRequest.Address)) {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
 

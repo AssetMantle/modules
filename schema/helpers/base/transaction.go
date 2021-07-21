@@ -8,7 +8,6 @@ package base
 import (
 	"bufio"
 	"encoding/json"
-	"github.com/persistenceOne/persistenceSDK/utilities/random"
 	"log"
 	"net/http"
 	"reflect"
@@ -25,6 +24,7 @@ import (
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/utilities/random"
 	"github.com/persistenceOne/persistenceSDK/utilities/rest/queuing"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

@@ -9,6 +9,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
+// Collection a list of mappable with create CRUD methods
 type Collection interface {
 	GetKey() Key
 	Get(Key) Mappable

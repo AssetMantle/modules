@@ -225,7 +225,7 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 
 	module.auxiliaries = NewAuxiliaries(auxiliaryList...)
 
-	for _, auxiliary := range auxiliaryList{
+	for _, auxiliary := range auxiliaryList {
 		auxiliaryKeepers = append(auxiliaryKeepers, auxiliary)
 	}
 

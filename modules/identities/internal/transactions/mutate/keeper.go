@@ -20,11 +20,11 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper              helpers.Mapper
-	verifyAuxiliary 	helpers.Auxiliary
-	maintainAuxiliary   helpers.Auxiliary
-	scrubAuxiliary      helpers.Auxiliary
-	conformAuxiliary    helpers.Auxiliary
+	mapper            helpers.Mapper
+	verifyAuxiliary   helpers.Auxiliary
+	maintainAuxiliary helpers.Auxiliary
+	scrubAuxiliary    helpers.Auxiliary
+	conformAuxiliary  helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)

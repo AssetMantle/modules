@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func test_filter(t* testing.T)  {
+func test_filter(t *testing.T) {
 
 	c := NewCuckoo(10, .1)
 	c.insert(newId("hello"))

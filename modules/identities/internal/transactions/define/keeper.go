@@ -34,14 +34,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.FromID))
-	identity := identities.Get(key.FromID(message.FromID))
-
+	identity := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.FromID)).Get(key.FromID(message.FromID)).(mappables.InterIdentity)
 	if identity == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	if !identity.(mappables.InterIdentity).IsProvisioned(message.From) {
+	if !identity.IsProvisioned(message.From) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 

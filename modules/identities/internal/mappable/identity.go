@@ -47,9 +47,7 @@ func (identity identity) GetAuthentication() types.Property {
 	} else if property := identity.HasMutables.GetMutableProperties().Get(base.NewID(properties.Authentication)); property != nil {
 		return property
 	} else {
-		data, _ := base.ReadAccAddressListData("")
-
-		return base.NewProperty(base.NewID(properties.Authentication), base.NewFact(data))
+		return base.NewProperty(base.NewID(properties.Authentication), base.NewFact(base.NewListData().ZeroValue()))
 	}
 }
 func (identity identity) GetKey() helpers.Key {
