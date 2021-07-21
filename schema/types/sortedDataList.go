@@ -6,7 +6,10 @@
 package types
 
 type SortedDataList interface {
-	Insert(Data) SortedDataList
-	Delete(Data) SortedDataList
 	Search(Data) int
+
+	GetList() []Data
+
+	Add(...Data) SortedDataList
+	Remove(...Data) SortedDataList
 }
