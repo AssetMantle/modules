@@ -15,7 +15,7 @@ type sortedDataList []types.Data
 
 var _ types.SortedDataList = (*sortedDataList)(nil)
 
-func (sortedDataList sortedDataList) Insert(data types.Data) types.SortedDataList {
+func (sortedDataList sortedDataList) Add(data types.Data) types.SortedDataList {
 	if sortedDataList.Search(data) != len(sortedDataList) {
 		return sortedDataList
 	}
@@ -33,7 +33,7 @@ func (sortedDataList sortedDataList) Insert(data types.Data) types.SortedDataLis
 
 	return sortedDataList
 }
-func (sortedDataList sortedDataList) Delete(data types.Data) types.SortedDataList {
+func (sortedDataList sortedDataList) Remove(data types.Data) types.SortedDataList {
 	index := sortedDataList.Search(data)
 
 	if index == len(sortedDataList) {

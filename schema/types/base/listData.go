@@ -84,14 +84,14 @@ func (listData listData) Get() interface{} {
 }
 func (listData listData) Add(dataList ...types.Data) types.ListData {
 	for _, data := range dataList {
-		listData.Value.Insert(data)
+		listData.Value.Add(data)
 	}
 
 	return listData
 }
 func (listData listData) Remove(dataList ...types.Data) types.ListData {
 	for _, data := range dataList {
-		listData.Value.Delete(data)
+		listData.Value.Remove(data)
 	}
 
 	return listData
