@@ -26,13 +26,7 @@ func (heightData heightData) Compare(data types.Data) int {
 		panic(Error)
 	}
 
-	if heightData.Value.IsGreaterThan(compareHeightData.Value) {
-		return 1
-	} else if heightData.Value.Equals(compareHeightData.Value) {
-		return 0
-	}
-
-	return -1
+	return heightData.Value.Compare(compareHeightData.Value)
 }
 func (heightData heightData) String() string {
 	return strconv.FormatInt(heightData.Value.Get(), 10)

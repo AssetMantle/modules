@@ -39,8 +39,8 @@ func (classificationID classificationID) String() string {
 
 	return strings.Join(values, constants.IDSeparator)
 }
-func (classificationID classificationID) Equals(id types.ID) bool {
-	return bytes.Equal(classificationID.Bytes(), id.Bytes())
+func (classificationID classificationID) Compare(id types.ID) int {
+	return bytes.Compare(classificationID.Bytes(), id.Bytes())
 }
 func (classificationID classificationID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(classificationID.Bytes())
@@ -51,7 +51,7 @@ func (classificationID) RegisterCodec(codec *codec.Codec) {
 func (classificationID classificationID) IsPartial() bool {
 	return len(classificationID.HashID.Bytes()) == 0
 }
-func (classificationID classificationID) Matches(key helpers.Key) bool {
+func (classificationID classificationID) Equals(key helpers.Key) bool {
 	return classificationID.Equals(classificationIDFromInterface(key))
 }
 
@@ -71,7 +71,7 @@ func NewClassificationID(chainID types.ID, immutableProperties types.Properties,
 	defaultImmutableStringList := make([]string, len(immutableProperties.GetList()))
 
 	for i, property := range immutableProperties.GetList() {
-		if hashID := property.GetFact().GetHashID(); !hashID.Equals(base.NewID("")) {
+		if hashID := property.GetFact().GetHashID(); !(hashID.Compare(base.NewID("")) == 0) {
 			defaultImmutableStringList[i] = hashID.String()
 		}
 	}

@@ -38,7 +38,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(Error)
 	}
 
-	if !metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().(types.ListData).IsPresent(base.NewAccAddressData(auxiliaryRequest.Address)) {
+	if metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().(types.ListData).Search(base.NewAccAddressData(auxiliaryRequest.Address)) == -1 {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
 

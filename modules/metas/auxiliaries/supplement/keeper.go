@@ -30,7 +30,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	for _, property := range auxiliaryRequest.PropertyList {
 		var meta helpers.Mappable
 
-		if property.GetFact().GetHashID().Equals(base.NewID("")) {
+		if property.GetFact().GetHashID().Compare(base.NewID("")) == 0 {
 			if metaFact, Error := base.ReadMetaFact(property.GetFact().GetTypeID().String() + constants.DataTypeAndValueSeparator); Error == nil {
 				meta = mappable.NewMeta(metaFact.GetData())
 			} else {

@@ -57,7 +57,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	if burnHeight.IsGreaterThan(base.NewHeight(context.BlockHeight())) {
+	if burnHeight.Compare(base.NewHeight(context.BlockHeight())) > 0 {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 

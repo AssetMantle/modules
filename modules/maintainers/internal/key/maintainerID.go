@@ -37,8 +37,8 @@ func (maintainerID maintainerID) String() string {
 
 	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
-func (maintainerID maintainerID) Equals(id types.ID) bool {
-	return bytes.Equal(maintainerID.Bytes(), id.Bytes())
+func (maintainerID maintainerID) Compare(id types.ID) int {
+	return bytes.Compare(maintainerID.Bytes(), id.Bytes())
 }
 func (maintainerID maintainerID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(maintainerID.Bytes())
@@ -49,7 +49,7 @@ func (maintainerID) RegisterCodec(codec *codec.Codec) {
 func (maintainerID maintainerID) IsPartial() bool {
 	return len(maintainerID.IdentityID.Bytes()) == 0
 }
-func (maintainerID maintainerID) Matches(key helpers.Key) bool {
+func (maintainerID maintainerID) Equals(key helpers.Key) bool {
 	return maintainerID.Equals(maintainerIDFromInterface(key))
 }
 

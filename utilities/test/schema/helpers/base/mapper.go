@@ -72,7 +72,7 @@ func (t testKey) IsPartial() bool {
 	return t.ID != ""
 }
 
-func (t testKey) Matches(key helpers.Key) bool {
+func (t testKey) Equals(key helpers.Key) bool {
 	return bytes.Equal([]byte(t.ID), []byte(key.(testKey).ID))
 }
 

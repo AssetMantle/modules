@@ -82,6 +82,12 @@ func (listData listData) AsID() (types.ID, error) {
 func (listData listData) Get() interface{} {
 	return listData.Value
 }
+func (listData listData) Search(data types.Data) int {
+	return listData.Value.Search(data)
+}
+func (listData listData) GetList() []types.Data {
+	return listData.Value
+}
 func (listData listData) Add(dataList ...types.Data) types.ListData {
 	for _, data := range dataList {
 		listData.Value.Add(data)
@@ -95,10 +101,6 @@ func (listData listData) Remove(dataList ...types.Data) types.ListData {
 	}
 
 	return listData
-}
-
-func (listData listData) IsPresent(data types.Data) bool {
-	return listData.Value.Search(data) != len(listData.Value)
 }
 func listDataFromData(data types.Data) (listData, error) {
 	switch value := data.(type) {

@@ -20,7 +20,7 @@ var _ types.MetaProperties = (*metaProperties)(nil)
 
 func (metaProperties metaProperties) Get(id types.ID) types.MetaProperty {
 	for _, metaProperty := range metaProperties.GetList() {
-		if metaProperty.GetID().Equals(id) {
+		if metaProperty.GetID().Compare(id) == 0 {
 			return metaProperty
 		}
 	}
@@ -46,7 +46,7 @@ func (metaProperties metaProperties) Remove(metaPropertyList ...types.MetaProper
 
 	for _, removeMetaProperty := range metaPropertyList {
 		for i, oldMetaProperty := range newMetaPropertyList {
-			if oldMetaProperty.GetID().Equals(removeMetaProperty.GetID()) {
+			if oldMetaProperty.GetID().Compare(removeMetaProperty.GetID()) == 0 {
 				newMetaPropertyList = append(newMetaPropertyList[:i], newMetaPropertyList[i+1:]...)
 				break
 			}
@@ -60,7 +60,7 @@ func (metaProperties metaProperties) Mutate(metaPropertyList ...types.MetaProper
 
 	for _, mutateMetaProperty := range metaPropertyList {
 		for i, oldMetaProperty := range newMetaPropertyList {
-			if oldMetaProperty.GetID().Equals(mutateMetaProperty.GetID()) {
+			if oldMetaProperty.GetID().Compare(mutateMetaProperty.GetID()) == 0 {
 				newMetaPropertyList[i] = mutateMetaProperty
 				break
 			}

@@ -15,7 +15,7 @@ import (
 type bucket []byte
 type fingerprint []byte
 
-var hasher = sha256.New()
+var h = sha256.New()
 
 const retries = 500
 
@@ -131,9 +131,9 @@ func (c *Cuckoo) hashes(data string) (uint, uint, fingerprint) {
 }
 
 func hash(data []byte) []byte {
-	hasher.Write([]byte(data))
-	hash := hasher.Sum(nil)
-	hasher.Reset()
+	h.Write([]byte(data))
+	hash := h.Sum(nil)
+	h.Reset()
 	return hash
 }
 
@@ -143,6 +143,7 @@ func fingerprintLength(b uint, e float64) uint {
 	if f < 1 {
 		return 1
 	}
+
 	return f
 }
 
@@ -155,5 +156,6 @@ func nextPower(i uint) uint {
 	i |= i >> 16
 	i |= i >> 32
 	i++
+
 	return i
 }

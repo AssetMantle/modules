@@ -11,5 +11,5 @@ type Key interface {
 	GenerateStoreKeyBytes() []byte
 	RegisterCodec(*codec.Codec)
 	IsPartial() bool
-	Matches(Key) bool
+	Equals(Key) bool
 }

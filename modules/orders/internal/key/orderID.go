@@ -68,8 +68,8 @@ func (orderID orderID) String() string {
 
 	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
-func (orderID orderID) Equals(id types.ID) bool {
-	return bytes.Equal(orderID.Bytes(), id.Bytes())
+func (orderID orderID) Compare(id types.ID) int {
+	return bytes.Compare(orderID.Bytes(), id.Bytes())
 }
 func (orderID orderID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(orderID.Bytes())
@@ -80,7 +80,7 @@ func (orderID) RegisterCodec(codec *codec.Codec) {
 func (orderID orderID) IsPartial() bool {
 	return len(orderID.HashID.Bytes()) == 0
 }
-func (orderID orderID) Matches(key helpers.Key) bool {
+func (orderID orderID) Equals(key helpers.Key) bool {
 	return orderID.Equals(orderIDFromInterface(key))
 }
 

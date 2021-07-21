@@ -14,7 +14,7 @@ func validator(i interface{}) error {
 	switch value := i.(type) {
 	case types.Parameter:
 		data, Error := value.GetData().AsDec()
-		if Error != nil || !value.GetID().Equals(ID) || data.IsNegative() {
+		if Error != nil || value.GetID().Compare(ID) != 0 || data.IsNegative() {
 			return errors.InvalidParameter
 		}
 

@@ -40,7 +40,7 @@ func (maintainer maintainer) CanRemoveMaintainer() bool { return maintainer.Remo
 func (maintainer maintainer) CanMutateMaintainer() bool { return maintainer.MutateMaintainer }
 func (maintainer maintainer) MaintainsProperty(id types.ID) bool {
 	for _, property := range maintainer.MaintainedProperties.GetList() {
-		if property.GetID().Equals(id) {
+		if property.GetID().Compare(id) == 0 {
 			return true
 		}
 	}

@@ -4,8 +4,8 @@ type id struct {
 	IDString string `json:"idString"`
 }
 
-func newId(idstring string) *id {
+func newId(idString string) *id {
 	return &id{
-		IDString: idstring,
+		IDString: idString,
 	}
 }

@@ -17,7 +17,7 @@ import (
 func GetOwnableTotalSplitsValue(collection helpers.Collection, ownableID types.ID) sdkTypes.Dec {
 	value := sdkTypes.ZeroDec()
 	accumulator := func(mappable helpers.Mappable) bool {
-		if key.ReadOwnableID(key.ToID(mappable.GetKey())).Equals(ownableID) {
+		if key.ReadOwnableID(key.ToID(mappable.GetKey())).Compare(ownableID) == 0 {
 			value = value.Add(mappable.(mappables.Split).GetValue())
 		}
 

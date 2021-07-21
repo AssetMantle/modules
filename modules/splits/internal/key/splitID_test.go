@@ -6,11 +6,12 @@
 package key
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"strings"
-	"testing"
 )
 
 func Test_SplitID_Methods(t *testing.T) {
@@ -27,9 +28,9 @@ func Test_SplitID_Methods(t *testing.T) {
 		require.Equal(t, false, testSplitID.IsPartial())
 		require.Equal(t, true, testSplitID2.IsPartial())
 
-		require.Equal(t, true, testSplitID.Matches(testSplitID))
-		require.Equal(t, false, testSplitID.Matches(testSplitID2))
-		require.Equal(t, false, testSplitID.Matches(nil))
+		require.Equal(t, true, testSplitID.Equals(testSplitID))
+		require.Equal(t, false, testSplitID.Equals(testSplitID2))
+		require.Equal(t, false, testSplitID.Equals(nil))
 		require.Equal(t, testSplitID, FromID(testSplitID))
 		require.Equal(t, testSplitID2, FromID(base.NewID("")))
 		require.Equal(t, splitID{OwnerID: base.NewID("ID1"), OwnableID: base.NewID("ID2")}, readSplitID("ID1*ID2"))

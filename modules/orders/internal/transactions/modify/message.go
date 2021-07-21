@@ -44,7 +44,7 @@ func (message message) ValidateBasic() error {
 		return errors.Wrap(xprtErrors.IncorrectMessage, "")
 	}
 
-	if !message.ExpiresIn.IsGreaterThan(base.NewHeight(0)) {
+	if !(message.ExpiresIn.Compare(base.NewHeight(0)) > 0) {
 		return errors.Wrap(xprtErrors.IncorrectMessage, "")
 	}
 
