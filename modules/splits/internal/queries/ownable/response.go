@@ -13,8 +13,8 @@ import (
 
 type queryResponse struct {
 	Success bool         `json:"success"`
-	Error   error        `json:"error"`
-	Value   sdkTypes.Dec `json:"value"`
+	Error   error        `json:"error" swaggertype:"string"`
+	Value   sdkTypes.Dec `json:"value" swaggertype:"string"`
 }
 
 var _ helpers.QueryResponse = (*queryResponse)(nil)
