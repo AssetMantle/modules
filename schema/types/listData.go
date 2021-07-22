@@ -8,8 +8,10 @@ package types
 type ListData interface {
 	Data
 
+	Search(Data) int
+
+	GetList() []Data
+
 	Add(...Data) ListData
 	Remove(...Data) ListData
-
-	IsPresent(Data) bool
 }

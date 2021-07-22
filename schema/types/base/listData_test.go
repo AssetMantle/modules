@@ -12,7 +12,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 	"github.com/stretchr/testify/require"
-
 )
 
 func Test_ListData(t *testing.T) {
@@ -53,8 +52,8 @@ func Test_ListData(t *testing.T) {
 	require.Equal(t, nil, data)
 	require.NotNil(t, Error)
 
-	require.Equal(t, false, testListData.Equal(NewStringData("")))
-	require.Equal(t, false, testListData.Equal(NewHeightData(NewHeight(123))))
+	require.Equal(t, false, testListData.Compare(NewStringData("")) == 0)
+	require.Equal(t, false, testListData.Compare(NewHeightData(NewHeight(123))) == 0)
 
 	listValue3, _ := ReadAccAddressListData("address3")
 	testListData3 := NewListData(listValue3)
@@ -77,7 +76,7 @@ func Test_ListData(t *testing.T) {
 	dataAsList10, Error := testListData10.AsListData()
 
 	require.Equal(t, 0, testListData3.Compare(testListData4))
-	require.Equal(t, true, dataAsList8.IsPresent(testListData9))
+	require.Equal(t, true, dataAsList8.Search(testListData9) != -1)
 	require.Equal(t, dataAsList6, dataAsList8.Remove(testListData9))
 	require.Equal(t, dataAsList10, dataAsList6.Add(testListData11))
 

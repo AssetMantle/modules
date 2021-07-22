@@ -54,7 +54,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	if expiryHeight.IsGreaterThan(base.NewHeight(context.BlockHeight())) {
+	if expiryHeight.Compare(base.NewHeight(context.BlockHeight())) > 0 {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 

@@ -20,7 +20,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	if auxiliaryRequest.ClassificationID.Equals(base.NewID("revokeError")) {
+	if auxiliaryRequest.ClassificationID.Compare(base.NewID("revokeError")) == 0 {
 		return newAuxiliaryResponse(test.MockError)
 	}
 

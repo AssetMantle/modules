@@ -49,7 +49,7 @@ func (parameters parameters) Equal(compareParameters helpers.Parameters) bool {
 }
 func (parameters parameters) Get(id types.ID) types.Parameter {
 	for _, parameter := range parameters.parameterList {
-		if parameter.GetID().Equals(id) {
+		if parameter.GetID().Compare(id) == 0 {
 			return parameter
 		}
 	}
@@ -65,7 +65,7 @@ func (parameters parameters) Fetch(context sdkTypes.Context, id types.ID) helper
 	parameters.paramsSubspace.Get(context, id.Bytes(), &data)
 
 	for i, parameter := range parameters.parameterList {
-		if parameter.GetID().Equals(id) {
+		if parameter.GetID().Compare(id) == 0 {
 			parameters.parameterList[i] = parameter.Mutate(data)
 		}
 	}
@@ -74,7 +74,7 @@ func (parameters parameters) Fetch(context sdkTypes.Context, id types.ID) helper
 }
 func (parameters parameters) Mutate(context sdkTypes.Context, newParameter types.Parameter) helpers.Parameters {
 	for i, parameter := range parameters.parameterList {
-		if parameter.GetID().Equals(newParameter.GetID()) {
+		if parameter.GetID().Compare(newParameter.GetID()) == 0 {
 			parameters.parameterList[i] = newParameter
 			parameters.paramsSubspace.Set(context, parameter.GetID().Bytes(), parameter.GetData())
 

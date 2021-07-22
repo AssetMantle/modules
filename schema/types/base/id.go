@@ -23,8 +23,8 @@ func (id id) String() string {
 func (id id) Bytes() []byte {
 	return []byte(id.IDString)
 }
-func (id id) Equals(compareID types.ID) bool {
-	return bytes.Equal(id.Bytes(), compareID.Bytes())
+func (id id) Compare(compareID types.ID) int {
+	return bytes.Compare(id.Bytes(), compareID.Bytes())
 }
 
 func NewID(idString string) types.ID {

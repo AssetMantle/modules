@@ -42,7 +42,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	if !message.FromID.Equals(order.(mappables.Order).GetMakerID()) {
+	if message.FromID.Compare(order.(mappables.Order).GetMakerID()) != 0 {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 

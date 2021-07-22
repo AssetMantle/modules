@@ -41,8 +41,8 @@ func (assetID assetID) String() string {
 
 	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
-func (assetID assetID) Equals(id types.ID) bool {
-	return bytes.Equal(assetID.Bytes(), id.Bytes())
+func (assetID assetID) Compare(id types.ID) int {
+	return bytes.Compare(assetID.Bytes(), id.Bytes())
 }
 func (assetID assetID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(assetID.Bytes())
@@ -53,8 +53,8 @@ func (assetID) RegisterCodec(codec *codec.Codec) {
 func (assetID assetID) IsPartial() bool {
 	return len(assetID.HashID.Bytes()) == 0
 }
-func (assetID assetID) Matches(key helpers.Key) bool {
-	return assetID.Equals(assetIDFromInterface(key))
+func (assetID assetID) Equals(key helpers.Key) bool {
+	return assetID.Compare(assetIDFromInterface(key)) == 0
 }
 
 func NewAssetID(classificationID types.ID, immutableProperties types.Properties) types.ID {

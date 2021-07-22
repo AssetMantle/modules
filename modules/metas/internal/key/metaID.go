@@ -39,8 +39,8 @@ func (metaID metaID) String() string {
 
 	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
-func (metaID metaID) Equals(id types.ID) bool {
-	return bytes.Equal(metaID.Bytes(), id.Bytes())
+func (metaID metaID) Compare(id types.ID) int {
+	return bytes.Compare(metaID.Bytes(), id.Bytes())
 }
 func (metaID metaID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(metaID.Bytes())
@@ -51,8 +51,8 @@ func (metaID) RegisterCodec(codec *codec.Codec) {
 func (metaID metaID) IsPartial() bool {
 	return len(metaID.HashID.Bytes()) == 0
 }
-func (metaID metaID) Matches(key helpers.Key) bool {
-	return metaID.Equals(metaIDFromInterface(key))
+func (metaID metaID) Equals(key helpers.Key) bool {
+	return metaID.Compare(metaIDFromInterface(key)) == 0
 }
 
 func NewMetaID(typeID types.ID, hashID types.ID) types.ID {

@@ -53,7 +53,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 					panic(Error)
 				}
 
-				if !expiry.IsGreaterThan(base.NewHeight(context.BlockHeight())) {
+				if expiry.Compare(base.NewHeight(context.BlockHeight())) <= 0 {
 					makerOwnableSplitProperty := metaProperties.Get(base.NewID(properties.MakerOwnableSplit))
 					if makerOwnableSplitProperty == nil {
 						panic(errors.MetaDataError)
@@ -100,10 +100,10 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 					}
 
 					switch {
-					case orderHeight.IsGreaterThan(executableOrderHeight):
+					case orderHeight.Compare(executableOrderHeight) > 0:
 						leftOrder = orderMappable.(mappables.Order)
 						rightOrder = executableMappableOrder.(mappables.Order)
-					case executableOrderHeight.IsGreaterThan(orderHeight):
+					case executableOrderHeight.Compare(orderHeight) > 0:
 						leftOrder = executableMappableOrder.(mappables.Order)
 						rightOrder = orderMappable.(mappables.Order)
 					default:
@@ -162,7 +162,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 							orders.Mutate(mappable.NewOrder(leftOrder.GetID(), leftOrder.GetImmutableProperties(), leftOrder.GetMutableProperties().Mutate(mutableProperties.GetList()...)))
 							orders.Remove(rightOrder)
 
-							if executableOrderHeight.IsGreaterThan(orderHeight) {
+							if executableOrderHeight.Compare(orderHeight) > 0 {
 								return true
 							}
 						case leftOrderMakerOwnableSplit.LT(rightOrderTakerOwnableSplitDemanded):
@@ -182,7 +182,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 							orders.Mutate(mappable.NewOrder(rightOrder.GetID(), rightOrder.GetImmutableProperties(), rightOrder.GetMutableProperties().Mutate(mutableProperties.GetList()...)))
 							orders.Remove(leftOrder)
 
-							if orderHeight.IsGreaterThan(executableOrderHeight) || orderHeight.Equals(executableOrderHeight) {
+							if orderHeight.Compare(executableOrderHeight) >= 0 {
 								return true
 							}
 						default:

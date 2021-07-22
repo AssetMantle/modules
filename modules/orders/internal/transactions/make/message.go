@@ -43,7 +43,7 @@ func (message message) ValidateBasic() error {
 		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
 	}
 
-	if message.MakerOwnableID.Equals(message.TakerOwnableID) {
+	if message.MakerOwnableID.Compare(message.TakerOwnableID) == 0 {
 		return errors.Wrap(xprtErrors.IncorrectMessage, "")
 	}
 

@@ -5,11 +5,11 @@
 
 package types
 
-import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-)
+type SortedDataList interface {
+	Search(Data) int
 
-type NFTWallet interface {
-	GetAccAddress() sdkTypes.AccAddress
-	GetNFTID() ID
+	GetList() []Data
+
+	Add(...Data) SortedDataList
+	Remove(...Data) SortedDataList
 }
