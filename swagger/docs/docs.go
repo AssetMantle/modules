@@ -1320,9 +1320,9 @@ var doc = `{
                 }
             }
         },
-        "burn.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "assets.burnValueRequest":{
+            "type":"object",
+            "properties":{
                 "assetID": {
                     "type": "string"
                 },
@@ -1332,6 +1332,18 @@ var doc = `{
                 "fromID": {
                     "type": "string"
                 }
+            }
+        },
+        "burn.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/assets.burnValueRequest"
+                }
+                
             }
         },
         "burn.transactionResponse": {
@@ -1387,9 +1399,9 @@ var doc = `{
                 }
             }
         },
-        "define.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "assets.defineValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -1407,6 +1419,17 @@ var doc = `{
                 },
                 "mutableProperties": {
                     "type": "string"
+                }
+            }
+        },
+        "define.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/assets.defineValueRequest"
                 }
             }
         },
