@@ -50,7 +50,7 @@ func (splitID splitID) IsPartial() bool {
 	return len(splitID.OwnableID.Bytes()) == 0
 }
 func (splitID splitID) Equals(key helpers.Key) bool {
-	return splitID.Equals(splitIDFromInterface(key))
+	return splitID.Compare(splitIDFromInterface(key)) == 0
 }
 
 func NewSplitID(ownerID types.ID, ownableID types.ID) types.ID {

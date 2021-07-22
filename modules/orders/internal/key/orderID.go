@@ -81,7 +81,7 @@ func (orderID orderID) IsPartial() bool {
 	return len(orderID.HashID.Bytes()) == 0
 }
 func (orderID orderID) Equals(key helpers.Key) bool {
-	return orderID.Equals(orderIDFromInterface(key))
+	return orderID.Compare(orderIDFromInterface(key)) == 0
 }
 
 func (orderID orderID) getRateIDBytes() ([]byte, error) {

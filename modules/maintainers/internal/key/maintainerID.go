@@ -50,7 +50,7 @@ func (maintainerID maintainerID) IsPartial() bool {
 	return len(maintainerID.IdentityID.Bytes()) == 0
 }
 func (maintainerID maintainerID) Equals(key helpers.Key) bool {
-	return maintainerID.Equals(maintainerIDFromInterface(key))
+	return maintainerID.Compare(maintainerIDFromInterface(key)) == 0
 }
 
 func NewMaintainerID(classificationID types.ID, identityID types.ID) types.ID {

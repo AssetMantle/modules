@@ -53,7 +53,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 					panic(Error)
 				}
 
-				if expiry.Compare(base.NewHeight(context.BlockHeight())) < 0 {
+				if expiry.Compare(base.NewHeight(context.BlockHeight())) <= 0 {
 					makerOwnableSplitProperty := metaProperties.Get(base.NewID(properties.MakerOwnableSplit))
 					if makerOwnableSplitProperty == nil {
 						panic(errors.MetaDataError)

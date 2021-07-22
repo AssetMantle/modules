@@ -52,7 +52,7 @@ func (classificationID classificationID) IsPartial() bool {
 	return len(classificationID.HashID.Bytes()) == 0
 }
 func (classificationID classificationID) Equals(key helpers.Key) bool {
-	return classificationID.Equals(classificationIDFromInterface(key))
+	return classificationID.Compare(classificationIDFromInterface(key)) == 0
 }
 
 func NewClassificationID(chainID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) types.ID {
