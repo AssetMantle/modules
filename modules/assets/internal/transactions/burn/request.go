@@ -34,9 +34,9 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Accept text/plain
 // @Produce json
 // @Tags Assets
-// @Param body body  helpers.TransactionRequest true "request body"
-// @Success 200 {object} helpers.TransactionResponse   "A successful response."
-// @Failure default  {object}  helpers.TransactionResponse "An unexpected error response."
+// @Param body body  transactionRequest true "request body"
+// @Success 200 {object} transactionResponse   "A successful response."
+// @Failure default  {object}  transactionResponse "An unexpected error response."
 // @Router /assets/burn [post]
 func (transactionRequest transactionRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(transactionRequest)

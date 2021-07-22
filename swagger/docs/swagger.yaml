@@ -10,6 +10,22 @@ definitions:
       success:
         type: boolean
     type: object
+  burn.transactionRequest:
+    properties:
+      assetID:
+        type: string
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      fromID:
+        type: string
+    type: object
+  burn.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
   cancel.transactionRequest:
     properties:
       baseReq:
@@ -86,10 +102,6 @@ definitions:
         type: boolean
     type: object
   helpers.Mappable:
-    type: object
-  helpers.TransactionRequest:
-    type: object
-  helpers.TransactionResponse:
     type: object
   identity.queryResponse:
     properties:
@@ -558,18 +570,18 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/helpers.TransactionRequest'
+          $ref: '#/definitions/burn.transactionRequest'
       produces:
       - application/json
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/helpers.TransactionResponse'
+            $ref: '#/definitions/burn.transactionResponse'
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/helpers.TransactionResponse'
+            $ref: '#/definitions/burn.transactionResponse'
       summary: burn asset transaction
       tags:
       - Assets

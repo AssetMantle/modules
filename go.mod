@@ -22,5 +22,3 @@ require (
 	github.com/tendermint/tm-db v0.5.2
 	honnef.co/go/tools v0.0.1-2020.1.6
 )
-
-replace github.com/persistenceOne/persistenceSDK => ./../peristenceSDK

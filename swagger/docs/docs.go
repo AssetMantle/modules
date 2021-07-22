@@ -84,7 +84,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/helpers.TransactionRequest"
+                            "$ref": "#/definitions/burn.transactionRequest"
                         }
                     }
                 ],
@@ -92,13 +92,13 @@ var doc = `{
                     "200": {
                         "description": "A successful response.",
                         "schema": {
-                            "$ref": "#/definitions/helpers.TransactionResponse"
+                            "$ref": "#/definitions/burn.transactionResponse"
                         }
                     },
                     "default": {
                         "description": "An unexpected error response.",
                         "schema": {
-                            "$ref": "#/definitions/helpers.TransactionResponse"
+                            "$ref": "#/definitions/burn.transactionResponse"
                         }
                     }
                 }
@@ -1320,6 +1320,31 @@ var doc = `{
                 }
             }
         },
+        "burn.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "assetID": {
+                    "type": "string"
+                },
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "fromID": {
+                    "type": "string"
+                }
+            }
+        },
+        "burn.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "cancel.transactionRequest": {
             "type": "object",
             "properties": {
@@ -1437,12 +1462,6 @@ var doc = `{
             }
         },
         "helpers.Mappable": {
-            "type": "object"
-        },
-        "helpers.TransactionRequest": {
-            "type": "object"
-        },
-        "helpers.TransactionResponse": {
             "type": "object"
         },
         "identity.queryResponse": {
