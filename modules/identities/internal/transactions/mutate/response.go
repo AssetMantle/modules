@@ -16,16 +16,6 @@ type transactionResponse struct {
 
 var _ helpers.TransactionResponse = (*transactionResponse)(nil)
 
-// Transaction Request godoc
-// @Summary nub identities transaction
-// @Descrption nub transaction
-// @Accept text/plain
-// @Produce json
-// @Tags Identities
-// @Param body body  transactionRequest true "request body"
-// @Success 200 {object} transactionResponse   "A successful response."
-// @Failure default  {object}  transactionResponse "An unexpected error response."
-// @Router /identities/nub [post]
 func (transactionResponse transactionResponse) IsSuccessful() bool {
 	return transactionResponse.Success
 }
