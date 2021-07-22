@@ -9,8 +9,9 @@ import (
 
 	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
 	"github.com/persistenceOne/persistenceSDK/swagger/configurations"
-	_ "github.com/persistenceOne/persistenceSDK/swagger/docs"
 	httpSwagger "github.com/swaggo/http-swagger"
+
+	_ "github.com/persistenceOne/persistenceSDK/swagger"
 )
 
 var Prototype = base.NewApplication(
