@@ -375,6 +375,43 @@ var doc = `{
                 }
             }
         },
+        "/identities/identities/{identityID}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Identities"
+                ],
+                "summary": "Query identities using identity id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "identity ID",
+                        "name": "identityID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sucessful query response",
+                        "schema": {
+                            "$ref": "#/definitions/identity.queryResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/identity.queryResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/identities/define": {
             "post": {
                 "consumes": [
@@ -453,43 +490,7 @@ var doc = `{
                 }
             }
         },
-        "/identities/identities/{identityID}": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Identities"
-                ],
-                "summary": "Query identities using identity id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "identity ID",
-                        "name": "identityID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Sucessful query response",
-                        "schema": {
-                            "$ref": "#/definitions/identity.queryResponse"
-                        }
-                    },
-                    "default": {
-                        "description": "An unexpected error response.",
-                        "schema": {
-                            "$ref": "#/definitions/identity.queryResponse"
-                        }
-                    }
-                }
-            }
-        },
+       
         "/identities/issue": {
             "post": {
                 "consumes": [
@@ -798,6 +799,43 @@ var doc = `{
                 }
             }
         },
+        "/orders/orders/{orderID}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Query order using order id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order ID",
+                        "name": "orderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful query response",
+                        "schema": {
+                            "$ref": "#/definitions/order.queryResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/order.queryResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/orders/cancel": {
             "post": {
                 "consumes": [
@@ -1032,43 +1070,6 @@ var doc = `{
                 }
             }
         },
-        "/orders/orders/{orderID}": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Orders"
-                ],
-                "summary": "Query order using order id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "order ID",
-                        "name": "orderID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "A successful query response",
-                        "schema": {
-                            "$ref": "#/definitions/order.queryResponse"
-                        }
-                    },
-                    "default": {
-                        "description": "An unexpected error response.",
-                        "schema": {
-                            "$ref": "#/definitions/order.queryResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/orders/revoke": {
             "post": {
                 "consumes": [
@@ -1147,6 +1148,43 @@ var doc = `{
                 }
             }
         },
+        "/splits/splits/{splitID}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Splits"
+                ],
+                "summary": "Query split using split id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "split ID",
+                        "name": "splitID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful query response",
+                        "schema": {
+                            "$ref": "#/definitions/split.queryResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/split.queryResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/splits/send": {
             "post": {
                 "consumes": [
@@ -1181,43 +1219,6 @@ var doc = `{
                         "description": "An unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/send.transactionResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/splits/splits/{splitID}": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Splits"
-                ],
-                "summary": "Query split using split id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "split ID",
-                        "name": "splitID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "A successful query response",
-                        "schema": {
-                            "$ref": "#/definitions/split.queryResponse"
-                        }
-                    },
-                    "default": {
-                        "description": "An unexpected error response.",
-                        "schema": {
-                            "$ref": "#/definitions/split.queryResponse"
                         }
                     }
                 }
