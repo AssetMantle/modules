@@ -36,6 +36,6 @@ func main() {
 	ctx := context.NewCLIContext()
 	Prototype.GetModuleBasicManager().RegisterRESTRoutes(ctx, r)
 	r.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
-
+	log.Println("listen on :1317")
 	log.Fatal(http.ListenAndServe(":1317", r))
 }

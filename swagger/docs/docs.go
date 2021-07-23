@@ -31,7 +31,7 @@ var doc = `{
         "/assets/assets/{assetID}": {
             "get": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -68,7 +68,7 @@ var doc = `{
         "/assets/burn": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -107,7 +107,7 @@ var doc = `{
         "/assets/define": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -146,7 +146,7 @@ var doc = `{
         "/assets/deputize": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -185,7 +185,7 @@ var doc = `{
         "/assets/mint": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -224,7 +224,7 @@ var doc = `{
         "/assets/mutate": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -263,7 +263,7 @@ var doc = `{
         "/assets/renumerate": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -302,7 +302,7 @@ var doc = `{
         "/assets/revoke": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -378,7 +378,7 @@ var doc = `{
         "/identities/define": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -417,7 +417,7 @@ var doc = `{
         "/identities/deputize": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -493,7 +493,7 @@ var doc = `{
         "/identities/issue": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -532,7 +532,7 @@ var doc = `{
         "/identities/nub": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -571,7 +571,7 @@ var doc = `{
         "/identities/provision": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -610,7 +610,7 @@ var doc = `{
         "/identities/reveal": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -649,7 +649,7 @@ var doc = `{
         "/identities/revoke": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -688,7 +688,7 @@ var doc = `{
         "/identities/unprovision": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -801,7 +801,7 @@ var doc = `{
         "/orders/cancel": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -840,7 +840,7 @@ var doc = `{
         "/orders/define": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -879,7 +879,7 @@ var doc = `{
         "/orders/deputize": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -918,7 +918,7 @@ var doc = `{
         "/orders/immediate": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -957,7 +957,7 @@ var doc = `{
         "/orders/make": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -996,7 +996,7 @@ var doc = `{
         "/orders/modify": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -1072,7 +1072,7 @@ var doc = `{
         "/orders/revoke": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -1111,7 +1111,7 @@ var doc = `{
         "/orders/take": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -1150,7 +1150,7 @@ var doc = `{
         "/splits/send": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -1226,7 +1226,7 @@ var doc = `{
         "/splits/unwrap": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -1265,7 +1265,7 @@ var doc = `{
         "/splits/wrap": {
             "post": {
                 "consumes": [
-                    "text/plain"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -1444,12 +1444,9 @@ var doc = `{
                 }
             }
         },
-        "deputize.transactionRequest": {
-            "type": "object",
-            "properties": {
-                "addMaintainer": {
-                    "type": "boolean"
-                },
+        "deputizeValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -1470,6 +1467,20 @@ var doc = `{
                 },
                 "toID": {
                     "type": "string"
+                },
+                "addMaintainer": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "deputize.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/deputizeValueRequest"
                 }
             }
         },
@@ -1682,9 +1693,9 @@ var doc = `{
                 }
             }
         },
-        "mint.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "mintValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -1709,6 +1720,17 @@ var doc = `{
                 "toID": {
                     "type": "string"
                 }
+            }
+        },
+        "mint.transactionRequest": {
+            "type": "object",
+            "properties": {
+               "type":{
+                   "type":"string"
+               },
+               "value":{
+                   "$ref":"#/definitions/mintValueRequest"
+               }
             }
         },
         "mint.transactionResponse": {
@@ -1762,14 +1784,14 @@ var doc = `{
                 }
             }
         },
-        "mutate.transactionRequest": {
-            "type": "object",
-            "properties": {
-                "assetID": {
-                    "type": "string"
-                },
+        "mutateValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
+                },
+                "assetID": {
+                    "type": "string"
                 },
                 "fromID": {
                     "type": "string"
@@ -1779,6 +1801,17 @@ var doc = `{
                 },
                 "mutableProperties": {
                     "type": "string"
+                }
+            }
+        },
+        "mutate.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/mutateValueRequest"
                 }
             }
         },
@@ -1857,17 +1890,28 @@ var doc = `{
                 }
             }
         },
-        "renumerate.transactionRequest": {
-            "type": "object",
-            "properties": {
-                "assetID": {
-                    "type": "string"
-                },
+        "renumerateValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
+                "assetID": {
+                    "type": "string"
+                },
                 "fromID": {
                     "type": "string"
+                }
+            }
+        },
+        "renumerate.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/renumerateValueRequest"
                 }
             }
         },
@@ -1939,9 +1983,9 @@ var doc = `{
                 }
             }
         },
-        "revoke.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "revokeValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -1953,6 +1997,17 @@ var doc = `{
                 },
                 "toID": {
                     "type": "string"
+                }
+            }
+        },
+        "revoke.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/revokeValueRequest"
                 }
             }
         },
