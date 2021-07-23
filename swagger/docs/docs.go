@@ -607,45 +607,6 @@ var doc = `{
                 }
             }
         },
-        "/metas/reveal": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Metas"
-                ],
-                "summary": "reveal metas transaction",
-                "parameters": [
-                    {
-                        "description": "request body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/reveal.transactionRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "A successful response.",
-                        "schema": {
-                            "$ref": "#/definitions/reveal.transactionResponse"
-                        }
-                    },
-                    "default": {
-                        "description": "An unexpected error response.",
-                        "schema": {
-                            "$ref": "#/definitions/reveal.transactionResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/identities/revoke": {
             "post": {
                 "consumes": [
@@ -793,6 +754,45 @@ var doc = `{
                         "description": "An unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/meta.queryResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/metas/reveal": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Metas"
+                ],
+                "summary": "reveal metas transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/reveal.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/reveal.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/reveal.transactionResponse"
                         }
                     }
                 }
@@ -1357,9 +1357,9 @@ var doc = `{
                 }
             }
         },
-        "cancel.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "cancelValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -1368,6 +1368,17 @@ var doc = `{
                 },
                 "orderID": {
                     "type": "string"
+                }
+            }
+        },
+        "cancel.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/cancelValueRequest"
                 }
             }
         },
@@ -1515,9 +1526,9 @@ var doc = `{
                 }
             }
         },
-        "immediate.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "immediateValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -1553,6 +1564,17 @@ var doc = `{
                 },
                 "takerOwnableSplit": {
                     "type": "string"
+                }
+            }
+        },
+        "immediate.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/immediateValueRequest"
                 }
             }
         },
@@ -1635,9 +1657,9 @@ var doc = `{
                 }
             }
         },
-        "make.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "makeValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -1673,6 +1695,18 @@ var doc = `{
                 },
                 "takerOwnableSplit": {
                     "type": "string"
+                }
+            }
+            
+        },
+        "make.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/makeValueRequest"
                 }
             }
         },
@@ -1755,9 +1789,9 @@ var doc = `{
                 }
             }
         },
-        "modify.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "modifyValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -1781,6 +1815,17 @@ var doc = `{
                 },
                 "takerOwnableSplit": {
                     "type": "string"
+                }
+            }            
+        },
+        "modify.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/modifyValueRequest"
                 }
             }
         },
@@ -2115,9 +2160,9 @@ var doc = `{
                 }
             }
         },
-        "take.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "takeValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -2129,6 +2174,17 @@ var doc = `{
                 },
                 "takerOwnableSplit": {
                     "type": "string"
+                }
+            }
+        },
+        "take.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/takeValueRequest"
                 }
             }
         },
