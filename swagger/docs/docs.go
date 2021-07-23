@@ -607,7 +607,7 @@ var doc = `{
                 }
             }
         },
-        "/identities/reveal": {
+        "/metas/reveal": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -1994,14 +1994,26 @@ var doc = `{
                 }
             }
         },
-        "reveal.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "revealValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
                 "metaFact": {
                     "type": "string"
+                }
+            }
+            
+        },
+        "reveal.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/revealValueRequest"
                 }
             }
         },
