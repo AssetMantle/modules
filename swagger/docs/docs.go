@@ -1567,9 +1567,9 @@ var doc = `{
                 }
             }
         },
-        "issue.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "issueValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -1593,6 +1593,17 @@ var doc = `{
                 },
                 "to": {
                     "type": "string"
+                }
+            }
+        },
+        "issue.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/issueValueRequest"
                 }
             }
         },
@@ -1826,14 +1837,25 @@ var doc = `{
                 }
             }
         },
-        "nub.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "nubValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
                 "nubID": {
                     "type": "string"
+                }
+            }
+        },
+        "nub.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/nubValueRequest"
                 }
             }
         },
@@ -1865,9 +1887,9 @@ var doc = `{
                 }
             }
         },
-        "provision.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "provisionValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -1876,6 +1898,17 @@ var doc = `{
                 },
                 "to": {
                     "type": "string"
+                }
+            }
+        },
+        "provision.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/provisionValueRequest"
                 }
             }
         },
@@ -2113,9 +2146,9 @@ var doc = `{
         "types.Int": {
             "type": "object"
         },
-        "unprovision.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "unprovisionValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -2124,6 +2157,17 @@ var doc = `{
                 },
                 "to": {
                     "type": "string"
+                }
+            }
+        },
+        "unprovision.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/unprovisionValueRequest"
                 }
             }
         },
