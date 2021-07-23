@@ -2112,9 +2112,9 @@ var doc = `{
                 }
             }
         },
-        "send.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "sendValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -2129,6 +2129,17 @@ var doc = `{
                 },
                 "value": {
                     "type": "string"
+                }
+            }
+        },
+        "send.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/sendValueRequest"
                 }
             }
         },
@@ -2250,9 +2261,9 @@ var doc = `{
                 }
             }
         },
-        "unwrap.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "unwarpValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -2267,6 +2278,17 @@ var doc = `{
                 }
             }
         },
+        "unwrap.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/unwarpValueRequest"
+                }
+            }
+        },
         "unwrap.transactionResponse": {
             "type": "object",
             "properties": {
@@ -2278,9 +2300,9 @@ var doc = `{
                 }
             }
         },
-        "wrap.transactionRequest": {
-            "type": "object",
-            "properties": {
+        "wrapValueRequest":{
+            "type":"object",
+            "properties":{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
@@ -2289,6 +2311,18 @@ var doc = `{
                 },
                 "fromID": {
                     "type": "string"
+                }
+            }
+            
+        },
+        "wrap.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "type":{
+                    "type":"string"
+                },
+                "value":{
+                    "$ref":"#/definitions/wrapValueRequest"
                 }
             }
         },
