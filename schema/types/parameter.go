@@ -7,6 +7,7 @@ package types
 
 type Parameter interface {
 	String() string
+
 	Equal(Parameter) bool
 	Validate() error
 

@@ -55,7 +55,7 @@ func Test_HeightData(t *testing.T) {
 	require.Equal(t, heightData{Value: height{Value: 123}}, data)
 	require.Nil(t, Error)
 
-	require.Equal(t, false, testHeightData.Equal(NewStringData("")))
-	require.Equal(t, true, testHeightData.Equal(NewHeightData(NewHeight(123))))
+	require.Equal(t, false, testHeightData.Compare(NewStringData("")) == 0)
+	require.Equal(t, true, testHeightData.Compare(NewHeightData(NewHeight(123))) == 0)
 
 }

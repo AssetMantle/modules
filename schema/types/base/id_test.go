@@ -6,8 +6,9 @@
 package base
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func Test_ID(t *testing.T) {
@@ -15,7 +16,7 @@ func Test_ID(t *testing.T) {
 
 	require.Equal(t, id{IDString: "ID"}, testID)
 	require.Equal(t, "ID", testID.String())
-	require.Equal(t, true, testID.Equals(testID))
-	require.Equal(t, false, testID.Equals(NewID("ID2")))
+	require.Equal(t, true, testID.Compare(testID) == 0)
+	require.Equal(t, false, testID.Compare(NewID("ID2")) == 0)
 	require.Equal(t, []byte("ID"), testID.Bytes())
 }

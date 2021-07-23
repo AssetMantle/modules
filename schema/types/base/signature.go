@@ -32,7 +32,7 @@ func (baseSignature signature) GetValidityHeight() types.Height {
 	return baseSignature.ValidityHeight
 }
 func (baseSignature signature) HasExpired(height types.Height) bool {
-	return baseSignature.GetValidityHeight().IsGreaterThan(height)
+	return baseSignature.GetValidityHeight().Compare(height) > 0
 }
 
 func NewSignature(id types.ID, signatureBytes []byte, validityHeight types.Height) types.Signature {

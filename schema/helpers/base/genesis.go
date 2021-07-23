@@ -42,7 +42,7 @@ func (genesis genesis) Validate() error {
 		var isPresent bool
 		for _, defaultParameter := range genesis.defaultParameterList {
 			isPresent = false
-			if defaultParameter.GetID().Equals(parameter.GetID()) {
+			if defaultParameter.GetID().Compare(parameter.GetID()) == 0 {
 				isPresent = true
 				break
 			}
@@ -113,7 +113,7 @@ func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList
 	} else {
 		for _, defaultParameter := range genesis.defaultParameterList {
 			for i, parameter := range parameterList {
-				if defaultParameter.GetID().Equals(parameter.GetID()) {
+				if defaultParameter.GetID().Compare(parameter.GetID()) == 0 {
 					parameterList[i] = defaultParameter.Mutate(parameter.GetData())
 				}
 			}

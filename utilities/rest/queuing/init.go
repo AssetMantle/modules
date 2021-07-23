@@ -1,8 +1,9 @@
 package queuing
 
 import (
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"time"
+
+	"github.com/cosmos/cosmos-sdk/client/context"
 )
 
 func InitializeKafka(nodeList []string, cliContext context.CLIContext) {

@@ -37,8 +37,8 @@ func (splitID splitID) String() string {
 
 	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
-func (splitID splitID) Equals(id types.ID) bool {
-	return bytes.Equal(splitID.Bytes(), id.Bytes())
+func (splitID splitID) Compare(id types.ID) int {
+	return bytes.Compare(splitID.Bytes(), id.Bytes())
 }
 func (splitID splitID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(splitID.Bytes())
@@ -49,8 +49,8 @@ func (splitID) RegisterCodec(codec *codec.Codec) {
 func (splitID splitID) IsPartial() bool {
 	return len(splitID.OwnableID.Bytes()) == 0
 }
-func (splitID splitID) Matches(key helpers.Key) bool {
-	return splitID.Equals(splitIDFromInterface(key))
+func (splitID splitID) Equals(key helpers.Key) bool {
+	return splitID.Compare(splitIDFromInterface(key)) == 0
 }
 
 func NewSplitID(ownerID types.ID, ownableID types.ID) types.ID {

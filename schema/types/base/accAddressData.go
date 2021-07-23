@@ -6,6 +6,8 @@
 package base
 
 import (
+	"bytes"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -18,6 +20,14 @@ type accAddressData struct {
 
 var _ types.Data = (*accAddressData)(nil)
 
+func (accAddressData accAddressData) Compare(sortable types.Data) int {
+	compareAccAddressData, Error := accAddressDataFromInterface(sortable)
+	if Error != nil {
+		panic(Error)
+	}
+
+	return bytes.Compare(accAddressData.Value.Bytes(), compareAccAddressData.Value.Bytes()) % 2
+}
 func (accAddressData accAddressData) String() string {
 	return accAddressData.Value.String()
 }
@@ -28,7 +38,7 @@ func (accAddressData accAddressData) ZeroValue() types.Data {
 	return NewAccAddressData(sdkTypes.AccAddress{})
 }
 func (accAddressData accAddressData) GenerateHashID() types.ID {
-	if accAddressData.Equal(accAddressData.ZeroValue()) {
+	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
 		return NewID("")
 	}
 
@@ -37,8 +47,8 @@ func (accAddressData accAddressData) GenerateHashID() types.ID {
 func (accAddressData accAddressData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	return accAddressData.Value, nil
 }
-func (accAddressData accAddressData) AsAccAddressList() ([]sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressListData{}.ZeroValue().AsAccAddressList()
+func (accAddressData accAddressData) AsListData() (types.ListData, error) {
+	zeroValue, _ := listData{}.ZeroValue().AsListData()
 	return zeroValue, errors.IncorrectFormat
 }
 func (accAddressData accAddressData) AsString() (string, error) {
@@ -59,14 +69,6 @@ func (accAddressData accAddressData) AsID() (types.ID, error) {
 }
 func (accAddressData accAddressData) Get() interface{} {
 	return accAddressData.Value
-}
-func (accAddressData accAddressData) Equal(data types.Data) bool {
-	compareAccAddressData, Error := accAddressDataFromInterface(data)
-	if Error != nil {
-		return false
-	}
-
-	return accAddressData.Value.Equals(compareAccAddressData.Value)
 }
 func accAddressDataFromInterface(data types.Data) (accAddressData, error) {
 	switch value := data.(type) {

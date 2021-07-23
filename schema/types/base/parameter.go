@@ -32,7 +32,7 @@ func (parameter parameter) Equal(compareParameter types.Parameter) bool {
 		return false
 	}
 
-	return parameter.Data.Equal(compareParameter.GetData())
+	return parameter.Data.Compare(compareParameter.GetData()) == 0
 }
 func (parameter parameter) Validate() error {
 	return parameter.validator(parameter)

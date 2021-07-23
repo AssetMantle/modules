@@ -21,7 +21,6 @@ func Test_Fact(t *testing.T) {
 	idData := NewIDData(NewID("id"))
 	heightData := NewHeightData(NewHeight(123))
 
-
 	testFact := NewFact(stringData)
 	require.Equal(t, fact{HashID: stringData.GenerateHashID(), TypeID: NewID("S"), Signatures: signatures{}}, testFact)
 	require.Equal(t, stringData.GenerateHashID(), testFact.GetHashID())
@@ -43,13 +42,13 @@ func Test_Fact(t *testing.T) {
 	require.Equal(t, nil, readFact2)
 	require.Equal(t, errors.IncorrectFormat, Error)
 
-	clicont := context.NewCLIContext()
+	cliContext := context.NewCLIContext()
 	require.Panics(t, func() {
-		sign, _, _ := clicont.Keybase.Sign(clicont.FromName, keys.DefaultKeyPass, readFact.GetHashID().Bytes())
+		sign, _, _ := cliContext.Keybase.Sign(cliContext.FromName, keys.DefaultKeyPass, readFact.GetHashID().Bytes())
 		Signature := signature{
 			ID:             id{IDString: readFact.GetHashID().String()},
 			SignatureBytes: sign,
-			ValidityHeight: height{clicont.Height},
+			ValidityHeight: height{cliContext.Height},
 		}
 		readFact.GetSignatures().Add(Signature)
 		require.Equal(t, readFact.GetSignatures().Get(readFact.GetHashID()), readFact.GetHashID().String())

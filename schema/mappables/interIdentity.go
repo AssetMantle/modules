@@ -18,6 +18,7 @@ type InterIdentity interface {
 	IsUnprovisioned(address sdkTypes.AccAddress) bool
 	ProvisionAddress(address sdkTypes.AccAddress) helpers.Mappable
 	UnprovisionAddress(address sdkTypes.AccAddress) helpers.Mappable
+	GetClassificationID() types.ID
 
 	Document
 }

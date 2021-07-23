@@ -17,7 +17,7 @@ var _ types.Properties = (*properties)(nil)
 
 func (properties properties) Get(id types.ID) types.Property {
 	for _, property := range properties.GetList() {
-		if property.GetID().Equals(id) {
+		if property.GetID().Compare(id) == 0 {
 			return property
 		}
 	}
@@ -43,7 +43,7 @@ func (properties properties) Remove(propertyList ...types.Property) types.Proper
 
 	for _, removeProperty := range propertyList {
 		for i, oldProperty := range newPropertyList {
-			if oldProperty.GetID().Equals(removeProperty.GetID()) {
+			if oldProperty.GetID().Compare(removeProperty.GetID()) == 0 {
 				newPropertyList = append(newPropertyList[:i], newPropertyList[i+1:]...)
 				break
 			}
@@ -57,7 +57,7 @@ func (properties properties) Mutate(propertyList ...types.Property) types.Proper
 
 	for _, mutateProperty := range propertyList {
 		for i, oldProperty := range newPropertyList {
-			if oldProperty.GetID().Equals(mutateProperty.GetID()) {
+			if oldProperty.GetID().Compare(mutateProperty.GetID()) == 0 {
 				newPropertyList[i] = mutateProperty
 				break
 			}

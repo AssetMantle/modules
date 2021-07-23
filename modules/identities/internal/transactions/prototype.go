@@ -9,8 +9,10 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/define"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/deputize"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/issue"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/mutate"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/nub"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/provision"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/quash"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/revoke"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/unprovision"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -22,8 +24,10 @@ func Prototype() helpers.Transactions {
 		define.Transaction,
 		deputize.Transaction,
 		issue.Transaction,
+		mutate.Transaction,
 		nub.Transaction,
 		provision.Transaction,
+		quash.Transaction,
 		revoke.Transaction,
 		unprovision.Transaction,
 	)

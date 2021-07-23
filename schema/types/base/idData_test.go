@@ -47,8 +47,8 @@ func Test_IDData(t *testing.T) {
 	require.Equal(t, idData{Value: id{IDString: "testString"}}, data)
 	require.Nil(t, Error)
 
-	require.Equal(t, false, testIDData.Equal(NewStringData("")))
-	require.Equal(t, true, testIDData.Equal(testIDData))
+	require.Equal(t, false, testIDData.Compare(NewStringData("")) == 0)
+	require.Equal(t, true, testIDData.Compare(testIDData) == 0)
 
 	require.Equal(t, "", testIDData.ZeroValue().String())
 

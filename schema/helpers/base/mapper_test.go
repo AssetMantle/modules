@@ -6,13 +6,14 @@
 package base
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/kv"
-	"reflect"
-	"testing"
 )
 
 func TestMapper(t *testing.T) {
@@ -42,7 +43,7 @@ func TestMapper(t *testing.T) {
 	// Update
 	testMapper.Update(context, base.NewMappable("test2", "value3"))
 
-	// Delete
+	// Remove
 	testMapper.Delete(context, base.NewKey("test3"))
 
 	// Read

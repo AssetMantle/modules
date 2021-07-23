@@ -53,7 +53,7 @@ func Test_DecData(t *testing.T) {
 	require.Equal(t, decData{Value: sdkTypes.NewDec(123)}, data)
 	require.Nil(t, Error)
 
-	require.Equal(t, false, testDecData.Equal(NewStringData("")))
-	require.Equal(t, true, testDecData.Equal(NewDecData(sdkTypes.NewDec(12))))
+	require.Equal(t, false, testDecData.Compare(NewStringData("")) == 0)
+	require.Equal(t, true, testDecData.Compare(NewDecData(sdkTypes.NewDec(12))) == 0)
 
 }

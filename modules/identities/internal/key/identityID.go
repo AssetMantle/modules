@@ -40,8 +40,8 @@ func (identityID identityID) String() string {
 
 	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
-func (identityID identityID) Equals(id types.ID) bool {
-	return bytes.Equal(identityID.Bytes(), id.Bytes())
+func (identityID identityID) Compare(id types.ID) int {
+	return bytes.Compare(identityID.Bytes(), id.Bytes())
 }
 func (identityID identityID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(identityID.Bytes())
@@ -52,8 +52,8 @@ func (identityID) RegisterCodec(codec *codec.Codec) {
 func (identityID identityID) IsPartial() bool {
 	return len(identityID.HashID.Bytes()) == 0
 }
-func (identityID identityID) Matches(key helpers.Key) bool {
-	return identityID.Equals(identityIDFromInterface(key))
+func (identityID identityID) Equals(key helpers.Key) bool {
+	return identityID.Compare(identityIDFromInterface(key)) == 0
 }
 
 func NewIdentityID(classificationID types.ID, immutableProperties types.Properties) types.ID {

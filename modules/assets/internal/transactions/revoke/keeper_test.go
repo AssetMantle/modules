@@ -18,12 +18,11 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -34,7 +33,7 @@ import (
 )
 
 type TestKeepers struct {
-	MaintainersKeeper helpers.TransactionKeeper
+	AssetsKeeper helpers.TransactionKeeper
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
@@ -70,11 +69,11 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	conformAuxiliary := conform.AuxiliaryMock.Initialize(Mapper, Parameters)
+	revokeAuxiliary := revoke.AuxiliaryMock.Initialize(Mapper, Parameters)
 	verifyAuxiliary := verify.AuxiliaryMock.Initialize(Mapper, Parameters)
 	keepers := TestKeepers{
-		MaintainersKeeper: keeperPrototype().Initialize(Mapper, Parameters,
-			[]interface{}{verifyAuxiliary, conformAuxiliary}).(helpers.TransactionKeeper),
+		AssetsKeeper: keeperPrototype().Initialize(Mapper, Parameters,
+			[]interface{}{verifyAuxiliary, revokeAuxiliary}).(helpers.TransactionKeeper),
 	}
 
 	return context, keepers
@@ -91,50 +90,29 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultIdentityID := base.NewID("fromIdentityID")
-	fakeFromID := base.NewID("fakeFromID")
 	toID := base.NewID("toID")
 	toID2 := base.NewID("toID2")
 	classificationID := base.NewID("ClassificationID")
+	mockErrorClassification := base.NewID("revokeError")
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
-		require.Panics(t, func() {
-			if got := keepers.MaintainersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID)); !reflect.DeepEqual(got, want) {
-				t.Errorf("Transact() = %v, want %v", got, want)
-			}
-		})
-	})
-
-	t.Run("NegativeCase - non-maintainer adding maintainer", func(t *testing.T) {
-		t.Parallel()
-		want := newTransactionResponse(errors.NotAuthorized)
-		require.Panics(t, func() {
-			if got := keepers.MaintainersKeeper.Transact(context, newMessage(defaultAddr, fakeFromID, toID, classificationID)); !reflect.DeepEqual(got, want) {
-				t.Errorf("Transact() = %v, want %v", got, want)
-			}
-		})
+		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID)); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
 	})
 
 	t.Run("NegativeCase - verify identity fail", func(t *testing.T) {
 		want := newTransactionResponse(test.MockError)
-		if got := keepers.MaintainersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, toID, classificationID)); !reflect.DeepEqual(got, want) {
+		if got := keepers.AssetsKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, toID, classificationID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
-	t.Run("NegativeCase - ReAdd same maintainer", func(t *testing.T) {
-		want := newTransactionResponse(errors.EntityAlreadyExists)
-		require.Panics(t, func() {
-			if got := keepers.MaintainersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID)); !reflect.DeepEqual(got, want) {
-				t.Errorf("Transact() = %v, want %v", got, want)
-			}
-		})
-	})
+
 	t.Run("NegativeCase - conform mock error", func(t *testing.T) {
 		want := newTransactionResponse(test.MockError)
-		require.Panics(t, func() {
-			if got := keepers.MaintainersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID2, classificationID)); !reflect.DeepEqual(got, want) {
-				t.Errorf("Transact() = %v, want %v", got, want)
-			}
-		})
+		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID2, mockErrorClassification)); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
 	})
 }
