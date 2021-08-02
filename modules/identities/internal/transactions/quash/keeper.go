@@ -74,8 +74,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.supplementAuxiliary = value
 			case verify.Auxiliary.GetName():
 				transactionKeeper.verifyAuxiliary = value
-			default:
-				panic(errors.UninitializedUsage)
 			}
 		default:
 			panic(errors.UninitializedUsage)
