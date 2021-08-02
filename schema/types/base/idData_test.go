@@ -46,8 +46,11 @@ func Test_IDData(t *testing.T) {
 	data, Error := ReadIDData("testString")
 	require.Equal(t, idData{Value: id{IDString: "testString"}}, data)
 	require.Nil(t, Error)
+	require.Equal(t, true, NewIDData(NewID("identity2")).Compare(NewIDData(NewID("identity2"))) == 0)
 
-	require.Equal(t, false, testIDData.Compare(NewStringData("")) == 0)
+	require.Panics(t, func() {
+		require.Equal(t, false, testIDData.Compare(NewStringData("")) == 0)
+	})
 	require.Equal(t, true, testIDData.Compare(testIDData) == 0)
 
 	require.Equal(t, "", testIDData.ZeroValue().String())
