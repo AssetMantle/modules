@@ -26,7 +26,7 @@ func (stringData stringData) Compare(data types.Data) int {
 		panic(Error)
 	}
 
-	return strings.Compare(stringData.Value, compareStringData.Value) % 2
+	return strings.Compare(stringData.Value, compareStringData.Value)
 }
 func (stringData stringData) String() string {
 	return stringData.Value
