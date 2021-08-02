@@ -21,20 +21,24 @@ type listData struct {
 
 var _ types.ListData = (*listData)(nil)
 
+// TODO: find a better impl
 func (listData listData) Compare(data types.Data) int {
 	compareListData, Error := listDataFromData(data)
 	if Error != nil {
 		panic(Error)
 	}
 
-	for i, compareData := range compareListData.Value {
-		result := listData.Value[i].Compare(compareData)
-		if result != 0 {
-			return result
-		}
+	var listDataString []string
+	for _, data := range listData.Value {
+		listDataString = append(listDataString, data.String())
 	}
 
-	return 0
+	var comparisonDataString []string
+	for _, data := range compareListData.Value {
+		comparisonDataString = append(comparisonDataString, data.String())
+	}
+
+	return strings.Compare(strings.Join(listDataString, constants.ListDataStringSeparator), strings.Join(comparisonDataString, constants.ListDataStringSeparator))
 }
 func (listData listData) String() string {
 	dataStringList := make([]string, len(listData.Value))
