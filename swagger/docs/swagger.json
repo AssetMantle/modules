@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "API Documentation of Persistence custom modules",
-        "title": "Persistence Swagger Documentation",
+        "description": "API Reference Documentation of Persistence Custom Modules",
+        "title": "Persistence API Documentation",
         "contact": {},
         "license": {
             "name": "Apache 2.0",
@@ -23,11 +23,11 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Query asset using asset ID",
+                "summary": "Search for an asset by Asset ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Asset ID",
+                        "description": "Asset Identifier",
                         "name": "assetID",
                         "in": "path",
                         "required": true
@@ -35,13 +35,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful query response",
+                        "description": "Message for a successful search.",
                         "schema": {
                             "$ref": "#/definitions/asset.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error.",
                         "schema": {
                             "$ref": "#/definitions/asset.queryResponse"
                         }
@@ -453,7 +453,7 @@
                     {
                         "type": "string",
                         "description": "identity ID",
-                        "name": "identityID",
+                        "name": "Identity ID",
                         "in": "path",
                         "required": true
                     }
