@@ -23,7 +23,7 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Query asset using asset id",
+                "summary": "Query asset using asset ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -35,7 +35,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A succesful query response",
+                        "description": "A successful query response",
                         "schema": {
                             "$ref": "#/definitions/asset.queryResponse"
                         }
