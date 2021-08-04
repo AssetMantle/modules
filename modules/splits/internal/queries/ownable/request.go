@@ -19,6 +19,16 @@ type queryRequest struct {
 	OwnableID types.ID `json:"ownableID" valid:"required~required field ownableID missing"`
 }
 
+// QueryRequest godoc
+// @Summary Query asset using asset id
+// @Descrption Able to query the asset
+// @Accept json
+// @Produce json
+// @Tags Splits
+// @Param ownableID path string true "ownable ID"
+// @Success 200 {object} queryResponse "A succesful query response"
+// @Failure default  {object}  queryResponse "An unexpected error response."
+// @Router /ownable/{ownableID} [get]
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
 func (queryRequest queryRequest) Validate() error {

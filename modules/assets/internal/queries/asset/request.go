@@ -21,6 +21,16 @@ type queryRequest struct {
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
+// QueryRequest godoc
+// @Summary Query asset using asset id
+// @Descrption Able to query the asset
+// @Accept text/plain
+// @Produce json
+// @Tags Assets
+// @Param assetID path string true "Asset ID"
+// @Success 200 {object} queryResponse "A succesful query response"
+// @Failure default  {object}  queryResponse "An unexpected error response."
+// @Router /assets/assets/{assetID} [get]
 func (queryRequest queryRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(queryRequest)
 	return Error
