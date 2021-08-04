@@ -31,6 +31,7 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
+
 	if auxiliaryResponse := transactionKeeper.maintainersVerifyAuxiliary.GetKeeper().Help(context, maintainersVerify.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
@@ -84,6 +85,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.conformAuxiliary = value
 			case scrub.Auxiliary.GetName():
 				transactionKeeper.scrubAuxiliary = value
+			case verify.Auxiliary.GetName():
+				transactionKeeper.verifyAuxiliary = value
 			case maintainersVerify.Auxiliary.GetName():
 				transactionKeeper.maintainersVerifyAuxiliary = value
 			}

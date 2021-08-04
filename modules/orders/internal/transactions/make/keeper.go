@@ -6,6 +6,7 @@
 package make
 
 import (
+	maintainersVerify "github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/verify"
 	"strconv"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -24,19 +25,24 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper              helpers.Mapper
-	parameters          helpers.Parameters
-	conformAuxiliary    helpers.Auxiliary
-	scrubAuxiliary      helpers.Auxiliary
-	supplementAuxiliary helpers.Auxiliary
-	transferAuxiliary   helpers.Auxiliary
-	verifyAuxiliary     helpers.Auxiliary
+	mapper                     helpers.Mapper
+	parameters                 helpers.Parameters
+	conformAuxiliary           helpers.Auxiliary
+	scrubAuxiliary             helpers.Auxiliary
+	supplementAuxiliary        helpers.Auxiliary
+	transferAuxiliary          helpers.Auxiliary
+	verifyAuxiliary            helpers.Auxiliary
+	maintainersVerifyAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
+	if auxiliaryResponse := transactionKeeper.maintainersVerifyAuxiliary.GetKeeper().Help(context, maintainersVerify.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
+	}
+
 	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
@@ -98,6 +104,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.transferAuxiliary = value
 			case verify.Auxiliary.GetName():
 				transactionKeeper.verifyAuxiliary = value
+			case maintainersVerify.Auxiliary.GetName():
+				transactionKeeper.maintainersVerifyAuxiliary = value
 			}
 		default:
 			panic(errors.UninitializedUsage)
