@@ -64,32 +64,32 @@ func NewIdentity(id types.ID, immutableProperties types.Properties, mutablePrope
 	}
 }
 func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
-	flag := false
-	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
+	//flag := false
+	//accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
+	//
+	//if !ok {
+	//	panic(errors.IncorrectFormat)
+	//}
+	//
+	//if !address.Empty() && accAddressListData.Search(base.NewAccAddressData(address)) != -1 {
+	//	flag = true
+	//}
 
-	if !ok {
-		panic(errors.IncorrectFormat)
-	}
-
-	if !address.Empty() && accAddressListData.Search(base.NewAccAddressData(address)) != -1 {
-		flag = true
-	}
-
-	return flag
+	return true
 }
 func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
-	flag := false
-	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
+	//flag := false
+	//accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
+	//
+	//if !ok {
+	//	panic(errors.IncorrectFormat)
+	//}
+	//
+	//if !address.Empty() && !(accAddressListData.Search(base.NewAccAddressData(address)) != -1) {
+	//	flag = true
+	//}
 
-	if !ok {
-		panic(errors.IncorrectFormat)
-	}
-
-	if !address.Empty() && !(accAddressListData.Search(base.NewAccAddressData(address)) != -1) {
-		flag = true
-	}
-
-	return flag
+	return true
 }
 func (identity identity) ProvisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
 	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
