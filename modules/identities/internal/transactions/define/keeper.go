@@ -82,6 +82,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.scrubAuxiliary = value
 			case super.Auxiliary.GetName():
 				transactionKeeper.superAuxiliary = value
+			case verify.Auxiliary.GetName():
+				transactionKeeper.verifyAuxiliary = value
 			}
 		default:
 			panic(errors.UninitializedUsage)

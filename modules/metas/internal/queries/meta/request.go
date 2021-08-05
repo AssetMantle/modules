@@ -21,6 +21,16 @@ type queryRequest struct {
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
+// QueryRequest godoc
+// @Summary Query meta using meta id
+// @Descrption Able to query the meta data
+// @Accept json
+// @Produce json
+// @Tags Metas
+// @Param metaID path string true "meta ID"
+// @Success 200 {object} queryResponse "A successful query response"
+// @Failure default  {object}  queryResponse "An unexpected error response."
+// @Router /metas/metas/{metaID} [get]
 func (queryRequest queryRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(queryRequest)
 	return Error

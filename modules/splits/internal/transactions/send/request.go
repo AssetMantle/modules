@@ -30,6 +30,16 @@ type transactionRequest struct {
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
+// Transaction Request godoc
+// @Summary send split transaction
+// @Descrption send split transaction
+// @Accept text/plain
+// @Produce json
+// @Tags Splits
+// @Param body body  transactionRequest true "request body"
+// @Success 200 {object} transactionResponse   "A successful response."
+// @Failure default  {object}  transactionResponse "An unexpected error response."
+// @Router /splits/send [post]
 func (transactionRequest transactionRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(transactionRequest)
 	return Error

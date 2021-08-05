@@ -10,8 +10,8 @@ import (
 )
 
 type transactionResponse struct {
-	Success bool
-	Error   error
+	Success bool  `json:"sucess"`
+	Error   error `json:"error" swaggertype:"string"`
 }
 
 var _ helpers.TransactionResponse = (*transactionResponse)(nil)

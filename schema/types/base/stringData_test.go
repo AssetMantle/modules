@@ -50,5 +50,7 @@ func Test_StringData(t *testing.T) {
 
 	require.Equal(t, false, testStringData.Compare(testStringData2) == 0)
 	require.Equal(t, true, testStringData.Compare(testStringData) == 0)
-	require.Equal(t, false, testStringData.Compare(NewIDData(NewID("ID"))) == 0)
+	require.Panics(t, func() {
+		require.Equal(t, false, testStringData.Compare(NewIDData(NewID("ID"))) == 0)
+	})
 }

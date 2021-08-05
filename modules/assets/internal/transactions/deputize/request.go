@@ -26,13 +26,23 @@ type transactionRequest struct {
 	ToID                 string       `json:"toID" valid:"required~required field toID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field toID"`
 	ClassificationID     string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^[A-Za-z0-9-_=.]+$)~invalid field classificationID"`
 	MaintainedProperties string       `json:"maintainedProperties" valid:"required~required field maintainedProperties missing, matches(^.*$)~invalid field maintainedProperties"`
-	AddMaintainer        bool         `json:"addMaintainer" valid:"required~required field addMaintainer missing"`
-	RemoveMaintainer     bool         `json:"removeMaintainer" valid:"required~required field removeMaintainer missing"`
-	MutateMaintainer     bool         `json:"mutateMaintainer" valid:"required~required field mutateMaintainer missing"`
+	AddMaintainer        bool         `json:"addMaintainer"`
+	RemoveMaintainer     bool         `json:"removeMaintainer"`
+	MutateMaintainer     bool         `json:"mutateMaintainer"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
+// Transaction Request godoc
+// @Summary deputize asset transaction
+// @Descrption deputize asset
+// @Accept text/plain
+// @Produce json
+// @Tags Assets
+// @Param body body  transactionRequest true "request body"
+// @Success 200 {object} transactionResponse   "A successful response."
+// @Failure default  {object}  transactionResponse "An unexpected error response."
+// @Router /assets/deputize [post]
 func (transactionRequest transactionRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(transactionRequest)
 	return Error

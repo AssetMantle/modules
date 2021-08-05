@@ -26,7 +26,7 @@ func (accAddressData accAddressData) Compare(sortable types.Data) int {
 		panic(Error)
 	}
 
-	return bytes.Compare(accAddressData.Value.Bytes(), compareAccAddressData.Value.Bytes()) % 2
+	return bytes.Compare(accAddressData.Value.Bytes(), compareAccAddressData.Value.Bytes())
 }
 func (accAddressData accAddressData) String() string {
 	return accAddressData.Value.String()

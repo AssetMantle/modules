@@ -26,7 +26,7 @@ func (idData idData) Compare(data types.Data) int {
 		panic(Error)
 	}
 
-	return bytes.Compare(idData.Value.Bytes(), compareIDData.Value.Bytes()) % 2
+	return bytes.Compare(idData.Value.Bytes(), compareIDData.Value.Bytes())
 }
 func (idData idData) String() string {
 	return idData.Value.String()

@@ -21,6 +21,16 @@ type queryRequest struct {
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
+// QueryRequest godoc
+// @Summary Query order using order id
+// @Descrption Able to query the order
+// @Accept json
+// @Produce json
+// @Tags Orders
+// @Param orderID path string true "order ID"
+// @Success 200 {object} queryResponse "A successful query response"
+// @Failure default  {object}  queryResponse "An unexpected error response."
+// @Router /orders/orders/{orderID} [get]
 func (queryRequest queryRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(queryRequest)
 	return Error
