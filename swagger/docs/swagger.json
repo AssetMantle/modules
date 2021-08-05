@@ -27,8 +27,8 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Asset Identifier",
-                        "name": "assetID",
+                        "description": "Unique identifier of the asset.",
+                        "name": "Asset ID",
                         "in": "path",
                         "required": true
                     }
@@ -60,10 +60,10 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "burn asset transaction",
+                "summary": "Burn asset transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Transaction for burning an asset.", "request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -74,13 +74,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/burn.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/burn.transactionResponse"
                         }
@@ -99,10 +99,10 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "define asset transaction",
+                "summary": "Define asset transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to define the asset.", "request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -113,13 +113,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/define.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/define.transactionResponse"
                         }
@@ -138,7 +138,7 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "deputize asset transaction",
+                "summary": "Deputize asset transaction",
                 "parameters": [
                     {
                         "description": "request body",
@@ -152,13 +152,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/deputize.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/deputize.transactionResponse"
                         }
@@ -177,10 +177,10 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "mint asset transaction",
+                "summary": "Mint asset transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to mint the asset.", "request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -191,13 +191,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/mint.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/mint.transactionResponse"
                         }
@@ -216,10 +216,10 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "mutate asset transaction",
+                "summary": "Mutate asset transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to mutate an asset.", "request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -230,13 +230,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/mutate.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/mutate.transactionResponse"
                         }
@@ -255,7 +255,7 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "renumerate asset transaction",
+                "summary": "Renumerate asset transaction",
                 "parameters": [
                     {
                         "description": "request body",
@@ -269,13 +269,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/renumerate.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/renumerate.transactionResponse"
                         }
@@ -294,7 +294,7 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "revoke asset transaction",
+                "summary": "Revoke asset transaction",
                 "parameters": [
                     {
                         "description": "request body",
@@ -308,13 +308,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/revoke.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/revoke.transactionResponse"
                         }
@@ -337,21 +337,21 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "classification ID",
-                        "name": "classificationID",
+                        "description": "Unique identifier of an asset classification.",
+                        "name": "Classification ID",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Sucessful query response",
+                        "description": "Message for a successful search response.",
                         "schema": {
                             "$ref": "#/definitions/classification.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/classification.queryResponse"
                         }
@@ -370,7 +370,7 @@
                 "tags": [
                     "Identities"
                 ],
-                "summary": "define identities transaction",
+                "summary": "Define identities transaction",
                 "parameters": [
                     {
                         "description": "request body",
@@ -384,13 +384,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/define.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/define.transactionResponse"
                         }
@@ -409,7 +409,7 @@
                 "tags": [
                     "Identities"
                 ],
-                "summary": "deputize identities transaction",
+                "summary": "Deputize identities transaction",
                 "parameters": [
                     {
                         "description": "request body",
@@ -423,13 +423,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/deputize.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/deputize.transactionResponse"
                         }
@@ -448,11 +448,11 @@
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Query identities using identity id",
+                "summary": "Search for identities by Identity ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "identity ID",
+                        "description": "Unique identifier of an indentity.",
                         "name": "Identity ID",
                         "in": "path",
                         "required": true
@@ -460,13 +460,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Sucessful query response",
+                        "description": "Message for a sucessful query response.",
                         "schema": {
                             "$ref": "#/definitions/identity.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/identity.queryResponse"
                         }
@@ -485,7 +485,7 @@
                 "tags": [
                     "Identities"
                 ],
-                "summary": "issue identities transaction",
+                "summary": "Issue identities transaction",
                 "parameters": [
                     {
                         "description": "request body",
@@ -499,13 +499,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/issue.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/issue.transactionResponse"
                         }
@@ -524,7 +524,7 @@
                 "tags": [
                     "Identities"
                 ],
-                "summary": "nub identities transaction",
+                "summary": "Nub identities transaction",
                 "parameters": [
                     {
                         "description": "request body",
@@ -538,13 +538,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/nub.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/nub.transactionResponse"
                         }
@@ -563,7 +563,7 @@
                 "tags": [
                     "Identities"
                 ],
-                "summary": "provision identities transaction",
+                "summary": "Provision identities transaction",
                 "parameters": [
                     {
                         "description": "request body",
@@ -577,13 +577,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/provision.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/provision.transactionResponse"
                         }
@@ -602,7 +602,7 @@
                 "tags": [
                     "Metas"
                 ],
-                "summary": "reveal metas transaction",
+                "summary": "Reveal meta data transaction",
                 "parameters": [
                     {
                         "description": "request body",
@@ -616,13 +616,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/reveal.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/reveal.transactionResponse"
                         }
@@ -641,7 +641,7 @@
                 "tags": [
                     "Identities"
                 ],
-                "summary": "revoke identity transaction",
+                "summary": "Revoke identity transaction",
                 "parameters": [
                     {
                         "description": "request body",
@@ -2044,7 +2044,7 @@
                 }
             }
         },
-        "unwrap.transactionRequest": {
+        "Unwrap.transactionRequest": {
             "type": "object",
             "properties": {
                 "baseReq": {
