@@ -27,7 +27,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Unique identifier of the asset.",
+                        "description": "Unique identifier of an asset.",
                         "name": "Asset ID",
                         "in": "path",
                         "required": true
@@ -64,7 +64,7 @@
                 "parameters": [
                     {
                         "description": "Transaction for burning an asset.", "request body",
-                        "name": "body",
+                        "name": "what's the parameter used here?, body",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -74,13 +74,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Message for a successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/burn.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "Message for an unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/burn.transactionResponse"
                         }
@@ -103,7 +103,7 @@
                 "parameters": [
                     {
                         "description": "A transaction to define the asset.", "request body",
-                        "name": "body",
+                        "name": "what's the parameter name here", "body",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -113,13 +113,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Message for a successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/define.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "Message for an unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/define.transactionResponse"
                         }
