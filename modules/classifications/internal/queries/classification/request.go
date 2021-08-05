@@ -15,15 +15,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-type queryRequest struct {
-	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID missing"`
-}
-
-var _ helpers.QueryRequest = (*queryRequest)(nil)
-
-// QueryRequest godoc
+// queryRequest godoc
 // @Summary Query classification using classification id
-// @Descrption Able to query the asset
+// @Description Able to query the asset
 // @Accept json
 // @Produce json
 // @Tags Classifications
@@ -31,6 +25,12 @@ var _ helpers.QueryRequest = (*queryRequest)(nil)
 // @Success 200 {object} queryResponse "Sucessful query response"
 // @Failure default  {object}  queryResponse "An unexpected error response."
 // @Router /classifications/classifications/{classificationID} [get]
+type queryRequest struct {
+	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID missing"`
+}
+
+var _ helpers.QueryRequest = (*queryRequest)(nil)
+
 func (queryRequest queryRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(queryRequest)
 	return Error
@@ -45,7 +45,6 @@ func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRe
 func (queryRequest queryRequest) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryRequest)
 }
-
 func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
 	if Error := common.Codec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
 		return nil, Error
@@ -56,7 +55,6 @@ func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, err
 func requestPrototype() helpers.QueryRequest {
 	return queryRequest{}
 }
-
 func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 	switch value := request.(type) {
 	case queryRequest:
@@ -65,7 +63,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 		return queryRequest{}
 	}
 }
-
 func newQueryRequest(classificationID types.ID) helpers.QueryRequest {
 	return queryRequest{ClassificationID: classificationID}
 }
