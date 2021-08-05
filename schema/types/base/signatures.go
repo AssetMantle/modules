@@ -51,6 +51,7 @@ func (signatures signatures) Mutate(signature types.Signature) types.Signatures 
 
 	return NewSignatures(signatureList)
 }
+
 func NewSignatures(signatureList []types.Signature) types.Signatures {
 	return signatures{SignatureList: signatureList}
 }
