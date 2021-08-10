@@ -39,25 +39,25 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Query asset using asset id",
+                "summary": "Search for an asset by Asset ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Asset ID",
-                        "name": "assetID",
+                        "description": "Unique identifier of an asset.",
+                        "name": "Asset ID",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "A succesful query response",
+                        "description": "Message for a successful search transaction.",
                         "schema": {
                             "$ref": "#/definitions/asset.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/asset.queryResponse"
                         }
@@ -76,11 +76,11 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "burn asset transaction",
+                "summary": "Burn asset transaction",
                 "parameters": [
                     {
-                        "description": "request body",
-                        "name": "body",
+                        "description": "Transaction for burning an asset. request body",
+                        "name": "please provide the parameter name body",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -90,13 +90,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/burn.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/burn.transactionResponse"
                         }
@@ -115,11 +115,11 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "define asset transaction",
+                "summary": "Define asset transaction",
                 "parameters": [
                     {
-                        "description": "request body",
-                        "name": "body",
+                        "description": "A transaction to define the asset. request body",
+                        "name": "Define Asset body",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -129,13 +129,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/define.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/define.transactionResponse"
                         }
@@ -154,10 +154,10 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "deputize asset transaction",
+                "summary": "Deputize asset transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Transaction to deputaize an asset. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -168,13 +168,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/deputize.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/deputize.transactionResponse"
                         }
@@ -193,10 +193,10 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "mint asset transaction",
+                "summary": "Mint asset transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to mint the asset. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -207,13 +207,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/mint.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/mint.transactionResponse"
                         }
@@ -246,13 +246,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/mutate.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/mutate.transactionResponse"
                         }
@@ -271,10 +271,10 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "renumerate asset transaction",
+                "summary": "Renumerate asset transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to make payment for the asset. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -285,13 +285,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/renumerate.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/renumerate.transactionResponse"
                         }
@@ -310,10 +310,10 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "revoke asset transaction",
+                "summary": "Revoke asset transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to revoke the asset. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -324,13 +324,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/revoke.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/revoke.transactionResponse"
                         }
@@ -349,25 +349,25 @@ var doc = `{
                 "tags": [
                     "Classifications"
                 ],
-                "summary": "Query classification using classification id",
+                "summary": "Search for classification by Classification ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "classification ID",
-                        "name": "classificationID",
+                        "description": "Unique identifier of the asset classification.",
+                        "name": "Classification ID",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Sucessful query response",
+                        "description": "Message for a successful search transaction.",
                         "schema": {
                             "$ref": "#/definitions/classification.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/classification.queryResponse"
                         }
@@ -386,25 +386,25 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Query identities using identity id",
+                "summary": "Search for identities by Identity ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "identity ID",
-                        "name": "identityID",
+                        "description": "Unique identifier of an identity.",
+                        "name": "Identity ID",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Sucessful query response",
+                        "description": "Message for a successful search transaction.",
                         "schema": {
                             "$ref": "#/definitions/identity.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/identity.queryResponse"
                         }
@@ -423,10 +423,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "define identities transaction",
+                "summary": "Define identity",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to define an identity. request body",                    
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -437,13 +437,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/define.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/define.transactionResponse"
                         }
@@ -462,10 +462,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "deputize identities transaction",
+                "summary": "Deputize identities",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to deputize the identities. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -476,13 +476,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/deputize.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/deputize.transactionResponse"
                         }
@@ -502,10 +502,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "issue identities transaction",
+                "summary": "Issue identities",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to issue an identity. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -516,13 +516,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/issue.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/issue.transactionResponse"
                         }
@@ -541,10 +541,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "nub identities transaction",
+                "summary": "Nub identity",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to nub an identity. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -555,13 +555,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/nub.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/nub.transactionResponse"
                         }
@@ -580,10 +580,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "provision identities transaction",
+                "summary": "Provision identity",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to provision an identity. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -594,13 +594,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/provision.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/provision.transactionResponse"
                         }
@@ -619,10 +619,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "revoke identity transaction",
+                "summary": "Revoke identity",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to revoke an identity. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -633,13 +633,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/revoke.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/revoke.transactionResponse"
                         }
@@ -658,10 +658,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "unprovision identity transaction",
+                "summary": "Unprovision identity",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to unprovision an identity. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -672,13 +672,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/unprovision.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/unprovision.transactionResponse"
                         }
@@ -697,25 +697,25 @@ var doc = `{
                 "tags": [
                     "Maintainers"
                 ],
-                "summary": "Query maintainers using maintainer id",
+                "summary": "Search for maintainers by Maintainer ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "maintainer ID",
-                        "name": "maintainerID",
+                        "description": "Unique identifier of a maintainer.",
+                        "name": "Maintainer ID",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful query response",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/maintainer.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/maintainer.queryResponse"
                         }
@@ -734,25 +734,25 @@ var doc = `{
                 "tags": [
                     "Metas"
                 ],
-                "summary": "Query meta using meta id",
+                "summary": "Search for Metadata by Meta ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "meta ID",
-                        "name": "metaID",
+                        "description": "Unique idetifier of metadata value",
+                        "name": "Metadata ID",
                         "in": "path",
-                        "required": true
+                        "required": true.
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful query response",
+                        "description": "Message for a successful search transaction.",
                         "schema": {
                             "$ref": "#/definitions/meta.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/meta.queryResponse"
                         }
@@ -771,10 +771,10 @@ var doc = `{
                 "tags": [
                     "Metas"
                 ],
-                "summary": "reveal metas transaction",
+                "summary": "Reveal metadata",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to reveal the metadata. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -785,13 +785,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/reveal.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/reveal.transactionResponse"
                         }
@@ -810,25 +810,25 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Query order using order id",
+                "summary": "Search for orders by Order ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "order ID",
-                        "name": "orderID",
+                        "description": "Unique identifier of an order.",
+                        "name": "Order ID",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful query response",
+                        "description": "Message for a successful search transaction.",
                         "schema": {
                             "$ref": "#/definitions/order.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/order.queryResponse"
                         }
@@ -847,10 +847,10 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "cancel order transaction",
+                "summary": "Cancel order",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to cancel the order. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -861,13 +861,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/cancel.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/cancel.transactionResponse"
                         }
@@ -886,10 +886,10 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "define order transaction",
+                "summary": "Define order",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to define an order. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -900,13 +900,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/define.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/define.transactionResponse"
                         }
@@ -925,10 +925,10 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "deputize order transaction",
+                "summary": "Deputize order",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to deputize the order. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -939,13 +939,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/deputize.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/deputize.transactionResponse"
                         }
@@ -964,10 +964,10 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "immediate order transaction",
+                "summary": "Immediate order",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to define an order instantly. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -978,13 +978,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/immediate.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/immediate.transactionResponse"
                         }
@@ -1003,10 +1003,10 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "make order transaction",
+                "summary": "Make order",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to place an order. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1017,13 +1017,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/make.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/make.transactionResponse"
                         }
@@ -1042,10 +1042,10 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "modify order transaction",
+                "summary": "Modify order",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to modify the order. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1056,13 +1056,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/modify.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/modify.transactionResponse"
                         }
@@ -1081,10 +1081,10 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "revoke order transaction",
+                "summary": "Revoke order",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to revoke an order. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1095,13 +1095,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/revoke.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "error",
+                        "description": "Message for an error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/revoke.transactionResponse"
                         }
@@ -1120,10 +1120,10 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "take order transaction",
+                "summary": "Take order",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to take the order. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1134,13 +1134,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/take.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/take.transactionResponse"
                         }
@@ -1159,25 +1159,25 @@ var doc = `{
                 "tags": [
                     "Splits"
                 ],
-                "summary": "Query split using split id",
+                "summary": "Search for split transaction by Split ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "split ID",
-                        "name": "splitID",
+                        "description": "Unique identifier of the split transaction.",
+                        "name": "Split ID",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful query response",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/split.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/split.queryResponse"
                         }
@@ -1196,10 +1196,10 @@ var doc = `{
                 "tags": [
                     "Splits"
                 ],
-                "summary": "send split transaction",
+                "summary": "Send split",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to send the split asset. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1210,13 +1210,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/send.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/send.transactionResponse"
                         }
@@ -1235,10 +1235,10 @@ var doc = `{
                 "tags": [
                     "Splits"
                 ],
-                "summary": "unwrap split transaction",
+                "summary": "Unwrap split",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to unwrap the split asset. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1249,13 +1249,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/unwrap.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/unwrap.transactionResponse"
                         }
@@ -1274,10 +1274,10 @@ var doc = `{
                 "tags": [
                     "Splits"
                 ],
-                "summary": "wrap split transaction",
+                "summary": "Wrap split asset",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to wrap the split asset. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1288,13 +1288,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful transaction.",
                         "schema": {
                             "$ref": "#/definitions/wrap.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error in the transaction.",
                         "schema": {
                             "$ref": "#/definitions/wrap.transactionResponse"
                         }
