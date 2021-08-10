@@ -1,0 +1,1357 @@
+definitions:
+  asset.queryResponse:
+    properties:
+      error:
+        type: string
+      list:
+        items:
+          $ref: '#/definitions/helpers.Mappable'
+        type: array
+      success:
+        type: boolean
+    type: object
+  burn.transactionRequest:
+    properties:
+      assetID:
+        type: string
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      fromID:
+        type: string
+    type: object
+  burn.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  cancel.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      fromID:
+        type: string
+      orderID:
+        type: string
+    type: object
+  cancel.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  classification.queryResponse:
+    properties:
+      error:
+        type: string
+      list:
+        items:
+          $ref: '#/definitions/helpers.Mappable'
+        type: array
+      success:
+        type: boolean
+    type: object
+  define.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      fromID:
+        type: string
+      immutableMetaProperties:
+        type: string
+      immutableProperties:
+        type: string
+      mutableMetaProperties:
+        type: string
+      mutableProperties:
+        type: string
+    type: object
+  define.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  deputize.transactionRequest:
+    properties:
+      addMaintainer:
+        type: boolean
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      classificationID:
+        type: string
+      fromID:
+        type: string
+      maintainedProperties:
+        type: string
+      mutateMaintainer:
+        type: boolean
+      removeMaintainer:
+        type: boolean
+      toID:
+        type: string
+    type: object
+  deputize.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  helpers.Mappable:
+    type: object
+  identity.queryResponse:
+    properties:
+      error:
+        type: string
+      list:
+        items:
+          $ref: '#/definitions/helpers.Mappable'
+        type: array
+      success:
+        type: boolean
+    type: object
+  immediate.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      classificationID:
+        type: string
+      expiresIn:
+        type: integer
+      fromID:
+        type: string
+      immutableMetaProperties:
+        type: string
+      immutableProperties:
+        type: string
+      makerOwnableID:
+        type: string
+      makerOwnableSplit:
+        type: string
+      mutableMetaProperties:
+        type: string
+      mutableProperties:
+        type: string
+      takerOwnableID:
+        type: string
+      takerOwnableSplit:
+        type: string
+    type: object
+  immediate.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  issue.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      classificationID:
+        type: string
+      fromID:
+        type: string
+      immutableMetaProperties:
+        type: string
+      immutableProperties:
+        type: string
+      mutableMetaProperties:
+        type: string
+      mutableProperties:
+        type: string
+      to:
+        type: string
+    type: object
+  issue.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  maintainer.queryResponse:
+    properties:
+      error:
+        type: string
+      list:
+        items:
+          $ref: '#/definitions/helpers.Mappable'
+        type: array
+      success:
+        type: boolean
+    type: object
+  make.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      classificationID:
+        type: string
+      expiresIn:
+        type: integer
+      fromID:
+        type: string
+      immutableMetaProperties:
+        type: string
+      immutableProperties:
+        type: string
+      makerOwnableID:
+        type: string
+      makerOwnableSplit:
+        type: string
+      mutableMetaProperties:
+        type: string
+      mutableProperties:
+        type: string
+      takerOwnableID:
+        type: string
+      takerOwnableSplit:
+        type: string
+    type: object
+  make.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  meta.queryResponse:
+    properties:
+      error:
+        type: string
+      list:
+        items:
+          $ref: '#/definitions/helpers.Mappable'
+        type: array
+      success:
+        type: boolean
+    type: object
+  mint.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      classificationID:
+        type: string
+      fromID:
+        type: string
+      immutableMetaProperties:
+        type: string
+      immutableProperties:
+        type: string
+      mutableMetaProperties:
+        type: string
+      mutableProperties:
+        type: string
+      toID:
+        type: string
+    type: object
+  mint.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  modify.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      expiresIn:
+        type: integer
+      fromID:
+        type: string
+      makerOwnableSplit:
+        type: string
+      mutableMetaProperties:
+        type: string
+      mutableProperties:
+        type: string
+      orderID:
+        type: string
+      takerOwnableSplit:
+        type: string
+    type: object
+  modify.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  mutate.transactionRequest:
+    properties:
+      assetID:
+        type: string
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      fromID:
+        type: string
+      mutableMetaProperties:
+        type: string
+      mutableProperties:
+        type: string
+    type: object
+  mutate.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  nub.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      nubID:
+        type: string
+    type: object
+  nub.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  order.queryResponse:
+    properties:
+      error:
+        type: string
+      list:
+        items:
+          $ref: '#/definitions/helpers.Mappable'
+        type: array
+      success:
+        type: boolean
+    type: object
+  provision.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      identityID:
+        type: string
+      to:
+        type: string
+    type: object
+  provision.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  renumerate.transactionRequest:
+    properties:
+      assetID:
+        type: string
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      fromID:
+        type: string
+    type: object
+  renumerate.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  rest.BaseReq:
+    properties:
+      account_number:
+        type: integer
+      chain_id:
+        type: string
+      fees:
+        items:
+          $ref: '#/definitions/types.Coin'
+        type: array
+      from:
+        type: string
+      gas:
+        type: string
+      gas_adjustment:
+        type: string
+      memo:
+        type: string
+      sequence:
+        type: integer
+      simulate:
+        type: boolean
+    type: object
+  reveal.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      metaFact:
+        type: string
+    type: object
+  reveal.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  revoke.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      classificationID:
+        type: string
+      fromID:
+        type: string
+      toID:
+        type: string
+    type: object
+  revoke.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  send.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      fromID:
+        type: string
+      ownableID:
+        type: string
+      toID:
+        type: string
+      value:
+        type: string
+    type: object
+  send.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  split.queryResponse:
+    properties:
+      error:
+        type: string
+      list:
+        items:
+          $ref: '#/definitions/helpers.Mappable'
+        type: array
+      success:
+        type: boolean
+    type: object
+  take.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      fromID:
+        type: string
+      orderID:
+        type: string
+      takerOwnableSplit:
+        type: string
+    type: object
+  take.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  types.Coin:
+    properties:
+      amount:
+        $ref: '#/definitions/types.Int'
+        description: |-
+          To allow the use of unsigned integers (see: #1273) a larger refactor will
+          need to be made. So we use signed integers for now with safety measures in
+          place preventing negative values being used.
+      denom:
+        type: string
+    type: object
+  types.Int:
+    type: object
+  unprovision.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      identityID:
+        type: string
+      to:
+        type: string
+    type: object
+  unprovision.transactionResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  unwrap.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      fromID:
+        type: string
+      ownableID:
+        type: string
+      value:
+        type: string
+    type: object
+  unwrap.transactionResponse:
+    properties:
+      error:
+        type: string
+      sucess:
+        type: boolean
+    type: object
+  wrap.transactionRequest:
+    properties:
+      baseReq:
+        $ref: '#/definitions/rest.BaseReq'
+      coins:
+        type: string
+      fromID:
+        type: string
+    type: object
+  wrap.transactionResponse:
+    properties:
+      error:
+        type: string
+      sucess:
+        type: boolean
+    type: object
+host: localhost:1317
+info:
+  contact: {}
+  description: API Documentation of Persistence custom modules
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Persistence Swagger Documentation
+  version: 0.1.0
+paths:
+  /assets/assets/{assetID}:
+    get:
+      consumes:
+      - text/plain
+      parameters:
+      - description: Asset ID
+        in: path
+        name: assetID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A succesful query response
+          schema:
+            $ref: '#/definitions/asset.queryResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/asset.queryResponse'
+      summary: Query asset using asset id
+      tags:
+      - Assets
+  /assets/burn:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/burn.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/burn.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/burn.transactionResponse'
+      summary: burn asset transaction
+      tags:
+      - Assets
+  /assets/define:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/define.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/define.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/define.transactionResponse'
+      summary: define asset transaction
+      tags:
+      - Assets
+  /assets/deputize:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/deputize.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/deputize.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/deputize.transactionResponse'
+      summary: deputize asset transaction
+      tags:
+      - Assets
+  /assets/mint:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/mint.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/mint.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/mint.transactionResponse'
+      summary: mint asset transaction
+      tags:
+      - Assets
+  /assets/mutate:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/mutate.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/mutate.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/mutate.transactionResponse'
+      summary: mutate asset transaction
+      tags:
+      - Assets
+  /assets/renumerate:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/renumerate.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/renumerate.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/renumerate.transactionResponse'
+      summary: renumerate asset transaction
+      tags:
+      - Assets
+  /assets/revoke:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/revoke.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/revoke.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/revoke.transactionResponse'
+      summary: revoke asset transaction
+      tags:
+      - Assets
+  /classifications/classifications/{classificationID}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: classification ID
+        in: path
+        name: classificationID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Sucessful query response
+          schema:
+            $ref: '#/definitions/classification.queryResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/classification.queryResponse'
+      summary: Query classification using classification id
+      tags:
+      - Classifications
+  /identities/define:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/define.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/define.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/define.transactionResponse'
+      summary: define identities transaction
+      tags:
+      - Identities
+  /identities/deputize:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/deputize.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/deputize.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/deputize.transactionResponse'
+      summary: deputize identities transaction
+      tags:
+      - Identities
+  /identities/identities/{identityID}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: identity ID
+        in: path
+        name: identityID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Sucessful query response
+          schema:
+            $ref: '#/definitions/identity.queryResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/identity.queryResponse'
+      summary: Query identities using identity id
+      tags:
+      - Identities
+  /identities/issue:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/issue.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/issue.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/issue.transactionResponse'
+      summary: issue identities transaction
+      tags:
+      - Identities
+  /identities/nub:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/nub.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/nub.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/nub.transactionResponse'
+      summary: nub identities transaction
+      tags:
+      - Identities
+  /identities/provision:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/provision.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/provision.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/provision.transactionResponse'
+      summary: provision identities transaction
+      tags:
+      - Identities
+  /identities/reveal:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/reveal.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/reveal.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/reveal.transactionResponse'
+      summary: reveal metas transaction
+      tags:
+      - Metas
+  /identities/revoke:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/revoke.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/revoke.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/revoke.transactionResponse'
+      summary: revoke identity transaction
+      tags:
+      - Identities
+  /identities/unprovision:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/unprovision.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/unprovision.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/unprovision.transactionResponse'
+      summary: unprovision identity transaction
+      tags:
+      - Identities
+  /maintainers/maintainers/{maintainerID}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: maintainer ID
+        in: path
+        name: maintainerID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful query response
+          schema:
+            $ref: '#/definitions/maintainer.queryResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/maintainer.queryResponse'
+      summary: Query maintainers using maintainer id
+      tags:
+      - Maintainers
+  /metas/metas/{metaID}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: meta ID
+        in: path
+        name: metaID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful query response
+          schema:
+            $ref: '#/definitions/meta.queryResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/meta.queryResponse'
+      summary: Query meta using meta id
+      tags:
+      - Metas
+  /orders/cancel:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/cancel.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/cancel.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/cancel.transactionResponse'
+      summary: cancel order transaction
+      tags:
+      - Orders
+  /orders/define:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/define.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/define.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/define.transactionResponse'
+      summary: define order transaction
+      tags:
+      - Orders
+  /orders/deputize:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/deputize.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/deputize.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/deputize.transactionResponse'
+      summary: deputize order transaction
+      tags:
+      - Orders
+  /orders/immediate:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/immediate.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/immediate.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/immediate.transactionResponse'
+      summary: immediate order transaction
+      tags:
+      - Orders
+  /orders/make:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/make.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/make.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/make.transactionResponse'
+      summary: make order transaction
+      tags:
+      - Orders
+  /orders/modify:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/modify.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/modify.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/modify.transactionResponse'
+      summary: modify order transaction
+      tags:
+      - Orders
+  /orders/orders/{orderID}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: order ID
+        in: path
+        name: orderID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful query response
+          schema:
+            $ref: '#/definitions/order.queryResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/order.queryResponse'
+      summary: Query order using order id
+      tags:
+      - Orders
+  /orders/revoke:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/revoke.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/revoke.transactionResponse'
+        default:
+          description: error
+          schema:
+            $ref: '#/definitions/revoke.transactionResponse'
+      summary: revoke order transaction
+      tags:
+      - Orders
+  /orders/take:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/take.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/take.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/take.transactionResponse'
+      summary: take order transaction
+      tags:
+      - Orders
+  /splits/send:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/send.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/send.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/send.transactionResponse'
+      summary: send split transaction
+      tags:
+      - Splits
+  /splits/splits/{splitID}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: split ID
+        in: path
+        name: splitID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful query response
+          schema:
+            $ref: '#/definitions/split.queryResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/split.queryResponse'
+      summary: Query split using split id
+      tags:
+      - Splits
+  /splits/unwrap:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/unwrap.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/unwrap.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/unwrap.transactionResponse'
+      summary: unwrap split transaction
+      tags:
+      - Splits
+  /splits/wrap:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/wrap.transactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/wrap.transactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/wrap.transactionResponse'
+      summary: wrap split transaction
+      tags:
+      - Splits
+swagger: "2.0"

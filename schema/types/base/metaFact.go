@@ -58,6 +58,8 @@ func ReadMetaFact(metaFactString string) (types.MetaFact, error) {
 			data, Error = ReadStringData(dataString)
 		case accAddressData{}.GetTypeID():
 			data, Error = ReadAccAddressData(dataString)
+		case listData{}.GetTypeID():
+			data, Error = ReadAccAddressListData(dataString)
 		default:
 			data, Error = nil, errors.UnsupportedParameter
 		}

@@ -24,9 +24,9 @@ type message struct {
 	ToID                 types.ID            `json:"toID" valid:"required~required field toID missing"`
 	ClassificationID     types.ID            `json:"classificationID" valid:"required~required field classificationID missing"`
 	MaintainedProperties types.Properties    `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
-	AddMaintainer        bool                `json:"addMaintainer" valid:"required~required field addMaintainer missing"`
-	RemoveMaintainer     bool                `json:"removeMaintainer" valid:"required~required field removeMaintainer missing"`
-	MutateMaintainer     bool                `json:"mutateMaintainer" valid:"required~required field mutateMaintainer missing"`
+	AddMaintainer        bool                `json:"addMaintainer"`
+	RemoveMaintainer     bool                `json:"removeMaintainer"`
+	MutateMaintainer     bool                `json:"mutateMaintainer"`
 }
 
 var _ sdkTypes.Msg = message{}
