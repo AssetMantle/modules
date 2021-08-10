@@ -7,6 +7,7 @@ package base
 
 import (
 	"encoding/json"
+	maintainersVerify "github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/verify"
 	"io"
 	"os"
 	"path/filepath"
@@ -374,6 +375,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(maintainersVerify.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
 	)
@@ -393,6 +395,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(maintainersVerify.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
 		splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
@@ -409,6 +412,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(maintainersVerify.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
 		splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
