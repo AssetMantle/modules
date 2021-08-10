@@ -25,10 +25,9 @@ func Test_ListData(t *testing.T) {
 	require.Nil(t, Error)
 	testListData2 := NewListData(listValue2)
 
-
 	require.Equal(t, "cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae", testListData.String())
 	require.Equal(t, NewID(meta.Hash("cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae")), testListData.GenerateHashID())
-  
+
 	require.Equal(t, NewID(""), testListData2.GenerateHashID())
 	require.Equal(t, NewID("LD"), testListData.GetTypeID())
 
@@ -96,13 +95,10 @@ func Test_ListData(t *testing.T) {
 	dataAsList10, Error := listValue10.AsListData()
 	require.Nil(t, Error)
 
-
-	a := dataAsList6.Add(dataAsList11)
 	require.Equal(t, 0, testListData3.Compare(testListData4))
 
 	require.Equal(t, false, dataAsList8.Search(dataAsList9.(listData).Value.GetList()[0]) == len(dataAsList8.(listData).Value.GetList()))
 	require.Equal(t, dataAsList6, dataAsList8.Remove(listValue9.(listData).Value.GetList()[0]))
 	require.Equal(t, dataAsList10, dataAsList6.Add(listValue11.(listData).Value.GetList()[0]))
-
 
 }

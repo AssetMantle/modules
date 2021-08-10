@@ -20,16 +20,9 @@ import (
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
-type transactionRequest struct {
-	BaseReq rest.BaseReq `json:"baseReq"`
-	NubID   string       `json:"nubID" valid:"required~required field nubID missing, matches(^.*$)~invalid field nubID"`
-}
-
-var _ helpers.TransactionRequest = (*transactionRequest)(nil)
-
-// Transaction Request godoc
+// transactionRequest godoc
 // @Summary nub identities transaction
-// @Descrption nub transaction
+// @Description nub transaction
 // @Accept text/plain
 // @Produce json
 // @Tags Identities
@@ -37,6 +30,13 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Success 200 {object} transactionResponse   "A successful response."
 // @Failure default  {object}  transactionResponse "An unexpected error response."
 // @Router /identities/nub [post]
+type transactionRequest struct {
+	BaseReq rest.BaseReq `json:"baseReq"`
+	NubID   string       `json:"nubID" valid:"required~required field nubID missing, matches(^.*$)~invalid field nubID"`
+}
+
+var _ helpers.TransactionRequest = (*transactionRequest)(nil)
+
 func (transactionRequest transactionRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(transactionRequest)
 	return Error
@@ -74,7 +74,6 @@ func (transactionRequest) RegisterCodec(codec *codec.Codec) {
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-
 func newTransactionRequest(baseReq rest.BaseReq, nubID string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq: baseReq,

@@ -20,6 +20,16 @@ import (
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
+// transactionRequest godoc
+// @Summary revoke identity transaction
+// @Description revoke identity transaction
+// @Accept text/plain
+// @Produce json
+// @Tags Identities
+// @Param body body  transactionRequest true "request body"
+// @Success 200 {object} transactionResponse   "A successful response."
+// @Failure default  {object}  transactionResponse "An unexpected error response."
+// @Router /identities/revoke [post]
 type transactionRequest struct {
 	BaseReq          rest.BaseReq `json:"baseReq"`
 	FromID           string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
@@ -29,16 +39,6 @@ type transactionRequest struct {
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
-// Transaction Request godoc
-// @Summary revoke identity transaction
-// @Descrption revoke identity transaction
-// @Accept text/plain
-// @Produce json
-// @Tags Identities
-// @Param body body  transactionRequest true "request body"
-// @Success 200 {object} transactionResponse   "A successful response."
-// @Failure default  {object}  transactionResponse "An unexpected error response."
-// @Router /identities/revoke [post]
 func (transactionRequest transactionRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(transactionRequest)
 	return Error
@@ -80,7 +80,6 @@ func (transactionRequest) RegisterCodec(codec *codec.Codec) {
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-
 func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:          baseReq,

@@ -15,15 +15,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-type queryRequest struct {
-	OrderID types.ID `json:"orderID" valid:"required~required field orderID missing"`
-}
-
-var _ helpers.QueryRequest = (*queryRequest)(nil)
-
-// QueryRequest godoc
+// queryRequest godoc
 // @Summary Query order using order id
-// @Descrption Able to query the order
+// @Description Able to query the order
 // @Accept json
 // @Produce json
 // @Tags Orders
@@ -31,23 +25,25 @@ var _ helpers.QueryRequest = (*queryRequest)(nil)
 // @Success 200 {object} queryResponse "A successful query response"
 // @Failure default  {object}  queryResponse "An unexpected error response."
 // @Router /orders/orders/{orderID} [get]
+type queryRequest struct {
+	OrderID types.ID `json:"orderID" valid:"required~required field orderID missing"`
+}
+
+var _ helpers.QueryRequest = (*queryRequest)(nil)
+
 func (queryRequest queryRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(queryRequest)
 	return Error
 }
-
 func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(cliCommand.ReadString(flags.OrderID)))
 }
-
 func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(vars[Query.GetName()]))
 }
-
 func (queryRequest queryRequest) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryRequest)
 }
-
 func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
 	if Error := common.Codec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
 		return nil, Error
@@ -58,7 +54,6 @@ func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, err
 func requestPrototype() helpers.QueryRequest {
 	return queryRequest{}
 }
-
 func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 	switch value := request.(type) {
 	case queryRequest:
@@ -67,7 +62,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 		return queryRequest{}
 	}
 }
-
 func newQueryRequest(orderID types.ID) helpers.QueryRequest {
 	return queryRequest{OrderID: orderID}
 }
