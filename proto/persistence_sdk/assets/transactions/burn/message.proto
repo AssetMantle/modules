@@ -3,14 +3,15 @@ syntax = "proto3";
 package assets.internal.transactions.burn;
 
 import "gogoproto/gogo.proto";
-import "cosmos_proto/cosmos.proto";
-import "persistence_sdk/schema/types/base/id.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/burn";
 
 message Message {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
+  option (gogoproto.sizer) = false;
+  option (gogoproto.marshaler) = false;
+  option (gogoproto.unmarshaler) = false;
 
   string from = 1;
   string from_id = 2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];

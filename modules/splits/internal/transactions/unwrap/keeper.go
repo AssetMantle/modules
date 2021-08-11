@@ -7,7 +7,7 @@ package unwrap
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/supply"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
@@ -18,7 +18,7 @@ import (
 type transactionKeeper struct {
 	mapper          helpers.Mapper
 	parameters      helpers.Parameters
-	supplyKeeper    supply.Keeper
+	bankKeeper      bankKeeper.Keeper
 	verifyAuxiliary helpers.Auxiliary
 }
 
@@ -35,7 +35,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	if Error := transactionKeeper.supplyKeeper.SendCoinsFromModuleToAccount(context, module.Name, message.From, sdkTypes.NewCoins(sdkTypes.NewCoin(message.OwnableID.String(), message.Value))); Error != nil {
+	if Error := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(context, module.Name, message.From, sdkTypes.NewCoins(sdkTypes.NewCoin(message.OwnableID.String(), message.Value))); Error != nil {
 		return newTransactionResponse(Error)
 	}
 
@@ -47,8 +47,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
-		case supply.Keeper:
-			transactionKeeper.supplyKeeper = value
+		case bankKeeper.Keeper:
+			transactionKeeper.bankKeeper = value
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case verify.Auxiliary.GetName():

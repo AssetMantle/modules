@@ -12,8 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/bank"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/test"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
@@ -37,8 +37,7 @@ import (
 type TestKeepers struct {
 	SplitsKeeper  helpers.TransactionKeeper
 	AccountKeeper auth.AccountKeeper
-	BankKeeper    bank.Keeper
-	SupplyKeeper  supply.Keeper
+	BankKeeper    bankKeeper.Keeper
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {

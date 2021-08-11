@@ -48,7 +48,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
-		case supply.Keeper:
+		case bankKeeper.Keeper:
 			transactionKeeper.bankKeeper = value
 		case helpers.Auxiliary:
 			switch value.GetName() {
