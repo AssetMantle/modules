@@ -10,7 +10,7 @@ import (
 	"math/rand"
 	"testing"
 
-	clientContext "github.com/cosmos/cosmos-sdk/client/context"
+	clientContext "github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/params"

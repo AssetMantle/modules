@@ -14,27 +14,22 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type metaFact struct {
-	Data       types.Data       `json:"data"`
-	Signatures types.Signatures `json:"signatures"`
-}
+var _ types.MetaFact = (*MetaFact)(nil)
 
-var _ types.MetaFact = (*metaFact)(nil)
-
-func (metaFact metaFact) GetHashID() types.ID             { return metaFact.Data.GenerateHashID() }
-func (metaFact metaFact) GetTypeID() types.ID             { return metaFact.Data.GetTypeID() }
-func (metaFact metaFact) GetSignatures() types.Signatures { return metaFact.Signatures }
-func (metaFact metaFact) Sign(_ keyring.Keyring) types.MetaFact {
+func (metaFact MetaFact) GetHashID() types.ID             { return metaFact.Data.GenerateHashID() }
+func (metaFact MetaFact) GetTypeID() types.ID             { return metaFact.Data.GetTypeID() }
+func (metaFact MetaFact) GetSignatures() types.Signatures { return metaFact.Signatures }
+func (metaFact MetaFact) Sign(_ keyring.Keyring) types.MetaFact {
 	// TODO implement signing
 	return metaFact
 }
-func (metaFact metaFact) GetData() types.Data    { return metaFact.Data }
-func (metaFact metaFact) RemoveData() types.Fact { return NewFact(metaFact.Data) }
+func (metaFact MetaFact) GetData() types.Data    { return metaFact.Data }
+func (metaFact MetaFact) RemoveData() types.Fact { return NewFact(metaFact.Data) }
 
 func NewMetaFact(data types.Data) types.MetaFact {
-	return metaFact{
+	return MetaFact{
 		Data:       data,
-		Signatures: signatures{},
+		Signatures: Signatures{},
 	}
 }
 
@@ -48,17 +43,17 @@ func ReadMetaFact(metaFactString string) (types.MetaFact, error) {
 		var Error error
 
 		switch NewID(dataType) {
-		case decData{}.GetTypeID():
+		case DecData{}.GetTypeID():
 			data, Error = ReadDecData(dataString)
-		case idData{}.GetTypeID():
+		case IDData{}.GetTypeID():
 			data, Error = ReadIDData(dataString)
-		case heightData{}.GetTypeID():
+		case HeightData{}.GetTypeID():
 			data, Error = ReadHeightData(dataString)
-		case stringData{}.GetTypeID():
+		case StringData{}.GetTypeID():
 			data, Error = ReadStringData(dataString)
-		case accAddressData{}.GetTypeID():
+		case AccAddressData{}.GetTypeID():
 			data, Error = ReadAccAddressData(dataString)
-		case listData{}.GetTypeID():
+		case ListData{}.GetTypeID():
 			data, Error = ReadAccAddressListData(dataString)
 		default:
 			data, Error = nil, errors.UnsupportedParameter

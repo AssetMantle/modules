@@ -13,22 +13,17 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type metaProperty struct {
-	ID       types.ID       `json:"id"`
-	MetaFact types.MetaFact `json:"metaFact"`
-}
+var _ types.MetaProperty = (*MetaProperty)(nil)
 
-var _ types.MetaProperty = (*metaProperty)(nil)
-
-func (metaProperty metaProperty) GetMetaFact() types.MetaFact { return metaProperty.MetaFact }
-func (metaProperty metaProperty) GetID() types.ID             { return metaProperty.ID }
-func (metaProperty metaProperty) RemoveData() types.Property {
-	return NewProperty(metaProperty.ID, metaProperty.MetaFact.RemoveData())
+func (metaProperty MetaProperty) GetMetaFact() types.MetaFact { return metaProperty.MetaFact }
+func (metaProperty MetaProperty) GetID() types.ID             { return metaProperty.Id }
+func (metaProperty MetaProperty) RemoveData() types.Property {
+	return NewProperty(metaProperty.Id, metaProperty.MetaFact.RemoveData())
 }
 
 func NewMetaProperty(id types.ID, metaFact types.MetaFact) types.MetaProperty {
-	return metaProperty{
-		ID:       id,
+	return MetaProperty{
+		Id:       id,
 		MetaFact: metaFact,
 	}
 }

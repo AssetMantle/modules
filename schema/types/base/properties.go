@@ -9,13 +9,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type properties struct {
-	PropertyList []types.Property `json:"propertyList,omitempty"`
-}
+var _ types.Properties = (*Properties)(nil)
 
-var _ types.Properties = (*properties)(nil)
-
-func (properties properties) Get(id types.ID) types.Property {
+func (properties Properties) Get(id types.ID) types.Property {
 	for _, property := range properties.GetList() {
 		if property.GetID().Compare(id) == 0 {
 			return property
@@ -24,10 +20,10 @@ func (properties properties) Get(id types.ID) types.Property {
 
 	return nil
 }
-func (properties properties) GetList() []types.Property {
+func (properties Properties) GetList() []types.Property {
 	return properties.PropertyList
 }
-func (properties properties) Add(propertyList ...types.Property) types.Properties {
+func (properties Properties) Add(propertyList ...types.Property) types.Properties {
 	newPropertyList := properties.GetList()
 
 	for _, addProperty := range propertyList {
@@ -38,7 +34,7 @@ func (properties properties) Add(propertyList ...types.Property) types.Propertie
 
 	return NewProperties(newPropertyList...)
 }
-func (properties properties) Remove(propertyList ...types.Property) types.Properties {
+func (properties Properties) Remove(propertyList ...types.Property) types.Properties {
 	newPropertyList := properties.GetList()
 
 	for _, removeProperty := range propertyList {
@@ -52,7 +48,7 @@ func (properties properties) Remove(propertyList ...types.Property) types.Proper
 
 	return NewProperties(newPropertyList...)
 }
-func (properties properties) Mutate(propertyList ...types.Property) types.Properties {
+func (properties Properties) Mutate(propertyList ...types.Property) types.Properties {
 	newPropertyList := properties.GetList()
 
 	for _, mutateProperty := range propertyList {
@@ -67,7 +63,7 @@ func (properties properties) Mutate(propertyList ...types.Property) types.Proper
 	return NewProperties(newPropertyList...)
 }
 func NewProperties(propertyList ...types.Property) types.Properties {
-	return properties{
+	return Properties{
 		PropertyList: propertyList,
 	}
 }

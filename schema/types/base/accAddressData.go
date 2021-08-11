@@ -14,13 +14,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
-type accAddressData struct {
-	Value sdkTypes.AccAddress `json:"value"`
-}
+var _ types.Data = (*AccAddressData)(nil)
 
-var _ types.Data = (*accAddressData)(nil)
-
-func (accAddressData accAddressData) Compare(sortable types.Data) int {
+func (accAddressData AccAddressData) Compare(sortable types.Data) int {
 	compareAccAddressData, Error := accAddressDataFromInterface(sortable)
 	if Error != nil {
 		panic(Error)
@@ -28,71 +24,71 @@ func (accAddressData accAddressData) Compare(sortable types.Data) int {
 
 	return bytes.Compare(accAddressData.Value.Bytes(), compareAccAddressData.Value.Bytes())
 }
-func (accAddressData accAddressData) String() string {
+func (accAddressData AccAddressData) String() string {
 	return accAddressData.Value.String()
 }
-func (accAddressData accAddressData) GetTypeID() types.ID {
+func (accAddressData AccAddressData) GetTypeID() types.ID {
 	return NewID("A")
 }
-func (accAddressData accAddressData) ZeroValue() types.Data {
+func (accAddressData AccAddressData) ZeroValue() types.Data {
 	return NewAccAddressData(sdkTypes.AccAddress{})
 }
-func (accAddressData accAddressData) GenerateHashID() types.ID {
+func (accAddressData AccAddressData) GenerateHashID() types.ID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
 		return NewID("")
 	}
 
 	return NewID(meta.Hash(accAddressData.Value.String()))
 }
-func (accAddressData accAddressData) AsAccAddress() (sdkTypes.AccAddress, error) {
+func (accAddressData AccAddressData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	return accAddressData.Value, nil
 }
-func (accAddressData accAddressData) AsListData() (types.ListData, error) {
-	zeroValue, _ := listData{}.ZeroValue().AsListData()
+func (accAddressData AccAddressData) AsListData() (types.ListData, error) {
+	zeroValue, _ := ListData{}.ZeroValue().AsListData()
 	return zeroValue, errors.IncorrectFormat
 }
-func (accAddressData accAddressData) AsString() (string, error) {
-	zeroValue, _ := stringData{}.ZeroValue().AsString()
+func (accAddressData AccAddressData) AsString() (string, error) {
+	zeroValue, _ := StringData{}.ZeroValue().AsString()
 	return zeroValue, errors.IncorrectFormat
 }
-func (accAddressData accAddressData) AsDec() (sdkTypes.Dec, error) {
-	zeroValue, _ := decData{}.ZeroValue().AsDec()
+func (accAddressData AccAddressData) AsDec() (sdkTypes.Dec, error) {
+	zeroValue, _ := DecData{}.ZeroValue().AsDec()
 	return zeroValue, errors.IncorrectFormat
 }
-func (accAddressData accAddressData) AsHeight() (types.Height, error) {
-	zeroValue, _ := heightData{}.ZeroValue().AsHeight()
+func (accAddressData AccAddressData) AsHeight() (types.Height, error) {
+	zeroValue, _ := HeightData{}.ZeroValue().AsHeight()
 	return zeroValue, errors.IncorrectFormat
 }
-func (accAddressData accAddressData) AsID() (types.ID, error) {
-	zeroValue, _ := idData{}.ZeroValue().AsID()
+func (accAddressData AccAddressData) AsID() (types.ID, error) {
+	zeroValue, _ := IDData{}.ZeroValue().AsID()
 	return zeroValue, errors.IncorrectFormat
 }
-func (accAddressData accAddressData) Get() interface{} {
+func (accAddressData AccAddressData) Get() interface{} {
 	return accAddressData.Value
 }
-func accAddressDataFromInterface(data types.Data) (accAddressData, error) {
+func accAddressDataFromInterface(data types.Data) (AccAddressData, error) {
 	switch value := data.(type) {
-	case accAddressData:
+	case AccAddressData:
 		return value, nil
 	default:
-		return accAddressData{}, errors.MetaDataError
+		return AccAddressData{}, errors.MetaDataError
 	}
 }
 
 func NewAccAddressData(value sdkTypes.AccAddress) types.Data {
-	return accAddressData{
+	return AccAddressData{
 		Value: value,
 	}
 }
 
 func ReadAccAddressData(dataString string) (types.Data, error) {
 	if dataString == "" {
-		return accAddressData{}.ZeroValue(), nil
+		return AccAddressData{}.ZeroValue(), nil
 	}
 
 	accAddress, Error := sdkTypes.AccAddressFromBech32(dataString)
 	if Error != nil {
-		return accAddressData{}.ZeroValue(), Error
+		return AccAddressData{}.ZeroValue(), Error
 	}
 
 	return NewAccAddressData(accAddress), nil

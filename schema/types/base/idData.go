@@ -14,13 +14,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
-type idData struct {
-	Value types.ID `json:"value"`
-}
+var _ types.Data = (*IDData)(nil)
 
-var _ types.Data = (*idData)(nil)
-
-func (idData idData) Compare(data types.Data) int {
+func (idData IDData) Compare(data types.Data) int {
 	compareIDData, Error := idDataFromInterface(data)
 	if Error != nil {
 		panic(Error)
@@ -28,55 +24,55 @@ func (idData idData) Compare(data types.Data) int {
 
 	return bytes.Compare(idData.Value.Bytes(), compareIDData.Value.Bytes())
 }
-func (idData idData) String() string {
+func (idData IDData) String() string {
 	return idData.Value.String()
 }
-func (idData idData) ZeroValue() types.Data {
+func (idData IDData) ZeroValue() types.Data {
 	return NewIDData(NewID(""))
 }
-func (idData idData) GetTypeID() types.ID {
+func (idData IDData) GetTypeID() types.ID {
 	return NewID("I")
 }
-func (idData idData) GenerateHashID() types.ID {
+func (idData IDData) GenerateHashID() types.ID {
 	return NewID(meta.Hash(idData.Value.String()))
 }
-func (idData idData) AsAccAddress() (sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
+func (idData IDData) AsAccAddress() (sdkTypes.AccAddress, error) {
+	zeroValue, _ := AccAddressData{}.ZeroValue().AsAccAddress()
 	return zeroValue, errors.EntityNotFound
 }
-func (idData idData) AsListData() (types.ListData, error) {
-	zeroValue, _ := listData{}.ZeroValue().AsListData()
+func (idData IDData) AsListData() (types.ListData, error) {
+	zeroValue, _ := ListData{}.ZeroValue().AsListData()
 	return zeroValue, errors.IncorrectFormat
 }
-func (idData idData) AsString() (string, error) {
-	zeroValue, _ := stringData{}.ZeroValue().AsString()
+func (idData IDData) AsString() (string, error) {
+	zeroValue, _ := StringData{}.ZeroValue().AsString()
 	return zeroValue, errors.IncorrectFormat
 }
-func (idData idData) AsDec() (sdkTypes.Dec, error) {
-	zeroValue, _ := decData{}.ZeroValue().AsDec()
+func (idData IDData) AsDec() (sdkTypes.Dec, error) {
+	zeroValue, _ := DecData{}.ZeroValue().AsDec()
 	return zeroValue, errors.IncorrectFormat
 }
-func (idData idData) AsHeight() (types.Height, error) {
-	zeroValue, _ := heightData{}.ZeroValue().AsHeight()
+func (idData IDData) AsHeight() (types.Height, error) {
+	zeroValue, _ := HeightData{}.ZeroValue().AsHeight()
 	return zeroValue, errors.IncorrectFormat
 }
-func (idData idData) AsID() (types.ID, error) {
+func (idData IDData) AsID() (types.ID, error) {
 	return idData.Value, nil
 }
-func (idData idData) Get() interface{} {
+func (idData IDData) Get() interface{} {
 	return idData.Value
 }
-func idDataFromInterface(data types.Data) (idData, error) {
+func idDataFromInterface(data types.Data) (IDData, error) {
 	switch value := data.(type) {
-	case idData:
+	case IDData:
 		return value, nil
 	default:
-		return idData{}, errors.MetaDataError
+		return IDData{}, errors.MetaDataError
 	}
 }
 
 func NewIDData(value types.ID) types.Data {
-	return idData{
+	return IDData{
 		Value: value,
 	}
 }

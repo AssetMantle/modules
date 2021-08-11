@@ -20,11 +20,11 @@ func Test_MetaFact(t *testing.T) {
 	heightData := NewHeightData(NewHeight(123))
 
 	testMetaFact := NewMetaFact(stringData)
-	require.Equal(t, metaFact{Data: stringData, Signatures: signatures{}}, testMetaFact)
+	require.Equal(t, MetaFact{Data: stringData, Signatures: Signatures{}}, testMetaFact)
 	require.Equal(t, stringData, testMetaFact.GetData())
 	require.Equal(t, NewFact(stringData), testMetaFact.RemoveData())
 	require.Equal(t, stringData.GenerateHashID(), testMetaFact.GetHashID())
-	require.Equal(t, signatures{}, testMetaFact.GetSignatures())
+	require.Equal(t, Signatures{}, testMetaFact.GetSignatures())
 	require.Equal(t, NewID("S"), testMetaFact.GetTypeID())
 	require.Equal(t, NewID("D"), NewMetaFact(decData).GetTypeID())
 	require.Equal(t, NewID("I"), NewMetaFact(idData).GetTypeID())

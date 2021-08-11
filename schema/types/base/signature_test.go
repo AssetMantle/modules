@@ -24,7 +24,7 @@ func Test_Signature(t *testing.T) {
 	validityHeight := NewHeight(123)
 	testSignature := NewSignature(id, signedBytes, validityHeight)
 
-	require.Equal(t, signature{ID: id, SignatureBytes: signedBytes, ValidityHeight: validityHeight}, testSignature)
+	require.Equal(t, Signature{Id: id, SignatureBytes: signedBytes, ValidityHeight: validityHeight}, testSignature)
 	require.Equal(t, base64.URLEncoding.EncodeToString(signedBytes), testSignature.String())
 	require.Equal(t, signedBytes, testSignature.Bytes())
 	require.Equal(t, id, testSignature.GetID())

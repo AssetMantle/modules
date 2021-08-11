@@ -15,7 +15,7 @@ import (
 	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-func RegisterCodec(codec *codec.Codec) {
+func RegisterCodec(codec *codec.LegacyAmino) {
 	codec.RegisterInterface((*error)(nil), nil)
 	types.RegisterCodec(codec)
 	baseTypes.RegisterCodec(codec)

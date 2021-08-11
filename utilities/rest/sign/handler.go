@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func handler(cliContext context.CLIContext) http.HandlerFunc {
+func handler(cliContext client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		var request request
 		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
@@ -91,6 +91,6 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 	}
 }
 
-func RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
+func RegisterRESTRoutes(cliContext client.Context, router *mux.Router) {
 	router.HandleFunc("/sign", handler(cliContext)).Methods("POST")
 }

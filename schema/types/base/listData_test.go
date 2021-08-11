@@ -25,10 +25,9 @@ func Test_ListData(t *testing.T) {
 	require.Nil(t, Error)
 	testListData2 := NewListData(listValue2)
 
-
 	require.Equal(t, "cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae", testListData.String())
 	require.Equal(t, NewID(meta.Hash("cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae")), testListData.GenerateHashID())
-  
+
 	require.Equal(t, NewID(""), testListData2.GenerateHashID())
 	require.Equal(t, NewID("LD"), testListData.GetTypeID())
 
@@ -37,7 +36,7 @@ func Test_ListData(t *testing.T) {
 	require.Equal(t, errors.IncorrectFormat, Error)
 
 	dataAsHeight, Error := testListData.AsHeight()
-	require.Equal(t, height{}, dataAsHeight)
+	require.Equal(t, Height{}, dataAsHeight)
 	require.Equal(t, errors.IncorrectFormat, Error)
 
 	dataAsDec, Error := testListData.AsDec()
@@ -45,7 +44,7 @@ func Test_ListData(t *testing.T) {
 	require.Equal(t, errors.IncorrectFormat, Error)
 
 	dataAsID, Error := testListData.AsID()
-	require.Equal(t, id{}, dataAsID)
+	require.Equal(t, ID{}, dataAsID)
 	require.Equal(t, errors.IncorrectFormat, Error)
 
 	dataAsList, Error := testListData.AsListData()
@@ -53,10 +52,10 @@ func Test_ListData(t *testing.T) {
 
 	require.Nil(t, Error)
 
-	require.Equal(t, testListData.(listData).Value, testListData.Get())
+	require.Equal(t, testListData.(ListData).Value, testListData.Get())
 
 	data, Error := ReadAccAddressListData("testString")
-	require.Equal(t, listData{}, data)
+	require.Equal(t, ListData{}, data)
 	require.NotNil(t, Error)
 
 	require.Panics(t, func() {
@@ -96,13 +95,11 @@ func Test_ListData(t *testing.T) {
 	dataAsList10, Error := listValue10.AsListData()
 	require.Nil(t, Error)
 
-
-	a := dataAsList6.Add(dataAsList11)
+	_ = dataAsList6.Add(dataAsList)
 	require.Equal(t, 0, testListData3.Compare(testListData4))
 
-	require.Equal(t, false, dataAsList8.Search(dataAsList9.(listData).Value.GetList()[0]) == len(dataAsList8.(listData).Value.GetList()))
-	require.Equal(t, dataAsList6, dataAsList8.Remove(listValue9.(listData).Value.GetList()[0]))
-	require.Equal(t, dataAsList10, dataAsList6.Add(listValue11.(listData).Value.GetList()[0]))
-
+	require.Equal(t, false, dataAsList8.Search(dataAsList9.(ListData).Value.GetList()[0]) == len(dataAsList8.(ListData).Value.GetList()))
+	require.Equal(t, dataAsList6, dataAsList8.Remove(listValue9.(ListData).Value.GetList()[0]))
+	require.Equal(t, dataAsList10, dataAsList6.Add(listValue11.(ListData).Value.GetList()[0]))
 
 }

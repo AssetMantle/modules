@@ -31,11 +31,11 @@ func Test_StringData(t *testing.T) {
 	require.Equal(t, nil, Error)
 
 	dataAsID, Error := testStringData.AsID()
-	require.Equal(t, id{}, dataAsID)
+	require.Equal(t, ID{}, dataAsID)
 	require.Equal(t, errors.IncorrectFormat, Error)
 
 	dataAsHeight, Error := testStringData.AsHeight()
-	require.Equal(t, height{}, dataAsHeight)
+	require.Equal(t, Height{}, dataAsHeight)
 	require.Equal(t, errors.IncorrectFormat, Error)
 
 	dataAsDec, Error := testStringData.AsDec()
@@ -46,7 +46,7 @@ func Test_StringData(t *testing.T) {
 
 	data, Error := ReadStringData("testString")
 	require.Nil(t, Error)
-	require.Equal(t, stringData{Value: "testString"}.String(), data.String())
+	require.Equal(t, StringData{Value: "testString"}.String(), data.String())
 
 	require.Equal(t, false, testStringData.Compare(testStringData2) == 0)
 	require.Equal(t, true, testStringData.Compare(testStringData) == 0)

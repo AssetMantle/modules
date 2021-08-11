@@ -7,11 +7,10 @@ package add
 
 import (
 	"bytes"
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/crypto/keys"
-	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
+	legacyCodec "github.com/cosmos/cosmos-sdk/codec/legacy"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
@@ -25,25 +24,25 @@ import (
 )
 
 func TestHandler(t *testing.T) {
-	Codec := codec.New()
+	Codec := legacyCodec.Cdc
 	schema.RegisterCodec(Codec)
 	Codec.RegisterConcrete(request{}, "request", nil)
 	Codec.RegisterConcrete(response{}, "response", nil)
-	clientContext := context.NewCLIContext().WithCodec(Codec)
+	clientContext := client.Context{}.WithLegacyAmino(Codec)
 	handler := handler(clientContext)
-	viper.Set(flags.FlagKeyringBackend, keys.BackendTest)
+	viper.Set(flags.FlagKeyringBackend, keyring.BackendTest)
 	viper.Set(flags.FlagHome, t.TempDir())
 
-	keyring, Error := cryptoKeys.NewKeyring(sdk.KeyringServiceName(), keys.BackendTest, t.TempDir(), strings.NewReader(""))
+	keyring, Error := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, t.TempDir(), strings.NewReader(""))
 	require.NoError(t, Error)
 
 	router := mux.NewRouter()
 	RegisterRESTRoutes(clientContext, router)
 
 	t.Cleanup(func() {
-		_ = keyring.Delete("keyName1", "", true)
-		_ = keyring.Delete("keyName2", "", true)
-		_ = keyring.Delete("keyName3", "", true)
+		_ = keyring.Delete("keyName1")
+		_ = keyring.Delete("keyName2")
+		_ = keyring.Delete("keyName3")
 	})
 
 	getResponse := func(responseBytes []byte) response {

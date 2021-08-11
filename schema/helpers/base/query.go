@@ -8,8 +8,7 @@ package base
 import (
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
@@ -31,9 +30,9 @@ type query struct {
 var _ helpers.Query = (*query)(nil)
 
 func (query query) GetName() string { return query.name }
-func (query query) Command(codec *codec.Codec) *cobra.Command {
+func (query query) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
-		cliContext := context.NewCLIContext().WithCodec(codec)
+		cliContext := client.Context{}.WithLegacyAmino(codec)
 
 		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, cliContext)
 		responseBytes, _, Error := query.query(queryRequest, cliContext)
@@ -47,7 +46,7 @@ func (query query) Command(codec *codec.Codec) *cobra.Command {
 			return Error
 		}
 
-		return cliContext.PrintOutput(response)
+		return cliContext.PrintObjectLegacy(response)
 	}
 
 	return query.cliCommand.CreateCommand(runE)
@@ -61,7 +60,7 @@ func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciType
 	return query.queryKeeper.Enquire(context, request).Encode()
 }
 
-func (query query) RESTQueryHandler(cliContext context.CLIContext) http.HandlerFunc {
+func (query query) RESTQueryHandler(cliContext client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		responseWriter.Header().Set("Content-Type", "application/json")
 		cliContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, cliContext, httpRequest)
@@ -87,7 +86,7 @@ func (query query) Initialize(mapper helpers.Mapper, parameters helpers.Paramete
 	return query
 }
 
-func (query query) query(queryRequest helpers.QueryRequest, cliContext context.CLIContext) ([]byte, int64, error) {
+func (query query) query(queryRequest helpers.QueryRequest, cliContext client.Context) ([]byte, int64, error) {
 	bytes, Error := queryRequest.Encode()
 	if Error != nil {
 		return nil, 0, Error

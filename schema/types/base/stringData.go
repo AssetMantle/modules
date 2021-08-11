@@ -14,13 +14,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
-type stringData struct {
-	Value string `json:"value"`
-}
+var _ types.Data = (*StringData)(nil)
 
-var _ types.Data = (*stringData)(nil)
-
-func (stringData stringData) Compare(data types.Data) int {
+func (stringData StringData) Compare(data types.Data) int {
 	compareStringData, Error := stringDataFromInterface(data)
 	if Error != nil {
 		panic(Error)
@@ -28,55 +24,55 @@ func (stringData stringData) Compare(data types.Data) int {
 
 	return strings.Compare(stringData.Value, compareStringData.Value)
 }
-func (stringData stringData) String() string {
+func (stringData StringData) String() string {
 	return stringData.Value
 }
-func (stringData stringData) GetTypeID() types.ID {
+func (stringData StringData) GetTypeID() types.ID {
 	return NewID("S")
 }
-func (stringData stringData) ZeroValue() types.Data {
+func (stringData StringData) ZeroValue() types.Data {
 	return NewStringData("")
 }
-func (stringData stringData) GenerateHashID() types.ID {
+func (stringData StringData) GenerateHashID() types.ID {
 	return NewID(meta.Hash(stringData.Value))
 }
-func (stringData stringData) AsAccAddress() (sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
+func (stringData StringData) AsAccAddress() (sdkTypes.AccAddress, error) {
+	zeroValue, _ := AccAddressData{}.ZeroValue().AsAccAddress()
 	return zeroValue, errors.EntityNotFound
 }
-func (stringData stringData) AsListData() (types.ListData, error) {
-	zeroValue, _ := listData{}.ZeroValue().AsListData()
+func (stringData StringData) AsListData() (types.ListData, error) {
+	zeroValue, _ := ListData{}.ZeroValue().AsListData()
 	return zeroValue, errors.IncorrectFormat
 }
-func (stringData stringData) AsString() (string, error) {
+func (stringData StringData) AsString() (string, error) {
 	return stringData.Value, nil
 }
-func (stringData stringData) AsDec() (sdkTypes.Dec, error) {
-	zeroValue, _ := decData{}.ZeroValue().AsDec()
+func (stringData StringData) AsDec() (sdkTypes.Dec, error) {
+	zeroValue, _ := DecData{}.ZeroValue().AsDec()
 	return zeroValue, errors.IncorrectFormat
 }
-func (stringData stringData) AsHeight() (types.Height, error) {
-	zeroValue, _ := heightData{}.ZeroValue().AsHeight()
+func (stringData StringData) AsHeight() (types.Height, error) {
+	zeroValue, _ := HeightData{}.ZeroValue().AsHeight()
 	return zeroValue, errors.IncorrectFormat
 }
-func (stringData stringData) AsID() (types.ID, error) {
-	zeroValue, _ := idData{}.ZeroValue().AsID()
+func (stringData StringData) AsID() (types.ID, error) {
+	zeroValue, _ := IDData{}.ZeroValue().AsID()
 	return zeroValue, errors.IncorrectFormat
 }
-func (stringData stringData) Get() interface{} {
+func (stringData StringData) Get() interface{} {
 	return stringData.Value
 }
-func stringDataFromInterface(data types.Data) (stringData, error) {
+func stringDataFromInterface(data types.Data) (StringData, error) {
 	switch value := data.(type) {
-	case stringData:
+	case StringData:
 		return value, nil
 	default:
-		return stringData{}, errors.MetaDataError
+		return StringData{}, errors.MetaDataError
 	}
 }
 
 func NewStringData(value string) types.Data {
-	return stringData{
+	return StringData{
 		Value: value,
 	}
 }

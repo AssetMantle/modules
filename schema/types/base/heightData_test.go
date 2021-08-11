@@ -38,13 +38,13 @@ func Test_HeightData(t *testing.T) {
 	require.Equal(t, errors.IncorrectFormat, Error)
 
 	dataAsID, Error := testHeightData.AsID()
-	require.Equal(t, id{}, dataAsID)
+	require.Equal(t, ID{}, dataAsID)
 	require.Equal(t, errors.IncorrectFormat, Error)
 
 	require.Equal(t, heightValue, testHeightData.Get())
 
 	data, Error := ReadHeightData("")
-	require.Equal(t, heightData{Value: height{Value: 0}}, data)
+	require.Equal(t, HeightData{Value: Height{Value: 0}}, data)
 	require.Nil(t, Error)
 
 	data, Error = ReadHeightData("testString")
@@ -52,7 +52,7 @@ func Test_HeightData(t *testing.T) {
 	require.NotNil(t, Error)
 
 	data, Error = ReadHeightData("123")
-	require.Equal(t, heightData{Value: height{Value: 123}}, data)
+	require.Equal(t, HeightData{Value: Height{Value: 123}}, data)
 	require.Nil(t, Error)
 
 	require.Equal(t, false, testHeightData.Compare(NewStringData("")) == 0)

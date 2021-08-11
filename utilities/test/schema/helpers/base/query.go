@@ -8,7 +8,7 @@ package base
 import (
 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
@@ -44,7 +44,7 @@ func (t testQueryRequest) Validate() error {
 	return nil
 }
 
-func (t testQueryRequest) FromCLI(_ helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
+func (t testQueryRequest) FromCLI(_ helpers.CLICommand, _ client.Context) helpers.QueryRequest {
 	return t
 }
 

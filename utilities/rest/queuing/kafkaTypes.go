@@ -7,7 +7,7 @@ package queuing
 
 import (
 	"github.com/Shopify/sarama"
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	dbm "github.com/tendermint/tm-db"
@@ -25,7 +25,7 @@ type kafkaMsg struct {
 }
 
 // NewKafkaMsgFromRest : makes a msg to send to kafka queue
-func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseReq, cliCtx context.CLIContext) kafkaMsg {
+func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseReq, cliCtx client.Context) kafkaMsg {
 	kafkaCliCtx := kafkaCliCtx{
 		OutputFormat:  cliCtx.OutputFormat,
 		ChainID:       cliCtx.ChainID,
@@ -53,7 +53,7 @@ func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseRe
 }
 
 // cliCtxFromKafkaMsg : sets the transaction and cli contexts again to consume
-func cliCtxFromKafkaMsg(kafkaMsg kafkaMsg, cliContext context.CLIContext) context.CLIContext {
+func cliCtxFromKafkaMsg(kafkaMsg kafkaMsg, cliContext client.Context) client.Context {
 	cliContext.OutputFormat = kafkaMsg.KafkaCliCtx.OutputFormat
 	cliContext.ChainID = kafkaMsg.KafkaCliCtx.ChainID
 	cliContext.Height = kafkaMsg.KafkaCliCtx.Height

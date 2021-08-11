@@ -12,32 +12,26 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 )
 
-type signature struct {
-	ID             types.ID     `json:"id"`
-	SignatureBytes []byte       `json:"signatureBytes"`
-	ValidityHeight types.Height `json:"validityHeight"`
-}
+var _ types.Signature = (*Signature)(nil)
 
-var _ types.Signature = (*signature)(nil)
-
-func (baseSignature signature) String() string {
+func (baseSignature Signature) String() string {
 	return base64.URLEncoding.EncodeToString(baseSignature.Bytes())
 }
-func (baseSignature signature) Bytes() []byte   { return baseSignature.SignatureBytes }
-func (baseSignature signature) GetID() types.ID { return baseSignature.ID }
-func (baseSignature signature) Verify(pubKey crypto.PubKey, bytes []byte) bool {
-	return pubKey.VerifyBytes(bytes, baseSignature.Bytes())
+func (baseSignature Signature) Bytes() []byte   { return baseSignature.SignatureBytes }
+func (baseSignature Signature) GetID() types.ID { return baseSignature.Id }
+func (baseSignature Signature) Verify(pubKey crypto.PubKey, bytes []byte) bool {
+	return pubKey.VerifySignature(bytes, baseSignature.Bytes())
 }
-func (baseSignature signature) GetValidityHeight() types.Height {
+func (baseSignature Signature) GetValidityHeight() types.Height {
 	return baseSignature.ValidityHeight
 }
-func (baseSignature signature) HasExpired(height types.Height) bool {
+func (baseSignature Signature) HasExpired(height types.Height) bool {
 	return baseSignature.GetValidityHeight().Compare(height) > 0
 }
 
 func NewSignature(id types.ID, signatureBytes []byte, validityHeight types.Height) types.Signature {
-	return signature{
-		ID:             id,
+	return Signature{
+		Id:             id,
 		SignatureBytes: signatureBytes,
 		ValidityHeight: validityHeight,
 	}

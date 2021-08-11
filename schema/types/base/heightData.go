@@ -14,13 +14,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
-type heightData struct {
-	Value types.Height `json:"value"`
-}
+var _ types.Data = (*HeightData)(nil)
 
-var _ types.Data = (*heightData)(nil)
-
-func (heightData heightData) Compare(data types.Data) int {
+func (heightData HeightData) Compare(data types.Data) int {
 	compareHeightData, Error := heightDataFromInterface(data)
 	if Error != nil {
 		panic(Error)
@@ -28,66 +24,66 @@ func (heightData heightData) Compare(data types.Data) int {
 
 	return heightData.Value.Compare(compareHeightData.Value)
 }
-func (heightData heightData) String() string {
+func (heightData HeightData) String() string {
 	return strconv.FormatInt(heightData.Value.Get(), 10)
 }
-func (heightData heightData) GetTypeID() types.ID {
+func (heightData HeightData) GetTypeID() types.ID {
 	return NewID("H")
 }
-func (heightData heightData) ZeroValue() types.Data {
+func (heightData HeightData) ZeroValue() types.Data {
 	return NewHeightData(NewHeight(0))
 }
-func (heightData heightData) GenerateHashID() types.ID {
+func (heightData HeightData) GenerateHashID() types.ID {
 	if heightData.Compare(heightData.ZeroValue()) == 0 {
 		return NewID("")
 	}
 
 	return NewID(meta.Hash(strconv.FormatInt(heightData.Value.Get(), 10)))
 }
-func (heightData heightData) AsAccAddress() (sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
+func (heightData HeightData) AsAccAddress() (sdkTypes.AccAddress, error) {
+	zeroValue, _ := AccAddressData{}.ZeroValue().AsAccAddress()
 	return zeroValue, errors.IncorrectFormat
 }
-func (heightData heightData) AsListData() (types.ListData, error) {
-	zeroValue, _ := listData{}.ZeroValue().AsListData()
+func (heightData HeightData) AsListData() (types.ListData, error) {
+	zeroValue, _ := ListData{}.ZeroValue().AsListData()
 	return zeroValue, errors.IncorrectFormat
 }
-func (heightData heightData) AsString() (string, error) {
-	zeroValue, _ := stringData{}.ZeroValue().AsString()
+func (heightData HeightData) AsString() (string, error) {
+	zeroValue, _ := StringData{}.ZeroValue().AsString()
 	return zeroValue, errors.IncorrectFormat
 }
-func (heightData heightData) AsDec() (sdkTypes.Dec, error) {
-	zeroValue, _ := decData{}.ZeroValue().AsDec()
+func (heightData HeightData) AsDec() (sdkTypes.Dec, error) {
+	zeroValue, _ := DecData{}.ZeroValue().AsDec()
 	return zeroValue, errors.IncorrectFormat
 }
-func (heightData heightData) AsHeight() (types.Height, error) {
+func (heightData HeightData) AsHeight() (types.Height, error) {
 	return heightData.Value, nil
 }
-func (heightData heightData) AsID() (types.ID, error) {
-	zeroValue, _ := idData{}.ZeroValue().AsID()
+func (heightData HeightData) AsID() (types.ID, error) {
+	zeroValue, _ := IDData{}.ZeroValue().AsID()
 	return zeroValue, errors.IncorrectFormat
 }
-func (heightData heightData) Get() interface{} {
+func (heightData HeightData) Get() interface{} {
 	return heightData.Value
 }
-func heightDataFromInterface(data types.Data) (heightData, error) {
+func heightDataFromInterface(data types.Data) (HeightData, error) {
 	switch value := data.(type) {
-	case heightData:
+	case HeightData:
 		return value, nil
 	default:
-		return heightData{}, errors.MetaDataError
+		return HeightData{}, errors.MetaDataError
 	}
 }
 
 func NewHeightData(value types.Height) types.Data {
-	return heightData{
+	return HeightData{
 		Value: value,
 	}
 }
 
 func ReadHeightData(dataString string) (types.Data, error) {
 	if dataString == "" {
-		return heightData{}.ZeroValue(), nil
+		return HeightData{}.ZeroValue(), nil
 	}
 
 	height, Error := strconv.ParseInt(dataString, 10, 64)

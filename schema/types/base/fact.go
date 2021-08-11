@@ -7,33 +7,26 @@ package base
 
 import (
 	"github.com/99designs/keyring"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/client/keys"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type fact struct {
-	HashID     types.ID         `json:"hashID"`
-	TypeID     types.ID         `json:"typeID"`
-	Signatures types.Signatures `json:"signatures"`
-}
+var _ types.Fact = (*Fact)(nil)
 
-var _ types.Fact = (*fact)(nil)
-
-func (fact fact) GetHashID() types.ID             { return fact.HashID }
-func (fact fact) GetTypeID() types.ID             { return fact.TypeID }
-func (fact fact) GetSignatures() types.Signatures { return fact.Signatures }
-func (fact fact) IsMeta() bool {
+func (fact Fact) GetHashID() types.ID             { return fact.HashId }
+func (fact Fact) GetTypeID() types.ID             { return fact.TypeId }
+func (fact Fact) GetSignatures() types.Signatures { return fact.Signatures }
+func (fact Fact) IsMeta() bool {
 	return false
 }
-func (fact fact) Sign(_ keyring.Keyring) types.Fact {
+func (fact Fact) Sign(_ keyring.Keyring) types.Fact {
 	// TODO use keyring to sign
-	cliContext := context.NewCLIContext()
-	sign, _, _ := cliContext.Keybase.Sign(cliContext.FromName, keys.DefaultKeyPass, fact.HashID.Bytes())
-	Signature := signature{
-		ID:             id{IDString: fact.HashID.String()},
+	cliContext := client.Context{}
+	sign, _, _ := cliContext.Keyring.Sign(cliContext.FromName, fact.GetHashID().Bytes())
+	Signature := Signature{
+		Id:             ID{IdString: fact.GetHashID().String()},
 		SignatureBytes: sign,
-		ValidityHeight: height{cliContext.Height},
+		ValidityHeight: Height{cliContext.Height},
 	}
 	fact.GetSignatures().Add(Signature)
 
@@ -41,10 +34,10 @@ func (fact fact) Sign(_ keyring.Keyring) types.Fact {
 }
 
 func NewFact(data types.Data) types.Fact {
-	return fact{
-		HashID:     data.GenerateHashID(),
-		TypeID:     data.GetTypeID(),
-		Signatures: signatures{},
+	return Fact{
+		HashId:     data.GenerateHashID(),
+		TypeId:     data.GetTypeID(),
+		Signatures: Signatures{},
 	}
 }
 

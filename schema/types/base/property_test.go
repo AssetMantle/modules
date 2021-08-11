@@ -17,7 +17,7 @@ func Test_Property(t *testing.T) {
 	fact := NewFact(NewStringData("Data"))
 
 	testProperty := NewProperty(id, fact)
-	require.Equal(t, property{ID: id, Fact: fact}, testProperty)
+	require.Equal(t, Property{Id: id, Fact: fact}, testProperty)
 	require.Equal(t, id, testProperty.GetID())
 	require.Equal(t, fact, testProperty.GetFact())
 

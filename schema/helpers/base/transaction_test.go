@@ -8,7 +8,7 @@ package base
 import (
 	"bytes"
 	"encoding/json"
-	clientContext "github.com/cosmos/cosmos-sdk/client/context"
+	clientContext "github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"

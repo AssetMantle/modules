@@ -6,8 +6,7 @@
 package base
 
 import (
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/client/keys"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/stretchr/testify/require"
@@ -22,10 +21,10 @@ func Test_Fact(t *testing.T) {
 	heightData := NewHeightData(NewHeight(123))
 
 	testFact := NewFact(stringData)
-	require.Equal(t, fact{HashID: stringData.GenerateHashID(), TypeID: NewID("S"), Signatures: signatures{}}, testFact)
+	require.Equal(t, Fact{HashId: stringData.GenerateHashID(), TypeId: NewID("S"), Signatures: Signatures{}}, testFact)
 	require.Equal(t, stringData.GenerateHashID(), testFact.GetHashID())
-	require.Equal(t, signatures{}, testFact.GetSignatures())
-	require.Equal(t, false, testFact.(fact).IsMeta())
+	require.Equal(t, Signatures{}, testFact.GetSignatures())
+	require.Equal(t, false, testFact.(Fact).IsMeta())
 	require.Equal(t, NewID("S"), testFact.GetTypeID())
 	require.Equal(t, NewID("D"), NewFact(decData).GetTypeID())
 	require.Equal(t, NewID("I"), NewFact(idData).GetTypeID())
@@ -42,13 +41,13 @@ func Test_Fact(t *testing.T) {
 	require.Equal(t, nil, readFact2)
 	require.Equal(t, errors.IncorrectFormat, Error)
 
-	cliContext := context.NewCLIContext()
+	cliContext := client.Context{}
 	require.Panics(t, func() {
-		sign, _, _ := cliContext.Keybase.Sign(cliContext.FromName, keys.DefaultKeyPass, readFact.GetHashID().Bytes())
-		Signature := signature{
-			ID:             id{IDString: readFact.GetHashID().String()},
+		sign, _, _ := cliContext.Keyring.Sign(cliContext.FromName, readFact.GetHashID().Bytes())
+		Signature := Signature{
+			Id:             ID{IdString: readFact.GetHashID().String()},
 			SignatureBytes: sign,
-			ValidityHeight: height{cliContext.Height},
+			ValidityHeight: Height{cliContext.Height},
 		}
 		readFact.GetSignatures().Add(Signature)
 		require.Equal(t, readFact.GetSignatures().Get(readFact.GetHashID()), readFact.GetHashID().String())

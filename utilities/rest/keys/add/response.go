@@ -6,14 +6,14 @@
 package add
 
 import (
-	"github.com/cosmos/cosmos-sdk/crypto/keys"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
 type response struct {
-	Success   bool           `json:"success"`
-	Error     error          `json:"error"`
-	KeyOutput keys.KeyOutput `json:"keyOutput"`
+	Success   bool              `json:"success"`
+	Error     error             `json:"error"`
+	KeyOutput keyring.KeyOutput `json:"keyOutput"`
 }
 
 var _ helpers.Response = response{}
@@ -24,7 +24,7 @@ func (response response) IsSuccessful() bool {
 func (response response) GetError() error {
 	return response.Error
 }
-func newResponse(keyOutput keys.KeyOutput, error error) helpers.Response {
+func newResponse(keyOutput keyring.KeyOutput, error error) helpers.Response {
 	success := true
 	if error != nil {
 		success = false

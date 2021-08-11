@@ -7,26 +7,27 @@ package add
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
 
-	"github.com/bartekn/go-bip39"
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
+	"github.com/cosmos/go-bip39"
 
 	"net/http"
 	"strings"
 
-	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
+	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 )
 
-func handler(cliContext context.CLIContext) http.HandlerFunc {
+func handler(cliContext client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		var request request
-		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
+		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.LegacyAmino, &request) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
@@ -36,13 +37,13 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		Keyring, Error := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
+		Keyring, Error := cryptoKeys.New(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
 		}
 
-		_, Error = Keyring.Get(request.Name)
+		_, Error = Keyring.Key(request.Name)
 		if Error == nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, fmt.Sprintf("Account for keyname %v already exists", request.Name))
 			return
@@ -69,7 +70,7 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			}
 		}
 
-		info, Error := Keyring.CreateAccount(request.Name, request.Mnemonic, cryptoKeys.DefaultBIP39Passphrase, keys.DefaultKeyPass, sdkTypes.FullFundraiserPath, cryptoKeys.Secp256k1)
+		info, Error := Keyring.NewAccount(request.Name, request.Mnemonic, cryptoKeys.DefaultBIP39Passphrase, sdkTypes.FullFundraiserPath, hd.Secp256k1)
 		if Error != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 			return
@@ -86,6 +87,6 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 	}
 }
 
-func RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
+func RegisterRESTRoutes(cliContext client.Context, router *mux.Router) {
 	router.HandleFunc("/keys/add", handler(cliContext)).Methods("POST")
 }

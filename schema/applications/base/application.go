@@ -7,6 +7,10 @@ package base
 
 import (
 	"encoding/json"
+	"github.com/cosmos/cosmos-sdk/x/crisis"
+	"github.com/cosmos/cosmos-sdk/x/distribution"
+	"github.com/cosmos/cosmos-sdk/x/slashing"
+	"github.com/cosmos/cosmos-sdk/x/staking"
 	"io"
 	"os"
 	"path/filepath"
@@ -20,16 +24,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/cosmos/cosmos-sdk/x/crisis"
-	"github.com/cosmos/cosmos-sdk/x/distribution"
+	crisisKeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
+	distributionKeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/mint"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/cosmos/cosmos-sdk/x/slashing"
-	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/cosmos/cosmos-sdk/x/supply"
+	slashingKeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
+	slashingTypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	stakingTypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	"github.com/persistenceOne/persistenceSDK/modules/assets"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications"
@@ -68,7 +73,7 @@ type application struct {
 
 	moduleBasicManager module.BasicManager
 
-	codec *codec.Codec
+	codec *codec.LegacyAmino
 
 	enabledWasmProposalTypeList []wasm.ProposalType
 	moduleAccountPermissions    map[string][]string
@@ -76,10 +81,10 @@ type application struct {
 
 	keys map[string]*sdkTypes.KVStoreKey
 
-	stakingKeeper      staking.Keeper
-	slashingKeeper     slashing.Keeper
-	distributionKeeper distribution.Keeper
-	crisisKeeper       crisis.Keeper
+	stakingKeeper      stakingKeeper.Keeper
+	slashingKeeper     slashingKeeper.Keeper
+	distributionKeeper distributionKeeper.Keeper
+	crisisKeeper       crisisKeeper.Keeper
 
 	moduleManager *module.Manager
 
@@ -97,7 +102,7 @@ func (application application) GetDefaultClientHome() string {
 func (application application) GetModuleBasicManager() module.BasicManager {
 	return application.moduleBasicManager
 }
-func (application application) GetCodec() *codec.Codec {
+func (application application) GetCodec() *codec.LegacyAmino {
 	return application.codec
 }
 func (application application) LoadHeight(height int64) error {
@@ -125,14 +130,22 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 
 		application.crisisKeeper.AssertInvariants(context)
 
-		application.stakingKeeper.IterateValidators(context, func(_ int64, val staking.ValidatorI) (stop bool) {
+		application.stakingKeeper.IterateValidators(context, func(_ int64, val stakingTypes.ValidatorI) (stop bool) {
 			_, _ = application.distributionKeeper.WithdrawValidatorCommission(context, val.GetOperator())
 			return false
 		})
 
 		delegations := application.stakingKeeper.GetAllDelegations(context)
 		for _, delegation := range delegations {
-			_, _ = application.distributionKeeper.WithdrawDelegationRewards(context, delegation.DelegatorAddress, delegation.ValidatorAddress)
+			delegator, err := sdkTypes.AccAddressFromBech32(delegation.DelegatorAddress)
+			if err != nil {
+				return nil, nil, err
+			}
+			validator, err := sdkTypes.ValAddressFromBech32(delegation.ValidatorAddress)
+			if err != nil {
+				return nil, nil, err
+			}
+			_, _ = application.distributionKeeper.WithdrawDelegationRewards(context, delegator, validator)
 		}
 
 		application.distributionKeeper.DeleteAllValidatorSlashEvents(context)
@@ -142,11 +155,11 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 		height := context.BlockHeight()
 		context = context.WithBlockHeight(0)
 
-		application.stakingKeeper.IterateValidators(context, func(_ int64, val staking.ValidatorI) (stop bool) {
+		application.stakingKeeper.IterateValidators(context, func(_ int64, val stakingTypes.ValidatorI) (stop bool) {
 
 			scraps := application.distributionKeeper.GetValidatorOutstandingRewards(context, val.GetOperator())
 			feePool := application.distributionKeeper.GetFeePool(context)
-			feePool.CommunityPool = feePool.CommunityPool.Add(scraps...)
+			feePool.CommunityPool = feePool.CommunityPool.Add(scraps.Rewards...)
 			application.distributionKeeper.SetFeePool(context, feePool)
 
 			application.distributionKeeper.Hooks().AfterValidatorCreated(context, val.GetOperator())
@@ -154,13 +167,21 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 		})
 
 		for _, delegation := range delegations {
-			application.distributionKeeper.Hooks().BeforeDelegationCreated(context, delegation.DelegatorAddress, delegation.ValidatorAddress)
-			application.distributionKeeper.Hooks().AfterDelegationModified(context, delegation.DelegatorAddress, delegation.ValidatorAddress)
+			delegator, err := sdkTypes.AccAddressFromBech32(delegation.DelegatorAddress)
+			if err != nil {
+				return nil, nil, err
+			}
+			validator, err := sdkTypes.ValAddressFromBech32(delegation.ValidatorAddress)
+			if err != nil {
+				return nil, nil, err
+			}
+			application.distributionKeeper.Hooks().BeforeDelegationCreated(context, delegator, validator)
+			application.distributionKeeper.Hooks().AfterDelegationModified(context, delegator, validator)
 		}
 
 		context = context.WithBlockHeight(height)
 
-		application.stakingKeeper.IterateRedelegations(context, func(_ int64, redelegation staking.Redelegation) (stop bool) {
+		application.stakingKeeper.IterateRedelegations(context, func(_ int64, redelegation stakingTypes.Redelegation) (stop bool) {
 			for i := range redelegation.Entries {
 				redelegation.Entries[i].CreationHeight = 0
 			}
@@ -168,7 +189,7 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 			return false
 		})
 
-		application.stakingKeeper.IterateUnbondingDelegations(context, func(_ int64, unbondingDelegation staking.UnbondingDelegation) (stop bool) {
+		application.stakingKeeper.IterateUnbondingDelegations(context, func(_ int64, unbondingDelegation stakingTypes.UnbondingDelegation) (stop bool) {
 			for i := range unbondingDelegation.Entries {
 				unbondingDelegation.Entries[i].CreationHeight = 0
 			}
@@ -176,8 +197,8 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 			return false
 		})
 
-		store := context.KVStore(application.keys[staking.StoreKey])
-		kvStoreReversePrefixIterator := sdkTypes.KVStoreReversePrefixIterator(store, staking.ValidatorsKey)
+		store := context.KVStore(application.keys[stakingTypes.StoreKey])
+		kvStoreReversePrefixIterator := sdkTypes.KVStoreReversePrefixIterator(store, stakingTypes.ValidatorsKey)
 		counter := int16(0)
 
 		for ; kvStoreReversePrefixIterator.Valid(); kvStoreReversePrefixIterator.Next() {
@@ -204,7 +225,7 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 
 		application.slashingKeeper.IterateValidatorSigningInfos(
 			context,
-			func(validatorConsAddress sdkTypes.ConsAddress, validatorSigningInfo slashing.ValidatorSigningInfo) (stop bool) {
+			func(validatorConsAddress sdkTypes.ConsAddress, validatorSigningInfo slashingTypes.ValidatorSigningInfo) (stop bool) {
 				validatorSigningInfo.StartHeight = 0
 				application.slashingKeeper.SetValidatorSigningInfo(context, validatorConsAddress, validatorSigningInfo)
 				return false

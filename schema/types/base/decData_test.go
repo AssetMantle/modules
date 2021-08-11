@@ -34,23 +34,23 @@ func Test_DecData(t *testing.T) {
 	require.Equal(t, nil, Error)
 
 	dataAsHeight, Error := testDecData.AsHeight()
-	require.Equal(t, height{}, dataAsHeight)
+	require.Equal(t, Height{}, dataAsHeight)
 	require.Equal(t, errors.IncorrectFormat, Error)
 
 	dataAsID, Error := testDecData.AsID()
-	require.Equal(t, id{}, dataAsID)
+	require.Equal(t, ID{}, dataAsID)
 	require.Equal(t, errors.IncorrectFormat, Error)
 	require.Equal(t, decValue, testDecData.Get())
 
 	data, Error := ReadDecData("")
-	require.Equal(t, decData{Value: sdkTypes.ZeroDec()}, data)
+	require.Equal(t, DecData{Value: sdkTypes.ZeroDec()}, data)
 	require.Nil(t, Error)
 
 	data, Error = ReadDecData("testString")
 	require.NotNil(t, Error)
 
 	data, Error = ReadDecData("123")
-	require.Equal(t, decData{Value: sdkTypes.NewDec(123)}, data)
+	require.Equal(t, DecData{Value: sdkTypes.NewDec(123)}, data)
 	require.Nil(t, Error)
 
 	require.Equal(t, false, testDecData.Compare(NewStringData("")) == 0)

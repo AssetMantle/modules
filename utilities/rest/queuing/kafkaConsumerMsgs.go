@@ -8,11 +8,11 @@ package queuing
 import (
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 )
 
 // kafkaConsumerMessages : messages to consume 5 second delay
-func kafkaConsumerMessages(cliCtx context.CLIContext) {
+func kafkaConsumerMessages(cliCtx client.Context) {
 	quit := make(chan bool)
 
 	var kafkaMsgList []kafkaMsg

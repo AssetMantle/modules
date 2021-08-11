@@ -25,7 +25,7 @@ type Application interface {
 	GetDefaultNodeHome() string
 	GetDefaultClientHome() string
 	GetModuleBasicManager() module.BasicManager
-	GetCodec() *codec.Codec
+	GetCodec() *codec.LegacyAmino
 
 	LoadHeight(int64) error
 	ExportApplicationStateAndValidators(bool, []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error)

@@ -12,13 +12,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
-type decData struct {
-	Value sdkTypes.Dec `json:"value"`
-}
+var _ types.Data = (*DecData)(nil)
 
-var _ types.Data = (*decData)(nil)
-
-func (decData decData) Compare(data types.Data) int {
+func (decData DecData) Compare(data types.Data) int {
 	compareDecData, Error := decDataFromInterface(data)
 	if Error != nil {
 		panic(Error)
@@ -32,71 +28,71 @@ func (decData decData) Compare(data types.Data) int {
 
 	return 0
 }
-func (decData decData) String() string {
+func (decData DecData) String() string {
 	return decData.Value.String()
 }
-func (decData decData) GetTypeID() types.ID {
+func (decData DecData) GetTypeID() types.ID {
 	return NewID("D")
 }
-func (decData decData) ZeroValue() types.Data {
+func (decData DecData) ZeroValue() types.Data {
 	return NewDecData(sdkTypes.ZeroDec())
 }
-func (decData decData) GenerateHashID() types.ID {
+func (decData DecData) GenerateHashID() types.ID {
 	if decData.Compare(decData.ZeroValue()) == 0 {
 		return NewID("")
 	}
 
 	return NewID(meta.Hash(decData.Value.String()))
 }
-func (decData decData) AsAccAddress() (sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
+func (decData DecData) AsAccAddress() (sdkTypes.AccAddress, error) {
+	zeroValue, _ := AccAddressData{}.ZeroValue().AsAccAddress()
 	return zeroValue, errors.IncorrectFormat
 }
-func (decData decData) AsListData() (types.ListData, error) {
-	zeroValue, _ := listData{}.ZeroValue().AsListData()
+func (decData DecData) AsListData() (types.ListData, error) {
+	zeroValue, _ := ListData{}.ZeroValue().AsListData()
 	return zeroValue, errors.IncorrectFormat
 }
-func (decData decData) AsString() (string, error) {
-	zeroValue, _ := stringData{}.ZeroValue().AsString()
+func (decData DecData) AsString() (string, error) {
+	zeroValue, _ := StringData{}.ZeroValue().AsString()
 	return zeroValue, errors.IncorrectFormat
 }
-func (decData decData) AsDec() (sdkTypes.Dec, error) {
+func (decData DecData) AsDec() (sdkTypes.Dec, error) {
 	return decData.Value, nil
 }
-func (decData decData) AsHeight() (types.Height, error) {
-	zeroValue, _ := heightData{}.ZeroValue().AsHeight()
+func (decData DecData) AsHeight() (types.Height, error) {
+	zeroValue, _ := HeightData{}.ZeroValue().AsHeight()
 	return zeroValue, errors.IncorrectFormat
 }
-func (decData decData) AsID() (types.ID, error) {
-	zeroValue, _ := idData{}.ZeroValue().AsID()
+func (decData DecData) AsID() (types.ID, error) {
+	zeroValue, _ := IDData{}.ZeroValue().AsID()
 	return zeroValue, errors.IncorrectFormat
 }
-func (decData decData) Get() interface{} {
+func (decData DecData) Get() interface{} {
 	return decData.Value
 }
-func decDataFromInterface(data types.Data) (decData, error) {
+func decDataFromInterface(data types.Data) (DecData, error) {
 	switch value := data.(type) {
-	case decData:
+	case DecData:
 		return value, nil
 	default:
-		return decData{}, errors.MetaDataError
+		return DecData{}, errors.MetaDataError
 	}
 }
 
 func NewDecData(value sdkTypes.Dec) types.Data {
-	return decData{
+	return DecData{
 		Value: value,
 	}
 }
 
 func ReadDecData(dataString string) (types.Data, error) {
 	if dataString == "" {
-		return decData{}.ZeroValue(), nil
+		return DecData{}.ZeroValue(), nil
 	}
 
 	dec, Error := sdkTypes.NewDecFromStr(dataString)
 	if Error != nil {
-		return decData{}.ZeroValue(), Error
+		return DecData{}.ZeroValue(), Error
 	}
 
 	return NewDecData(dec), nil
