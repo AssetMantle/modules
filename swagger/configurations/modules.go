@@ -34,7 +34,7 @@ var ModuleBasicManager = module.NewBasicManager(
 	staking.AppModuleBasic{},
 	mint.AppModuleBasic{},
 	distribution.AppModuleBasic{},
-	gov.NewAppModuleBasic(append(wasmClient.ProposalHandlers, paramsClient.ProposalHandler, distribution.ProposalHandler, upgradeClient.ProposalHandler)...),
+	gov.NewAppModuleBasic(append(wasmClient.ProposalHandlers, paramsClient.ProposalHandler, distribution.NewCommunityPoolSpendProposalHandler(distributionKeeper), upgradeClient.ProposalHandler)...),
 	params.AppModuleBasic{},
 	crisis.AppModuleBasic{},
 	wasm.AppModuleBasic{},

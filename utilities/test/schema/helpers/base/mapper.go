@@ -44,7 +44,7 @@ func SetupTest(t *testing.T) (sdkTypes.Context, *sdkTypes.KVStoreKey, *sdkTypes.
 func MakeCodec() *codec.Codec {
 	var Codec = codec.New()
 
-	schema.RegisterCodec(Codec)
+	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)

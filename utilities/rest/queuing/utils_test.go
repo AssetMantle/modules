@@ -31,7 +31,7 @@ func Test_Rest_Utils(t *testing.T) {
 	require.Equal(t, nil, error3)
 
 	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
+	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)

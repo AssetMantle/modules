@@ -13,7 +13,7 @@ import (
 func TestKafkaTopicConsumer(t *testing.T) {
 	testConsumers := []string{"testConsumers"}
 	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
+	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)

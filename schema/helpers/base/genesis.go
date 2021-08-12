@@ -137,9 +137,9 @@ func (genesis genesis) GetMappableList() []helpers.Mappable {
 
 func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable, defaultMappableList []helpers.Mappable, defaultParameterList []types.Parameter) helpers.Genesis {
 	Codec := &codec.LegacyAmino{}
-	keyPrototype().RegisterCodec(Codec)
-	mappablePrototype().RegisterCodec(Codec)
-	schema.RegisterCodec(Codec)
+	keyPrototype().RegisterLegacyAminoCodec(Codec)
+	mappablePrototype().RegisterLegacyAminoCodec(Codec)
+	schema.RegisterLegacyAminoCodec(Codec)
 	Codec.Seal()
 
 	return genesis{

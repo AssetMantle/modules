@@ -159,7 +159,7 @@ func (simulationApplication SimulationApplication) AddTestAddresses(context sdkT
 
 func (simulationApplication SimulationApplication) Setup(isCheckTx bool) applications.SimulationApplication {
 	db := tendermintDB.NewMemDB()
-	newSimulationApplication := simulationApplication.Initialize(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, 0, map[int64]bool{}, simulationApplication.GetDefaultNodeHome()).(*SimulationApplication)
+	newSimulationApplication := simulationApplication.Initialize(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, 0, map[int64]bool{}, simulationApplication.GetDefaultHome()).(*SimulationApplication)
 
 	if !isCheckTx {
 		// init chain must be called to stop deliverState from being nil
@@ -184,7 +184,7 @@ func (simulationApplication SimulationApplication) Setup(isCheckTx bool) applica
 
 func (simulationApplication SimulationApplication) SetupWithGenesisAccounts(accounts []exported.GenesisAccount) applications.SimulationApplication {
 	db := tendermintDB.NewMemDB()
-	newSimulationApplication := simulationApplication.Initialize(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, 0, map[int64]bool{}, simulationApplication.GetDefaultNodeHome()).(*SimulationApplication)
+	newSimulationApplication := simulationApplication.Initialize(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, 0, map[int64]bool{}, simulationApplication.GetDefaultHome()).(*SimulationApplication)
 
 	// initialize the chain with the passed in genesis accounts
 	genesisState := simulationApplication.GetModuleBasicManager().DefaultGenesis()

@@ -93,7 +93,7 @@ func (mapper mapper) ReverseIterate(context sdkTypes.Context, partialKey helpers
 		}
 	}
 }
-func (mapper mapper) StoreDecoder(_ *codec.LegacyAmino, kvA kv.Pair, kvB kv.Pair) string {
+func (mapper mapper) StoreDecoder(kvA kv.Pair, kvB kv.Pair) string {
 	if bytes.Equal(kvA.Key[:1], mapper.keyPrototype().GenerateStoreKeyBytes()) {
 		var mappableA helpers.Mappable
 
@@ -114,9 +114,9 @@ func (mapper mapper) Initialize(kvStoreKey *sdkTypes.KVStoreKey) helpers.Mapper 
 }
 func NewMapper(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) helpers.Mapper {
 	Codec := &codec.LegacyAmino{}
-	keyPrototype().RegisterCodec(Codec)
-	mappablePrototype().RegisterCodec(Codec)
-	schema.RegisterCodec(Codec)
+	keyPrototype().RegisterLegacyAminoCodec(Codec)
+	mappablePrototype().RegisterLegacyAminoCodec(Codec)
+	schema.RegisterLegacyAminoCodec(Codec)
 	Codec.Seal()
 
 	return mapper{

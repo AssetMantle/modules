@@ -22,36 +22,45 @@ import (
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
-type order struct {
-	ID types.ID `json:"id" valid:"required~required field key missing"`
-	traits.HasMutables
-	traits.HasImmutables
-}
+var _ mappables.Order = (*Order)(nil)
 
-var _ mappables.Order = (*order)(nil)
-
-func (order order) GetID() types.ID {
+func (order Order) GetID() types.ID {
 	return order.ID
 }
-func (order order) GetClassificationID() types.ID {
+func (order Order) GetClassificationID() types.ID {
 	return key.ReadClassificationID(order.ID)
 }
-func (order order) GetRateID() types.ID {
+func (order Order) GetImmutableProperties() types.Properties {
+	return order.HasImmutables.GetImmutableProperties()
+}
+
+func (order Order) GenerateHashID() types.ID {
+	return order.HasImmutables.GenerateHashID()
+}
+
+func (order Order) GetMutableProperties() types.Properties {
+	return order.HasMutables.GetMutableProperties()
+}
+
+func (order Order) Mutate(propertyList ...types.Property) traits.HasMutables {
+	return order.HasMutables.Mutate(propertyList...)
+}
+func (order Order) GetRateID() types.ID {
 	return key.ReadRateID(order.ID)
 }
-func (order order) GetCreationID() types.ID {
+func (order Order) GetCreationID() types.ID {
 	return key.ReadCreationID(order.ID)
 }
-func (order order) GetMakerOwnableID() types.ID {
+func (order Order) GetMakerOwnableID() types.ID {
 	return key.ReadMakerOwnableID(order.ID)
 }
-func (order order) GetTakerOwnableID() types.ID {
+func (order Order) GetTakerOwnableID() types.ID {
 	return key.ReadTakerOwnableID(order.ID)
 }
-func (order order) GetMakerID() types.ID {
+func (order Order) GetMakerID() types.ID {
 	return key.ReadMakerID(order.ID)
 }
-func (order order) GetCreation() types.MetaProperty {
+func (order Order) GetCreation() types.MetaProperty {
 	heightValue, Error := strconv.ParseInt(key.ReadCreationID(order.ID).String(), 10, 64)
 	if Error != nil {
 		return base.NewMetaProperty(base.NewID(properties.Creation), base.NewMetaFact(base.NewHeightData(base.NewHeight(0))))
@@ -59,7 +68,7 @@ func (order order) GetCreation() types.MetaProperty {
 
 	return base.NewMetaProperty(base.NewID(properties.Creation), base.NewMetaFact(base.NewHeightData(base.NewHeight(heightValue))))
 }
-func (order order) GetExchangeRate() types.MetaProperty {
+func (order Order) GetExchangeRate() types.MetaProperty {
 	decValue, Error := sdkTypes.NewDecFromStr(key.ReadRateID(order.ID).String())
 	if Error != nil {
 		return base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewDecData(sdkTypes.ZeroDec())))
@@ -67,7 +76,7 @@ func (order order) GetExchangeRate() types.MetaProperty {
 
 	return base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewDecData(decValue)))
 }
-func (order order) GetTakerID() types.Property {
+func (order Order) GetTakerID() types.Property {
 	if takerID := order.HasImmutables.GetImmutableProperties().Get(base.NewID(properties.TakerID)); takerID != nil {
 		return takerID
 	} else if takerID := order.HasMutables.GetMutableProperties().Get(base.NewID(properties.TakerID)); takerID != nil {
@@ -77,7 +86,7 @@ func (order order) GetTakerID() types.Property {
 		return base.NewProperty(base.NewID(properties.TakerID), base.NewFact(data))
 	}
 }
-func (order order) GetExpiry() types.Property {
+func (order Order) GetExpiry() types.Property {
 	if property := order.HasImmutables.GetImmutableProperties().Get(base.NewID(properties.Expiry)); property != nil {
 		return property
 	} else if property := order.HasMutables.GetMutableProperties().Get(base.NewID(properties.Expiry)); property != nil {
@@ -86,7 +95,7 @@ func (order order) GetExpiry() types.Property {
 		return base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
 	}
 }
-func (order order) GetMakerOwnableSplit() types.Property {
+func (order Order) GetMakerOwnableSplit() types.Property {
 	if split := order.HasImmutables.GetImmutableProperties().Get(base.NewID(properties.MakerOwnableSplit)); split != nil {
 		return split
 	} else if split := order.HasMutables.GetMutableProperties().Get(base.NewID(properties.MakerOwnableSplit)); split != nil {
@@ -96,15 +105,15 @@ func (order order) GetMakerOwnableSplit() types.Property {
 		return base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(data))
 	}
 }
-func (order order) GetKey() helpers.Key {
+func (order Order) GetKey() helpers.Key {
 	return key.FromID(order.ID)
 }
-func (order) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, order{})
+func (Order) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, Order{})
 }
 
 func NewOrder(orderID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Order {
-	return order{
+	return Order{
 		ID:            orderID,
 		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
 		HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},

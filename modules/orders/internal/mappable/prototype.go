@@ -8,5 +8,5 @@ package mappable
 import "github.com/persistenceOne/persistenceSDK/schema/helpers"
 
 func Prototype() helpers.Mappable {
-	return order{}
+	return Order{}
 }

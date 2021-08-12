@@ -35,7 +35,7 @@ type TestKeepers struct {
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
+	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)

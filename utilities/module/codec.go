@@ -13,9 +13,9 @@ import (
 
 func RegisterCodec(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) *codec.Codec {
 	Codec := codec.New()
-	keyPrototype().RegisterCodec(Codec)
-	mappablePrototype().RegisterCodec(Codec)
-	schema.RegisterCodec(Codec)
+	keyPrototype().RegisterLegacyAminoCodec(Codec)
+	mappablePrototype().RegisterLegacyAminoCodec(Codec)
+	schema.RegisterLegacyAminoCodec(Codec)
 	Codec.Seal()
 
 	return Codec

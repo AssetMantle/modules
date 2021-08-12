@@ -12,10 +12,6 @@ import (
 	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
-type HasImmutables struct {
-	Properties types.Properties `json:"properties"`
-}
-
 var _ traits.HasImmutables = (*HasImmutables)(nil)
 
 func (immutables HasImmutables) GetImmutableProperties() types.Properties {

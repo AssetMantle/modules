@@ -71,11 +71,6 @@ func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simT
 func (module module) Name() string {
 	return module.name
 }
-func (module module) RegisterCodec(codec *codec.LegacyAmino) {
-	for _, transaction := range module.transactionsPrototype().GetList() {
-		transaction.RegisterCodec(codec)
-	}
-}
 func (module module) DefaultGenesis(_ codec.JSONMarshaler) json.RawMessage {
 	return module.genesisPrototype().Default().Encode()
 }
@@ -91,6 +86,9 @@ func (module module) RegisterRESTRoutes(cliContext client.Context, router *mux.R
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
 	}
+}
+func (module module) RegisterGRPCGatewayRoutes(context client.Context, serveMux *runtime.ServeMux) {
+	panic("implement me")
 }
 func (module module) GetTxCmd() *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
@@ -251,17 +249,14 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 	return module
 }
 
-func (module module) RegisterLegacyAminoCodec(amino *codec.LegacyAmino) {
-	panic("implement me")
+func (module module) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	for _, transaction := range module.transactionsPrototype().GetList() {
+		transaction.RegisterCodec(codec)
+	}
 }
 
 // TODO
 func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
-	panic("implement me")
-}
-
-// TODO
-func (module module) RegisterGRPCGatewayRoutes(context client.Context, serveMux *runtime.ServeMux) {
 	panic("implement me")
 }
 

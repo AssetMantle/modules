@@ -10,10 +10,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type HasMutables struct {
-	Properties types.Properties `json:"properties"`
-}
-
 var _ traits.HasMutables = (*HasMutables)(nil)
 
 func (mutables HasMutables) GetMutableProperties() types.Properties {

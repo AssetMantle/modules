@@ -24,7 +24,7 @@ import (
 
 func Test_Renumerate_Request(t *testing.T) {
 	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
+	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)

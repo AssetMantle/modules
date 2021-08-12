@@ -20,20 +20,10 @@ import (
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
-type orderID struct {
-	ClassificationID types.ID `json:"classificationID"`
-	MakerOwnableID   types.ID `json:"makerOwnableID"`
-	TakerOwnableID   types.ID `json:"takerOwnableID"`
-	RateID           types.ID `json:"rateID"`
-	CreationID       types.ID `json:"creationID"`
-	MakerID          types.ID `json:"makerID"`
-	HashID           types.ID `json:"hashID"`
-}
+var _ types.ID = (*OrderID)(nil)
+var _ helpers.Key = (*OrderID)(nil)
 
-var _ types.ID = (*orderID)(nil)
-var _ helpers.Key = (*orderID)(nil)
-
-func (orderID orderID) Bytes() []byte {
+func (orderID OrderID) Bytes() []byte {
 	var Bytes []byte
 
 	rateIDBytes, Error := orderID.getRateIDBytes()
@@ -56,7 +46,7 @@ func (orderID orderID) Bytes() []byte {
 
 	return Bytes
 }
-func (orderID orderID) String() string {
+func (orderID OrderID) String() string {
 	var values []string
 	values = append(values, orderID.ClassificationID.String())
 	values = append(values, orderID.MakerOwnableID.String())
@@ -68,23 +58,23 @@ func (orderID orderID) String() string {
 
 	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
-func (orderID orderID) Compare(id types.ID) int {
+func (orderID OrderID) Compare(id types.ID) int {
 	return bytes.Compare(orderID.Bytes(), id.Bytes())
 }
-func (orderID orderID) GenerateStoreKeyBytes() []byte {
+func (orderID OrderID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(orderID.Bytes())
 }
-func (orderID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, orderID{})
+func (OrderID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, OrderID{})
 }
-func (orderID orderID) IsPartial() bool {
+func (orderID OrderID) IsPartial() bool {
 	return len(orderID.HashID.Bytes()) == 0
 }
-func (orderID orderID) Equals(key helpers.Key) bool {
+func (orderID OrderID) Equals(key helpers.Key) bool {
 	return orderID.Compare(orderIDFromInterface(key)) == 0
 }
 
-func (orderID orderID) getRateIDBytes() ([]byte, error) {
+func (orderID OrderID) getRateIDBytes() ([]byte, error) {
 	var Bytes []byte
 
 	if orderID.RateID.String() == "" {
@@ -102,7 +92,7 @@ func (orderID orderID) getRateIDBytes() ([]byte, error) {
 	return Bytes, Error
 }
 
-func (orderID orderID) getCreationHeightBytes() ([]byte, error) {
+func (orderID OrderID) getCreationHeightBytes() ([]byte, error) {
 	var Bytes []byte
 
 	if orderID.CreationID.String() == "" {
@@ -121,7 +111,7 @@ func (orderID orderID) getCreationHeightBytes() ([]byte, error) {
 }
 
 func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, rateID types.ID, creationID types.ID, makerID types.ID, immutableProperties types.Properties) types.ID {
-	return orderID{
+	return OrderID{
 		ClassificationID: classificationID,
 		MakerOwnableID:   makerOwnableID,
 		TakerOwnableID:   takerOwnableID,

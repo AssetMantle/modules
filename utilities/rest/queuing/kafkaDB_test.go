@@ -20,7 +20,7 @@ import (
 func Test_Kafka_DB(t *testing.T) {
 	require.Panics(t, func() {
 		var Codec = codec.New()
-		schema.RegisterCodec(Codec)
+		schema.RegisterLegacyAminoCodec(Codec)
 		sdkTypes.RegisterCodec(Codec)
 		codec.RegisterCrypto(Codec)
 		codec.RegisterEvidences(Codec)

@@ -14,7 +14,7 @@ import (
 func RegisterCodec(messagePrototype func() helpers.Message) *codec.LegacyAmino {
 	Codec := &codec.LegacyAmino{}
 	messagePrototype().RegisterCodec(Codec)
-	schema.RegisterCodec(Codec)
+	schema.RegisterLegacyAminoCodec(Codec)
 	Codec.Seal()
 
 	return Codec

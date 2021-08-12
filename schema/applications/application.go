@@ -6,7 +6,9 @@
 package applications
 
 import (
-	"encoding/json"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec/types"
+	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"io"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -15,20 +17,20 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	tendermintABCITypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
-	tendermintTypes "github.com/tendermint/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 )
 
 type Application interface {
 	tendermintABCITypes.Application
 
-	GetDefaultNodeHome() string
-	GetDefaultClientHome() string
+	GetDefaultHome() string
 	GetModuleBasicManager() module.BasicManager
-	GetCodec() *codec.LegacyAmino
+	GetLegacyAmino() *codec.LegacyAmino
+	GetCodec() codec.Marshaler
+	GetInterfaceRegistry() types.InterfaceRegistry
 
 	LoadHeight(int64) error
-	ExportApplicationStateAndValidators(bool, []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error)
+	ExportApplicationStateAndValidators(bool, []string) (servertypes.ExportedApp, error)
 
 	Name() string
 	AppVersion() string
@@ -38,7 +40,6 @@ type Application interface {
 	MountTransientStores(keys map[string]*sdkTypes.TransientStoreKey)
 	MountStoreWithDB(key sdkTypes.StoreKey, typ sdkTypes.StoreType, db tendermintDB.DB)
 	MountStore(key sdkTypes.StoreKey, typ sdkTypes.StoreType)
-	LoadLatestVersion(baseKey *sdkTypes.KVStoreKey) error
 	LoadVersion(version int64, baseKey *sdkTypes.KVStoreKey) error
 	LastCommitID() sdkTypes.CommitID
 	LastBlockHeight() int64
@@ -47,5 +48,5 @@ type Application interface {
 	Seal()
 	IsSealed() bool
 
-	Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) Application
+	Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, clientTxConfig client.TxConfig, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) Application
 }
