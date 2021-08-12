@@ -51,13 +51,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Message for a successful search transaction.",
+                        "description": "Message for a successful search.",
                         "schema": {
                             "$ref": "#/definitions/asset.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "Message for an unexpected error in the transaction.",
+                        "description": "Message for an unexpected error.",
                         "schema": {
                             "$ref": "#/definitions/asset.queryResponse"
                         }
@@ -80,7 +80,7 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "Transaction for burning an asset. request body",
-                        "name": "please provide the parameter name body",
+                        "name": "PLEASE PROVIDE THE PARAMETER NAMES body",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -157,7 +157,7 @@ var doc = `{
                 "summary": "Deputize asset transaction",
                 "parameters": [
                     {
-                        "description": "Transaction to deputaize an asset. request body",
+                        "description": "Transaction to deputize an asset. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -235,7 +235,7 @@ var doc = `{
                 "summary": "mutate asset transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to mutate the asset. request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -349,7 +349,7 @@ var doc = `{
                 "tags": [
                     "Classifications"
                 ],
-                "summary": "Search for classification by Classification ID",
+                "summary": "Search for classifications by Classification ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -361,13 +361,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Message for a successful search transaction.",
+                        "description": "Message for a successful search.",
                         "schema": {
                             "$ref": "#/definitions/classification.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "Message for an unexpected error in the transaction.",
+                        "description": "Message for an unexpected error.",
                         "schema": {
                             "$ref": "#/definitions/classification.queryResponse"
                         }
@@ -398,13 +398,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Message for a successful search transaction.",
+                        "description": "Message for a successful search.",
                         "schema": {
                             "$ref": "#/definitions/identity.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "Message for an unexpected error in the transaction.",
+                        "description": "Message for an unexpected error.",
                         "schema": {
                             "$ref": "#/definitions/identity.queryResponse"
                         }
@@ -738,7 +738,7 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Unique idetifier of metadata value",
+                        "description": "Unique identifier of metadata value.",
                         "name": "Metadata ID",
                         "in": "path",
                         "required": true.
@@ -746,13 +746,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Message for a successful search transaction.",
+                        "description": "Message for a successful search.",
                         "schema": {
                             "$ref": "#/definitions/meta.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "Message for an unexpected error in the transaction.",
+                        "description": "Message for an unexpected error.",
                         "schema": {
                             "$ref": "#/definitions/meta.queryResponse"
                         }
@@ -822,13 +822,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Message for a successful search transaction.",
+                        "description": "Message for a successful search.",
                         "schema": {
                             "$ref": "#/definitions/order.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "Message for an unexpected error in the transaction.",
+                        "description": "Message for an unexpected error.",
                         "schema": {
                             "$ref": "#/definitions/order.queryResponse"
                         }
@@ -1084,7 +1084,7 @@ var doc = `{
                 "summary": "Revoke order",
                 "parameters": [
                     {
-                        "description": "A transaction to revoke an order. request body",
+                        "description": "A transaction to revoke an order. DOES REVOKE MEAN CANCEL? request body",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1171,13 +1171,13 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Message for a successful transaction.",
+                        "description": "Message for a successful search.",
                         "schema": {
                             "$ref": "#/definitions/split.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "Message for an unexpected error in the transaction.",
+                        "description": "Message for an unexpected error.",
                         "schema": {
                             "$ref": "#/definitions/split.queryResponse"
                         }
