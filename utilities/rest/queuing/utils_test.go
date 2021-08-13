@@ -30,9 +30,9 @@ func Test_Rest_Utils(t *testing.T) {
 	require.Equal(t, 0.3, value3)
 	require.Equal(t, nil, error3)
 
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)

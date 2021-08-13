@@ -18,17 +18,17 @@ import (
 func readMaintainerID(maintainerIDString string) types.ID {
 	idList := strings.Split(maintainerIDString, constants.SecondOrderCompositeIDSeparator)
 	if len(idList) == 2 {
-		return maintainerID{
+		return &MaintainerID{
 			ClassificationID: base.NewID(idList[0]),
 			IdentityID:       base.NewID(idList[1]),
 		}
 	}
 
-	return maintainerID{IdentityID: base.NewID(""), ClassificationID: base.NewID("")}
+	return &MaintainerID{IdentityID: base.NewID(""), ClassificationID: base.NewID("")}
 }
-func maintainerIDFromInterface(i interface{}) maintainerID {
+func maintainerIDFromInterface(i interface{}) MaintainerID {
 	switch value := i.(type) {
-	case maintainerID:
+	case MaintainerID:
 		return value
 	case types.ID:
 		return maintainerIDFromInterface(readMaintainerID(value.String()))

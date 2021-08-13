@@ -15,30 +15,22 @@ import (
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
-type maintainer struct {
-	ID                   types.ID         `json:"id" valid:"required field key missing"`
-	MaintainedProperties types.Properties `json:"maintainedProperties" valid:"required field maintainedProperties missing"`
-	AddMaintainer        bool             `json:"addMaintainer" valid:"required field addMaintainer missing"`
-	RemoveMaintainer     bool             `json:"removeMaintainer" valid:"required field removeMaintainer missing"`
-	MutateMaintainer     bool             `json:"mutateMaintainer" valid:"required field mutateMaintainer missing"`
-}
+var _ mappables.Maintainer = (*Maintainer)(nil)
 
-var _ mappables.Maintainer = (*maintainer)(nil)
-
-func (maintainer maintainer) GetID() types.ID { return maintainer.ID }
-func (maintainer maintainer) GetClassificationID() types.ID {
+func (maintainer Maintainer) GetID() types.ID { return maintainer.ID }
+func (maintainer Maintainer) GetClassificationID() types.ID {
 	return key.ReadClassificationID(maintainer.ID)
 }
-func (maintainer maintainer) GetIdentityID() types.ID {
+func (maintainer Maintainer) GetIdentityID() types.ID {
 	return key.ReadIdentityID(maintainer.ID)
 }
-func (maintainer maintainer) GetMaintainedProperties() types.Properties {
+func (maintainer Maintainer) GetMaintainedProperties() types.Properties {
 	return maintainer.MaintainedProperties
 }
-func (maintainer maintainer) CanAddMaintainer() bool    { return maintainer.AddMaintainer }
-func (maintainer maintainer) CanRemoveMaintainer() bool { return maintainer.RemoveMaintainer }
-func (maintainer maintainer) CanMutateMaintainer() bool { return maintainer.MutateMaintainer }
-func (maintainer maintainer) MaintainsProperty(id types.ID) bool {
+func (maintainer Maintainer) CanAddMaintainer() bool    { return maintainer.AddMaintainer }
+func (maintainer Maintainer) CanRemoveMaintainer() bool { return maintainer.RemoveMaintainer }
+func (maintainer Maintainer) CanMutateMaintainer() bool { return maintainer.MutateMaintainer }
+func (maintainer Maintainer) MaintainsProperty(id types.ID) bool {
 	for _, property := range maintainer.MaintainedProperties.GetList() {
 		if property.GetID().Compare(id) == 0 {
 			return true
@@ -47,15 +39,15 @@ func (maintainer maintainer) MaintainsProperty(id types.ID) bool {
 
 	return false
 }
-func (maintainer maintainer) GetKey() helpers.Key {
+func (maintainer Maintainer) GetKey() helpers.Key {
 	return key.FromID(maintainer.ID)
 }
 
-func (maintainer) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, maintainer{})
+func (Maintainer) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, Maintainer{})
 }
 func NewMaintainer(id types.ID, maintainedProperties types.Properties, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) mappables.Maintainer {
-	return maintainer{
+	return Maintainer{
 		ID:                   id,
 		MaintainedProperties: maintainedProperties,
 		AddMaintainer:        addMaintainer,

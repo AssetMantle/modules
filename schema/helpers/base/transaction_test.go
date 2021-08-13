@@ -39,7 +39,7 @@ func TestTransaction(t *testing.T) {
 	require.Equal(t, sdkTypes.AccAddress("addr"), message.GetSigners()[0])
 
 	// RegisterLegacyAminoCodec : No Panics
-	require.NotPanics(t, func() { Transaction.RegisterCodec(codec) })
+	require.NotPanics(t, func() { Transaction.RegisterLegacyAminoCodec(codec) })
 
 	// Command : No Panics
 	command := Transaction.Command(codec)

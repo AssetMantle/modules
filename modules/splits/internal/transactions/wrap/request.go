@@ -65,7 +65,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, Error
 	}
 
-	coins, Error := sdkTypes.ParseCoins(transactionRequest.Coins)
+	coins, Error := sdkTypes.ParseCoinsNormalized(transactionRequest.Coins)
 	if Error != nil {
 		return nil, Error
 	}
@@ -76,7 +76,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		coins,
 	), nil
 }
-func (transactionRequest) RegisterCodec(codec *codec.Codec) {
+func (transactionRequest) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {

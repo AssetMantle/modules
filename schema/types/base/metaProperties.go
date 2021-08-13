@@ -75,7 +75,7 @@ func (metaProperties MetaProperties) RemoveData() types.Properties {
 }
 
 func NewMetaProperties(metaPropertyList ...types.MetaProperty) types.MetaProperties {
-	return MetaProperties{
+	return &MetaProperties{
 		MetaPropertyList: metaPropertyList,
 	}
 }

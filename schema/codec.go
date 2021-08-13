@@ -17,10 +17,10 @@ import (
 
 func RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codec.RegisterInterface((*error)(nil), nil)
-	types.RegisterCodec(codec)
-	baseTypes.RegisterCodec(codec)
-	traits.RegisterCodec(codec)
-	baseTraits.RegisterCodec(codec)
-	mappables.RegisterCodec(codec)
-	helpers.RegisterCodec(codec)
+	types.RegisterLegacyAminoCodec(codec)
+	baseTypes.RegisterLegacyAminoCodec(codec)
+	traits.RegisterLegacyCodec(codec)
+	baseTraits.RegisterLegacyCodec(codec)
+	mappables.RegisterLegacyCodec(codec)
+	helpers.RegisterLegacyCodec(codec)
 }

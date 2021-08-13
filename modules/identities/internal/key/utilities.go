@@ -18,18 +18,18 @@ import (
 func readIdentityID(identityIDString string) types.ID {
 	idList := strings.Split(identityIDString, constants.FirstOrderCompositeIDSeparator)
 	if len(idList) == 2 {
-		return identityID{
+		return &IdentityID{
 			ClassificationID: base.NewID(idList[0]),
 			HashID:           base.NewID(idList[1]),
 		}
 	}
 
-	return identityID{ClassificationID: base.NewID(""), HashID: base.NewID("")}
+	return &IdentityID{ClassificationID: base.NewID(""), HashID: base.NewID("")}
 }
 
-func identityIDFromInterface(i interface{}) identityID {
+func identityIDFromInterface(i interface{}) IdentityID {
 	switch value := i.(type) {
-	case identityID:
+	case IdentityID:
 		return value
 	case types.ID:
 		return identityIDFromInterface(readIdentityID(value.String()))

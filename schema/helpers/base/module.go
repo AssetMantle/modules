@@ -251,7 +251,7 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 
 func (module module) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	for _, transaction := range module.transactionsPrototype().GetList() {
-		transaction.RegisterCodec(codec)
+		transaction.RegisterLegacyAminoCodec(codec)
 	}
 }
 

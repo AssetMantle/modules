@@ -11,9 +11,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
-func RegisterCodec(messagePrototype func() helpers.Message) *codec.LegacyAmino {
+func RegisterLegacyAminoCodec(messagePrototype func() helpers.Message) *codec.LegacyAmino {
 	Codec := &codec.LegacyAmino{}
-	messagePrototype().RegisterCodec(Codec)
+	messagePrototype().RegisterLegacyAminoCodec(Codec)
 	schema.RegisterLegacyAminoCodec(Codec)
 	Codec.Seal()
 

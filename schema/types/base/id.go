@@ -24,5 +24,5 @@ func (id ID) Compare(compareID types.ID) int {
 }
 
 func NewID(idString string) types.ID {
-	return ID{IdString: idString}
+	return &ID{IdString: idString}
 }

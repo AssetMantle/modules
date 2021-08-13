@@ -52,7 +52,7 @@ func Test_ListData(t *testing.T) {
 
 	require.Nil(t, Error)
 
-	require.Equal(t, testListData.(ListData).Value, testListData.Get())
+	require.Equal(t, testListData.(*ListData).Value, testListData.Get())
 
 	data, Error := ReadAccAddressListData("testString")
 	require.Equal(t, ListData{}, data)
@@ -98,8 +98,8 @@ func Test_ListData(t *testing.T) {
 	_ = dataAsList6.Add(dataAsList)
 	require.Equal(t, 0, testListData3.Compare(testListData4))
 
-	require.Equal(t, false, dataAsList8.Search(dataAsList9.(ListData).Value.GetList()[0]) == len(dataAsList8.(ListData).Value.GetList()))
-	require.Equal(t, dataAsList6, dataAsList8.Remove(listValue9.(ListData).Value.GetList()[0]))
-	require.Equal(t, dataAsList10, dataAsList6.Add(listValue11.(ListData).Value.GetList()[0]))
+	require.Equal(t, false, dataAsList8.Search(dataAsList9.(*ListData).Value.GetList()[0]) == len(dataAsList8.(ListData).Value.GetList()))
+	require.Equal(t, dataAsList6, dataAsList8.Remove(listValue9.(*ListData).Value.GetList()[0]))
+	require.Equal(t, dataAsList10, dataAsList6.Add(listValue11.(*ListData).Value.GetList()[0]))
 
 }

@@ -17,44 +17,39 @@ import (
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
-type maintainerID struct {
-	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID missing"`
-	IdentityID       types.ID `json:"identityID" valid:"required~required field identityID missing"`
-}
+var _ types.ID = (*MaintainerID)(nil)
+var _ helpers.Key = (*MaintainerID)(nil)
 
-var _ types.ID = (*maintainerID)(nil)
-var _ helpers.Key = (*maintainerID)(nil)
-
-func (maintainerID maintainerID) Bytes() []byte {
+func (maintainerID MaintainerID) Bytes() []byte {
 	return append(
 		maintainerID.ClassificationID.Bytes(),
 		maintainerID.IdentityID.Bytes()...)
 }
-func (maintainerID maintainerID) String() string {
+func (maintainerID MaintainerID) String() string {
 	var values []string
 	values = append(values, maintainerID.ClassificationID.String())
 	values = append(values, maintainerID.IdentityID.String())
 
 	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
-func (maintainerID maintainerID) Compare(id types.ID) int {
+func (maintainerID MaintainerID) Compare(id types.ID) int {
 	return bytes.Compare(maintainerID.Bytes(), id.Bytes())
 }
-func (maintainerID maintainerID) GenerateStoreKeyBytes() []byte {
+func (maintainerID MaintainerID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(maintainerID.Bytes())
 }
-func (maintainerID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, maintainerID{})
+func (MaintainerID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, MaintainerID{})
 }
-func (maintainerID maintainerID) IsPartial() bool {
+func (maintainerID MaintainerID) IsPartial() bool {
 	return len(maintainerID.IdentityID.Bytes()) == 0
 }
-func (maintainerID maintainerID) Equals(key helpers.Key) bool {
+func (maintainerID MaintainerID) Equals(key helpers.Key) bool {
 	return maintainerID.Compare(maintainerIDFromInterface(key)) == 0
 }
 
 func NewMaintainerID(classificationID types.ID, identityID types.ID) types.ID {
-	return maintainerID{
+	return &MaintainerID{
 		ClassificationID: classificationID,
 		IdentityID:       identityID,
 	}

@@ -5,6 +5,8 @@
 
 package types
 
+import "github.com/persistenceOne/persistenceSDK/schema"
+
 type ListData interface {
 	Data
 
@@ -14,4 +16,6 @@ type ListData interface {
 
 	Add(...Data) ListData
 	Remove(...Data) ListData
+
+	schema.Proto
 }

@@ -25,7 +25,7 @@ func (signatures Signatures) GetList() []types.Signature {
 }
 func (signatures Signatures) Add(signature types.Signature) types.Signatures {
 	signatures.SignatureList = append(signatures.SignatureList, signature)
-	return signatures
+	return &signatures
 }
 func (signatures Signatures) Remove(signature types.Signature) types.Signatures {
 	signatureList := signatures.SignatureList
@@ -48,5 +48,5 @@ func (signatures Signatures) Mutate(signature types.Signature) types.Signatures 
 	return NewSignatures(signatureList)
 }
 func NewSignatures(signatureList []types.Signature) types.Signatures {
-	return Signatures{SignatureList: signatureList}
+	return &Signatures{SignatureList: signatureList}
 }

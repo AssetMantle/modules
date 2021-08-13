@@ -24,7 +24,7 @@ import (
 func CreateTestInput(t *testing.T) sdkTypes.Context {
 	var Codec = codec.New()
 	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)

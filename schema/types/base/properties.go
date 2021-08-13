@@ -63,7 +63,7 @@ func (properties Properties) Mutate(propertyList ...types.Property) types.Proper
 	return NewProperties(newPropertyList...)
 }
 func NewProperties(propertyList ...types.Property) types.Properties {
-	return Properties{
+	return &Properties{
 		PropertyList: propertyList,
 	}
 }

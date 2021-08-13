@@ -6,12 +6,9 @@ import "gogoproto/gogo.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
-message signatures {
+message Signatures {
   option (gogoproto.stringer) = false;
-  option (gogoproto.sizer) = false;
-  option (gogoproto.marshaler) = false;
-  option (gogoproto.unmarshaler) = false;
 
-  repeated string signature_list = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Signature", (gogoproto.nullable) = false];
+  repeated string signature_list = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Signature"];
 
 }

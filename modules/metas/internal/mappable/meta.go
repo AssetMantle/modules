@@ -27,7 +27,7 @@ func (meta meta) GetID() types.ID     { return meta.ID }
 func (meta meta) GetKey() helpers.Key {
 	return key.FromID(meta.GetID())
 }
-func (meta) RegisterCodec(codec *codec.Codec) {
+func (meta) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, meta{})
 }
 

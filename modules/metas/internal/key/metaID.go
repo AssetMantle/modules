@@ -45,7 +45,7 @@ func (metaID metaID) Compare(id types.ID) int {
 func (metaID metaID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(metaID.Bytes())
 }
-func (metaID) RegisterCodec(codec *codec.Codec) {
+func (metaID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, metaID{})
 }
 func (metaID metaID) IsPartial() bool {

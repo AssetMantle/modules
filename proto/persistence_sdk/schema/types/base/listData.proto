@@ -8,10 +8,7 @@ option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base"
 
 message ListData {
   option (gogoproto.goproto_stringer) = false;
-  option (gogoproto.sizer) = false;
-  option (gogoproto.marshaler) = false;
-  option (gogoproto.unmarshaler) = false;
 
-  string value = 1 [(gogoproto.customtype) = "sortedDataList", (gogoproto.nullable) = false];
+  repeated string value = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Data", (gogoproto.nullable) = false];
 
 }

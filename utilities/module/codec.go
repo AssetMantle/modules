@@ -11,8 +11,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
-func RegisterCodec(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) *codec.Codec {
-	Codec := codec.New()
+func RegisterLegacyAminoCodec(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) *codec.LegacyAmino {
+	Codec := codec.NewLegacyAmino()
 	keyPrototype().RegisterLegacyAminoCodec(Codec)
 	mappablePrototype().RegisterLegacyAminoCodec(Codec)
 	schema.RegisterLegacyAminoCodec(Codec)

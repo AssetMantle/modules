@@ -30,10 +30,10 @@ import (
 func TestHandler(t *testing.T) {
 	Codec := codec.New()
 	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
 	Codec.RegisterConcrete(request{}, "request", nil)
 	Codec.RegisterConcrete(response{}, "response", nil)
-	base.TestMessagePrototype().RegisterCodec(Codec)
+	base.TestMessagePrototype().RegisterLegacyAminoCodec(Codec)
 
 	clientContext := context.NewCLIContext().WithCodec(Codec)
 
