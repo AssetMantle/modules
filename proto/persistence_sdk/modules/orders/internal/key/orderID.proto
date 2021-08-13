@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package orders.internal.key;
+package modules.orders.internal.key;
 
 import "gogoproto/gogo.proto";
 
@@ -8,9 +8,6 @@ option go_package = "github.com/persistenceOne/persistenceSDK/modules/orders/int
 
 message OrderID {
   option (gogoproto.goproto_stringer) = false;
-  option (gogoproto.sizer) = false;
-  option (gogoproto.marshaler) = false;
-  option (gogoproto.unmarshaler) = false;
 
   string classification_i_d = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
   string maker_ownable_i_d = 2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
