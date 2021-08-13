@@ -18,18 +18,18 @@ import (
 func readMetaID(metaIDString string) types.ID {
 	idList := strings.Split(metaIDString, constants.FirstOrderCompositeIDSeparator)
 	if len(idList) == 2 {
-		return metaID{
+		return &MetaID{
 			TypeID: base.NewID(idList[0]),
 			HashID: base.NewID(idList[1]),
 		}
 	}
 
-	return metaID{TypeID: base.NewID(""), HashID: base.NewID("")}
+	return &MetaID{TypeID: base.NewID(""), HashID: base.NewID("")}
 }
-func metaIDFromInterface(i interface{}) metaID {
+func metaIDFromInterface(i interface{}) *MetaID {
 	switch value := i.(type) {
-	case metaID:
-		return value
+	case MetaID:
+		return &value
 	case types.ID:
 		return metaIDFromInterface(readMetaID(value.String()))
 	default:
@@ -38,7 +38,7 @@ func metaIDFromInterface(i interface{}) metaID {
 }
 
 func GenerateMetaID(data types.Data) types.ID {
-	return metaID{
+	return &MetaID{
 		TypeID: data.GetTypeID(),
 		HashID: data.GenerateHashID(),
 	}

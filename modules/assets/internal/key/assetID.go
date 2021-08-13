@@ -49,9 +49,11 @@ func (assetID AssetID) IsPartial() bool {
 	return len(assetID.HashID.Bytes()) == 0
 }
 func (assetID AssetID) Equals(key helpers.Key) bool {
-	return assetID.Compare(assetIDFromInterface(key)) == 0
+	id := assetIDFromInterface(key)
+	return assetID.Compare(&id) == 0
 }
 
+// NewAssetID TODO try removing & like in mappables
 func NewAssetID(classificationID types.ID, immutableProperties types.Properties) types.ID {
 	return &AssetID{
 		ClassificationID: classificationID,
