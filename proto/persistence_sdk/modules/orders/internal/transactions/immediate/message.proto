@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package modules.orders.internal.transactions.immediate;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/immediate";
+
+message Message {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = false;
+
+  string from = 1 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.AccAddress", (gogoproto.nullable) = false] ;
+  string from_i_d = 2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false] ;
+  string classification_i_d = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
+  string maker_ownable_i_d = 4 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
+  string taker_ownable_i_d = 5 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
+  string expires_in = 6 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Height", (gogoproto.nullable) = false];
+  string maker_ownable_split = 7 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  string taker_ownable_split = 8 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  string immutable_meta_properties = 9 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.MetaProperties", (gogoproto.nullable) = false];
+  string immutable_properties = 10 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Properties", (gogoproto.nullable) = false];
+  string mutable_peta_properties = 11 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.MetaProperties", (gogoproto.nullable) = false];
+  string mutable_properties = 12 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Properties", (gogoproto.nullable) = false];
+}
