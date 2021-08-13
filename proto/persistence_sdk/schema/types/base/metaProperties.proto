@@ -7,10 +7,5 @@ import "gogoproto/gogo.proto";
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message MetaProperties {
-  option (gogoproto.sizer) = false;
-  option (gogoproto.marshaler) = false;
-  option (gogoproto.unmarshaler) = false;
-
   repeated string metaPropertyList = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.MetaProperty", (gogoproto.nullable) = false];
-
 }

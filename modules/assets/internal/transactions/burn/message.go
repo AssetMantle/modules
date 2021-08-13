@@ -36,12 +36,11 @@ func (message Message) GetSignBytes() []byte {
 func (message Message) GetSigners() []sdkTypes.AccAddress {
 	accAddress, err := sdkTypes.AccAddressFromBech32(message.From)
 	if err != nil {
-		// TODO
 		panic(err)
 	}
 	return []sdkTypes.AccAddress{accAddress}
 }
-func (Message) RegisterCodec(codec *codec.LegacyAmino) {
+func (Message) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, Message{})
 }
 func messageFromInterface(msg sdkTypes.Msg) Message {
@@ -58,7 +57,7 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, assetID types.ID) sdkTypes.Msg {
 	return &Message{
 		From:    from.String(),
-		FromId:  fromID,
-		AssetId: assetID,
+		FromID:  fromID,
+		AssetID: assetID,
 	}
 }

@@ -20,16 +20,16 @@ func (decData DecData) Compare(data types.Data) int {
 		panic(Error)
 	}
 
-	if decData.Value.GT(compareDecData.Value) {
+	if decData.Value.Dec.GT(compareDecData.Value.Dec) {
 		return 1
-	} else if decData.Value.LT(compareDecData.Value) {
+	} else if decData.Value.Dec.LT(compareDecData.Value.Dec) {
 		return -1
 	}
 
 	return 0
 }
 func (decData DecData) String() string {
-	return decData.Value.String()
+	return decData.Value.Dec.String()
 }
 func (decData DecData) GetTypeID() types.ID {
 	return NewID("D")
@@ -42,7 +42,7 @@ func (decData DecData) GenerateHashID() types.ID {
 		return NewID("")
 	}
 
-	return NewID(meta.Hash(decData.Value.String()))
+	return NewID(meta.Hash(decData.Value.Dec.String()))
 }
 func (decData DecData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := AccAddressData{}.ZeroValue().AsAccAddress()
@@ -57,7 +57,7 @@ func (decData DecData) AsString() (string, error) {
 	return zeroValue, errors.IncorrectFormat
 }
 func (decData DecData) AsDec() (sdkTypes.Dec, error) {
-	return decData.Value, nil
+	return decData.Value.Dec, nil
 }
 func (decData DecData) AsHeight() (types.Height, error) {
 	zeroValue, _ := HeightData{}.ZeroValue().AsHeight()
@@ -68,20 +68,20 @@ func (decData DecData) AsID() (types.ID, error) {
 	return zeroValue, errors.IncorrectFormat
 }
 func (decData DecData) Get() interface{} {
-	return decData.Value
+	return decData.Value.Dec
 }
 func decDataFromInterface(data types.Data) (DecData, error) {
 	switch value := data.(type) {
-	case DecData:
-		return value, nil
+	case *DecData:
+		return *value, nil
 	default:
 		return DecData{}, errors.MetaDataError
 	}
 }
 
 func NewDecData(value sdkTypes.Dec) types.Data {
-	return DecData{
-		Value: value,
+	return &DecData{
+		Value: sdkTypes.DecProto{Dec: value},
 	}
 }
 

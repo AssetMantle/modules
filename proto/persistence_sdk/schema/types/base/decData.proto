@@ -8,9 +8,6 @@ option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base"
 
 message DecData {
   option (gogoproto.goproto_stringer) = false;
-  option (gogoproto.sizer) = false;
-  option (gogoproto.marshaler) = false;
-  option (gogoproto.unmarshaler) = false;
 
-  bytes value = 1 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  bytes value = 1 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.DecProto", (gogoproto.nullable) = false];
 }

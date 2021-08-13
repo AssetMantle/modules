@@ -63,7 +63,7 @@ func (listData ListData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	return zeroValue, errors.IncorrectFormat
 }
 func (listData ListData) AsListData() (types.ListData, error) {
-	return listData, nil
+	return &listData, nil
 }
 func (listData ListData) AsString() (string, error) {
 	zeroValue, _ := StringData{}.ZeroValue().AsString()
@@ -85,29 +85,29 @@ func (listData ListData) Get() interface{} {
 	return listData.Value
 }
 func (listData ListData) Search(data types.Data) int {
-	return listData.Value.Search(data)
+	return sortedDataList(listData.Value).Search(data)
 }
 func (listData ListData) GetList() []types.Data {
 	return listData.Value
 }
 func (listData ListData) Add(dataList ...types.Data) types.ListData {
 	for _, data := range dataList {
-		listData.Value = listData.Value.Add(data).(sortedDataList)
+		listData.Value = sortedDataList(listData.Value).Add(data).GetList()
 	}
 
-	return listData
+	return &listData
 }
 func (listData ListData) Remove(dataList ...types.Data) types.ListData {
 	for _, data := range dataList {
-		listData.Value = listData.Value.Remove(data).(sortedDataList)
+		listData.Value = sortedDataList(listData.Value).Remove(data).GetList()
 	}
 
-	return listData
+	return &listData
 }
 func listDataFromData(data types.Data) (ListData, error) {
 	switch value := data.(type) {
-	case ListData:
-		return value, nil
+	case *ListData:
+		return *value, nil
 	default:
 		return ListData{}, errors.MetaDataError
 	}

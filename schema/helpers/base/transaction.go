@@ -117,8 +117,8 @@ func (transaction transaction) RESTRequestHandler(cliContext client.Context) htt
 	}
 }
 
-func (transaction transaction) RegisterCodec(codec *codec.LegacyAmino) {
-	transaction.messagePrototype().RegisterCodec(codec)
+func (transaction transaction) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	transaction.messagePrototype().RegisterLegacyAminoCodec(codec)
 	transaction.requestPrototype().RegisterCodec(codec)
 }
 func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessage) (sdkTypes.Msg, error) {

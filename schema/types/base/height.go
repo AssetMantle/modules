@@ -19,5 +19,5 @@ func (height Height) Compare(compareHeight types.Height) int {
 	return 0
 }
 func NewHeight(value int64) types.Height {
-	return Height{Value: value}
+	return &Height{Value: value}
 }

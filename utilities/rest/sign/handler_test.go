@@ -33,7 +33,7 @@ func TestHandler(t *testing.T) {
 	sdkTypes.RegisterCodec(Codec)
 	Codec.RegisterConcrete(request{}, "request", nil)
 	Codec.RegisterConcrete(response{}, "response", nil)
-	base.TestMessagePrototype().RegisterCodec(Codec)
+	base.TestMessagePrototype().RegisterLegacyAminoCodec(Codec)
 
 	clientContext := context.NewCLIContext().WithCodec(Codec)
 

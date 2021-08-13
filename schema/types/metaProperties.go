@@ -5,6 +5,8 @@
 
 package types
 
+import "github.com/persistenceOne/persistenceSDK/schema"
+
 type MetaProperties interface {
 	Get(ID) MetaProperty
 
@@ -15,4 +17,6 @@ type MetaProperties interface {
 	Mutate(...MetaProperty) MetaProperties
 
 	RemoveData() Properties
+
+	schema.Proto
 }

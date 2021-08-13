@@ -64,15 +64,15 @@ func (idData IDData) Get() interface{} {
 }
 func idDataFromInterface(data types.Data) (IDData, error) {
 	switch value := data.(type) {
-	case IDData:
-		return value, nil
+	case *IDData:
+		return *value, nil
 	default:
 		return IDData{}, errors.MetaDataError
 	}
 }
 
 func NewIDData(value types.ID) types.Data {
-	return IDData{
+	return &IDData{
 		Value: value,
 	}
 }

@@ -21,15 +21,15 @@ func (metaFact MetaFact) GetTypeID() types.ID             { return metaFact.Data
 func (metaFact MetaFact) GetSignatures() types.Signatures { return metaFact.Signatures }
 func (metaFact MetaFact) Sign(_ keyring.Keyring) types.MetaFact {
 	// TODO implement signing
-	return metaFact
+	return &metaFact
 }
 func (metaFact MetaFact) GetData() types.Data    { return metaFact.Data }
 func (metaFact MetaFact) RemoveData() types.Fact { return NewFact(metaFact.Data) }
 
 func NewMetaFact(data types.Data) types.MetaFact {
-	return MetaFact{
+	return &MetaFact{
 		Data:       data,
-		Signatures: Signatures{},
+		Signatures: &Signatures{},
 	}
 }
 

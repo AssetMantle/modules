@@ -7,6 +7,7 @@ package types
 
 import (
 	"github.com/99designs/keyring"
+	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
 type Fact interface {
@@ -15,4 +16,6 @@ type Fact interface {
 	GetSignatures() Signatures
 
 	Sign(keyring.Keyring) Fact
+
+	schema.Proto
 }

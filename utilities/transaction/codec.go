@@ -13,7 +13,7 @@ import (
 
 func RegisterCodec(messagePrototype func() helpers.Message) *codec.LegacyAmino {
 	Codec := &codec.LegacyAmino{}
-	messagePrototype().RegisterCodec(Codec)
+	messagePrototype().RegisterLegacyAminoCodec(Codec)
 	schema.RegisterLegacyAminoCodec(Codec)
 	Codec.Seal()
 

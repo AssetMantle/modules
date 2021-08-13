@@ -7,11 +7,6 @@ import "gogoproto/gogo.proto";
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message MetaFact {
-  option (gogoproto.sizer) = false;
-  option (gogoproto.marshaler) = false;
-  option (gogoproto.unmarshaler) = false;
-
   string data = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Data", (gogoproto.nullable) = false];
   string signatures = 2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Signatures", (gogoproto.nullable) = false];
-
 }

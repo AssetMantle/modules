@@ -20,9 +20,9 @@ func Test_Maintainer_Methods(t *testing.T) {
 
 	testMaintainerID := key.NewMaintainerID(classificationID, identityID)
 
-	testMaintainer := NewMaintainer(testMaintainerID, properties, true, true, true).(maintainer)
+	testMaintainer := NewMaintainer(testMaintainerID, properties, true, true, true).(Maintainer)
 
-	require.Equal(t, maintainer{ID: testMaintainerID, MaintainedProperties: properties, AddMaintainer: true, RemoveMaintainer: true, MutateMaintainer: true}, testMaintainer)
+	require.Equal(t, Maintainer{ID: testMaintainerID, MaintainedProperties: properties, AddMaintainer: true, RemoveMaintainer: true, MutateMaintainer: true}, testMaintainer)
 	require.Equal(t, testMaintainerID, testMaintainer.GetID())
 	require.Equal(t, classificationID, testMaintainer.GetClassificationID())
 	require.Equal(t, identityID, testMaintainer.GetIdentityID())

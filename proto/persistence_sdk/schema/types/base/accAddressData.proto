@@ -3,14 +3,12 @@ syntax = "proto3";
 package schema.types.base;
 
 import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/accAddress.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message AccAddressData {
   option (gogoproto.goproto_stringer) = false;
-  option (gogoproto.sizer) = false;
-  option (gogoproto.marshaler) = false;
-  option (gogoproto.unmarshaler) = false;
 
-  bytes value = 1 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.AccAddress", (gogoproto.nullable) = false];
+  schema.types.base.AccAddress  value = 1 [(gogoproto.nullable) = false];
 }

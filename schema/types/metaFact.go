@@ -5,7 +5,10 @@
 
 package types
 
-import "github.com/99designs/keyring"
+import (
+	"github.com/99designs/keyring"
+	"github.com/persistenceOne/persistenceSDK/schema"
+)
 
 type MetaFact interface {
 	GetHashID() ID
@@ -15,4 +18,6 @@ type MetaFact interface {
 
 	Sign(keyring.Keyring) MetaFact
 	RemoveData() Fact
+
+	schema.Proto
 }

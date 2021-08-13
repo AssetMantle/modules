@@ -7,6 +7,7 @@ package types
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
 type Data interface {
@@ -31,4 +32,6 @@ type Data interface {
 	AsID() (ID, error)
 
 	Get() interface{}
+
+	schema.Proto
 }

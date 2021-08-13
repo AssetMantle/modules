@@ -8,9 +8,6 @@ option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base"
 
 message Signature {
   option (gogoproto.goproto_stringer) = false;
-  option (gogoproto.sizer) = false;
-  option (gogoproto.marshaler) = false;
-  option (gogoproto.unmarshaler) = false;
 
   string id = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
   bytes signature_bytes = 2;

@@ -7,9 +7,6 @@ import "gogoproto/gogo.proto";
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message Properties {
-  option (gogoproto.sizer) = false;
-  option (gogoproto.marshaler) = false;
-  option (gogoproto.unmarshaler) = false;
 
   repeated string propertyList = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Property", (gogoproto.nullable) = false];
 

@@ -8,9 +8,6 @@ option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base"
 
 message ID {
   option (gogoproto.goproto_stringer) = false;
-  option (gogoproto.sizer) = false;
-  option (gogoproto.marshaler) = false;
-  option (gogoproto.unmarshaler) = false;
 
   string id_string = 1;
 

@@ -22,7 +22,7 @@ func (accAddressData AccAddressData) Compare(sortable types.Data) int {
 		panic(Error)
 	}
 
-	return bytes.Compare(accAddressData.Value.Bytes(), compareAccAddressData.Value.Bytes())
+	return bytes.Compare(accAddressData.Value.GetBytes(), compareAccAddressData.Value.GetBytes())
 }
 func (accAddressData AccAddressData) String() string {
 	return accAddressData.Value.String()
@@ -41,7 +41,7 @@ func (accAddressData AccAddressData) GenerateHashID() types.ID {
 	return NewID(meta.Hash(accAddressData.Value.String()))
 }
 func (accAddressData AccAddressData) AsAccAddress() (sdkTypes.AccAddress, error) {
-	return accAddressData.Value, nil
+	return accAddressData.Value.AsSDKTypesAccAddress(), nil
 }
 func (accAddressData AccAddressData) AsListData() (types.ListData, error) {
 	zeroValue, _ := ListData{}.ZeroValue().AsListData()
@@ -68,16 +68,16 @@ func (accAddressData AccAddressData) Get() interface{} {
 }
 func accAddressDataFromInterface(data types.Data) (AccAddressData, error) {
 	switch value := data.(type) {
-	case AccAddressData:
-		return value, nil
+	case *AccAddressData:
+		return *value, nil
 	default:
 		return AccAddressData{}, errors.MetaDataError
 	}
 }
 
 func NewAccAddressData(value sdkTypes.AccAddress) types.Data {
-	return AccAddressData{
-		Value: value,
+	return &AccAddressData{
+		Value: NewAccAddressFromSDKTypesAccAddress(value),
 	}
 }
 

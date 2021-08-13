@@ -68,15 +68,15 @@ func (heightData HeightData) Get() interface{} {
 }
 func heightDataFromInterface(data types.Data) (HeightData, error) {
 	switch value := data.(type) {
-	case HeightData:
-		return value, nil
+	case *HeightData:
+		return *value, nil
 	default:
 		return HeightData{}, errors.MetaDataError
 	}
 }
 
 func NewHeightData(value types.Height) types.Data {
-	return HeightData{
+	return &HeightData{
 		Value: value,
 	}
 }

@@ -64,15 +64,15 @@ func (stringData StringData) Get() interface{} {
 }
 func stringDataFromInterface(data types.Data) (StringData, error) {
 	switch value := data.(type) {
-	case StringData:
-		return value, nil
+	case *StringData:
+		return *value, nil
 	default:
 		return StringData{}, errors.MetaDataError
 	}
 }
 
 func NewStringData(value string) types.Data {
-	return StringData{
+	return &StringData{
 		Value: value,
 	}
 }

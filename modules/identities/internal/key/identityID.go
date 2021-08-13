@@ -19,45 +19,40 @@ import (
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
-type identityID struct {
-	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID missing"`
-	HashID           types.ID `json:"hashID" valid:"required~required field hashID missing"`
-}
+var _ types.ID = (*IdentityID)(nil)
+var _ helpers.Key = (*IdentityID)(nil)
 
-var _ types.ID = (*identityID)(nil)
-var _ helpers.Key = (*identityID)(nil)
-
-func (identityID identityID) Bytes() []byte {
+func (identityID IdentityID) Bytes() []byte {
 	return append(
 		identityID.ClassificationID.Bytes(),
 		identityID.HashID.Bytes()...,
 	)
 }
-func (identityID identityID) String() string {
+func (identityID IdentityID) String() string {
 	var values []string
 	values = append(values, identityID.ClassificationID.String())
 	values = append(values, identityID.HashID.String())
 
 	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
-func (identityID identityID) Compare(id types.ID) int {
+func (identityID IdentityID) Compare(id types.ID) int {
 	return bytes.Compare(identityID.Bytes(), id.Bytes())
 }
-func (identityID identityID) GenerateStoreKeyBytes() []byte {
+func (identityID IdentityID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(identityID.Bytes())
 }
-func (identityID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, identityID{})
+func (IdentityID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, IdentityID{})
 }
-func (identityID identityID) IsPartial() bool {
+func (identityID IdentityID) IsPartial() bool {
 	return len(identityID.HashID.Bytes()) == 0
 }
-func (identityID identityID) Equals(key helpers.Key) bool {
+func (identityID IdentityID) Equals(key helpers.Key) bool {
 	return identityID.Compare(identityIDFromInterface(key)) == 0
 }
 
 func NewIdentityID(classificationID types.ID, immutableProperties types.Properties) types.ID {
-	return identityID{
+	return &IdentityID{
 		ClassificationID: classificationID,
 		HashID:           baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID(),
 	}

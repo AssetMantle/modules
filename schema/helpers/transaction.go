@@ -20,7 +20,7 @@ type Transaction interface {
 	Command() *cobra.Command
 	HandleMessage(sdkTypes.Context, sdkTypes.Msg) (*sdkTypes.Result, error)
 	RESTRequestHandler(client.Context) http.HandlerFunc
-	RegisterCodec(*codec.LegacyAmino)
+	RegisterLegacyAminoCodec(*codec.LegacyAmino)
 	DecodeTransactionRequest(json.RawMessage) (sdkTypes.Msg, error)
 	InitializeKeeper(Mapper, Parameters, ...interface{}) Transaction
 }

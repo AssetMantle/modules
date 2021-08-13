@@ -47,7 +47,7 @@ func (message message) GetSignBytes() []byte {
 func (message message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
-func (message) RegisterCodec(codec *codec.Codec) {
+func (message) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, message{})
 }
 func messageFromInterface(msg sdkTypes.Msg) message {

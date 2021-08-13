@@ -5,9 +5,13 @@
 
 package types
 
+import "github.com/persistenceOne/persistenceSDK/schema"
+
 type ID interface {
 	String() string
 	Bytes() []byte
 
 	Compare(ID) int
+
+	schema.Proto
 }

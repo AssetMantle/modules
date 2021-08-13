@@ -22,7 +22,7 @@ func (metaProperty MetaProperty) RemoveData() types.Property {
 }
 
 func NewMetaProperty(id types.ID, metaFact types.MetaFact) types.MetaProperty {
-	return MetaProperty{
+	return &MetaProperty{
 		Id:       id,
 		MetaFact: metaFact,
 	}
