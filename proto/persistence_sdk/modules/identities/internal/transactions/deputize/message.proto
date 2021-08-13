@@ -19,4 +19,3 @@ message message {
   bool  remove_maintainer = 7;
   bool mutate_maintainer = 8;
 }
-
