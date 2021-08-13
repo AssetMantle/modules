@@ -24,7 +24,7 @@ func Test_Split_Request(t *testing.T) {
 
 	var Codec = codec.New()
 	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)

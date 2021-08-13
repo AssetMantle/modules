@@ -31,7 +31,7 @@ func (message Message) ValidateBasic() error {
 	return nil
 }
 func (message Message) GetSignBytes() []byte {
-	return sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message))
+	return sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message))
 }
 func (message Message) GetSigners() []sdkTypes.AccAddress {
 	accAddress, err := sdkTypes.AccAddressFromBech32(message.From)

@@ -12,7 +12,7 @@ import (
 
 const moduleName = "traits"
 
-func RegisterCodec(codec *codec.LegacyAmino) {
+func RegisterLegacyCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, HasImmutables{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, HasMutables{})
 }

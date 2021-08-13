@@ -23,7 +23,7 @@ import (
 )
 
 func Test_Deputize_Request(t *testing.T) {
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
@@ -76,6 +76,6 @@ func Test_Deputize_Request(t *testing.T) {
 
 	require.Equal(t, transactionRequest{}, requestPrototype())
 	require.NotPanics(t, func() {
-		requestPrototype().RegisterCodec(codec.New())
+		requestPrototype().RegisterLegacyAminoCodec(codec.New())
 	})
 }

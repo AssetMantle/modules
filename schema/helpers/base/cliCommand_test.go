@@ -19,14 +19,14 @@ import (
 )
 
 func Test_Cli_Command(t *testing.T) {
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
-	cliContext := context.NewCLIContext().WithCodec(Codec)
+	cliContext := client.Context{}.WithLegacyAmino(Codec)
 	cliContext = cliContext.WithChainID("chainID")
 
 	testCliFlag := NewCLIFlag("name", "value", ",usage")

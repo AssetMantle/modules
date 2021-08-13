@@ -48,7 +48,7 @@ func (split split) CanSend(outValue sdkTypes.Dec) bool {
 func (split split) GetKey() helpers.Key {
 	return key.FromID(split.ID)
 }
-func (split) RegisterCodec(codec *codec.Codec) {
+func (split) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, split{})
 }
 

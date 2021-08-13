@@ -15,5 +15,5 @@ import (
 var Codec *codec.LegacyAmino
 
 func init() {
-	Codec = module.RegisterCodec(key.Prototype, mappable.Prototype)
+	Codec = module.RegisterLegacyAminoCodec(key.Prototype, mappable.Prototype)
 }

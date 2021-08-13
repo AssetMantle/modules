@@ -119,7 +119,7 @@ func (transaction transaction) RESTRequestHandler(cliContext client.Context) htt
 
 func (transaction transaction) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	transaction.messagePrototype().RegisterLegacyAminoCodec(codec)
-	transaction.requestPrototype().RegisterCodec(codec)
+	transaction.requestPrototype().RegisterLegacyAminoCodec(codec)
 }
 func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessage) (sdkTypes.Msg, error) {
 	transactionRequest, Error := transaction.requestPrototype().FromJSON(rawMessage)

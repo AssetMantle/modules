@@ -79,7 +79,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		base.NewID(transactionRequest.OrderID),
 	), nil
 }
-func (transactionRequest) RegisterCodec(codec *codec.Codec) {
+func (transactionRequest) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {

@@ -23,9 +23,9 @@ import (
 )
 
 func Test_Renumerate_Request(t *testing.T) {
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
@@ -68,6 +68,6 @@ func Test_Renumerate_Request(t *testing.T) {
 	require.Equal(t, transactionRequest{}, requestPrototype())
 
 	require.NotPanics(t, func() {
-		requestPrototype().RegisterCodec(codec.New())
+		requestPrototype().RegisterLegacyAminoCodec(codec.New())
 	})
 }

@@ -41,11 +41,11 @@ func SetupTest(t *testing.T) (sdkTypes.Context, *sdkTypes.KVStoreKey, *sdkTypes.
 	return context, storeKey, paramsTransientStoreKeys
 }
 
-func MakeCodec() *codec.Codec {
-	var Codec = codec.New()
+func MakeCodec() *codec.LegacyAmino {
+	var Codec = codec.NewLegacyAmino()
 
 	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
