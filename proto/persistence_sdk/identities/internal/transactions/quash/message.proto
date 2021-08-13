@@ -6,7 +6,7 @@ import "gogoproto/gogo.proto";
 
 
 
-option go_package = "github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/provision";
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/quash";
 
 
 message message {
