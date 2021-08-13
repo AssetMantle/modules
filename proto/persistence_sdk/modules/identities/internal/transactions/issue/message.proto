@@ -6,7 +6,7 @@ import "gogoproto/gogo.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/issue";
 
-message message {
+message Message {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = false;
 

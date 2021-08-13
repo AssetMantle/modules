@@ -6,10 +6,10 @@ import "gogoproto/gogo.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/renumerate";
 
-message message {
+message Message {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
-  option (gogoproto.sizer) = false;
+
 
   string from = 1 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.AccAddress", (gogoproto.nullable) = false] ;
   string from_id = 2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false] ;
