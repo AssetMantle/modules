@@ -1,0 +1,23 @@
+syntax ="proto3";
+
+package splits.internal.transactions.send;
+
+import "gogoproto/gogo.proto";
+
+
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/splits/internal/transactions/send";
+
+
+message message {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal)            = false;
+
+  string from =1 ;
+  string from_i_d =2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false] ;
+  string to_i_d =3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
+  string ownable_i_d =4 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
+  string value =5 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+
+}
+
