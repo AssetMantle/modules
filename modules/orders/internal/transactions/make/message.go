@@ -14,30 +14,16 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 )
 
-type message struct {
-	From                    sdkTypes.AccAddress  `json:"from" valid:"required~required field from missing"`
-	FromID                  types.ID             `json:"fromID" valid:"required~required field fromID missing"`
-	ClassificationID        types.ID             `json:"classificationID" valid:"required~required field classificationID missing"`
-	MakerOwnableID          types.ID             `json:"makerOwnableID" valid:"required~required field makerOwnableID missing"`
-	TakerOwnableID          types.ID             `json:"takerOwnableID" valid:"required~required field takerOwnableID missing"`
-	ExpiresIn               types.Height         `json:"expiresIn" valid:"required~required field expiresIn missing"`
-	MakerOwnableSplit       sdkTypes.Dec         `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing"`
-	TakerOwnableSplit       sdkTypes.Dec         `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
-	ImmutableMetaProperties types.MetaProperties `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing"`
-	ImmutableProperties     types.Properties     `json:"immutableProperties" valid:"required~required field immutableProperties missing"`
-	MutableMetaProperties   types.MetaProperties `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
-	MutableProperties       types.Properties     `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
-}
+var _ helpers.Message = &Message{}
 
-var _ sdkTypes.Msg = message{}
-
-func (message message) Route() string { return module.Name }
-func (message message) Type() string  { return Transaction.GetName() }
-func (message message) ValidateBasic() error {
+func (message Message) Route() string { return module.Name }
+func (message Message) Type() string  { return Transaction.GetName() }
+func (message Message) ValidateBasic() error {
 	var _, Error = govalidator.ValidateStruct(message)
 	if Error != nil {
 		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
@@ -53,30 +39,30 @@ func (message message) ValidateBasic() error {
 
 	return nil
 }
-func (message message) GetSignBytes() []byte {
+func (message Message) GetSignBytes() []byte {
 	return sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message))
 }
-func (message message) GetSigners() []sdkTypes.AccAddress {
-	return []sdkTypes.AccAddress{message.From}
+func (message Message) GetSigners() []sdkTypes.AccAddress {
+	return []sdkTypes.AccAddress{message.From.AsSDKTypesAccAddress()}
 }
-func (message) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, message{})
+func (Message) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, Message{})
 }
-func messageFromInterface(msg sdkTypes.Msg) message {
+func messageFromInterface(msg sdkTypes.Msg) Message {
 	switch value := msg.(type) {
-	case message:
+	case Message:
 		return value
 	default:
-		return message{}
+		return Message{}
 	}
 }
 func messagePrototype() helpers.Message {
-	return message{}
+	return Message{}
 }
 
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, expiresIn types.Height, makerOwnableSplit sdkTypes.Dec, takerOwnableSplit sdkTypes.Dec, immutableMetaProperties types.MetaProperties, immutableProperties types.Properties, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
-	return message{
-		From:                    from,
+	return Message{
+		From:                    base.NewAccAddressFromSDKTypesAccAddress(from),
 		FromID:                  fromID,
 		ClassificationID:        classificationID,
 		MakerOwnableID:          makerOwnableID,
