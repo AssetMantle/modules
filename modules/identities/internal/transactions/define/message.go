@@ -19,8 +19,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 )
 
-
-
 var _ helpers.Message = &Message{}
 
 func (message Message) Route() string { return module.Name }

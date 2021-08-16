@@ -68,7 +68,7 @@ func (m *Message) XXX_DiscardUnknown() {
 var xxx_messageInfo_Message proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*Message)(nil), "modules.assets.internal.transactions.define.message")
+	proto.RegisterType((*Message)(nil), "modules.assets.internal.transactions.define.Message")
 }
 
 func init() {
