@@ -27,13 +27,13 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Message struct {
 	From       github_com_persistenceOne_persistenceSDK_schema_types_base.AccAddress `protobuf:"bytes,1,opt,name=from,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types/base.AccAddress" json:"from" valid:"required~required From missing"`
-	To         github_com_persistenceOne_persistenceSDK_schema_types_base.AccAddress `protobuf:"bytes,2,opt,name=to,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types/base.AccAddress" json:"to" valid:"required~required To missing"`
+	FromID     github_com_persistenceOne_persistenceSDK_schema_types.ID              `protobuf:"bytes,2,opt,name=to,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types/base.AccAddress" json:"to" valid:"required~required FromID missing"`
 	IdentityID github_com_persistenceOne_persistenceSDK_schema_types.ID              `protobuf:"bytes,3,opt,name=identity_i_d,json=identityID,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types.ID" json:"identity_i_d" valid:"required~required IdentityID missing"`
 }
 
-func (m *Message) Reset()         { *m = Message{} }
-func (m *Message) String() string { return proto.CompactTextString(m) }
-func (*Message) ProtoMessage()    {}
+func (m Message) Reset()         { m = Message{} }
+func (m Message) String() string { return proto.CompactTextString(m) }
+func (Message) ProtoMessage()    {}
 func (*Message) Descriptor() ([]byte, []int) {
 	return fileDescriptor_7a0477d664af2a02, []int{0}
 }
@@ -131,9 +131,9 @@ func (m *Message) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i--
 	dAtA[i] = 0x1a
 	{
-		size := m.To.Size()
+		size := m.FromID.Size()
 		i -= size
-		if _, err := m.To.MarshalTo(dAtA[i:]); err != nil {
+		if _, err := m.FromID.MarshalTo(dAtA[i:]); err != nil {
 			return 0, err
 		}
 		i = encodeVarintMessage(dAtA, i, uint64(size))
@@ -172,7 +172,7 @@ func (m *Message) Size() (n int) {
 	_ = l
 	l = m.From.Size()
 	n += 1 + l + sovMessage(uint64(l))
-	l = m.To.Size()
+	l = m.FromID.Size()
 	n += 1 + l + sovMessage(uint64(l))
 	l = m.IdentityID.Size()
 	n += 1 + l + sovMessage(uint64(l))
@@ -250,7 +250,7 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field To", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field FromID", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -278,7 +278,7 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.To.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.FromID.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

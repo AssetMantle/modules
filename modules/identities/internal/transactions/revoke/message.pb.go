@@ -32,9 +32,9 @@ type Message struct {
 	ClassificationID github_com_persistenceOne_persistenceSDK_schema_types.ID              `protobuf:"bytes,4,opt,name=classification_i_d,json=classificationID,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types.ID" json:"classification_i_d" valid:"required~required ClassificationID missing"`
 }
 
-func (m *Message) Reset()         { *m = Message{} }
-func (m *Message) String() string { return proto.CompactTextString(m) }
-func (*Message) ProtoMessage()    {}
+func (m Message) Reset()         { m = Message{} }
+func (m Message) String() string { return proto.CompactTextString(m) }
+func (Message) ProtoMessage()    {}
 func (*Message) Descriptor() ([]byte, []int) {
 	return fileDescriptor_9c84d09bfd503118, []int{0}
 }

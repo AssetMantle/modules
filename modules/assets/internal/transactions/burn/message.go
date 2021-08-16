@@ -55,7 +55,7 @@ func messagePrototype() helpers.Message {
 	return &Message{}
 }
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, assetID types.ID) sdkTypes.Msg {
-	return &Message{
+	return Message{
 		From:    from.String(),
 		FromID:  fromID,
 		AssetID: assetID,

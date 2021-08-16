@@ -30,9 +30,9 @@ type Message struct {
 	NubID github_com_persistenceOne_persistenceSDK_schema_types.ID              `protobuf:"bytes,2,opt,name=nub_i_d,json=nubID,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types.ID" json:"nub_i_d" valid:"required~required field NubID missing"`
 }
 
-func (m *Message) Reset()         { *m = Message{} }
-func (m *Message) String() string { return proto.CompactTextString(m) }
-func (*Message) ProtoMessage()    {}
+func (m Message) Reset()         { m = Message{} }
+func (m Message) String() string { return proto.CompactTextString(m) }
+func (Message) ProtoMessage()    {}
 func (*Message) Descriptor() ([]byte, []int) {
 	return fileDescriptor_4a91bc736e1ead03, []int{0}
 }

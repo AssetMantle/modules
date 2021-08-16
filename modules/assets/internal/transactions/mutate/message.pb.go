@@ -33,9 +33,9 @@ type Message struct {
 	MutableProperties     github_com_persistenceOne_persistenceSDK_schema_types.Properties      `protobuf:"bytes,5,opt,name=mutable_properties,json=mutableProperties,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types.Properties" json:"mutable_properties" valid:"required~required field MutableProperties missing"`
 }
 
-func (m *Message) Reset()         { *m = Message{} }
-func (m *Message) String() string { return proto.CompactTextString(m) }
-func (*Message) ProtoMessage()    {}
+func (m Message) Reset()         { m = Message{} }
+func (m Message) String() string { return proto.CompactTextString(m) }
+func (Message) ProtoMessage()    {}
 func (*Message) Descriptor() ([]byte, []int) {
 	return fileDescriptor_595c2732186bdf0e, []int{0}
 }

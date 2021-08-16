@@ -19,16 +19,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 )
 
-//type Message struct {
-//	From                    sdkTypes.AccAddress  `json:"from" valid:"required~required field from missing"`
-//	FromID                  types.ID             `json:"fromID" valid:"required~required field fromID missing"`
-//	ImmutableMetaProperties types.MetaProperties `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing"`
-//	ImmutableProperties     types.Properties     `json:"immutableProperties" valid:"required~required field immutableProperties missing"`
-//	MutableMetaProperties   types.MetaProperties `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
-//	MutableProperties       types.Properties     `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
-//}
-
-var _ helpers.Message = Message{}
+var _ helpers.Message = &Message{}
 
 func (message Message) Route() string { return module.Name }
 func (message Message) Type() string  { return Transaction.GetName() }
@@ -62,7 +53,7 @@ func messagePrototype() helpers.Message {
 }
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, immutableMetaProperties types.MetaProperties, immutableProperties types.Properties, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
 	return Message{
-		From:                    base.NewAccAddressFromSDKTypesAccAddress(from),
+		From: base.NewAccAddressFromSDKTypesAccAddress(from),
 		FromID:                  fromID,
 		ImmutableMetaProperties: immutableMetaProperties,
 		ImmutableProperties:     immutableProperties,
