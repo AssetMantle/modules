@@ -10,7 +10,7 @@ message Message {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = false;
 
-  string from = 1 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.AccAddress", (gogoproto.nullable) = false] ;
+  string from = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types/base.AccAddress", (gogoproto.nullable) = false] ;
   string from_i_d = 2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false] ;
   string order_i_d = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
   string maker_ownable_split = 4 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
