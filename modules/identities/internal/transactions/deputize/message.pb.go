@@ -36,9 +36,9 @@ type Message struct {
 	MutateMaintainer     bool                                                                  `protobuf:"varint,8,opt,name=mutate_maintainer,json=mutateMaintainer,proto3" json:"mutate_maintainer,omitempty"`
 }
 
-func (m Message) Reset()         { m = Message{} }
-func (m Message) String() string { return proto.CompactTextString(m) }
-func (Message) ProtoMessage()    {}
+func (m *Message) Reset()         { *m = Message{} }
+func (m *Message) String() string { return proto.CompactTextString(m) }
+func (*Message) ProtoMessage()    {}
 func (*Message) Descriptor() ([]byte, []int) {
 	return fileDescriptor_f3062f28d652d259, []int{0}
 }

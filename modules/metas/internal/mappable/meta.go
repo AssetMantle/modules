@@ -27,7 +27,7 @@ func (Meta) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 }
 
 func NewMeta(data types.Data) mappables.Meta {
-	return Meta{
+	return &Meta{
 		ID:   key.GenerateMetaID(data),
 		Data: data,
 	}

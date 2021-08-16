@@ -113,7 +113,7 @@ func (Order) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 }
 
 func NewOrder(orderID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Order {
-	return Order{
+	return &Order{
 		ID:            orderID,
 		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
 		HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},

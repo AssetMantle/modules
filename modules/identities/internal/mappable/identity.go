@@ -69,7 +69,7 @@ func (Identity) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, Identity{})
 }
 func NewIdentity(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.InterIdentity {
-	return Identity{
+	return &Identity{
 		ID:            id,
 		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
 		HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
@@ -111,7 +111,7 @@ func (identity Identity) ProvisionAddress(address sdkTypes.AccAddress) helpers.M
 
 	accAddressListData.Add(base.NewAccAddressData(address))
 
-	return mappables.InterIdentity(identity)
+	return mappables.InterIdentity(&identity)
 }
 func (identity Identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
 	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
@@ -121,5 +121,5 @@ func (identity Identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers
 
 	accAddressListData.Remove(base.NewAccAddressData(address))
 
-	return mappables.InterIdentity(identity)
+	return mappables.InterIdentity(&identity)
 }

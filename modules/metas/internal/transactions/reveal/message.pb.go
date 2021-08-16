@@ -30,9 +30,9 @@ type Message struct {
 	MetaFact github_com_persistenceOne_persistenceSDK_schema_types.MetaFact        `protobuf:"bytes,2,opt,name=meta_fact,json=metaFact,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types.MetaFact" json:"meta_fact" valid:"required~required field MetaFact missing"`
 }
 
-func (m Message) Reset()         { m = Message{} }
-func (m Message) String() string { return proto.CompactTextString(m) }
-func (Message) ProtoMessage()    {}
+func (m *Message) Reset()         { *m = Message{} }
+func (m *Message) String() string { return proto.CompactTextString(m) }
+func (*Message) ProtoMessage()    {}
 func (*Message) Descriptor() ([]byte, []int) {
 	return fileDescriptor_b89912b997b8f0d0, []int{0}
 }

@@ -50,7 +50,7 @@ func (Split) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 }
 
 func NewSplit(splitID types.ID, value sdkTypes.Dec) mappables.Split {
-	return Split{
+	return &Split{
 		ID:    splitID,
 		Value: sdkTypes.DecProto{Dec: value},
 	}
