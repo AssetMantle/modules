@@ -2215,7 +2215,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "amount": {
-                    "description": "To allow the use of unsigned integers (see: #1273) a larger refactor will\nneed to be made. So we use signed integers for now with safety measures in\nplace preventing negative values being used.",
+                    "description": "To allow the use of unsigned integers (see cosmos-sdk issue #1273) a larger refactor will\nneed to be made. PLEASE CHECK THIS OUT So we use signed integers for now with safety measures in\nplace preventing negative values being used.",
                     "$ref": "#/definitions/types.Int"
                 },
                 "denom": {
