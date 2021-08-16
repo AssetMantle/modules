@@ -8,11 +8,11 @@ package applications
 import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec/types"
-	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"io"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
+	serverTypes "github.com/cosmos/cosmos-sdk/server/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	tendermintABCITypes "github.com/tendermint/tendermint/abci/types"
@@ -25,22 +25,23 @@ type Application interface {
 
 	GetDefaultHome() string
 	GetModuleBasicManager() module.BasicManager
-	GetLegacyAmino() *codec.LegacyAmino
+	GetLegacyAminoCodec() *codec.LegacyAmino
 	GetCodec() codec.Marshaler
 	GetInterfaceRegistry() types.InterfaceRegistry
 
-	LoadHeight(int64) error
-	ExportApplicationStateAndValidators(bool, []string) (servertypes.ExportedApp, error)
+	ExportApplicationStateAndValidators(bool, []string) (serverTypes.ExportedApp, error)
 
 	Name() string
 	AppVersion() string
 	Logger() log.Logger
+	MsgServiceRouter() *baseapp.MsgServiceRouter
 	MountStores(keys ...sdkTypes.StoreKey)
 	MountKVStores(keys map[string]*sdkTypes.KVStoreKey)
 	MountTransientStores(keys map[string]*sdkTypes.TransientStoreKey)
-	MountStoreWithDB(key sdkTypes.StoreKey, typ sdkTypes.StoreType, db tendermintDB.DB)
+	MountMemoryStores(keys map[string]*sdkTypes.MemoryStoreKey)
 	MountStore(key sdkTypes.StoreKey, typ sdkTypes.StoreType)
-	LoadVersion(version int64, baseKey *sdkTypes.KVStoreKey) error
+	LoadLatestVersion() error
+	LoadVersion(version int64) error
 	LastCommitID() sdkTypes.CommitID
 	LastBlockHeight() int64
 	Router() sdkTypes.Router
@@ -48,5 +49,5 @@ type Application interface {
 	Seal()
 	IsSealed() bool
 
-	Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, clientTxConfig client.TxConfig, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) Application
+	Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, clientTxConfig client.TxConfig, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, appOpts serverTypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp)) Application
 }

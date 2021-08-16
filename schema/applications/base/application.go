@@ -111,7 +111,7 @@ type application struct {
 	moduleBasicManager module.BasicManager
 
 	codec             codec.Marshaler
-	legacyAmino       *codec.LegacyAmino
+	legacyAminoCodec  *codec.LegacyAmino
 	interfaceRegistry types.InterfaceRegistry
 
 	invCheckPeriod uint
@@ -133,16 +133,6 @@ type application struct {
 	moduleSimulationManager *module.SimulationManager
 }
 
-// TODO
-func (application application) MountStoreWithDB(key sdkTypes.StoreKey, typ sdkTypes.StoreType, db tendermintDB.DB) {
-	panic("implement me")
-}
-
-// TODO
-func (application application) LoadVersion(version int64, baseKey *sdkTypes.KVStoreKey) error {
-	panic("implement me")
-}
-
 var _ applications.Application = (*application)(nil)
 
 func (application application) GetDefaultHome() string {
@@ -154,15 +144,13 @@ func (application application) GetModuleBasicManager() module.BasicManager {
 func (application application) GetCodec() codec.Marshaler {
 	return application.codec
 }
-func (application application) GetLegacyAmino() *codec.LegacyAmino {
-	return application.legacyAmino
+func (application application) GetLegacyAminoCodec() *codec.LegacyAmino {
+	return application.legacyAminoCodec
 }
 func (application application) GetInterfaceRegistry() types.InterfaceRegistry {
 	return application.interfaceRegistry
 }
-func (application application) LoadHeight(height int64) error {
-	return application.LoadVersion(height, application.keys[baseapp.MainStoreKey])
-}
+
 func (application application) ExportApplicationStateAndValidators(forZeroHeight bool, jailAllowedAddrs []string) (serverTypes.ExportedApp, error) {
 	context := application.NewContext(true, tmProto.Header{Height: application.LastBlockHeight()})
 
@@ -308,7 +296,7 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 	}, err
 }
 
-func (application application) Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, clientTxConfig client.TxConfig, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
+func (application application) Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, clientTxConfig client.TxConfig, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, appOpts serverTypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
 	application.BaseApp = baseapp.NewBaseApp(
 		application.name,
 		logger,
@@ -321,7 +309,6 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 	application.SetInterfaceRegistry(application.interfaceRegistry)
 
 	application.keys = sdkTypes.NewKVStoreKeys(
-		baseapp.MainStoreKey,
 		sdkAuthTypes.StoreKey,
 		sdkBankTypes.StoreKey,
 		sdkStakingTypes.StoreKey,
@@ -352,7 +339,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 
 	paramsKeeper := sdkParamsKeeper.NewKeeper(
 		application.codec,
-		application.legacyAmino,
+		application.legacyAminoCodec,
 		application.keys[sdkParamsTypes.StoreKey],
 		application.transientStoreKeys[sdkParamsTypes.TStoreKey],
 	)
@@ -659,7 +646,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 	)
 
 	application.moduleManager.RegisterInvariants(&application.crisisKeeper)
-	application.moduleManager.RegisterRoutes(application.Router(), application.QueryRouter(), application.legacyAmino)
+	application.moduleManager.RegisterRoutes(application.Router(), application.QueryRouter(), application.legacyAminoCodec)
 	application.moduleManager.RegisterServices(module.NewConfigurator(application.MsgServiceRouter(), application.GRPCQueryRouter()))
 
 	application.moduleSimulationManager = module.NewSimulationManager(
@@ -733,7 +720,7 @@ func NewApplication(name string, moduleBasicManager module.BasicManager, enabled
 	return &application{
 		name:                        name,
 		moduleBasicManager:          moduleBasicManager,
-		legacyAmino:                 makeLegacyAmino(moduleBasicManager),
+		legacyAminoCodec:            makeLegacyAmino(moduleBasicManager),
 		codec:                       codec,
 		interfaceRegistry:           interfaceRegistry,
 		enabledWasmProposalTypeList: enabledWasmProposalTypeList,

@@ -11,6 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/codec"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -120,6 +121,11 @@ func (transaction transaction) RESTRequestHandler(cliContext client.Context) htt
 func (transaction transaction) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	transaction.messagePrototype().RegisterLegacyAminoCodec(codec)
 	transaction.requestPrototype().RegisterLegacyAminoCodec(codec)
+}
+func (transaction transaction) RegisterInterface(registry codecTypes.InterfaceRegistry) {
+	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
+		transaction.messagePrototype(),
+	)
 }
 func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessage) (sdkTypes.Msg, error) {
 	transactionRequest, Error := transaction.requestPrototype().FromJSON(rawMessage)

@@ -7,6 +7,6 @@ package helpers
 
 type QueryResponse interface {
 	Response
-	Encode() ([]byte, error)
-	Decode([]byte) (QueryResponse, error)
+	LegacyAminoEncode() ([]byte, error)
+	LegacyAminoDecode([]byte) (QueryResponse, error)
 }

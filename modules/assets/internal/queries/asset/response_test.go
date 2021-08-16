@@ -62,14 +62,14 @@ func Test_Asset_Response(t *testing.T) {
 	require.Equal(t, nil, testQueryResponse.GetError())
 	require.Equal(t, errors.IncorrectFormat, testQueryResponseWithError.GetError())
 
-	encodedResponse, _ := testQueryResponse.Encode()
-	bytes, _ := common.Codec.MarshalJSON(testQueryResponse)
+	encodedResponse, _ := testQueryResponse.LegacyAminoEncode()
+	bytes, _ := common.LegacyAmino.MarshalJSON(testQueryResponse)
 	require.Equal(t, bytes, encodedResponse)
 
-	decodedResponse, _ := queryResponse{}.Decode(bytes)
+	decodedResponse, _ := queryResponse{}.LegacyAminoDecode(bytes)
 	require.Equal(t, testQueryResponse, decodedResponse)
 
-	decodedResponse2, _ := queryResponse{}.Decode([]byte{})
+	decodedResponse2, _ := queryResponse{}.LegacyAminoDecode([]byte{})
 	require.Equal(t, nil, decodedResponse2)
 
 	require.Equal(t, queryResponse{}, responsePrototype())

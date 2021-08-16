@@ -88,6 +88,7 @@ func (module module) RegisterRESTRoutes(cliContext client.Context, router *mux.R
 	}
 }
 func (module module) RegisterGRPCGatewayRoutes(context client.Context, serveMux *runtime.ServeMux) {
+	// TODO
 	panic("implement me")
 }
 func (module module) GetTxCmd() *cobra.Command {
@@ -152,14 +153,14 @@ func (module module) NewHandler() sdkTypes.Handler {
 func (module module) QuerierRoute() string {
 	return module.name
 }
-func (module module) NewQuerierHandler() sdkTypes.Querier {
+func (module module) LegacyQuerierHandler(legacyAmino *codec.LegacyAmino) sdkTypes.Querier {
 	return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
 		if module.queries == nil {
 			panic(errors.UninitializedUsage)
 		}
 
 		if query := module.queries.Get(path[0]); query != nil {
-			return query.HandleMessage(context, requestQuery)
+			return query.HandleMessageByLegacyAmino(context, requestQuery)
 		}
 
 		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())
@@ -257,12 +258,12 @@ func (module module) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 
 // TODO
 func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
-	panic("implement me")
-}
+	for _, transaction := range module.transactionsPrototype().GetList() {
+		transaction.RegisterInterface(registry)
+	}
 
-// TODO
-func (module module) LegacyQuerierHandler(amino *codec.LegacyAmino) sdkTypes.Querier {
-	panic("implement me")
+	// TODO
+	//sdkTypesMsgService.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 
 // TODO
