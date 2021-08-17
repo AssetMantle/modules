@@ -7,13 +7,14 @@ package mint
 
 import (
 	"encoding/json"
+	cryptoCodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	vestingTypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -26,13 +27,13 @@ func Test_Mint_Request(t *testing.T) {
 
 	var Codec = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
+	vestingTypes.RegisterLegacyAminoCodec(Codec)
 	Codec.Seal()
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.FromID, flags.ToID, flags.ClassificationID, flags.ImmutableMetaProperties, flags.ImmutableProperties, flags.MutableMetaProperties, flags.MutableProperties})
-	cliContext := context.NewCLIContext().WithCodec(Codec)
+	cliContext := client.Context{}.WithLegacyAmino(Codec)
 
 	immutableMetaPropertiesString := "defaultImmutableMeta1:S|defaultImmutableMeta1"
 	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
@@ -99,6 +100,6 @@ func Test_Mint_Request(t *testing.T) {
 
 	require.Equal(t, transactionRequest{}, requestPrototype())
 	require.NotPanics(t, func() {
-		requestPrototype().RegisterLegacyAminoCodec(codec.New())
+		requestPrototype().RegisterLegacyAminoCodec(codec.NewLegacyAmino())
 	})
 }

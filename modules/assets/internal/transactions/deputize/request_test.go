@@ -7,13 +7,14 @@ package deputize
 
 import (
 	"encoding/json"
+	cryptoCodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	vestingTypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -26,12 +27,12 @@ func Test_Deputize_Request(t *testing.T) {
 	var Codec = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
+	vestingTypes.RegisterLegacyAminoCodec(Codec)
 	Codec.Seal()
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.FromID, flags.ToID, flags.ClassificationID, flags.MaintainedProperties, flags.AddMaintainer, flags.RemoveMaintainer, flags.MutateMaintainer})
-	cliContext := context.NewCLIContext().WithCodec(Codec)
+	cliContext := client.Context{}.WithLegacyAmino(Codec)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -76,6 +77,6 @@ func Test_Deputize_Request(t *testing.T) {
 
 	require.Equal(t, transactionRequest{}, requestPrototype())
 	require.NotPanics(t, func() {
-		requestPrototype().RegisterLegacyAminoCodec(codec.New())
+		requestPrototype().RegisterLegacyAminoCodec(codec.NewLegacyAmino())
 	})
 }
