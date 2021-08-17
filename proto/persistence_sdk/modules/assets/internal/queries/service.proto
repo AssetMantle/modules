@@ -8,6 +8,7 @@ import "google/api/annotations.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/modules/assets/internal/queries";
 
+
 service Query {
   rpc Asset(asset.QueryRequest) returns (asset.QueryResponse) {
     option (google.api.http).get = "/cosmos/staking/v1beta1/validators";
