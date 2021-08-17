@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package modules.splits.internal.queries;
 
-import "gogoproto/gogo.proto";
 import "persistence_sdk/modules/splits/internal/queries/ownable/query.proto";
 import "persistence_sdk/modules/splits/internal/queries/split/query.proto";
 import "google/api/annotations.proto";

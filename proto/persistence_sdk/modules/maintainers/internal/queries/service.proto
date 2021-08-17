@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package modules.maintainers.internal.queries;
 
-import "gogoproto/gogo.proto";
 import "persistence_sdk/modules/maintainers/internal/queries/maintainer/query.proto";
 import "google/api/annotations.proto";
 

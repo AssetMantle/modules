@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package modules.orders.internal.queries;
 
-import "gogoproto/gogo.proto";
 import "persistence_sdk/modules/orders/internal/queries/order/query.proto";
 import "google/api/annotations.proto";
 
