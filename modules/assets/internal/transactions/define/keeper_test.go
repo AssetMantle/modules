@@ -6,6 +6,12 @@
 package define
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec/types"
+	cryptoCodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	"github.com/cosmos/cosmos-sdk/std"
+	"github.com/cosmos/cosmos-sdk/x/auth/tx"
+	vestingTypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
+	"github.com/persistenceOne/persistenceSDK/schema/applications"
 	"reflect"
 	"testing"
 
@@ -43,10 +49,23 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	var Codec = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
+	vestingTypes.RegisterLegacyAminoCodec(Codec)
 	Codec.Seal()
+
+	interfaceRegistry := types.NewInterfaceRegistry()
+	marshaler := codec.NewProtoCodec(interfaceRegistry)
+	txCfg := tx.NewTxConfig(marshaler, tx.DefaultSignModes)
+	std.RegisterLegacyAminoCodec(Codec)
+	std.RegisterInterfaces(interfaceRegistry)
+
+	encodingConfig := applications.EncodingConfig{
+		InterfaceRegistry: interfaceRegistry,
+		Marshaler:         marshaler,
+		TxConfig:          txCfg,
+		Amino:             Codec,
+	}
 
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")

@@ -6,6 +6,7 @@
 package mutate
 
 import (
+	cryptoCodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	"reflect"
 	"testing"
 
@@ -14,7 +15,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
@@ -43,9 +44,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	var Codec = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
+	vestingTypes.RegisterL(Codec)
 	Codec.Seal()
 
 	storeKey := sdkTypes.NewKVStoreKey("test")

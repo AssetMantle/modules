@@ -22,6 +22,7 @@ import (
 
 var _ mappables.InterNFT = (*Asset)(nil)
 
+
 func (asset Asset) GetID() types.ID {
 	return asset.ID
 }

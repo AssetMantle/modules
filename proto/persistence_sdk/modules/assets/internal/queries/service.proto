@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package modules.assets.internal.queries;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/modules/assets/internal/queries/asset/query.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/assets/internal/queries";
+
+//TODO service endpoint
+service Query {
+  rpc Asset(modules.assets.internal.queries.asset.QueryRequest) returns ( modules.assets.internal.queries.asset.QueryResponse) {
+    option (google.api.http).get = "";
+  }
+}
