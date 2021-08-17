@@ -15,24 +15,19 @@ import (
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
-type meta struct {
-	ID   types.ID   `json:"id" valid:"required field id missing"`
-	Data types.Data `json:"data" valid:"required field data missing"`
-}
+var _ mappables.Meta = (*Meta)(nil)
 
-var _ mappables.Meta = (*meta)(nil)
-
-func (meta meta) GetData() types.Data { return meta.Data }
-func (meta meta) GetID() types.ID     { return meta.ID }
-func (meta meta) GetKey() helpers.Key {
+func (meta Meta) GetData() types.Data { return meta.Data }
+func (meta Meta) GetID() types.ID     { return meta.ID }
+func (meta Meta) GetKey() helpers.Key {
 	return key.FromID(meta.GetID())
 }
-func (meta) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, meta{})
+func (Meta) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, Meta{})
 }
 
 func NewMeta(data types.Data) mappables.Meta {
-	return meta{
+	return &Meta{
 		ID:   key.GenerateMetaID(data),
 		Data: data,
 	}

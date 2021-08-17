@@ -32,9 +32,9 @@ type Message struct {
 	Coins  github_com_cosmos_cosmos_sdk_types.Coins                              `protobuf:"bytes,3,rep,name=coins,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Coin,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"coins" valid:"required~required field Coins missing"`
 }
 
-func (m Message) Reset()         { m = Message{} }
-func (m Message) String() string { return proto.CompactTextString(m) }
-func (Message) ProtoMessage()    {}
+func (m *Message) Reset()         { *m = Message{} }
+func (m *Message) String() string { return proto.CompactTextString(m) }
+func (*Message) ProtoMessage()    {}
 func (*Message) Descriptor() ([]byte, []int) {
 	return fileDescriptor_1310275d9b86728f, []int{0}
 }

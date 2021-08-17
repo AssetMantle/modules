@@ -24,11 +24,11 @@ func (queryResponse queryResponse) IsSuccessful() bool {
 func (queryResponse queryResponse) GetError() error {
 	return queryResponse.Error
 }
-func (queryResponse queryResponse) Encode() ([]byte, error) {
-	return common.Codec.MarshalJSON(queryResponse)
+func (queryResponse queryResponse) LegacyAminoEncode() ([]byte, error) {
+	return common.LegacyAmino.MarshalJSON(queryResponse)
 }
-func (queryResponse queryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
-	if Error := common.Codec.UnmarshalJSON(bytes, &queryResponse); Error != nil {
+func (queryResponse queryResponse) LegacyAminoDecode(bytes []byte) (helpers.QueryResponse, error) {
+	if Error := common.LegacyAmino.UnmarshalJSON(bytes, &queryResponse); Error != nil {
 		return nil, Error
 	}
 

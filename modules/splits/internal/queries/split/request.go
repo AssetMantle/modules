@@ -42,10 +42,10 @@ func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ client
 func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(vars[Query.GetName()]))
 }
-func (queryRequest queryRequest) Encode() ([]byte, error) {
+func (queryRequest queryRequest) LegacyAminoEncode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryRequest)
 }
-func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
+func (queryRequest queryRequest) LegacyAminoDecode(bytes []byte) (helpers.QueryRequest, error) {
 	if Error := common.Codec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
 		return nil, Error
 	}

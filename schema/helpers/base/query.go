@@ -32,32 +32,35 @@ var _ helpers.Query = (*query)(nil)
 func (query query) GetName() string { return query.name }
 func (query query) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
-		cliContext := client.Context{}.WithLegacyAmino(codec)
+		clientContext, err := client.GetClientQueryContext(command)
+		if err != nil {
+			return err
+		}
 
-		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, cliContext)
-		responseBytes, _, Error := query.query(queryRequest, cliContext)
+		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, clientContext)
+		responseBytes, _, Error := query.query(queryRequest, clientContext)
 
 		if Error != nil {
 			return Error
 		}
 
-		response, Error := query.responsePrototype().Decode(responseBytes)
+		response, Error := query.responsePrototype().LegacyAminoDecode(responseBytes)
 		if Error != nil {
 			return Error
 		}
 
-		return cliContext.PrintObjectLegacy(response)
+		return clientContext.PrintObjectLegacy(response)
 	}
 
 	return query.cliCommand.CreateCommand(runE)
 }
-func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
-	request, Error := query.requestPrototype().Decode(requestQuery.Data)
+func (query query) HandleMessageByLegacyAmino(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
+	request, Error := query.requestPrototype().LegacyAminoDecode(requestQuery.Data)
 	if Error != nil {
 		return nil, Error
 	}
 
-	return query.queryKeeper.Enquire(context, request).Encode()
+	return query.queryKeeper.Enquire(context, request).LegacyAminoEncode()
 }
 
 func (query query) RESTQueryHandler(cliContext client.Context) http.HandlerFunc {
@@ -87,7 +90,7 @@ func (query query) Initialize(mapper helpers.Mapper, parameters helpers.Paramete
 }
 
 func (query query) query(queryRequest helpers.QueryRequest, cliContext client.Context) ([]byte, int64, error) {
-	bytes, Error := queryRequest.Encode()
+	bytes, Error := queryRequest.LegacyAminoEncode()
 	if Error != nil {
 		return nil, 0, Error
 	}

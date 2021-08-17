@@ -27,10 +27,10 @@ func readIdentityID(identityIDString string) types.ID {
 	return &IdentityID{ClassificationID: base.NewID(""), HashID: base.NewID("")}
 }
 
-func identityIDFromInterface(i interface{}) IdentityID {
+func identityIDFromInterface(i interface{}) *IdentityID {
 	switch value := i.(type) {
 	case IdentityID:
-		return value
+		return &value
 	case types.ID:
 		return identityIDFromInterface(readIdentityID(value.String()))
 	default:

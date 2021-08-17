@@ -26,20 +26,20 @@ func TestQuery(t *testing.T) {
 	require.Equal(t, nil, base.TestQueryRequestPrototype().Validate())
 	require.Equal(t, false, base.TestQueryResponsePrototype().IsSuccessful())
 	require.Equal(t, nil, base.TestQueryResponsePrototype().GetError())
-	encodedResponse, Error := base.TestQueryResponsePrototype().Encode()
+	encodedResponse, Error := base.TestQueryResponsePrototype().LegacyAminoEncode()
 	require.Nil(t, Error)
-	decodedResponse, Error := base.TestQueryResponsePrototype().Decode(encodedResponse)
+	decodedResponse, Error := base.TestQueryResponsePrototype().LegacyAminoDecode(encodedResponse)
 	require.Nil(t, Error)
 	require.Equal(t, Query.responsePrototype(), decodedResponse)
 
 	// GetName
 	require.Equal(t, "test", Query.GetName())
 
-	// HandleMessage
-	encodedRequest, Error := Query.requestPrototype().Encode()
+	// HandleMessageByLegacyAmino
+	encodedRequest, Error := Query.requestPrototype().LegacyAminoEncode()
 	require.Nil(t, Error)
 
-	_, Error = Query.HandleMessage(context, abciTypes.RequestQuery{Data: encodedRequest})
+	_, Error = Query.HandleMessageByLegacyAmino(context, abciTypes.RequestQuery{Data: encodedRequest})
 	require.Nil(t, Error)
 
 	command := Query.Command(codec)

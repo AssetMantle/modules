@@ -53,7 +53,7 @@ func messagePrototype() helpers.Message {
 }
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, immutableMetaProperties types.MetaProperties, immutableProperties types.Properties, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
 	return Message{
-		From: base.NewAccAddressFromSDKTypesAccAddress(from),
+		From:                    base.NewAccAddressFromSDKTypesAccAddress(from),
 		FromID:                  fromID,
 		ImmutableMetaProperties: immutableMetaProperties,
 		ImmutableProperties:     immutableProperties,

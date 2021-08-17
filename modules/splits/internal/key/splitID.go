@@ -17,44 +17,40 @@ import (
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
-type splitID struct {
-	OwnerID   types.ID `json:"ownerID" valid:"required~required field ownerID missing"`
-	OwnableID types.ID `json:"ownableID" valid:"required~required field ownableID missing"`
-}
+var _ types.ID = (*SplitID)(nil)
+var _ helpers.Key = (*SplitID)(nil)
 
-var _ types.ID = (*splitID)(nil)
-var _ helpers.Key = (*splitID)(nil)
-
-func (splitID splitID) Bytes() []byte {
+func (splitID SplitID) Bytes() []byte {
 	return append(
 		splitID.OwnerID.Bytes(),
 		splitID.OwnableID.Bytes()...)
 }
-func (splitID splitID) String() string {
+func (splitID SplitID) String() string {
 	var values []string
 	values = append(values, splitID.OwnerID.String())
 	values = append(values, splitID.OwnableID.String())
 
 	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
-func (splitID splitID) Compare(id types.ID) int {
+func (splitID SplitID) Compare(id types.ID) int {
 	return bytes.Compare(splitID.Bytes(), id.Bytes())
 }
-func (splitID splitID) GenerateStoreKeyBytes() []byte {
+func (splitID SplitID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(splitID.Bytes())
 }
-func (splitID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, splitID{})
+func (SplitID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, SplitID{})
 }
-func (splitID splitID) IsPartial() bool {
+func (splitID SplitID) IsPartial() bool {
 	return len(splitID.OwnableID.Bytes()) == 0
 }
-func (splitID splitID) Equals(key helpers.Key) bool {
-	return splitID.Compare(splitIDFromInterface(key)) == 0
+func (splitID SplitID) Equals(key helpers.Key) bool {
+	id := splitIDFromInterface(key)
+	return splitID.Compare(&id) == 0
 }
 
 func NewSplitID(ownerID types.ID, ownableID types.ID) types.ID {
-	return splitID{
+	return &SplitID{
 		OwnerID:   ownerID,
 		OwnableID: ownableID,
 	}
