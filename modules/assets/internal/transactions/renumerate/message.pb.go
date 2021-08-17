@@ -31,9 +31,9 @@ type Message struct {
 	AssetID github_com_persistenceOne_persistenceSDK_schema_types.ID              `protobuf:"bytes,3,opt,name=asset_i_d,json=assetID,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types.ID" json:"asset_i_d" valid:"required~required field AssetID missing"`
 }
 
-func (m Message) Reset()         { m = Message{} }
-func (m Message) String() string { return proto.CompactTextString(m) }
-func (Message) ProtoMessage()    {}
+func (m *Message) Reset()         { *m = Message{} }
+func (m *Message) String() string { return proto.CompactTextString(m) }
+func (*Message) ProtoMessage()    {}
 func (*Message) Descriptor() ([]byte, []int) {
 	return fileDescriptor_5bc713cdf152725d, []int{0}
 }

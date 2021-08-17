@@ -13,6 +13,6 @@ type QueryRequest interface {
 	Request
 	FromCLI(CLICommand, client.Context) QueryRequest
 	FromMap(map[string]string) QueryRequest
-	Encode() ([]byte, error)
-	Decode([]byte) (QueryRequest, error)
+	LegacyAminoEncode() ([]byte, error)
+	LegacyAminoDecode([]byte) (QueryRequest, error)
 }

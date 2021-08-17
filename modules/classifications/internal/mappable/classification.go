@@ -45,7 +45,7 @@ func (Classification) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 }
 
 func NewClassification(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Classification {
-	return Classification{
+	return &Classification{
 		ID:            id,
 		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
 		HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},

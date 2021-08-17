@@ -31,9 +31,9 @@ type Message struct {
 	IdentityID github_com_persistenceOne_persistenceSDK_schema_types.ID              `protobuf:"bytes,3,opt,name=identity_i_d,json=identityID,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types.ID" json:"identity_i_d" valid:"required~required IdentityID missing"`
 }
 
-func (m Message) Reset()         { m = Message{} }
-func (m Message) String() string { return proto.CompactTextString(m) }
-func (Message) ProtoMessage()    {}
+func (m *Message) Reset()         { *m = Message{} }
+func (m *Message) String() string { return proto.CompactTextString(m) }
+func (*Message) ProtoMessage()    {}
 func (*Message) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0604abea0b2258dd, []int{0}
 }

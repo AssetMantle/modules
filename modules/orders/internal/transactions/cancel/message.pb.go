@@ -31,9 +31,9 @@ type Message struct {
 	OrderID github_com_persistenceOne_persistenceSDK_schema_types.ID              `protobuf:"bytes,3,opt,name=order_i_d,json=orderID,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types.ID" json:"order_i_d" valid:"required~required field OrderID missing"`
 }
 
-func (m Message) Reset()         { m = Message{} }
-func (m Message) String() string { return proto.CompactTextString(m) }
-func (Message) ProtoMessage()    {}
+func (m *Message) Reset()         { *m = Message{} }
+func (m *Message) String() string { return proto.CompactTextString(m) }
+func (*Message) ProtoMessage()    {}
 func (*Message) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8e0073811c6d95ba, []int{0}
 }

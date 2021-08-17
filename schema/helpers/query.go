@@ -17,7 +17,7 @@ import (
 type Query interface {
 	GetName() string
 	Command() *cobra.Command
-	HandleMessage(sdkTypes.Context, abciTypes.RequestQuery) ([]byte, error)
+	HandleMessageByLegacyAmino(sdkTypes.Context, abciTypes.RequestQuery) ([]byte, error)
 	RESTQueryHandler(client.Context) http.HandlerFunc
 	Initialize(Mapper, Parameters, ...interface{}) Query
 }

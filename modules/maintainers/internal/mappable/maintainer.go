@@ -47,7 +47,7 @@ func (Maintainer) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, Maintainer{})
 }
 func NewMaintainer(id types.ID, maintainedProperties types.Properties, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) mappables.Maintainer {
-	return Maintainer{
+	return &Maintainer{
 		ID:                   id,
 		MaintainedProperties: maintainedProperties,
 		AddMaintainer:        addMaintainer,

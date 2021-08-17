@@ -43,16 +43,16 @@ func Test_Maintainer_Request(t *testing.T) {
 	vars["maintainers"] = "randomString"
 	require.Equal(t, newQueryRequest(base.NewID("randomString")), queryRequest{}.FromMap(vars))
 
-	encodedRequest, Error := testQueryRequest.Encode()
+	encodedRequest, Error := testQueryRequest.LegacyAminoEncode()
 	encodedResult, _ := common.Codec.MarshalJSON(testQueryRequest)
 	require.Equal(t, encodedResult, encodedRequest)
 	require.Nil(t, Error)
 
-	decodedRequest, Error := queryRequest{}.Decode(encodedRequest)
+	decodedRequest, Error := queryRequest{}.LegacyAminoDecode(encodedRequest)
 	require.Equal(t, testQueryRequest, decodedRequest)
 	require.Equal(t, nil, Error)
 
-	randomDecode, _ := queryRequest{}.Decode(base.NewID("").Bytes())
+	randomDecode, _ := queryRequest{}.LegacyAminoDecode(base.NewID("").Bytes())
 	require.Equal(t, nil, randomDecode)
 	require.Equal(t, testQueryRequest, queryRequestFromInterface(testQueryRequest))
 	require.Equal(t, queryRequest{}, queryRequestFromInterface(nil))

@@ -95,7 +95,7 @@ func TestModule(t *testing.T) {
 
 	require.Equal(t, "test", Module.QuerierRoute())
 
-	encodedRequest, Error := Module.queries.Get("testQuery").(query).requestPrototype().Encode()
+	encodedRequest, Error := Module.queries.Get("testQuery").(query).requestPrototype().LegacyAminoEncode()
 	require.Nil(t, Error)
 
 	queryResponse, Error := Module.NewQuerierHandler()(context, []string{"testQuery"}, abciTypes.RequestQuery{Data: encodedRequest})

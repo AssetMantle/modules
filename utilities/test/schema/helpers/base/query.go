@@ -52,11 +52,11 @@ func (t testQueryRequest) FromMap(_ map[string]string) helpers.QueryRequest {
 	return t
 }
 
-func (t testQueryRequest) Encode() ([]byte, error) {
+func (t testQueryRequest) LegacyAminoEncode() ([]byte, error) {
 	return json.Marshal(t)
 }
 
-func (t testQueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
+func (t testQueryRequest) LegacyAminoDecode(bytes []byte) (helpers.QueryRequest, error) {
 	var queryRequest testQueryRequest
 	Error := json.Unmarshal(bytes, &queryRequest)
 
@@ -82,11 +82,11 @@ func (t testQueryResponse) GetError() error {
 	return t.Error
 }
 
-func (t testQueryResponse) Encode() ([]byte, error) {
+func (t testQueryResponse) LegacyAminoEncode() ([]byte, error) {
 	return json.Marshal(t)
 }
 
-func (t testQueryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
+func (t testQueryResponse) LegacyAminoDecode(bytes []byte) (helpers.QueryResponse, error) {
 	var queryResponse testQueryResponse
 	Error := json.Unmarshal(bytes, &queryResponse)
 
