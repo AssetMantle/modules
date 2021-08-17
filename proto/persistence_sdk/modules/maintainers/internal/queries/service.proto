@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package modules.maintainers.internal.queries;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/modules/maintainers/internal/queries/maintainer/query.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/orders/internal/queries";
+
+service Query {
+  rpc Maintainer(modules.maintainers.internal.queries.maintainer.QueryRequest) returns (modules.maintainers.internal.queries.maintainer.QueryResponse) {
+    option (google.api.http).get = "";
+  };
+}
