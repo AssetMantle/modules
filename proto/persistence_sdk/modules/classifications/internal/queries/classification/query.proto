@@ -21,7 +21,7 @@ message QueryResponse {
   option (gogoproto.unmarshaler) = false;
 
   bool success =1;
-  string error = 2 [(gogoproto.nullable) = false];
+  string error = 2 ;
   repeated string list = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/helpers.Mappable", (gogoproto.nullable) = false] ;
 
 }
