@@ -15,3 +15,10 @@ message Message {
   string asset_i_d = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
 }
 
+message TransactionResponse{}
+
+service Msg{
+  rpc Burn(Message) returns (TransactionResponse);
+}
+
+
