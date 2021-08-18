@@ -7,7 +7,7 @@ import "gogoproto/gogo.proto";
 option go_package = "github.com/persistenceOne/persistenceSDK/modules/splits/internal/transactions/unwrap";
 
 service Msg {
-  rpc Unwrap(Message) returns (MessageResponse) {};
+  rpc Unwrap(Message) returns (TransactionResponse) {};
 }
 
 message Message {
@@ -20,4 +20,4 @@ message Message {
   string value = 4 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field Value missing"'];
 }
 
-message MessageResponse {}
+message TransactionResponse {}

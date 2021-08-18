@@ -6,6 +6,10 @@ import "gogoproto/gogo.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/take";
 
+service Msg {
+  rpc Take(Message) returns (TransactionResponse) {};
+}
+
 message Message {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = false;
@@ -15,3 +19,5 @@ message Message {
   string taker_ownable_split = 3 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field TakerOwnableSplit missing"'];
   string order_i_d = 4 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field OrderID missing"'];
 }
+
+message TransactionResponse {}
