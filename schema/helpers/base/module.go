@@ -257,7 +257,6 @@ func (module module) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	}
 }
 
-// TODO
 func (module module) RegisterIxnterfaces(registry codecTypes.InterfaceRegistry) {
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterInterface(registry)
