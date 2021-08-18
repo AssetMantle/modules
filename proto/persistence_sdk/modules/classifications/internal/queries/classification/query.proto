@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package modules.classifications.internal.queries.classification;
+package persistence_sdk.modules.classifications.internal.queries.classification;
 
 import "gogoproto/gogo.proto";
 
@@ -21,7 +21,7 @@ message QueryResponse {
   option (gogoproto.unmarshaler) = false;
 
   bool success =1;
-  string error = 2 [(gogoproto.nullable) = false];
+  string error = 2 ;
   repeated string list = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/helpers.Mappable", (gogoproto.nullable) = false] ;
 
 }

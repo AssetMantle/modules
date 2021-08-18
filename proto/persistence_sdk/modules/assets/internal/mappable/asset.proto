@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 
-package modules.assets.internal.mappable;
+package persistence_sdk.modules.assets.internal.mappable;
 
 
 import "gogoproto/gogo.proto";

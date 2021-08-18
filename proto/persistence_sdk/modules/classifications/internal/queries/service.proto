@@ -1,16 +1,16 @@
 syntax = "proto3";
 
-package modules.identities.internal.queries;
+package persistence_sdk.modules.classifications.internal.queries;
 
 import "gogoproto/gogo.proto";
-import "persistence_sdk/modules/identities/internal/queries/identity/query.proto";
+import "persistence_sdk/modules/classifications/internal/queries/classification/query.proto";
 import "google/api/annotations.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/modules/classifications/internal/queries";
 
 //TODO service endpoint
 service Query {
-  rpc Classification(modules.identities.internal.queries.identity.QueryRequest) returns ( modules.identities.internal.queries.identity.QueryResponse) {
-    option (google.api.http).get = "";
+  rpc Classification(classification.QueryRequest) returns ( classification.QueryResponse) {
+    option (google.api.http).get = "/sdk/classifications/classification";
   }
 }

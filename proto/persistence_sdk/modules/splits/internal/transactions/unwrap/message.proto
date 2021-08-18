@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package modules.splits.internal.transactions.unwrap;
+package persistence_sdk.modules.splits.internal.transactions.unwrap;
 
 import "gogoproto/gogo.proto";
 

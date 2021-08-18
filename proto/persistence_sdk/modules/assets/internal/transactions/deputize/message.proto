@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package modules.assets.internal.transactions.deputize;
+package persistence_sdk.modules.assets.internal.transactions.deputize;
 
 import "gogoproto/gogo.proto";
 
