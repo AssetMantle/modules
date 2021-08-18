@@ -37,27 +37,27 @@ func Test_Asset_Request(t *testing.T) {
 	testAssetID := key.NewAssetID(classificationID, immutableProperties)
 	testQueryRequest := newQueryRequest(testAssetID)
 	require.Equal(t, nil, testQueryRequest.Validate())
-	require.Equal(t, queryRequest{}, requestPrototype())
+	require.Equal(t, QueryRequest{}, requestPrototype())
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.AssetID})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
-	require.Equal(t, newQueryRequest(base.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
+	require.Equal(t, newQueryRequest(base.NewID("")), QueryRequest{}.FromCLI(cliCommand, cliContext))
 
 	vars := make(map[string]string)
 	vars["assets"] = "randomString"
-	require.Equal(t, newQueryRequest(base.NewID("randomString")), queryRequest{}.FromMap(vars))
+	require.Equal(t, newQueryRequest(base.NewID("randomString")), QueryRequest{}.FromMap(vars))
 
 	encodedRequest, Error := testQueryRequest.LegacyAminoEncode()
-	encodedResult, _ := common.LegacyAmino.MarshalJSON(testQueryRequest)
+	encodedResult, _ := common.LegacyAminoCodec.MarshalJSON(testQueryRequest)
 	require.Equal(t, encodedResult, encodedRequest)
 	require.Nil(t, Error)
 
-	decodedRequest, Error := queryRequest{}.LegacyAminoDecode(encodedRequest)
+	decodedRequest, Error := QueryRequest{}.LegacyAminoDecode(encodedRequest)
 	require.Equal(t, testQueryRequest, decodedRequest)
 	require.Equal(t, nil, Error)
 
-	randomDecode, _ := queryRequest{}.LegacyAminoDecode(base.NewID("").Bytes())
+	randomDecode, _ := QueryRequest{}.LegacyAminoDecode(base.NewID("").Bytes())
 	require.Equal(t, nil, randomDecode)
 	require.Equal(t, testQueryRequest, queryRequestFromInterface(testQueryRequest))
-	require.Equal(t, queryRequest{}, queryRequestFromInterface(nil))
+	require.Equal(t, QueryRequest{}, queryRequestFromInterface(nil))
 }

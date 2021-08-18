@@ -72,10 +72,10 @@ func (module module) Name() string {
 	return module.name
 }
 func (module module) DefaultGenesis(_ codec.JSONMarshaler) json.RawMessage {
-	return module.genesisPrototype().Default().Encode()
+	return module.genesisPrototype().Default().LegacyAminoEncode()
 }
 func (module module) ValidateGenesis(_ codec.JSONMarshaler, _ client.TxEncodingConfig, rawMessage json.RawMessage) error {
-	genesisState := module.genesisPrototype().Decode(rawMessage)
+	genesisState := module.genesisPrototype().LegacyAminoDecode(rawMessage)
 	return genesisState.Validate()
 }
 func (module module) RegisterRESTRoutes(cliContext client.Context, router *mux.Router) {
@@ -87,9 +87,10 @@ func (module module) RegisterRESTRoutes(cliContext client.Context, router *mux.R
 		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
 	}
 }
-func (module module) RegisterGRPCGatewayRoutes(context client.Context, serveMux *runtime.ServeMux) {
-	// TODO
-	panic("implement me")
+func (module module) RegisterGRPCGatewayRoutes(clientContext client.Context, serveMux *runtime.ServeMux) {
+	for _, query := range module.queries.GetList() {
+		query.RegisterGRPCGatewayRoute(clientContext, serveMux)
+	}
 }
 func (module module) GetTxCmd() *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
@@ -167,7 +168,7 @@ func (module module) LegacyQuerierHandler(legacyAmino *codec.LegacyAmino) sdkTyp
 	}
 }
 func (module module) InitGenesis(context sdkTypes.Context, _ codec.JSONMarshaler, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
-	genesisState := module.genesisPrototype().Decode(rawMessage)
+	genesisState := module.genesisPrototype().LegacyAminoDecode(rawMessage)
 
 	if module.mapper == nil || module.parameters == nil {
 		panic(errors.UninitializedUsage)
@@ -182,7 +183,7 @@ func (module module) ExportGenesis(context sdkTypes.Context, _ codec.JSONMarshal
 		panic(errors.UninitializedUsage)
 	}
 
-	return module.genesisPrototype().Export(context, module.mapper, module.parameters).Encode()
+	return module.genesisPrototype().Export(context, module.mapper, module.parameters).LegacyAminoEncode()
 }
 func (module module) BeginBlock(context sdkTypes.Context, beginBlockRequest abciTypes.RequestBeginBlock) {
 	module.block.Begin(context, beginBlockRequest)
@@ -257,7 +258,7 @@ func (module module) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 }
 
 // TODO
-func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
+func (module module) RegisterIxnterfaces(registry codecTypes.InterfaceRegistry) {
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterInterface(registry)
 	}

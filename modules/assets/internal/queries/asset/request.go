@@ -15,11 +15,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-type queryRequest struct {
-	AssetID types.ID `json:"assetID" valid:"required~required field assetID missing"`
-}
-
-var _ helpers.QueryRequest = (*queryRequest)(nil)
+var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
 // QueryRequest godoc
 // @Summary Query asset using asset id
@@ -31,38 +27,38 @@ var _ helpers.QueryRequest = (*queryRequest)(nil)
 // @Success 200 {object} queryResponse "A succesful query response"
 // @Failure default  {object}  queryResponse "An unexpected error response."
 // @Router /assets/assets/{assetID} [get]
-func (queryRequest queryRequest) Validate() error {
+func (queryRequest QueryRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(queryRequest)
 	return Error
 }
-func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) helpers.QueryRequest {
+func (queryRequest QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(cliCommand.ReadString(flags.AssetID)))
 }
-func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
+func (queryRequest QueryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(vars[Query.GetName()]))
 }
-func (queryRequest queryRequest) LegacyAminoEncode() ([]byte, error) {
-	return common.LegacyAmino.MarshalJSON(queryRequest)
+func (queryRequest QueryRequest) LegacyAminoEncode() ([]byte, error) {
+	return common.LegacyAminoCodec.MarshalJSON(queryRequest)
 }
 
-func (queryRequest queryRequest) LegacyAminoDecode(bytes []byte) (helpers.QueryRequest, error) {
-	if Error := common.LegacyAmino.UnmarshalJSON(bytes, &queryRequest); Error != nil {
+func (queryRequest QueryRequest) LegacyAminoDecode(bytes []byte) (helpers.QueryRequest, error) {
+	if Error := common.LegacyAminoCodec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
 		return nil, Error
 	}
 
 	return queryRequest, nil
 }
 func requestPrototype() helpers.QueryRequest {
-	return queryRequest{}
+	return QueryRequest{}
 }
-func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
+func queryRequestFromInterface(request helpers.QueryRequest) QueryRequest {
 	switch value := request.(type) {
-	case queryRequest:
+	case QueryRequest:
 		return value
 	default:
-		return queryRequest{}
+		return QueryRequest{}
 	}
 }
 func newQueryRequest(assetID types.ID) helpers.QueryRequest {
-	return queryRequest{AssetID: assetID}
+	return QueryRequest{AssetID: assetID}
 }

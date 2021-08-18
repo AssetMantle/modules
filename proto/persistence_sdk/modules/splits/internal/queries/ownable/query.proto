@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package persistence_sdk.modules.splits.internal.queries.ownable;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/splits/internal/queries/ownable";
+
+message QueryRequest {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = false;
+
+  string ownable_i_d = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required AssetID missing\""];
+}
+
+message QueryResponse {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = false;
+
+  bool success = 1;
+  string error = 2 ;
+  string value = 3 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.DecProto", (gogoproto.nullable) = false] ;
+
+}
+
+service Query {
+  rpc Ownable(QueryRequest) returns (QueryResponse) {
+    option (google.api.http).get = "/persistence/splits/ownable";
+  }
+}

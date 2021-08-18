@@ -12,8 +12,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/utilities/module"
 )
 
-var LegacyAmino *codec.LegacyAmino
+var LegacyAminoCodec *codec.LegacyAmino
 
 func init() {
-	LegacyAmino = module.RegisterLegacyAminoCodec(key.Prototype, mappable.Prototype)
+	LegacyAminoCodec = module.RegisterLegacyAminoCodec(key.Prototype, mappable.Prototype)
 }

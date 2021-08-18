@@ -18,7 +18,8 @@ import (
 
 type mapper struct {
 	kvStoreKey        *sdkTypes.KVStoreKey
-	codec             *codec.LegacyAmino
+	legacyAminoCodec  *codec.LegacyAmino
+	codec             codec.Marshaler
 	keyPrototype      func() helpers.Key
 	mappablePrototype func() helpers.Mappable
 }
@@ -33,7 +34,7 @@ func (mapper mapper) GetKVStoreKey() *sdkTypes.KVStoreKey {
 	return mapper.kvStoreKey
 }
 func (mapper mapper) Create(context sdkTypes.Context, mappable helpers.Mappable) {
-	Bytes := mapper.codec.MustMarshalBinaryBare(mappable)
+	Bytes := mapper.legacyAminoCodec.MustMarshalBinaryBare(mappable)
 	kvStore := context.KVStore(mapper.kvStoreKey)
 	kvStore.Set(mappable.GetKey().GenerateStoreKeyBytes(), Bytes)
 }
@@ -47,12 +48,12 @@ func (mapper mapper) Read(context sdkTypes.Context, key helpers.Key) helpers.Map
 
 	var mappable helpers.Mappable
 
-	mapper.codec.MustUnmarshalBinaryBare(Bytes, &mappable)
+	mapper.legacyAminoCodec.MustUnmarshalBinaryBare(Bytes, &mappable)
 
 	return mappable
 }
 func (mapper mapper) Update(context sdkTypes.Context, mappable helpers.Mappable) {
-	Bytes := mapper.codec.MustMarshalBinaryBare(mappable)
+	Bytes := mapper.legacyAminoCodec.MustMarshalBinaryBare(mappable)
 	key := mappable.GetKey()
 	kvStore := context.KVStore(mapper.kvStoreKey)
 	kvStore.Set(key.GenerateStoreKeyBytes(), Bytes)
@@ -70,7 +71,7 @@ func (mapper mapper) Iterate(context sdkTypes.Context, partialKey helpers.Key, a
 	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {
 		var mappable helpers.Mappable
 
-		mapper.codec.MustUnmarshalBinaryBare(kvStorePrefixIterator.Value(), &mappable)
+		mapper.legacyAminoCodec.MustUnmarshalBinaryBare(kvStorePrefixIterator.Value(), &mappable)
 
 		if accumulator(mappable) {
 			break
@@ -86,7 +87,7 @@ func (mapper mapper) ReverseIterate(context sdkTypes.Context, partialKey helpers
 	for ; kvStoreReversePrefixIterator.Valid(); kvStoreReversePrefixIterator.Next() {
 		var mappable helpers.Mappable
 
-		mapper.codec.MustUnmarshalBinaryBare(kvStoreReversePrefixIterator.Value(), &mappable)
+		mapper.legacyAminoCodec.MustUnmarshalBinaryBare(kvStoreReversePrefixIterator.Value(), &mappable)
 
 		if accumulator(mappable) {
 			break
@@ -97,11 +98,11 @@ func (mapper mapper) StoreDecoder(kvA kv.Pair, kvB kv.Pair) string {
 	if bytes.Equal(kvA.Key[:1], mapper.keyPrototype().GenerateStoreKeyBytes()) {
 		var mappableA helpers.Mappable
 
-		mapper.codec.MustUnmarshalBinaryBare(kvA.Value, &mappableA)
+		mapper.legacyAminoCodec.MustUnmarshalBinaryBare(kvA.Value, &mappableA)
 
 		var mappableB helpers.Mappable
 
-		mapper.codec.MustUnmarshalBinaryBare(kvB.Value, &mappableB)
+		mapper.legacyAminoCodec.MustUnmarshalBinaryBare(kvB.Value, &mappableB)
 
 		return fmt.Sprintf("%v\n%v", mappableA, mappableB)
 	}
@@ -113,14 +114,14 @@ func (mapper mapper) Initialize(kvStoreKey *sdkTypes.KVStoreKey) helpers.Mapper 
 	return mapper
 }
 func NewMapper(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) helpers.Mapper {
-	Codec := &codec.LegacyAmino{}
-	keyPrototype().RegisterLegacyAminoCodec(Codec)
-	mappablePrototype().RegisterLegacyAminoCodec(Codec)
-	schema.RegisterLegacyAminoCodec(Codec)
-	Codec.Seal()
+	LegacyAminoCodec := &codec.LegacyAmino{}
+	keyPrototype().RegisterLegacyAminoCodec(LegacyAminoCodec)
+	mappablePrototype().RegisterLegacyAminoCodec(LegacyAminoCodec)
+	schema.RegisterLegacyAminoCodec(LegacyAminoCodec)
+	LegacyAminoCodec.Seal()
 
 	return mapper{
-		codec:             Codec,
+		legacyAminoCodec:  LegacyAminoCodec,
 		keyPrototype:      keyPrototype,
 		mappablePrototype: mappablePrototype,
 	}

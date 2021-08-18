@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package persistence_sdk.modules.orders.internal.queries.order;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/orders/internal/queries/order";
+
+message QueryRequest {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = false;
+
+  string order_i_d = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required AssetID missing\""];
+}
+
+message QueryResponse {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = false;
+
+  bool success = 1;
+  string error = 2 ;
+  repeated string list = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/helpers.Mappable", (gogoproto.nullable) = false] ;
+
+}
+
+service Query {
+  rpc Order(QueryRequest) returns (QueryResponse) {
+    option (google.api.http).get = "/persistence/orders/order";
+  }
+}
