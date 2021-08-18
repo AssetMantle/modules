@@ -1,10 +1,14 @@
 syntax = "proto3";
 
-package modules.orders.internal.transactions.deputize;
+package persistence_sdk.modules.orders.internal.transactions.deputize;
 
 import "gogoproto/gogo.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/deputize";
+
+service Msg {
+  rpc Deputize(Message) returns (TransactionResponse) {};
+}
 
 message Message {
   option (gogoproto.goproto_getters) = false;
@@ -19,3 +23,5 @@ message Message {
   bool remove_maintainer = 7 ;
   bool mutate_maintainer = 8;
 }
+
+message TransactionResponse {}
