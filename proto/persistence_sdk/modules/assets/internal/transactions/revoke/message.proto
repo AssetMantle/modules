@@ -16,3 +16,8 @@ message Message {
   string classification_i_d = 4 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field ClassificationID missing\""];
 }
 
+message TransactionResponse{}
+
+service Msg{
+  rpc Revoke(Message) returns (TransactionResponse);
+}

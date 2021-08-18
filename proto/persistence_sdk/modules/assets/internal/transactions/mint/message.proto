@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package persistence_sdk.modules.assets.internal.transactions.mint;
+package modules.assets.internal.transactions.mint;
 
 import "gogoproto/gogo.proto";
 
@@ -18,5 +18,11 @@ message Message {
   string immutable_properties = 6 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Properties", (gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field ImmutableProperties missing\""];
   string mutable_meta_properties = 7 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.MetaProperties", (gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field MutableMetaProperties missing\""];
   string mutable_properties = 8 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Properties", (gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field MutableProperties missing\""];
+}
+
+message TransactionResponse{}
+
+service Msg{
+  rpc Mint(Message) returns (TransactionResponse);
 }
 

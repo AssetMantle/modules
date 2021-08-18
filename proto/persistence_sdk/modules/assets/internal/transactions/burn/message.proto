@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package persistence_sdk.modules.assets.internal.transactions.burn;
+package modules.assets.internal.transactions.burn;
 
 import "gogoproto/gogo.proto";
 
@@ -14,4 +14,11 @@ message Message {
   string from_i_d = 2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
   string asset_i_d = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
 }
+
+message TransactionResponse{}
+
+service Msg{
+  rpc Burn(Message) returns (TransactionResponse);
+}
+
 

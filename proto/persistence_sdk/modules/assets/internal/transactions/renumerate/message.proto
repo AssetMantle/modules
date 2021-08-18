@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package persistence_sdk.modules.assets.internal.transactions.renumerate;
+package modules.assets.internal.transactions.renumerate;
 
 import "gogoproto/gogo.proto";
 
@@ -16,3 +16,8 @@ message Message {
   string asset_i_d = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field AssetID missing\""];
 }
 
+message TransactionResponse{}
+
+service Msg{
+  rpc Renumerate(Message) returns (TransactionResponse);
+}
