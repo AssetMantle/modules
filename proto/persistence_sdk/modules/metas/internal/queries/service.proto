@@ -1,14 +1,14 @@
 syntax = "proto3";
 
-package modules.metas.internal.queries;
+package persistence_sdk.modules.metas.internal.queries;
 
 import "persistence_sdk/modules/metas/internal/queries/meta/query.proto";
 import "google/api/annotations.proto";
 
-option go_package = "github.com/persistenceOne/persistenceSDK/modules/orders/internal/queries";
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/metas/internal/queries";
 
 service Query {
   rpc Meta(modules.metas.internal.queries.meta.QueryRequest) returns (modules.metas.internal.queries.meta.QueryResponse) {
-    option (google.api.http).get = "";
+    option (google.api.http).get = "/persistenceSDK/metas/meta";
   };
 }

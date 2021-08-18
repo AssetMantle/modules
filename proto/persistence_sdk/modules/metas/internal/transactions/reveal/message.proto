@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package modules.metas.internal.transactions.reveal;
+package persistence_sdk.modules.metas.internal.transactions.reveal;
 
 import "gogoproto/gogo.proto";
 

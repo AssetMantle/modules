@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package modules.metas.internal.queries.meta;
+package persistence_sdk.modules.metas.internal.queries.meta;
 
 import "gogoproto/gogo.proto";
 

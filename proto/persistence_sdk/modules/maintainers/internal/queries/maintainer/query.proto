@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package modules.maintainers.internal.queries.maintainer;
+package persistence_sdk.modules.maintainers.internal.queries.maintainer;
 
 import "gogoproto/gogo.proto";
 

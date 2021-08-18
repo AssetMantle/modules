@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package modules.orders.internal.transactions.take;
+package persistence_sdk.modules.orders.internal.transactions.take;
 
 import "gogoproto/gogo.proto";
 

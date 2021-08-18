@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package modules.identities.internal.transactions.issue;
+package persistence_sdk.modules.identities.internal.transactions.issue;
 
 import "gogoproto/gogo.proto";
 
