@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package schema.traits.base;
+package persistence_sdk.schema.traits.base;
 
 import "gogoproto/gogo.proto";
 
