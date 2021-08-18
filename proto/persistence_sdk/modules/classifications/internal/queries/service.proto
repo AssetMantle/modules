@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package modules.classifications.internal.queries;
+package persistence_sdk.modules.classifications.internal.queries;
 
 import "gogoproto/gogo.proto";
 import "persistence_sdk/modules/classifications/internal/queries/classification/query.proto";

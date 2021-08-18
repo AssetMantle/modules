@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package modules.identities.internal.queries.identity;
+package persistence_sdk.modules.identities.internal.queries.identity;
 
 import "gogoproto/gogo.proto";
 

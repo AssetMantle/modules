@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package modules.classifications.internal.key;
+package persistence_sdk.modules.classifications.internal.key;
 
 import "gogoproto/gogo.proto";
 

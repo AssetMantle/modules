@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package modules.identities.internal.mappable;
+package persistence_sdk.modules.identities.internal.mappable;
 
 import "gogoproto/gogo.proto";
 import "persistence_sdk/schema/traits/base/hasImmutables.proto";

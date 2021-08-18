@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package modules.assets.internal.queries.asset;
+package persistence_sdk.modules.assets.internal.queries.asset;
 
 import "gogoproto/gogo.proto";
 
