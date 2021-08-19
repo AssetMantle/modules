@@ -1,14 +1,13 @@
-package burn
+package quash
 
 import (
 	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
@@ -19,44 +18,40 @@ type msgServer struct {
 
 var _ MsgServer = msgServer{}
 
-func (msgServer msgServer) Burn(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
+func (msgServer msgServer) Quash(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
 	message := messageFromInterface(msg)
 	ctx := sdkTypes.UnwrapSDKContext(goCtx)
 	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	assets := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(message.AssetID))
+	identities := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(message.IdentityID))
 
-	asset := assets.Get(key.FromID(message.AssetID))
-	if asset == nil {
+	identity := identities.Get(key.FromID(message.IdentityID))
+	if identity == nil {
 		return nil, errors.EntityNotFound
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(msgServer.transactionKeeper.supplementAuxiliary.GetKeeper().Help(ctx, supplement.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetBurn())))
+	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(msgServer.transactionKeeper.supplementAuxiliary.GetKeeper().Help(ctx, supplement.NewAuxiliaryRequest(identity.(mappables.InterIdentity).GetExpiry())))
 	if Error != nil {
 		return nil, Error
 	}
 
-	burnHeightMetaFact := metaProperties.Get(base.NewID(properties.Burn))
-	if burnHeightMetaFact == nil {
+	expiryHeightMetaFact := metaProperties.Get(base.NewID(properties.Expiry))
+	if expiryHeightMetaFact == nil {
 		return nil, errors.EntityNotFound
 	}
 
-	burnHeight, Error := burnHeightMetaFact.GetMetaFact().GetData().AsHeight()
+	expiryHeight, Error := expiryHeightMetaFact.GetMetaFact().GetData().AsHeight()
 	if Error != nil {
 		return nil, Error
 	}
 
-	if burnHeight.Compare(base.NewHeight(ctx.BlockHeight())) > 0 {
+	if expiryHeight.Compare(base.NewHeight(ctx.BlockHeight())) > 0 {
 		return nil, errors.NotAuthorized
 	}
 
-	if auxiliaryResponse := msgServer.transactionKeeper.burnAuxiliary.GetKeeper().Help(ctx, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.SmallestDec())); !auxiliaryResponse.IsSuccessful() {
-		return nil, auxiliaryResponse.GetError()
-	}
-
-	assets.Remove(asset)
+	identities.Remove(identity)
 
 	return &TransactionResponse{}, nil
 }

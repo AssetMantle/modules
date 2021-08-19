@@ -7,10 +7,8 @@ package unprovision
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
+	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 )
 
 type transactionKeeper struct {
@@ -21,30 +19,19 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	identityID := message.IdentityID
-	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
+	msgServer := NewMsgServerImpl(transactionKeeper)
 
-	identity := identities.Get(key.FromID(identityID))
-	if identity == nil {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
-
-	if !identity.(mappables.InterIdentity).IsProvisioned(message.From) {
-		return newTransactionResponse(errors.NotAuthorized)
-	}
-
-	if !identity.(mappables.InterIdentity).IsProvisioned(message.To) {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
-
-	identities.Mutate(identity.(mappables.InterIdentity).UnprovisionAddress(message.To))
-
-	return newTransactionResponse(nil)
+	_, Error := msgServer.Unprovision(sdkTypes.WrapSDKContext(context), &message)
+	return newTransactionResponse(Error)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
 	return transactionKeeper
+}
+
+func (transactionKeeper transactionKeeper) RegisterService(configurator module.Configurator) {
+	RegisterMsgServer(configurator.MsgServer(), NewMsgServerImpl(transactionKeeper))
 }
 
 func keeperPrototype() helpers.TransactionKeeper {
