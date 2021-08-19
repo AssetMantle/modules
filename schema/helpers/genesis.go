@@ -16,8 +16,8 @@ type Genesis interface {
 	Import(sdkTypes.Context, Mapper, Parameters)
 	Export(sdkTypes.Context, Mapper, Parameters) Genesis
 
-	Encode() []byte
-	Decode([]byte) Genesis
+	LegacyAminoEncode() []byte
+	LegacyAminoDecode([]byte) Genesis
 
 	Initialize([]Mappable, []types.Parameter) Genesis
 

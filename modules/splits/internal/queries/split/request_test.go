@@ -44,7 +44,7 @@ func Test_Split_Request(t *testing.T) {
 	require.Equal(t, newQueryRequest(base.NewID("randomString")), queryRequest{}.FromMap(vars))
 
 	encodedRequest, Error := testQueryRequest.LegacyAminoEncode()
-	encodedResult, _ := common.Codec.MarshalJSON(testQueryRequest)
+	encodedResult, _ := common.LegacyAminoCodec.MarshalJSON(testQueryRequest)
 	require.Equal(t, encodedResult, encodedRequest)
 	require.Nil(t, Error)
 

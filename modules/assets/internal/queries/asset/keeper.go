@@ -6,7 +6,10 @@
 package asset
 
 import (
+	"context"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
@@ -24,6 +27,13 @@ func (queryKeeper queryKeeper) Enquire(context sdkTypes.Context, queryRequest he
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
 	queryKeeper.mapper = mapper
 	return queryKeeper
+}
+
+func (queryKeeper queryKeeper) RegisterGRPCGatewayRoute(clientContext client.Context, serveMux *runtime.ServeMux) {
+	err := RegisterQueryHandlerClient(context.Background(), serveMux, NewQueryClient(clientContext))
+	if err != nil {
+		panic(err)
+	}
 }
 
 func keeperPrototype() helpers.QueryKeeper {

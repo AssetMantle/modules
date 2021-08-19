@@ -7,18 +7,25 @@ import "google/api/annotations.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/queries/maintainer";
 
-service Query {
-  rpc Maintainer(QueryRequest) returns (QueryResponse) {
-    option (google.api.http).get = "/persistenceSDK/maintainers/maintainer";
-  };
-}
-
 message QueryRequest {
-  string maintainer_i_d = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field MaintainerID missing"'];
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = false;
+
+  string maintainer_i_d = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required AssetID missing\""];
 }
 
 message QueryResponse {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = false;
+
   bool success = 1;
-  string error = 2 [(gogoproto.moretags) = 'swaggertype:"string"'];
-  repeated string list = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/helpers.Mappable"];
+  string error = 2 ;
+  repeated string list = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/helpers.Mappable", (gogoproto.nullable) = false] ;
+
+}
+
+service Query {
+  rpc Maintainer(QueryRequest) returns (QueryResponse) {
+    option (google.api.http).get = "/persistence/maintainers/maintainer";
+  }
 }

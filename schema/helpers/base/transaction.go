@@ -123,9 +123,7 @@ func (transaction transaction) RegisterLegacyAminoCodec(codec *codec.LegacyAmino
 	transaction.requestPrototype().RegisterLegacyAminoCodec(codec)
 }
 func (transaction transaction) RegisterInterface(registry codecTypes.InterfaceRegistry) {
-	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
-		transaction.messagePrototype(),
-	)
+	transaction.messagePrototype().RegisterInterface(registry)
 }
 func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessage) (sdkTypes.Msg, error) {
 	transactionRequest, Error := transaction.requestPrototype().FromJSON(rawMessage)
