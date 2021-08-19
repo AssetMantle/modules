@@ -51,7 +51,7 @@ func TestMapper(t *testing.T) {
 
 	// Iterate
 	testMapper.Iterate(context, base.NewKey("test1"), func(mappable helpers.Mappable) bool { return false })
-	testMapper.Iterate(context, base.NewKey("test3"), func(mappable helpers.Mappable) bool { return false })
+	testMapper.Iteate(context, base.NewKey("test3"), func(mappable helpers.Mappable) bool { return false })
 
 	// Store Decoder
 	//require.Equal(t, "{test1 value1}\n{test1 value1}", testMapper.StoreDecoder(codec.New(), kv.Pair{
