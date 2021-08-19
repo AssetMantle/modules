@@ -35,7 +35,7 @@ func Test_Mint_Message(t *testing.T) {
 	require.Equal(t, nil, Error)
 
 	testMessage := newMessage(fromAccAddress, testFromID, testToID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
-	require.Equal(t, Message{From: fromAccAddress, FromID: testFromID, ToID: testToID, ClassificationID: testClassificationID, ImmutableMetaProperties: immutableMetaProperties, ImmutableProperties: immutableProperties, MutableMetaProperties: mutableMetaProperties, MutableProperties: mutableProperties}, testMessage)
+	require.Equal(t, Message{From: base.NewAccAddressFromSDKTypesAccAddress(fromAccAddress), FromID: testFromID, ToID: testToID, ClassificationID: testClassificationID, ImmutableMetaProperties: immutableMetaProperties, ImmutableProperties: immutableProperties, MutableMetaProperties: mutableMetaProperties, MutableProperties: mutableProperties}, testMessage)
 	require.Equal(t, module.Name, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
 	require.Equal(t, nil, testMessage.ValidateBasic())

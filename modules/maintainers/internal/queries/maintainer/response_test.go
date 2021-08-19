@@ -62,7 +62,7 @@ func Test_Maintainer_Response(t *testing.T) {
 	require.Equal(t, errors.IncorrectFormat, testQueryResponseWithError.GetError())
 
 	encodedResponse, _ := testQueryResponse.LegacyAminoEncode()
-	bytes, _ := common.Codec.MarshalJSON(testQueryResponse)
+	bytes, _ := common.LegacyAminoCodec.MarshalJSON(testQueryResponse)
 	require.Equal(t, bytes, encodedResponse)
 
 	decodedResponse, _ := queryResponse{}.LegacyAminoDecode(bytes)

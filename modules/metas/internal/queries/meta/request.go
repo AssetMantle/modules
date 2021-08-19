@@ -15,11 +15,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-type queryRequest struct {
-	MetaID types.ID `json:"metaID" valid:"required~required field metaID missing"`
-}
-
-var _ helpers.QueryRequest = (*queryRequest)(nil)
+var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
 // QueryRequest godoc
 // @Summary Query meta using meta id
@@ -31,43 +27,43 @@ var _ helpers.QueryRequest = (*queryRequest)(nil)
 // @Success 200 {object} queryResponse "A successful query response"
 // @Failure default  {object}  queryResponse "An unexpected error response."
 // @Router /metas/metas/{metaID} [get]
-func (queryRequest queryRequest) Validate() error {
+func (queryRequest QueryRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(queryRequest)
 	return Error
 }
 
-func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) helpers.QueryRequest {
+func (queryRequest QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(cliCommand.ReadString(flags.MetaID)))
 }
 
-func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
+func (queryRequest QueryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(vars[Query.GetName()]))
 }
 
-func (queryRequest queryRequest) LegacyAminoEncode() ([]byte, error) {
-	return common.Codec.MarshalJSON(queryRequest)
+func (queryRequest QueryRequest) LegacyAminoEncode() ([]byte, error) {
+	return common.LegacyAminoCodec.MarshalJSON(queryRequest)
 }
 
-func (queryRequest queryRequest) LegacyAminoDecode(bytes []byte) (helpers.QueryRequest, error) {
-	if Error := common.Codec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
+func (queryRequest QueryRequest) LegacyAminoDecode(bytes []byte) (helpers.QueryRequest, error) {
+	if Error := common.LegacyAminoCodec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
 		return nil, Error
 	}
 
 	return queryRequest, nil
 }
 func requestPrototype() helpers.QueryRequest {
-	return queryRequest{}
+	return QueryRequest{}
 }
 
-func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
+func queryRequestFromInterface(request helpers.QueryRequest) QueryRequest {
 	switch value := request.(type) {
-	case queryRequest:
+	case QueryRequest:
 		return value
 	default:
-		return queryRequest{}
+		return QueryRequest{}
 	}
 }
 
 func newQueryRequest(metaID types.ID) helpers.QueryRequest {
-	return queryRequest{MetaID: metaID}
+	return QueryRequest{MetaID: metaID}
 }

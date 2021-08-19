@@ -6,6 +6,7 @@
 package base
 
 import (
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -87,6 +88,10 @@ func (query query) RESTQueryHandler(cliContext client.Context) http.HandlerFunc 
 func (query query) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Query {
 	query.queryKeeper = query.keeperPrototype().Initialize(mapper, parameters, auxiliaryKeepers).(helpers.QueryKeeper)
 	return query
+}
+
+func (query query) RegisterGRPCGatewayRoute(clientContext client.Context, serveMux *runtime.ServeMux) {
+	query.queryKeeper.RegisterGRPCGatewayRoute(clientContext, serveMux)
 }
 
 func (query query) query(queryRequest helpers.QueryRequest, cliContext client.Context) ([]byte, int64, error) {

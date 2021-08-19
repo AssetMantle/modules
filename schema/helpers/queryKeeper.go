@@ -6,10 +6,13 @@
 package helpers
 
 import (
+	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 )
 
 type QueryKeeper interface {
 	Enquire(sdkTypes.Context, QueryRequest) QueryResponse
+	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)
 	Keeper
 }

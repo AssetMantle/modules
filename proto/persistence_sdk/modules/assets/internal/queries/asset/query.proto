@@ -3,6 +3,7 @@ syntax = "proto3";
 package persistence_sdk.modules.assets.internal.queries.asset;
 
 import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/modules/assets/internal/queries/asset";
 
@@ -16,12 +17,15 @@ message QueryRequest {
 message QueryResponse {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = false;
-  option (gogoproto.sizer) = false;
-  option (gogoproto.marshaler) = false;
-  option (gogoproto.unmarshaler) = false;
 
-  bool success =1;
+  bool success = 1;
   string error = 2 ;
   repeated string list = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/helpers.Mappable", (gogoproto.nullable) = false] ;
 
+}
+
+service Query {
+  rpc Asset(QueryRequest) returns (QueryResponse) {
+    option (google.api.http).get = "/persistence/assets/asset";
+  }
 }

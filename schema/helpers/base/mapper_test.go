@@ -57,8 +57,8 @@ func TestMapper(t *testing.T) {
 
 	// Store Decoder
 	require.Equal(t, "{test1 value1}\n{test1 value1}", testMapper.StoreDecoder(codec.New(), kv.Pair{
-		Key: append([]byte{0x11}, []byte("test1")...), Value: testMapper.codec.MustMarshalBinaryBare(base.NewMappable("test1", "value1"))}, kv.Pair{
-		Key: append([]byte{0x11}, []byte("test1")...), Value: testMapper.codec.MustMarshalBinaryBare(base.NewMappable("test1", "value1"))}),
+		Key: append([]byte{0x11}, []byte("test1")...), Value: testMapper.legacyAminoCodec.MustMarshalBinaryBare(base.NewMappable("test1", "value1"))}, kv.Pair{
+		Key: append([]byte{0x11}, []byte("test1")...), Value: testMapper.legacyAminoCodec.MustMarshalBinaryBare(base.NewMappable("test1", "value1"))}),
 	)
 
 }

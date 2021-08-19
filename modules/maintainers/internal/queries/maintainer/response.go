@@ -25,10 +25,10 @@ func (queryResponse queryResponse) GetError() error {
 	return queryResponse.Error
 }
 func (queryResponse queryResponse) LegacyAminoEncode() ([]byte, error) {
-	return common.Codec.MarshalJSON(queryResponse)
+	return common.LegacyAminoCodec.MarshalJSON(queryResponse)
 }
 func (queryResponse queryResponse) LegacyAminoDecode(bytes []byte) (helpers.QueryResponse, error) {
-	if Error := common.Codec.UnmarshalJSON(bytes, &queryResponse); Error != nil {
+	if Error := common.LegacyAminoCodec.UnmarshalJSON(bytes, &queryResponse); Error != nil {
 		return nil, Error
 	}
 

@@ -6,36 +6,37 @@
 package asset
 
 import (
+	"fmt"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/common"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
-type queryResponse struct {
-	Success bool               `json:"success"`
-	Error   error              `json:"error" swaggertype:"string"`
-	List    []helpers.Mappable `json:"list"`
-}
+//type queryResponse struct {
+//	Success bool               `json:"success"`
+//	Error   error              `json:"error" swaggertype:"string"`
+//	List    []helpers.Mappable `json:"list"`
+//}
 
-var _ helpers.QueryResponse = (*queryResponse)(nil)
+var _ helpers.QueryResponse = (*QueryResponse)(nil)
 
-func (queryResponse queryResponse) IsSuccessful() bool {
+func (queryResponse QueryResponse) IsSuccessful() bool {
 	return queryResponse.Success
 }
-func (queryResponse queryResponse) GetError() error {
-	return queryResponse.Error
+func (queryResponse QueryResponse) GetError() error {
+	return fmt.Errorf(queryResponse.Error)
 }
-func (queryResponse queryResponse) LegacyAminoEncode() ([]byte, error) {
-	return common.LegacyAmino.MarshalJSON(queryResponse)
+func (queryResponse QueryResponse) LegacyAminoEncode() ([]byte, error) {
+	return common.LegacyAminoCodec.MarshalJSON(queryResponse)
 }
-func (queryResponse queryResponse) LegacyAminoDecode(bytes []byte) (helpers.QueryResponse, error) {
-	if Error := common.LegacyAmino.UnmarshalJSON(bytes, &queryResponse); Error != nil {
+func (queryResponse QueryResponse) LegacyAminoDecode(bytes []byte) (helpers.QueryResponse, error) {
+	if Error := common.LegacyAminoCodec.UnmarshalJSON(bytes, &queryResponse); Error != nil {
 		return nil, Error
 	}
 
 	return queryResponse, nil
 }
 func responsePrototype() helpers.QueryResponse {
-	return queryResponse{}
+	return QueryResponse{}
 }
 func newQueryResponse(collection helpers.Collection, error error) helpers.QueryResponse {
 	success := true
@@ -43,9 +44,9 @@ func newQueryResponse(collection helpers.Collection, error error) helpers.QueryR
 		success = false
 	}
 
-	return queryResponse{
+	return QueryResponse{
 		Success: success,
-		Error:   error,
+		Error:   error.Error(),
 		List:    collection.GetList(),
 	}
 }

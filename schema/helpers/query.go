@@ -6,6 +6,7 @@
 package helpers
 
 import (
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -20,4 +21,5 @@ type Query interface {
 	HandleMessageByLegacyAmino(sdkTypes.Context, abciTypes.RequestQuery) ([]byte, error)
 	RESTQueryHandler(client.Context) http.HandlerFunc
 	Initialize(Mapper, Parameters, ...interface{}) Query
+	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)
 }
