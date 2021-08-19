@@ -66,7 +66,7 @@ func (identity Identity) GetKey() helpers.Key {
 	return key.FromID(identity.ID)
 }
 func (Identity) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Identity{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Identity{})
 }
 func NewIdentity(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.InterIdentity {
 	return &Identity{

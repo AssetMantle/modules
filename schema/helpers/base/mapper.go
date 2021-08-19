@@ -114,7 +114,7 @@ func (mapper mapper) Initialize(kvStoreKey *sdkTypes.KVStoreKey) helpers.Mapper 
 	return mapper
 }
 func NewMapper(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) helpers.Mapper {
-	LegacyAminoCodec := &codec.LegacyAmino{}
+	LegacyAminoCodec := codec.NewLegacyAmino()
 	keyPrototype().RegisterLegacyAminoCodec(LegacyAminoCodec)
 	mappablePrototype().RegisterLegacyAminoCodec(LegacyAminoCodec)
 	schema.RegisterLegacyAminoCodec(LegacyAminoCodec)

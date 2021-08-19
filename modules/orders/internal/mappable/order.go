@@ -109,7 +109,7 @@ func (order Order) GetKey() helpers.Key {
 	return key.FromID(order.ID)
 }
 func (Order) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Order{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Order{})
 }
 
 func NewOrder(orderID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Order {

@@ -39,7 +39,7 @@ func (maintainerID MaintainerID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(maintainerID.Bytes())
 }
 func (MaintainerID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, MaintainerID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &MaintainerID{})
 }
 func (maintainerID MaintainerID) IsPartial() bool {
 	return len(maintainerID.IdentityID.Bytes()) == 0

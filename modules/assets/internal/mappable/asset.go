@@ -74,7 +74,7 @@ func (asset Asset) GetKey() helpers.Key {
 	return key.FromID(asset.ID)
 }
 func (Asset) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Asset{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Asset{})
 }
 
 func NewAsset(assetID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.InterNFT {

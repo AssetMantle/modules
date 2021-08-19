@@ -65,7 +65,7 @@ func (orderID OrderID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(orderID.Bytes())
 }
 func (OrderID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, OrderID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &OrderID{})
 }
 func (orderID OrderID) IsPartial() bool {
 	return len(orderID.HashID.Bytes()) == 0

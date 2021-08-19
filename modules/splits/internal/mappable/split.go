@@ -46,7 +46,7 @@ func (split Split) GetKey() helpers.Key {
 	return key.FromID(split.ID)
 }
 func (Split) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Split{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Split{})
 }
 
 func NewSplit(splitID types.ID, value sdkTypes.Dec) mappables.Split {
