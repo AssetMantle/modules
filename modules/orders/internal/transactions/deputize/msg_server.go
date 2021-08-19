@@ -1,31 +1,25 @@
-package send
+package deputize
 
 import (
 	"context"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/utilities"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
 )
 
 type msgServer struct {
 	transactionKeeper
 }
 
-func (msgServer msgServer) Send(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
+func (msgServer msgServer) Deputize(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
 	message := messageFromInterface(msg)
 	ctx := types.UnwrapSDKContext(goCtx)
 	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	splits := msgServer.transactionKeeper.mapper.NewCollection(ctx)
-
-	if _, Error := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, message.Value); Error != nil {
-		return nil, Error
-	}
-
-	if _, Error := utilities.AddSplits(splits, message.ToID, message.OwnableID, message.Value); Error != nil {
-		return nil, Error
+	if auxiliaryResponse := msgServer.transactionKeeper.deputizeAuxiliary.GetKeeper().Help(ctx, deputize.NewAuxiliaryRequest(message.FromID, message.ToID, message.ClassificationID, message.MaintainedProperties, message.AddMaintainer, message.RemoveMaintainer, message.MutateMaintainer)); !auxiliaryResponse.IsSuccessful() {
+		return nil, auxiliaryResponse.GetError()
 	}
 
 	return &TransactionResponse{}, nil

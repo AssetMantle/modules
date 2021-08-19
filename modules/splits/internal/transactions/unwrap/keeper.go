@@ -7,11 +7,10 @@ package unwrap
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/utilities"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
@@ -26,20 +25,10 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
+	msgServer := NewMsgServerImpl(transactionKeeper)
 
-	splits := transactionKeeper.mapper.NewCollection(context)
-	if _, Error := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, sdkTypes.NewDecFromInt(message.Value)); Error != nil {
-		return newTransactionResponse(Error)
-	}
-
-	if Error := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(context, module.Name, message.From, sdkTypes.NewCoins(sdkTypes.NewCoin(message.OwnableID.String(), message.Value))); Error != nil {
-		return newTransactionResponse(Error)
-	}
-
-	return newTransactionResponse(nil)
+	_, Error := msgServer.Unwrap(sdkTypes.WrapSDKContext(context), &message)
+	return newTransactionResponse(Error)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
@@ -63,6 +52,10 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 
 	return transactionKeeper
 }
+func (transactionKeeper transactionKeeper) RegisterService(configurator sdkModule.Configurator) {
+	RegisterMsgServer(configurator.MsgServer(), NewMsgServerImpl(transactionKeeper))
+}
+
 func keeperPrototype() helpers.TransactionKeeper {
 	return transactionKeeper{}
 }

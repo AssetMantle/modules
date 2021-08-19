@@ -27,7 +27,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	_, Error := msgServer.Send(sdkTypes.WrapSDKContext(context), &message)
 	return newTransactionResponse(Error)
-
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {

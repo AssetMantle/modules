@@ -1,33 +1,26 @@
-package send
+package revoke
 
 import (
 	"context"
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/utilities"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
 )
 
 type msgServer struct {
 	transactionKeeper
 }
 
-func (msgServer msgServer) Send(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
+func (msgServer msgServer) Revoke(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
 	message := messageFromInterface(msg)
-	ctx := types.UnwrapSDKContext(goCtx)
+	ctx := sdkTypes.UnwrapSDKContext(goCtx)
 	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	splits := msgServer.transactionKeeper.mapper.NewCollection(ctx)
-
-	if _, Error := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, message.Value); Error != nil {
-		return nil, Error
+	if auxiliaryResponse := msgServer.transactionKeeper.revokeAuxiliary.GetKeeper().Help(ctx, revoke.NewAuxiliaryRequest(message.FromID, message.ToID, message.ClassificationID)); !auxiliaryResponse.IsSuccessful() {
+		return nil, auxiliaryResponse.GetError()
 	}
-
-	if _, Error := utilities.AddSplits(splits, message.ToID, message.OwnableID, message.Value); Error != nil {
-		return nil, Error
-	}
-
 	return &TransactionResponse{}, nil
 }
 

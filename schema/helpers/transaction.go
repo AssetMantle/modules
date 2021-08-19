@@ -7,13 +7,13 @@ package helpers
 
 import (
 	"encoding/json"
-	"net/http"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/spf13/cobra"
+	"net/http"
 )
 
 type Transaction interface {
@@ -26,4 +26,5 @@ type Transaction interface {
 	// RegisterMsgServer(s grpc.Server, srv MsgServer)
 	DecodeTransactionRequest(json.RawMessage) (sdkTypes.Msg, error)
 	InitializeKeeper(Mapper, Parameters, ...interface{}) Transaction
+	RegisterService(module.Configurator)
 }

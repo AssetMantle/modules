@@ -261,17 +261,12 @@ func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterInterface(registry)
 	}
-
-	// TODO
-	//sdkTypesMsgService.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 
-// TODO
 func (module module) RegisterServices(configurator sdkTypesModule.Configurator) {
 	for _, transaction := range module.transactions.GetList() {
-		transaction.RegisterSe
+		transaction.RegisterService(configurator)
 	}
-	panic("implement me")
 }
 
 func NewModule(name string, auxiliariesPrototype func() helpers.Auxiliaries, genesisPrototype func() helpers.Genesis, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.Parameters, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions, blockPrototype func() helpers.Block) helpers.Module {

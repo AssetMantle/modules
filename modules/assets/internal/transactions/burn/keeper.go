@@ -60,6 +60,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 
 func (transactionKeeper transactionKeeper) RegisterService(configurator module.Configurator) {
 	RegisterMsgServer(configurator.MsgServer(), NewMsgServerImpl(transactionKeeper))
+
 }
 
 func keeperPrototype() helpers.TransactionKeeper {
