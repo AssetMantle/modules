@@ -19,21 +19,21 @@ type msgServer struct {
 
 var _ MsgServer = msgServer{}
 
-func (m msgServer) Burn(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
+func (msgServer msgServer) Burn(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
 	message := messageFromInterface(msg)
 	ctx := sdkTypes.UnwrapSDKContext(goCtx)
-	if auxiliaryResponse := m.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	assets := m.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(message.AssetID))
+	assets := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(message.AssetID))
 
 	asset := assets.Get(key.FromID(message.AssetID))
 	if asset == nil {
 		return nil, errors.EntityNotFound
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(m.transactionKeeper.supplementAuxiliary.GetKeeper().Help(ctx, supplement.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetBurn())))
+	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(msgServer.transactionKeeper.supplementAuxiliary.GetKeeper().Help(ctx, supplement.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetBurn())))
 	if Error != nil {
 		return nil, Error
 	}
@@ -52,7 +52,7 @@ func (m msgServer) Burn(goCtx context.Context, msg *Message) (*TransactionRespon
 		return nil, errors.NotAuthorized
 	}
 
-	if auxiliaryResponse := m.transactionKeeper.burnAuxiliary.GetKeeper().Help(ctx, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.SmallestDec())); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := msgServer.transactionKeeper.burnAuxiliary.GetKeeper().Help(ctx, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.SmallestDec())); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 

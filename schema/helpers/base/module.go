@@ -252,26 +252,26 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 }
 
 func (module module) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	for _, transaction := range module.transactionsPrototype().GetList() {
+	for _, transaction := range module.transactions.GetList() {
 		transaction.RegisterLegacyAminoCodec(codec)
 	}
+	// TODO queries codec can be registered here and removed from common
 }
 
 func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
-	for _, transaction := range module.transactionsPrototype().GetList() {
+	for _, transaction := range module.transactions.GetList() {
 		transaction.RegisterInterface(registry)
 	}
-
-	// TODO
-	//sdkTypesMsgService.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 
 func (module module) RegisterServices(configurator sdkTypesModule.Configurator) {
+	for _, transaction := range module.transactions.GetList() {
+		transaction.RegisterService(configurator)
+	}
+
 	for _, query := range module.queries.GetList() {
 		query.RegisterService(configurator)
 	}
-
-	// TODO RegisterMsgServer
 }
 
 func NewModule(name string, auxiliariesPrototype func() helpers.Auxiliaries, genesisPrototype func() helpers.Genesis, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.Parameters, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions, blockPrototype func() helpers.Block) helpers.Module {

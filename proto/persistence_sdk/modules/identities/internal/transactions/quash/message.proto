@@ -18,5 +18,5 @@ message Message {
 message TransactionResponse{}
 
 service Msg{
-  rpc Provision(Message) returns (TransactionResponse);
+  rpc Quash(Message) returns (TransactionResponse);
 }

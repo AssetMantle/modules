@@ -16,6 +16,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 )
@@ -36,11 +37,7 @@ func (message Message) GetSignBytes() []byte {
 	return sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message))
 }
 func (message Message) GetSigners() []sdkTypes.AccAddress {
-	accAddress, err := sdkTypes.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic(err)
-	}
-	return []sdkTypes.AccAddress{accAddress}
+	return []sdkTypes.AccAddress{message.From.AsSDKTypesAccAddress()}
 }
 func (Message) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, Message{})
@@ -64,7 +61,7 @@ func messagePrototype() helpers.Message {
 }
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, assetID types.ID) sdkTypes.Msg {
 	return &Message{
-		From:    from.String(),
+		From:    base.NewAccAddressFromSDKTypesAccAddress(from),
 		FromID:  fromID,
 		AssetID: assetID,
 	}
