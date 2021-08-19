@@ -39,12 +39,12 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Search for an asset by Asset ID",
+                "summary": "Search for an asset by asset ID",
                 "parameters": [
                     {
                         "type": "string",
                         "description": "Unique identifier of an asset.",
-                        "name": "Asset ID",
+                        "name": "assetID",
                         "in": "path",
                         "required": true
                     }
@@ -79,8 +79,8 @@ var doc = `{
                 "summary": "Burn asset transaction",
                 "parameters": [
                     {
-                        "description": "Transaction for burning an asset. request body",
-                        "name": "PLEASE PROVIDE THE PARAMETER NAMES body",
+                        "description": "Transaction for burning an asset.",
+                        "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -115,11 +115,11 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Define asset transaction",
+                "summary": "Define an asset transaction",
                 "parameters": [
                     {
-                        "description": "A transaction to define the asset. request body",
-                        "name": "Define Asset body",
+                        "description": "A transaction to define the asset.",
+                        "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -154,10 +154,10 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Deputize asset transaction",
+                "summary": "Deputize an asset transaction",
                 "parameters": [
                     {
-                        "description": "Transaction to deputize an asset. request body",
+                        "description": "Transaction to deputize a maintainer for an asset classification.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -193,10 +193,10 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Mint asset transaction",
+                "summary": "Mint an asset transaction",
                 "parameters": [
                     {
-                        "description": "A transaction to mint the asset. request body",
+                        "description": "A transaction to mint the asset.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -232,10 +232,10 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "mutate asset transaction",
+                "summary": "Mutate an asset transaction",
                 "parameters": [
                     {
-                        "description": "A transaction to mutate the asset. request body",
+                        "description": "A transaction to mutate the asset.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -274,7 +274,7 @@ var doc = `{
                 "summary": "Renumerate asset transaction",
                 "parameters": [
                     {
-                        "description": "A transaction to make payment for the asset. request body",
+                        "description": "A transaction to renumerate the asset.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -310,10 +310,10 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Revoke asset transaction",
+                "summary": "Revoke a maintainer for an asset classification transaction",
                 "parameters": [
                     {
-                        "description": "A transaction to revoke the asset. request body",
+                        "description": "A transaction to revoke a maintainer for the asset classification.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -349,12 +349,12 @@ var doc = `{
                 "tags": [
                     "Classifications"
                 ],
-                "summary": "Search for classifications by Classification ID",
+                "summary": "Search for a classification by classification ID",
                 "parameters": [
                     {
                         "type": "string",
                         "description": "Unique identifier of the asset classification.",
-                        "name": "Classification ID",
+                        "name": "classification ID",
                         "in": "path",
                         "required": true
                     }
@@ -386,7 +386,7 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Search for identities by Identity ID",
+                "summary": "Search for an identity by identity ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -423,10 +423,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Define identity",
+                "summary": "Define an identity",
                 "parameters": [
                     {
-                        "description": "A transaction to define an identity. request body",                    
+                        "description": "A transaction to define an identity.",                    
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -462,10 +462,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Deputize identities",
+                "summary": "Deputize an identity",
                 "parameters": [
                     {
-                        "description": "A transaction to deputize the identities. request body",
+                        "description": "A transaction to deputize a maintainer for an identity classification.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -502,10 +502,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Issue identities",
+                "summary": "Issue an identity",
                 "parameters": [
                     {
-                        "description": "A transaction to issue an identity. request body",
+                        "description": "A transaction to issue an identity.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -541,10 +541,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Nub identity",
+                "summary": "Nub an identity",
                 "parameters": [
                     {
-                        "description": "A transaction to nub an identity. request body",
+                        "description": "A transaction to nub a base identity.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -580,10 +580,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Provision identity",
+                "summary": "Provision an identity",
                 "parameters": [
                     {
-                        "description": "A transaction to provision an identity. request body",
+                        "description": "A transaction to provision an address to an identity.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -619,10 +619,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Revoke identity",
+                "summary": "Revoke an identity",
                 "parameters": [
                     {
-                        "description": "A transaction to revoke an identity. request body",
+                        "description": "A transaction to revoke a maintainer for identity classification.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -658,10 +658,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Unprovision identity",
+                "summary": "Unprovision an identity",
                 "parameters": [
                     {
-                        "description": "A transaction to unprovision an identity. request body",
+                        "description": "A transaction to unprovision an address for an identity.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -697,7 +697,7 @@ var doc = `{
                 "tags": [
                     "Maintainers"
                 ],
-                "summary": "Search for maintainers by Maintainer ID",
+                "summary": "Search for maintainer by maintainer ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -734,7 +734,7 @@ var doc = `{
                 "tags": [
                     "Metas"
                 ],
-                "summary": "Search for Metadata by Meta ID",
+                "summary": "Search for metadata by meta ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -810,7 +810,7 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Search for orders by Order ID",
+                "summary": "Search for an order by order ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -850,7 +850,7 @@ var doc = `{
                 "summary": "Cancel order",
                 "parameters": [
                     {
-                        "description": "A transaction to cancel the order. request body",
+                        "description": "A transaction to cancel the order.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -886,10 +886,10 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Define order",
+                "summary": "Define an order",
                 "parameters": [
                     {
-                        "description": "A transaction to define an order. request body",
+                        "description": "A transaction to define an order.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -925,10 +925,10 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Deputize order",
+                "summary": "Deputize an order",
                 "parameters": [
                     {
-                        "description": "A transaction to deputize the order. request body",
+                        "description": "A transaction to deputize a maintainer for the order classification.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -967,7 +967,7 @@ var doc = `{
                 "summary": "Immediate order",
                 "parameters": [
                     {
-                        "description": "A transaction to define an order instantly. request body",
+                        "description": "A transaction to execute an order instantly.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1003,10 +1003,10 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Make order",
+                "summary": "Make an order",
                 "parameters": [
                     {
-                        "description": "A transaction to place an order. request body",
+                        "description": "A transaction to place an order.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1042,10 +1042,10 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Modify order",
+                "summary": "Modify an order",
                 "parameters": [
                     {
-                        "description": "A transaction to modify the order. request body",
+                        "description": "A transaction to modify the order.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1081,10 +1081,10 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Revoke order",
+                "summary": "Revoke an order",
                 "parameters": [
                     {
-                        "description": "A transaction to revoke an order. DOES REVOKE MEAN CANCEL? request body",
+                        "description": "A transaction to revoke a maintainer from the order classification.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1120,10 +1120,10 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Take order",
+                "summary": "Take an order",
                 "parameters": [
                     {
-                        "description": "A transaction to take the order. request body",
+                        "description": "A transaction to take the order.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1159,11 +1159,11 @@ var doc = `{
                 "tags": [
                     "Splits"
                 ],
-                "summary": "Search for split transaction by Split ID",
+                "summary": "Search for a split by split ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Unique identifier of the split transaction.",
+                        "description": "Unique identifier of the split.",
                         "name": "Split ID",
                         "in": "path",
                         "required": true
@@ -1196,10 +1196,10 @@ var doc = `{
                 "tags": [
                     "Splits"
                 ],
-                "summary": "Send split",
+                "summary": "Send a split",
                 "parameters": [
                     {
-                        "description": "A transaction to send the split asset. request body",
+                        "description": "A transaction to send the split to another identity.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1235,10 +1235,10 @@ var doc = `{
                 "tags": [
                     "Splits"
                 ],
-                "summary": "Unwrap split",
+                "summary": "Unwrap a split",
                 "parameters": [
                     {
-                        "description": "A transaction to unwrap the split asset. request body",
+                        "description": "A transaction to unwrap a coin split.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1274,10 +1274,10 @@ var doc = `{
                 "tags": [
                     "Splits"
                 ],
-                "summary": "Wrap split asset",
+                "summary": "Wrap a coin",
                 "parameters": [
                     {
-                        "description": "A transaction to wrap the split asset. request body",
+                        "description": "A transaction to wrap the coin and convert to a split.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -2080,7 +2080,7 @@ var doc = `{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
-                "classificationID": {
+                "ClassificationID": {
                     "type": "string"
                 },
                 "fromID": {
@@ -2356,7 +2356,7 @@ var SwaggerInfo = swaggerInfo{
 	Host:        "localhost:1317",
 	BasePath:    "",
 	Schemes:     []string{},
-	Title:       "Persistence Swagger Documentation",
+	Title:       "Persistence Swagger API Documentation",
 	Description: "API Documentation of Persistence custom modules",
 }
 
