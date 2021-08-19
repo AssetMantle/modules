@@ -268,6 +268,9 @@ func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
 
 // TODO
 func (module module) RegisterServices(configurator sdkTypesModule.Configurator) {
+	for _, transaction := range module.transactions.GetList() {
+		transaction.RegisterSe
+	}
 	panic("implement me")
 }
 

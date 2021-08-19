@@ -19,3 +19,9 @@ message Message {
   bool  remove_maintainer = 7;
   bool mutate_maintainer = 8;
 }
+
+message TransactionResponse{}
+
+service Msg{
+  rpc Deputize(Message) returns (TransactionResponse);
+}
