@@ -76,7 +76,7 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Burn asset transaction",
+                "summary": "Burn an asset transaction",
                 "parameters": [
                     {
                         "description": "Transaction for burning an asset.",
@@ -697,7 +697,7 @@ var doc = `{
                 "tags": [
                     "Maintainers"
                 ],
-                "summary": "Search for maintainer by maintainer ID",
+                "summary": "Search for a maintainer by maintainer ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -1081,7 +1081,7 @@ var doc = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Revoke an order",
+                "summary": "Revoke a maintainer",
                 "parameters": [
                     {
                         "description": "A transaction to revoke a maintainer from the order classification.",
