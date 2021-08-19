@@ -7,25 +7,33 @@ package base
 
 import (
 	"encoding/json"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
+	"github.com/cosmos/cosmos-sdk/client/rpc"
+	"github.com/cosmos/cosmos-sdk/server/api"
+	"github.com/cosmos/cosmos-sdk/server/config"
+	"github.com/persistenceOne/persistenceSDK/schema/applications/base/encoding"
+	"github.com/rakyll/statik/fs"
 	"honnef.co/go/tools/version"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
-	cryptoCodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	serverTypes "github.com/cosmos/cosmos-sdk/server/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+	authRest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
 	sdkAuthKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authSimulation "github.com/cosmos/cosmos-sdk/x/auth/simulation"
+	authTx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	sdkAuthTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/bank"
@@ -92,7 +100,6 @@ import (
 	splitsMint "github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/renumerate"
 	splitsTransfer "github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
-	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/applications"
 	"github.com/spf13/viper"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
@@ -118,7 +125,6 @@ type application struct {
 
 	enabledWasmProposalTypeList []wasm.ProposalType
 	moduleAccountPermissions    map[string][]string
-	tokenReceiveAllowedModules  map[string]bool
 
 	keys               map[string]*sdkTypes.KVStoreKey
 	transientStoreKeys map[string]*sdkTypes.TransientStoreKey
@@ -149,6 +155,44 @@ func (application application) GetLegacyAminoCodec() *codec.LegacyAmino {
 }
 func (application application) GetInterfaceRegistry() types.InterfaceRegistry {
 	return application.interfaceRegistry
+}
+
+func (application application) LoadHeight(height int64) error {
+	return application.LoadVersion(height)
+}
+
+func (application application) RegisterAPIRoutes(apiServer *api.Server, apiConfig config.APIConfig) {
+	clientCtx := apiServer.ClientCtx
+	rpc.RegisterRoutes(clientCtx, apiServer.Router)
+	// Register legacy tx routes.
+	authRest.RegisterTxRoutes(clientCtx, apiServer.Router)
+	// Register new tx routes from grpc-gateway.
+	authTx.RegisterGRPCGatewayRoutes(clientCtx, apiServer.GRPCGatewayRouter)
+	// Register new tendermint queries routes from grpc-gateway.
+	tmservice.RegisterGRPCGatewayRoutes(clientCtx, apiServer.GRPCGatewayRouter)
+
+	// Register legacy and grpc-gateway routes for all modules.
+	application.moduleBasicManager.RegisterRESTRoutes(clientCtx, apiServer.Router)
+	application.moduleBasicManager.RegisterGRPCGatewayRoutes(clientCtx, apiServer.GRPCGatewayRouter)
+
+	// register swagger API from root so that other applications can override easily
+	if apiConfig.Swagger {
+		statikFS, err := fs.New()
+		if err != nil {
+			panic(err)
+		}
+
+		staticServer := http.FileServer(statikFS)
+		apiServer.Router.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", staticServer))
+	}
+}
+
+func (application application) RegisterTxService(clientCtx client.Context) {
+	authTx.RegisterTxService(application.BaseApp.GRPCQueryRouter(), clientCtx, application.BaseApp.Simulate, application.interfaceRegistry)
+}
+
+func (application application) RegisterTendermintService(clientCtx client.Context) {
+	tmservice.RegisterTendermintService(application.BaseApp.GRPCQueryRouter(), clientCtx, application.interfaceRegistry)
 }
 
 func (application application) ExportApplicationStateAndValidators(forZeroHeight bool, jailAllowedAddrs []string) (serverTypes.ExportedApp, error) {
@@ -296,12 +340,12 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 	}, err
 }
 
-func (application application) Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, clientTxConfig client.TxConfig, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, appOpts serverTypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
+func (application application) Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, skipUpgradeHeights map[int64]bool, homePath string, invCheckPeriod uint, encodingConfig encoding.EncodingConfig, appOpts serverTypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
 	application.BaseApp = baseapp.NewBaseApp(
 		application.name,
 		logger,
 		db,
-		clientTxConfig.TxDecoder(), // TODO
+		encodingConfig.TxConfig.TxDecoder(),
 		baseAppOptions...,
 	)
 	application.SetCommitMultiStoreTracer(traceStore)
@@ -512,7 +556,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		splitsModule.GetAuxiliary(splitsTransfer.Auxiliary.GetName()),
 	)
 
-	wasmDir := filepath.Join(home, wasmTypes.ModuleName)
+	wasmDir := filepath.Join(application.GetDefaultHome(), wasmTypes.ModuleName)
 
 	wasmWrap := struct {
 		Wasm wasmTypes.WasmConfig `mapstructure:"wasm"`
@@ -576,7 +620,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 	}
 
 	application.moduleManager = module.NewManager(
-		genutil.NewAppModule(accountKeeper, application.stakingKeeper, application.BaseApp.DeliverTx, clientTxConfig),
+		genutil.NewAppModule(accountKeeper, application.stakingKeeper, application.BaseApp.DeliverTx, encodingConfig.TxConfig),
 		auth.NewAppModule(application.codec, accountKeeper, nil),
 		vesting.NewAppModule(accountKeeper, bankKeeper),
 		bank.NewAppModule(application.codec, bankKeeper, accountKeeper),
@@ -689,7 +733,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 	application.SetAnteHandler(
 		ante.NewAnteHandler(
 			accountKeeper, bankKeeper, ante.DefaultSigVerificationGasConsumer,
-			clientTxConfig.SignModeHandler(),
+			encodingConfig.TxConfig.SignModeHandler(),
 		))
 	application.SetEndBlocker(application.moduleManager.EndBlock)
 
@@ -704,27 +748,15 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 
 	return &application
 }
-func makeLegacyAmino(moduleBasicManager module.BasicManager) *codec.LegacyAmino {
-	Codec := codec.NewLegacyAmino()
-	moduleBasicManager.RegisterLegacyAminoCodec(Codec)
-	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	cryptoCodec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	Codec.Seal()
 
-	return Codec
-}
-
-func NewApplication(name string, moduleBasicManager module.BasicManager, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool, codec codec.Marshaler, interfaceRegistry types.InterfaceRegistry) applications.Application {
+func NewApplication(name string, moduleBasicManager module.BasicManager, encodingConfig encoding.EncodingConfig, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string) applications.Application {
 	return &application{
 		name:                        name,
 		moduleBasicManager:          moduleBasicManager,
-		legacyAminoCodec:            makeLegacyAmino(moduleBasicManager),
-		codec:                       codec,
-		interfaceRegistry:           interfaceRegistry,
+		legacyAminoCodec:            encodingConfig.LegacyAmino,
+		codec:                       encodingConfig.Marshaler,
+		interfaceRegistry:           encodingConfig.InterfaceRegistry,
 		enabledWasmProposalTypeList: enabledWasmProposalTypeList,
 		moduleAccountPermissions:    moduleAccountPermissions,
-		tokenReceiveAllowedModules:  tokenReceiveAllowedModules,
 	}
 }
