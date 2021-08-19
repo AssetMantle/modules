@@ -8,8 +8,10 @@ package mint
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
+	sdkTypesMsgService "github.com/cosmos/cosmos-sdk/types/msgservice"
 	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -40,19 +42,25 @@ func (message Message) GetSigners() []sdkTypes.AccAddress {
 func (Message) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, Message{})
 }
+func (Message) RegisterInterface(registry codecTypes.InterfaceRegistry) {
+	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
+		&Message{},
+	)
+	sdkTypesMsgService.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
+}
 func messageFromInterface(msg sdkTypes.Msg) Message {
 	switch value := msg.(type) {
-	case Message:
-		return value
+	case *Message:
+		return *value
 	default:
 		return Message{}
 	}
 }
 func messagePrototype() helpers.Message {
-	return Message{}
+	return &Message{}
 }
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, toID types.ID, classificationID types.ID, immutableMetaProperties types.MetaProperties, immutableProperties types.Properties, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
-	return Message{
+	return &Message{
 		From:                    base.NewAccAddressFromSDKTypesAccAddress(from),
 		FromID:                  fromID,
 		ToID:                    toID,
