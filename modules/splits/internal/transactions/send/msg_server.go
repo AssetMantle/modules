@@ -11,14 +11,14 @@ type msgServer struct {
 	transactionKeeper
 }
 
-func (m msgServer) Send(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
+func (msgServer msgServer) Send(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
 	message := messageFromInterface(msg)
 	ctx := types.UnwrapSDKContext(goCtx)
-	if auxiliaryResponse := m.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	splits := m.transactionKeeper.mapper.NewCollection(ctx)
+	splits := msgServer.transactionKeeper.mapper.NewCollection(ctx)
 
 	if _, Error := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, message.Value); Error != nil {
 		return nil, Error
