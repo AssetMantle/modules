@@ -5,11 +5,9 @@
 
 package types
 
-import "github.com/persistenceOne/persistenceSDK/schema"
-
 type Property interface {
 	GetID() ID
 	GetFact() Fact
 
-	schema.Proto
+	Proto
 }

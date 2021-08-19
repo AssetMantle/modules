@@ -41,7 +41,7 @@ func (classification Classification) Mutate(propertyList ...types.Property) trai
 }
 
 func (Classification) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, Classification{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Classification{})
 }
 
 func NewClassification(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Classification {

@@ -5,8 +5,6 @@
 
 package types
 
-import "github.com/persistenceOne/persistenceSDK/schema"
-
 type Properties interface {
 	Get(ID) Property
 
@@ -16,5 +14,5 @@ type Properties interface {
 	Remove(...Property) Properties
 	Mutate(...Property) Properties
 
-	schema.Proto
+	Proto
 }

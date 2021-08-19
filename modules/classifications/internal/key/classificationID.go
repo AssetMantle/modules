@@ -41,13 +41,14 @@ func (classificationID ClassificationID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(classificationID.Bytes())
 }
 func (ClassificationID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, ClassificationID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, ClassificationID{})
 }
 func (classificationID ClassificationID) IsPartial() bool {
 	return len(classificationID.HashID.Bytes()) == 0
 }
 func (classificationID ClassificationID) Equals(key helpers.Key) bool {
-	return classificationID.Compare(classificationIDFromInterface(key)) == 0
+	id := classificationIDFromInterface(key)
+	return classificationID.Compare(&id) == 0
 }
 
 func NewClassificationID(chainID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) types.ID {

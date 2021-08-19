@@ -9,7 +9,7 @@ import (
 	"math/rand"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/cosmos/cosmos-sdk/types/simulation"
 )
 
 func RandomBool(r *rand.Rand) bool {

@@ -38,8 +38,8 @@ func (message testMessage) GetSigners() []sdkTypes.AccAddress {
 	fromAccAddress, _ := sdkTypes.AccAddressFromBech32(fromAddress)
 	return []sdkTypes.AccAddress{fromAccAddress}
 }
-func (testMessage) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, "testModule", testMessage{})
+func (testMessage) RegisterCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, "testModule", testMessage{})
 }
 
 func Test_Kafka(t *testing.T) {

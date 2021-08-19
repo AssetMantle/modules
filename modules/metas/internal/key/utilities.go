@@ -15,21 +15,21 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-func readMetaID(metaIDString string) types.ID {
+func readMetaID(metaIDString string) MetaID {
 	idList := strings.Split(metaIDString, constants.FirstOrderCompositeIDSeparator)
 	if len(idList) == 2 {
-		return &MetaID{
+		return MetaID{
 			TypeID: base.NewID(idList[0]),
 			HashID: base.NewID(idList[1]),
 		}
 	}
 
-	return &MetaID{TypeID: base.NewID(""), HashID: base.NewID("")}
+	return MetaID{TypeID: base.NewID(""), HashID: base.NewID("")}
 }
-func metaIDFromInterface(i interface{}) *MetaID {
+func metaIDFromInterface(i interface{}) MetaID {
 	switch value := i.(type) {
 	case MetaID:
-		return &value
+		return value
 	case types.ID:
 		return metaIDFromInterface(readMetaID(value.String()))
 	default:

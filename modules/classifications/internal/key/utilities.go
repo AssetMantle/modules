@@ -15,21 +15,21 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-func readClassificationID(classificationIDString string) types.ID {
+func readClassificationID(classificationIDString string) ClassificationID {
 	idList := strings.Split(classificationIDString, constants.IDSeparator)
 	if len(idList) == 2 {
-		return &ClassificationID{
+		return ClassificationID{
 			ChainID: base.NewID(idList[0]),
 			HashID:  base.NewID(idList[1]),
 		}
 	}
 
-	return &ClassificationID{ChainID: base.NewID(""), HashID: base.NewID("")}
+	return ClassificationID{ChainID: base.NewID(""), HashID: base.NewID("")}
 }
-func classificationIDFromInterface(i interface{}) *ClassificationID {
+func classificationIDFromInterface(i interface{}) ClassificationID {
 	switch value := i.(type) {
 	case ClassificationID:
-		return &value
+		return value
 	case types.ID:
 		return classificationIDFromInterface(readClassificationID(value.String()))
 	default:

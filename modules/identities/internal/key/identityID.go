@@ -42,13 +42,14 @@ func (identityID IdentityID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(identityID.Bytes())
 }
 func (IdentityID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, IdentityID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, IdentityID{})
 }
 func (identityID IdentityID) IsPartial() bool {
 	return len(identityID.HashID.Bytes()) == 0
 }
 func (identityID IdentityID) Equals(key helpers.Key) bool {
-	return identityID.Compare(identityIDFromInterface(key)) == 0
+	id := identityIDFromInterface(key)
+	return identityID.Compare(&id) == 0
 }
 
 func NewIdentityID(classificationID types.ID, immutableProperties types.Properties) types.ID {
