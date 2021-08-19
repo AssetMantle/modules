@@ -33,7 +33,7 @@ func (queryResponse QueryResponse) LegacyAminoDecode(bytes []byte) (helpers.Quer
 func responsePrototype() helpers.QueryResponse {
 	return QueryResponse{}
 }
-func newQueryResponse(value sdkTypes.Dec, error error) helpers.QueryResponse {
+func newQueryResponse(value sdkTypes.Dec, error error) QueryResponse {
 	success := true
 	if error != nil {
 		success = false
@@ -42,6 +42,6 @@ func newQueryResponse(value sdkTypes.Dec, error error) helpers.QueryResponse {
 	return QueryResponse{
 		Success: success,
 		Error:   error.Error(),
-		Value:   sdkTypes.DecProto{Dec: value},
+		Value:   value,
 	}
 }

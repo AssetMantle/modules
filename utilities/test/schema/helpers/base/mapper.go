@@ -46,7 +46,7 @@ func MakeCodec() *codec.LegacyAmino {
 
 	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 

@@ -9,6 +9,7 @@ import (
 	"context"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -19,9 +20,15 @@ type queryKeeper struct {
 }
 
 var _ helpers.QueryKeeper = (*queryKeeper)(nil)
+var _ QueryServer = (*queryKeeper)(nil)
 
-func (queryKeeper queryKeeper) Enquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
+func (queryKeeper queryKeeper) LegacyEnquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
 	return newQueryResponse(queryKeeper.mapper.NewCollection(context).Fetch(key.FromID(queryRequestFromInterface(queryRequest).SplitID)), nil)
+}
+
+func (queryKeeper queryKeeper) Enquire(context context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
+	response := newQueryResponse(queryKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(context)).Fetch(key.FromID(queryRequest.SplitID)), nil)
+	return &response, response.GetError()
 }
 
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
@@ -34,6 +41,10 @@ func (queryKeeper queryKeeper) RegisterGRPCGatewayRoute(clientContext client.Con
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (queryKeeper queryKeeper) RegisterService(cfg module.Configurator) {
+	RegisterQueryServer(cfg.QueryServer(), queryKeeper)
 }
 
 func keeperPrototype() helpers.QueryKeeper {

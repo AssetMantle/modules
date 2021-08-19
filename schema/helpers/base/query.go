@@ -6,6 +6,8 @@
 package base
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"net/http"
 
@@ -55,13 +57,13 @@ func (query query) Command() *cobra.Command {
 
 	return query.cliCommand.CreateCommand(runE)
 }
-func (query query) HandleMessageByLegacyAmino(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
+func (query query) HandleMessageByLegacyAmino(context sdkTypes.Context, legacyAmino *codec.LegacyAmino, requestQuery abciTypes.RequestQuery) ([]byte, error) {
 	request, Error := query.requestPrototype().LegacyAminoDecode(requestQuery.Data)
 	if Error != nil {
 		return nil, Error
 	}
 
-	return query.queryKeeper.Enquire(context, request).LegacyAminoEncode()
+	return query.queryKeeper.LegacyEnquire(context, request).LegacyAminoEncode()
 }
 
 func (query query) RESTQueryHandler(cliContext client.Context) http.HandlerFunc {
@@ -101,6 +103,10 @@ func (query query) query(queryRequest helpers.QueryRequest, cliContext client.Co
 	}
 
 	return cliContext.QueryWithData("custom"+"/"+query.moduleName+"/"+query.name, bytes)
+}
+
+func (query query) RegisterService(configurator sdkTypesModule.Configurator) {
+	query.queryKeeper.RegisterService(configurator)
 }
 
 func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, flagList ...helpers.CLIFlag) helpers.Query {

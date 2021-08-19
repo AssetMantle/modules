@@ -44,7 +44,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	var Codec = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	cryptoCodec.RegisterCrypto(Codec)
+	cryptocryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vestingTypes.RegisterL(Codec)
 	Codec.Seal()

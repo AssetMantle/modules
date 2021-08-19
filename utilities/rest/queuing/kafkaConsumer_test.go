@@ -15,7 +15,7 @@ func TestKafkaTopicConsumer(t *testing.T) {
 	var Codec = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 

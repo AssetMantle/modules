@@ -28,7 +28,7 @@ func Test_Mint_Request(t *testing.T) {
 	var Codec = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	cryptoCodec.RegisterCrypto(Codec)
+	cryptocryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vestingTypes.RegisterLegacyAminoCodec(Codec)
 	Codec.Seal()

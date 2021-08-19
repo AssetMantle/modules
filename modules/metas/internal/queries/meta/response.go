@@ -32,7 +32,7 @@ func (queryResponse QueryResponse) LegacyAminoDecode(bytes []byte) (helpers.Quer
 func responsePrototype() helpers.QueryResponse {
 	return QueryResponse{}
 }
-func newQueryResponse(collection helpers.Collection, error error) helpers.QueryResponse {
+func newQueryResponse(collection helpers.Collection, error error) QueryResponse {
 	success := true
 	if error != nil {
 		success = false

@@ -30,7 +30,7 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 	var Codec = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
@@ -76,6 +76,6 @@ func Test_Query_Keeper_Classification(t *testing.T) {
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewClassification(classificationID, immutableProperties, mutableProperties))
 
 	testQueryRequest := newQueryRequest(classificationID)
-	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.FromID(classificationID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
+	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.FromID(classificationID)).GetList()}, keepers.(queryKeeper).LegacyEnquire(context, testQueryRequest))
 
 }

@@ -28,7 +28,7 @@ func Test_Define_Request(t *testing.T) {
 	var Codec = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	cryptoCodec.RegisterCrypto(Codec)
+	cryptocryptoCodec.RegisterCrypto(Codec)
 	vestingTypes.RegisterLegacyAminoCodec(Codec)
 	codec.RegisterEvidences(Codec)
 

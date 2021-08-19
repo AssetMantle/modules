@@ -161,7 +161,7 @@ func (module module) LegacyQuerierHandler(legacyAmino *codec.LegacyAmino) sdkTyp
 		}
 
 		if query := module.queries.Get(path[0]); query != nil {
-			return query.HandleMessageByLegacyAmino(context, requestQuery)
+			return query.HandleMessageByLegacyAmino(context, legacyAmino, requestQuery)
 		}
 
 		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())
@@ -266,12 +266,12 @@ func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
 	//sdkTypesMsgService.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 
-// TODO
 func (module module) RegisterServices(configurator sdkTypesModule.Configurator) {
-	for _, transaction := range module.transactions.GetList() {
-		transaction.RegisterSe
+	for _, query := range module.queries.GetList() {
+		query.RegisterService(configurator)
 	}
-	panic("implement me")
+
+	// TODO RegisterMsgServer
 }
 
 func NewModule(name string, auxiliariesPrototype func() helpers.Auxiliaries, genesisPrototype func() helpers.Genesis, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.Parameters, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions, blockPrototype func() helpers.Block) helpers.Module {

@@ -11,12 +11,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
-//type queryResponse struct {
-//	Success bool               `json:"success"`
-//	Error   error              `json:"error" swaggertype:"string"`
-//	List    []helpers.Mappable `json:"list"`
-//}
-
 var _ helpers.QueryResponse = (*QueryResponse)(nil)
 
 func (queryResponse QueryResponse) IsSuccessful() bool {
@@ -38,7 +32,7 @@ func (queryResponse QueryResponse) LegacyAminoDecode(bytes []byte) (helpers.Quer
 func responsePrototype() helpers.QueryResponse {
 	return QueryResponse{}
 }
-func newQueryResponse(collection helpers.Collection, error error) helpers.QueryResponse {
+func newQueryResponse(collection helpers.Collection, error error) QueryResponse {
 	success := true
 	if error != nil {
 		success = false

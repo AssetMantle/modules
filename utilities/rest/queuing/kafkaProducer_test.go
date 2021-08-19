@@ -16,7 +16,7 @@ func TestKafkaProducerDeliverMessage(t *testing.T) {
 	require.Panics(t, func() {
 		schema.RegisterLegacyAminoCodec(Codec)
 		sdkTypes.RegisterLegacyAminoCodec(Codec)
-		codec.RegisterCrypto(Codec)
+		cryptoCodec.RegisterCrypto(Codec)
 		codec.RegisterEvidences(Codec)
 		vesting.RegisterCodec(Codec)
 		testKafkaMessage := kafkaMsg{Msg: nil}

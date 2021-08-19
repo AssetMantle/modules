@@ -30,7 +30,7 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 	var Codec = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
@@ -74,7 +74,7 @@ func Test_Query_Keeper_Split(t *testing.T) {
 
 	testQueryRequest := newQueryRequest(splitID)
 	require.Panics(t, func() {
-		require.Equal(t, queryResponse{Success: true, Value: sdkTypes.NewDec(123)}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
+		require.Equal(t, queryResponse{Success: true, Value: sdkTypes.NewDec(123)}, keepers.(queryKeeper).LegacyEnquire(context, testQueryRequest))
 	})
 
 }

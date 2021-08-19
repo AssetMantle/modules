@@ -25,7 +25,7 @@ message QueryResponse {
 }
 
 service Query {
-  rpc Asset(QueryRequest) returns (QueryResponse) {
+  rpc Enquire(QueryRequest) returns (QueryResponse) {
     option (google.api.http).get = "/persistence/assets/asset";
   }
 }
