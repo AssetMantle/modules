@@ -8,5 +8,5 @@ option go_package = "github.com/persistenceOne/persistenceSDK/modules/splits/int
 
 message Split {
   string i_d = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
-  string value = 2 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.DecProto", (gogoproto.nullable) = false];
+  string value = 2 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
 }
