@@ -6,7 +6,6 @@
 package types
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/tendermint/tendermint/crypto"
 )
 
@@ -20,5 +19,5 @@ type Signature interface {
 	GetValidityHeight() Height
 	HasExpired(Height) bool
 
-	schema.Proto
+	Proto
 }

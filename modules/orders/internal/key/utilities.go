@@ -16,21 +16,21 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-func readOrderID(orderIDString string) types.ID {
+func readOrderID(orderIDString string) OrderID {
 	idList := strings.Split(orderIDString, constants.SecondOrderCompositeIDSeparator)
 
 	if len(idList) == 7 {
 		exchangeRate, Error := sdkTypes.NewDecFromStr(idList[3])
 		if Error != nil {
-			return orderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), RateID: base.NewID(""), CreationID: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}
+			return OrderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), RateID: base.NewID(""), CreationID: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}
 		}
 
 		height, Error := strconv.ParseInt(idList[4], 10, 64)
 		if Error != nil {
-			return orderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), RateID: base.NewID(""), CreationID: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}
+			return OrderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), RateID: base.NewID(""), CreationID: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}
 		}
 
-		return orderID{
+		return OrderID{
 			ClassificationID: base.NewID(idList[0]),
 			MakerOwnableID:   base.NewID(idList[1]),
 			TakerOwnableID:   base.NewID(idList[2]),
@@ -41,11 +41,11 @@ func readOrderID(orderIDString string) types.ID {
 		}
 	}
 
-	return orderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), RateID: base.NewID(""), CreationID: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}
+	return OrderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), RateID: base.NewID(""), CreationID: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}
 }
-func orderIDFromInterface(i interface{}) orderID {
+func orderIDFromInterface(i interface{}) OrderID {
 	switch value := i.(type) {
-	case orderID:
+	case OrderID:
 		return value
 	case types.ID:
 		return orderIDFromInterface(readOrderID(value.String()))

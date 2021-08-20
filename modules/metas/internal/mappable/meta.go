@@ -23,7 +23,7 @@ func (meta Meta) GetKey() helpers.Key {
 	return key.FromID(meta.GetID())
 }
 func (Meta) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, Meta{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Meta{})
 }
 
 func NewMeta(data types.Data) mappables.Meta {

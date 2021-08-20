@@ -41,13 +41,14 @@ func (metaID MetaID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(metaID.Bytes())
 }
 func (MetaID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, MetaID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, MetaID{})
 }
 func (metaID MetaID) IsPartial() bool {
 	return len(metaID.HashID.Bytes()) == 0
 }
 func (metaID MetaID) Equals(key helpers.Key) bool {
-	return metaID.Compare(metaIDFromInterface(key)) == 0
+	id := metaIDFromInterface(key)
+	return metaID.Compare(&id) == 0
 }
 
 func NewMetaID(typeID types.ID, hashID types.ID) types.ID {

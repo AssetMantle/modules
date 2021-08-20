@@ -11,7 +11,7 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
 )
 

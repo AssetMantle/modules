@@ -7,7 +7,6 @@ package types
 
 import (
 	"github.com/99designs/keyring"
-	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
 type MetaFact interface {
@@ -19,5 +18,5 @@ type MetaFact interface {
 	Sign(keyring.Keyring) MetaFact
 	RemoveData() Fact
 
-	schema.Proto
+	Proto
 }

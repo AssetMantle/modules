@@ -71,10 +71,14 @@ func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simT
 func (module module) Name() string {
 	return module.name
 }
-func (module module) DefaultGenesis(_ codec.JSONMarshaler) json.RawMessage {
+
+// TODO
+func (module module) DefaultGenesis(codec codec.JSONMarshaler) json.RawMessage {
 	return module.genesisPrototype().Default().LegacyAminoEncode()
 }
-func (module module) ValidateGenesis(_ codec.JSONMarshaler, _ client.TxEncodingConfig, rawMessage json.RawMessage) error {
+
+// TODO
+func (module module) ValidateGenesis(codec codec.JSONMarshaler, txConfig client.TxEncodingConfig, rawMessage json.RawMessage) error {
 	genesisState := module.genesisPrototype().LegacyAminoDecode(rawMessage)
 	return genesisState.Validate()
 }
@@ -252,24 +256,24 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 }
 
 func (module module) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	for _, transaction := range module.transactions.GetList() {
+	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterLegacyAminoCodec(codec)
 	}
+
 	// TODO queries codec can be registered here and removed from common
 }
 
 func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
-	for _, transaction := range module.transactions.GetList() {
+	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterInterface(registry)
 	}
 }
 
 func (module module) RegisterServices(configurator sdkTypesModule.Configurator) {
-	for _, transaction := range module.transactions.GetList() {
+	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterService(configurator)
 	}
-
-	for _, query := range module.queries.GetList() {
+	for _, query := range module.queriesPrototype().GetList() {
 		query.RegisterService(configurator)
 	}
 }

@@ -6,22 +6,21 @@
 package applications
 
 import (
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec/types"
 	"io"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 	serverTypes "github.com/cosmos/cosmos-sdk/server/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	tendermintABCITypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/persistenceOne/persistenceSDK/schema/applications/base/encoding"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 )
 
 type Application interface {
-	tendermintABCITypes.Application
+	serverTypes.Application
 
 	GetDefaultHome() string
 	GetModuleBasicManager() module.BasicManager
@@ -49,5 +48,6 @@ type Application interface {
 	Seal()
 	IsSealed() bool
 
-	Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, clientTxConfig client.TxConfig, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, appOpts serverTypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp)) Application
+	LoadHeight(height int64) error
+	Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, skipUpgradeHeights map[int64]bool, homePath string, invCheckPeriod uint, encodingConfig encoding.EncodingConfig, appOpts serverTypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp)) Application
 }

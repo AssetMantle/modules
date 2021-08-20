@@ -10,5 +10,5 @@ import (
 )
 
 func Prototype() helpers.Mappable {
-	return Asset{}
+	return &Asset{}
 }

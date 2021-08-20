@@ -15,16 +15,16 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-func readMaintainerID(maintainerIDString string) types.ID {
+func readMaintainerID(maintainerIDString string) MaintainerID {
 	idList := strings.Split(maintainerIDString, constants.SecondOrderCompositeIDSeparator)
 	if len(idList) == 2 {
-		return &MaintainerID{
+		return MaintainerID{
 			ClassificationID: base.NewID(idList[0]),
 			IdentityID:       base.NewID(idList[1]),
 		}
 	}
 
-	return &MaintainerID{IdentityID: base.NewID(""), ClassificationID: base.NewID("")}
+	return MaintainerID{IdentityID: base.NewID(""), ClassificationID: base.NewID("")}
 }
 func maintainerIDFromInterface(i interface{}) MaintainerID {
 	switch value := i.(type) {

@@ -39,7 +39,7 @@ func (splitID SplitID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(splitID.Bytes())
 }
 func (SplitID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, SplitID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, SplitID{})
 }
 func (splitID SplitID) IsPartial() bool {
 	return len(splitID.OwnableID.Bytes()) == 0

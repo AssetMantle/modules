@@ -13,6 +13,6 @@ import (
 const moduleName = "traits"
 
 func RegisterLegacyCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, HasImmutables{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, HasMutables{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, HasImmutables{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, HasMutables{})
 }

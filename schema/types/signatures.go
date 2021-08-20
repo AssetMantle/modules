@@ -5,8 +5,6 @@
 
 package types
 
-import "github.com/persistenceOne/persistenceSDK/schema"
-
 type Signatures interface {
 	Get(ID) Signature
 
@@ -16,5 +14,5 @@ type Signatures interface {
 	Remove(Signature) Signatures
 	Mutate(Signature) Signatures
 
-	schema.Proto
+	Proto
 }

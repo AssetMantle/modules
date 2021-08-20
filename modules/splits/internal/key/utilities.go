@@ -14,16 +14,16 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-func readSplitID(splitIDString string) types.ID {
+func readSplitID(splitIDString string) SplitID {
 	idList := strings.Split(splitIDString, constants.SecondOrderCompositeIDSeparator)
 	if len(idList) == 2 {
-		return &SplitID{
+		return SplitID{
 			OwnerID:   base.NewID(idList[0]),
 			OwnableID: base.NewID(idList[1]),
 		}
 	}
 
-	return &SplitID{OwnerID: base.NewID(""), OwnableID: base.NewID("")}
+	return SplitID{OwnerID: base.NewID(""), OwnableID: base.NewID("")}
 }
 
 func splitIDFromInterface(i interface{}) SplitID {

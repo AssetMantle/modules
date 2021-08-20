@@ -5,12 +5,10 @@
 
 package types
 
-import "github.com/persistenceOne/persistenceSDK/schema"
-
 type Height interface {
 	Get() int64
 
 	Compare(Height) int
 
-	schema.Proto
+	Proto
 }

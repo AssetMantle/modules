@@ -41,7 +41,7 @@ func (message TestMessage) ValidateBasic() error { return nil }
 func (message TestMessage) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
-func (message TestMessage) RegisterCodec(codec *codec.Codec) {
+func (message TestMessage) RegisterCodec(codec *codec.LegacyAmino) {
 	codec.RegisterConcrete(TestMessage{}, "test/TestMessage", nil)
 }
 

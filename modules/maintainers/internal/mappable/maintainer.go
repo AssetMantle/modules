@@ -44,7 +44,7 @@ func (maintainer Maintainer) GetKey() helpers.Key {
 }
 
 func (Maintainer) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, Maintainer{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Maintainer{})
 }
 func NewMaintainer(id types.ID, maintainedProperties types.Properties, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) mappables.Maintainer {
 	return &Maintainer{

@@ -43,7 +43,7 @@ func (assetID AssetID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(assetID.Bytes())
 }
 func (AssetID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, AssetID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, AssetID{})
 }
 func (assetID AssetID) IsPartial() bool {
 	return len(assetID.HashID.Bytes()) == 0

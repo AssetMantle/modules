@@ -65,13 +65,14 @@ func (orderID OrderID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(orderID.Bytes())
 }
 func (OrderID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, OrderID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, OrderID{})
 }
 func (orderID OrderID) IsPartial() bool {
 	return len(orderID.HashID.Bytes()) == 0
 }
 func (orderID OrderID) Equals(key helpers.Key) bool {
-	return orderID.Compare(orderIDFromInterface(key)) == 0
+	id := orderIDFromInterface(key)
+	return orderID.Compare(&id) == 0
 }
 
 func (orderID OrderID) getRateIDBytes() ([]byte, error) {
@@ -111,7 +112,7 @@ func (orderID OrderID) getCreationHeightBytes() ([]byte, error) {
 }
 
 func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, rateID types.ID, creationID types.ID, makerID types.ID, immutableProperties types.Properties) types.ID {
-	return OrderID{
+	return &OrderID{
 		ClassificationID: classificationID,
 		MakerOwnableID:   makerOwnableID,
 		TakerOwnableID:   takerOwnableID,

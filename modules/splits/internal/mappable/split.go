@@ -27,31 +27,31 @@ func (split Split) GetOwnableID() types.ID {
 	return key.ReadOwnableID(split.ID)
 }
 func (split Split) GetValue() sdkTypes.Dec {
-	return split.Value.Dec
+	return split.Value
 }
 func (split Split) Send(outValue sdkTypes.Dec) traits.Transactional {
-	result := split.Value.Dec.Sub(outValue)
-	split.Value = sdkTypes.DecProto{Dec: result}
+	result := split.Value.Sub(outValue)
+	split.Value = result
 	return split
 }
 func (split Split) Receive(inValue sdkTypes.Dec) traits.Transactional {
-	result := split.Value.Dec.Add(inValue)
-	split.Value = sdkTypes.DecProto{Dec: result}
+	result := split.Value.Add(inValue)
+	split.Value = result
 	return split
 }
 func (split Split) CanSend(outValue sdkTypes.Dec) bool {
-	return split.Value.Dec.GTE(outValue)
+	return split.Value.GTE(outValue)
 }
 func (split Split) GetKey() helpers.Key {
 	return key.FromID(split.ID)
 }
 func (Split) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, Split{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Split{})
 }
 
 func NewSplit(splitID types.ID, value sdkTypes.Dec) mappables.Split {
 	return &Split{
 		ID:    splitID,
-		Value: sdkTypes.DecProto{Dec: value},
+		Value: value,
 	}
 }
