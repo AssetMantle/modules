@@ -42,7 +42,7 @@ func (identityID IdentityID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(identityID.Bytes())
 }
 func (IdentityID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &IdentityID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, IdentityID{})
 }
 func (identityID IdentityID) IsPartial() bool {
 	return len(identityID.HashID.Bytes()) == 0

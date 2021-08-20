@@ -41,7 +41,7 @@ func (metaID MetaID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(metaID.Bytes())
 }
 func (MetaID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &MetaID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, MetaID{})
 }
 func (metaID MetaID) IsPartial() bool {
 	return len(metaID.HashID.Bytes()) == 0
