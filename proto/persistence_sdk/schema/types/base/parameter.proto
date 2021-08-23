@@ -7,9 +7,8 @@ import "gogoproto/gogo.proto";
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message Parameter {
-  option (gogoproto.goproto_stringer) = true;
+  option (gogoproto.goproto_stringer) = false;
 
-  string id = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
+  string i_d = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
   string data = 2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Data", (gogoproto.nullable) = false];
-
 }
