@@ -16,4 +16,5 @@ type Parameter interface {
 	GetValidator() func(interface{}) error
 
 	Mutate(Data) Parameter
+	Proto
 }
