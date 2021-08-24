@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package persistence_sdk.modules.maintainers.internal.parameters.dummy;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/parameter.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/parameters/dummy";
+
+message DummyParameter {
+  option (gogoproto.goproto_stringer) = false;
+
+  schema.types.base.Parameter base_parameter = 1 [(gogoproto.nullable) = false];
+}

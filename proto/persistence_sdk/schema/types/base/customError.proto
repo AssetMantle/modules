@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package persistence_sdk.schema.types.base;
+
+option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
+
+message CustomError {
+  string proto_error = 1;
+}
