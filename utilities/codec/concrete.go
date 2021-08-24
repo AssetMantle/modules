@@ -15,3 +15,7 @@ import (
 func RegisterLegacyAminoXPRTConcrete(codec *codec.LegacyAmino, moduleName string, o interface{}) {
 	codec.RegisterConcrete(o, constants.ProjectRoute+"/"+moduleName+"/"+reflect.TypeOf(o).PkgPath()+"/"+reflect.TypeOf(o).Name(), nil)
 }
+
+func RegisterXPRTImplementations(protoCodec codec.ProtoCodec,moduleName string, o interface{})  {
+
+}

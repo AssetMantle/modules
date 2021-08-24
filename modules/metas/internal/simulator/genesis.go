@@ -6,18 +6,18 @@
 package simulator
 
 import (
+	"github.com/gogo/protobuf/proto"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/genesis"
 	"math/rand"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/common"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
 	metasModule "github.com/persistenceOne/persistenceSDK/modules/metas/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/parameters/dummy"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	baseSimulation "github.com/persistenceOne/persistenceSDK/simulation/schema/types/base"
@@ -40,7 +40,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMeta(baseSimulation.GenerateRandomData(simulationState.Rand))
 	}
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
+	genesisState := genesis.NewGenesis(nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
 
-	simulationState.GenState[metasModule.Name] = common.LegacyAminoCodec.MustMarshalJSON(genesisState)
+	simulationState.GenState[metasModule.Name] = common.JSONCodec.MustMarshalJSON(genesisState.(proto.Message))
 }

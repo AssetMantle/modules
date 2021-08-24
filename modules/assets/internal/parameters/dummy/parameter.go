@@ -7,6 +7,7 @@ package dummy
 
 import (
 	"encoding/json"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
@@ -47,6 +48,10 @@ func (dummyParameter DummyParameter) GetValidator() func(interface{}) error {
 func (dummyParameter DummyParameter) Mutate(data types.Data) types.Parameter {
 	dummyParameter.BaseParameter.Data = data
 	return &dummyParameter
+}
+
+func (DummyParameter) RegisterImplementation(interfaceRegistry codecTypes.InterfaceRegistry){
+	interfaceRegistry.RegisterImplementations((*types.Parameter)(nil), &DummyParameter{})
 }
 
 func NewParameter(id types.ID, data types.Data) types.Parameter {

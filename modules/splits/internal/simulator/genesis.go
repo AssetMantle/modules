@@ -6,6 +6,8 @@
 package simulator
 
 import (
+	"github.com/gogo/protobuf/proto"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/genesis"
 	"math/rand"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -18,7 +20,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters/dummy"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	baseSimulation "github.com/persistenceOne/persistenceSDK/simulation/schema/types/base"
@@ -41,7 +42,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewSplit(key.NewSplitID(baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand)), simulation.RandomDecAmount(simulationState.Rand, sdkTypes.NewDec(9999999999)))
 	}
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
+	genesisState := genesis.NewGenesis(nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
 
-	simulationState.GenState[splitsModule.Name] = common.LegacyAminoCodec.MustMarshalJSON(genesisState)
+	simulationState.GenState[splitsModule.Name] = common.JSONCodec.MustMarshalJSON(genesisState.(proto.Message))
 }

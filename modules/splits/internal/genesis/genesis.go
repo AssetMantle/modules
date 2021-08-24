@@ -1,11 +1,12 @@
 package genesis
 
 import (
+	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
@@ -101,8 +102,10 @@ func (genesis Genesis) Encode(cdc codec.JSONMarshaler) []byte {
 }
 
 func (genesis Genesis) Decode(cdc codec.JSONMarshaler, byte []byte) helpers.Genesis {
+	fmt.Println("in decode")
 	var newGenesis Genesis
 	if Error := cdc.UnmarshalJSON(byte, &newGenesis); Error != nil {
+		fmt.Println("error in decode")
 		panic(Error)
 	}
 

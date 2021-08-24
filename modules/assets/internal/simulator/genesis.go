@@ -6,6 +6,8 @@
 package simulator
 
 import (
+	"github.com/gogo/protobuf/proto"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/genesis"
 	"math/rand"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -17,7 +19,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters/dummy"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	baseSimulation "github.com/persistenceOne/persistenceSDK/simulation/schema/types/base"
@@ -41,7 +42,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewAsset(key.NewAssetID(baseSimulation.GenerateRandomID(simulationState.Rand), immutableProperties), immutableProperties, baseSimulation.GenerateRandomProperties(simulationState.Rand))
 	}
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
+	genesisState := genesis.NewGenesis( nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
 
-	simulationState.GenState[assetsModule.Name] = common.LegacyAminoCodec.MustMarshalJSON(genesisState)
+	simulationState.GenState[assetsModule.Name] = common.JSONCodec.MustMarshalJSON(genesisState.(proto.Message))
 }
