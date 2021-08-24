@@ -72,14 +72,12 @@ func (module module) Name() string {
 	return module.name
 }
 
-// TODO
 func (module module) DefaultGenesis(codec codec.JSONMarshaler) json.RawMessage {
-	return module.genesisPrototype().Default().LegacyAminoEncode()
+	return module.genesisPrototype().Default().Encode(codec)
 }
 
-// TODO
 func (module module) ValidateGenesis(codec codec.JSONMarshaler, txConfig client.TxEncodingConfig, rawMessage json.RawMessage) error {
-	genesisState := module.genesisPrototype().LegacyAminoDecode(rawMessage)
+	genesisState := module.genesisPrototype().Decode(codec, rawMessage)
 	return genesisState.Validate()
 }
 func (module module) RegisterRESTRoutes(cliContext client.Context, router *mux.Router) {

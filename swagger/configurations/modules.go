@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	"github.com/cosmos/cosmos-sdk/x/distribution"
+	distributionKeeper"github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/cosmos/cosmos-sdk/x/gov"
@@ -34,7 +35,7 @@ var ModuleBasicManager = module.NewBasicManager(
 	staking.AppModuleBasic{},
 	mint.AppModuleBasic{},
 	distribution.AppModuleBasic{},
-	gov.NewAppModuleBasic(append(wasmClient.ProposalHandlers, paramsClient.ProposalHandler, distribution.NewCommunityPoolSpendProposalHandler(distributionKeeper), upgradeClient.ProposalHandler)...),
+	gov.NewAppModuleBasic(append(wasmClient.ProposalHandlers, paramsClient.ProposalHandler, distribution.NewCommunityPoolSpendProposalHandler(distributionKeeper.Keeper{}), upgradeClient.ProposalHandler)...),
 	params.AppModuleBasic{},
 	crisis.AppModuleBasic{},
 	wasm.AppModuleBasic{},

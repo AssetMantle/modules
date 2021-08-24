@@ -17,6 +17,7 @@ import (
 
 type genesis struct {
 	legacyAminoCodec *codec.LegacyAmino
+	codec            codec.JSONMarshaler
 
 	keyPrototype      func() helpers.Key
 	mappablePrototype func() helpers.Mappable
@@ -26,6 +27,26 @@ type genesis struct {
 
 	MappableList  []helpers.Mappable `json:"mappableList"`
 	ParameterList []types.Parameter  `json:"parameterList"`
+}
+
+func (genesis genesis) Encode(marshaler codec.JSONMarshaler) []byte {
+	panic("module level implementation not found")
+}
+
+func (genesis genesis) Decode(marshaler codec.JSONMarshaler, bytes []byte) helpers.Genesis {
+	panic("module level implementation not found")
+}
+
+func (genesis genesis) Size() int {
+	panic("module level implementation not found")
+}
+
+func (genesis genesis) MarshalTo(data []byte) (int, error) {
+	panic("module level implementation not found")
+}
+
+func (genesis genesis) Unmarshal(dAtA []byte) error {
+	panic("module level implementation not found")
 }
 
 var _ helpers.Genesis = (*genesis)(nil)
