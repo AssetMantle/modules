@@ -76,7 +76,7 @@ func (transaction transaction) HandleMessage(context sdkTypes.Context, message s
 	context.EventManager().EmitEvent(
 		sdkTypes.NewEvent(
 			sdkTypes.EventTypeMessage,
-			sdkTypes.NewAttribute(sdkTypes.AttributeKeyModule, transaction.name),
+			sdkTypes.NewAttribute(sdkTypes.AttributeKeyModule, message.Route()),
 		),
 	)
 
