@@ -6,22 +6,22 @@
 package simulator
 
 import (
-	"math/rand"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/gogo/protobuf/proto"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/common"
+	internalGenesis "github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
 	maintainersModule "github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/parameters/dummy"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/simulation"
 	baseSimulation "github.com/persistenceOne/persistenceSDK/simulation/schema/types/base"
+	"math/rand"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -41,7 +41,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMaintainer(key.NewMaintainerID(baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand)), baseSimulation.GenerateRandomProperties(simulationState.Rand), simulation.RandomBool(simulationState.Rand), simulation.RandomBool(simulationState.Rand), simulation.RandomBool(simulationState.Rand))
 	}
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
+	genesisState := internalGenesis.NewGenesis(nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
 
-	simulationState.GenState[maintainersModule.Name] = common.LegacyAminoCodec.MustMarshalJSON(genesisState)
+	simulationState.GenState[maintainersModule.Name] = common.JSONCodec.MustMarshalJSON(genesisState.(proto.Message))
 }

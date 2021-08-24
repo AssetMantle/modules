@@ -8,6 +8,7 @@ package send
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -34,12 +35,11 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
+		case bankKeeper.Keeper:
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case verify.Auxiliary.GetName():
 				transactionKeeper.verifyAuxiliary = value
-			default:
-				break
 			}
 		default:
 			panic(errors.UninitializedUsage)

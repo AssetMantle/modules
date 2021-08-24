@@ -13,6 +13,7 @@ import (
 )
 
 var LegacyAminoCodec *codec.LegacyAmino
+var JSONCodec codec.JSONMarshaler
 
 func init() {
 	LegacyAminoCodec = module.RegisterLegacyAminoCodec(key.Prototype, mappable.Prototype)
