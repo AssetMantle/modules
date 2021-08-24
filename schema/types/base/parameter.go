@@ -17,8 +17,9 @@ func (parameter Parameter) String() string {
 func (parameter Parameter) Equal(compareParameter types.Parameter) bool {
 	panic("failed to fetch module level implementation")
 }
+
 func (parameter Parameter) Validate() error {
-	panic("failed to fetch module level implementation")
+	panic("\"failed to fetch module level implementation")
 }
 func (parameter Parameter) GetID() types.ID {
 	panic("failed to fetch module level implementation")
@@ -26,6 +27,7 @@ func (parameter Parameter) GetID() types.ID {
 func (parameter Parameter) GetData() types.Data {
 	panic("failed to fetch module level implementation")
 }
+
 func (parameter Parameter) GetValidator() func(interface{}) error {
 	panic("failed to fetch module level implementation")
 }
@@ -34,8 +36,5 @@ func (parameter Parameter) Mutate(data types.Data) types.Parameter {
 }
 
 func NewParameter(id types.ID, data types.Data) types.Parameter {
-	return &Parameter{
-		ID:   id,
-		Data: data,
-	}
+	panic("failed to fetch module level implementation")
 }
