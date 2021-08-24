@@ -57,4 +57,3 @@ func NewParameter(id types.ID, data types.Data) types.Parameter {
 		},
 	}
 }
-

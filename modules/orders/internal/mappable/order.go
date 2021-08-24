@@ -6,20 +6,20 @@
 package mappable
 
 import (
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 var _ mappables.Order = (*Order)(nil)
@@ -109,7 +109,7 @@ func (order Order) GetKey() helpers.Key {
 	return key.FromID(order.ID)
 }
 func (Order) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Order{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Order{})
 }
 
 func NewOrder(orderID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Order {
