@@ -6,6 +6,7 @@
 package helpers
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
@@ -19,8 +20,12 @@ type Genesis interface {
 	LegacyAminoEncode() []byte
 	LegacyAminoDecode([]byte) Genesis
 
+	Encode(codec.JSONMarshaler) []byte
+	Decode(codec.JSONMarshaler, []byte) Genesis
+
 	Initialize([]Mappable, []types.Parameter) Genesis
 
 	GetParameterList() []types.Parameter
 	GetMappableList() []Mappable
+	types.Proto
 }

@@ -28,6 +28,26 @@ type genesis struct {
 	ParameterList []types.Parameter  `json:"parameterList"`
 }
 
+func (genesis genesis) Encode(marshaler codec.JSONMarshaler) []byte {
+	panic("implement me")
+}
+
+func (genesis genesis) Decode(marshaler codec.JSONMarshaler, bytes []byte) helpers.Genesis {
+	panic("implement me")
+}
+
+func (genesis genesis) Size() int {
+	panic("implement me")
+}
+
+func (genesis genesis) MarshalTo(data []byte) (int, error) {
+	panic("implement me")
+}
+
+func (genesis genesis) Unmarshal(dAtA []byte) error {
+	panic("implement me")
+}
+
 var _ helpers.Genesis = (*genesis)(nil)
 
 func (genesis genesis) Default() helpers.Genesis {
