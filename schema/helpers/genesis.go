@@ -21,7 +21,7 @@ type Genesis interface {
 	LegacyAminoDecode([]byte) Genesis
 
 	Encode(codec.JSONMarshaler) []byte
-	Decode(codec.JSONMarshaler, []byte) Genesis
+	Decode(codec.JSONMarshaler,[]byte) Genesis
 
 	Initialize([]Mappable, []types.Parameter) Genesis
 
