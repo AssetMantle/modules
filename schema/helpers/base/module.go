@@ -8,21 +8,21 @@ package base
 import (
 	"encoding/json"
 	"fmt"
-	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
-	simTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"math/rand"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	simTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"math/rand"
 )
 
 type module struct {
@@ -170,7 +170,7 @@ func (module module) LegacyQuerierHandler(legacyAmino *codec.LegacyAmino) sdkTyp
 	}
 }
 func (module module) InitGenesis(context sdkTypes.Context, codec codec.JSONMarshaler, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
-	genesisState := module.genesisPrototype().Decode(codec,rawMessage)
+	genesisState := module.genesisPrototype().Decode(codec, rawMessage)
 
 	if module.mapper == nil || module.parameters == nil {
 		panic(errors.UninitializedUsage)
@@ -266,6 +266,7 @@ func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterInterface(registry)
 	}
+	schema.RegisterProtoCodec(registry)
 }
 
 func (module module) RegisterServices(configurator sdkTypesModule.Configurator) {
@@ -276,6 +277,7 @@ func (module module) RegisterServices(configurator sdkTypesModule.Configurator) 
 	for _, query := range module.queriesPrototype().GetList() {
 		query.RegisterService(configurator)
 	}
+
 }
 
 func NewModule(name string, auxiliariesPrototype func() helpers.Auxiliaries, genesisPrototype func() helpers.Genesis, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.Parameters, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions, blockPrototype func() helpers.Block) helpers.Module {
