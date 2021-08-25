@@ -169,8 +169,8 @@ func (module module) LegacyQuerierHandler(legacyAmino *codec.LegacyAmino) sdkTyp
 		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())
 	}
 }
-func (module module) InitGenesis(context sdkTypes.Context, _ codec.JSONMarshaler, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
-	genesisState := module.genesisPrototype().LegacyAminoDecode(rawMessage)
+func (module module) InitGenesis(context sdkTypes.Context, codec codec.JSONMarshaler, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
+	genesisState := module.genesisPrototype().Decode(codec,rawMessage)
 
 	if module.mapper == nil || module.parameters == nil {
 		panic(errors.UninitializedUsage)
@@ -180,12 +180,12 @@ func (module module) InitGenesis(context sdkTypes.Context, _ codec.JSONMarshaler
 
 	return []abciTypes.ValidatorUpdate{}
 }
-func (module module) ExportGenesis(context sdkTypes.Context, _ codec.JSONMarshaler) json.RawMessage {
+func (module module) ExportGenesis(context sdkTypes.Context, codec codec.JSONMarshaler) json.RawMessage {
 	if module.mapper == nil || module.parameters == nil {
 		panic(errors.UninitializedUsage)
 	}
 
-	return module.genesisPrototype().Export(context, module.mapper, module.parameters).LegacyAminoEncode()
+	return module.genesisPrototype().Export(context, module.mapper, module.parameters).Encode(codec)
 }
 func (module module) BeginBlock(context sdkTypes.Context, beginBlockRequest abciTypes.RequestBeginBlock) {
 	module.block.Begin(context, beginBlockRequest)

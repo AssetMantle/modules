@@ -613,7 +613,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 	govKeeper := sdkGovKeeper.NewKeeper(
 		application.codec,
 		application.keys[sdkGovTypes.StoreKey],
-		paramsKeeper.Subspace(sdkGovTypes.ModuleName), // TODO not in gaia.WithKeyTable(sdkGovTypes.ParamKeyTable()),
+		paramsKeeper.Subspace(sdkGovTypes.ModuleName).WithKeyTable(sdkGovTypes.ParamKeyTable()),
 		accountKeeper,
 		bankKeeper,
 		&stakingKeeper,
