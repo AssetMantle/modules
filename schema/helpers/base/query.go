@@ -6,18 +6,17 @@
 package base
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"net/http"
-
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"net/http"
 )
 
 type query struct {
@@ -106,7 +105,7 @@ func (query query) query(queryRequest helpers.QueryRequest, cliContext client.Co
 }
 
 func (query query) RegisterService(configurator sdkTypesModule.Configurator) {
-	query.queryKeeper.RegisterService(configurator)
+	query.keeperPrototype().RegisterService(configurator)
 }
 
 func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, flagList ...helpers.CLIFlag) helpers.Query {
