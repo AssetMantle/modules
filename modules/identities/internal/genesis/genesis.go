@@ -3,9 +3,12 @@ package genesis
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters/dummy"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
@@ -141,6 +144,21 @@ func (genesis Genesis) GetParameterList() []types.Parameter {
 }
 func (genesis Genesis) GetMappableList() []helpers.Mappable {
 	return genesis.MappableList
+}
+
+func (genesis Genesis) RegisterInterface(registry codecTypes.InterfaceRegistry) {
+	registry.RegisterImplementations((*helpers.Key)(nil),
+		&key.IdentityID{},
+	)
+	registry.RegisterImplementations((*helpers.Mappable)(nil),
+		&mappable.Identity{},
+	)
+	registry.RegisterImplementations((*types.Parameter)(nil),
+		&dummy.DummyParameter{},
+	)
+	registry.RegisterImplementations((*helpers.Genesis)(nil),
+		&Genesis{},
+	)
 }
 
 func NewGenesis(defaultMappableList []helpers.Mappable, defaultParameterList []types.Parameter) helpers.Genesis {

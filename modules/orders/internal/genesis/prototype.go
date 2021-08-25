@@ -6,10 +6,10 @@
 package genesis
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 func Prototype() helpers.Genesis {
-	return NewGenesis([]helpers.Mappable{}, parameters.Prototype().GetList())
+	return NewGenesis([]helpers.Mappable{}, []types.Parameter{})
 }

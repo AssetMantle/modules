@@ -17,6 +17,5 @@ func RegisterLegacyAminoCodec(keyPrototype func() helpers.Key, mappablePrototype
 	mappablePrototype().RegisterLegacyAminoCodec(Codec)
 	schema.RegisterLegacyAminoCodec(Codec)
 	Codec.Seal()
-
 	return Codec
 }

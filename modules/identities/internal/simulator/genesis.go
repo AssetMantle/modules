@@ -6,13 +6,11 @@
 package simulator
 
 import (
-	"github.com/gogo/protobuf/proto"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/genesis"
-	"math/rand"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/gogo/protobuf/proto"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/common"
+	internalGenesis "github.com/persistenceOne/persistenceSDK/modules/identities/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
 	identitiesModule "github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
@@ -22,6 +20,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	baseSimulation "github.com/persistenceOne/persistenceSDK/simulation/schema/types/base"
+	"math/rand"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -42,7 +41,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewIdentity(key.NewIdentityID(baseSimulation.GenerateRandomID(simulationState.Rand), immutableProperties), immutableProperties, baseSimulation.GenerateRandomProperties(simulationState.Rand))
 	}
 
-	genesisState := genesis.NewGenesis(nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
+	genesisState := internalGenesis.NewGenesis(nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
 
 	simulationState.GenState[identitiesModule.Name] = common.JSONCodec.MustMarshalJSON(genesisState.(proto.Message))
 }

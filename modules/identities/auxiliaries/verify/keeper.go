@@ -54,8 +54,6 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, paramet
 			switch value.GetName() {
 			case supplement.Auxiliary.GetName():
 				auxiliaryKeeper.supplementAuxiliary = value
-			default:
-				break
 			}
 		default:
 			panic(errors.UninitializedUsage)

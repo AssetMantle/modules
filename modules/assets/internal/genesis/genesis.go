@@ -3,9 +3,12 @@ package genesis
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters/dummy"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
@@ -46,8 +49,8 @@ func (genesis Genesis) Validate() error {
 }
 
 func (genesis Genesis) Import(context sdkTypes.Context, mapper helpers.Mapper, parameters helpers.Parameters) {
-	for _, mappable := range genesis.MappableList {
-		mapper.Create(context, mappable)
+	for _, mappableValue := range genesis.MappableList {
+		mapper.Create(context, mappableValue)
 	}
 
 	for _, parameter := range genesis.ParameterList {
@@ -87,7 +90,7 @@ func (genesis Genesis) LegacyAminoDecode(byte []byte) helpers.Genesis {
 		panic(Error)
 	}
 
-	return NewGenesis(genesis.DefaultMappableList, genesis.DefaultParameterList).Initialize(newGenesis.MappableList, newGenesis.ParameterList)
+	return NewGenesis(newGenesis.DefaultMappableList, newGenesis.DefaultParameterList).Initialize(newGenesis.MappableList, newGenesis.ParameterList)
 }
 
 func (genesis Genesis) Encode(cdc codec.JSONMarshaler) []byte {
@@ -106,7 +109,7 @@ func (genesis Genesis) Decode(cdc codec.JSONMarshaler, byte []byte) helpers.Gene
 		panic(Error)
 	}
 
-	return NewGenesis(genesis.DefaultMappableList, genesis.DefaultParameterList).Initialize(newGenesis.MappableList, newGenesis.ParameterList)
+	return NewGenesis(newGenesis.DefaultMappableList, newGenesis.DefaultParameterList).Initialize(newGenesis.MappableList, newGenesis.ParameterList)
 }
 
 func (genesis Genesis) Initialize(mappableList []helpers.Mappable, parameterList []types.Parameter) helpers.Genesis {
@@ -141,6 +144,21 @@ func (genesis Genesis) GetParameterList() []types.Parameter {
 }
 func (genesis Genesis) GetMappableList() []helpers.Mappable {
 	return genesis.MappableList
+}
+
+func (genesis Genesis) RegisterInterface(registry codecTypes.InterfaceRegistry) {
+	registry.RegisterImplementations((*helpers.Key)(nil),
+		&key.AssetID{},
+	)
+	registry.RegisterImplementations((*helpers.Mappable)(nil),
+		&mappable.Asset{},
+	)
+	registry.RegisterImplementations((*types.Parameter)(nil),
+		&dummy.DummyParameter{},
+	)
+	registry.RegisterImplementations((*helpers.Genesis)(nil),
+		&Genesis{},
+	)
 }
 
 func NewGenesis(defaultMappableList []helpers.Mappable, defaultParameterList []types.Parameter) helpers.Genesis {

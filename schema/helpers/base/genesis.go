@@ -8,6 +8,7 @@ package base
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema"
@@ -26,6 +27,10 @@ type genesis struct {
 
 	MappableList  []helpers.Mappable `json:"mappableList"`
 	ParameterList []types.Parameter  `json:"parameterList"`
+}
+
+func (genesis genesis) RegisterInterface(registry codecTypes.InterfaceRegistry) {
+	panic("implement me")
 }
 
 func (genesis genesis) Encode(marshaler codec.JSONMarshaler) []byte {

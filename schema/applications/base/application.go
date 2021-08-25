@@ -7,24 +7,17 @@ package base
 
 import (
 	"encoding/json"
+	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
-	"github.com/cosmos/cosmos-sdk/server/api"
-	"github.com/cosmos/cosmos-sdk/server/config"
-	"github.com/persistenceOne/persistenceSDK/schema/applications/base/encoding"
-	"github.com/rakyll/statik/fs"
-	"honnef.co/go/tools/version"
-	"io"
-	"net/http"
-	"os"
-	"path/filepath"
-
-	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/server/api"
+	"github.com/cosmos/cosmos-sdk/server/config"
 	serverTypes "github.com/cosmos/cosmos-sdk/server/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -101,6 +94,10 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/renumerate"
 	splitsTransfer "github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/applications"
+	"github.com/persistenceOne/persistenceSDK/schema/applications/base/encoding"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/rakyll/statik/fs"
+	"github.com/spf13/cast"
 	"github.com/spf13/viper"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	tmJson "github.com/tendermint/tendermint/libs/json"
@@ -108,6 +105,11 @@ import (
 	tendermintOS "github.com/tendermint/tendermint/libs/os"
 	tmProto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
+	"honnef.co/go/tools/version"
+	"io"
+	"net/http"
+	"os"
+	"path/filepath"
 )
 
 type application struct {
@@ -571,6 +573,11 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 
 	wasmConfig := wasmWrap.Wasm
 
+	var wasmOpts []wasm.Option
+	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
+		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
+	}
+
 	wasmKeeper := wasm.NewKeeper(
 		application.codec,
 		application.keys[wasm.StoreKey],
@@ -589,7 +596,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		wasmConfig,
 		sdkStakingTypes.ModuleName,
 		//TODO &wasm.MessageEncoders{Custom: wasmUtilities.CustomEncoder(assets.Prototype(), classifications.Prototype(), identities.Prototype(), maintainers.Prototype(), metas.Prototype(), orders.Prototype(), splits.Prototype())},
-		nil)
+		wasmOpts...)
 
 	govRouter := sdkGovTypes.NewRouter()
 
