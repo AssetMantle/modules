@@ -262,11 +262,11 @@ func (module module) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 }
 
 func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
+	schema.RegisterProtoCodec(registry)
 	module.genesisPrototype().RegisterInterface(registry)
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterInterface(registry)
 	}
-	schema.RegisterProtoCodec(registry)
 }
 
 func (module module) RegisterServices(configurator sdkTypesModule.Configurator) {

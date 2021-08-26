@@ -31,7 +31,7 @@ func RegisterProtoCodec(registry codecTypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*types.Height)(nil), &baseTypes.Height{})
 	registry.RegisterImplementations((*types.Signature)(nil), &baseTypes.Signature{})
 	registry.RegisterImplementations((*types.Signatures)(nil), &baseTypes.Signatures{})
-	registry.RegisterImplementations((*types.Data)(nil), &baseTypes.AccAddressData{}, &baseTypes.HeightData{}, &baseTypes.IDData{}, &baseTypes.StringData{}, &baseTypes.DecData{})
+	registry.RegisterImplementations((*types.Data)(nil), &baseTypes.AccAddressData{}, &baseTypes.HeightData{}, &baseTypes.IDData{}, &baseTypes.StringData{}, &baseTypes.DecData{}, &baseTypes.DecData{})
 	registry.RegisterImplementations((*types.Fact)(nil), &baseTypes.Fact{})
 	registry.RegisterImplementations((*types.ListData)(nil), &baseTypes.ListData{})
 	registry.RegisterImplementations((*types.MetaFact)(nil), &baseTypes.MetaFact{})
