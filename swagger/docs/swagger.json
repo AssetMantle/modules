@@ -63,8 +63,8 @@
                 "summary": "Burn asset transaction",
                 "parameters": [
                     {
-                        "description": "Transaction for burning an asset.", "request body",
-                        "name": "what's the parameter used here?, body",
+                        "description": "Transaction for burning an asset. request body",
+                        "name": "what's the parameter used here? body",
                         "in": "body",
                         "required": true,
                         "schema": {
