@@ -6,7 +6,14 @@
 package base
 
 import (
+	"reflect"
 	"testing"
+
+	"github.com/persistenceOne/persistenceSDK/constants"
+
+	"github.com/persistenceOne/persistenceSDK/utilities/random"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
@@ -101,4 +108,99 @@ func Test_ListData(t *testing.T) {
 	require.Equal(t, dataAsList6, dataAsList8.Remove(listValue9.(listData).Value.GetList()[0]))
 	require.Equal(t, dataAsList10, dataAsList6.Add(listValue11.(listData).Value.GetList()[0]))
 
+}
+
+func Test_listData_GenerateHashID(t *testing.T) {
+	randomString := random.GenerateUniqueIdentifier()
+
+	type fields struct {
+		Value sortedDataList
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   types.ID
+	}{
+		{
+			name:   "hash of nil list",
+			fields: fields{Value: nil},
+			want:   NewID(""),
+		},
+		{
+			name:   "hash of empty list",
+			fields: fields{Value: sortedDataList{}},
+			want:   NewID(""),
+		},
+		{
+			name:   "hash of single string data",
+			fields: fields{Value: []types.Data{NewStringData(randomString)}},
+			want:   NewStringData(randomString).GenerateHashID(),
+		},
+		{
+			name:   "hash of single zero value string data",
+			fields: fields{Value: []types.Data{NewStringData(randomString).ZeroValue()}},
+			want:   NewStringData(randomString).ZeroValue().GenerateHashID(),
+		},
+		{
+			name:   "hash of two string data",
+			fields: fields{Value: []types.Data{NewStringData(randomString), NewStringData(randomString)}},
+			want:   NewID(NewStringData(randomString).GenerateHashID().String() + constants.ListHashStringSeparator + NewStringData(randomString).GenerateHashID().String()),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			listData := listData{
+				Value: tt.fields.Value,
+			}
+			if got := listData.GenerateHashID(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GenerateHashID() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNewListData(t *testing.T) {
+	randomString := random.GenerateUniqueIdentifier()
+
+	type args struct {
+		value []types.Data
+	}
+	tests := []struct {
+		name string
+		args args
+		want types.Data
+	}{
+		{
+			name: "nil argument",
+			args: args{nil},
+			want: listData{},
+		},
+		{
+			name: "empty arguments",
+			args: args{},
+			want: listData{},
+		},
+		{
+			name: "zero arguments",
+			args: args{[]types.Data{}},
+			want: listData{},
+		},
+		{
+			name: "one string data argument",
+			args: args{[]types.Data{NewStringData(randomString)}},
+			want: listData{[]types.Data{NewStringData(randomString)}},
+		},
+		{
+			name: "two unsorted string data arguments",
+			args: args{[]types.Data{NewStringData("a"), NewStringData("b")}},
+			want: listData{[]types.Data{NewStringData("b"), NewStringData("a")}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewListData(tt.args.value...); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewListData() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

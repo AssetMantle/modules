@@ -12,7 +12,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
 type listData struct {
@@ -21,24 +20,13 @@ type listData struct {
 
 var _ types.ListData = (*listData)(nil)
 
-// TODO: find a better impl
 func (listData listData) Compare(data types.Data) int {
-	compareListData, Error := listDataFromData(data)
+	compareListData, Error := listDataFromInterface(data)
 	if Error != nil {
 		panic(Error)
 	}
 
-	var listDataString []string
-	for _, data := range listData.Value {
-		listDataString = append(listDataString, data.String())
-	}
-
-	var comparisonDataString []string
-	for _, data := range compareListData.Value {
-		comparisonDataString = append(comparisonDataString, data.String())
-	}
-
-	return strings.Compare(strings.Join(listDataString, constants.ListDataStringSeparator), strings.Join(comparisonDataString, constants.ListDataStringSeparator))
+	return strings.Compare(listData.GenerateHashID().String(), compareListData.GenerateHashID().String())
 }
 func (listData listData) String() string {
 	dataStringList := make([]string, len(listData.Value))
@@ -60,7 +48,15 @@ func (listData listData) GenerateHashID() types.ID {
 		return NewID("")
 	}
 
-	return NewID(meta.Hash(listData.String()))
+	hashList := make([]string, len(listData.Value))
+
+	for i, data := range listData.Value {
+		hashList[i] = data.GenerateHashID().String()
+	}
+
+	hashString := strings.Join(hashList, constants.ListHashStringSeparator)
+
+	return NewID(hashString)
 }
 func (listData listData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
@@ -108,7 +104,7 @@ func (listData listData) Remove(dataList ...types.Data) types.ListData {
 
 	return listData
 }
-func listDataFromData(data types.Data) (listData, error) {
+func listDataFromInterface(data types.Data) (listData, error) {
 	switch value := data.(type) {
 	case listData:
 		return value, nil
