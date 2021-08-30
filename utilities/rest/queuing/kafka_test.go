@@ -6,6 +6,8 @@
 package queuing
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -16,7 +18,6 @@ import (
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 	"github.com/persistenceOne/persistenceSDK/utilities/random"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 type testMessage struct {
@@ -55,7 +56,7 @@ func Test_Kafka(t *testing.T) {
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, Error)
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test"}
-	ticketID := TicketID(random.GenerateID("ticket"))
+	ticketID := TicketID(random.GenerateUniqueIdentifier("ticket"))
 	kafkaPorts := []string{"localhost:9092"}
 	require.Panics(t, func() {
 		testKafkaState := NewKafkaState(kafkaPorts)
