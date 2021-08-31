@@ -6,19 +6,18 @@
 package mappables
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type Maintainer interface {
-	GetClassificationID() types.ID
 	GetIdentityID() types.ID
+	GetMaintainedClassificationID() types.ID
 	GetMaintainedProperties() types.Properties
 
 	CanAddMaintainer() bool
 	CanRemoveMaintainer() bool
 	CanMutateMaintainer() bool
-
 	MaintainsProperty(types.ID) bool
-	helpers.Mappable
+
+	Document
 }
