@@ -10,7 +10,6 @@ import (
 )
 
 type Order interface {
-	GetClassificationID() types.ID
 	GetRateID() types.ID
 	GetCreationID() types.ID
 	GetMakerOwnableID() types.ID
