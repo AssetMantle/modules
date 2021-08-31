@@ -25,7 +25,7 @@ type asset struct {
 	baseTraits.HasMutables //nolint:govet
 }
 
-var _ mappables.InterNFT = (*asset)(nil)
+var _ mappables.Asset = (*asset)(nil)
 
 func (asset asset) GetID() types.ID {
 	return asset.ID
@@ -67,7 +67,7 @@ func (asset) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, asset{})
 }
 
-func NewAsset(assetID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.InterNFT {
+func NewAsset(assetID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Asset {
 	return asset{
 		ID:            assetID,
 		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},

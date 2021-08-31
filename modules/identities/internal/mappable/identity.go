@@ -26,11 +26,20 @@ type identity struct {
 	baseTraits.HasMutables //nolint:govet
 }
 
-var _ mappables.InterIdentity = (*identity)(nil)
+var _ mappables.Identity = (*identity)(nil)
 
 func (identity identity) GetID() types.ID { return identity.ID }
 func (identity identity) GetClassificationID() types.ID {
 	return key.ReadClassificationID(identity.ID)
+}
+func (identity identity) GetProperty(id types.ID) types.Property {
+	if property := identity.HasImmutables.GetImmutableProperties().Get(id); property != nil {
+		return property
+	} else if property := identity.HasMutables.GetMutableProperties().Get(id); property != nil {
+		return property
+	} else {
+		return base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
+	}
 }
 func (identity identity) GetExpiry() types.Property {
 	if property := identity.HasImmutables.GetImmutableProperties().Get(base.NewID(properties.Expiry)); property != nil {
@@ -56,7 +65,7 @@ func (identity identity) GetKey() helpers.Key {
 func (identity) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, identity{})
 }
-func NewIdentity(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.InterIdentity {
+func NewIdentity(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Identity {
 	return identity{
 		ID:            id,
 		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
@@ -91,7 +100,7 @@ func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 
 	return true
 }
-func (identity identity) ProvisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
+func (identity identity) ProvisionAddress(address sdkTypes.AccAddress) mappables.Identity {
 	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
 	if !ok {
 		panic(errors.IncorrectFormat)
@@ -99,9 +108,9 @@ func (identity identity) ProvisionAddress(address sdkTypes.AccAddress) helpers.M
 
 	accAddressListData.Add(base.NewAccAddressData(address))
 
-	return mappables.InterIdentity(identity)
+	return mappables.Identity(identity)
 }
-func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
+func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) mappables.Identity {
 	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
 	if !ok {
 		panic(errors.IncorrectFormat)
@@ -109,5 +118,5 @@ func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers
 
 	accAddressListData.Remove(base.NewAccAddressData(address))
 
-	return mappables.InterIdentity(identity)
+	return mappables.Identity(identity)
 }
