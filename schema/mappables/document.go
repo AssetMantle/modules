@@ -13,6 +13,8 @@ import (
 
 type Document interface {
 	GetID() types.ID
+	GetClassificationID() types.ID
+	GetProperty(types.ID) types.Property
 
 	traits.HasImmutables
 	traits.HasMutables
