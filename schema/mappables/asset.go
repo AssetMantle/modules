@@ -7,11 +7,9 @@ package mappables
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type InterNFT interface {
-	types.NFT
+type Asset interface {
 	traits.Burnable
 	traits.Lockable
 	traits.Splittable
