@@ -17,7 +17,6 @@ func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*MetaFact)(nil), nil)
 	codec.RegisterInterface((*MetaProperties)(nil), nil)
 	codec.RegisterInterface((*MetaProperty)(nil), nil)
-	codec.RegisterInterface((*NFT)(nil), nil)
 	codec.RegisterInterface((*Parameter)(nil), nil)
 	codec.RegisterInterface((*Properties)(nil), nil)
 	codec.RegisterInterface((*Property)(nil), nil)
