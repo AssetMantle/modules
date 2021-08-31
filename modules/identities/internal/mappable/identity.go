@@ -38,7 +38,7 @@ func (identity identity) GetProperty(id types.ID) types.Property {
 	} else if property := identity.HasMutables.GetMutableProperties().Get(id); property != nil {
 		return property
 	} else {
-		return base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
+		return nil
 	}
 }
 func (identity identity) GetExpiry() types.Property {

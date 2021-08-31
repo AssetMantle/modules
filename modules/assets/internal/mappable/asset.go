@@ -33,6 +33,15 @@ func (asset asset) GetID() types.ID {
 func (asset asset) GetClassificationID() types.ID {
 	return key.ReadClassificationID(asset.ID)
 }
+func (asset asset) GetProperty(id types.ID) types.Property {
+	if property := asset.HasImmutables.GetImmutableProperties().Get(id); property != nil {
+		return property
+	} else if property := asset.HasMutables.GetMutableProperties().Get(id); property != nil {
+		return property
+	} else {
+		return nil
+	}
+}
 func (asset asset) GetBurn() types.Property {
 	if burnProperty := asset.HasImmutables.GetImmutableProperties().Get(base.NewID(properties.Burn)); burnProperty != nil {
 		return burnProperty

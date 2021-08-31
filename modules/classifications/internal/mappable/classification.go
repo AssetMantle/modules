@@ -24,7 +24,17 @@ type classification struct {
 
 var _ mappables.Classification = (*classification)(nil)
 
-func (classification classification) GetID() types.ID { return classification.ID }
+func (classification classification) GetID() types.ID               { return classification.ID }
+func (classification classification) GetClassificationID() types.ID { return classification.ID }
+func (classification classification) GetProperty(id types.ID) types.Property {
+	if property := classification.HasImmutables.GetImmutableProperties().Get(id); property != nil {
+		return property
+	} else if property := classification.HasMutables.GetMutableProperties().Get(id); property != nil {
+		return property
+	} else {
+		return nil
+	}
+}
 func (classification classification) GetKey() helpers.Key {
 	return key.FromID(classification.ID)
 }
