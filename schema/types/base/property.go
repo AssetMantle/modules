@@ -11,9 +11,9 @@ import (
 
 var _ types.Property = (*Property)(nil)
 
-func (property Property) GetID() types.ID     { return property.Id }
-func (property Property) GetFact() types.Fact { return property.Fact }
-func NewProperty(id types.ID, fact types.Fact) types.Property {
+func (property Property) GetID() types.ID     { return &property.Id }
+func (property Property) GetFact() types.Fact { return &property.Fact }
+func NewProperty(id ID, fact Fact) *Property {
 	return &Property{
 		Id:   id,
 		Fact: fact,

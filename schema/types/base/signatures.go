@@ -14,39 +14,46 @@ var _ types.Signatures = (*Signatures)(nil)
 func (signatures Signatures) Get(id types.ID) types.Signature {
 	for _, signature := range signatures.SignatureList {
 		if signature.GetID().Compare(id) == 0 {
-			return signature
+			return &signature
 		}
 	}
 
 	return nil
 }
 func (signatures Signatures) GetList() []types.Signature {
-	return signatures.SignatureList
+	//return signatures.SignatureList
+	panic("Implement me")
 }
 func (signatures Signatures) Add(signature types.Signature) types.Signatures {
-	signatures.SignatureList = append(signatures.SignatureList, signature)
+	newSignature := Signature{
+		Id:             *NewID(signature.GetID().String()),
+		SignatureBytes: signature.Bytes(),
+		ValidityHeight: *NewHeight(signature.GetValidityHeight().Get())}
+	signatures.SignatureList = append(signatures.SignatureList, newSignature)
 	return &signatures
 }
 func (signatures Signatures) Remove(signature types.Signature) types.Signatures {
-	signatureList := signatures.SignatureList
-	for i, oldSignature := range signatureList {
-		if oldSignature.GetID().Compare(signature.GetID()) == 0 {
-			signatureList = append(signatureList[:i], signatureList[i+1:]...)
-		}
-	}
-
-	return NewSignatures(signatureList)
+	//signatureList := signatures.SignatureList
+	//for i, oldSignature := range signatureList {
+	//	if oldSignature.GetID().Compare(signature.GetID()) == 0 {
+	//		signatureList = append(signatureList[:i], signatureList[i+1:]...)
+	//	}
+	//}
+	//
+	//return NewSignatures(signatureList)
+	panic("Implement me")
 }
 func (signatures Signatures) Mutate(signature types.Signature) types.Signatures {
-	signatureList := signatures.GetList()
-	for i, oldSignature := range signatureList {
-		if oldSignature.GetID().Compare(signature.GetID()) == 0 {
-			signatureList[i] = signature
-		}
-	}
-
-	return NewSignatures(signatureList)
+	//signatureList := signatures.GetList()
+	//for i, oldSignature := range signatureList {
+	//	if oldSignature.GetID().Compare(signature.GetID()) == 0 {
+	//		signatureList[i] = signature
+	//	}
+	//}
+	//
+	//return NewSignatures(signatureList)
+	panic("Implement me")
 }
-func NewSignatures(signatureList []types.Signature) types.Signatures {
+func NewSignatures(signatureList []Signature) *Signatures {
 	return &Signatures{SignatureList: signatureList}
 }

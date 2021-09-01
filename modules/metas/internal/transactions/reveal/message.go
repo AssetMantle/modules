@@ -15,7 +15,6 @@ import (
 	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
@@ -60,9 +59,13 @@ func messagePrototype() helpers.Message {
 	return &Message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, metaFact types.MetaFact) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, metaFact base.MetaFact) *Message {
 	return &Message{
 		From:     base.NewAccAddressFromSDKTypesAccAddress(from),
 		MetaFact: metaFact,
 	}
+}
+
+func ReturnMessage() *Message {
+	return &Message{}
 }

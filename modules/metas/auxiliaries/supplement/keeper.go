@@ -12,7 +12,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -25,7 +24,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	var metaPropertyList []types.MetaProperty
+	var metaPropertyList []base.MetaProperty
 
 	for _, property := range auxiliaryRequest.PropertyList {
 		var meta helpers.Mappable
@@ -43,7 +42,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		}
 
 		if meta != nil {
-			metaPropertyList = append(metaPropertyList, base.NewMetaProperty(property.GetID(), base.NewMetaFact(meta.(mappables.Meta).GetData())))
+			a := base.NewID(property.GetID().String())
+			metaPropertyList = append(metaPropertyList, *base.NewMetaProperty(*a, *base.NewMetaFact(meta.(mappables.Meta).GetData())))
 		}
 	}
 

@@ -48,6 +48,11 @@ func (transaction transaction) Command() *cobra.Command {
 		}
 
 		msg, Error := transactionRequest.MakeMsg()
+		accAddress := transactionRequest.GetBaseReq().From
+		fmt.Println(accAddress, "AccAddress")
+		fmt.Println(msg.String(), "Message string")
+		fmt.Println(msg, "Message")
+
 		if Error != nil {
 			return Error
 		}

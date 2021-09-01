@@ -3,9 +3,10 @@ syntax = "proto3";
 package persistence_sdk.schema.types.base;
 
 import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/metaProperty.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message MetaProperties {
-  repeated string metaPropertyList = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.MetaProperty", (gogoproto.nullable) = false];
+  repeated persistence_sdk.schema.types.base.MetaProperty metaPropertyList = 1 [(gogoproto.nullable) = false];
 }

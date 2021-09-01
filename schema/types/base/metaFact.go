@@ -16,24 +16,24 @@ import (
 
 var _ types.MetaFact = (*MetaFact)(nil)
 
-func (metaFact MetaFact) GetHashID() types.ID             { return metaFact.Data.GenerateHashID() }
-func (metaFact MetaFact) GetTypeID() types.ID             { return metaFact.Data.GetTypeID() }
-func (metaFact MetaFact) GetSignatures() types.Signatures { return metaFact.Signatures }
+func (metaFact MetaFact) GetHashID() types.ID             { return metaFact.Data.Data.GenerateHashID() }
+func (metaFact MetaFact) GetTypeID() types.ID             { return metaFact.Data.Data.GetTypeID() }
+func (metaFact MetaFact) GetSignatures() types.Signatures { return &metaFact.Signatures }
 func (metaFact MetaFact) Sign(_ keyring.Keyring) types.MetaFact {
 	// TODO implement signing
 	return &metaFact
 }
-func (metaFact MetaFact) GetData() types.Data    { return metaFact.Data }
-func (metaFact MetaFact) RemoveData() types.Fact { return NewFact(metaFact.Data) }
+func (metaFact MetaFact) GetData() types.Data    { return &metaFact.Data }
+func (metaFact MetaFact) RemoveData() types.Fact { return NewFact(&metaFact.Data) }
 
-func NewMetaFact(data types.Data) types.MetaFact {
+func NewMetaFact(data types.Data) *MetaFact {
 	return &MetaFact{
-		Data:       data,
-		Signatures: &Signatures{},
+		Data:       *NewData(data),
+		Signatures: Signatures{},
 	}
 }
 
-func ReadMetaFact(metaFactString string) (types.MetaFact, error) {
+func ReadMetaFact(metaFactString string) (*MetaFact, error) {
 	dataTypeAndString := strings.SplitN(metaFactString, constants.DataTypeAndValueSeparator, 2)
 	if len(dataTypeAndString) == 2 {
 		dataType, dataString := dataTypeAndString[0], dataTypeAndString[1]
@@ -42,18 +42,18 @@ func ReadMetaFact(metaFactString string) (types.MetaFact, error) {
 
 		var Error error
 
-		switch NewID(dataType) {
-		case DecData{}.GetTypeID():
+		switch NewID(dataType).String() {
+		case Data_DecData{}.GetTypeID().String():
 			data, Error = ReadDecData(dataString)
-		case IDData{}.GetTypeID():
+		case Data_IdData{}.GetTypeID().String():
 			data, Error = ReadIDData(dataString)
-		case HeightData{}.GetTypeID():
+		case Data_HeightData{}.GetTypeID().String():
 			data, Error = ReadHeightData(dataString)
-		case StringData{}.GetTypeID():
+		case Data_StringData{}.GetTypeID().String():
 			data, Error = ReadStringData(dataString)
-		case AccAddressData{}.GetTypeID():
+		case Data_AccAddressData{}.GetTypeID().String():
 			data, Error = ReadAccAddressData(dataString)
-		case ListData{}.GetTypeID():
+		case Data_ListData{}.GetTypeID().String():
 			data, Error = ReadAccAddressListData(dataString)
 		default:
 			data, Error = nil, errors.UnsupportedParameter

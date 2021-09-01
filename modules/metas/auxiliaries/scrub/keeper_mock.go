@@ -9,7 +9,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/test"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -22,10 +21,14 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	scrubbedPropertyList := make([]types.Property, len(auxiliaryRequest.MetaPropertyList))
+	scrubbedPropertyList := make([]base.Property, len(auxiliaryRequest.MetaPropertyList))
 
 	for i, metaProperty := range auxiliaryRequest.MetaPropertyList {
-		scrubbedPropertyList[i] = metaProperty.RemoveData()
+		a := base.Property{
+			Id:   *base.NewID(metaProperty.GetID().String()),
+			Fact: *base.NewFact(metaProperty.GetMetaFact().GetData()),
+		}
+		scrubbedPropertyList[i] = a
 
 		if metaProperty.GetID().String() == "scrubError" {
 			return newAuxiliaryResponse(nil, test.MockError)

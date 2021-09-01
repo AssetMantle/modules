@@ -23,6 +23,6 @@ func (id ID) Compare(compareID types.ID) int {
 	return bytes.Compare(id.Bytes(), compareID.Bytes())
 }
 
-func NewID(idString string) types.ID {
+func NewID(idString string) *ID {
 	return &ID{IdString: idString}
 }

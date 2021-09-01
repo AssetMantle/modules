@@ -9,7 +9,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -22,15 +21,18 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	scrubbedPropertyList := make([]types.Property, len(auxiliaryRequest.MetaPropertyList))
+	scrubbedPropertyList := make([]base.Property, len(auxiliaryRequest.MetaPropertyList))
 	metas := auxiliaryKeeper.mapper.NewCollection(context)
 
 	for i, metaProperty := range auxiliaryRequest.MetaPropertyList {
 		if metaProperty.GetMetaFact().GetHashID().Compare(base.NewID("")) != 0 {
 			metas.Add(mappable.NewMeta(metaProperty.GetMetaFact().GetData()))
 		}
-
-		scrubbedPropertyList[i] = metaProperty.RemoveData()
+		a := base.Property{
+			Id:   *base.NewID(metaProperty.GetID().String()),
+			Fact: *base.NewFact(metaProperty.GetMetaFact().GetData()),
+		}
+		scrubbedPropertyList[i] = a
 	}
 
 	return newAuxiliaryResponse(base.NewProperties(scrubbedPropertyList...), nil)

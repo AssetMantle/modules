@@ -15,6 +15,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/queries"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/simulator"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/transactions"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/transactions/reveal"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
@@ -31,4 +32,8 @@ func Prototype() helpers.Module {
 		transactions.Prototype,
 		block.Prototype,
 	)
+}
+
+func Message() *reveal.Message {
+	return reveal.ReturnMessage()
 }

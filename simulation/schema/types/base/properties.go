@@ -16,7 +16,7 @@ import (
 func GenerateRandomProperties(r *rand.Rand) types.Properties {
 	randomPositiveInt := int(math.Abs(float64(r.Int()))) % 11
 
-	propertyList := make([]types.Property, randomPositiveInt)
+	propertyList := make([]base.Property, randomPositiveInt)
 
 	for i := 0; i < randomPositiveInt; i++ {
 		propertyList[i] = GenerateRandomProperty(r)

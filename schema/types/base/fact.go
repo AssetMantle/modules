@@ -15,7 +15,7 @@ var _ types.Fact = (*Fact)(nil)
 
 func (fact Fact) GetHashID() types.ID             { return fact.HashId }
 func (fact Fact) GetTypeID() types.ID             { return fact.TypeId }
-func (fact Fact) GetSignatures() types.Signatures { return fact.Signatures }
+func (fact Fact) GetSignatures() types.Signatures { return &fact.Signatures }
 func (fact Fact) IsMeta() bool {
 	return false
 }
@@ -24,20 +24,20 @@ func (fact Fact) Sign(_ keyring.Keyring) types.Fact {
 	cliContext := client.Context{}
 	sign, _, _ := cliContext.Keyring.Sign(cliContext.FromName, fact.GetHashID().Bytes())
 	Signature := Signature{
-		Id:             &ID{IdString: fact.GetHashID().String()},
+		Id:             ID{IdString: fact.GetHashID().String()},
 		SignatureBytes: sign,
-		ValidityHeight: &Height{cliContext.Height},
+		ValidityHeight: Height{cliContext.Height},
 	}
 	fact.GetSignatures().Add(&Signature)
 
 	return &fact
 }
 
-func NewFact(data types.Data) types.Fact {
+func NewFact(data types.Data) *Fact {
 	return &Fact{
 		HashId:     data.GenerateHashID(),
 		TypeId:     data.GetTypeID(),
-		Signatures: &Signatures{},
+		Signatures: Signatures{},
 	}
 }
 

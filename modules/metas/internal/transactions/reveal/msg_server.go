@@ -2,6 +2,7 @@ package reveal
 
 import (
 	"context"
+	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
@@ -27,6 +28,7 @@ func (msgServer msgServer) Reveal(goCtx context.Context, msg *Message) (*Transac
 	if message.MetaFact.GetHashID().Compare(base.NewID("")) != 0 {
 		metas.Add(mappable.NewMeta(message.MetaFact.GetData()))
 	}
+	fmt.Println("Hellppppppppppppppp")
 	return &TransactionResponse{}, nil
 }
 

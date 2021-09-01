@@ -15,19 +15,19 @@ import (
 
 var _ types.MetaProperty = (*MetaProperty)(nil)
 
-func (metaProperty MetaProperty) GetMetaFact() types.MetaFact { return metaProperty.MetaFact }
-func (metaProperty MetaProperty) GetID() types.ID             { return metaProperty.Id }
+func (metaProperty MetaProperty) GetMetaFact() types.MetaFact { return &metaProperty.MetaFact }
+func (metaProperty MetaProperty) GetID() types.ID             { return &metaProperty.Id }
 func (metaProperty MetaProperty) RemoveData() types.Property {
-	return NewProperty(metaProperty.Id, metaProperty.MetaFact.RemoveData())
+	return NewProperty(metaProperty.Id, *NewFact(&metaProperty.MetaFact.Data))
 }
 
-func NewMetaProperty(id types.ID, metaFact types.MetaFact) types.MetaProperty {
+func NewMetaProperty(id ID, metaFact MetaFact) *MetaProperty {
 	return &MetaProperty{
 		Id:       id,
 		MetaFact: metaFact,
 	}
 }
-func ReadMetaProperty(metaPropertyString string) (types.MetaProperty, error) {
+func ReadMetaProperty(metaPropertyString string) (*MetaProperty, error) {
 	propertyIDAndData := strings.Split(metaPropertyString, constants.PropertyIDAndDataSeparator)
 	if len(propertyIDAndData) == 2 && propertyIDAndData[0] != "" {
 		metaFact, Error := ReadMetaFact(propertyIDAndData[1])
@@ -35,7 +35,7 @@ func ReadMetaProperty(metaPropertyString string) (types.MetaProperty, error) {
 			return nil, Error
 		}
 
-		return NewMetaProperty(NewID(propertyIDAndData[0]), metaFact), nil
+		return NewMetaProperty(*NewID(propertyIDAndData[0]), *metaFact), nil
 	}
 
 	return nil, errors.IncorrectFormat
