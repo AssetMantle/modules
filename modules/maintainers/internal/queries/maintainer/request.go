@@ -15,22 +15,22 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-// queryRequest godoc
-// @Summary Query maintainers using maintainer id
-// @Description Able to query the maintainers details
-// @Accept json
-// @Produce json
-// @Tags Maintainers
-// @Param maintainerID path string true "maintainer ID"
-// @Success 200 {object} queryResponse "A successful query response"
-// @Failure default  {object}  queryResponse "An unexpected error response."
-// @Router /maintainers/maintainers/{maintainerID} [get]
 type queryRequest struct {
 	MaintainerID types.ID `json:"maintainerID" valid:"required~required field maintainerID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
+// Validate godoc
+// @Summary Query maintainers using maintainer id
+// @Description Able to query the maintainers details
+// @Accept json
+// @Produce json
+// @Tags Maintainers
+// @Param maintainerID path string true "maintainer ID"
+// @Success 200 {object} queryResponse "Message for a successful query response"
+// @Failure default  {object}  queryResponse "Message for an unexpected error response."
+// @Router /maintainers/maintainers/{maintainerID} [get]
 func (queryRequest queryRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(queryRequest)
 	return Error

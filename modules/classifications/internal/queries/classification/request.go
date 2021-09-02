@@ -15,22 +15,22 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-// queryRequest godoc
-// @Summary Query classification using classification id
-// @Description Able to query the asset
-// @Accept json
-// @Produce json
-// @Tags Classifications
-// @Param classificationID path string true "classification ID"
-// @Success 200 {object} queryResponse "Sucessful query response"
-// @Failure default  {object}  queryResponse "An unexpected error response."
-// @Router /classifications/classifications/{classificationID} [get]
 type queryRequest struct {
 	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
+// Validate godoc
+// @Summary Query classification using classification id
+// @Description Able to query the asset
+// @Accept json
+// @Produce json
+// @Tags Classifications
+// @Param classificationID path string true "Unique identifier of an asset classification."
+// @Success 200 {object} queryResponse "Message for a successful search response."
+// @Failure default  {object}  queryResponse "Message for an unexpected error response."
+// @Router /classifications/classifications/{classificationID} [get]
 func (queryRequest queryRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(queryRequest)
 	return Error

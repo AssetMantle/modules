@@ -15,22 +15,22 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-// queryRequest godoc
-// @Summary Query split using split id
-// @Description Able to query the asset
-// @Accept json
-// @Produce json
-// @Tags Splits
-// @Param splitID path string true "split ID"
-// @Success 200 {object} queryResponse "A successful query response"
-// @Failure default  {object}  queryResponse "An unexpected error response."
-// @Router /splits/splits/{splitID} [get]
 type queryRequest struct {
 	SplitID types.ID `json:"splitID" valid:"required~required field splitID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
+// Validate godoc
+// @Summary Query split using split id
+// @Description Able to query the asset
+// @Accept json
+// @Produce json
+// @Tags Splits
+// @Param splitID path string true "split ID"
+// @Success 200 {object} queryResponse "Message for a successful query response"
+// @Failure default  {object}  queryResponse "Message for an unexpected error response."
+// @Router /splits/splits/{splitID} [get]
 func (queryRequest queryRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(queryRequest)
 	return Error

@@ -20,16 +20,6 @@ import (
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
-// transactionRequest godoc
-// @Summary revoke order transaction
-// @Description revoke order transaction
-// @Accept text/plain
-// @Produce json
-// @Tags Orders
-// @Param body  transactionRequest true "request body"
-// @Success 200 {object} transactionResponse   "A successful response."
-// @Failure default  {object}  transactionResponse "error"
-// @Router /orders/revoke [post]
 type transactionRequest struct {
 	BaseReq          rest.BaseReq `json:"baseReq"`
 	FromID           string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
@@ -39,6 +29,16 @@ type transactionRequest struct {
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
+// Validate godoc
+// @Summary Revoke order transaction
+// @Description Revoke order transaction
+// @Accept text/plain
+// @Produce json
+// @Tags Orders
+// @Param body body transactionRequest true "Request body to revoke order"
+// @Success 200 {object} transactionResponse "Message for a successful response."
+// @Failure default  {object}  transactionResponse "Message for an unexpected error response."
+// @Router /orders/revoke [post]
 func (transactionRequest transactionRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(transactionRequest)
 	return Error

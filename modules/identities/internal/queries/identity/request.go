@@ -15,22 +15,22 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-// queryRequest godoc
-// @Summary Query identities using identity id
-// @Description Able to query the asset
-// @Accept json
-// @Produce json
-// @Tags Identities
-// @Param identityID path string true "identity ID"
-// @Success 200 {object} queryResponse "Sucessful query response"
-// @Failure default  {object}  queryResponse "An unexpected error response."
-// @Router /identities/identities/{identityID} [get]
 type queryRequest struct {
 	IdentityID types.ID `json:"identityID" valid:"required~required field identityID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
+// Validate godoc
+// @Summary Define identities transaction
+// @Description Able to query the asset
+// @Accept json
+// @Produce json
+// @Tags Identities
+// @Param identityID path string true "Query identity using identityID"
+// @Success 200 {object} queryResponse "Message for a successful response."
+// @Failure default  {object}  queryResponse "Message for an unexpected error response."
+// @Router /identities/identities/{identityID} [get]
 func (queryRequest queryRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(queryRequest)
 	return Error
