@@ -15,20 +15,24 @@ type msgServer struct {
 }
 
 func (msgServer msgServer) Reveal(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
-	message := messageFromInterface(msg)
 	ctx := sdkTypes.UnwrapSDKContext(goCtx)
-	metaID := key.GenerateMetaID(message.MetaFact.GetData())
+	fmt.Println("")
+	fmt.Println("")
+	fmt.Println(ctx, "Printing context")
+	fmt.Println("")
+	fmt.Println("")
+	metaID := key.GenerateMetaID(msg.MetaFact.GetData())
 	metas := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(metaID))
 
 	meta := metas.Get(key.FromID(metaID))
 	if meta != nil {
 		return nil, errors.EntityAlreadyExists
 	}
-
-	if message.MetaFact.GetHashID().Compare(base.NewID("")) != 0 {
-		metas.Add(mappable.NewMeta(message.MetaFact.GetData()))
+	fmt.Println(meta, "Printing Meta in ms_server ----------")
+	if msg.MetaFact.GetHashID().Compare(base.NewID("")) != 0 {
+		metas.Add(mappable.NewMeta(msg.MetaFact.GetData()))
 	}
-	fmt.Println("Hellppppppppppppppp")
+	fmt.Println(msg, "Printing ,msg in ms_server ++++++++++++")
 	return &TransactionResponse{}, nil
 }
 

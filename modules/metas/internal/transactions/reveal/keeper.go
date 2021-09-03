@@ -6,6 +6,7 @@
 package reveal
 
 import (
+	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -21,8 +22,9 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 	msgServer := NewMsgServerImpl(transactionKeeper)
-
+	fmt.Println("Pre msgServer.Reveal")
 	_, Error := msgServer.Reveal(sdkTypes.WrapSDKContext(context), &message)
+	fmt.Println("Post msgServer.Reveal")
 	return newTransactionResponse(Error)
 }
 
