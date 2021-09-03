@@ -18,13 +18,15 @@ var _ types.MetaProperty = (*MetaProperty)(nil)
 func (metaProperty MetaProperty) GetMetaFact() types.MetaFact { return &metaProperty.MetaFact }
 func (metaProperty MetaProperty) GetID() types.ID             { return &metaProperty.Id }
 func (metaProperty MetaProperty) RemoveData() types.Property {
-	return NewProperty(metaProperty.Id, *NewFact(&metaProperty.MetaFact.Data))
+	return NewProperty(metaProperty.GetID(), metaProperty.MetaFact.RemoveData())
 }
 
-func NewMetaProperty(id ID, metaFact MetaFact) *MetaProperty {
+func NewMetaProperty(id types.ID, metaFact types.MetaFact) *MetaProperty {
+	newID := *NewID(id.String())
+	newMetaFact := *NewMetaFact(metaFact.GetData())
 	return &MetaProperty{
-		Id:       id,
-		MetaFact: metaFact,
+		Id:       newID,
+		MetaFact: newMetaFact,
 	}
 }
 func ReadMetaProperty(metaPropertyString string) (*MetaProperty, error) {
@@ -35,7 +37,7 @@ func ReadMetaProperty(metaPropertyString string) (*MetaProperty, error) {
 			return nil, Error
 		}
 
-		return NewMetaProperty(*NewID(propertyIDAndData[0]), *metaFact), nil
+		return NewMetaProperty(NewID(propertyIDAndData[0]), metaFact), nil
 	}
 
 	return nil, errors.IncorrectFormat

@@ -23,10 +23,11 @@ func heightDataFromInterface(data types.Data) (Data_HeightData, error) {
 	}
 }
 
-func NewHeightData(value Height) *Data_HeightData {
+func NewHeightData(value types.Height) *Data_HeightData {
+	height := *NewHeight(value.Get())
 	return &Data_HeightData{
 		HeightData: &HeightData{
-			Value: value,
+			Value: height,
 		},
 	}
 }
@@ -41,7 +42,7 @@ func ReadHeightData(dataString string) (types.Data, error) {
 		return nil, Error
 	}
 
-	return NewHeightData(*NewHeight(height)), nil
+	return NewHeightData(NewHeight(height)), nil
 }
 
 var _ types.Data = (*Data_HeightData)(nil)
@@ -61,7 +62,7 @@ func (heightData Data_HeightData) GetTypeID() types.ID {
 	return NewID("H")
 }
 func (heightData Data_HeightData) ZeroValue() types.Data {
-	return NewHeightData(*NewHeight(0))
+	return NewHeightData(NewHeight(0))
 }
 func (heightData Data_HeightData) GenerateHashID() types.ID {
 	if heightData.Compare(heightData.ZeroValue()) == 0 {

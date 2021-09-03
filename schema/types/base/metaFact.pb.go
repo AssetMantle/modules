@@ -26,8 +26,6 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type MetaFact struct {
-	//  option (gogoproto.goproto_stringer) = false;
-	//  string data = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Data", (gogoproto.nullable) = false, (cosmos_proto.accepts_interface) = "github.com/persistenceOne/persistenceSDK/schema/types.Data"];
 	Signatures Signatures `protobuf:"bytes,1,opt,name=signatures,proto3" json:"signatures"`
 	Data       Data       `protobuf:"bytes,2,opt,name=data,proto3" json:"data"`
 }
@@ -561,8 +559,6 @@ func sozMetaFact(x uint64) (n int) {
 	return sovMetaFact(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
 func (m *MetaFact) Unmarshal(dAtA []byte) error {
-	fmt.Println(string(dAtA), "--------")
-	fmt.Println(m, "Metafact -------")
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {

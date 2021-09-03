@@ -34,7 +34,7 @@ func RegisterProtoCodec(registry codecTypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*types.Fact)(nil), &baseTypes.Fact{})
 	registry.RegisterImplementations((*types.MetaFact)(nil), &baseTypes.MetaFact{})
 	registry.RegisterImplementations((*types.MetaProperties)(nil), &baseTypes.MetaProperties{})
-	registry.RegisterImplementations((*types.Parameter)(nil), &baseTypes.Parameter{})
+	//registry.RegisterImplementations((*types.Parameter)(nil), &baseTypes.Parameter{})
 	registry.RegisterImplementations((*types.Property)(nil), &baseTypes.Property{})
 	registry.RegisterImplementations((*types.Properties)(nil), &baseTypes.Properties{})
 	registry.RegisterImplementations((*traits.HasMutables)(nil), &baseTraits.HasMutables{})

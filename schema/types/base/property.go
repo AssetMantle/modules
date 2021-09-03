@@ -13,10 +13,12 @@ var _ types.Property = (*Property)(nil)
 
 func (property Property) GetID() types.ID     { return &property.Id }
 func (property Property) GetFact() types.Fact { return &property.Fact }
-func NewProperty(id ID, fact Fact) *Property {
+func NewProperty(id types.ID, fact types.Fact) *Property {
+	newID := *NewID(id.String())
+	newFact := *NewFactProperty(fact.GetHashID(), fact.GetTypeID(), fact.GetSignatures())
 	return &Property{
-		Id:   id,
-		Fact: fact,
+		Id:   newID,
+		Fact: newFact,
 	}
 }
 func ReadProperty(propertyString string) (types.Property, error) {

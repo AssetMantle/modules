@@ -30,10 +30,12 @@ func (baseSignature Signature) HasExpired(height types.Height) bool {
 	return baseSignature.GetValidityHeight().Compare(height) > 0
 }
 
-func NewSignature(id ID, signatureBytes []byte, validityHeight Height) *Signature {
+func NewSignature(id types.ID, signatureBytes []byte, validityHeight types.Height) *Signature {
+	newID := *NewID(id.String())
+	newValidityHeight := *NewHeight(validityHeight.Get())
 	return &Signature{
-		Id:             id,
+		Id:             newID,
 		SignatureBytes: signatureBytes,
-		ValidityHeight: validityHeight,
+		ValidityHeight: newValidityHeight,
 	}
 }

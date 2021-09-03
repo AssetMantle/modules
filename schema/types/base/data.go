@@ -8,47 +8,47 @@ import (
 var _ types.Data = &Data{}
 
 func (m Data) Compare(data types.Data) int {
-	panic("implement me")
+	return m.Data.Compare(data)
 }
 
 func (m Data) GetTypeID() types.ID {
-	panic("implement me")
+	return m.Data.GetTypeID()
 }
 
 func (m Data) ZeroValue() types.Data {
-	panic("implement me")
+	return m.Data.ZeroValue()
 }
 
 func (m Data) GenerateHashID() types.ID {
-	panic("implement me")
+	return m.Data.GetTypeID()
 }
 
 func (m Data) AsAccAddress() (sdkTypes.AccAddress, error) {
-	panic("implement me")
+	return m.Data.AsAccAddress()
 }
 
 func (m Data) AsListData() (types.ListData, error) {
-	panic("implement me")
+	return m.Data.AsListData()
 }
 
 func (m Data) AsString() (string, error) {
-	panic("implement me")
+	return m.Data.AsString()
 }
 
 func (m Data) AsDec() (sdkTypes.Dec, error) {
-	panic("implement me")
+	return m.Data.AsDec()
 }
 
 func (m Data) AsHeight() (types.Height, error) {
-	panic("implement me")
+	return m.Data.AsHeight()
 }
 
 func (m Data) AsID() (types.ID, error) {
-	panic("implement me")
+	return m.Data.AsID()
 }
 
 func (m Data) Get() interface{} {
-	panic("implement me")
+	return m.Data.Get()
 }
 
 func NewData(data types.Data) *Data {
@@ -56,3 +56,12 @@ func NewData(data types.Data) *Data {
 		Data: data,
 	}
 }
+
+//func dataFromInterface(data types.Data) (Data, error) {
+//	switch value := data.(type) {
+//	case *Data:
+//		return *value, nil
+//	default:
+//		return Data{}, errors.MetaDataError
+//	}
+//}

@@ -16,8 +16,6 @@ option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base"
 
 message MetaFact {
   option (gogoproto.goproto_getters) = false;
-//  option (gogoproto.goproto_stringer) = false;
-//  string data = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Data", (gogoproto.nullable) = false, (cosmos_proto.accepts_interface) = "github.com/persistenceOne/persistenceSDK/schema/types.Data"];
   persistence_sdk.schema.types.base.Signatures signatures = 1 [(gogoproto.nullable) = false];
   data data = 2 [(gogoproto.nullable) = false];
 }

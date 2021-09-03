@@ -23,16 +23,17 @@ func idDataFromInterface(data types.Data) (Data_IdData, error) {
 	}
 }
 
-func NewIDData(value ID) types.Data {
+func NewIDData(value types.ID) types.Data {
+	id := *NewID(value.String())
 	return &Data_IdData{
 		IdData: &IDData{
-			Value: value,
+			Value: id,
 		},
 	}
 }
 
 func ReadIDData(idData string) (types.Data, error) {
-	return NewIDData(*NewID(idData)), nil
+	return NewIDData(NewID(idData)), nil
 }
 
 var _ types.Data = (*Data_IdData)(nil)
@@ -49,7 +50,7 @@ func (idData Data_IdData) String() string {
 	return idData.IdData.Value.String()
 }
 func (idData Data_IdData) ZeroValue() types.Data {
-	return NewIDData(*NewID(""))
+	return NewIDData(NewID(""))
 }
 func (idData Data_IdData) GetTypeID() types.ID {
 	return NewID("I")

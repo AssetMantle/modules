@@ -26,7 +26,7 @@ func GenerateRandomData(r *rand.Rand) types.Data {
 	case 2:
 		return base.NewDecData(simulation.RandomDecAmount(r, sdkTypes.NewDec(99)))
 	case 3:
-		return base.NewHeightData(*base.NewHeight(r.Int63()))
+		return base.NewHeightData(base.NewHeight(r.Int63()))
 	default:
 		return nil
 	}
