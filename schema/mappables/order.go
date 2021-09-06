@@ -6,6 +6,7 @@
 package mappables
 
 import (
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -24,4 +25,5 @@ type Order interface {
 	GetMakerOwnableSplit() types.Property
 
 	Document
+	helpers.Mappable
 }

@@ -5,6 +5,9 @@
 
 package mappables
 
+import "github.com/persistenceOne/persistenceSDK/schema/helpers"
+
 type Classification interface {
 	Document
+	helpers.Mappable
 }

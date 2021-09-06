@@ -7,11 +7,18 @@ package mappables
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type Identity interface {
+
+	// GetExpiry returns the expiry property of an Identity
+	// * If the property is not found, it returns a default value and not nil
 	GetExpiry() types.Property
+
+	// GetAuthentication returns the authentication property of an Identity
+	// * If the property is not found, it returns a default value and not nil
 	GetAuthentication() types.Property
 
 	IsProvisioned(sdkTypes.AccAddress) bool
@@ -20,4 +27,5 @@ type Identity interface {
 	UnprovisionAddress(sdkTypes.AccAddress) Identity
 
 	Document
+	helpers.Mappable
 }

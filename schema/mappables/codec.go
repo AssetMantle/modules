@@ -10,7 +10,6 @@ import (
 )
 
 func RegisterCodec(codec *codec.Codec) {
-	codec.RegisterInterface((*Chain)(nil), nil)
 	codec.RegisterInterface((*Classification)(nil), nil)
 	codec.RegisterInterface((*Identity)(nil), nil)
 	codec.RegisterInterface((*Asset)(nil), nil)

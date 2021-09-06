@@ -6,6 +6,7 @@
 package mappables
 
 import (
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 )
 
@@ -15,4 +16,5 @@ type Asset interface {
 	traits.Splittable
 
 	Document
+	helpers.Mappable
 }
