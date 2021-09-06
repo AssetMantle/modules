@@ -14,6 +14,7 @@ const moduleName = "types"
 
 func RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, accAddressData{})
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, booleanData{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, listData{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, decData{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, fact{})
