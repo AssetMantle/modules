@@ -15,22 +15,22 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-// queryRequest godoc
-// @Summary Query asset using asset id
-// @Description Able to query the asset
-// @Accept text/plain
-// @Produce json
-// @Tags Assets
-// @Param assetID path string true "Asset ID"
-// @Success 200 {object} queryResponse "A successful query response"
-// @Failure default  {object}  queryResponse "An unexpected error response."
-// @Router /assets/assets/{assetID} [get]
 type queryRequest struct {
 	AssetID types.ID `json:"assetID" valid:"required~required field assetID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
+// Validate godoc
+// @Summary Search for an asset by Asset ID
+// @Description Unique identifier of an asset.
+// @Accept text/plain
+// @Produce json
+// @Tags Assets
+// @Param assetID path string true "Asset ID"
+// @Success 200 {object} queryResponse "Message for a successful search."
+// @Failure default  {object}  queryResponse "Message for an unexpected error."
+// @Router /assets/assets/{assetID} [get]
 func (queryRequest queryRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(queryRequest)
 	return Error
