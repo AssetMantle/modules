@@ -15,4 +15,9 @@ type Mappable interface {
 	RegisterLegacyAminoCodec(amino *codec.LegacyAmino)
 
 	types.Proto
+	Reset()
+	String() string
+	ProtoMessage()
+	Marshal() ([]byte, error)
+	MarshalToSizedBuffer([]byte) (int, error)
 }

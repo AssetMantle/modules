@@ -57,8 +57,8 @@ func requestPrototype() helpers.QueryRequest {
 
 func queryRequestFromInterface(request helpers.QueryRequest) QueryRequest {
 	switch value := request.(type) {
-	case QueryRequest:
-		return value
+	case *QueryRequest:
+		return *value
 	default:
 		return QueryRequest{}
 	}

@@ -6,6 +6,7 @@
 package base
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/99designs/keyring"
@@ -16,15 +17,18 @@ import (
 
 var _ types.MetaFact = (*MetaFact)(nil)
 
-func (metaFact MetaFact) GetHashID() types.ID             { return metaFact.Data.Data.GenerateHashID() }
-func (metaFact MetaFact) GetTypeID() types.ID             { return metaFact.Data.Data.GetTypeID() }
+func (metaFact MetaFact) GetHashID() types.ID {
+	fmt.Println(metaFact.Data.GenerateHashID(), "Printing GenerateHashID")
+	return metaFact.Data.GenerateHashID()
+}
+func (metaFact MetaFact) GetTypeID() types.ID             { return metaFact.Data.GetTypeID() }
 func (metaFact MetaFact) GetSignatures() types.Signatures { return &metaFact.Signatures }
 func (metaFact MetaFact) Sign(_ keyring.Keyring) types.MetaFact {
 	// TODO implement signing
 	return &metaFact
 }
-func (metaFact MetaFact) GetData() types.Data    { return &metaFact.Data }
-func (metaFact MetaFact) RemoveData() types.Fact { return NewFact(&metaFact.Data) }
+func (metaFact MetaFact) GetData() types.Data    { return metaFact.Data.GetData() }
+func (metaFact MetaFact) RemoveData() types.Fact { return NewFact(metaFact.Data.GetData()) }
 
 func NewMetaFact(data types.Data) *MetaFact {
 	return &MetaFact{

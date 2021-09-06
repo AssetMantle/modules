@@ -12,13 +12,14 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 var _ mappables.Meta = (*Meta)(nil)
 
-func (meta Meta) GetData() types.Data { return meta.Data }
-func (meta Meta) GetID() types.ID     { return meta.ID }
+func (meta Meta) GetData() types.Data { return &meta.Data }
+func (meta Meta) GetID() types.ID     { return &meta.ID }
 func (meta Meta) GetKey() helpers.Key {
 	return key.FromID(meta.GetID())
 }
@@ -26,9 +27,11 @@ func (Meta) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Meta{})
 }
 
-func NewMeta(data types.Data) mappables.Meta {
+func NewMeta(data types.Data) *Meta {
+	newID := *base.NewID(key.GenerateMetaID(data).String())
+	newData := *base.NewData(data)
 	return &Meta{
-		ID:   key.GenerateMetaID(data),
-		Data: data,
+		ID:   newID,
+		Data: newData,
 	}
 }

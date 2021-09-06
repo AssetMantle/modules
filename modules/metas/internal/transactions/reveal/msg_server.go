@@ -29,8 +29,12 @@ func (msgServer msgServer) Reveal(goCtx context.Context, msg *Message) (*Transac
 		return nil, errors.EntityAlreadyExists
 	}
 	fmt.Println(meta, "Printing Meta in ms_server ----------")
-	if msg.MetaFact.GetHashID().Compare(base.NewID("")) != 0 {
-		metas.Add(mappable.NewMeta(msg.MetaFact.GetData()))
+	a := msg.MetaFact.GetHashID().Compare(base.NewID(""))
+	fmt.Println(a, "Printing comparison result (((((((((((((")
+	if a != 0 {
+		b := mappable.NewMeta(msg.MetaFact.GetData())
+		fmt.Println(b, "Printing NewMeta")
+		metas.Add(b)
 	}
 	fmt.Println(msg, "Printing ,msg in ms_server ++++++++++++")
 	return &TransactionResponse{}, nil

@@ -70,7 +70,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 
 	return newMessage(
 		from,
-		*metaFact,
+		metaFact,
 	), nil
 }
 func (transactionRequest) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {

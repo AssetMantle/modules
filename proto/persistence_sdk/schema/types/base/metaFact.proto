@@ -17,10 +17,10 @@ option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base"
 message MetaFact {
   option (gogoproto.goproto_getters) = false;
   persistence_sdk.schema.types.base.Signatures signatures = 1 [(gogoproto.nullable) = false];
-  data data = 2 [(gogoproto.nullable) = false];
+  Data data = 2 [(gogoproto.nullable) = false];
 }
 
-message data {
+message Data {
   oneof data {
     persistence_sdk.schema.types.base.DecData dec_data = 1;
     persistence_sdk.schema.types.base.HeightData height_data = 2;
