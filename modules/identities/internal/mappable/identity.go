@@ -14,7 +14,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
@@ -42,22 +42,18 @@ func (identity identity) GetProperty(id types.ID) types.Property {
 	}
 }
 func (identity identity) GetExpiry() types.Property {
-	if property := identity.HasImmutables.GetImmutableProperties().Get(base.NewID(properties.Expiry)); property != nil {
+	if property := identity.GetProperty(base.NewID(properties.Expiry)); property != nil {
 		return property
-	} else if property := identity.HasMutables.GetMutableProperties().Get(base.NewID(properties.Expiry)); property != nil {
-		return property
-	} else {
-		return base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
 	}
+
+	return base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewHeightData(base.NewHeight(-1))))
 }
 func (identity identity) GetAuthentication() types.Property {
-	if property := identity.HasImmutables.GetImmutableProperties().Get(base.NewID(properties.Authentication)); property != nil {
+	if property := identity.GetProperty(base.NewID(properties.Authentication)); property != nil {
 		return property
-	} else if property := identity.HasMutables.GetMutableProperties().Get(base.NewID(properties.Authentication)); property != nil {
-		return property
-	} else {
-		return base.NewProperty(base.NewID(properties.Authentication), base.NewFact(base.NewListData().ZeroValue()))
 	}
+
+	return base.NewProperty(base.NewID(properties.Authentication), base.NewFact(base.NewListData().ZeroValue()))
 }
 func (identity identity) GetKey() helpers.Key {
 	return key.FromID(identity.ID)
@@ -80,7 +76,7 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	//	panic(errors.IncorrectFormat)
 	//}
 	//
-	//if !address.Empty() && accAddressListData.Search(base.NewAccAddressData(address)) != -1 {
+	//if !address.Empty() && accAddressListData.Search(qualified.NewAccAddressData(address)) != -1 {
 	//	flag = true
 	//}
 
@@ -94,7 +90,7 @@ func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 	//	panic(errors.IncorrectFormat)
 	//}
 	//
-	//if !address.Empty() && !(accAddressListData.Search(base.NewAccAddressData(address)) != -1) {
+	//if !address.Empty() && !(accAddressListData.Search(qualified.NewAccAddressData(address)) != -1) {
 	//	flag = true
 	//}
 

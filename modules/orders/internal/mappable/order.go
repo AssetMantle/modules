@@ -16,7 +16,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
@@ -35,6 +35,15 @@ func (order order) GetID() types.ID {
 }
 func (order order) GetClassificationID() types.ID {
 	return key.ReadClassificationID(order.ID)
+}
+func (order order) GetProperty(id types.ID) types.Property {
+	if property := order.HasImmutables.GetImmutableProperties().Get(id); property != nil {
+		return property
+	} else if property := order.HasMutables.GetMutableProperties().Get(id); property != nil {
+		return property
+	} else {
+		return nil
+	}
 }
 func (order order) GetRateID() types.ID {
 	return key.ReadRateID(order.ID)
