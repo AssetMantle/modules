@@ -7,14 +7,16 @@ package properties
 
 //Note: Arranged alphabetically
 const (
-	Authentication    = "authentication"
-	Burn              = "burn"
-	Creation          = "creation"
-	ExchangeRate      = "exchangeRate"
-	Expiry            = "expiry"
-	Lock              = "lock"
-	MakerOwnableSplit = "makerOwnableSplit"
-	NubID             = "nubID"
-	TakerID           = "takerID"
-	Value             = "value"
+	Authentication       = "authentication"
+	Burn                 = "burn"
+	Creation             = "creation"
+	ExchangeRate         = "exchangeRate"
+	Expiry               = "expiry"
+	Lock                 = "lock"
+	MaintainedProperties = "maintainedProperties"
+	MakerOwnableSplit    = "makerOwnableSplit"
+	NubID                = "nubID"
+	Permissions          = "permissions"
+	TakerID              = "takerID"
+	Value                = "value"
 )
