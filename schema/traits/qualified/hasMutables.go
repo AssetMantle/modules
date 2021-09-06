@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package base
+package qualified
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
