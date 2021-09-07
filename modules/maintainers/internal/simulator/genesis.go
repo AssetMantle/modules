@@ -20,7 +20,6 @@ import (
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/persistenceOne/persistenceSDK/simulation"
 	baseSimulation "github.com/persistenceOne/persistenceSDK/simulation/schema/types/base"
 )
 
@@ -38,7 +37,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	mappableList := make([]helpers.Mappable, simulationState.Rand.Intn(99))
 
 	for i := range mappableList {
-		mappableList[i] = mappable.NewMaintainer(key.NewMaintainerID(baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand)), baseSimulation.GenerateRandomProperties(simulationState.Rand), simulation.RandomBool(simulationState.Rand), simulation.RandomBool(simulationState.Rand), simulation.RandomBool(simulationState.Rand))
+		mappableList[i] = mappable.NewMaintainer(key.NewMaintainerID(baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand)), baseSimulation.GenerateRandomProperties(simulationState.Rand), baseSimulation.GenerateRandomProperties(simulationState.Rand))
 	}
 
 	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
