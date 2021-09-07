@@ -13,6 +13,7 @@ import (
 const moduleName = "traits"
 
 func RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, Document{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, HasImmutables{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, HasMutables{})
 }
