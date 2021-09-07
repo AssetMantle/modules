@@ -8,6 +8,8 @@ package mappable
 import (
 	"testing"
 
+	"github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
+
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
@@ -24,7 +26,7 @@ func Test_Identity_Methods(t *testing.T) {
 	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("MutableData"))))
 
 	testIdentity := NewIdentity(testIdentityID, immutableProperties, mutableProperties)
-	require.Equal(t, testIdentity, identity{ID: testIdentityID, HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties}, HasMutables: baseTraits.HasMutables{Properties: mutableProperties}})
+	require.Equal(t, testIdentity, identity{Document: qualified.Document{ID: testIdentityID, HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties}, HasMutables: baseTraits.HasMutables{Properties: mutableProperties}}})
 	require.Equal(t, testIdentity.(identity).GetID(), testIdentityID)
 	require.Equal(t, testIdentity.GetImmutableProperties(), immutableProperties)
 	require.Equal(t, testIdentity.GetMutableProperties(), mutableProperties)

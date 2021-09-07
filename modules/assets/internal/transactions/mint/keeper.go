@@ -8,7 +8,7 @@ package mint
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	propertiesConstants "github.com/persistenceOne/persistenceSDK/constants/properties"
+	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
@@ -70,8 +70,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	split := sdkTypes.SmallestDec()
 
-	if metaProperties := base.NewMetaProperties(append(message.ImmutableMetaProperties.GetList(), message.MutableMetaProperties.GetList()...)...); metaProperties.Get(base.NewID(propertiesConstants.Lock)) != nil {
-		if split, Error = metaProperties.Get(base.NewID(propertiesConstants.Lock)).GetMetaFact().GetData().AsDec(); Error != nil {
+	if metaProperties := base.NewMetaProperties(append(message.ImmutableMetaProperties.GetList(), message.MutableMetaProperties.GetList()...)...); metaProperties.Get(ids.Lock) != nil {
+		if split, Error = metaProperties.Get(ids.Lock).GetMetaFact().GetData().AsDec(); Error != nil {
 			return newTransactionResponse(errors.MetaDataError)
 		}
 	}

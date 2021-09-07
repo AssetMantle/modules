@@ -11,42 +11,31 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type classification struct {
-	ID types.ID `json:"id" valid:"required~required field id missing"`
-	baseTraits.HasImmutables
-	baseTraits.HasMutables //nolint:govet
+	qualified.Document
 }
 
 var _ mappables.Classification = (*classification)(nil)
 
-func (classification classification) GetID() types.ID               { return classification.ID }
-func (classification classification) GetClassificationID() types.ID { return classification.ID }
-func (classification classification) GetProperty(id types.ID) types.Property {
-	if property := classification.HasImmutables.GetImmutableProperties().Get(id); property != nil {
-		return property
-	} else if property := classification.HasMutables.GetMutableProperties().Get(id); property != nil {
-		return property
-	} else {
-		return nil
-	}
-}
 func (classification classification) GetKey() helpers.Key {
 	return key.FromID(classification.ID)
 }
-
 func (classification) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, classification{})
 }
 
 func NewClassification(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Classification {
 	return classification{
-		ID:            id,
-		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
-		HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
+		Document: qualified.Document{
+			ID:            id,
+			HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
+			HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
+		},
 	}
 }

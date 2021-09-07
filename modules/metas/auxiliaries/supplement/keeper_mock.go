@@ -7,7 +7,7 @@ package supplement
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants/properties"
+	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/constants/test"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -26,16 +26,16 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 	var metaPropertyList []types.MetaProperty
 
 	for _, property := range auxiliaryRequest.PropertyList {
-		if property.GetID().String() == properties.Burn && property.GetFact().GetHashID().Compare(base.NewID("")) == 0 {
+		if property.GetID().Compare(ids.Burn) == 0 && property.GetFact().GetHashID().Compare(base.NewID("")) == 0 {
 			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), test.MockError)
 		}
 	}
 
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.Burn), base.NewMetaFact(base.NewHeightData(base.NewHeight(1)))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(sdkTypes.SmallestDec()))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.TakerID), base.NewMetaFact(base.NewIDData(base.NewID("fromID")))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec())))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.Expiry), base.NewMetaFact(base.NewHeightData(base.NewHeight(900)))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.Burn, base.NewMetaFact(base.NewHeightData(base.NewHeight(1)))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.MakerOwnableSplit, base.NewMetaFact(base.NewDecData(sdkTypes.SmallestDec()))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.TakerID, base.NewMetaFact(base.NewIDData(base.NewID("fromID")))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.ExchangeRate, base.NewMetaFact(base.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec())))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.Expiry, base.NewMetaFact(base.NewHeightData(base.NewHeight(900)))))
 
 	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
 }

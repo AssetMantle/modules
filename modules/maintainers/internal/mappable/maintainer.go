@@ -7,21 +7,20 @@ package mappable
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
+	"github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type maintainer struct {
-	ID types.ID `json:"id" valid:"required~required field id missing"`
-	baseTraits.HasImmutables
-	baseTraits.HasMutables //nolint:govet
+	qualified.Document
 }
 
 var _ mappables.Maintainer = (*maintainer)(nil)
@@ -46,21 +45,21 @@ func (maintainer maintainer) GetMaintainedClassificationID() types.ID {
 	return key.ReadClassificationID(maintainer.ID)
 }
 func (maintainer maintainer) GetMaintainedProperties() types.Property {
-	if property := maintainer.GetProperty(base.NewID(properties.MaintainedProperties)); property != nil {
+	if property := maintainer.GetProperty(ids.MaintainedProperties); property != nil {
 		return property
 	}
 
-	return base.NewProperty(base.NewID(properties.MaintainedProperties), base.NewFact(base.NewListData()))
+	return properties.MaintainedProperties
 }
 func (maintainer maintainer) CanMintAsset() bool {
-	if property := maintainer.GetProperty(base.NewID(properties.Permissions)); property != nil {
+	if property := maintainer.GetProperty(ids.Permissions); property != nil {
 		impl
 	}
 
 	return false
 }
 func (maintainer maintainer) CanBurnAsset() bool {
-	if property := maintainer.GetProperty(base.NewID(properties.Permissions)); property != nil {
+	if property := maintainer.GetProperty(ids.Permissions); property != nil {
 		impl
 	}
 
@@ -108,10 +107,12 @@ func (maintainer) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, maintainer{})
 }
 
-func NewMaintainer(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Maintainer {
+func NewMaintainer(id types.ID, maintainedProperties types.Properties, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) mappables.Maintainer {
 	return maintainer{
-		ID:            id,
-		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
-		HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
+		Document: qualified.Document{
+			ID:            id,
+			HasImmutables: qualified.HasImmutables{Properties: immutableProperties},
+			HasMutables:   qualified.HasMutables{Properties: mutableProperties},
+		},
 	}
 }

@@ -8,7 +8,7 @@ package verify
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/constants/properties"
+	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -38,7 +38,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(Error)
 	}
 
-	if metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().(types.ListData).Search(base.NewAccAddressData(auxiliaryRequest.Address)) == -1 {
+	if metaProperties.Get(ids.Authentication).GetMetaFact().GetData().(types.ListData).Search(base.NewAccAddressData(auxiliaryRequest.Address)) == -1 {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
 
