@@ -15,22 +15,22 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-// queryRequest godoc
-// @Summary Query meta using meta id
-// @Description Able to query the meta data
-// @Accept json
-// @Produce json
-// @Tags Metas
-// @Param metaID path string true "meta ID"
-// @Success 200 {object} queryResponse "A successful query response"
-// @Failure default  {object}  queryResponse "An unexpected error response."
-// @Router /metas/metas/{metaID} [get]
 type queryRequest struct {
 	MetaID types.ID `json:"metaID" valid:"required~required field metaID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
+// Validate godoc
+// @Summary Query meta using meta id
+// @Description Able to query the meta data
+// @Accept json
+// @Produce json
+// @Tags Metas
+// @Param metaID path string true "meta ID"
+// @Success 200 {object} queryResponse "Message for a successful query response"
+// @Failure default  {object}  queryResponse "Message for an unexpected error response."
+// @Router /metas/metas/{metaID} [get]
 func (queryRequest queryRequest) Validate() error {
 	_, Error := govalidator.ValidateStruct(queryRequest)
 	return Error
