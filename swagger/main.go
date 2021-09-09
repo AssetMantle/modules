@@ -27,15 +27,37 @@ var Prototype = base.NewApplication(
 // @version 0.1.0
 // @description API Documentation of Persistence custom modules
 // @host localhost:1317
+// @BasePath /xrpt
 
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 func main() {
 	r := mux.NewRouter()
+	//r.HandleFunc("/", fooHandler).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodOptions)
+	//r.Use(mux.CORSMethodMiddleware(r))
+	//c := cors.New(cors.Options{
+	//	AllowedMethods: []string{"GET","POST", "OPTIONS"},
+	//	AllowedOrigins: []string{"*"},
+	//	AllowCredentials: true,
+	//	AllowedHeaders: []string{"Content-Type","Bearer","Bearer ","content-type","Origin","Accept"},
+	//	OptionsPassthrough: true,
+	//})
+	//http.Handle("/", r)
 	ctx := context.NewCLIContext()
 	Prototype.GetModuleBasicManager().RegisterRESTRoutes(ctx, r)
 	r.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
-	log.Println("listen on :1317")
-	log.Fatal(http.ListenAndServe(":1317", r))
+	//r.Headers("Access-Control-Allow-Origin", "*")
+	log.Println("listen on :1318")
+	log.Fatal(http.ListenAndServe(":1318", r))
 }
+
+//func fooHandler(w http.ResponseWriter, r *http.Request) {
+//	w.Header().Set("Access-Control-Allow-Origin", "*")
+//	w.Header().Set("Sec-Fetch-Mode","no-cors")
+//	if r.Method == http.MethodOptions {
+//		return
+//	}
+//
+//	w.Write([]byte("foo"))
+//}
