@@ -410,10 +410,6 @@ definitions:
         type: integer
       chain_id:
         type: string
-      fees:
-        items:
-          $ref: '#/definitions/types.Coin'
-        type: array
       from:
         type: string
       gas:
@@ -507,19 +503,6 @@ definitions:
         type: string
       success:
         type: boolean
-    type: object
-  types.Coin:
-    properties:
-      amount:
-        $ref: '#/definitions/types.Int'
-        description: |-
-          To allow the use of unsigned integers (see: #1273) a larger refactor will
-          need to be made. So we use signed integers for now with safety measures in
-          place preventing negative values being used.
-      denom:
-        type: string
-    type: object
-  types.Int:
     type: object
   unprovision.transactionRequest:
     properties:
@@ -629,7 +612,7 @@ paths:
           description: Message for an unexpected error in the transaction.
           schema:
             $ref: '#/definitions/burn.transactionResponse'
-      summary: Burn asset transaction
+      summary: Burn an asset transaction
       tags:
       - Assets
   /assets/define:
@@ -655,7 +638,7 @@ paths:
           description: Message for an unexpected error in the transaction.
           schema:
             $ref: '#/definitions/define.transactionResponse'
-      summary: Define asset transaction
+      summary: Define an asset transaction
       tags:
       - Assets
   /assets/deputize:
@@ -681,7 +664,7 @@ paths:
           description: Message for an unexpected error response.
           schema:
             $ref: '#/definitions/deputize.transactionResponse'
-      summary: Deputize asset transaction
+      summary: Deputize an asset transaction
       tags:
       - Assets
   /assets/mint:
@@ -707,7 +690,7 @@ paths:
           description: Message for an unexpected error response.
           schema:
             $ref: '#/definitions/mint.transactionResponse'
-      summary: Mint asset transaction
+      summary: Mint an asset transaction
       tags:
       - Assets
   /assets/mutate:
@@ -733,7 +716,7 @@ paths:
           description: Message for an unexpected error response.
           schema:
             $ref: '#/definitions/github.com_persistenceOne_persistenceSDK_modules_assets_internal_transactions_mutate.transactionResponse'
-      summary: Mutate asset transaction
+      summary: Mutate an asset transaction
       tags:
       - Assets
   /assets/renumerate:
@@ -759,7 +742,7 @@ paths:
           description: Message for an unexpected error response.
           schema:
             $ref: '#/definitions/renumerate.transactionResponse'
-      summary: Renumerate asset transaction
+      summary: Renumerate an asset transaction
       tags:
       - Assets
   /assets/revoke:
@@ -785,7 +768,7 @@ paths:
           description: Message for unexpected error response.
           schema:
             $ref: '#/definitions/revoke.transactionResponse'
-      summary: Revoke asset transaction
+      summary: Revoke a maintainer for an asset classification transaction
       tags:
       - Assets
   /classifications/classifications/{classificationID}:
@@ -810,7 +793,7 @@ paths:
           description: Message for an unexpected error response.
           schema:
             $ref: '#/definitions/classification.queryResponse'
-      summary: Query classification using classification id
+      summary: Search for an identity by identity ID
       tags:
       - Classifications
   /identities/define:
@@ -836,14 +819,14 @@ paths:
           description: Message for an unexpected error response.
           schema:
             $ref: '#/definitions/define.transactionResponse'
-      summary: Deputize identities transaction
+      summary: Define an identity
       tags:
       - Identities
   /identities/deputize:
     post:
       consumes:
       - text/plain
-      description: deputize transaction
+      description: A transaction to deputize a maintainer for an identity classification.
       parameters:
       - description: Request body to deputize identity
         in: body
@@ -862,7 +845,7 @@ paths:
           description: Message for an unexpected error response.
           schema:
             $ref: '#/definitions/deputize.transactionResponse'
-      summary: deputize identities transaction
+      summary: Deputize an identity
       tags:
       - Identities
   /identities/identities/{identityID}:
@@ -887,7 +870,7 @@ paths:
           description: Message for an unexpected error response.
           schema:
             $ref: '#/definitions/identity.queryResponse'
-      summary: Define identities transaction
+      summary: Search for an identity by identity ID
       tags:
       - Identities
   /identities/issue:
@@ -896,7 +879,7 @@ paths:
       - text/plain
       description: Issue identities with mutable immutable properties
       parameters:
-      - description: Request body for Issue Identity
+      - description: A transaction to issue an identity.
         in: body
         name: body
         required: true
@@ -913,7 +896,7 @@ paths:
           description: Message for an unexpected error response.
           schema:
             $ref: '#/definitions/issue.transactionResponse'
-      summary: Issue identities transaction
+      summary: Issue an identity
       tags:
       - Identities
   /identities/mutate:
@@ -939,16 +922,16 @@ paths:
           description: Message for an unexpected error response.
           schema:
             $ref: '#/definitions/github.com_persistenceOne_persistenceSDK_modules_identities_internal_transactions_mutate.transactionResponse'
-      summary: Mutate identities transaction
+      summary: Mutate an identity
       tags:
       - Identities
   /identities/nub:
     post:
       consumes:
       - text/plain
-      description: Nub transaction
+      description: A transaction to nub an identity.
       parameters:
-      - description: Request body for nub identity
+      - description: A transaction to nub a base identity.
         in: body
         name: body
         required: true
@@ -965,7 +948,7 @@ paths:
           description: Message for an unexpected error response.
           schema:
             $ref: '#/definitions/nub.transactionResponse'
-      summary: Nub identities transaction
+      summary: Nub an identity
       tags:
       - Identities
   /identities/provision:
@@ -991,7 +974,7 @@ paths:
           description: Message for an unexpected error response.
           schema:
             $ref: '#/definitions/provision.transactionResponse'
-      summary: Provision identities transaction
+      summary: Provision an identity
       tags:
       - Identities
   /identities/quash:
@@ -1078,7 +1061,7 @@ paths:
       - application/json
       description: Able to query the maintainers details
       parameters:
-      - description: maintainer ID
+      - description: Unique identifier of a maintainer.
         in: path
         name: maintainerID
         required: true
@@ -1094,7 +1077,7 @@ paths:
           description: Message for an unexpected error response.
           schema:
             $ref: '#/definitions/maintainer.queryResponse'
-      summary: Query maintainers using maintainer id
+      summary: Search for a maintainer by maintainer ID
       tags:
       - Maintainers
   /metas/metas/{metaID}:
@@ -1103,7 +1086,7 @@ paths:
       - application/json
       description: Able to query the meta data
       parameters:
-      - description: meta ID
+      - description: Unique identifier of metadata value.
         in: path
         name: metaID
         required: true
@@ -1119,7 +1102,7 @@ paths:
           description: Message for an unexpected error response.
           schema:
             $ref: '#/definitions/meta.queryResponse'
-      summary: Query meta using meta id
+      summary: Search for metadata by meta ID
       tags:
       - Metas
   /metas/reveal:

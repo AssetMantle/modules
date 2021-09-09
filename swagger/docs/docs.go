@@ -25,7 +25,7 @@ var doc = `{
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
-    "basePath": "/xprt",
+    "basePath": "{{.BasePath}}",
     "paths": {
         "/assets/assets/{assetID}": {
             "get": {
@@ -77,7 +77,7 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Burn asset transaction",
+                "summary": "Burn an asset transaction",
                 "parameters": [
                     {
                         "description": "Transaction for burning an asset. request body",
@@ -117,7 +117,7 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Define asset transaction",
+                "summary": "Define an asset transaction",
                 "parameters": [
                     {
                         "description": "A transaction to define the asset.",
@@ -157,7 +157,7 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Deputize asset transaction",
+                "summary": "Deputize an asset transaction",
                 "parameters": [
                     {
                         "description": "request body",
@@ -197,7 +197,7 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Mint asset transaction",
+                "summary": "Mint an asset transaction",
                 "parameters": [
                     {
                         "description": "A transaction to mint the asset.",
@@ -237,7 +237,7 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Mutate asset transaction",
+                "summary": "Mutate an asset transaction",
                 "parameters": [
                     {
                         "description": "A transaction to mutate an asset.",
@@ -277,7 +277,7 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Renumerate asset transaction",
+                "summary": "Renumerate an asset transaction",
                 "parameters": [
                     {
                         "description": "A transaction to renumerate an asset.",
@@ -317,7 +317,7 @@ var doc = `{
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Revoke asset transaction",
+                "summary": "Revoke a maintainer for an asset classification transaction",
                 "parameters": [
                     {
                         "description": "A transaction to revoke an asset.",
@@ -357,7 +357,7 @@ var doc = `{
                 "tags": [
                     "Classifications"
                 ],
-                "summary": "Query classification using classification id",
+                "summary": "Search for an identity by identity ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -395,7 +395,7 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Deputize identities transaction",
+                "summary": "Define an identity",
                 "parameters": [
                     {
                         "description": "Deputize identities",
@@ -425,7 +425,7 @@ var doc = `{
         },
         "/identities/deputize": {
             "post": {
-                "description": "deputize transaction",
+                "description": "A transaction to deputize a maintainer for an identity classification.",
                 "consumes": [
                     "text/plain"
                 ],
@@ -435,7 +435,7 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "deputize identities transaction",
+                "summary": "Deputize an identity",
                 "parameters": [
                     {
                         "description": "Request body to deputize identity",
@@ -475,7 +475,7 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Define identities transaction",
+                "summary": "Search for an identity by identity ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -513,10 +513,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Issue identities transaction",
+                "summary": "Issue an identity",
                 "parameters": [
                     {
-                        "description": "Request body for Issue Identity",
+                        "description": "A transaction to issue an identity.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -553,7 +553,7 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Mutate identities transaction",
+                "summary": "Mutate an identity",
                 "parameters": [
                     {
                         "description": "Request body to mutate Identity",
@@ -583,7 +583,7 @@ var doc = `{
         },
         "/identities/nub": {
             "post": {
-                "description": "Nub transaction",
+                "description": "A transaction to nub an identity.",
                 "consumes": [
                     "text/plain"
                 ],
@@ -593,10 +593,10 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Nub identities transaction",
+                "summary": "Nub an identity",
                 "parameters": [
                     {
-                        "description": "Request body for nub identity",
+                        "description": "A transaction to nub a base identity.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -633,7 +633,7 @@ var doc = `{
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Provision identities transaction",
+                "summary": "Provision an identity",
                 "parameters": [
                     {
                         "description": "Request body for provision identity",
@@ -793,11 +793,11 @@ var doc = `{
                 "tags": [
                     "Maintainers"
                 ],
-                "summary": "Query maintainers using maintainer id",
+                "summary": "Search for a maintainer by maintainer ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "maintainer ID",
+                        "description": "Unique identifier of a maintainer.",
                         "name": "maintainerID",
                         "in": "path",
                         "required": true
@@ -831,11 +831,11 @@ var doc = `{
                 "tags": [
                     "Metas"
                 ],
-                "summary": "Query meta using meta id",
+                "summary": "Search for metadata by meta ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "meta ID",
+                        "description": "Unique identifier of metadata value.",
                         "name": "metaID",
                         "in": "path",
                         "required": true
@@ -2088,12 +2088,6 @@ var doc = `{
                 "chain_id": {
                     "type": "string"
                 },
-                "fees": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/types.Coin"
-                    }
-                },
                 "from": {
                     "type": "string"
                 },
@@ -2239,21 +2233,6 @@ var doc = `{
                     "type": "boolean"
                 }
             }
-        },
-        "types.Coin": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "description": "To allow the use of unsigned integers (see: #1273) a larger refactor will\nneed to be made. So we use signed integers for now with safety measures in\nplace preventing negative values being used.",
-                    "$ref": "#/definitions/types.Int"
-                },
-                "denom": {
-                    "type": "string"
-                }
-            }
-        },
-        "types.Int": {
-            "type": "object"
         },
         "unprovision.transactionRequest": {
             "type": "object",
