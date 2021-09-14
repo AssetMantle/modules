@@ -160,7 +160,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
-	Enquire(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryResponse, error)
+	Get(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryResponse, error)
 }
 
 type queryClient struct {
@@ -171,9 +171,9 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 	return &queryClient{cc}
 }
 
-func (c *queryClient) Enquire(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryResponse, error) {
+func (c *queryClient) Get(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryResponse, error) {
 	out := new(QueryResponse)
-	err := c.cc.Invoke(ctx, "/persistence_sdk.modules.metas.internal.queries.meta.Query/Enquire", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/persistence_sdk.modules.metas.internal.queries.meta.Query/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -182,35 +182,35 @@ func (c *queryClient) Enquire(ctx context.Context, in *QueryRequest, opts ...grp
 
 // QueryServer is the server API for Query service.
 type QueryServer interface {
-	Enquire(context.Context, *QueryRequest) (*QueryResponse, error)
+	Get(context.Context, *QueryRequest) (*QueryResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServer struct {
 }
 
-func (*UnimplementedQueryServer) Enquire(ctx context.Context, req *QueryRequest) (*QueryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Enquire not implemented")
+func (*UnimplementedQueryServer) Get(ctx context.Context, req *QueryRequest) (*QueryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
 }
 
-func _Query_Enquire_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Query_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).Enquire(ctx, in)
+		return srv.(QueryServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/persistence_sdk.modules.metas.internal.queries.meta.Query/Enquire",
+		FullMethod: "/persistence_sdk.modules.metas.internal.queries.meta.Query/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).Enquire(ctx, req.(*QueryRequest))
+		return srv.(QueryServer).Get(ctx, req.(*QueryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -220,8 +220,8 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Enquire",
-			Handler:    _Query_Enquire_Handler,
+			MethodName: "Get",
+			Handler:    _Query_Get_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

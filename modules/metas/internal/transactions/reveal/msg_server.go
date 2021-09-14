@@ -16,11 +16,7 @@ type msgServer struct {
 
 func (msgServer msgServer) Reveal(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
 	ctx := sdkTypes.UnwrapSDKContext(goCtx)
-	fmt.Println("")
-	fmt.Println("")
-	fmt.Println(ctx, "Printing context")
-	fmt.Println("")
-	fmt.Println("")
+
 	metaID := key.GenerateMetaID(msg.MetaFact.GetData())
 	metas := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(metaID))
 
@@ -36,7 +32,7 @@ func (msgServer msgServer) Reveal(goCtx context.Context, msg *Message) (*Transac
 		fmt.Println(b, "Printing NewMeta")
 		metas.Add(b)
 	}
-	fmt.Println(msg, "Printing ,msg in ms_server ++++++++++++")
+	fmt.Println(metaID.String())
 	return &TransactionResponse{}, nil
 }
 

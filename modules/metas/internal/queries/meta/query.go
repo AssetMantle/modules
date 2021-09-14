@@ -8,8 +8,12 @@ package meta
 import (
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/module"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
+
+var _ helpers.QueryRequest = (*QueryRequest)(nil)
+var _ helpers.QueryResponse = (*QueryResponse)(nil)
 
 var Query = base.NewQuery(
 	"metas",

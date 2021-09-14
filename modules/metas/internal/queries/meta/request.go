@@ -40,6 +40,17 @@ func (queryRequest QueryRequest) FromMap(vars map[string]string) helpers.QueryRe
 	return newQueryRequest(base.NewID(vars[Query.GetName()]))
 }
 
+func (queryRequest QueryRequest) Encode() ([]byte,error) {
+	return common.JSONCodec.MarshalJSON(&queryRequest)
+}
+
+func (queryRequest QueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
+	if Error := common.JSONCodec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
+		return nil, Error
+	}
+
+	return queryRequest, nil
+}
 func (queryRequest QueryRequest) LegacyAminoEncode() ([]byte, error) {
 	return common.LegacyAminoCodec.MarshalJSON(queryRequest)
 }

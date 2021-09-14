@@ -21,6 +21,7 @@ type Query interface {
 	GetName() string
 	Command() *cobra.Command
 	HandleMessageByLegacyAmino(sdkTypes.Context, *codec.LegacyAmino, abciTypes.RequestQuery) ([]byte, error)
+	HandleMessageByProto(sdkTypes.Context, abciTypes.RequestQuery) ([]byte, error)
 	RESTQueryHandler(client.Context) http.HandlerFunc
 	Initialize(Mapper, Parameters, ...interface{}) Query
 	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)

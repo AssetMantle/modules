@@ -29,6 +29,10 @@ type query struct {
 	keeperPrototype   func() helpers.QueryKeeper
 }
 
+func (query query) HandleMessageByProto(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
+	panic("implement me")
+}
+
 var _ helpers.Query = (*query)(nil)
 
 func (query query) GetName() string { return query.name }
@@ -46,12 +50,12 @@ func (query query) Command() *cobra.Command {
 			return Error
 		}
 
-		response, Error := query.responsePrototype().LegacyAminoDecode(responseBytes)
+		response, Error := query.responsePrototype().Decode(responseBytes)
 		if Error != nil {
 			return Error
 		}
 
-		return clientContext.PrintObjectLegacy(response)
+		return clientContext.PrintProto(response)
 	}
 
 	return query.cliCommand.CreateCommand(runE)
@@ -64,6 +68,19 @@ func (query query) HandleMessageByLegacyAmino(context sdkTypes.Context, legacyAm
 
 	return query.queryKeeper.LegacyEnquire(context, request).LegacyAminoEncode()
 }
+
+//func (query query) HandleMessageByProto(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
+//	request, Error := query.requestPrototype().Decode(requestQuery.Data)
+//	if Error != nil {
+//		return nil, Error
+//	}
+//	response, Error := query.queryKeeper.Enquire(context, request)
+//	if Error != nil {
+//		return nil, Error
+//	}
+//	return response.Encode()
+//
+//}
 
 func (query query) RESTQueryHandler(cliContext client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
@@ -92,7 +109,7 @@ func (query query) Initialize(mapper helpers.Mapper, parameters helpers.Paramete
 }
 
 func (query query) RegisterGRPCGatewayRoute(clientContext client.Context, serveMux *runtime.ServeMux) {
-	query.queryKeeper.RegisterGRPCGatewayRoute(clientContext, serveMux)
+	query.keeperPrototype().RegisterGRPCGatewayRoute(clientContext, serveMux)
 }
 
 func (query query) query(queryRequest helpers.QueryRequest, cliContext client.Context) ([]byte, int64, error) {

@@ -27,10 +27,21 @@ func (queryResponse QueryResponse) LegacyAminoDecode(bytes []byte) (helpers.Quer
 		return nil, Error
 	}
 
-	return queryResponse, nil
+	return &queryResponse, nil
+}
+func (queryResponse QueryResponse) Encode() ([]byte, error) {
+	return common.JSONCodec.MarshalJSON(&queryResponse)
+}
+
+func (queryResponse QueryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
+	if Error := common.JSONCodec.UnmarshalJSON(bytes, &queryResponse); Error != nil {
+		return nil, Error
+	}
+
+	return &queryResponse, nil
 }
 func responsePrototype() helpers.QueryResponse {
-	return QueryResponse{}
+	return &QueryResponse{}
 }
 func newQueryResponse(collection helpers.Collection, error error) QueryResponse {
 	success := true

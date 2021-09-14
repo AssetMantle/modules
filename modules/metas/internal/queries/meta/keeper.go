@@ -24,13 +24,24 @@ var _ helpers.QueryKeeper = (*queryKeeper)(nil)
 var _ QueryServer = (*queryKeeper)(nil)
 
 func (queryKeeper queryKeeper) LegacyEnquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
-	return newQueryResponse(queryKeeper.mapper.NewCollection(context).Fetch(key.FromID(queryRequestFromInterface(queryRequest).MetaID)), nil)
+	queryResponse := newQueryResponse(queryKeeper.mapper.NewCollection(context).Fetch(key.FromID(queryRequestFromInterface(queryRequest).MetaID)), nil)
+	return &queryResponse
 }
 
-func (queryKeeper queryKeeper) Enquire(context context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
-	fmt.Println("Entering Enquire in metas Keeper ---------------")
-	response := newQueryResponse(queryKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(context)).Fetch(key.FromID(queryRequest.MetaID)), nil)
+func (queryKeeper queryKeeper) Get(ctx context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
+	response := newQueryResponse(queryKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(ctx)).Fetch(key.FromID(queryRequest.MetaID)), nil)
 	return &response, response.GetError()
+}
+func (queryKeeper queryKeeper) GetQueryClient(ctx client.Context) QueryClient {
+	return NewQueryClient(ctx)
+}
+
+func (queryKeeper queryKeeper) Enquire(clientctx client.Context,ctx sdkTypes.Context, request helpers.QueryRequest) (helpers.QueryResponse, error) {
+	queryRequest := request.(QueryRequest)
+	queryCli := queryKeeper.GetQueryClient(clientctx)
+	response, Error := queryCli.Get(sdkTypes.WrapSDKContext(ctx), &queryRequest)
+	//response, Error := queryKeeper.Get(sdkTypes.WrapSDKContext(ctx), &queryRequest)
+	return response, Error
 }
 
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
@@ -40,9 +51,13 @@ func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Param
 
 func (queryKeeper queryKeeper) RegisterGRPCGatewayRoute(clientContext client.Context, serveMux *runtime.ServeMux) {
 	err := RegisterQueryHandlerClient(context.Background(), serveMux, NewQueryClient(clientContext))
+	fmt.Println("ERROR")
+	fmt.Println(err)
 	if err != nil {
+		fmt.Println("RGRPC")
 		panic(err)
 	}
+
 }
 
 func (queryKeeper queryKeeper) RegisterService(cfg module.Configurator) {
