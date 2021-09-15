@@ -22,7 +22,6 @@ type Identity interface {
 	GetAuthentication() types.Property
 
 	IsProvisioned(sdkTypes.AccAddress) bool
-	IsUnprovisioned(sdkTypes.AccAddress) bool
 	ProvisionAddress(sdkTypes.AccAddress) Identity
 	UnprovisionAddress(sdkTypes.AccAddress) Identity
 
