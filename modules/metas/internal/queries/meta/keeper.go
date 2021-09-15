@@ -67,3 +67,10 @@ func (queryKeeper queryKeeper) RegisterService(cfg module.Configurator) {
 func keeperPrototype() helpers.QueryKeeper {
 	return queryKeeper{}
 }
+
+func queryInKeeper( ctx context.Context,clientCtx client.Context, req helpers.QueryRequest) (helpers.QueryResponse,error) {
+	newReq := req.(QueryRequest)
+	queryClient := NewQueryClient(clientCtx)
+
+	return queryClient.Get(ctx,&newReq)
+}

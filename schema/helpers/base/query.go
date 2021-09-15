@@ -6,6 +6,7 @@
 package base
 
 import (
+	"context"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -27,6 +28,7 @@ type query struct {
 	requestPrototype  func() helpers.QueryRequest
 	responsePrototype func() helpers.QueryResponse
 	keeperPrototype   func() helpers.QueryKeeper
+	queryInKeeper     func(context.Context, client.Context, helpers.QueryRequest) (helpers.QueryResponse, error)
 }
 
 func (query query) HandleMessageByProto(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
@@ -44,13 +46,9 @@ func (query query) Command() *cobra.Command {
 		}
 
 		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, clientContext)
-		responseBytes, _, Error := query.query(queryRequest, clientContext)
 
-		if Error != nil {
-			return Error
-		}
+		response, Error := query.queryInKeeper(command.Context(), clientContext, queryRequest)
 
-		response, Error := query.responsePrototype().Decode(responseBytes)
 		if Error != nil {
 			return Error
 		}
@@ -125,7 +123,7 @@ func (query query) RegisterService(configurator sdkTypesModule.Configurator) {
 	query.keeperPrototype().RegisterService(configurator)
 }
 
-func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, flagList ...helpers.CLIFlag) helpers.Query {
+func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, queryInKeeper func(context.Context, client.Context, helpers.QueryRequest) (helpers.QueryResponse, error), flagList ...helpers.CLIFlag) helpers.Query {
 	return query{
 		name:              name,
 		cliCommand:        NewCLICommand(name, short, long, flagList),
@@ -133,5 +131,6 @@ func NewQuery(name string, short string, long string, moduleName string, request
 		requestPrototype:  requestPrototype,
 		responsePrototype: responsePrototype,
 		keeperPrototype:   keeperPrototype,
+		queryInKeeper:     queryInKeeper,
 	}
 }

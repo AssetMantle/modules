@@ -25,6 +25,6 @@ var Query = base.NewQuery(
 	requestPrototype,
 	responsePrototype,
 	keeperPrototype,
-
+	queryInKeeper,
 	flags.MetaID,
 )
