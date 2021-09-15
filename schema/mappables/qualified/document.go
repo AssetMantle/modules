@@ -20,6 +20,7 @@ var _ mappables.Document = (*Document)(nil)
 func (document Document) GetID() types.ID               { return document.ID }
 func (document Document) GetClassificationID() types.ID { return document.ClassificationID }
 func (document Document) GetProperty(id types.ID) types.Property {
+
 	if property := document.HasImmutables.GetImmutableProperties().Get(id); property != nil {
 		return property
 	} else if property := document.HasMutables.GetMutableProperties().Get(id); property != nil {

@@ -10,6 +10,8 @@ import (
 )
 
 type HasMutables interface {
+	// GetMutableProperties return the mutable properties object
+	// does not return nil
 	GetMutableProperties() types.Properties
 
 	Mutate(propertyList ...types.Property) HasMutables
