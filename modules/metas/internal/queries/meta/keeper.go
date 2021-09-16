@@ -14,6 +14,9 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/spf13/cobra"
 )
 
 type queryKeeper struct {
@@ -68,9 +71,19 @@ func keeperPrototype() helpers.QueryKeeper {
 	return queryKeeper{}
 }
 
-func queryInKeeper( ctx context.Context,clientCtx client.Context, req helpers.QueryRequest) (helpers.QueryResponse,error) {
-	newReq := req.(QueryRequest)
+func queryInKeeper( command *cobra.Command,clientCtx client.Context, req helpers.QueryRequest) (helpers.QueryResponse,error) {
 	queryClient := NewQueryClient(clientCtx)
+	meta, Error:= command.Flags().GetString("metaID")
+	if Error!=nil{
+		panic(Error)
+	}
+	newMetaID:= base.NewID(meta)
+	params:=NewQueryGet(newMetaID)
+	return queryClient.Get(command.Context(),params)
+}
 
-	return queryClient.Get(ctx,&newReq)
+func NewQueryGet(metaID types.ID) *QueryRequest {
+	return &QueryRequest{
+		MetaID: metaID,
+	}
 }
