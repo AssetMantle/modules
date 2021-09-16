@@ -58,7 +58,7 @@ func (identityID IdentityID) Equals(key helpers.Key) bool {
 
 func NewIdentityID(classificationID types.ID, immutableProperties types.Properties) types.ID {
 	return &IdentityID{
-		ClassificationID: base.NewID(classificationID.String()),
-		HashID:           base.NewID(baseTraits.HasImmutables{Properties: *base.NewProperties(immutableProperties.GetList()...)}.GenerateHashID().String()),
+		ClassificationID: classificationID,
+		HashID:           baseTraits.HasImmutables{Properties: *base.NewProperties(immutableProperties.GetList()...)}.GenerateHashID(),
 	}
 }
