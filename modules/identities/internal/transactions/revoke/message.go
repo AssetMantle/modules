@@ -63,8 +63,8 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, toID types.ID, classificationID types.ID) sdkTypes.Msg {
 	return &Message{
 		From:             base.NewAccAddressFromSDKTypesAccAddress(from),
-		FromID:           fromID,
-		ToID:             toID,
-		ClassificationID: classificationID,
+		FromID:           *base.NewID(fromID.String()),
+		ToID:             *base.NewID(toID.String()),
+		ClassificationID: *base.NewID(classificationID.String()),
 	}
 }

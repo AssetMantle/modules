@@ -7,6 +7,7 @@ package key
 
 import (
 	"bytes"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -20,6 +21,9 @@ import (
 var _ types.ID = (*MetaID)(nil)
 var _ helpers.Key = (*MetaID)(nil)
 
+func (metaID MetaID) GetStructReference() codec.ProtoMarshaler {
+	return &metaID
+}
 func (metaID MetaID) Bytes() []byte {
 	var Bytes []byte
 	Bytes = append(Bytes, metaID.TypeID.Bytes()...)
@@ -53,7 +57,7 @@ func (metaID MetaID) Equals(key helpers.Key) bool {
 
 func NewMetaID(typeID types.ID, hashID types.ID) types.ID {
 	return &MetaID{
-		TypeID: typeID,
-		HashID: hashID,
+		TypeID: *base.NewID(typeID.String()),
+		HashID: *base.NewID(hashID.String()),
 	}
 }

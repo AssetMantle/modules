@@ -17,11 +17,15 @@ import (
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 var _ mappables.InterNFT = (*Asset)(nil)
 
+func (asset Asset) GetStructReference() codec.ProtoMarshaler {
+	return &asset
+}
 func (asset Asset) GetID() types.ID {
 	return asset.ID
 }
@@ -80,7 +84,7 @@ func (Asset) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 func NewAsset(assetID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.InterNFT {
 	return &Asset{
 		ID:            assetID,
-		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
-		HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
+		HasImmutables: baseTraits.HasImmutables{Properties: *baseTypes.NewProperties(immutableProperties.GetList()...)},
+		HasMutables:   baseTraits.HasMutables{Properties: *baseTypes.NewProperties(mutableProperties.GetList()...)},
 	}
 }

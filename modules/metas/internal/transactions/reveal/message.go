@@ -60,9 +60,9 @@ func messagePrototype() helpers.Message {
 	return &Message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, metaFact types.MetaFact) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, metaFact types.MetaFact) *Message {
 	return &Message{
 		From:     base.NewAccAddressFromSDKTypesAccAddress(from),
-		MetaFact: metaFact,
+		MetaFact: *base.NewMetaFact(metaFact.GetData()),
 	}
 }

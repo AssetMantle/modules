@@ -62,12 +62,12 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, toID types.ID, classificationID types.ID, immutableMetaProperties types.MetaProperties, immutableProperties types.Properties, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
 	return &Message{
 		From:                    base.NewAccAddressFromSDKTypesAccAddress(from),
-		FromID:                  fromID,
-		ToID:                    toID,
-		ClassificationID:        classificationID,
-		ImmutableMetaProperties: immutableMetaProperties,
-		ImmutableProperties:     immutableProperties,
-		MutableMetaProperties:   mutableMetaProperties,
-		MutableProperties:       mutableProperties,
+		FromID:                  *base.NewID(fromID.String()),
+		ToID:                    *base.NewID(toID.String()),
+		ClassificationID:        *base.NewID(classificationID.String()),
+		ImmutableMetaProperties: *base.NewMetaProperties(immutableMetaProperties.GetList()...),
+		ImmutableProperties:     *base.NewProperties(immutableProperties.GetList()...),
+		MutableMetaProperties:   *base.NewMetaProperties(mutableMetaProperties.GetList()...),
+		MutableProperties:       *base.NewProperties(mutableProperties.GetList()...),
 	}
 }

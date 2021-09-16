@@ -31,7 +31,7 @@ func (message Message) ValidateBasic() error {
 		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
 	}
 
-	if message.MakerOwnableID.Compare(message.TakerOwnableID) == 0 {
+	if message.MakerOwnableID.Compare(&message.TakerOwnableID) == 0 {
 		return errors.Wrap(xprtErrors.IncorrectMessage, "")
 	}
 
@@ -71,16 +71,16 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, expiresIn types.Height, makerOwnableSplit sdkTypes.Dec, takerOwnableSplit sdkTypes.Dec, immutableMetaProperties types.MetaProperties, immutableProperties types.Properties, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
 	return &Message{
 		From:                    base.NewAccAddressFromSDKTypesAccAddress(from),
-		FromID:                  fromID,
-		ClassificationID:        classificationID,
-		MakerOwnableID:          makerOwnableID,
-		TakerOwnableID:          takerOwnableID,
-		ExpiresIn:               expiresIn,
+		FromID:                  *base.NewID(fromID.String()),
+		ClassificationID:        *base.NewID(classificationID.String()),
+		MakerOwnableID:          *base.NewID(makerOwnableID.String()),
+		TakerOwnableID:          *base.NewID(takerOwnableID.String()),
+		ExpiresIn:               *base.NewHeight(expiresIn.Get()),
 		MakerOwnableSplit:       makerOwnableSplit,
 		TakerOwnableSplit:       takerOwnableSplit,
-		ImmutableMetaProperties: immutableMetaProperties,
-		ImmutableProperties:     immutableProperties,
-		MutableMetaProperties:   mutableMetaProperties,
-		MutableProperties:       mutableProperties,
+		ImmutableMetaProperties: *base.NewMetaProperties(immutableMetaProperties.GetList()...),
+		ImmutableProperties:     *base.NewProperties(immutableProperties.GetList()...),
+		MutableMetaProperties:   *base.NewMetaProperties(mutableMetaProperties.GetList()...),
+		MutableProperties:       *base.NewProperties(mutableProperties.GetList()...),
 	}
 }

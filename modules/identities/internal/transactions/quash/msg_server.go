@@ -18,16 +18,15 @@ type msgServer struct {
 
 var _ MsgServer = msgServer{}
 
-func (msgServer msgServer) Quash(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
-	message := messageFromInterface(msg)
+func (msgServer msgServer) Quash(goCtx context.Context, message *Message) (*TransactionResponse, error) {
 	ctx := sdkTypes.UnwrapSDKContext(goCtx)
-	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), &message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	identities := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(message.IdentityID))
+	identities := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(&message.IdentityID))
 
-	identity := identities.Get(key.FromID(message.IdentityID))
+	identity := identities.Get(key.FromID(&message.IdentityID))
 	if identity == nil {
 		return nil, errors.EntityNotFound
 	}

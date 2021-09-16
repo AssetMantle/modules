@@ -4,6 +4,7 @@ package persistence_sdk.modules.identities.internal.queries.identity;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
+import "persistence_sdk/schema/types/base/id.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/modules/identities/internal/queries/identity";
 
@@ -11,7 +12,7 @@ message QueryRequest {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = false;
 
-  string identity_i_d = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required AssetID missing\""];
+  persistence_sdk.schema.types.base.ID identity_i_d = 1 [(gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required AssetID missing\""];
 }
 
 message QueryResponse {

@@ -6,6 +6,7 @@
 package base
 
 import (
+	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
@@ -46,7 +47,9 @@ func (collection collection) Fetch(key helpers.Key) helpers.Collection {
 		}
 		collection.mapper.Iterate(collection.context, key, accumulator)
 	} else {
+		fmt.Println(key, "Printing key in fetch")
 		mappable := collection.mapper.Read(collection.context, key)
+		fmt.Println(mappable, "Printing Mappable in collection.go")
 		if mappable != nil {
 			mappableList = append(mappableList, mappable)
 		}

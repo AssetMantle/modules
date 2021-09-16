@@ -63,8 +63,8 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, takerOwnableSplit sdkTypes.Dec, orderID types.ID) sdkTypes.Msg {
 	return &Message{
 		From:              base.NewAccAddressFromSDKTypesAccAddress(from),
-		FromID:            fromID,
+		FromID:            *base.NewID(fromID.String()),
 		TakerOwnableSplit: takerOwnableSplit,
-		OrderID:           orderID,
+		OrderID:           *base.NewID(orderID.String()),
 	}
 }

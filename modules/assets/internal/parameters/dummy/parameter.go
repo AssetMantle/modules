@@ -34,11 +34,11 @@ func (dummyParameter DummyParameter) Validate() error {
 }
 
 func (dummyParameter DummyParameter) GetID() types.ID {
-	return dummyParameter.BaseParameter.ID
+	return &dummyParameter.BaseParameter.ID
 }
 
 func (dummyParameter DummyParameter) GetData() types.Data {
-	return dummyParameter.BaseParameter.Data
+	return &dummyParameter.BaseParameter.Data
 }
 
 func (dummyParameter DummyParameter) GetValidator() func(interface{}) error {
@@ -46,19 +46,19 @@ func (dummyParameter DummyParameter) GetValidator() func(interface{}) error {
 }
 
 func (dummyParameter DummyParameter) Mutate(data types.Data) types.Parameter {
-	dummyParameter.BaseParameter.Data = data
+	dummyParameter.BaseParameter.Data = *base.NewData(data)
 	return &dummyParameter
 }
 
-func (DummyParameter) RegisterImplementation(interfaceRegistry codecTypes.InterfaceRegistry){
+func (DummyParameter) RegisterImplementation(interfaceRegistry codecTypes.InterfaceRegistry) {
 	interfaceRegistry.RegisterImplementations((*types.Parameter)(nil), &DummyParameter{})
 }
 
 func NewParameter(id types.ID, data types.Data) types.Parameter {
 	return &DummyParameter{
 		BaseParameter: base.Parameter{
-			ID:   id,
-			Data: data,
+			ID:   *base.NewID(id.String()),
+			Data: *base.NewData(data),
 		},
 	}
 }

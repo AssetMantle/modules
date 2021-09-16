@@ -14,13 +14,12 @@ type msgServer struct {
 
 var _ MsgServer = msgServer{}
 
-func (msgServer msgServer) Unprovision(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
-	message := messageFromInterface(msg)
+func (msgServer msgServer) Unprovision(goCtx context.Context, message *Message) (*TransactionResponse, error) {
 	ctx := sdkTypes.UnwrapSDKContext(goCtx)
 	identityID := message.IdentityID
-	identities := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(identityID))
+	identities := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(&identityID))
 
-	identity := identities.Get(key.FromID(identityID))
+	identity := identities.Get(key.FromID(&identityID))
 	if identity == nil {
 		return nil, errors.EntityNotFound
 	}

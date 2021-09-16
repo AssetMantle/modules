@@ -3,11 +3,10 @@ syntax = "proto3";
 package persistence_sdk.schema.types.base;
 
 import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/height.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message HeightData {
-  option (gogoproto.goproto_stringer) = false;
-
-  string value = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Height", (gogoproto.nullable) = false];
+  persistence_sdk.schema.types.base.Height value = 1 [(gogoproto.nullable) = false];
 }

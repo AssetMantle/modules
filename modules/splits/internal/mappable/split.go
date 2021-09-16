@@ -19,6 +19,9 @@ import (
 
 var _ mappables.Split = (*Split)(nil)
 
+func (split Split) GetStructReference() codec.ProtoMarshaler {
+	return &split
+}
 func (split Split) GetID() types.ID { return split.ID }
 func (split Split) GetOwnerID() types.ID {
 	return key.ReadOwnerID(split.ID)

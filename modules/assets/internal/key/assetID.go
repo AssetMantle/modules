@@ -9,19 +9,22 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/persistenceOne/persistenceSDK/schema/traits/base"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 var _ types.ID = (*AssetID)(nil)
 var _ helpers.Key = (*AssetID)(nil)
 
+func (assetID AssetID) GetStructReference() codec.ProtoMarshaler {
+	return &assetID
+}
 func (assetID AssetID) Bytes() []byte {
 	var Bytes []byte
 	Bytes = append(Bytes, assetID.ClassificationID.Bytes()...)
@@ -57,6 +60,6 @@ func (assetID AssetID) Equals(key helpers.Key) bool {
 func NewAssetID(classificationID types.ID, immutableProperties types.Properties) types.ID {
 	return &AssetID{
 		ClassificationID: classificationID,
-		HashID:           base.HasImmutables{Properties: immutableProperties}.GenerateHashID(),
+		HashID:           baseTraits.HasImmutables{Properties: *baseTypes.NewProperties(immutableProperties.GetList()...)}.GenerateHashID(),
 	}
 }

@@ -62,6 +62,6 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, nubID types.ID) sdkTypes.Msg {
 	return &Message{
 		From:  base.NewAccAddressFromSDKTypesAccAddress(from),
-		NubID: nubID,
+		NubID: *base.NewID(nubID.String()),
 	}
 }

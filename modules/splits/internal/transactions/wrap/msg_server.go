@@ -13,10 +13,9 @@ type msgServer struct {
 	transactionKeeper
 }
 
-func (msgServer msgServer) Wrap(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
-	message := messageFromInterface(msg)
+func (msgServer msgServer) Wrap(goCtx context.Context, message *Message) (*TransactionResponse, error) {
 	ctx := sdkTypes.UnwrapSDKContext(goCtx)
-	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), &message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
@@ -25,7 +24,7 @@ func (msgServer msgServer) Wrap(goCtx context.Context, msg *Message) (*Transacti
 	}
 
 	for _, coin := range message.Coins {
-		if _, Error := utilities.AddSplits(msgServer.transactionKeeper.mapper.NewCollection(ctx), message.FromID, base.NewID(coin.Denom), sdkTypes.NewDecFromInt(coin.Amount)); Error != nil {
+		if _, Error := utilities.AddSplits(msgServer.transactionKeeper.mapper.NewCollection(ctx), &message.FromID, base.NewID(coin.Denom), sdkTypes.NewDecFromInt(coin.Amount)); Error != nil {
 			return nil, Error
 		}
 	}

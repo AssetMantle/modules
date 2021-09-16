@@ -15,16 +15,16 @@ import (
 
 var _ types.MetaProperty = (*MetaProperty)(nil)
 
-func (metaProperty MetaProperty) GetMetaFact() types.MetaFact { return metaProperty.MetaFact }
-func (metaProperty MetaProperty) GetID() types.ID             { return metaProperty.Id }
+func (metaProperty MetaProperty) GetMetaFact() types.MetaFact { return &metaProperty.MetaFact }
+func (metaProperty MetaProperty) GetID() types.ID             { return &metaProperty.Id }
 func (metaProperty MetaProperty) RemoveData() types.Property {
-	return NewProperty(metaProperty.Id, metaProperty.MetaFact.RemoveData())
+	return NewProperty(metaProperty.GetID(), metaProperty.MetaFact.RemoveData())
 }
 
-func NewMetaProperty(id types.ID, metaFact types.MetaFact) types.MetaProperty {
+func NewMetaProperty(id types.ID, metaFact types.MetaFact) *MetaProperty {
 	return &MetaProperty{
-		Id:       id,
-		MetaFact: metaFact,
+		Id:       *NewID(id.String()),
+		MetaFact: *NewMetaFact(metaFact.GetData()),
 	}
 }
 func ReadMetaProperty(metaPropertyString string) (types.MetaProperty, error) {

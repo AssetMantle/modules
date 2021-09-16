@@ -20,6 +20,9 @@ import (
 var _ types.ID = (*SplitID)(nil)
 var _ helpers.Key = (*SplitID)(nil)
 
+func (splitID SplitID) GetStructReference() codec.ProtoMarshaler {
+	return &splitID
+}
 func (splitID SplitID) Bytes() []byte {
 	return append(
 		splitID.OwnerID.Bytes(),

@@ -62,9 +62,9 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, assetID types.ID, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
 	return &Message{
 		From:                  base.NewAccAddressFromSDKTypesAccAddress(from),
-		FromID:                fromID,
-		AssetID:               assetID,
-		MutableMetaProperties: mutableMetaProperties,
-		MutableProperties:     mutableProperties,
+		FromID:                *base.NewID(fromID.String()),
+		AssetID:               *base.NewID(assetID.String()),
+		MutableMetaProperties: *base.NewMetaProperties(mutableMetaProperties.GetList()...),
+		MutableProperties:     *base.NewProperties(mutableProperties.GetList()...),
 	}
 }

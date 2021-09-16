@@ -22,6 +22,9 @@ import (
 var _ types.ID = (*ClassificationID)(nil)
 var _ helpers.Key = (*ClassificationID)(nil)
 
+func (classificationID ClassificationID) GetStructReference() codec.ProtoMarshaler {
+	return &classificationID
+}
 func (classificationID ClassificationID) Bytes() []byte {
 	return append(
 		classificationID.ChainID.Bytes(),

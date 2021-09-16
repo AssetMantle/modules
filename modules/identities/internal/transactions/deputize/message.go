@@ -63,10 +63,10 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, toID types.ID, classificationID types.ID, maintainedProperties types.Properties, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) sdkTypes.Msg {
 	return &Message{
 		From:                 base.NewAccAddressFromSDKTypesAccAddress(from),
-		FromID:               fromID,
-		ToID:                 toID,
-		ClassificationID:     classificationID,
-		MaintainedProperties: maintainedProperties,
+		FromID:               *base.NewID(fromID.String()),
+		ToID:                 *base.NewID(toID.String()),
+		ClassificationID:     *base.NewID(classificationID.String()),
+		MaintainedProperties: *base.NewProperties(maintainedProperties.GetList()...),
 		AddMaintainer:        addMaintainer,
 		RemoveMaintainer:     removeMaintainer,
 		MutateMaintainer:     mutateMaintainer,

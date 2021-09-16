@@ -14,6 +14,4 @@ type ListData interface {
 
 	Add(...Data) ListData
 	Remove(...Data) ListData
-
-	Proto
 }

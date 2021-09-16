@@ -17,6 +17,9 @@ import (
 
 var _ mappables.Maintainer = (*Maintainer)(nil)
 
+func (maintainer Maintainer) GetStructReference() codec.ProtoMarshaler {
+	return &maintainer
+}
 func (maintainer Maintainer) GetID() types.ID { return maintainer.ID }
 func (maintainer Maintainer) GetClassificationID() types.ID {
 	return key.ReadClassificationID(maintainer.ID)

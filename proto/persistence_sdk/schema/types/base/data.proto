@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package persistence_sdk.schema.types.base;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/decData.proto";
+import "persistence_sdk/schema/types/base/heightData.proto";
+import "persistence_sdk/schema/types/base/idData.proto";
+import "persistence_sdk/schema/types/base/stringData.proto";
+import "persistence_sdk/schema/types/base/accAddressData.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
+
+message Data {
+  oneof data {
+    persistence_sdk.schema.types.base.DecData dec_data = 1;
+    persistence_sdk.schema.types.base.HeightData height_data = 2;
+    persistence_sdk.schema.types.base.IDData id_data = 3;
+    persistence_sdk.schema.types.base.StringData string_data = 4;
+    persistence_sdk.schema.types.base.AccAddressData acc_address_data = 5;
+    string list_data = 6 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types/base.ListData"];
+  }
+}

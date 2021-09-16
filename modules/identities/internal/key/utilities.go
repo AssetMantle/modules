@@ -43,5 +43,5 @@ func FromID(id types.ID) helpers.Key {
 }
 
 func ReadClassificationID(identityID types.ID) types.ID {
-	return identityIDFromInterface(identityID).ClassificationID
+	return base.NewID(identityIDFromInterface(identityID).ClassificationID.String())
 }

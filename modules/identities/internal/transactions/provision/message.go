@@ -63,6 +63,6 @@ func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, identityID typ
 	return &Message{
 		From:       base.NewAccAddressFromSDKTypesAccAddress(from),
 		To:         base.NewAccAddressFromSDKTypesAccAddress(to),
-		IdentityID: identityID,
+		IdentityID: *base.NewID(identityID.String()),
 	}
 }

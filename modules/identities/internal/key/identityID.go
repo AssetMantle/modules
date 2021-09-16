@@ -7,6 +7,7 @@ package key
 
 import (
 	"bytes"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"strings"
 
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
@@ -22,6 +23,9 @@ import (
 var _ types.ID = (*IdentityID)(nil)
 var _ helpers.Key = (*IdentityID)(nil)
 
+func (identityID IdentityID) GetStructReference() codec.ProtoMarshaler {
+	return &identityID
+}
 func (identityID IdentityID) Bytes() []byte {
 	return append(
 		identityID.ClassificationID.Bytes(),
@@ -54,7 +58,7 @@ func (identityID IdentityID) Equals(key helpers.Key) bool {
 
 func NewIdentityID(classificationID types.ID, immutableProperties types.Properties) types.ID {
 	return &IdentityID{
-		ClassificationID: classificationID,
-		HashID:           baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID(),
+		ClassificationID: base.NewID(classificationID.String()),
+		HashID:           base.NewID(baseTraits.HasImmutables{Properties: *base.NewProperties(immutableProperties.GetList()...)}.GenerateHashID().String()),
 	}
 }
