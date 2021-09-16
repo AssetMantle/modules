@@ -6,7 +6,6 @@
 package verify
 
 import (
-	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
@@ -27,9 +26,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	fmt.Println(auxiliaryRequest.IdentityID, "Printing IdentityID in verify Aux")
 	identity := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(auxiliaryRequest.IdentityID)).Get(key.FromID(auxiliaryRequest.IdentityID))
-	fmt.Println(identity, "Printing Identity in varify auxiliary")
 	if identity == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}

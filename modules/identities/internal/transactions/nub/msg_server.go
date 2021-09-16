@@ -40,7 +40,7 @@ func (msgServer msgServer) Nub(goCtx context.Context, message *Message) (*Transa
 	}
 
 	identityID := key.NewIdentityID(classificationID, immutableProperties)
-	fmt.Println(identityID, "Identity ID--------------")
+	fmt.Println(identityID, "Printing IdentityID")
 	identities := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(identityID))
 	if identities.Get(key.FromID(identityID)) != nil {
 		return nil, errors.EntityAlreadyExists

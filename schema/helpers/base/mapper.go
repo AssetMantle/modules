@@ -43,16 +43,13 @@ func (mapper mapper) Read(context sdkTypes.Context, key helpers.Key) helpers.Map
 	kvStore := context.KVStore(mapper.kvStoreKey)
 
 	Bytes := kvStore.Get(key.GenerateStoreKeyBytes())
-	fmt.Println("Starting priting bytes", string(Bytes), "Printing Bytes in Mapper.go")
 	if Bytes == nil {
 		return nil
 	}
 
 	mappable := mapper.mappablePrototype().GetStructReference()
-	fmt.Println(mappable, "Pritnig mappable")
 
 	mapper.codec.MustUnmarshalBinaryBare(Bytes, mappable)
-	fmt.Println("Unmashaled bytes")
 	return mappable.(helpers.Mappable)
 }
 func (mapper mapper) Update(context sdkTypes.Context, mappable helpers.Mappable) {

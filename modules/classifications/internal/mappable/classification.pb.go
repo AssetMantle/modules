@@ -241,7 +241,6 @@ func (m *Classification) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			fmt.Println(string(dAtA[iNdEx:postIndex]), "Printing string of data bytes to be unmarshalled in classification.pb.go")
 			if err := m.ID.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}

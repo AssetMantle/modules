@@ -6,7 +6,6 @@
 package mappable
 
 import (
-	"fmt"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
@@ -25,7 +24,6 @@ import (
 var _ mappables.InterIdentity = (*Identity)(nil)
 
 func (identity Identity) GetStructReference() codec.ProtoMarshaler {
-	fmt.Println("Calling get struct reference")
 	return &identity
 }
 
