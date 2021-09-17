@@ -22,8 +22,8 @@ func (properties Properties) Get(id types.ID) types.Property {
 }
 func (properties Properties) GetList() []types.Property {
 	newPropertyList := make([]types.Property, len(properties.PropertyList))
-	for i, element := range properties.PropertyList {
-		newPropertyList[i] = &element
+	for i, _ := range properties.PropertyList {
+		newPropertyList[i] = &properties.PropertyList[i]
 	}
 	return newPropertyList
 }

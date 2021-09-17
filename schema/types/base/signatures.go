@@ -22,8 +22,8 @@ func (signatures Signatures) Get(id types.ID) types.Signature {
 }
 func (signatures Signatures) GetList() []types.Signature {
 	newSignatureList := make([]types.Signature, len(signatures.SignatureList))
-	for i, element := range signatures.SignatureList {
-		newSignatureList[i] = &element
+	for i, _ := range signatures.SignatureList {
+		newSignatureList[i] = &signatures.SignatureList[i]
 	}
 	return newSignatureList
 }
