@@ -36,7 +36,7 @@ type Data struct {
 }
 
 func (m *Data) Reset()         { *m = Data{} }
-func (m *Data) String() string { return proto.CompactTextString(m) }
+func (m *Data) String() string { return m.Data.String() }
 func (*Data) ProtoMessage()    {}
 func (*Data) Descriptor() ([]byte, []int) {
 	return fileDescriptor_9b342118f875caf9, []int{0}
