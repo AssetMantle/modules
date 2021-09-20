@@ -28,7 +28,7 @@ func (msgServer msgServer) Provision(goCtx context.Context, message *Message) (*
 		return nil, errors.NotAuthorized
 	}
 
-	if identity.(mappables.InterIdentity).IsProvisioned(message.To.AsSDKTypesAccAddress()) {
+	if !identity.(mappables.InterIdentity).IsProvisioned(message.To.AsSDKTypesAccAddress()) {
 		return nil, errors.EntityAlreadyExists
 	}
 

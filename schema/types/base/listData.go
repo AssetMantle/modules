@@ -104,9 +104,9 @@ func (listData Data_ListData) Add(dataList ...types.Data) types.ListData {
 		newList[i] = element.Data
 	}
 	for _, data := range dataList {
-		dataList := sortedDataList(newList).Add(data).GetList()
-		newDataList := make([]Data, len(dataList))
-		for i, element := range dataList {
+		dataListElement := sortedDataList(newList).Add(data).GetList()
+		newDataList := make([]Data, len(dataListElement))
+		for i, element := range dataListElement {
 			newDataList[i] = *NewData(element)
 		}
 		listData.ListData.Value = newDataList
@@ -120,9 +120,9 @@ func (listData Data_ListData) Remove(dataList ...types.Data) types.ListData {
 		newList[i] = element.Data
 	}
 	for _, data := range dataList {
-		dataList := sortedDataList(newList).Add(data).GetList()
-		newDataList := make([]Data, len(dataList))
-		for i, element := range dataList {
+		dataListElement := sortedDataList(newList).Add(data).GetList()
+		newDataList := make([]Data, len(dataListElement))
+		for i, element := range dataListElement {
 			newDataList[i] = *NewData(element)
 		}
 		listData.ListData.Value = newDataList
