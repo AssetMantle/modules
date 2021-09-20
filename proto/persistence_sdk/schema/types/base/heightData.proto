@@ -8,7 +8,5 @@ import "persistence_sdk/schema/types/base/height.proto";
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message HeightData {
-//  option (gogoproto.goproto_stringer) = false;
-
   persistence_sdk.schema.types.base.Height value = 1 [(gogoproto.nullable) = false];
 }

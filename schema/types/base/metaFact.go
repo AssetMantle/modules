@@ -6,7 +6,6 @@
 package base
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/99designs/keyring"
@@ -17,18 +16,15 @@ import (
 
 var _ types.MetaFact = (*MetaFact)(nil)
 
-func (metaFact MetaFact) GetHashID() types.ID {
-	fmt.Println(metaFact.Data.GenerateHashID(), "Printing GenerateHashID")
-	return metaFact.Data.GenerateHashID()
-}
+func (metaFact MetaFact) GetHashID() types.ID             { return metaFact.Data.GenerateHashID() }
 func (metaFact MetaFact) GetTypeID() types.ID             { return metaFact.Data.GetTypeID() }
 func (metaFact MetaFact) GetSignatures() types.Signatures { return &metaFact.Signatures }
 func (metaFact MetaFact) Sign(_ keyring.Keyring) types.MetaFact {
 	// TODO implement signing
 	return &metaFact
 }
-func (metaFact MetaFact) GetData() types.Data    { return metaFact.Data.GetData() }
-func (metaFact MetaFact) RemoveData() types.Fact { return NewFact(metaFact.Data.GetData()) }
+func (metaFact MetaFact) GetData() types.Data    { return metaFact.Data.GetOneOfData() }
+func (metaFact MetaFact) RemoveData() types.Fact { return NewFact(metaFact.Data.GetOneOfData()) }
 
 func NewMetaFact(data types.Data) *MetaFact {
 	return &MetaFact{
@@ -37,7 +33,7 @@ func NewMetaFact(data types.Data) *MetaFact {
 	}
 }
 
-func ReadMetaFact(metaFactString string) (*MetaFact, error) {
+func ReadMetaFact(metaFactString string) (types.MetaFact, error) {
 	dataTypeAndString := strings.SplitN(metaFactString, constants.DataTypeAndValueSeparator, 2)
 	if len(dataTypeAndString) == 2 {
 		dataType, dataString := dataTypeAndString[0], dataTypeAndString[1]

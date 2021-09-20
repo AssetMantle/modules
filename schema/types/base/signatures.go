@@ -22,14 +22,13 @@ func (signatures Signatures) Get(id types.ID) types.Signature {
 }
 func (signatures Signatures) GetList() []types.Signature {
 	newSignatureList := make([]types.Signature, len(signatures.SignatureList))
-	for i, element := range signatures.SignatureList {
-		newSignatureList[i] = NewSignature(element.GetID(), element.SignatureBytes, element.GetValidityHeight())
+	for i, _ := range signatures.SignatureList {
+		newSignatureList[i] = &signatures.SignatureList[i]
 	}
 	return newSignatureList
 }
 func (signatures Signatures) Add(signature types.Signature) types.Signatures {
-	newSignature := *NewSignature(signature.GetID(), signature.Bytes(), signature.GetValidityHeight())
-	signatures.SignatureList = append(signatures.SignatureList, newSignature)
+	signatures.SignatureList = append(signatures.SignatureList, *NewSignature(signature.GetID(), signature.Bytes(), signature.GetValidityHeight()))
 	return &signatures
 }
 func (signatures Signatures) Remove(signature types.Signature) types.Signatures {
@@ -57,5 +56,7 @@ func NewSignatures(signatureList []types.Signature) *Signatures {
 	for i, element := range signatureList {
 		newSignatureList[i] = *NewSignature(element.GetID(), element.Bytes(), element.GetValidityHeight())
 	}
-	return &Signatures{SignatureList: newSignatureList}
+	return &Signatures{
+		SignatureList: newSignatureList,
+	}
 }

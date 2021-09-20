@@ -14,27 +14,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
-func stringDataFromInterface(data types.Data) (Data_StringData, error) {
-	switch value := data.(type) {
-	case *Data_StringData:
-		return *value, nil
-	default:
-		return Data_StringData{}, errors.MetaDataError
-	}
-}
-
-func NewStringData(value string) types.Data {
-	return &Data_StringData{
-		StringData: &StringData{
-			Value: value,
-		},
-	}
-}
-
-func ReadStringData(stringData string) (types.Data, error) {
-	return NewStringData(stringData), nil
-}
-
 var _ types.Data = (*Data_StringData)(nil)
 
 func (stringData Data_StringData) Compare(data types.Data) int {
@@ -88,3 +67,24 @@ func (stringData Data_StringData) Unmarshal(dAtA []byte) error {
 }
 func (stringData *Data_StringData) Reset() { *stringData = Data_StringData{} }
 func (*Data_StringData) ProtoMessage()     {}
+
+func stringDataFromInterface(data types.Data) (Data_StringData, error) {
+	switch value := data.(type) {
+	case *Data_StringData:
+		return *value, nil
+	default:
+		return Data_StringData{}, errors.MetaDataError
+	}
+}
+
+func NewStringData(value string) types.Data {
+	return &Data_StringData{
+		StringData: &StringData{
+			Value: value,
+		},
+	}
+}
+
+func ReadStringData(stringData string) (types.Data, error) {
+	return NewStringData(stringData), nil
+}

@@ -21,6 +21,9 @@ import (
 var _ types.ID = (*MetaID)(nil)
 var _ helpers.Key = (*MetaID)(nil)
 
+func (metaID MetaID) GetStructReference() codec.ProtoMarshaler {
+	return &metaID
+}
 func (metaID MetaID) Bytes() []byte {
 	var Bytes []byte
 	Bytes = append(Bytes, metaID.TypeID.Bytes()...)

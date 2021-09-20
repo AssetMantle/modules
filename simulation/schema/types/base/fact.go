@@ -1,9 +1,9 @@
 package base
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"math/rand"
 
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 

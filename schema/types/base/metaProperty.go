@@ -22,14 +22,12 @@ func (metaProperty MetaProperty) RemoveData() types.Property {
 }
 
 func NewMetaProperty(id types.ID, metaFact types.MetaFact) *MetaProperty {
-	newID := *NewID(id.String())
-	newMetaFact := *NewMetaFact(metaFact.GetData())
 	return &MetaProperty{
-		Id:       newID,
-		MetaFact: newMetaFact,
+		Id:       *NewID(id.String()),
+		MetaFact: *NewMetaFact(metaFact.GetData()),
 	}
 }
-func ReadMetaProperty(metaPropertyString string) (*MetaProperty, error) {
+func ReadMetaProperty(metaPropertyString string) (types.MetaProperty, error) {
 	propertyIDAndData := strings.Split(metaPropertyString, constants.PropertyIDAndDataSeparator)
 	if len(propertyIDAndData) == 2 && propertyIDAndData[0] != "" {
 		metaFact, Error := ReadMetaFact(propertyIDAndData[1])

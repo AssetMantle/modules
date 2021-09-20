@@ -15,42 +15,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
-func listDataFromData(data types.Data) (Data_ListData, error) {
-	switch value := data.(type) {
-	case *Data_ListData:
-		return *value, nil
-	default:
-		return Data_ListData{}, errors.MetaDataError
-	}
-}
-
-func NewListData(value ...types.Data) *Data_ListData {
-	return &Data_ListData{
-		ListData: &ListData{value},
-	}
-}
-
-func ReadAccAddressListData(dataString string) (types.Data, error) {
-	if dataString == "" {
-		return Data_ListData{}.ZeroValue(), nil
-	}
-
-	dataStringList := strings.Split(dataString, constants.ListDataStringSeparator)
-	dataList := make([]types.Data, len(dataStringList))
-
-	for i, accAddressString := range dataStringList {
-		accAddress, Error := sdkTypes.AccAddressFromBech32(accAddressString)
-		if Error != nil {
-			return Data_ListData{}.ZeroValue(), Error
-		}
-
-		dataList[i] = NewAccAddressData(accAddress)
-	}
-
-	return NewListData(dataList...), nil
-}
-
-var _ types.Data = (*Data_ListData)(nil)
+var _ types.ListData = (*Data_ListData)(nil)
 
 // TODO: find a better impl
 func (listData Data_ListData) Compare(data types.Data) int {
@@ -120,21 +85,47 @@ func (listData Data_ListData) Get() interface{} {
 	return listData.ListData.Value
 }
 func (listData Data_ListData) Search(data types.Data) int {
-	return sortedDataList(listData.ListData.Value).Search(data)
+	newList := make([]types.Data, len(listData.ListData.Value))
+	for i, element := range listData.ListData.Value {
+		newList[i] = element.Data
+	}
+	return sortedDataList(newList).Search(data)
 }
 func (listData Data_ListData) GetList() []types.Data {
-	return listData.ListData.Value
+	newList := make([]types.Data, len(listData.ListData.Value))
+	for i, element := range listData.ListData.Value {
+		newList[i] = element.Data
+	}
+	return newList
 }
 func (listData Data_ListData) Add(dataList ...types.Data) types.ListData {
+	newList := make([]types.Data, len(listData.ListData.Value))
+	for i, element := range listData.ListData.Value {
+		newList[i] = element.Data
+	}
 	for _, data := range dataList {
-		listData.ListData.Value = sortedDataList(listData.ListData.Value).Add(data).GetList()
+		dataList := sortedDataList(newList).Add(data).GetList()
+		newDataList := make([]Data, len(dataList))
+		for i, element := range dataList {
+			newDataList[i] = *NewData(element)
+		}
+		listData.ListData.Value = newDataList
 	}
 
 	return &listData
 }
 func (listData Data_ListData) Remove(dataList ...types.Data) types.ListData {
+	newList := make([]types.Data, len(listData.ListData.Value))
+	for i, element := range listData.ListData.Value {
+		newList[i] = element.Data
+	}
 	for _, data := range dataList {
-		listData.ListData.Value = sortedDataList(listData.ListData.Value).Remove(data).GetList()
+		dataList := sortedDataList(newList).Add(data).GetList()
+		newDataList := make([]Data, len(dataList))
+		for i, element := range dataList {
+			newDataList[i] = *NewData(element)
+		}
+		listData.ListData.Value = newDataList
 	}
 
 	return &listData
@@ -144,3 +135,44 @@ func (listData Data_ListData) Unmarshal(dAtA []byte) error {
 }
 func (listData *Data_ListData) Reset() { *listData = Data_ListData{} }
 func (*Data_ListData) ProtoMessage()   {}
+
+func listDataFromData(data types.Data) (Data_ListData, error) {
+	switch value := data.(type) {
+	case *Data_ListData:
+		return *value, nil
+	default:
+		return Data_ListData{}, errors.MetaDataError
+	}
+}
+
+func NewListData(value ...types.Data) *Data_ListData {
+	newValue := make([]Data, len(value))
+	for i, element := range value {
+		newValue[i] = *NewData(element)
+	}
+	return &Data_ListData{
+		ListData: ListData{
+			Value: newValue,
+		},
+	}
+}
+
+func ReadAccAddressListData(dataString string) (types.Data, error) {
+	if dataString == "" {
+		return Data_ListData{}.ZeroValue(), nil
+	}
+
+	dataStringList := strings.Split(dataString, constants.ListDataStringSeparator)
+	dataList := make([]types.Data, len(dataStringList))
+
+	for i, accAddressString := range dataStringList {
+		accAddress, Error := sdkTypes.AccAddressFromBech32(accAddressString)
+		if Error != nil {
+			return Data_ListData{}.ZeroValue(), Error
+		}
+
+		dataList[i] = NewAccAddressData(accAddress)
+	}
+
+	return NewListData(dataList...), nil
+}

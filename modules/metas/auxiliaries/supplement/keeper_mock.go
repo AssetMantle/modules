@@ -38,7 +38,6 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(base.NewID(properties.Expiry), base.NewMetaFact(base.NewHeightData(base.NewHeight(900)))))
 
 	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
-
 }
 
 func (auxiliaryKeeperMock) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

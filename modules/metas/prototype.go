@@ -32,4 +32,3 @@ func Prototype() helpers.Module {
 		block.Prototype,
 	)
 }
-

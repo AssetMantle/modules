@@ -25,8 +25,8 @@ func (metaProperties MetaProperties) Get(id types.ID) types.MetaProperty {
 }
 func (metaProperties MetaProperties) GetList() []types.MetaProperty {
 	newMetaPropertiesList := make([]types.MetaProperty, len(metaProperties.MetaPropertyList))
-	for i, element := range metaProperties.MetaPropertyList {
-		newMetaPropertiesList[i] = NewMetaProperty(element.GetID(), element.GetMetaFact())
+	for i, _ := range metaProperties.MetaPropertyList {
+		newMetaPropertiesList[i] = &metaProperties.MetaPropertyList[i]
 	}
 	return newMetaPropertiesList
 }
@@ -88,7 +88,7 @@ func NewMetaProperties(metaPropertyList ...types.MetaProperty) *MetaProperties {
 	}
 }
 
-func ReadMetaProperties(metaPropertiesString string) (*MetaProperties, error) {
+func ReadMetaProperties(metaPropertiesString string) (types.MetaProperties, error) {
 	var metaPropertyList []types.MetaProperty
 
 	metaProperties := strings.Split(metaPropertiesString, constants.PropertiesSeparator)

@@ -5,10 +5,11 @@ package persistence_sdk.schema.types.base;
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 import "persistence_sdk/schema/types/base/id.proto";
+import "persistence_sdk/schema/types/base/data.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message Parameter {
-  persistence_sdk.schema.types.base.ID i_d = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
-  string data = 2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Data", (gogoproto.nullable) = false, (cosmos_proto.accepts_interface) = "github.com/persistenceOne/persistenceSDK/schema/types.Data"];
+  persistence_sdk.schema.types.base.ID i_d = 1 [(gogoproto.nullable) = false];
+  persistence_sdk.schema.types.base.Data data = 2 [(gogoproto.nullable) = false];
 }

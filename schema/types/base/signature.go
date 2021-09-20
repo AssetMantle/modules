@@ -23,7 +23,6 @@ func (baseSignature Signature) Verify(pubKey crypto.PubKey, bytes []byte) bool {
 	return pubKey.VerifySignature(bytes, baseSignature.Bytes())
 }
 func (baseSignature Signature) GetValidityHeight() types.Height {
-
 	return &baseSignature.ValidityHeight
 }
 func (baseSignature Signature) HasExpired(height types.Height) bool {
@@ -31,11 +30,9 @@ func (baseSignature Signature) HasExpired(height types.Height) bool {
 }
 
 func NewSignature(id types.ID, signatureBytes []byte, validityHeight types.Height) *Signature {
-	newID := *NewID(id.String())
-	newValidityHeight := *NewHeight(validityHeight.Get())
 	return &Signature{
-		Id:             newID,
+		Id:             *NewID(id.String()),
 		SignatureBytes: signatureBytes,
-		ValidityHeight: newValidityHeight,
+		ValidityHeight: *NewHeight(validityHeight.Get()),
 	}
 }

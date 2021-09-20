@@ -15,5 +15,4 @@ message Signature {
   persistence_sdk.schema.types.base.ID id = 1 [(gogoproto.nullable) = false];
   bytes signature_bytes = 2;
   persistence_sdk.schema.types.base.Height validity_height = 3 [(gogoproto.nullable) = false];
-
 }

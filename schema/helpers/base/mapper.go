@@ -47,11 +47,10 @@ func (mapper mapper) Read(context sdkTypes.Context, key helpers.Key) helpers.Map
 		return nil
 	}
 
-	var mappable helpers.Mappable
+	mappable := mapper.mappablePrototype().GetStructReference()
 
 	mapper.codec.MustUnmarshalBinaryBare(Bytes, mappable)
-
-	return mappable
+	return mappable.(helpers.Mappable)
 }
 func (mapper mapper) Update(context sdkTypes.Context, mappable helpers.Mappable) {
 	Bytes := mapper.codec.MustMarshalBinaryBare(mappable)

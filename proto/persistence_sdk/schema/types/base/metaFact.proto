@@ -3,30 +3,13 @@ syntax = "proto3";
 package persistence_sdk.schema.types.base;
 
 import "gogoproto/gogo.proto";
-import "cosmos_proto/cosmos.proto";
 import "persistence_sdk/schema/types/base/signatures.proto";
-import "persistence_sdk/schema/types/base/decData.proto";
-import "persistence_sdk/schema/types/base/heightData.proto";
-import "persistence_sdk/schema/types/base/idData.proto";
-import "persistence_sdk/schema/types/base/listData.proto";
-import "persistence_sdk/schema/types/base/stringData.proto";
-import "persistence_sdk/schema/types/base/accAddressData.proto";
+import "persistence_sdk/schema/types/base/data.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message MetaFact {
   option (gogoproto.goproto_getters) = false;
   persistence_sdk.schema.types.base.Signatures signatures = 1 [(gogoproto.nullable) = false];
-  Data data = 2 [(gogoproto.nullable) = false];
-}
-
-message Data {
-  oneof data {
-    persistence_sdk.schema.types.base.DecData dec_data = 1;
-    persistence_sdk.schema.types.base.HeightData height_data = 2;
-    persistence_sdk.schema.types.base.IDData id_data = 3;
-    persistence_sdk.schema.types.base.ListData list_data = 4;
-    persistence_sdk.schema.types.base.StringData string_data = 5;
-    persistence_sdk.schema.types.base.AccAddressData acc_address_data = 6;
-  }
+  persistence_sdk.schema.types.base.Data data = 2 [(gogoproto.nullable) = false];
 }

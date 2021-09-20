@@ -8,21 +8,21 @@ package base
 import (
 	"encoding/json"
 	"fmt"
-	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
-	simTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"math/rand"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	simTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"math/rand"
 )
 
 type module struct {
@@ -102,7 +102,6 @@ func (module module) GetTxCmd() *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-
 	commandList := make([]*cobra.Command, len(module.transactionsPrototype().GetList()))
 
 	for i, transaction := range module.transactionsPrototype().GetList() {
@@ -124,17 +123,14 @@ func (module module) GetQueryCmd() *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 	commandList := make([]*cobra.Command, len(module.queriesPrototype().GetList()))
+
 	for i, query := range module.queriesPrototype().GetList() {
 		commandList[i] = query.Command()
 	}
-	fmt.Println()
-	fmt.Println(commandList[0])
-	fmt.Println("command list")
 
 	rootQueryCommand.AddCommand(
 		commandList...,
 	)
-	fmt.Println(rootQueryCommand)
 
 	return rootQueryCommand
 }
@@ -273,6 +269,7 @@ func (module module) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 }
 
 func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
+	schema.RegisterProtoCodec(registry)
 	module.genesisPrototype().RegisterInterface(registry)
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterInterface(registry)
@@ -287,6 +284,7 @@ func (module module) RegisterServices(configurator sdkTypesModule.Configurator) 
 	for _, query := range module.queriesPrototype().GetList() {
 		query.RegisterService(configurator)
 	}
+
 }
 
 func NewModule(name string, auxiliariesPrototype func() helpers.Auxiliaries, genesisPrototype func() helpers.Genesis, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.Parameters, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions, blockPrototype func() helpers.Block) helpers.Module {

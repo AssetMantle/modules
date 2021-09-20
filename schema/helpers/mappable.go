@@ -20,4 +20,6 @@ type Mappable interface {
 	ProtoMessage()
 	Marshal() ([]byte, error)
 	MarshalToSizedBuffer([]byte) (int, error)
+
+	GetStructReference() codec.ProtoMarshaler
 }

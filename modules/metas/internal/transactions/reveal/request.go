@@ -7,7 +7,6 @@ package reveal
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -65,18 +64,9 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	}
 
 	metaFact, Error := base.ReadMetaFact(transactionRequest.MetaFact)
-	fmt.Println(metaFact,"--MetaFact value")
-
-	fmt.Printf("%T\n --TYPE METAFACT", metaFact )
 	if Error != nil {
 		return nil, Error
 	}
-
-	message:= newMessage(from,metaFact,)
-
-	fmt.Println(message, "--MAKEMSG INternal")
-	fmt.Printf("%T\n", message)
-
 
 	return newMessage(
 		from,

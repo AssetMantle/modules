@@ -7,7 +7,5 @@ import "gogoproto/gogo.proto";
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message DecData {
-//  option (gogoproto.goproto_stringer) = false;
-
   bytes value = 1 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
 }

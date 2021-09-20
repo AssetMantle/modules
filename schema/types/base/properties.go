@@ -22,8 +22,8 @@ func (properties Properties) Get(id types.ID) types.Property {
 }
 func (properties Properties) GetList() []types.Property {
 	newPropertyList := make([]types.Property, len(properties.PropertyList))
-	for i, element := range properties.PropertyList {
-		newPropertyList[i] = NewProperty(element.GetID(), element.GetFact())
+	for i, _ := range properties.PropertyList {
+		newPropertyList[i] = &properties.PropertyList[i]
 	}
 	return newPropertyList
 }
@@ -75,6 +75,7 @@ func NewProperties(propertyList ...types.Property) *Properties {
 		PropertyList: newPropertyList,
 	}
 }
+
 func ReadProperties(propertiesString string) (types.Properties, error) {
 	properties, Error := ReadMetaProperties(propertiesString)
 	if Error != nil {

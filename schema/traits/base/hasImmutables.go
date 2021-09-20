@@ -15,7 +15,7 @@ import (
 var _ traits.HasImmutables = (*HasImmutables)(nil)
 
 func (immutables HasImmutables) GetImmutableProperties() types.Properties {
-	return immutables.Properties
+	return &immutables.Properties
 }
 func (immutables HasImmutables) GenerateHashID() types.ID {
 	metaList := make([]string, len(immutables.Properties.GetList()))

@@ -20,7 +20,7 @@ func (m Data) ZeroValue() types.Data {
 }
 
 func (m Data) GenerateHashID() types.ID {
-	return m.Data.GetTypeID()
+	return m.Data.GenerateHashID()
 }
 
 func (m Data) AsAccAddress() (sdkTypes.AccAddress, error) {
@@ -49,6 +49,10 @@ func (m Data) AsID() (types.ID, error) {
 
 func (m Data) Get() interface{} {
 	return m.Data.Get()
+}
+
+func (m Data) GetOneOfData() types.Data {
+	return m.Data
 }
 
 func NewData(data types.Data) *Data {

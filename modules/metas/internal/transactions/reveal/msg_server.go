@@ -14,25 +14,23 @@ type msgServer struct {
 	transactionKeeper
 }
 
-func (msgServer msgServer) Reveal(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
+func (msgServer msgServer) Reveal(goCtx context.Context, message *Message) (*TransactionResponse, error) {
 	ctx := sdkTypes.UnwrapSDKContext(goCtx)
-
-	metaID := key.GenerateMetaID(msg.MetaFact.GetData())
+	metaID := key.GenerateMetaID(message.MetaFact.GetData())
 	metas := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(metaID))
 
 	meta := metas.Get(key.FromID(metaID))
 	if meta != nil {
 		return nil, errors.EntityAlreadyExists
 	}
-	fmt.Println(meta, "Printing Meta in ms_server ----------")
-	a := msg.MetaFact.GetHashID().Compare(base.NewID(""))
-	fmt.Println(a, "Printing comparison result (((((((((((((")
-	if a != 0 {
-		b := mappable.NewMeta(msg.MetaFact.GetData())
-		fmt.Println(b, "Printing NewMeta")
-		metas.Add(b)
+
+	if message.MetaFact.GetHashID().Compare(base.NewID("")) != 0 {
+		metas.Add(mappable.NewMeta(message.MetaFact.GetData()))
 	}
+	fmt.Println("----------")
+	fmt.Println("META")
 	fmt.Println(metaID.String())
+	fmt.Println("----------")
 	return &TransactionResponse{}, nil
 }
 

@@ -18,6 +18,9 @@ import (
 
 var _ mappables.Meta = (*Meta)(nil)
 
+func (meta Meta) GetStructReference() codec.ProtoMarshaler {
+	return &meta
+}
 func (meta Meta) GetData() types.Data { return &meta.Data }
 func (meta Meta) GetID() types.ID     { return &meta.ID }
 func (meta Meta) GetKey() helpers.Key {
@@ -28,10 +31,8 @@ func (Meta) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 }
 
 func NewMeta(data types.Data) *Meta {
-	newID := *base.NewID(key.GenerateMetaID(data).String())
-	newData := *base.NewData(data)
 	return &Meta{
-		ID:   newID,
-		Data: newData,
+		ID:   *base.NewID(key.GenerateMetaID(data).String()),
+		Data: *base.NewData(data),
 	}
 }
