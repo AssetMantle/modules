@@ -27,12 +27,12 @@ var _ helpers.QueryKeeper = (*queryKeeper)(nil)
 var _ QueryServer = (*queryKeeper)(nil)
 
 func (queryKeeper queryKeeper) LegacyEnquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
-	queryResponse := newQueryResponse(queryKeeper.mapper.NewCollection(context).Fetch(key.FromID(queryRequestFromInterface(queryRequest).MetaID)), nil)
+	queryResponse := newQueryResponse(queryKeeper.mapper.NewCollection(context).Fetch(key.FromID(base.NewID(queryRequestFromInterface(queryRequest).MetaID.IdString))), nil)
 	return &queryResponse
 }
 
 func (queryKeeper queryKeeper) Get(ctx context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
-	response := newQueryResponse(queryKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(ctx)).Fetch(key.FromID(queryRequest.MetaID)), nil)
+	response := newQueryResponse(queryKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(ctx)).Fetch(key.FromID(&queryRequest.MetaID)), nil)
 	return &response, response.GetError()
 }
 func (queryKeeper queryKeeper) GetQueryClient(ctx client.Context) QueryClient {
@@ -84,6 +84,6 @@ func queryInKeeper( command *cobra.Command,clientCtx client.Context, req helpers
 
 func NewQueryGet(metaID types.ID) *QueryRequest {
 	return &QueryRequest{
-		MetaID: metaID,
+		MetaID: *base.NewID(metaID.String()),
 	}
 }

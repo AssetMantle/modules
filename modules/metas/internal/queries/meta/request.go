@@ -76,5 +76,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) QueryRequest {
 }
 
 func newQueryRequest(metaID types.ID) helpers.QueryRequest {
-	return QueryRequest{MetaID: metaID}
+	return QueryRequest{MetaID: *base.NewID(metaID.String())}
 }

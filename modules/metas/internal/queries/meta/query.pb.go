@@ -10,7 +10,7 @@ import (
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
 	github_com_persistenceOne_persistenceSDK_schema_helpers "github.com/persistenceOne/persistenceSDK/schema/helpers"
-	github_com_persistenceOne_persistenceSDK_schema_types "github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -32,7 +32,7 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type QueryRequest struct {
-	MetaID github_com_persistenceOne_persistenceSDK_schema_types.ID `protobuf:"bytes,1,opt,name=meta_i_d,json=metaID,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types.ID" json:"meta_i_d" valid:"required~required AssetID missing"`
+	MetaID base.ID `protobuf:"bytes,1,opt,name=meta_i_d,json=metaID,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types.ID" json:"meta_i_d" valid:"required~required AssetID missing"`
 }
 
 func (m *QueryRequest) Reset()         { *m = QueryRequest{} }
