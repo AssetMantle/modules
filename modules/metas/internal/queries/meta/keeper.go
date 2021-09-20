@@ -13,6 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -32,7 +33,8 @@ func (queryKeeper queryKeeper) LegacyEnquire(context sdkTypes.Context, queryRequ
 }
 
 func (queryKeeper queryKeeper) Get(ctx context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
-	response := newQueryResponse(queryKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(ctx)).Fetch(key.FromID(base.NewID(queryRequest.MetaID.String()))), nil)
+	mapp:= mapper.Prototype()
+	response := newQueryResponse(mapp.NewCollection(sdkTypes.UnwrapSDKContext(ctx)).Fetch(key.FromID(base.NewID(queryRequest.MetaID.String()))), nil)
 	return &response, response.GetError()
 }
 func (queryKeeper queryKeeper) GetQueryClient(ctx client.Context) QueryClient {
