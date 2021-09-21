@@ -51,9 +51,11 @@ func (queryKeeper queryKeeper) Enquire(clientctx client.Context, ctx sdkTypes.Co
 	return response, Error
 }
 
-func (queryKeeper queryKeeper) GetKeeper() queryKeeper {
-	queryKeeper.mapper = mapper.Prototype()
-	return queryKeeper
+func (q queryKeeper) GetKeeper() queryKeeper {
+	metasKey := sdkTypes.NewKVStoreKey("metas")
+	metasMapper := mapper.Prototype().Initialize(metasKey)
+	queryKeep := q.Initialize(metasMapper,nil,nil)
+	return queryKeep.(queryKeeper)
 }
 
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
