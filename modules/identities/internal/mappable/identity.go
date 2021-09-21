@@ -106,7 +106,7 @@ func (identity Identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 	return true
 }
 func (identity Identity) ProvisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
-	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
+	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.Data).(types.ListData)
 	if !ok {
 		panic(errors.IncorrectFormat)
 	}
