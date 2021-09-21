@@ -13,6 +13,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -32,6 +34,7 @@ func (queryKeeper queryKeeper) LegacyEnquire(context sdkTypes.Context, queryRequ
 }
 
 func (queryKeeper queryKeeper) Get(ctx context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
+	queryKeeper.Initialize(mapper.Prototype(),parameters.Prototype(),nil)
 	keyr:= key.FromID(base.NewID(queryRequest.MetaID.String()))
 	collection:= queryKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(ctx))
 	response := newQueryResponse(collection.Fetch(keyr), nil)
@@ -65,7 +68,7 @@ func (queryKeeper queryKeeper) RegisterGRPCGatewayRoute(clientContext client.Con
 
 }
 
-func (queryKeeperv queryKeeper) QueryInKeeper(command *cobra.Command, clientCtx client.Context, req helpers.QueryRequest) (helpers.QueryResponse, error) {
+func (queryKeeper queryKeeper) QueryInKeeper(command *cobra.Command, clientCtx client.Context, req helpers.QueryRequest) (helpers.QueryResponse, error) {
 	queryClient := NewQueryClient(clientCtx)
 	meta, Error := command.Flags().GetString("metaID")
 	if Error != nil {
