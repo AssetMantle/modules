@@ -48,7 +48,7 @@ func (msgServer msgServer) Mutate(goCtx context.Context, message *Message) (*Tra
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	assets.Mutate(mappable.NewAsset(asset.(mappables.InterNFT).GetID(), asset.(mappables.InterNFT).GetImmutableProperties(), asset.(mappables.InterNFT).GetImmutableProperties().Mutate(mutableProperties.GetList()...)))
+	assets.Mutate(mappable.NewAsset(asset.(mappables.InterNFT).GetID(), asset.(mappables.InterNFT).GetImmutableProperties(), asset.(mappables.InterNFT).GetMutableProperties().Mutate(mutableProperties.GetList()...)))
 
 	return &TransactionResponse{}, nil
 }
