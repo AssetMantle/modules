@@ -120,7 +120,7 @@ func (listData Data_ListData) Remove(dataList ...types.Data) types.ListData {
 	//	newList[i] = element.Data
 	//}
 	for _, data := range dataList {
-		dataListElement := ListData{Value: listData.ListData.Value}.Add(data).GetList()
+		dataListElement := ListData{Value: listData.ListData.Value}.Remove(data).GetList()
 		newDataList := make([]Data, len(dataListElement))
 		for i, element := range dataListElement {
 			newDataList[i] = *NewData(element)
