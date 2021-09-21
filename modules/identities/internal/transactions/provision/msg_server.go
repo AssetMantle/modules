@@ -2,7 +2,6 @@ package provision
 
 import (
 	"context"
-	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
@@ -38,8 +37,11 @@ func (msgServer msgServer) Provision(goCtx context.Context, message *Message) (*
 		return nil, errors.EntityAlreadyExists
 	}
 
-	authenticationPropperty := identity.(mappables.InterIdentity).GetAuthentication()
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(msgServer.transactionKeeper.supplementAuxiliary.GetKeeper().Help(ctx, supplement.NewAuxiliaryRequest(authenticationPropperty)))
+	identityAuthenticationProperty := identity.(mappables.InterIdentity).GetAuthentication()
+	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(msgServer.transactionKeeper.supplementAuxiliary.GetKeeper().Help(ctx, supplement.NewAuxiliaryRequest(identityAuthenticationProperty)))
+	if Error != nil {
+		return nil, Error
+	}
 	listData, Error := metaProperties.GetList()[0].GetMetaFact().GetData().AsListData()
 	if Error != nil {
 		return nil, Error
@@ -51,9 +53,7 @@ func (msgServer msgServer) Provision(goCtx context.Context, message *Message) (*
 		return nil, Error
 	}
 	modifiedMutableProperties := identity.(mappables.InterIdentity).GetMutableProperties().Mutate(mutableMetaProperties.GetList()...)
-	fmt.Println(modifiedMutableProperties)
 	identities.Mutate(mappable.NewIdentity(&identityID, identity.(mappables.InterIdentity).GetImmutableProperties(), modifiedMutableProperties))
-	fmt.Println(identities, "-----")
 	//identities.Mutate(identity.(mappables.InterIdentity).ProvisionAddress(message.To.AsSDKTypesAccAddress()))
 
 	return &TransactionResponse{}, nil
