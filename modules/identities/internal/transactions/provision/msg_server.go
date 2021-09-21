@@ -53,6 +53,7 @@ func (msgServer msgServer) Provision(goCtx context.Context, message *Message) (*
 	modifiedMutableProperties := identity.(mappables.InterIdentity).GetMutableProperties().Mutate(mutableMetaProperties.GetList()...)
 	fmt.Println(modifiedMutableProperties)
 	identities.Mutate(mappable.NewIdentity(&identityID, identity.(mappables.InterIdentity).GetImmutableProperties(), modifiedMutableProperties))
+	fmt.Println(identities, "-----")
 	//identities.Mutate(identity.(mappables.InterIdentity).ProvisionAddress(message.To.AsSDKTypesAccAddress()))
 
 	return &TransactionResponse{}, nil
