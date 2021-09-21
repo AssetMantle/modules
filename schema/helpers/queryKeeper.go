@@ -10,10 +10,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/spf13/cobra"
 )
 
 type QueryKeeper interface {
-	Enquire(client.Context,sdkTypes.Context, QueryRequest) (QueryResponse, error)
+	QueryInKeeper(*cobra.Command, client.Context, QueryRequest) (QueryResponse, error)
+	Enquire(client.Context, sdkTypes.Context, QueryRequest) (QueryResponse, error)
 	LegacyEnquire(sdkTypes.Context, QueryRequest) QueryResponse
 	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)
 	RegisterService(module.Configurator)
