@@ -7,6 +7,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
@@ -51,7 +52,7 @@ func (msgServer msgServer) Provision(goCtx context.Context, message *Message) (*
 	}
 	modifiedMutableProperties := identity.(mappables.InterIdentity).GetMutableProperties().Mutate(mutableMetaProperties.GetList()...)
 	fmt.Println(modifiedMutableProperties)
-	identities.Mutate(identity)
+	identities.Mutate(mappable.NewIdentity(&identityID, identity.(mappables.InterIdentity).GetImmutableProperties(), modifiedMutableProperties))
 	//identities.Mutate(identity.(mappables.InterIdentity).ProvisionAddress(message.To.AsSDKTypesAccAddress()))
 
 	return &TransactionResponse{}, nil
