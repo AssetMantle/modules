@@ -5,9 +5,12 @@ import (
 	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type msgServer struct {
@@ -36,12 +39,20 @@ func (msgServer msgServer) Provision(goCtx context.Context, message *Message) (*
 
 	authenticationPropperty := identity.(mappables.InterIdentity).GetAuthentication()
 	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(msgServer.transactionKeeper.supplementAuxiliary.GetKeeper().Help(ctx, supplement.NewAuxiliaryRequest(authenticationPropperty)))
-	fmt.Println(metaProperties, "Printing metaProperties")
+	listData, Error := metaProperties.GetList()[0].GetMetaFact().GetData().AsListData()
 	if Error != nil {
 		return nil, Error
 	}
-
-	identities.Mutate(identity.(mappables.InterIdentity).ProvisionAddress(message.To.AsSDKTypesAccAddress()))
+	listData.Add(base.NewAccAddressData(message.To.AsSDKTypesAccAddress()))
+	authenticationProperty := base.NewMetaProperty(base.NewID(properties.Authentication), base.NewMetaFact(listData))
+	mutableMetaProperties, Error := scrub.GetPropertiesFromResponse(msgServer.transactionKeeper.scrubAuxiliary.GetKeeper().Help(ctx, scrub.NewAuxiliaryRequest(authenticationProperty)))
+	if Error != nil {
+		return nil, Error
+	}
+	modifiedMutableProperties := identity.(mappables.InterIdentity).GetMutableProperties().Mutate(mutableMetaProperties.GetList()...)
+	fmt.Println(modifiedMutableProperties)
+	identities.Mutate(identity)
+	//identities.Mutate(identity.(mappables.InterIdentity).ProvisionAddress(message.To.AsSDKTypesAccAddress()))
 
 	return &TransactionResponse{}, nil
 }

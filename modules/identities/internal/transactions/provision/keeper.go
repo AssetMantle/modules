@@ -9,6 +9,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
@@ -16,6 +17,7 @@ import (
 type transactionKeeper struct {
 	mapper              helpers.Mapper
 	supplementAuxiliary helpers.Auxiliary
+	scrubAuxiliary      helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -36,6 +38,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			switch value.GetName() {
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
+			case scrub.Auxiliary.GetName():
+				transactionKeeper.scrubAuxiliary = value
 			}
 		default:
 			panic(errors.UninitializedUsage)
