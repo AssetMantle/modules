@@ -2,9 +2,11 @@ package provision
 
 import (
 	"context"
+	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 )
 
@@ -30,6 +32,13 @@ func (msgServer msgServer) Provision(goCtx context.Context, message *Message) (*
 
 	if !identity.(mappables.InterIdentity).IsProvisioned(message.To.AsSDKTypesAccAddress()) {
 		return nil, errors.EntityAlreadyExists
+	}
+
+	authenticationPropperty := identity.(mappables.InterIdentity).GetAuthentication()
+	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(msgServer.transactionKeeper.supplementAuxiliary.GetKeeper().Help(ctx, supplement.NewAuxiliaryRequest(authenticationPropperty)))
+	fmt.Println(metaProperties, "Printing metaProperties")
+	if Error != nil {
+		return nil, Error
 	}
 
 	identities.Mutate(identity.(mappables.InterIdentity).ProvisionAddress(message.To.AsSDKTypesAccAddress()))
