@@ -105,13 +105,13 @@ func (identity Identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 
 	return true
 }
-func (identity Identity) ProvisionAddress(address sdkTypes.AccAddress, listData types.ListData) helpers.Mappable {
+func (identity Identity) ProvisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
 	//accAddressListData, ok := identity.GetAuthentication().GetFact().(types.Data).(types.ListData)
 	//if !ok {
 	//	panic(errors.IncorrectFormat)
 	//}
 
-	listData.Add(base.NewAccAddressData(address))
+	//listData.Add(base.NewAccAddressData(address))
 
 	return mappables.InterIdentity(&identity)
 }
