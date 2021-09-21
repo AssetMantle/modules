@@ -46,7 +46,7 @@ func (msgServer msgServer) Unprovision(goCtx context.Context, message *Message) 
 	if Error != nil {
 		return nil, Error
 	}
-	listData.Add(base.NewAccAddressData(message.To.AsSDKTypesAccAddress()))
+	listData.Remove(base.NewAccAddressData(message.To.AsSDKTypesAccAddress()))
 	authenticationProperty := base.NewMetaProperty(base.NewID(properties.Authentication), base.NewMetaFact(listData))
 	mutableMetaProperties, Error := scrub.GetPropertiesFromResponse(msgServer.transactionKeeper.scrubAuxiliary.GetKeeper().Help(ctx, scrub.NewAuxiliaryRequest(authenticationProperty)))
 	if Error != nil {

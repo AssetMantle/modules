@@ -8,7 +8,6 @@ package mappable
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
@@ -116,12 +115,12 @@ func (identity Identity) ProvisionAddress(address sdkTypes.AccAddress) helpers.M
 	return mappables.InterIdentity(&identity)
 }
 func (identity Identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
-	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
-	if !ok {
-		panic(errors.IncorrectFormat)
-	}
-
-	accAddressListData.Remove(base.NewAccAddressData(address))
+	//accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
+	//if !ok {
+	//	panic(errors.IncorrectFormat)
+	//}
+	//
+	//accAddressListData.Remove(base.NewAccAddressData(address))
 
 	return mappables.InterIdentity(&identity)
 }
