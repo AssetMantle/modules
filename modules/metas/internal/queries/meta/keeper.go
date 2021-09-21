@@ -14,7 +14,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -34,7 +33,7 @@ func (queryKeeper queryKeeper) LegacyEnquire(context sdkTypes.Context, queryRequ
 }
 
 func (queryKeeper queryKeeper) Get(ctx context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
-	queryKeeper.Initialize(mapper.Prototype(),parameters.Prototype(),nil)
+	queryKeeper = queryKeeper.GetKeeper()
 	keyr:= key.FromID(base.NewID(queryRequest.MetaID.String()))
 	collection:= queryKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(ctx))
 	response := newQueryResponse(collection.Fetch(keyr), nil)
@@ -50,6 +49,11 @@ func (queryKeeper queryKeeper) Enquire(clientctx client.Context, ctx sdkTypes.Co
 	response, Error := queryCli.Get(sdkTypes.WrapSDKContext(ctx), &queryRequest)
 	//response, Error := queryKeeper.Get(sdkTypes.WrapSDKContext(ctx), &queryRequest)
 	return response, Error
+}
+
+func (queryKeeper queryKeeper) GetKeeper() queryKeeper {
+	queryKeeper.mapper = mapper.Prototype()
+	return queryKeeper
 }
 
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
