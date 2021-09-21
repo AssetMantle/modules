@@ -33,10 +33,8 @@ func (queryKeeper queryKeeper) LegacyEnquire(context sdkTypes.Context, queryRequ
 
 func (queryKeeper queryKeeper) Get(ctx context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
 	keyr:= key.FromID(base.NewID(queryRequest.MetaID.String()))
-
-
-
-	response := newQueryResponse(queryKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(ctx)).Fetch(keyr), nil)
+	collection:= queryKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(ctx))
+	response := newQueryResponse(collection.Fetch(keyr), nil)
 	return &response, response.GetError()
 }
 func (queryKeeper queryKeeper) GetQueryClient(ctx client.Context) QueryClient {

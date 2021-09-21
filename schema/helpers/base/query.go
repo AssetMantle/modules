@@ -29,9 +29,6 @@ type query struct {
 	keeperPrototype   func() helpers.QueryKeeper
 }
 
-func (query query) HandleMessageByProto(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
-	panic("implement me")
-}
 
 var _ helpers.Query = (*query)(nil)
 
