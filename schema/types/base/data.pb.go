@@ -90,7 +90,7 @@ type Data_AccAddressData struct {
 	AccAddressData *AccAddressData `protobuf:"bytes,5,opt,name=acc_address_data,json=accAddressData,proto3,oneof" json:"acc_address_data,omitempty"`
 }
 type Data_ListData struct {
-	ListData ListData `protobuf:"bytes,6,opt,name=list_data,json=listData,proto3,oneof,customtype=github.com/persistenceOne/persistenceSDK/schema/types/base.ListData" json:"list_data,omitempty"`
+	ListData *ListData `protobuf:"bytes,6,opt,name=list_data,json=listData,proto3,oneof,customtype=github.com/persistenceOne/persistenceSDK/schema/types/base.ListData" json:"list_data,omitempty"`
 }
 
 func (*Data_DecData) isData_Data()        {}
@@ -685,7 +685,7 @@ func (m *Data) Unmarshal(dAtA []byte) error {
 			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
-			m.Data = &Data_ListData{*v}
+			m.Data = &Data_ListData{v}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

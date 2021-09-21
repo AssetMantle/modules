@@ -151,7 +151,7 @@ func NewListData(value ...types.Data) *Data_ListData {
 		newValue[i] = *NewData(element)
 	}
 	return &Data_ListData{
-		ListData: ListData{
+		ListData: &ListData{
 			Value: newValue,
 		},
 	}
