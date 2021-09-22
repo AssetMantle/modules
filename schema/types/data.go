@@ -10,6 +10,8 @@ import (
 )
 
 type Data interface {
+	GetID() ID
+
 	// Compare returns 1 if this > parameter
 	// * returns -1 if this < parameter
 	// * returns 0 if this = parameter
