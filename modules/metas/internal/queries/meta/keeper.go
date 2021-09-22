@@ -59,16 +59,15 @@ func (queryKeeper queryKeeper) RegisterGRPCGatewayRoute(clientContext client.Con
 
 }
 
-func (queryKeeper queryKeeper) QueryInKeeper(command *cobra.Command, clientCtx client.Context, req helpers.QueryRequest) (helpers.QueryResponse, error) {
-	meta, Error := command.Flags().GetString("metaID")
-	if Error != nil {
+func (queryKeeper queryKeeper) QueryInKeeper(ctx sdkTypes.Context, req helpers.QueryRequest) ([]byte, error) {
+	request := req.(QueryRequest)
+	goCtx := sdkTypes.WrapSDKContext(ctx)
+	queryServer := NewQueryServerImpl(queryKeeper)
+	queryRes,Error:= queryServer.Get(goCtx,&request)
+	if Error!=nil{
 		panic(Error)
 	}
-	newMetaID := base.NewID(meta)
-	params := NewQueryGet(newMetaID)
-	queryServer := NewQueryServerImpl(queryKeeper)
-
-	return queryServer.Get(command.Context(), params)
+	return queryRes.Marshal()
 }
 
 func (queryKeeper queryKeeper) RegisterService(cfg module.Configurator) {

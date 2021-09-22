@@ -32,23 +32,23 @@ type query struct {
 var _ helpers.Query = (*query)(nil)
 
 func (query query) GetName() string { return query.name }
-func (query query) GetCommand() *cobra.Command {
-	cmd := query.cliCommand.CreateQueryCommand()
-	cmd.RunE = func(cmd *cobra.Command, args []string) error {
-		clientCtx, err := client.GetClientQueryContext(cmd)
-		if err != nil {
-			panic(err)
-		}
-		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, clientCtx)
-		response, Error := query.queryKeeper.QueryInKeeper(cmd, clientCtx, queryRequest)
-		if Error != nil {
-			return Error
-		}
-
-		return clientCtx.PrintProto(response)
-	}
-	return cmd
-}
+//func (query query) GetCommand() *cobra.Command {
+//	cmd := query.cliCommand.CreateQueryCommand()
+//	cmd.RunE = func(cmd *cobra.Command, args []string) error {
+//		clientCtx, err := client.GetClientQueryContext(cmd)
+//		if err != nil {
+//			panic(err)
+//		}
+//		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, clientCtx)
+//		response, Error := query.queryKeeper.QueryInKeeper(cmd, clientCtx, queryRequest)
+//		if Error != nil {
+//			return Error
+//		}
+//
+//		return clientCtx.PrintProto(response)
+//	}
+//	return cmd
+//}
 func (query query) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
 		clientContext, err := client.GetClientQueryContext(command)
@@ -79,7 +79,19 @@ func (query query) HandleMessageByLegacyAmino(context sdkTypes.Context, legacyAm
 		return nil, Error
 	}
 
-	return query.queryKeeper.LegacyEnquire(context, request).LegacyAminoEncode()
+	return query.queryKeeper.LegacyEnquire(context,request).LegacyAminoEncode()
+}
+
+func (query query)HandleMessage(context sdkTypes.Context,requestQuery abciTypes.RequestQuery) ([]byte, error)  {
+	request, Error := query.requestPrototype().LegacyAminoDecode(requestQuery.Data)
+	if Error != nil {
+		return nil, Error
+	}
+
+	return query.queryKeeper.QueryInKeeper(context,request)
+
+
+	
 }
 
 //func (query query) HandleMessageByProto(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
