@@ -7,7 +7,6 @@ package base
 
 import (
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
@@ -30,31 +29,24 @@ type query struct {
 	keeperPrototype   func() helpers.QueryKeeper
 }
 
-
 var _ helpers.Query = (*query)(nil)
 
 func (query query) GetName() string { return query.name }
-func (query query) GetCommand() *cobra.Command{
-	cmd := &cobra.Command{
-		Use: "metas",
-		Short: "",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx,err:= client.GetClientQueryContext(cmd)
-			if err!=nil{
-				panic(err)
-			}
-			queryRequest := query.requestPrototype().FromCLI(query.cliCommand, clientCtx)
-			response, Error := query.queryKeeper.QueryInKeeper(cmd, clientCtx, queryRequest)
-			if Error != nil {
-				return Error
-			}
+func (query query) GetCommand() *cobra.Command {
+	cmd := query.cliCommand.CreateQueryCommand()
+	cmd.RunE = func(cmd *cobra.Command, args []string) error {
+		clientCtx, err := client.GetClientQueryContext(cmd)
+		if err != nil {
+			panic(err)
+		}
+		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, clientCtx)
+		response, Error := query.queryKeeper.QueryInKeeper(cmd, clientCtx, queryRequest)
+		if Error != nil {
+			return Error
+		}
 
-			return clientCtx.PrintProto(response)
-
-
-		},
+		return clientCtx.PrintProto(response)
 	}
-	flags.AddQueryFlagsToCmd(cmd)
 	return cmd
 }
 func (query query) Command() *cobra.Command {

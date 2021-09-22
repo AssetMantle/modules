@@ -93,6 +93,17 @@ func (cliCommand cliCommand) ReadBaseReq(cliContext client.Context) rest.BaseReq
 		Simulate: cliContext.Simulate,
 	}
 }
+func(cliCommand cliCommand) CreateQueryCommand() *cobra.Command {
+	command := &cobra.Command{
+		Use:   cliCommand.use,
+		Short: cliCommand.short,
+		Long:  cliCommand.long,
+	}
+	cliCommand.registerFlags(command)
+	flags.AddTxFlagsToCmd(command)
+
+	return command
+}
 func (cliCommand cliCommand) CreateCommand(runE func(command *cobra.Command, args []string) error) *cobra.Command {
 	command := &cobra.Command{
 		Use:   cliCommand.use,
