@@ -55,12 +55,13 @@ func (query query) Command() *cobra.Command {
 		if err != nil {
 			return err
 		}
+		jsonMarshaler := clientContext.JSONMarshaler
 		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, clientContext)
 		responseBytes,_ ,Error := query.query(queryRequest, clientContext)
 		if Error != nil {
 			return Error
 		}
-		response,Error := query.responsePrototype().Decode(responseBytes)
+		response,Error := query.responsePrototype().Decode(jsonMarshaler,responseBytes)
 
 
 		if Error != nil {
@@ -125,7 +126,7 @@ func (query query) RegisterGRPCGatewayRoute(clientContext client.Context, serveM
 }
 
 func (query query) query(queryRequest helpers.QueryRequest, cliContext client.Context) ([]byte, int64, error) {
-	bytes, Error := queryRequest.Encode()
+	bytes, Error := queryRequest.Encode(cliContext.JSONMarshaler)
 	if Error != nil {
 		return nil, 0, Error
 	}

@@ -7,6 +7,7 @@ package meta
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/common"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
@@ -29,12 +30,12 @@ func (queryResponse QueryResponse) LegacyAminoDecode(bytes []byte) (helpers.Quer
 
 	return &queryResponse, nil
 }
-func (queryResponse QueryResponse) Encode() ([]byte, error) {
-	return common.JSONCodec.MarshalJSON(&queryResponse)
+func (queryResponse QueryResponse) Encode(cdc codec.JSONMarshaler) ([]byte, error) {
+	return cdc.MarshalJSON(&queryResponse)
 }
 
-func (queryResponse QueryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
-	if Error := common.JSONCodec.UnmarshalJSON(bytes, &queryResponse); Error != nil {
+func (queryResponse QueryResponse) Decode(cdc codec.JSONMarshaler,bytes []byte) (helpers.QueryResponse, error) {
+	if Error := cdc.UnmarshalJSON(bytes, &queryResponse); Error != nil {
 		return nil, Error
 	}
 
