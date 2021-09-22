@@ -27,19 +27,19 @@ type assetID struct {
 var _ types.ID = (*assetID)(nil)
 var _ helpers.Key = (*assetID)(nil)
 
-func (assetID assetID) Bytes() []byte {
-	var Bytes []byte
-	Bytes = append(Bytes, assetID.ClassificationID.Bytes()...)
-	Bytes = append(Bytes, assetID.HashID.Bytes()...)
-
-	return Bytes
-}
 func (assetID assetID) String() string {
 	var values []string
 	values = append(values, assetID.ClassificationID.String())
 	values = append(values, assetID.HashID.String())
 
 	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
+}
+func (assetID assetID) Bytes() []byte {
+	var Bytes []byte
+	Bytes = append(Bytes, assetID.ClassificationID.Bytes()...)
+	Bytes = append(Bytes, assetID.HashID.Bytes()...)
+
+	return Bytes
 }
 func (assetID assetID) Compare(id types.ID) int {
 	return bytes.Compare(assetID.Bytes(), id.Bytes())

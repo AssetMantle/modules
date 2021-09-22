@@ -47,14 +47,14 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 			if Error != nil {
 				panic(Error)
 			}
-			if expiryProperty := metaProperties.Get(ids.Expiry); expiryProperty != nil {
+			if expiryProperty := metaProperties.Get(ids.ExpiryProperty); expiryProperty != nil {
 				expiry, Error := expiryProperty.GetMetaFact().GetData().AsHeight()
 				if Error != nil {
 					panic(Error)
 				}
 
 				if expiry.Compare(base.NewHeight(context.BlockHeight())) <= 0 {
-					makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplit)
+					makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplitProperty)
 					if makerOwnableSplitProperty == nil {
 						panic(errors.MetaDataError)
 					}
@@ -122,7 +122,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 						panic(Error)
 					}
 
-					leftOrderMakerOwnableSplit, Error := leftOrderMetaProperties.Get(ids.MakerOwnableSplit).GetMetaFact().GetData().AsDec()
+					leftOrderMakerOwnableSplit, Error := leftOrderMetaProperties.Get(ids.MakerOwnableSplitProperty).GetMetaFact().GetData().AsDec()
 					if Error != nil {
 						panic(Error)
 					}
@@ -137,7 +137,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 						panic(Error)
 					}
 
-					rightOrderMakerOwnableSplit, Error := rightOrderMetaProperties.Get(ids.MakerOwnableSplit).GetMetaFact().GetData().AsDec()
+					rightOrderMakerOwnableSplit, Error := rightOrderMetaProperties.Get(ids.MakerOwnableSplitProperty).GetMetaFact().GetData().AsDec()
 					if Error != nil {
 						panic(Error)
 					}
@@ -154,7 +154,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								panic(auxiliaryResponse.GetError())
 							}
 
-							mutableProperties, Error := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(ids.MakerOwnableSplit, base.NewMetaFact(base.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded)))))))
+							mutableProperties, Error := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewMetaFact(base.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded)))))))
 							if Error != nil {
 								panic(Error)
 							}
@@ -174,7 +174,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								panic(auxiliaryResponse.GetError())
 							}
 
-							mutableProperties, Error := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(ids.MakerOwnableSplit, base.NewMetaFact(base.NewDecData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder)))))))
+							mutableProperties, Error := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewMetaFact(base.NewDecData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder)))))))
 							if Error != nil {
 								panic(Error)
 							}

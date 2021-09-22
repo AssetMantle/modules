@@ -45,21 +45,21 @@ func (maintainer maintainer) GetMaintainedClassificationID() types.ID {
 	return key.ReadClassificationID(maintainer.ID)
 }
 func (maintainer maintainer) GetMaintainedProperties() types.Property {
-	if property := maintainer.GetProperty(ids.MaintainedProperties); property != nil {
+	if property := maintainer.GetProperty(ids.MaintainedPropertiesProperty); property != nil {
 		return property
 	}
 
 	return properties.MaintainedProperties
 }
 func (maintainer maintainer) CanMintAsset() bool {
-	if property := maintainer.GetProperty(ids.Permissions); property != nil {
+	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
 		impl
 	}
 
 	return false
 }
 func (maintainer maintainer) CanBurnAsset() bool {
-	if property := maintainer.GetProperty(ids.Permissions); property != nil {
+	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
 		impl
 	}
 

@@ -48,23 +48,23 @@ func (order order) GetMakerID() types.ID {
 func (order order) GetCreation() types.MetaProperty {
 	heightValue, Error := strconv.ParseInt(key.ReadCreationID(order.ID).String(), 10, 64)
 	if Error != nil {
-		return base.NewMetaProperty(ids.Creation, base.NewMetaFact(base.NewHeightData(base.NewHeight(0))))
+		return base.NewMetaProperty(ids.CreationProperty, base.NewMetaFact(base.NewHeightData(base.NewHeight(0))))
 	}
 
-	return base.NewMetaProperty(ids.Creation, base.NewMetaFact(base.NewHeightData(base.NewHeight(heightValue))))
+	return base.NewMetaProperty(ids.CreationProperty, base.NewMetaFact(base.NewHeightData(base.NewHeight(heightValue))))
 }
 func (order order) GetExchangeRate() types.MetaProperty {
 	decValue, Error := sdkTypes.NewDecFromStr(key.ReadRateID(order.ID).String())
 	if Error != nil {
-		return base.NewMetaProperty(ids.ExchangeRate, base.NewMetaFact(base.NewDecData(sdkTypes.ZeroDec())))
+		return base.NewMetaProperty(ids.ExchangeRateProperty, base.NewMetaFact(base.NewDecData(sdkTypes.ZeroDec())))
 	}
 
-	return base.NewMetaProperty(ids.ExchangeRate, base.NewMetaFact(base.NewDecData(decValue)))
+	return base.NewMetaProperty(ids.ExchangeRateProperty, base.NewMetaFact(base.NewDecData(decValue)))
 }
 func (order order) GetTakerID() types.Property {
-	if takerID := order.HasImmutables.GetImmutableProperties().Get(ids.TakerID); takerID != nil {
+	if takerID := order.HasImmutables.GetImmutableProperties().Get(ids.TakerIDProperty); takerID != nil {
 		return takerID
-	} else if takerID := order.HasMutables.GetMutableProperties().Get(ids.TakerID); takerID != nil {
+	} else if takerID := order.HasMutables.GetMutableProperties().Get(ids.TakerIDProperty); takerID != nil {
 		return takerID
 	} else {
 
@@ -72,14 +72,14 @@ func (order order) GetTakerID() types.Property {
 	}
 }
 func (order order) GetExpiry() types.Property {
-	if expiry := order.GetProperty(ids.Expiry); expiry != nil {
+	if expiry := order.GetProperty(ids.ExpiryProperty); expiry != nil {
 		return expiry
 	}
 
 	return properties.Expiry
 }
 func (order order) GetMakerOwnableSplit() types.Property {
-	if makerOwnableSplit := order.GetProperty(ids.MakerOwnableSplit); makerOwnableSplit != nil {
+	if makerOwnableSplit := order.GetProperty(ids.MakerOwnableSplitProperty); makerOwnableSplit != nil {
 		return makerOwnableSplit
 	}
 

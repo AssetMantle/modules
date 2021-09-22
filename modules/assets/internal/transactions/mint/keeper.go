@@ -70,8 +70,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	split := sdkTypes.SmallestDec()
 
-	if metaProperties := base.NewMetaProperties(append(message.ImmutableMetaProperties.GetList(), message.MutableMetaProperties.GetList()...)...); metaProperties.Get(ids.Lock) != nil {
-		if split, Error = metaProperties.Get(ids.Lock).GetMetaFact().GetData().AsDec(); Error != nil {
+	if metaProperties := base.NewMetaProperties(append(message.ImmutableMetaProperties.GetList(), message.MutableMetaProperties.GetList()...)...); metaProperties.Get(ids.LockProperty) != nil {
+		if split, Error = metaProperties.Get(ids.LockProperty).GetMetaFact().GetData().AsDec(); Error != nil {
 			return newTransactionResponse(errors.MetaDataError)
 		}
 	}

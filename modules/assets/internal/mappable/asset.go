@@ -25,21 +25,21 @@ type asset struct {
 var _ mappables.Asset = (*asset)(nil)
 
 func (asset asset) GetBurn() types.Property {
-	if burn := asset.GetProperty(ids.Burn); burn != nil {
+	if burn := asset.GetProperty(ids.BurnProperty); burn != nil {
 		return burn
 	}
 
 	return properties.Burn
 }
 func (asset asset) GetLock() types.Property {
-	if lock := asset.GetProperty(ids.Lock); lock != nil {
+	if lock := asset.GetProperty(ids.LockProperty); lock != nil {
 		return lock
 	}
 
 	return properties.Lock
 }
 func (asset asset) GetValue() types.Property {
-	if value := asset.GetProperty(ids.Value); value != nil {
+	if value := asset.GetProperty(ids.ValueProperty); value != nil {
 		return value
 	}
 

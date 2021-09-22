@@ -6,8 +6,13 @@
 package mappable
 
 import (
+	"strings"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
@@ -27,14 +32,14 @@ type identity struct {
 var _ mappables.Identity = (*identity)(nil)
 
 func (identity identity) GetExpiry() types.Property {
-	if property := identity.GetProperty(ids.Expiry); property != nil {
+	if property := identity.GetProperty(ids.ExpiryProperty); property != nil {
 		return property
 	}
 
 	return properties.Expiry
 }
 func (identity identity) GetAuthentication() types.Property {
-	if property := identity.GetProperty(ids.Authentication); property != nil {
+	if property := identity.GetProperty(ids.AuthenticationProperty); property != nil {
 		return property
 	}
 
@@ -47,39 +52,25 @@ func (identity) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, identity{})
 }
 func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
-	//flag := false
-	//accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
-	//
-	//if !ok {
-	//	panic(errors.IncorrectFormat)
-	//}
-	//
-	//if !address.Empty() && accAddressListData.Search(qualified.NewAccAddressData(address)) != -1 {
-	//	flag = true
-	//}
-	impl
-	return true
-}
-func (identity identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
-	//flag := false
-	//accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
-	//
-	//if !ok {
-	//	panic(errors.IncorrectFormat)
-	//}
-	//
-	//if !address.Empty() && !(accAddressListData.Search(qualified.NewAccAddressData(address)) != -1) {
-	//	flag = true
-	//}
-	impl
-	return true
+	if authentication := identity.GetAuthentication(); authentication != nil {
+		compareAuthenticationHash := base.NewAccAddressData(address).GenerateHashID().String()
+
+		authenticationHashList := strings.Split(authentication.GetFact().GetHashID().String(), constants.ListHashStringSeparator)
+		for _, authenticationHash := range authenticationHashList {
+			if strings.Compare(authenticationHash, compareAuthenticationHash) == 0 {
+				return true
+			}
+		}
+	}
+
+	return false
 }
 func (identity identity) ProvisionAddress(address sdkTypes.AccAddress) mappables.Identity {
-	impl
+
 	return mappables.Identity(identity)
 }
 func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) mappables.Identity {
-	impl
+
 	return mappables.Identity(identity)
 }
 

@@ -51,7 +51,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplit)
+	makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplitProperty)
 	if makerOwnableSplitProperty == nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}

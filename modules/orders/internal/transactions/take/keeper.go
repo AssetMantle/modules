@@ -51,7 +51,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		newTransactionResponse(Error)
 	}
 
-	if takerIDProperty := metaProperties.Get(ids.TakerID); takerIDProperty != nil {
+	if takerIDProperty := metaProperties.Get(ids.TakerIDProperty); takerIDProperty != nil {
 		takerID, Error := takerIDProperty.GetMetaFact().GetData().AsID()
 		if Error != nil {
 			return newTransactionResponse(errors.MetaDataError)
@@ -65,7 +65,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplit)
+	makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplitProperty)
 	if makerOwnableSplitProperty == nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}
@@ -95,7 +95,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		orders.Remove(order)
 	default:
 		makerReceiveTakerOwnableSplit = message.TakerOwnableSplit
-		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(ids.MakerOwnableSplit, base.NewMetaFact(base.NewDecData(updatedMakerOwnableSplit))))))
+		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewMetaFact(base.NewDecData(updatedMakerOwnableSplit))))))
 
 		if Error != nil {
 			return newTransactionResponse(Error)

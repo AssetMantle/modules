@@ -96,9 +96,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	rateID := base.NewID(sdkTypes.MustNewDecFromStr("0.001").String())
 	creationID := base.NewID("100")
 	makerID := base.NewID("makerID")
-	metaProperties, Error := base.ReadMetaProperties(ids.MakerOwnableSplit.String() + ":D|0.000000000000000001" +
-		"," + ids.TakerID.String() + ":I|fromID" + "," +
-		ids.ExchangeRate.String() + ":D|0.000000000000000001")
+	metaProperties, Error := base.ReadMetaProperties(ids.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+		"," + ids.TakerIDProperty.String() + ":I|fromID" + "," +
+		ids.ExchangeRateProperty.String() + ":D|0.000000000000000001")
 	require.Equal(t, nil, Error)
 	orderID := key.NewOrderID(
 		classificationID,

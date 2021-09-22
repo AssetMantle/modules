@@ -26,16 +26,16 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 	var metaPropertyList []types.MetaProperty
 
 	for _, property := range auxiliaryRequest.PropertyList {
-		if property.GetID().Compare(ids.Burn) == 0 && property.GetFact().GetHashID().Compare(base.NewID("")) == 0 {
+		if property.GetID().Compare(ids.BurnProperty) == 0 && property.GetFact().GetHashID().Compare(base.NewID("")) == 0 {
 			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), test.MockError)
 		}
 	}
 
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.Burn, base.NewMetaFact(base.NewHeightData(base.NewHeight(1)))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.MakerOwnableSplit, base.NewMetaFact(base.NewDecData(sdkTypes.SmallestDec()))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.TakerID, base.NewMetaFact(base.NewIDData(base.NewID("fromID")))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.ExchangeRate, base.NewMetaFact(base.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec())))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.Expiry, base.NewMetaFact(base.NewHeightData(base.NewHeight(900)))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.BurnProperty, base.NewMetaFact(base.NewHeightData(base.NewHeight(1)))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewMetaFact(base.NewDecData(sdkTypes.SmallestDec()))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.TakerIDProperty, base.NewMetaFact(base.NewIDData(base.NewID("fromID")))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.ExchangeRateProperty, base.NewMetaFact(base.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec())))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.ExpiryProperty, base.NewMetaFact(base.NewHeightData(base.NewHeight(900)))))
 
 	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
 }
