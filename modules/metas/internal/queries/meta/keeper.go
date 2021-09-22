@@ -13,7 +13,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -25,20 +24,12 @@ type queryKeeper struct {
 }
 
 var _ helpers.QueryKeeper = (*queryKeeper)(nil)
-var _ QueryServer = (*queryKeeper)(nil)
 
 func (queryKeeper queryKeeper) LegacyEnquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
 	queryResponse := newQueryResponse(queryKeeper.mapper.NewCollection(context).Fetch(key.FromID(base.NewID(queryRequestFromInterface(queryRequest).MetaID.IdString))), nil)
 	return &queryResponse
 }
 
-func (queryKeeper queryKeeper) Get(ctx context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
-	queryKeeper = queryKeeper.GetKeeper()
-	keyr:= key.FromID(base.NewID(queryRequest.MetaID.String()))
-	collection:= queryKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(ctx))
-	response := newQueryResponse(collection.Fetch(keyr), nil)
-	return &response, response.GetError()
-}
 func (queryKeeper queryKeeper) GetQueryClient(ctx client.Context) QueryClient {
 	return NewQueryClient(ctx)
 }
@@ -51,12 +42,6 @@ func (queryKeeper queryKeeper) Enquire(clientctx client.Context, ctx sdkTypes.Co
 	return response, Error
 }
 
-func (q queryKeeper) GetKeeper() queryKeeper {
-	metasKey := sdkTypes.NewKVStoreKey("metas")
-	metasMapper := mapper.Prototype().Initialize(metasKey)
-	queryKeep := q.Initialize(metasMapper,nil,nil)
-	return queryKeep.(queryKeeper)
-}
 
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
 	queryKeeper.mapper = mapper
@@ -75,18 +60,19 @@ func (queryKeeper queryKeeper) RegisterGRPCGatewayRoute(clientContext client.Con
 }
 
 func (queryKeeper queryKeeper) QueryInKeeper(command *cobra.Command, clientCtx client.Context, req helpers.QueryRequest) (helpers.QueryResponse, error) {
-	queryClient := NewQueryClient(clientCtx)
 	meta, Error := command.Flags().GetString("metaID")
 	if Error != nil {
 		panic(Error)
 	}
 	newMetaID := base.NewID(meta)
 	params := NewQueryGet(newMetaID)
-	return queryClient.Get(command.Context(), params)
+	queryServer := NewQueryServerImpl(queryKeeper)
+
+	return queryServer.Get(command.Context(), params)
 }
 
 func (queryKeeper queryKeeper) RegisterService(cfg module.Configurator) {
-	RegisterQueryServer(cfg.QueryServer(), queryKeeper)
+	RegisterQueryServer(cfg.QueryServer(), NewQueryServerImpl(queryKeeper))
 }
 
 func keeperPrototype() helpers.QueryKeeper {

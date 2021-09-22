@@ -40,7 +40,7 @@ func (query query) Command() *cobra.Command {
 			return err
 		}
 		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, clientContext)
-		response, Error := query.keeperPrototype().QueryInKeeper(command, clientContext, queryRequest)
+		response, Error := query.queryKeeper.QueryInKeeper(command, clientContext, queryRequest)
 
 		if Error != nil {
 			return Error
