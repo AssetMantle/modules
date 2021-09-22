@@ -36,8 +36,8 @@ var _ helpers.Query = (*query)(nil)
 func (query query) GetName() string { return query.name }
 func (query query) GetCommand() *cobra.Command{
 	cmd := &cobra.Command{
-		Use: "query",
-		Short: "q",
+		Use: "metas",
+		Short: "",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx,err:= client.GetClientQueryContext(cmd)
 			if err!=nil{
