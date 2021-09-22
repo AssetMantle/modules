@@ -125,7 +125,7 @@ func (module module) GetQueryCmd() *cobra.Command {
 	commandList := make([]*cobra.Command, len(module.queriesPrototype().GetList()))
 
 	for i, query := range module.queriesPrototype().GetList() {
-		commandList[i] = query.GetCommand()
+		commandList[i] = query.Command()
 	}
 
 	rootQueryCommand.AddCommand(
