@@ -8,6 +8,8 @@ package base
 import (
 	"strings"
 
+	"github.com/persistenceOne/persistenceSDK/constants/ids"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
@@ -20,6 +22,12 @@ type listData struct {
 
 var _ types.ListData = (*listData)(nil)
 
+func (listData listData) GetID() types.ID {
+	return dataID{
+		TypeID: listData.GetTypeID(),
+		HashID: listData.GenerateHashID(),
+	}
+}
 func (listData listData) Compare(data types.Data) int {
 	compareListData, Error := listDataFromInterface(data)
 	if Error != nil {
@@ -38,7 +46,7 @@ func (listData listData) String() string {
 	return strings.Join(dataStringList, constants.ListDataStringSeparator)
 }
 func (listData listData) GetTypeID() types.ID {
-	return NewID("LD")
+	return ids.ListData
 }
 func (listData listData) ZeroValue() types.Data {
 	return NewListData([]types.Data{}...)

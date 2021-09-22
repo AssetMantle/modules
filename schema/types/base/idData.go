@@ -8,6 +8,8 @@ package base
 import (
 	"bytes"
 
+	"github.com/persistenceOne/persistenceSDK/constants/ids"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -20,6 +22,12 @@ type idData struct {
 
 var _ types.Data = (*idData)(nil)
 
+func (idData idData) GetID() types.ID {
+	return dataID{
+		TypeID: idData.GetTypeID(),
+		HashID: idData.GenerateHashID(),
+	}
+}
 func (idData idData) Compare(data types.Data) int {
 	compareIDData, Error := idDataFromInterface(data)
 	if Error != nil {
@@ -35,7 +43,7 @@ func (idData idData) ZeroValue() types.Data {
 	return NewIDData(NewID(""))
 }
 func (idData idData) GetTypeID() types.ID {
-	return NewID("I")
+	return ids.IDData
 }
 func (idData idData) GenerateHashID() types.ID {
 	return NewID(meta.Hash(idData.Value.String()))

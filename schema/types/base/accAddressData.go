@@ -20,6 +20,12 @@ type accAddressData struct {
 
 var _ types.Data = (*accAddressData)(nil)
 
+func (accAddressData accAddressData) GetID() types.ID {
+	return dataID{
+		TypeID: accAddressData.GetTypeID(),
+		HashID: accAddressData.GenerateHashID(),
+	}
+}
 func (accAddressData accAddressData) Compare(sortable types.Data) int {
 	compareAccAddressData, Error := accAddressDataFromInterface(sortable)
 	if Error != nil {
