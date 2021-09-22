@@ -6,7 +6,7 @@
 package meta
 
 import (
-	"fmt"
+	"errors"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/common"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -18,7 +18,7 @@ func (queryResponse QueryResponse) IsSuccessful() bool {
 	return queryResponse.Success
 }
 func (queryResponse QueryResponse) GetError() error {
-	return fmt.Errorf(queryResponse.Error)
+	return errors.New(queryResponse.Error)
 }
 func (queryResponse QueryResponse) LegacyAminoEncode() ([]byte, error) {
 	return common.LegacyAminoCodec.MarshalJSON(queryResponse)
@@ -34,7 +34,7 @@ func (queryResponse QueryResponse) Encode(cdc codec.JSONMarshaler) ([]byte, erro
 	return cdc.MarshalJSON(&queryResponse)
 }
 
-func (queryResponse QueryResponse) Decode(cdc codec.JSONMarshaler,bytes []byte) (helpers.QueryResponse, error) {
+func (queryResponse QueryResponse) Decode(cdc codec.JSONMarshaler, bytes []byte) (helpers.QueryResponse, error) {
 	if Error := cdc.UnmarshalJSON(bytes, &queryResponse); Error != nil {
 		return nil, Error
 	}
@@ -48,17 +48,16 @@ func newQueryResponse(collection helpers.Collection, error error) QueryResponse 
 	success := true
 	if error != nil {
 		success = false
-	}else {
 		return QueryResponse{
 			Success: success,
-			Error: "",
-			List: collection.GetList(),
+			Error:   "yes",
+			List:    collection.GetList(),
 		}
 	}
-
 	return QueryResponse{
 		Success: success,
-		Error:   error.Error(),
+		Error:   "no",
 		List:    collection.GetList(),
 	}
+
 }
