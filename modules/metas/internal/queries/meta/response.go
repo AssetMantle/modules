@@ -48,6 +48,12 @@ func newQueryResponse(collection helpers.Collection, error error) QueryResponse 
 	success := true
 	if error != nil {
 		success = false
+	}else {
+		return QueryResponse{
+			Success: success,
+			Error: "",
+			List: collection.GetList(),
+		}
 	}
 
 	return QueryResponse{
