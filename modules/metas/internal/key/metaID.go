@@ -7,7 +7,6 @@ package key
 
 import (
 	"bytes"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -57,7 +56,7 @@ func (metaID MetaID) Equals(key helpers.Key) bool {
 
 func NewMetaID(typeID types.ID, hashID types.ID) types.ID {
 	return &MetaID{
-		TypeID: *base.NewID(typeID.String()),
-		HashID: *base.NewID(hashID.String()),
+		TypeID: typeID,
+		HashID: hashID,
 	}
 }
