@@ -7,6 +7,7 @@ package meta
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -64,7 +65,7 @@ func (queryKeeper queryKeeper) QueryInKeeper(ctx sdkTypes.Context, req helpers.Q
 	goCtx := sdkTypes.WrapSDKContext(ctx)
 	queryServer := NewQueryServerImpl(queryKeeper)
 	queryRes,Error:= queryServer.Get(goCtx,&request)
-	if Error!=nil{
+	if Error==(errors.New("yes")){
 		panic(Error)
 	}
 	return queryRes.Marshal()
