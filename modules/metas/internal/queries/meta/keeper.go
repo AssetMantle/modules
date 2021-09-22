@@ -7,6 +7,7 @@ package meta
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -68,7 +69,7 @@ func (queryKeeper queryKeeper) QueryInKeeper(ctx sdkTypes.Context, req helpers.Q
 	if Error==(errors.New("yes")){
 		panic(Error)
 	}
-	return queryRes.Marshal()
+	return json.Marshal(queryRes)
 }
 
 func (queryKeeper queryKeeper) RegisterService(cfg module.Configurator) {
