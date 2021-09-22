@@ -20,6 +20,7 @@ import (
 type Query interface {
 	GetName() string
 	Command() *cobra.Command
+	GetCommand() *cobra.Command
 	HandleMessageByLegacyAmino(sdkTypes.Context, *codec.LegacyAmino, abciTypes.RequestQuery) ([]byte, error)
 	RESTQueryHandler(client.Context) http.HandlerFunc
 	Initialize(Mapper, Parameters, ...interface{}) Query
