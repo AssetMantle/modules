@@ -6,6 +6,7 @@
 package base
 
 import (
+	"encoding/json"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -56,21 +57,19 @@ func (query query) Command() *cobra.Command {
 		if err != nil {
 			return err
 		}
-		jsonMarshaler:= clientContext.JSONMarshaler
 		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, clientContext)
 		responseBytes, _, Error := query.query(queryRequest, clientContext)
 		if Error != nil {
 			return Error
 		}
-		response := query.responsePrototype()
-
-		Error = jsonMarshaler.UnmarshalJSON(responseBytes,response)
+		var response map[string]interface{}
+		Error = json.Unmarshal(responseBytes, &response)
 
 		if Error != nil {
 			return Error
 		}
 
-		return clientContext.PrintProto(response)
+		return clientContext.PrintObjectLegacy(response)
 	}
 
 	return query.cliCommand.CreateCommand(runE)
@@ -90,7 +89,7 @@ func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciType
 		return nil, Error
 	}
 
-	return query.queryKeeper.QueryInKeeper(context, request).LegacyAminoEncode()
+	return query.queryKeeper.QueryInKeeper(context, request)
 
 }
 
