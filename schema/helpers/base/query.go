@@ -62,7 +62,7 @@ func (query query) Command() *cobra.Command {
 		if Error != nil {
 			return Error
 		}
-		var response helpers.QueryResponse
+		response := query.responsePrototype()
 		Error = json.Unmarshal(responseBytes, &response)
 
 		if Error != nil {
