@@ -6,6 +6,7 @@
 package base
 
 import (
+	"encoding/json"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -32,6 +33,7 @@ type query struct {
 var _ helpers.Query = (*query)(nil)
 
 func (query query) GetName() string { return query.name }
+
 //func (query query) GetCommand() *cobra.Command {
 //	cmd := query.cliCommand.CreateQueryCommand()
 //	cmd.RunE = func(cmd *cobra.Command, args []string) error {
@@ -55,14 +57,13 @@ func (query query) Command() *cobra.Command {
 		if err != nil {
 			return err
 		}
-		jsonMarshaler := clientContext.JSONMarshaler
 		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, clientContext)
-		responseBytes,_ ,Error := query.query(queryRequest, clientContext)
+		responseBytes, _, Error := query.query(queryRequest, clientContext)
 		if Error != nil {
 			return Error
 		}
-		response,Error := query.responsePrototype().Decode(jsonMarshaler,responseBytes)
-
+		var response helpers.QueryResponse
+		Error = json.Unmarshal(responseBytes, &response)
 
 		if Error != nil {
 			return Error
@@ -79,19 +80,17 @@ func (query query) HandleMessageByLegacyAmino(context sdkTypes.Context, legacyAm
 		return nil, Error
 	}
 
-	return query.queryKeeper.LegacyEnquire(context,request).LegacyAminoEncode()
+	return query.queryKeeper.LegacyEnquire(context, request).LegacyAminoEncode()
 }
 
-func (query query)HandleMessage(context sdkTypes.Context,requestQuery abciTypes.RequestQuery) ([]byte, error)  {
+func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
 	request, Error := query.requestPrototype().LegacyAminoDecode(requestQuery.Data)
 	if Error != nil {
 		return nil, Error
 	}
 
-	return query.queryKeeper.QueryInKeeper(context,request)
+	return query.queryKeeper.QueryInKeeper(context, request)
 
-
-	
 }
 
 //func (query query) HandleMessageByProto(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
