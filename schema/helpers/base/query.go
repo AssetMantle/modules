@@ -56,12 +56,15 @@ func (query query) Command() *cobra.Command {
 		if err != nil {
 			return err
 		}
+		jsonMarshaler:= clientContext.JSONMarshaler
 		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, clientContext)
 		responseBytes, _, Error := query.query(queryRequest, clientContext)
 		if Error != nil {
 			return Error
 		}
-		response, Error := query.responsePrototype().LegacyAminoDecode(responseBytes)
+		response := query.responsePrototype()
+
+		Error = jsonMarshaler.UnmarshalJSON(responseBytes,response)
 
 		if Error != nil {
 			return Error
