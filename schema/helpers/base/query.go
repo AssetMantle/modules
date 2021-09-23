@@ -89,7 +89,7 @@ func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciType
 		return nil, Error
 	}
 
-	return query.queryKeeper.QueryInKeeper(context, request)
+	return query.queryKeeper.QueryInKeeper(context, request).LegacyAminoEncode()
 
 }
 

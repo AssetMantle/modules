@@ -6,7 +6,6 @@
 package helpers
 
 import (
-	"encoding/json"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -14,7 +13,7 @@ import (
 )
 
 type QueryKeeper interface {
-	QueryInKeeper(sdkTypes.Context, QueryRequest) (json.RawMessage,error)
+	QueryInKeeper(sdkTypes.Context, QueryRequest) QueryResponse
 	Enquire(client.Context, sdkTypes.Context, QueryRequest) (QueryResponse, error)
 	LegacyEnquire(sdkTypes.Context, QueryRequest) QueryResponse
 	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)
