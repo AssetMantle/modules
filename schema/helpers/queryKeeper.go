@@ -13,7 +13,7 @@ import (
 )
 
 type QueryKeeper interface {
-	QueryInKeeper(sdkTypes.Context, QueryRequest) ([]byte, error)
+	QueryInKeeper(sdkTypes.Context, QueryRequest) (QueryResponse)
 	Enquire(client.Context, sdkTypes.Context, QueryRequest) (QueryResponse, error)
 	LegacyEnquire(sdkTypes.Context, QueryRequest) QueryResponse
 	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)

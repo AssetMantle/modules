@@ -7,7 +7,6 @@ package meta
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -44,7 +43,6 @@ func (queryKeeper queryKeeper) Enquire(clientctx client.Context, ctx sdkTypes.Co
 	return response, Error
 }
 
-
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
 	queryKeeper.mapper = mapper
 	return queryKeeper
@@ -61,15 +59,15 @@ func (queryKeeper queryKeeper) RegisterGRPCGatewayRoute(clientContext client.Con
 
 }
 
-func (queryKeeper queryKeeper) QueryInKeeper(ctx sdkTypes.Context, req helpers.QueryRequest) ([]byte, error) {
+func (queryKeeper queryKeeper) QueryInKeeper(ctx sdkTypes.Context, req helpers.QueryRequest) helpers.QueryResponse {
 	request := req.(QueryRequest)
 	goCtx := sdkTypes.WrapSDKContext(ctx)
 	queryServer := NewQueryServerImpl(queryKeeper)
-	queryRes,Error:= queryServer.Get(goCtx,&request)
-	if Error==(errors.New("yes")){
+	queryRes, Error := queryServer.Get(goCtx, &request)
+	if Error == (errors.New("yes")) {
 		panic(Error)
 	}
-	return json.Marshal(queryRes)
+	return queryRes
 }
 
 func (queryKeeper queryKeeper) RegisterService(cfg module.Configurator) {
