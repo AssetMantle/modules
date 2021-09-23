@@ -69,7 +69,7 @@ func (query query) Command() *cobra.Command {
 			return Error
 		}
 
-		return clientContext.PrintObjectLegacy(response)
+		return clientContext.PrintString(string(responseBytes))
 	}
 
 	return query.cliCommand.CreateCommand(runE)
