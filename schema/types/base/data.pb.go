@@ -7,7 +7,7 @@ import (
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	github_com_persistenceOne_persistenceSDK_schema_types_base "github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -32,11 +32,11 @@ type Data struct {
 	//	*Data_StringData
 	//	*Data_AccAddressData
 	//	*Data_ListData
-	Data isData_Data `protobuf_oneof:"data"`
+	Data types.Data `protobuf_oneof:"data"`
 }
 
 func (m *Data) Reset()         { *m = Data{} }
-func (m *Data) String() string { return proto.CompactTextString(m) }
+func (m *Data) String() string { return m.Data.String() }
 func (*Data) ProtoMessage()    {}
 func (*Data) Descriptor() ([]byte, []int) {
 	return fileDescriptor_9b342118f875caf9, []int{0}
@@ -90,7 +90,7 @@ type Data_AccAddressData struct {
 	AccAddressData *AccAddressData `protobuf:"bytes,5,opt,name=acc_address_data,json=accAddressData,proto3,oneof" json:"acc_address_data,omitempty"`
 }
 type Data_ListData struct {
-	ListData github_com_persistenceOne_persistenceSDK_schema_types_base.ListData `protobuf:"bytes,6,opt,name=list_data,json=listData,proto3,oneof,customtype=github.com/persistenceOne/persistenceSDK/schema/types/base.ListData" json:"list_data,omitempty"`
+	ListData *ListData `protobuf:"bytes,6,opt,name=list_data,json=listData,proto3,oneof,customtype=github.com/persistenceOne/persistenceSDK/schema/types/base.ListData" json:"list_data,omitempty"`
 }
 
 func (*Data_DecData) isData_Data()        {}
@@ -100,7 +100,7 @@ func (*Data_StringData) isData_Data()     {}
 func (*Data_AccAddressData) isData_Data() {}
 func (*Data_ListData) isData_Data()       {}
 
-func (m *Data) GetData() isData_Data {
+func (m *Data) GetData() types.Data {
 	if m != nil {
 		return m.Data
 	}
@@ -680,12 +680,12 @@ func (m *Data) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			var vv github_com_persistenceOne_persistenceSDK_schema_types_base.ListData
+			var vv ListData
 			v := &vv
 			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
-			m.Data = &Data_ListData{*v}
+			m.Data = &Data_ListData{v}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

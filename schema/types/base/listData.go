@@ -85,11 +85,11 @@ func (listData Data_ListData) Get() interface{} {
 	return listData.ListData.Value
 }
 func (listData Data_ListData) Search(data types.Data) int {
-	newList := make([]types.Data, len(listData.ListData.Value))
-	for i, element := range listData.ListData.Value {
-		newList[i] = element.Data
-	}
-	return sortedDataList(newList).Search(data)
+	//newList := make([]Data, len(listData.ListData.Value))
+	//for i, _ := range listData.ListData.Value {
+	//	newList[i] = listData.ListData.Value[i]
+	//}
+	return ListData{Value: listData.ListData.Value}.Search(data)
 }
 func (listData Data_ListData) GetList() []types.Data {
 	newList := make([]types.Data, len(listData.ListData.Value))
@@ -99,14 +99,14 @@ func (listData Data_ListData) GetList() []types.Data {
 	return newList
 }
 func (listData Data_ListData) Add(dataList ...types.Data) types.ListData {
-	newList := make([]types.Data, len(listData.ListData.Value))
-	for i, element := range listData.ListData.Value {
-		newList[i] = element.Data
-	}
+	//newList := make([]types.Data, len(listData.ListData.Value))
+	//for i, element := range listData.ListData.Value {
+	//	newList[i] = element.Data
+	//}
 	for _, data := range dataList {
-		dataList := sortedDataList(newList).Add(data).GetList()
-		newDataList := make([]Data, len(dataList))
-		for i, element := range dataList {
+		dataListElement := ListData{Value: listData.ListData.Value}.Add(data).GetList()
+		newDataList := make([]Data, len(dataListElement))
+		for i, element := range dataListElement {
 			newDataList[i] = *NewData(element)
 		}
 		listData.ListData.Value = newDataList
@@ -115,14 +115,14 @@ func (listData Data_ListData) Add(dataList ...types.Data) types.ListData {
 	return &listData
 }
 func (listData Data_ListData) Remove(dataList ...types.Data) types.ListData {
-	newList := make([]types.Data, len(listData.ListData.Value))
-	for i, element := range listData.ListData.Value {
-		newList[i] = element.Data
-	}
+	//newList := make([]types.Data, len(listData.ListData.Value))
+	//for i, element := range listData.ListData.Value {
+	//	newList[i] = element.Data
+	//}
 	for _, data := range dataList {
-		dataList := sortedDataList(newList).Add(data).GetList()
-		newDataList := make([]Data, len(dataList))
-		for i, element := range dataList {
+		dataListElement := ListData{Value: listData.ListData.Value}.Remove(data).GetList()
+		newDataList := make([]Data, len(dataListElement))
+		for i, element := range dataListElement {
 			newDataList[i] = *NewData(element)
 		}
 		listData.ListData.Value = newDataList
@@ -151,7 +151,6 @@ func NewListData(value ...types.Data) *Data_ListData {
 		newValue[i] = *NewData(element)
 	}
 	return &Data_ListData{
-		ListData: ListData{
 			Value: newValue,
 		},
 	}
