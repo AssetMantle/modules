@@ -38,12 +38,13 @@ func (queryResponse QueryResponse) Decode(cdc codec.JSONMarshaler, bytes []byte)
 	if Error := cdc.UnmarshalJSON(bytes, &queryResponse); Error != nil {
 		return nil, Error
 	}
-
 	return &queryResponse, nil
 }
+
 func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
+
 func newQueryResponse(collection helpers.Collection, error error) QueryResponse {
 	success := true
 	if error != nil {

@@ -31,4 +31,9 @@ func RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, sortedDataList{})
 	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, StringData{})
 	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec,moduleName,  Data_StringData{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec,moduleName,  Data_IdData{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec,moduleName,  Data_ListData{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec,moduleName,  Data_HeightData{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec,moduleName,  Data_DecData{})
+
 }

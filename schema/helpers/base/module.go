@@ -147,11 +147,7 @@ func (module module) NewHandler() sdkTypes.Handler {
 		}
 
 		transaction := module.transactions.Get(msg.Type())
-		fmt.Println(transaction, "--NewHandler transaction")
-		fmt.Println(module.transactions.Get(msg.Type()), "--msgType")
 
-		fmt.Printf("%T\n", msg.Type())
-		fmt.Printf("%T\n", module.transactions.Get(msg.Type()))
 		if transaction != nil {
 			return transaction.HandleMessage(context, msg)
 		}

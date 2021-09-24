@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package persistence_sdk.modules.splits.internal.mappable;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/id.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable";
+
+message Split {
+  option (gogoproto.goproto_getters) = false;
+  persistence_sdk.schema.types.base.ID i_d = 1 [(gogoproto.nullable) = false];
+  string value = 2 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+}

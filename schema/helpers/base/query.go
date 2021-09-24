@@ -8,7 +8,6 @@ package base
 import (
 	"encoding/json"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -34,6 +33,8 @@ var _ helpers.Query = (*query)(nil)
 
 func (query query) GetName() string { return query.name }
 
+//TODO:see if this approach can be used here when the GRPC service is hit module is not initialized(queryKeeper uninitialised)
+//Approach: see if we can change the point where GRPCQuery service hits.
 //func (query query) GetCommand() *cobra.Command {
 //	cmd := query.cliCommand.CreateQueryCommand()
 //	cmd.RunE = func(cmd *cobra.Command, args []string) error {
@@ -51,6 +52,7 @@ func (query query) GetName() string { return query.name }
 //	}
 //	return cmd
 //}
+
 func (query query) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
 		clientContext, err := client.GetClientQueryContext(command)
@@ -68,43 +70,22 @@ func (query query) Command() *cobra.Command {
 		if Error != nil {
 			return Error
 		}
+		//TODO: as in QueryResponse the Mappables is types.Mappable in all queries except for splits/ownable Unmarshalling is not possible as it is a interface type here which is oneof (Data) but registered as helpers.Mappable so have printed the responseBytes
 
 		return clientContext.PrintString(string(responseBytes))
 	}
 
 	return query.cliCommand.CreateCommand(runE)
 }
-func (query query) HandleMessageByLegacyAmino(context sdkTypes.Context, legacyAmino *codec.LegacyAmino, requestQuery abciTypes.RequestQuery) ([]byte, error) {
-	request, Error := query.requestPrototype().LegacyAminoDecode(requestQuery.Data)
-	if Error != nil {
-		return nil, Error
-	}
-
-	return query.queryKeeper.LegacyEnquire(context, request).LegacyAminoEncode()
-}
-
 func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
+	//Here as no clientContext is recieved through the Handler codec (JSON.Marshaler is not recieved)
+	//Used LegacyAmino to decode then
 	request, Error := query.requestPrototype().LegacyAminoDecode(requestQuery.Data)
 	if Error != nil {
 		return nil, Error
 	}
-
 	return query.queryKeeper.QueryInKeeper(context, request)
-
 }
-
-//func (query query) HandleMessageByProto(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
-//	request, Error := query.requestPrototype().Decode(requestQuery.Data)
-//	if Error != nil {
-//		return nil, Error
-//	}
-//	response, Error := query.queryKeeper.Enquire(context, request)
-//	if Error != nil {
-//		return nil, Error
-//	}
-//	return response.Encode()
-//
-//}
 
 func (query query) RESTQueryHandler(cliContext client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {

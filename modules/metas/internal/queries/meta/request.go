@@ -41,11 +41,11 @@ func (queryRequest QueryRequest) FromMap(vars map[string]string) helpers.QueryRe
 	return newQueryRequest(base.NewID(vars[Query.GetName()]))
 }
 
-func (queryRequest QueryRequest) Encode(cdc codec.JSONMarshaler) ([]byte,error) {
+func (queryRequest QueryRequest) Encode(cdc codec.JSONMarshaler) ([]byte, error) {
 	return cdc.MarshalJSON(&queryRequest)
 }
 
-func (queryRequest QueryRequest) Decode(cdc codec.JSONMarshaler,bytes []byte) (helpers.QueryRequest, error) {
+func (queryRequest QueryRequest) Decode(cdc codec.JSONMarshaler, bytes []byte) (helpers.QueryRequest, error) {
 	if Error := cdc.UnmarshalJSON(bytes, &queryRequest); Error != nil {
 		return nil, Error
 	}

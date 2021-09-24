@@ -69,11 +69,11 @@ func (mapper mapper) Iterate(context sdkTypes.Context, partialKey helpers.Key, a
 	defer kvStorePrefixIterator.Close()
 
 	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {
-		var mappable helpers.Mappable
+		mappable := mapper.mappablePrototype().GetStructReference()
 
 		mapper.codec.MustUnmarshalBinaryBare(kvStorePrefixIterator.Value(), mappable)
 
-		if accumulator(mappable) {
+		if accumulator(mappable.(helpers.Mappable)) {
 			break
 		}
 	}

@@ -73,24 +73,26 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	sdkUpgradeKeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	sdkUpgradeTypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	//"github.com/persistenceOne/persistenceSDK/modules/assets"
-	//"github.com/persistenceOne/persistenceSDK/modules/classifications"
-	//"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
-	//"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/define"
-	//"github.com/persistenceOne/persistenceSDK/modules/identities"
-	//"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	//"github.com/persistenceOne/persistenceSDK/modules/maintainers"
-	//"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
-	//"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
-	//"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
-	//"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
+	"github.com/persistenceOne/persistenceSDK/modules/assets"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
+	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/define"
+	"github.com/persistenceOne/persistenceSDK/modules/identities"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
+	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
 	"github.com/persistenceOne/persistenceSDK/modules/metas"
-	//"github.com/persistenceOne/persistenceSDK/modules/orders"
-	//"github.com/persistenceOne/persistenceSDK/modules/splits"
-	//"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
-	//splitsMint "github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
-	//"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/renumerate"
-	//splitsTransfer "github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
+	"github.com/persistenceOne/persistenceSDK/modules/orders"
+	"github.com/persistenceOne/persistenceSDK/modules/splits"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
+	splitsMint "github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
+	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/renumerate"
+	splitsTransfer "github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/applications"
 	"github.com/persistenceOne/persistenceSDK/schema/applications/base/encoding"
 	"github.com/prometheus/client_golang/prometheus"
@@ -369,13 +371,13 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 
 		wasm.StoreKey,
 
-		//assets.Prototype().Name(),
-		//classifications.Prototype().Name(),
-		//identities.Prototype().Name(),
-		//maintainers.Prototype().Name(),
+		assets.Prototype().Name(),
+		classifications.Prototype().Name(),
+		identities.Prototype().Name(),
+		maintainers.Prototype().Name(),
 		metas.Prototype().Name(),
-		//orders.Prototype().Name(),
-		//splits.Prototype().Name(),
+		orders.Prototype().Name(),
+		splits.Prototype().Name(),
 	)
 
 	application.transientStoreKeys = sdkTypes.NewTransientStoreKeys(sdkParamsTypes.TStoreKey)
@@ -497,64 +499,64 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		application.keys[metas.Prototype().Name()],
 		paramsKeeper.Subspace(metas.Prototype().Name()),
 	)
-	//classificationsModule := classifications.Prototype().Initialize(
-	//	application.keys[classifications.Prototype().Name()],
-	//	paramsKeeper.Subspace(classifications.Prototype().Name()),
-	//	metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
-	//)
-	//maintainersModule := maintainers.Prototype().Initialize(
-	//	application.keys[metas.Prototype().Name()],
-	//	paramsKeeper.Subspace(maintainers.Prototype().Name()),
-	//	classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
-	//)
-	//identitiesModule := identities.Prototype().Initialize(
-	//	application.keys[identities.Prototype().Name()],
-	//	paramsKeeper.Subspace(identities.Prototype().Name()),
-	//	classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
-	//	classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-	//	metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
-	//	metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-	//)
-	//splitsModule := splits.Prototype().Initialize(
-	//	application.keys[splits.Prototype().Name()],
-	//	paramsKeeper.Subspace(splits.Prototype().Name()),
-	//	bankKeeper,
-	//	identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
-	//)
-	//assetsModule := assets.Prototype().Initialize(
-	//	application.keys[assets.Prototype().Name()],
-	//	paramsKeeper.Subspace(assets.Prototype().Name()),
-	//	classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
-	//	classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-	//	identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-	//	metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
-	//	metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-	//	splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
-	//	splitsModule.GetAuxiliary(burn.Auxiliary.GetName()),
-	//	splitsModule.GetAuxiliary(renumerate.Auxiliary.GetName()),
-	//)
-	//ordersModule := orders.Prototype().Initialize(
-	//	application.keys[orders.Prototype().Name()],
-	//	paramsKeeper.Subspace(orders.Prototype().Name()),
-	//	classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
-	//	classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-	//	identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-	//	metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
-	//	metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-	//	splitsModule.GetAuxiliary(splitsTransfer.Auxiliary.GetName()),
-	//)
+	classificationsModule := classifications.Prototype().Initialize(
+		application.keys[classifications.Prototype().Name()],
+		paramsKeeper.Subspace(classifications.Prototype().Name()),
+		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+	)
+	maintainersModule := maintainers.Prototype().Initialize(
+		application.keys[metas.Prototype().Name()],
+		paramsKeeper.Subspace(maintainers.Prototype().Name()),
+		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
+	)
+	identitiesModule := identities.Prototype().Initialize(
+		application.keys[identities.Prototype().Name()],
+		paramsKeeper.Subspace(identities.Prototype().Name()),
+		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
+	)
+	splitsModule := splits.Prototype().Initialize(
+		application.keys[splits.Prototype().Name()],
+		paramsKeeper.Subspace(splits.Prototype().Name()),
+		bankKeeper,
+		identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
+	)
+	assetsModule := assets.Prototype().Initialize(
+		application.keys[assets.Prototype().Name()],
+		paramsKeeper.Subspace(assets.Prototype().Name()),
+		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
+		identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
+		splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
+		splitsModule.GetAuxiliary(burn.Auxiliary.GetName()),
+		splitsModule.GetAuxiliary(renumerate.Auxiliary.GetName()),
+	)
+	ordersModule := orders.Prototype().Initialize(
+		application.keys[orders.Prototype().Name()],
+		paramsKeeper.Subspace(orders.Prototype().Name()),
+		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
+		identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
+		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
+		splitsModule.GetAuxiliary(splitsTransfer.Auxiliary.GetName()),
+	)
 
 	wasmDir := filepath.Join(application.GetDefaultHome(), wasmTypes.ModuleName)
 
@@ -644,13 +646,13 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 
 		wasm.NewAppModule(application.codec, &wasmKeeper, application.stakingKeeper),
 
-		//assetsModule,
-		//classificationsModule,
-		//identitiesModule,
-		//maintainersModule,
+		assetsModule,
+		classificationsModule,
+		identitiesModule,
+		maintainersModule,
 		metasModule,
-		//ordersModule,
-		//splitsModule,
+		ordersModule,
+		splitsModule,
 	)
 
 	application.moduleManager.SetOrderBeginBlockers(
@@ -666,7 +668,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		sdkCrisisTypes.ModuleName,
 		sdkGovTypes.ModuleName,
 		sdkStakingTypes.ModuleName,
-		//ordersModule.Name(),
+		ordersModule.Name(),
 	)
 	application.moduleManager.SetOrderInitGenesis(
 		sdkCapabilityTypes.ModuleName,
@@ -685,13 +687,13 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 
 		wasm.ModuleName,
 
-		//assets.Prototype().Name(),
-		//classifications.Prototype().Name(),
-		//identities.Prototype().Name(),
-		//maintainers.Prototype().Name(),
+		assets.Prototype().Name(),
+		classifications.Prototype().Name(),
+		identities.Prototype().Name(),
+		maintainers.Prototype().Name(),
 		metas.Prototype().Name(),
-		//orders.Prototype().Name(),
-		//splits.Prototype().Name(),
+		orders.Prototype().Name(),
+		splits.Prototype().Name(),
 	)
 
 	application.moduleManager.RegisterInvariants(&application.crisisKeeper)
@@ -712,13 +714,13 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		ibc.NewAppModule(ibcKeeper),
 		transferModule,
 
-		//assets.Prototype(),
-		//classifications.Prototype(),
-		//identities.Prototype(),
-		//maintainers.Prototype(),
+		assets.Prototype(),
+		classifications.Prototype(),
+		identities.Prototype(),
+		maintainers.Prototype(),
 		metas.Prototype(),
-		//orders.Prototype(),
-		//splits.Prototype(),
+		orders.Prototype(),
+		splits.Prototype(),
 	)
 	application.moduleSimulationManager.RegisterStoreDecoders()
 

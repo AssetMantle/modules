@@ -10,7 +10,6 @@ package meta
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -134,7 +133,7 @@ func RegisterQueryHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "QueryClient" to call the correct interceptors.
 func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, client QueryClient) error {
-    fmt.Println("REGISTER")
+
 	mux.Handle("GET", pattern_Query_Get_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
