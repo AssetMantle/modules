@@ -52,12 +52,12 @@ func newQueryResponse(value sdkTypes.Dec, error error) QueryResponse {
 		return QueryResponse{
 			Success: success,
 			Error:   "yes",
-			Value: value,
+			Value:   value,
 		}
 	}
 	return QueryResponse{
 		Success: success,
 		Error:   "no",
-		Value: value,
+		Value:   value,
 	}
 }

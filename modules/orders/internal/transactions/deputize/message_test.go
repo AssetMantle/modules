@@ -6,13 +6,12 @@
 package deputize
 
 import (
-	"testing"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func Test_Deputize_Message(t *testing.T) {

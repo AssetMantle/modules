@@ -13,6 +13,7 @@ import (
 )
 
 var _ helpers.QueryResponse = (*QueryResponse)(nil)
+
 func (queryResponse QueryResponse) IsSuccessful() bool {
 	return queryResponse.Success
 }

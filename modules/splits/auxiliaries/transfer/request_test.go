@@ -6,11 +6,10 @@
 package transfer
 
 import (
-	"testing"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func Test_Transfer_Request(t *testing.T) {
