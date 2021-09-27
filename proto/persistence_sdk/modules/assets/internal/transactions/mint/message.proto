@@ -28,4 +28,3 @@ message TransactionResponse{}
 service Msg{
   rpc Mint(Message) returns (TransactionResponse);
 }
-

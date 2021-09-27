@@ -13,5 +13,4 @@ message Genesis {
 
   repeated string MappableList = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/helpers.Mappable", (gogoproto.nullable) = false ];
   repeated string ParameterList = 4 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Parameter", (gogoproto.nullable) = false ];
-
 }

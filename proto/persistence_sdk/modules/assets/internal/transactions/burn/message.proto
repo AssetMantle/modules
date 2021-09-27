@@ -21,5 +21,3 @@ message TransactionResponse{}
 service Msg{
   rpc Burn(Message) returns (TransactionResponse);
 }
-
-

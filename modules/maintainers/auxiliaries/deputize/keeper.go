@@ -16,7 +16,7 @@ import (
 )
 
 type auxiliaryKeeper struct {
-	mapper           helpers.Mapper
+	mapper helpers.Mapper
 	conformAuxiliary helpers.Auxiliary
 }
 

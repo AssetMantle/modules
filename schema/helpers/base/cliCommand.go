@@ -93,7 +93,7 @@ func (cliCommand cliCommand) ReadBaseReq(cliContext client.Context) rest.BaseReq
 		Simulate: cliContext.Simulate,
 	}
 }
-func(cliCommand cliCommand) CreateQueryCommand() *cobra.Command {
+func (cliCommand cliCommand) CreateQueryCommand() *cobra.Command {
 	command := &cobra.Command{
 		Use:   cliCommand.use,
 		Short: cliCommand.short,

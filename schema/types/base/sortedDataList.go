@@ -11,8 +11,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-//type sortedDataList []types.Data
-
 var _ types.SortedDataList = (*ListData)(nil)
 
 func (sortedDataList ListData) Search(data types.Data) int {

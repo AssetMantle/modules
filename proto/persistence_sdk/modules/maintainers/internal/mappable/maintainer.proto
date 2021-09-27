@@ -17,5 +17,4 @@ message Maintainer {
   bool  add_maintainer = 3;
   bool  remove_maintainer = 4;
   bool  mutate_maintainer = 5;
-
 }

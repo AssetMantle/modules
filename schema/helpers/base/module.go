@@ -165,7 +165,7 @@ func (module module) LegacyQuerierHandler(legacyAmino *codec.LegacyAmino) sdkTyp
 		}
 
 		if query := module.queries.Get(path[0]); query != nil {
-			return query.HandleMessage(context,requestQuery)
+			return query.HandleMessage(context, requestQuery)
 		}
 
 		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())

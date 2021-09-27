@@ -51,5 +51,3 @@ func (msgServer msgServer) Define(goCtx context.Context, message *Message) (*Tra
 func NewMsgServerImpl(keeper transactionKeeper) MsgServer {
 	return &msgServer{keeper}
 }
-
-var _ MsgServer = msgServer{}
