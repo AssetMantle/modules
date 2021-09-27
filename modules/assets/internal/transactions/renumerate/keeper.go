@@ -53,7 +53,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	if valueMetaProperty := metaProperties.Get(ids.ValueProperty); valueMetaProperty != nil {
-		if value, Error := valueMetaProperty.GetMetaFact().GetData().AsDec(); Error != nil {
+		if value, Error := valueMetaProperty.Data().AsDec(); Error != nil {
 			return newTransactionResponse(Error)
 		} else if auxiliaryResponse := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, value)); !auxiliaryResponse.IsSuccessful() {
 			return newTransactionResponse(auxiliaryResponse.GetError())
