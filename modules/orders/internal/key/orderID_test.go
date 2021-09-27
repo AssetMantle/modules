@@ -6,14 +6,13 @@
 package key
 
 import (
-	"strings"
-	"testing"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
+	"strings"
+	"testing"
 )
 
 func Test_OrderID_Methods(t *testing.T) {

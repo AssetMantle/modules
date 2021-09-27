@@ -10,5 +10,5 @@ option go_package = "github.com/persistenceOne/persistenceSDK/modules/orders/int
 message DummyParameter {
   option (gogoproto.goproto_stringer) = false;
 
-  schema.types.base.Parameter base_parameter = 1 [(gogoproto.nullable)= false];
+  schema.types.base.Parameter base_parameter = 1 [(gogoproto.nullable) = false];
 }

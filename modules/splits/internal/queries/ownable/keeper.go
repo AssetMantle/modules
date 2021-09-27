@@ -24,9 +24,8 @@ type queryKeeper struct {
 
 var _ helpers.QueryKeeper = (*queryKeeper)(nil)
 
-
 func (queryKeeper queryKeeper) LegacyEnquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
-	queryResponse:= newQueryResponse(utilities.GetOwnableTotalSplitsValue(queryKeeper.mapper.NewCollection(context), base.NewID(queryRequestFromInterface(queryRequest).OwnableID.IdString)), nil)
+	queryResponse := newQueryResponse(utilities.GetOwnableTotalSplitsValue(queryKeeper.mapper.NewCollection(context), base.NewID(queryRequestFromInterface(queryRequest).OwnableID.IdString)), nil)
 	return &queryResponse
 }
 
