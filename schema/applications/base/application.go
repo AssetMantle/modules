@@ -160,7 +160,7 @@ func (application application) GetInterfaceRegistry() types.InterfaceRegistry {
 }
 
 func (application application) LoadHeight(height int64) error {
-	return application.LoadVersion(height)
+	return application.LoadVersion(height) //nolint:typecheck
 }
 
 func (application application) RegisterAPIRoutes(apiServer *api.Server, apiConfig config.APIConfig) {
@@ -198,9 +198,9 @@ func (application application) RegisterTendermintService(clientCtx client.Contex
 }
 
 func (application application) ExportApplicationStateAndValidators(forZeroHeight bool, jailAllowedAddrs []string) (serverTypes.ExportedApp, error) {
-	context := application.NewContext(true, tmProto.Header{Height: application.LastBlockHeight()})
+	context := application.NewContext(true, tmProto.Header{Height: application.LastBlockHeight()}) //nolint:typecheck
 
-	height := application.LastBlockHeight() + 1
+	height := application.LastBlockHeight() + 1 //nolint:typecheck
 	if forZeroHeight {
 		height = 0
 		applyAllowedAddrs := false
@@ -338,7 +338,7 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 		AppState:        appState,
 		Validators:      validators,
 		Height:          height,
-		ConsensusParams: application.GetConsensusParams(context),
+		ConsensusParams: application.GetConsensusParams(context), //nolint:typecheck
 	}, err
 }
 
@@ -350,9 +350,9 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		encodingConfig.TxConfig.TxDecoder(),
 		baseAppOptions...,
 	)
-	application.SetCommitMultiStoreTracer(traceStore)
-	application.SetAppVersion(version.Version)
-	application.SetInterfaceRegistry(application.interfaceRegistry)
+	application.SetCommitMultiStoreTracer(traceStore)               //nolint:typecheck
+	application.SetAppVersion(version.Version)                      //nolint:typecheck
+	application.SetInterfaceRegistry(application.interfaceRegistry) //nolint:typecheck
 
 	application.keys = sdkTypes.NewKVStoreKeys(
 		sdkAuthTypes.StoreKey,
@@ -590,8 +590,8 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		&ibcKeeper.PortKeeper,
 		scopedWasmKeeper,
 		transferKeeper,
-		application.Router(),
-		application.GRPCQueryRouter(),
+		application.Router(),          //nolint:typecheck
+		application.GRPCQueryRouter(), //nolint:typecheck
 		wasmDir,
 		wasmConfig,
 		sdkStakingTypes.ModuleName,
@@ -697,8 +697,8 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 	)
 
 	application.moduleManager.RegisterInvariants(&application.crisisKeeper)
-	application.moduleManager.RegisterRoutes(application.Router(), application.QueryRouter(), application.legacyAminoCodec)
-	application.moduleManager.RegisterServices(module.NewConfigurator(application.MsgServiceRouter(), application.GRPCQueryRouter()))
+	application.moduleManager.RegisterRoutes(application.Router(), application.QueryRouter(), application.legacyAminoCodec)           //nolint:typecheck
+	application.moduleManager.RegisterServices(module.NewConfigurator(application.MsgServiceRouter(), application.GRPCQueryRouter())) //nolint:typecheck
 
 	application.moduleSimulationManager = module.NewSimulationManager(
 		auth.NewAppModule(application.codec, accountKeeper, authSimulation.RandomGenesisAccounts),
@@ -724,11 +724,11 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 	)
 	application.moduleSimulationManager.RegisterStoreDecoders()
 
-	application.MountKVStores(application.keys)
-	application.MountTransientStores(application.transientStoreKeys)
-	application.MountMemoryStores(application.memoryStoreKeys)
+	application.MountKVStores(application.keys)                      //nolint:typecheck
+	application.MountTransientStores(application.transientStoreKeys) //nolint:typecheck
+	application.MountMemoryStores(application.memoryStoreKeys)       //nolint:typecheck
 
-	application.SetInitChainer(func(context sdkTypes.Context, requestInitChain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
+	application.SetInitChainer(func(context sdkTypes.Context, requestInitChain abciTypes.RequestInitChain) abciTypes.ResponseInitChain { //nolint:typecheck
 		var genesisState map[string]json.RawMessage
 		if err := tmJson.Unmarshal(requestInitChain.AppStateBytes, &genesisState); err != nil {
 			panic(err)
@@ -736,20 +736,20 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		return application.moduleManager.InitGenesis(context, application.codec, genesisState)
 	})
 
-	application.SetBeginBlocker(application.moduleManager.BeginBlock)
-	application.SetAnteHandler(
+	application.SetBeginBlocker(application.moduleManager.BeginBlock) //nolint:typecheck
+	application.SetAnteHandler( //nolint:typecheck
 		ante.NewAnteHandler(
 			accountKeeper, bankKeeper, ante.DefaultSigVerificationGasConsumer,
 			encodingConfig.TxConfig.SignModeHandler(),
 		))
-	application.SetEndBlocker(application.moduleManager.EndBlock)
+	application.SetEndBlocker(application.moduleManager.EndBlock) //nolint:typecheck
 
 	if loadLatest {
-		err := application.LoadLatestVersion()
+		err := application.LoadLatestVersion() //nolint:typecheck
 		if err != nil {
 			tendermintOS.Exit(err.Error())
 		}
-		ctx := application.NewUncachedContext(true, tmProto.Header{})
+		ctx := application.NewUncachedContext(true, tmProto.Header{}) //nolint:typecheck
 		capabilityKeeper.InitializeAndSeal(ctx)
 	}
 

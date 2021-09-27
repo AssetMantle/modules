@@ -8,7 +8,7 @@ package simulator
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/gogo/protobuf/proto"
+	"github.com/gogo/protobuf/proto" //nolint:typecheck
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/common"
 	internalGenesis "github.com/persistenceOne/persistenceSDK/modules/classifications/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"

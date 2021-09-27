@@ -12,7 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
-	"github.com/cosmos/go-bip39"
+	"github.com/cosmos/go-bip39" //nolint:typecheck
 
 	"net/http"
 	"strings"
@@ -49,7 +49,7 @@ func handler(cliContext client.Context) http.HandlerFunc {
 			return
 		}
 
-		if request.Mnemonic != "" && !bip39.IsMnemonicValid(request.Mnemonic) {
+		if request.Mnemonic != "" && !bip39.IsMnemonicValid(request.Mnemonic) { //nolint:typecheck
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, "invalid mnemonic")
 			return
 		}
@@ -57,13 +57,13 @@ func handler(cliContext client.Context) http.HandlerFunc {
 		if request.Mnemonic == "" {
 			var mnemonicEntropySize = 256
 
-			entropySeed, Error := bip39.NewEntropy(mnemonicEntropySize)
+			entropySeed, Error := bip39.NewEntropy(mnemonicEntropySize) //nolint:typecheck
 			if Error != nil {
 				rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 				return
 			}
 
-			request.Mnemonic, Error = bip39.NewMnemonic(entropySeed)
+			request.Mnemonic, Error = bip39.NewMnemonic(entropySeed) //nolint:typecheck
 			if Error != nil {
 				rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
 				return

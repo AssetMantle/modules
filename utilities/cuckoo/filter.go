@@ -110,7 +110,7 @@ func (c *Cuckoo) insert(input *id) {
 		f1 := append(f, '|')
 		b = []byte(strings.ReplaceAll(string(b), string(f1), ""))
 
-		i = i ^ uint(binary.BigEndian.Uint32(hash(f)))
+		i ^= uint(binary.BigEndian.Uint32(hash(f)))
 		b = c.buckets[i%c.m]
 
 		if len(b) < int(c.b*c.f) {
