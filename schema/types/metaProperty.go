@@ -7,5 +7,6 @@ package types
 
 type MetaProperty interface {
 	Property
+	GetData()
 	RemoveData() Property
 }
