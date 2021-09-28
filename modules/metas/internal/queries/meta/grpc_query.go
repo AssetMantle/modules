@@ -27,6 +27,3 @@ func (queryServer queryServer) Get(ctx context.Context, queryRequest *QueryReque
 func NewQueryServerImpl(keeper queryKeeper) QueryServer {
 	return &queryServer{keeper}
 }
-
-
-

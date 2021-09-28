@@ -6,19 +6,15 @@
 package modify
 
 import (
-	"testing"
-
-	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
-
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
-
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func Test_Make_Message(t *testing.T) {
