@@ -528,7 +528,7 @@ definitions:
     type: object
 host: localhost:1317
 info:
-  contact: {}
+  contact: { }
   description: API Documentation of Persistence custom modules
   license:
     name: Apache 2.0
@@ -539,15 +539,15 @@ paths:
   /assets/assets/{assetID}:
     get:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: Asset ID
-        in: path
-        name: assetID
-        required: true
-        type: string
+        - description: Asset ID
+          in: path
+          name: assetID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A succesful query response
@@ -559,20 +559,20 @@ paths:
             $ref: '#/definitions/asset.queryResponse'
       summary: Query asset using asset id
       tags:
-      - Assets
+        - Assets
   /assets/burn:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/burn.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/burn.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -584,20 +584,20 @@ paths:
             $ref: '#/definitions/burn.transactionResponse'
       summary: burn asset transaction
       tags:
-      - Assets
+        - Assets
   /assets/define:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/define.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/define.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -609,20 +609,20 @@ paths:
             $ref: '#/definitions/define.transactionResponse'
       summary: define asset transaction
       tags:
-      - Assets
+        - Assets
   /assets/deputize:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/deputize.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/deputize.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -634,20 +634,20 @@ paths:
             $ref: '#/definitions/deputize.transactionResponse'
       summary: deputize asset transaction
       tags:
-      - Assets
+        - Assets
   /assets/mint:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/mint.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/mint.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -659,20 +659,20 @@ paths:
             $ref: '#/definitions/mint.transactionResponse'
       summary: mint asset transaction
       tags:
-      - Assets
+        - Assets
   /assets/mutate:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/mutate.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/mutate.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -684,20 +684,20 @@ paths:
             $ref: '#/definitions/mutate.transactionResponse'
       summary: mutate asset transaction
       tags:
-      - Assets
+        - Assets
   /assets/renumerate:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/renumerate.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/renumerate.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -709,20 +709,20 @@ paths:
             $ref: '#/definitions/renumerate.transactionResponse'
       summary: renumerate asset transaction
       tags:
-      - Assets
+        - Assets
   /assets/revoke:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/revoke.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/revoke.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -734,19 +734,19 @@ paths:
             $ref: '#/definitions/revoke.transactionResponse'
       summary: revoke asset transaction
       tags:
-      - Assets
+        - Assets
   /classifications/classifications/{classificationID}:
     get:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: classification ID
-        in: path
-        name: classificationID
-        required: true
-        type: string
+        - description: classification ID
+          in: path
+          name: classificationID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Sucessful query response
@@ -758,20 +758,20 @@ paths:
             $ref: '#/definitions/classification.queryResponse'
       summary: Query classification using classification id
       tags:
-      - Classifications
+        - Classifications
   /identities/define:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/define.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/define.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -783,20 +783,20 @@ paths:
             $ref: '#/definitions/define.transactionResponse'
       summary: define identities transaction
       tags:
-      - Identities
+        - Identities
   /identities/deputize:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/deputize.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/deputize.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -808,19 +808,19 @@ paths:
             $ref: '#/definitions/deputize.transactionResponse'
       summary: deputize identities transaction
       tags:
-      - Identities
+        - Identities
   /identities/identities/{identityID}:
     get:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: identity ID
-        in: path
-        name: identityID
-        required: true
-        type: string
+        - description: identity ID
+          in: path
+          name: identityID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Sucessful query response
@@ -832,20 +832,20 @@ paths:
             $ref: '#/definitions/identity.queryResponse'
       summary: Query identities using identity id
       tags:
-      - Identities
+        - Identities
   /identities/issue:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/issue.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/issue.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -857,20 +857,20 @@ paths:
             $ref: '#/definitions/issue.transactionResponse'
       summary: issue identities transaction
       tags:
-      - Identities
+        - Identities
   /identities/nub:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/nub.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/nub.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -882,20 +882,20 @@ paths:
             $ref: '#/definitions/nub.transactionResponse'
       summary: nub identities transaction
       tags:
-      - Identities
+        - Identities
   /identities/provision:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/provision.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/provision.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -907,20 +907,20 @@ paths:
             $ref: '#/definitions/provision.transactionResponse'
       summary: provision identities transaction
       tags:
-      - Identities
+        - Identities
   /identities/reveal:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/reveal.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/reveal.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -932,20 +932,20 @@ paths:
             $ref: '#/definitions/reveal.transactionResponse'
       summary: reveal metas transaction
       tags:
-      - Metas
+        - Metas
   /identities/revoke:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/revoke.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/revoke.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -957,20 +957,20 @@ paths:
             $ref: '#/definitions/revoke.transactionResponse'
       summary: revoke identity transaction
       tags:
-      - Identities
+        - Identities
   /identities/unprovision:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/unprovision.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/unprovision.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -982,19 +982,19 @@ paths:
             $ref: '#/definitions/unprovision.transactionResponse'
       summary: unprovision identity transaction
       tags:
-      - Identities
+        - Identities
   /maintainers/maintainers/{maintainerID}:
     get:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: maintainer ID
-        in: path
-        name: maintainerID
-        required: true
-        type: string
+        - description: maintainer ID
+          in: path
+          name: maintainerID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful query response
@@ -1006,19 +1006,19 @@ paths:
             $ref: '#/definitions/maintainer.queryResponse'
       summary: Query maintainers using maintainer id
       tags:
-      - Maintainers
+        - Maintainers
   /metas/metas/{metaID}:
     get:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: meta ID
-        in: path
-        name: metaID
-        required: true
-        type: string
+        - description: meta ID
+          in: path
+          name: metaID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful query response
@@ -1030,20 +1030,20 @@ paths:
             $ref: '#/definitions/meta.queryResponse'
       summary: Query meta using meta id
       tags:
-      - Metas
+        - Metas
   /orders/cancel:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/cancel.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/cancel.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -1055,20 +1055,20 @@ paths:
             $ref: '#/definitions/cancel.transactionResponse'
       summary: cancel order transaction
       tags:
-      - Orders
+        - Orders
   /orders/define:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/define.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/define.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -1080,20 +1080,20 @@ paths:
             $ref: '#/definitions/define.transactionResponse'
       summary: define order transaction
       tags:
-      - Orders
+        - Orders
   /orders/deputize:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/deputize.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/deputize.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -1105,20 +1105,20 @@ paths:
             $ref: '#/definitions/deputize.transactionResponse'
       summary: deputize order transaction
       tags:
-      - Orders
+        - Orders
   /orders/immediate:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/immediate.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/immediate.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -1130,20 +1130,20 @@ paths:
             $ref: '#/definitions/immediate.transactionResponse'
       summary: immediate order transaction
       tags:
-      - Orders
+        - Orders
   /orders/make:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/make.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/make.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -1155,20 +1155,20 @@ paths:
             $ref: '#/definitions/make.transactionResponse'
       summary: make order transaction
       tags:
-      - Orders
+        - Orders
   /orders/modify:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/modify.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/modify.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -1180,19 +1180,19 @@ paths:
             $ref: '#/definitions/modify.transactionResponse'
       summary: modify order transaction
       tags:
-      - Orders
+        - Orders
   /orders/orders/{orderID}:
     get:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: order ID
-        in: path
-        name: orderID
-        required: true
-        type: string
+        - description: order ID
+          in: path
+          name: orderID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful query response
@@ -1204,20 +1204,20 @@ paths:
             $ref: '#/definitions/order.queryResponse'
       summary: Query order using order id
       tags:
-      - Orders
+        - Orders
   /orders/revoke:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/revoke.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/revoke.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -1229,20 +1229,20 @@ paths:
             $ref: '#/definitions/revoke.transactionResponse'
       summary: revoke order transaction
       tags:
-      - Orders
+        - Orders
   /orders/take:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/take.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/take.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -1254,20 +1254,20 @@ paths:
             $ref: '#/definitions/take.transactionResponse'
       summary: take order transaction
       tags:
-      - Orders
+        - Orders
   /splits/send:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/send.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/send.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -1279,19 +1279,19 @@ paths:
             $ref: '#/definitions/send.transactionResponse'
       summary: send split transaction
       tags:
-      - Splits
+        - Splits
   /splits/splits/{splitID}:
     get:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: split ID
-        in: path
-        name: splitID
-        required: true
-        type: string
+        - description: split ID
+          in: path
+          name: splitID
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful query response
@@ -1303,20 +1303,20 @@ paths:
             $ref: '#/definitions/split.queryResponse'
       summary: Query split using split id
       tags:
-      - Splits
+        - Splits
   /splits/unwrap:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/unwrap.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/unwrap.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -1328,20 +1328,20 @@ paths:
             $ref: '#/definitions/unwrap.transactionResponse'
       summary: unwrap split transaction
       tags:
-      - Splits
+        - Splits
   /splits/wrap:
     post:
       consumes:
-      - text/plain
+        - text/plain
       parameters:
-      - description: request body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/wrap.transactionRequest'
+        - description: request body
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/wrap.transactionRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: A successful response.
@@ -1353,5 +1353,5 @@ paths:
             $ref: '#/definitions/wrap.transactionResponse'
       summary: wrap split transaction
       tags:
-      - Splits
+        - Splits
 swagger: "2.0"

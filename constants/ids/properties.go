@@ -1,6 +1,6 @@
 package ids
 
-import "github.com/persistenceOne/persistenceSDK/schema/types/base"
+import "github.com/persistenceOne/persistenceSDK/schema/types/base" //nolint:typecheck
 
 //Note: Arranged alphabetically
 var (

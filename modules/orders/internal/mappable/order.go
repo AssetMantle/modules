@@ -48,18 +48,18 @@ func (order order) GetMakerID() types.ID {
 func (order order) GetCreation() types.MetaProperty {
 	heightValue, Error := strconv.ParseInt(key.ReadCreationID(order.ID).String(), 10, 64)
 	if Error != nil {
-		return base.NewMetaProperty(ids.CreationProperty, base.NewMetaFact(base.NewHeightData(base.NewHeight(0))))
+		return base.NewMetaProperty(ids.CreationProperty, base.NewHeightData(base.NewHeight(0)))
 	}
 
-	return base.NewMetaProperty(ids.CreationProperty, base.NewMetaFact(base.NewHeightData(base.NewHeight(heightValue))))
+	return base.NewMetaProperty(ids.CreationProperty, base.NewHeightData(base.NewHeight(heightValue)))
 }
 func (order order) GetExchangeRate() types.MetaProperty {
 	decValue, Error := sdkTypes.NewDecFromStr(key.ReadRateID(order.ID).String())
 	if Error != nil {
-		return base.NewMetaProperty(ids.ExchangeRateProperty, base.NewMetaFact(base.NewDecData(sdkTypes.ZeroDec())))
+		return base.NewMetaProperty(ids.ExchangeRateProperty, base.NewDecData(sdkTypes.ZeroDec()))
 	}
 
-	return base.NewMetaProperty(ids.ExchangeRateProperty, base.NewMetaFact(base.NewDecData(decValue)))
+	return base.NewMetaProperty(ids.ExchangeRateProperty, base.NewDecData(decValue))
 }
 func (order order) GetTakerID() types.Property {
 	if takerID := order.HasImmutables.GetImmutableProperties().Get(ids.TakerIDProperty); takerID != nil {
