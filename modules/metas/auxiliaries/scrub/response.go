@@ -6,7 +6,7 @@
 package scrub
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants/errors" //nolint:typecheck
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )

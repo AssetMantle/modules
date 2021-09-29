@@ -10,7 +10,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/renumerate"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables" //nolint:typecheck
+	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 

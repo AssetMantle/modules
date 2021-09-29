@@ -63,17 +63,17 @@ func (c *Cuckoo) Lookup(needle *ID) bool {
 	i1, i2, f := c.Hashes(needle.IDString)
 	_, b1 := c.buckets[i1%c.m].contains(f)
 	_, b2 := c.buckets[i2%c.m].contains(f)
-	return b1 || b2 //nolint:wsl
+	return b1 || b2
 }
 
-//nolint:unparam
+:unparam
 func (b bucket) contains(f Fingerprint) (int, bool) {
 	for i, x := range strings.Split(string(b), "|") {
 		if bytes.Equal([]byte(x), f) {
 			return i, true
 		}
 	}
-	return -1, false //nolint:wsl
+	return -1, false
 }
 
 func (c *Cuckoo) Insert(input *ID) {
@@ -84,35 +84,35 @@ func (c *Cuckoo) Insert(input *ID) {
 	if len(b1) < int(c.b*c.f) {
 		b1 = append(b1, []byte(f)...)
 		_ = append(b1, '|')
-		return //nolint:wsl
+		return
 	}
 
 	b2 := c.buckets[i2%c.m]
 
 	if len(b2) < int(c.b*c.f) {
 		b2 = append(b2, []byte(f)...)
-		b2 = append(b2, '|') //nolint
-		return               //nolint:wsl
+		b2 = append(b2, '|')
+		return
 	}
 
 	// else we need to start relocating items
 	i := i1
 	for r := 0; r < retries; r++ {
 		index := i % c.m
-		entryIndex := rand.Intn(int(c.b)) //nolint:gosec
+		entryIndex := rand.Intn(int(c.b))
 		// swap
 		b := c.buckets[index]
 
 		f, b = Fingerprint(strings.Split(string(b), "|")[entryIndex]),
 			append(b, []byte(f)...)
-		f1 := append(f, '|') //nolint
-		b = []byte(strings.ReplaceAll(string(b), string(f1), "")) //nolint
+		f1 := append(f, '|')
+		b = []byte(strings.ReplaceAll(string(b), string(f1), ""))
 
 		i ^= uint(binary.BigEndian.Uint32(hash(f)))
 		b = c.buckets[i%c.m]
 
 		if len(b) < int(c.b*c.f) {
-			b = append(b1, []byte(f1)...) //nolint
+			b = append(b1, []byte(f1)...)
 			// b = append(b1, '|')
 			return
 		}
@@ -125,20 +125,20 @@ func (c *Cuckoo) Hashes(data string) (uint, uint, Fingerprint) {
 	f := h[0:c.f]
 	i1 := uint(binary.BigEndian.Uint32(h))
 	i2 := i1 ^ uint(binary.BigEndian.Uint32(hash(f)))
-	return i1, i2, f //nolint:wsl
+	return i1, i2, f
 }
 
 func hash(data []byte) []byte {
-	h.Write([]byte(data)) //nolint:unconvert
+	h.Write([]byte(data))
 	hash := h.Sum(nil)
 	h.Reset()
-	return hash //nolint:wsl
+	return hash
 }
 
 func fingerprintLength(b uint, e float64) uint {
 	f := uint(math.Ceil(math.Log(2 * float64(b) / e)))
 	f /= 8
-	if f < 1 { //nolint:wsl
+	if f < 1 {
 		return 1
 	}
 
