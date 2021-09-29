@@ -22,7 +22,7 @@ type queryRequest struct {
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
 // Validate godoc
-// @Summary Query classification using classification id
+// @Summary Search for an identity by identity ID
 // @Description Able to query the asset
 // @Accept json
 // @Produce json

@@ -34,8 +34,8 @@ type transactionRequest struct {
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
 // Validate  godoc
-// @Summary deputize identities transaction
-// @Description deputize transaction
+// @Summary Deputize an identity
+// @Description A transaction to deputize a maintainer for an identity classification.
 // @Accept text/plain
 // @Produce json
 // @Tags Identities

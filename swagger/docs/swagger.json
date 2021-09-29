@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "API Reference Documentation of Persistence Custom Modules",
-        "title": "Persistence API Documentation",
+        "description": "API Documentation of Persistence custom modules",
+        "title": "Persistence Swagger Documentation",
         "contact": {},
         "license": {
             "name": "Apache 2.0",
@@ -14,6 +14,7 @@
     "paths": {
         "/assets/assets/{assetID}": {
             "get": {
+                "description": "Unique identifier of an asset.",
                 "consumes": [
                     "text/plain"
                 ],
@@ -27,8 +28,8 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Unique identifier of an asset.",
-                        "name": "Asset ID",
+                        "description": "Asset ID",
+                        "name": "assetID",
                         "in": "path",
                         "required": true
                     }
@@ -51,6 +52,7 @@
         },
         "/assets/burn": {
             "post": {
+                "description": "Transaction for burning an asset. request body",
                 "consumes": [
                     "text/plain"
                 ],
@@ -60,11 +62,11 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Burn asset transaction",
+                "summary": "Burn an asset transaction",
                 "parameters": [
                     {
                         "description": "Transaction for burning an asset. request body",
-                        "name": "what's the parameter used here? body",
+                        "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -90,6 +92,7 @@
         },
         "/assets/define": {
             "post": {
+                "description": "Define asset with mutable immutable properties",
                 "consumes": [
                     "text/plain"
                 ],
@@ -99,11 +102,11 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Define asset transaction",
+                "summary": "Define an asset transaction",
                 "parameters": [
                     {
-                        "description": "A transaction to define the asset.", "request body",
-                        "name": "what's the parameter name here", "body",
+                        "description": "A transaction to define the asset.",
+                        "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -129,6 +132,7 @@
         },
         "/assets/deputize": {
             "post": {
+                "description": "Deputize asset",
                 "consumes": [
                     "text/plain"
                 ],
@@ -138,7 +142,7 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Deputize asset transaction",
+                "summary": "Deputize an asset transaction",
                 "parameters": [
                     {
                         "description": "request body",
@@ -168,6 +172,7 @@
         },
         "/assets/mint": {
             "post": {
+                "description": "Mint asset with mutable immutable properties",
                 "consumes": [
                     "text/plain"
                 ],
@@ -177,10 +182,10 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Mint asset transaction",
+                "summary": "Mint an asset transaction",
                 "parameters": [
                     {
-                        "description": "A transaction to mint the asset.", "request body",
+                        "description": "A transaction to mint the asset.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -207,6 +212,7 @@
         },
         "/assets/mutate": {
             "post": {
+                "description": "Mutate asset",
                 "consumes": [
                     "text/plain"
                 ],
@@ -216,15 +222,15 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Mutate asset transaction",
+                "summary": "Mutate an asset transaction",
                 "parameters": [
                     {
-                        "description": "A transaction to mutate an asset.", "request body",
+                        "description": "A transaction to mutate an asset.",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/mutate.transactionRequest"
+                            "$ref": "#/definitions/github.com_persistenceOne_persistenceSDK_modules_assets_internal_transactions_mutate.transactionRequest"
                         }
                     }
                 ],
@@ -232,13 +238,13 @@
                     "200": {
                         "description": "Message for a successful response.",
                         "schema": {
-                            "$ref": "#/definitions/mutate.transactionResponse"
+                            "$ref": "#/definitions/github.com_persistenceOne_persistenceSDK_modules_assets_internal_transactions_mutate.transactionResponse"
                         }
                     },
                     "default": {
                         "description": "Message for an unexpected error response.",
                         "schema": {
-                            "$ref": "#/definitions/mutate.transactionResponse"
+                            "$ref": "#/definitions/github.com_persistenceOne_persistenceSDK_modules_assets_internal_transactions_mutate.transactionResponse"
                         }
                     }
                 }
@@ -246,6 +252,7 @@
         },
         "/assets/renumerate": {
             "post": {
+                "description": "Renumerate asset with mutable immutable properties",
                 "consumes": [
                     "text/plain"
                 ],
@@ -255,10 +262,10 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Renumerate asset transaction",
+                "summary": "Renumerate an asset transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to renumerate an asset.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -285,6 +292,7 @@
         },
         "/assets/revoke": {
             "post": {
+                "description": "Revoke asset",
                 "consumes": [
                     "text/plain"
                 ],
@@ -294,10 +302,10 @@
                 "tags": [
                     "Assets"
                 ],
-                "summary": "Revoke asset transaction",
+                "summary": "Revoke a maintainer for an asset classification transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to revoke an asset.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -314,7 +322,7 @@
                         }
                     },
                     "default": {
-                        "description": "Message for an unexpected error response.",
+                        "description": "Message for unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/revoke.transactionResponse"
                         }
@@ -324,6 +332,7 @@
         },
         "/classifications/classifications/{classificationID}": {
             "get": {
+                "description": "Able to query the asset",
                 "consumes": [
                     "application/json"
                 ],
@@ -333,12 +342,12 @@
                 "tags": [
                     "Classifications"
                 ],
-                "summary": "Query classification using classification id",
+                "summary": "Search for an identity by identity ID",
                 "parameters": [
                     {
                         "type": "string",
                         "description": "Unique identifier of an asset classification.",
-                        "name": "Classification ID",
+                        "name": "classificationID",
                         "in": "path",
                         "required": true
                     }
@@ -361,6 +370,7 @@
         },
         "/identities/define": {
             "post": {
+                "description": "Define identities with mutable immutable properties",
                 "consumes": [
                     "text/plain"
                 ],
@@ -370,10 +380,10 @@
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Define identities transaction",
+                "summary": "Define an identity",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Deputize identities",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -400,6 +410,7 @@
         },
         "/identities/deputize": {
             "post": {
+                "description": "A transaction to deputize a maintainer for an identity classification.",
                 "consumes": [
                     "text/plain"
                 ],
@@ -409,10 +420,10 @@
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Deputize identities transaction",
+                "summary": "Deputize an identity",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body to deputize identity",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -439,6 +450,7 @@
         },
         "/identities/identities/{identityID}": {
             "get": {
+                "description": "Able to query the asset",
                 "consumes": [
                     "application/json"
                 ],
@@ -448,19 +460,19 @@
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Search for identities by Identity ID",
+                "summary": "Search for an identity by identity ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Unique identifier of an indentity.",
-                        "name": "Identity ID",
+                        "description": "Query identity using identityID",
+                        "name": "identityID",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Message for a sucessful query response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/identity.queryResponse"
                         }
@@ -476,6 +488,7 @@
         },
         "/identities/issue": {
             "post": {
+                "description": "Issue identities with mutable immutable properties",
                 "consumes": [
                     "text/plain"
                 ],
@@ -485,10 +498,10 @@
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Issue identities transaction",
+                "summary": "Issue an identity",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "A transaction to issue an identity.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -513,8 +526,9 @@
                 }
             }
         },
-        "/identities/nub": {
+        "/identities/mutate": {
             "post": {
+                "description": "Mutate identity properties",
                 "consumes": [
                     "text/plain"
                 ],
@@ -524,10 +538,50 @@
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Nub identities transaction",
+                "summary": "Mutate an identity",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body to mutate Identity",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github.com_persistenceOne_persistenceSDK_modules_identities_internal_transactions_mutate.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Message for a successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_persistenceOne_persistenceSDK_modules_identities_internal_transactions_mutate.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Message for an unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_persistenceOne_persistenceSDK_modules_identities_internal_transactions_mutate.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/identities/nub": {
+            "post": {
+                "description": "A transaction to nub an identity.",
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Identities"
+                ],
+                "summary": "Nub an identity",
+                "parameters": [
+                    {
+                        "description": "A transaction to nub a base identity.",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -554,6 +608,7 @@
         },
         "/identities/provision": {
             "post": {
+                "description": "Provision identities",
                 "consumes": [
                     "text/plain"
                 ],
@@ -563,10 +618,10 @@
                 "tags": [
                     "Identities"
                 ],
-                "summary": "Provision identities transaction",
+                "summary": "Provision an identity",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body for provision identity",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -591,8 +646,205 @@
                 }
             }
         },
-        "/identities/reveal": {
+        "/identities/quash": {
             "post": {
+                "description": "Quash identity transaction",
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Identities"
+                ],
+                "summary": "Quash identity transaction",
+                "parameters": [
+                    {
+                        "description": "Request body for quash identity",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/quash.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Message for a successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/quash.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Message for an unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/quash.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/identities/revoke": {
+            "post": {
+                "description": "Revoke identity transaction",
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Identities"
+                ],
+                "summary": "Revoke identity transaction",
+                "parameters": [
+                    {
+                        "description": "Request body for revoke identity",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/revoke.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Message for a successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/revoke.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Message for an unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/revoke.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/identities/unprovision": {
+            "post": {
+                "description": "Unprovision identity transaction",
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Identities"
+                ],
+                "summary": "Unprovision identity transaction",
+                "parameters": [
+                    {
+                        "description": "Request body to unprovision identity",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/unprovision.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Message for a successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/unprovision.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Message for an unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/unprovision.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/maintainers/maintainers/{maintainerID}": {
+            "get": {
+                "description": "Able to query the maintainers details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Maintainers"
+                ],
+                "summary": "Search for a maintainer by maintainer ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unique identifier of a maintainer.",
+                        "name": "maintainerID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Message for a successful query response",
+                        "schema": {
+                            "$ref": "#/definitions/maintainer.queryResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Message for an unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/maintainer.queryResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/metas/metas/{metaID}": {
+            "get": {
+                "description": "Able to query the meta data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Metas"
+                ],
+                "summary": "Search for metadata by meta ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unique identifier of metadata value.",
+                        "name": "metaID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Message for a successful query response",
+                        "schema": {
+                            "$ref": "#/definitions/meta.queryResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Message for an unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/meta.queryResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/metas/reveal": {
+            "post": {
+                "description": "Reveal metas transaction",
                 "consumes": [
                     "text/plain"
                 ],
@@ -602,10 +854,10 @@
                 "tags": [
                     "Metas"
                 ],
-                "summary": "Reveal meta data transaction",
+                "summary": "Reveal metas transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body to reveal meta transaction",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -630,160 +882,9 @@
                 }
             }
         },
-        "/identities/revoke": {
-            "post": {
-                "consumes": [
-                    "text/plain"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Identities"
-                ],
-                "summary": "Revoke identity transaction",
-                "parameters": [
-                    {
-                        "description": "request body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/revoke.transactionRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "A successful response.",
-                        "schema": {
-                            "$ref": "#/definitions/revoke.transactionResponse"
-                        }
-                    },
-                    "default": {
-                        "description": "An unexpected error response.",
-                        "schema": {
-                            "$ref": "#/definitions/revoke.transactionResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/identities/unprovision": {
-            "post": {
-                "consumes": [
-                    "text/plain"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Identities"
-                ],
-                "summary": "unprovision identity transaction",
-                "parameters": [
-                    {
-                        "description": "request body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/unprovision.transactionRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "A successful response.",
-                        "schema": {
-                            "$ref": "#/definitions/unprovision.transactionResponse"
-                        }
-                    },
-                    "default": {
-                        "description": "An unexpected error response.",
-                        "schema": {
-                            "$ref": "#/definitions/unprovision.transactionResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/maintainers/maintainers/{maintainerID}": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Maintainers"
-                ],
-                "summary": "Query maintainers using maintainer id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "maintainer ID",
-                        "name": "maintainerID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "A successful query response",
-                        "schema": {
-                            "$ref": "#/definitions/maintainer.queryResponse"
-                        }
-                    },
-                    "default": {
-                        "description": "An unexpected error response.",
-                        "schema": {
-                            "$ref": "#/definitions/maintainer.queryResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/metas/metas/{metaID}": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Metas"
-                ],
-                "summary": "Query meta using meta id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "meta ID",
-                        "name": "metaID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "A successful query response",
-                        "schema": {
-                            "$ref": "#/definitions/meta.queryResponse"
-                        }
-                    },
-                    "default": {
-                        "description": "An unexpected error response.",
-                        "schema": {
-                            "$ref": "#/definitions/meta.queryResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/orders/cancel": {
             "post": {
+                "description": "cancel order transaction",
                 "consumes": [
                     "text/plain"
                 ],
@@ -796,7 +897,7 @@
                 "summary": "cancel order transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body to cancel order",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -807,13 +908,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/cancel.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/cancel.transactionResponse"
                         }
@@ -823,6 +924,7 @@
         },
         "/orders/define": {
             "post": {
+                "description": "Define order transaction",
                 "consumes": [
                     "text/plain"
                 ],
@@ -832,10 +934,10 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "define order transaction",
+                "summary": "Define order transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body to define an order",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -846,13 +948,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/define.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/define.transactionResponse"
                         }
@@ -862,6 +964,7 @@
         },
         "/orders/deputize": {
             "post": {
+                "description": "Deputize order transaction",
                 "consumes": [
                     "text/plain"
                 ],
@@ -871,10 +974,10 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "deputize order transaction",
+                "summary": "Deputize order transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body to deputize an order",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -885,13 +988,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/deputize.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/deputize.transactionResponse"
                         }
@@ -901,6 +1004,7 @@
         },
         "/orders/immediate": {
             "post": {
+                "description": "Immediate order transaction",
                 "consumes": [
                     "text/plain"
                 ],
@@ -910,10 +1014,10 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "immediate order transaction",
+                "summary": "Immediate order transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body for immediate order",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -924,13 +1028,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/immediate.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/immediate.transactionResponse"
                         }
@@ -940,6 +1044,7 @@
         },
         "/orders/make": {
             "post": {
+                "description": "Make order transaction",
                 "consumes": [
                     "text/plain"
                 ],
@@ -949,10 +1054,10 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "make order transaction",
+                "summary": "Make order transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body to make order",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -963,13 +1068,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/make.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/make.transactionResponse"
                         }
@@ -979,6 +1084,7 @@
         },
         "/orders/modify": {
             "post": {
+                "description": "Modify order transaction",
                 "consumes": [
                     "text/plain"
                 ],
@@ -988,10 +1094,10 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "modify order transaction",
+                "summary": "Modify order transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body to modify order transaction",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1002,13 +1108,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/modify.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/modify.transactionResponse"
                         }
@@ -1018,6 +1124,7 @@
         },
         "/orders/orders/{orderID}": {
             "get": {
+                "description": "Able to query the order",
                 "consumes": [
                     "application/json"
                 ],
@@ -1039,13 +1146,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful query response",
+                        "description": "Message for a successful response",
                         "schema": {
                             "$ref": "#/definitions/order.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/order.queryResponse"
                         }
@@ -1055,6 +1162,7 @@
         },
         "/orders/revoke": {
             "post": {
+                "description": "Revoke order transaction",
                 "consumes": [
                     "text/plain"
                 ],
@@ -1064,10 +1172,10 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "revoke order transaction",
+                "summary": "Revoke order transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body to revoke order",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1078,13 +1186,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/revoke.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "error",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/revoke.transactionResponse"
                         }
@@ -1094,6 +1202,7 @@
         },
         "/orders/take": {
             "post": {
+                "description": "Take order transaction",
                 "consumes": [
                     "text/plain"
                 ],
@@ -1103,10 +1212,10 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "take order transaction",
+                "summary": "Take order transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body to take order",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1117,13 +1226,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/take.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/take.transactionResponse"
                         }
@@ -1131,8 +1240,47 @@
                 }
             }
         },
+        "/ownable/{ownableID}": {
+            "get": {
+                "description": "Able to query the asset",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Splits"
+                ],
+                "summary": "Query asset using asset id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ownable ID",
+                        "name": "ownableID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Message for a successful query response",
+                        "schema": {
+                            "$ref": "#/definitions/ownable.queryResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Message for an unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/ownable.queryResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/splits/send": {
             "post": {
+                "description": "Send split transaction",
                 "consumes": [
                     "text/plain"
                 ],
@@ -1142,10 +1290,10 @@
                 "tags": [
                     "Splits"
                 ],
-                "summary": "send split transaction",
+                "summary": "Send split transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body to send split",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1156,13 +1304,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/send.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/send.transactionResponse"
                         }
@@ -1172,6 +1320,7 @@
         },
         "/splits/splits/{splitID}": {
             "get": {
+                "description": "Able to query the asset",
                 "consumes": [
                     "application/json"
                 ],
@@ -1193,13 +1342,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful query response",
+                        "description": "Message for a successful query response",
                         "schema": {
                             "$ref": "#/definitions/split.queryResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/split.queryResponse"
                         }
@@ -1209,6 +1358,7 @@
         },
         "/splits/unwrap": {
             "post": {
+                "description": "Unwrap split transaction",
                 "consumes": [
                     "text/plain"
                 ],
@@ -1218,10 +1368,10 @@
                 "tags": [
                     "Splits"
                 ],
-                "summary": "unwrap split transaction",
+                "summary": "Unwrap split transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body to unwrap split",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1232,13 +1382,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/unwrap.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/unwrap.transactionResponse"
                         }
@@ -1248,6 +1398,7 @@
         },
         "/splits/wrap": {
             "post": {
+                "description": "Wrap split transaction",
                 "consumes": [
                     "text/plain"
                 ],
@@ -1257,10 +1408,10 @@
                 "tags": [
                     "Splits"
                 ],
-                "summary": "wrap split transaction",
+                "summary": "Wrap split transaction",
                 "parameters": [
                     {
-                        "description": "request body",
+                        "description": "Request body to wrap split",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1271,13 +1422,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A successful response.",
+                        "description": "Message for a successful response.",
                         "schema": {
                             "$ref": "#/definitions/wrap.transactionResponse"
                         }
                     },
                     "default": {
-                        "description": "An unexpected error response.",
+                        "description": "Message for an unexpected error response.",
                         "schema": {
                             "$ref": "#/definitions/wrap.transactionResponse"
                         }
@@ -1435,6 +1586,68 @@
             }
         },
         "deputize.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github.com_persistenceOne_persistenceSDK_modules_assets_internal_transactions_mutate.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "assetID": {
+                    "type": "string"
+                },
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "mutableMetaProperties": {
+                    "type": "string"
+                },
+                "mutableProperties": {
+                    "type": "string"
+                }
+            }
+        },
+        "github.com_persistenceOne_persistenceSDK_modules_assets_internal_transactions_mutate.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github.com_persistenceOne_persistenceSDK_modules_identities_internal_transactions_mutate.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "identityID": {
+                    "type": "string"
+                },
+                "mutableMetaProperties": {
+                    "type": "string"
+                },
+                "mutableProperties": {
+                    "type": "string"
+                }
+            }
+        },
+        "github.com_persistenceOne_persistenceSDK_modules_identities_internal_transactions_mutate.transactionResponse": {
             "type": "object",
             "properties": {
                 "error": {
@@ -1723,37 +1936,6 @@
                 }
             }
         },
-        "mutate.transactionRequest": {
-            "type": "object",
-            "properties": {
-                "assetID": {
-                    "type": "string"
-                },
-                "baseReq": {
-                    "$ref": "#/definitions/rest.BaseReq"
-                },
-                "fromID": {
-                    "type": "string"
-                },
-                "mutableMetaProperties": {
-                    "type": "string"
-                },
-                "mutableProperties": {
-                    "type": "string"
-                }
-            }
-        },
-        "mutate.transactionResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "nub.transactionRequest": {
             "type": "object",
             "properties": {
@@ -1793,6 +1975,20 @@
                 }
             }
         },
+        "ownable.queryResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
         "provision.transactionRequest": {
             "type": "object",
             "properties": {
@@ -1808,6 +2004,31 @@
             }
         },
         "provision.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "quash.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "identityID": {
+                    "type": "string"
+                }
+            }
+        },
+        "quash.transactionResponse": {
             "type": "object",
             "properties": {
                 "error": {
@@ -1851,12 +2072,6 @@
                 },
                 "chain_id": {
                     "type": "string"
-                },
-                "fees": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/types.Coin"
-                    }
                 },
                 "from": {
                     "type": "string"
@@ -2004,21 +2219,6 @@
                 }
             }
         },
-        "types.Coin": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "description": "To allow the use of unsigned integers (see: #1273) a larger refactor will\nneed to be made. So we use signed integers for now with safety measures in\nplace preventing negative values being used.",
-                    "$ref": "#/definitions/types.Int"
-                },
-                "denom": {
-                    "type": "string"
-                }
-            }
-        },
-        "types.Int": {
-            "type": "object"
-        },
         "unprovision.transactionRequest": {
             "type": "object",
             "properties": {
@@ -2044,7 +2244,7 @@
                 }
             }
         },
-        "Unwrap.transactionRequest": {
+        "unwrap.transactionRequest": {
             "type": "object",
             "properties": {
                 "baseReq": {

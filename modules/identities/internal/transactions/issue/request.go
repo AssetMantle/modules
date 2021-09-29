@@ -34,12 +34,12 @@ type transactionRequest struct {
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
 // Validate godoc
-// @Summary Issue identities transaction
+// @Summary Issue an identity
 // @Description Issue identities with mutable immutable properties
 // @Accept text/plain
 // @Produce json
 // @Tags Identities
-// @Param body body  transactionRequest true "Request body for Issue Identity"
+// @Param body body  transactionRequest true "A transaction to issue an identity."
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /identities/issue [post]

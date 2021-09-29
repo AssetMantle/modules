@@ -22,12 +22,12 @@ type queryRequest struct {
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
 // Validate godoc
-// @Summary Query meta using meta id
+// @Summary Search for metadata by meta ID
 // @Description Able to query the meta data
 // @Accept json
 // @Produce json
 // @Tags Metas
-// @Param metaID path string true "meta ID"
+// @Param metaID path string true "Unique identifier of metadata value."
 // @Success 200 {object} queryResponse "Message for a successful query response"
 // @Failure default  {object}  queryResponse "Message for an unexpected error response."
 // @Router /metas/metas/{metaID} [get]
