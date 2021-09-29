@@ -102,8 +102,10 @@
         "summary": "Define asset transaction",
         "parameters": [
           {
-            "description": "A transaction to define the asset.", "request body",
-            "name": "what's the parameter name here", "body",
+            "description": "A transaction to define the asset.",
+            "request body",
+            "name": "what's the parameter name here",
+            "body",
             "in": "body",
             "required": true,
             "schema": {
@@ -180,7 +182,8 @@
         "summary": "Mint asset transaction",
         "parameters": [
           {
-            "description": "A transaction to mint the asset.", "request body",
+            "description": "A transaction to mint the asset.",
+            "request body",
             "name": "body",
             "in": "body",
             "required": true,
@@ -219,7 +222,8 @@
         "summary": "Mutate asset transaction",
         "parameters": [
           {
-            "description": "A transaction to mutate an asset.", "request body",
+            "description": "A transaction to mutate an asset.",
+            "request body",
             "name": "body",
             "in": "body",
             "required": true,
