@@ -14,7 +14,6 @@ type transactionResponse struct {
 	Error   error `json:"error" swaggertype:"string"`
 }
 
-
 var _ helpers.TransactionResponse = (*transactionResponse)(nil)
 
 func (transactionResponse transactionResponse) IsSuccessful() bool {

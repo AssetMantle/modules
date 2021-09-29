@@ -8,7 +8,7 @@ package qualified
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base" //nolint:typecheck
 	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 

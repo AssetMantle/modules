@@ -18,7 +18,7 @@ import (
 
 func Test_AssetID_Methods(t *testing.T) {
 	classificationID := base.NewID("classificationID")
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
 
 	testAssetID := NewAssetID(classificationID, immutableProperties).(assetID)
 	require.NotPanics(t, func() {
