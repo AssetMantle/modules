@@ -528,7 +528,7 @@ definitions:
     type: object
 host: localhost:1317
 info:
-  contact: { }
+  contact: {}
   description: API Documentation of Persistence custom modules
   license:
     name: Apache 2.0
