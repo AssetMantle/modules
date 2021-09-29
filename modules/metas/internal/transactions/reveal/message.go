@@ -19,8 +19,8 @@ import (
 )
 
 type message struct {
-	From     sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	MetaFact types.MetaFact      `json:"metaFact" valid:"required~required field metaFact missing"`
+	From sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
+	Data types.Data          `json:"metaFact" valid:"required~required field metaFact missing"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -56,9 +56,9 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, metaFact types.MetaFact) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, data types.Data) sdkTypes.Msg {
 	return message{
-		From:     from,
-		MetaFact: metaFact,
+		From: from,
+		Data: data,
 	}
 }

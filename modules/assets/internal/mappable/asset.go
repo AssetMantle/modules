@@ -7,7 +7,7 @@ package mappable
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
+	"github.com/persistenceOne/persistenceSDK/constants/ids" //nolint:typecheck
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
@@ -22,38 +22,38 @@ type asset struct {
 	qualified.Document //nolint:govet
 }
 
-var _ mappables.Asset = (*asset)(nil)
+var _ mappables.Asset = (*asset)(nil) //nolint:typecheck
 
 func (asset asset) GetBurn() types.Property {
-	if burn := asset.GetProperty(ids.BurnProperty); burn != nil {
+	if burn := asset.GetProperty(ids.BurnProperty); burn != nil { //nolint:typecheck
 		return burn
 	}
 
 	return properties.Burn
 }
 func (asset asset) GetLock() types.Property {
-	if lock := asset.GetProperty(ids.LockProperty); lock != nil {
+	if lock := asset.GetProperty(ids.LockProperty); lock != nil { //nolint:typecheck
 		return lock
 	}
 
 	return properties.Lock
 }
 func (asset asset) GetValue() types.Property {
-	if value := asset.GetProperty(ids.ValueProperty); value != nil {
+	if value := asset.GetProperty(ids.ValueProperty); value != nil { //nolint:typecheck
 		return value
 	}
 
 	return properties.Value
 }
 func (asset asset) GetKey() helpers.Key {
-	return key.FromID(asset.ID)
+	return key.FromID(asset.ID) //nolint:typecheck
 }
 func (asset) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, asset{})
 }
 
 func NewAsset(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Asset {
-	return asset{
+	return asset{ //nolint:typecheck
 		Document: qualified.Document{
 			ID:               id,
 			ClassificationID: key.ReadClassificationID(id),

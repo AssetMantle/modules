@@ -31,8 +31,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		var meta helpers.Mappable
 
 		if property.GetHashID().Compare(base.NewID("")) == 0 {
-			if metaFact, Error := base.ReadMetaFact(property.GetTypeID().String() + constants.DataTypeAndValueSeparator); Error == nil {
-				meta = mappable.NewMeta(metaFact.GetData())
+			if data, Error := base.ReadMetaProperty(property.GetTypeID().String() + constants.DataTypeAndValueSeparator); Error == nil {
+				meta = mappable.NewMeta(data.GetData())
 			} else {
 				return newAuxiliaryResponse(nil, Error)
 			}

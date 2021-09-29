@@ -82,7 +82,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	orderMutated := false
 	orderLeftOverMakerOwnableSplit := message.MakerOwnableSplit
 
-	orderExchangeRate, Error := order.GetExchangeRate().GetMetaFact().GetData().AsDec()
+	orderExchangeRate, Error := order.GetExchangeRate().GetData().AsDec()
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
@@ -90,7 +90,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	accumulator := func(mappableOrder helpers.Mappable) bool {
 		executableOrder := mappableOrder.(mappables.Order)
 
-		executableOrderExchangeRate, Error := executableOrder.GetExchangeRate().GetMetaFact().GetData().AsDec()
+		executableOrderExchangeRate, Error := executableOrder.GetExchangeRate().GetData().AsDec()
 		if Error != nil {
 			panic(Error)
 		}
@@ -103,7 +103,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		var executableOrderMakerOwnableSplit sdkTypes.Dec
 
 		if makerOwnableSplitProperty := executableOrderMetaProperties.Get(ids.MakerOwnableSplitProperty); makerOwnableSplitProperty != nil {
-			executableOrderMakerOwnableSplit, Error = makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
+			executableOrderMakerOwnableSplit, Error = makerOwnableSplitProperty.GetData().AsDec()
 			if Error != nil {
 				panic(Error)
 			}

@@ -97,7 +97,7 @@ func (c *Cuckoo) Insert(input string) error {
 	i := i1
 	for r := 0; r < c.retries; r++ {
 		index := i % c.numBuckets
-		entryIndex := rand.Intn(int(c.entriesPerBucket))
+		entryIndex := rand.Intn(int(c.entriesPerBucket)) //nolint:gosec
 		// swap
 		f, c.buckets[index][entryIndex] = c.buckets[index][entryIndex], f
 

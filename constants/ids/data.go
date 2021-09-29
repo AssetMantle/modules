@@ -1,6 +1,6 @@
 package ids
 
-import "github.com/persistenceOne/persistenceSDK/schema/types/base" //nolint:typecheck
+import "github.com/persistenceOne/persistenceSDK/schema/types/base"
 
 var (
 	BooleanData = base.NewID("B")

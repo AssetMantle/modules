@@ -15,7 +15,7 @@ type Document struct {
 	baseTraits.HasMutables            //nolint:govet
 }
 
-var _ mappables.Document = (*Document)(nil)
+var _ mappables.Document = (*Document)(nil) //nolint:typecheck
 
 func (document Document) GetID() types.ID               { return document.ID }
 func (document Document) GetClassificationID() types.ID { return document.ClassificationID }
