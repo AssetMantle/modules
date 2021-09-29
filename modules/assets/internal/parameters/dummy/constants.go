@@ -7,7 +7,7 @@ package dummy
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base" //nolint:typecheck
 )
 
 var ID = base.NewID("dummy")

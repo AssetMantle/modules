@@ -13,7 +13,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types" //nolint:typecheck
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -38,7 +38,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(Error)
 	}
 
-	if metaProperties.Get(ids.AuthenticationProperty).GetMetaFact().GetData().(types.ListData).Search(base.NewAccAddressData(auxiliaryRequest.Address)) == -1 {
+	if metaProperties.Get(ids.AuthenticationProperty).(types.ListData).Search(base.NewAccAddressData(auxiliaryRequest.Address)) == -1 {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
 

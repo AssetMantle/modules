@@ -55,7 +55,7 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	if authentication := identity.GetAuthentication(); authentication != nil {
 		compareAuthenticationHash := base.NewAccAddressData(address).GenerateHashID().String()
 
-		authenticationHashList := strings.Split(authentication.GetFact().GetHashID().String(), constants.ListHashStringSeparator)
+		authenticationHashList := strings.Split(authentication.GetHashID().String(), constants.ListHashStringSeparator)
 		for _, authenticationHash := range authenticationHashList {
 			if strings.Compare(authenticationHash, compareAuthenticationHash) == 0 {
 				return true

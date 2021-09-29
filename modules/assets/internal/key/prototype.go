@@ -7,7 +7,7 @@ package key
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base" //nolint:typecheck
 )
 
 func Prototype() helpers.Key {

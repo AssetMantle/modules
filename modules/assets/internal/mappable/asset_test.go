@@ -18,8 +18,8 @@ import (
 
 func Test_Asset_Methods(t *testing.T) {
 	classificationID := base.NewID("classificationID")
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
-	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("MutableData"))))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
+	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewStringData("MutableData")))
 
 	assetID := key.NewAssetID(classificationID, immutableProperties)
 	testAsset := NewAsset(assetID, immutableProperties, mutableProperties).(asset)
@@ -30,12 +30,12 @@ func Test_Asset_Methods(t *testing.T) {
 	require.Equal(t, immutableProperties, testAsset.GetImmutableProperties())
 	require.Equal(t, mutableProperties, testAsset.GetMutableProperties())
 	data, _ := base.ReadHeightData("-1")
-	require.Equal(t, testAsset.GetBurn(), base.NewProperty(ids.BurnProperty, base.NewFact(data)))
-	require.Equal(t, base.NewProperty(ids.BurnProperty, base.NewFact(base.NewStringData("BurnImmutableData"))), asset{qualified.Document{ID: assetID, HasImmutables: qualified.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.BurnProperty, base.NewFact(base.NewStringData("BurnImmutableData"))))}, HasMutables: qualified.HasMutables{Properties: mutableProperties}}}.GetBurn())
-	require.Equal(t, base.NewProperty(ids.BurnProperty, base.NewFact(base.NewStringData("BurnMutableData"))), asset{qualified.Document{ID: assetID, HasImmutables: qualified.HasImmutables{Properties: immutableProperties}, HasMutables: qualified.HasMutables{Properties: base.NewProperties(base.NewProperty(ids.BurnProperty, base.NewFact(base.NewStringData("BurnMutableData"))))}}}.GetBurn())
-	require.Equal(t, base.NewProperty(ids.LockProperty, base.NewFact(data)), testAsset.GetLock())
-	require.Equal(t, base.NewProperty(ids.LockProperty, base.NewFact(base.NewStringData("LockImmutableData"))), asset{qualified.Document{ID: assetID, HasImmutables: qualified.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.LockProperty, base.NewFact(base.NewStringData("LockImmutableData"))))}, HasMutables: qualified.HasMutables{Properties: mutableProperties}}}.GetLock())
-	require.Equal(t, base.NewProperty(ids.LockProperty, base.NewFact(base.NewStringData("LockMutableData"))), asset{qualified.Document{ID: assetID, HasImmutables: qualified.HasImmutables{Properties: immutableProperties}, HasMutables: qualified.HasMutables{Properties: base.NewProperties(base.NewProperty(ids.LockProperty, base.NewFact(base.NewStringData("LockMutableData"))))}}}.GetLock())
+	require.Equal(t, testAsset.GetBurn(), base.NewProperty(ids.BurnProperty, data))
+	require.Equal(t, base.NewProperty(ids.BurnProperty, base.NewStringData("BurnImmutableData")), asset{qualified.Document{ID: assetID, HasImmutables: qualified.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.BurnProperty, base.NewStringData("BurnImmutableData")))}, HasMutables: qualified.HasMutables{Properties: mutableProperties}}}.GetBurn())
+	require.Equal(t, base.NewProperty(ids.BurnProperty, base.NewStringData("BurnMutableData")), asset{qualified.Document{ID: assetID, HasImmutables: qualified.HasImmutables{Properties: immutableProperties}, HasMutables: qualified.HasMutables{Properties: base.NewProperties(base.NewProperty(ids.BurnProperty, base.NewStringData("BurnMutableData")))}}}.GetBurn())
+	require.Equal(t, base.NewProperty(ids.LockProperty, data), testAsset.GetLock())
+	require.Equal(t, base.NewProperty(ids.LockProperty, base.NewStringData("LockImmutableData")), asset{qualified.Document{ID: assetID, HasImmutables: qualified.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.LockProperty, base.NewStringData("LockImmutableData")))}, HasMutables: qualified.HasMutables{Properties: mutableProperties}}}.GetLock())
+	require.Equal(t, base.NewProperty(ids.LockProperty, base.NewStringData("LockMutableData")), asset{qualified.Document{ID: assetID, HasImmutables: qualified.HasImmutables{Properties: immutableProperties}, HasMutables: qualified.HasMutables{Properties: base.NewProperties(base.NewProperty(ids.LockProperty, base.NewStringData("LockMutableData")))}}}.GetLock())
 	require.Equal(t, assetID, testAsset.GetKey())
 
 }

@@ -8,7 +8,7 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("metas").GetName(),base.NewQueries(
+	require.Equal(t, Prototype().Get("metas").GetName(), base.NewQueries(
 		meta.Query,
 	).Get("metas").GetName())
 }

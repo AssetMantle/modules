@@ -61,8 +61,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	mutableMetaProperties := message.MutableMetaProperties.Add(base.NewMetaProperty(ids.ExpiryProperty, base.NewMetaFact(base.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight())))))
-	mutableMetaProperties = mutableMetaProperties.Add(base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewMetaFact(base.NewDecData(message.MakerOwnableSplit))))
+	mutableMetaProperties := message.MutableMetaProperties.Add(base.NewMetaProperty(ids.ExpiryProperty, base.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
+	mutableMetaProperties = mutableMetaProperties.Add(base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewDecData(message.MakerOwnableSplit)))
 
 	scrubbedMutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetList()...)))
 	if Error != nil {
@@ -82,7 +82,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	orderMutated := false
 	orderLeftOverMakerOwnableSplit := message.MakerOwnableSplit
 
-	orderExchangeRate, Error := order.GetExchangeRate().GetMetaFact().GetData().AsDec()
+	orderExchangeRate, Error := order.GetExchangeRate().GetData().AsDec()
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
@@ -90,7 +90,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	accumulator := func(mappableOrder helpers.Mappable) bool {
 		executableOrder := mappableOrder.(mappables.Order)
 
-		executableOrderExchangeRate, Error := executableOrder.GetExchangeRate().GetMetaFact().GetData().AsDec()
+		executableOrderExchangeRate, Error := executableOrder.GetExchangeRate().GetData().AsDec()
 		if Error != nil {
 			panic(Error)
 		}
@@ -103,7 +103,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		var executableOrderMakerOwnableSplit sdkTypes.Dec
 
 		if makerOwnableSplitProperty := executableOrderMetaProperties.Get(ids.MakerOwnableSplitProperty); makerOwnableSplitProperty != nil {
-			executableOrderMakerOwnableSplit, Error = makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
+			executableOrderMakerOwnableSplit, Error = makerOwnableSplitProperty.GetData().AsDec()
 			if Error != nil {
 				panic(Error)
 			}
@@ -139,7 +139,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 					panic(auxiliaryResponse.GetError())
 				}
 
-				mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewMetaFact(base.NewDecData(executableOrderMakerOwnableSplit.Sub(sendToBuyer)))))))
+				mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewDecData(executableOrderMakerOwnableSplit.Sub(sendToBuyer))))))
 				if Error != nil {
 					panic(Error)
 				}
@@ -177,7 +177,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	orders.Iterate(key.FromID(key.NewOrderID(order.GetClassificationID(), order.GetTakerOwnableID(), order.GetMakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewProperties())), accumulator)
 
 	if !orderLeftOverMakerOwnableSplit.Equal(sdkTypes.ZeroDec()) && orderMutated {
-		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewMetaFact(base.NewDecData(orderLeftOverMakerOwnableSplit))))))
+		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewDecData(orderLeftOverMakerOwnableSplit)))))
 		if Error != nil {
 			return newTransactionResponse(Error)
 		}

@@ -5,17 +5,17 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types" //nolint:typecheck
 )
 
 type Document struct {
-	ID               types.ID `json:"id" valid:"required~required field id missing"`
-	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID missing"`
-	baseTraits.HasImmutables
-	baseTraits.HasMutables //nolint:govet
+	ID                       types.ID `json:"id" valid:"required~required field id missing"`
+	ClassificationID         types.ID `json:"classificationID" valid:"required~required field classificationID missing"`
+	baseTraits.HasImmutables          //nolint:typecheck
+	baseTraits.HasMutables            //nolint:govet
 }
 
-var _ mappables.Document = (*Document)(nil)
+var _ mappables.Document = (*Document)(nil) //nolint:typecheck
 
 func (document Document) GetID() types.ID               { return document.ID }
 func (document Document) GetClassificationID() types.ID { return document.ClassificationID }

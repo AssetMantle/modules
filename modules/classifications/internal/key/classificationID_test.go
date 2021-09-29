@@ -19,8 +19,8 @@ import (
 
 func Test_ClassificationID_Methods(t *testing.T) {
 	chainID := base.NewID("chainID")
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
-	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("MutableData"))))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
+	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewStringData("MutableData")))
 
 	testClassificationID := NewClassificationID(chainID, immutableProperties, mutableProperties).(classificationID)
 	require.NotPanics(t, func() {
