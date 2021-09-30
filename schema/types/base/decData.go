@@ -8,7 +8,6 @@ package base
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
@@ -43,7 +42,7 @@ func (decData decData) String() string {
 	return decData.Value.String()
 }
 func (decData decData) GetTypeID() types.ID {
-	return ids.DecData
+	return decDataID
 }
 func (decData decData) ZeroValue() types.Data {
 	return NewDecData(sdkTypes.ZeroDec())

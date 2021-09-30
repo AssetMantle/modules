@@ -9,8 +9,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-
 	"github.com/persistenceOne/persistenceSDK/constants"
 
 	"github.com/persistenceOne/persistenceSDK/utilities/random"
@@ -38,7 +36,7 @@ func Test_ListData(t *testing.T) {
 	require.Equal(t, NewID(meta.Hash("cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae")), testListData.GenerateHashID())
 
 	require.Equal(t, NewID(""), testListData2.GenerateHashID())
-	require.Equal(t, ids.ListData, testListData.GetTypeID())
+	require.Equal(t, listDataID, testListData.GetTypeID())
 
 	dataAsString, Error := testListData.AsString()
 	require.Equal(t, "", dataAsString)
