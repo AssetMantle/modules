@@ -66,7 +66,6 @@ func (c *Cuckoo) Lookup(needle *ID) bool {
 	return b1 || b2
 }
 
-:unparam
 func (b bucket) contains(f Fingerprint) (int, bool) {
 	for i, x := range strings.Split(string(b), "|") {
 		if bytes.Equal([]byte(x), f) {
