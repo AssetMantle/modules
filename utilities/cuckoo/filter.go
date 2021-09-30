@@ -4,16 +4,13 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
-	_ "errors"
-	"strings"
-
-	//"github.com/persistenceOne/persistenceSDK/utilities/cuckoo"
 	"math"
 	"math/rand"
+	"strings"
 )
 
 type bucket []byte
-type fingerprint []byte
+type Fingerprint []byte
 
 var h = sha256.New()
 
@@ -23,7 +20,7 @@ type Cuckoo struct {
 	buckets []bucket
 	m       uint // buckets
 	b       uint // entries per bucket
-	f       uint // fingerprint length
+	f       uint // Fingerprint length
 	n       uint // filter capacity (rename cap?)
 }
 
@@ -32,7 +29,7 @@ func NewCuckoo(n uint, fp float64) *Cuckoo {
 	f := fingerprintLength(b, fp)
 	m := nextPower(n / f * 8)
 	buckets := make([]bucket, m)
-	//for i := uint(0); i < m; i++ {
+	// for i := uint(0); i < m; i++ {
 	//	buckets[i] = make(bucket, b)
 	//}
 	return &Cuckoo{
@@ -44,8 +41,8 @@ func NewCuckoo(n uint, fp float64) *Cuckoo {
 	}
 }
 
-func (c *Cuckoo) delete(needle *id) {
-	i1, i2, f := c.hashes(needle.IDString)
+func (c *Cuckoo) Delete(needle *ID) {
+	i1, i2, f := c.Hashes(needle.IDString)
 	// try to remove from f1
 	b1 := c.buckets[i1%c.m]
 
@@ -61,15 +58,15 @@ func (c *Cuckoo) delete(needle *id) {
 	}
 }
 
-// lookup needle in the cuckoo filter
-func (c *Cuckoo) lookup(needle *id) bool {
-	i1, i2, f := c.hashes(needle.IDString)
+// Lookup needle in the cuckoo filter
+func (c *Cuckoo) Lookup(needle *ID) bool {
+	i1, i2, f := c.Hashes(needle.IDString)
 	_, b1 := c.buckets[i1%c.m].contains(f)
 	_, b2 := c.buckets[i2%c.m].contains(f)
 	return b1 || b2
 }
 
-func (b bucket) contains(f fingerprint) (int, bool) {
+func (b bucket) contains(f Fingerprint) (int, bool) {
 	for i, x := range strings.Split(string(b), "|") {
 		if bytes.Equal([]byte(x), f) {
 			return i, true
@@ -78,14 +75,14 @@ func (b bucket) contains(f fingerprint) (int, bool) {
 	return -1, false
 }
 
-func (c *Cuckoo) insert(input *id) {
-	i1, i2, f := c.hashes(input.IDString)
+func (c *Cuckoo) Insert(input *ID) {
+	i1, i2, f := c.Hashes(input.IDString)
 	// first try bucket one
 	b1 := c.buckets[i1%c.m]
 
 	if len(b1) < int(c.b*c.f) {
 		b1 = append(b1, []byte(f)...)
-		b1 = append(b1, '|')
+		_ = append(b1, '|')
 		return
 	}
 
@@ -105,24 +102,24 @@ func (c *Cuckoo) insert(input *id) {
 		// swap
 		b := c.buckets[index]
 
-		f, b = fingerprint(strings.Split(string(b), "|")[entryIndex]),
+		f, b = Fingerprint(strings.Split(string(b), "|")[entryIndex]),
 			append(b, []byte(f)...)
 		f1 := append(f, '|')
 		b = []byte(strings.ReplaceAll(string(b), string(f1), ""))
 
-		i = i ^ uint(binary.BigEndian.Uint32(hash(f)))
+		i ^= uint(binary.BigEndian.Uint32(hash(f)))
 		b = c.buckets[i%c.m]
 
 		if len(b) < int(c.b*c.f) {
 			b = append(b1, []byte(f1)...)
-			//b = append(b1, '|')
+			// b = append(b1, '|')
 			return
 		}
 	}
 	panic("cuckoo filter full")
 }
 
-func (c *Cuckoo) hashes(data string) (uint, uint, fingerprint) {
+func (c *Cuckoo) Hashes(data string) (uint, uint, Fingerprint) {
 	h := hash([]byte(data))
 	f := h[0:c.f]
 	i1 := uint(binary.BigEndian.Uint32(h))

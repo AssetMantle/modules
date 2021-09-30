@@ -8,11 +8,11 @@ import (
 func test_filter(t *testing.T) {
 
 	c := NewCuckoo(10, .1)
-	c.insert(newId("hello"))
-	c.insert(newId("world"))
-	ok := c.lookup(newId("world"))
+	c.Insert(NewID("hello"))
+	c.Insert(NewID("world"))
+	ok := c.Lookup(NewID("world"))
 	fmt.Printf("%v\n", ok)
-	c.delete(newId("world"))
-	ok = c.lookup(newId("world"))
+	c.Delete(NewID("world"))
+	ok = c.Lookup(NewID("world"))
 	fmt.Printf("%v\n", ok)
 }

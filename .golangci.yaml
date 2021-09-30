@@ -1,5 +1,8 @@
 run:
   tests: false
+  skip-files:
+    - schema/applications/base/application.go
+    - utilities/cuckoo/filter.go
 linters:
   disable-all: false
   enable:
