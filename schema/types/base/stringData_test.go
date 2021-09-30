@@ -8,8 +8,6 @@ package base
 import (
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
@@ -25,7 +23,7 @@ func Test_StringData(t *testing.T) {
 	require.Equal(t, value, testStringData.String())
 	require.Equal(t, NewID(meta.Hash(value)), testStringData.GenerateHashID())
 	require.Equal(t, NewID(""), testStringData2.GenerateHashID())
-	require.Equal(t, ids.StringData, testStringData.GetTypeID())
+	require.Equal(t, stringDataID, testStringData.GetTypeID())
 	require.Equal(t, testStringData.ZeroValue(), NewStringData(""))
 
 	dataAsString, Error := testStringData.AsString()
