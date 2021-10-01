@@ -20,12 +20,12 @@ func Test_Reveal_Message(t *testing.T) {
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, Error)
 
-	metaFact := "S|newMetaFact"
-	newMetaFact, Error := base.ReadMetaFact(metaFact)
+	data := "S|newData"
+	newData, Error := base.ReadData(data)
 	require.Equal(t, nil, Error)
 
-	testMessage := newMessage(fromAccAddress, newMetaFact)
-	require.Equal(t, message{From: fromAccAddress, MetaFact: newMetaFact}, testMessage)
+	testMessage := newMessage(fromAccAddress, newData)
+	require.Equal(t, message{From: fromAccAddress, Data: newData}, testMessage)
 	require.Equal(t, module.Name, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
 	require.Equal(t, nil, testMessage.ValidateBasic())
