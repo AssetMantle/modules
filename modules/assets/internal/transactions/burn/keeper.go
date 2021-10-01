@@ -52,7 +52,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	burnHeight, Error := burnHeightMetaFact.GetMetaFact().GetData().AsHeight()
+	burnHeight, Error := burnHeightMetaFact.GetData().AsHeight()
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
