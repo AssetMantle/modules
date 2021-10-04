@@ -48,6 +48,7 @@ func (maintainer maintainer) GetMaintainedClassificationID() types.ID {
 func (maintainer maintainer) GetMaintainedProperties() types.Properties {
 		return maintainer.MaintainedProperties
 }
+//TODO
 func (maintainer maintainer) CanMintAsset() bool {
 	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
 		impl
@@ -55,6 +56,7 @@ func (maintainer maintainer) CanMintAsset() bool {
 
 	return false
 }
+//TODO
 func (maintainer maintainer) CanBurnAsset() bool {
 	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
 		impl
@@ -62,6 +64,7 @@ func (maintainer maintainer) CanBurnAsset() bool {
 
 	return false
 }
+//TODO
 func (maintainer maintainer) CanRenumerateAsset() bool {
 	if property := maintainer.GetProperty(base.NewID(properties.Permissions)); property != nil {
 		impl
@@ -69,6 +72,7 @@ func (maintainer maintainer) CanRenumerateAsset() bool {
 
 	return false
 }
+//TODO
 func (maintainer maintainer) CanAddMaintainer() bool {
 	if property := maintainer.GetProperty(base.NewID(properties.Permissions)); property != nil {
 		impl
@@ -76,6 +80,7 @@ func (maintainer maintainer) CanAddMaintainer() bool {
 
 	return false
 }
+//TODO
 func (maintainer maintainer) CanRemoveMaintainer() bool {
 	if property := maintainer.GetProperty(base.NewID(properties.Permissions)); property != nil {
 		impl
@@ -83,6 +88,7 @@ func (maintainer maintainer) CanRemoveMaintainer() bool {
 
 	return false
 }
+//TODO
 func (maintainer maintainer) CanMutateMaintainer() bool {
 	if property := maintainer.GetProperty(base.NewID(properties.Permissions)); property != nil {
 		impl
@@ -90,6 +96,8 @@ func (maintainer maintainer) CanMutateMaintainer() bool {
 
 	return false
 }
+//TODO
+
 func (maintainer maintainer) MaintainsProperty(id types.ID) bool {
 	if property := maintainer.GetProperty(base.NewID(properties.Permissions)); property != nil {
 		impl
@@ -103,8 +111,8 @@ func (maintainer maintainer) GetKey() helpers.Key {
 func (maintainer) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, maintainer{})
 }
-
-func NewMaintainer(id types.ID, maintainedProperties types.Properties, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) mappables.Maintainer {
+//TODO
+func NewMaintainer(id types.ID) mappables.Maintainer {
 	return maintainer{
 		Document: qualified.Document{
 			ID:            id,
