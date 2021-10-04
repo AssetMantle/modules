@@ -17,7 +17,7 @@ import (
 func Test_Maintainer_Methods(t *testing.T) {
 	classificationID := base.NewID("classificationID")
 	identityID := base.NewID("identityID")
-	properties := base.NewProperties(base.NewProperty(base.NewID("ID"), base.NewFact(base.NewStringData("MutableData"))))
+	properties := base.NewProperties(base.NewProperty(base.NewID("ID"), base.NewStringData("MutableData")))
 
 	testMaintainerID := key.NewMaintainerID(classificationID, identityID)
 

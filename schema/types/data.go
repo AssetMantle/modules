@@ -21,8 +21,7 @@ type Data interface {
 
 	GetTypeID() ID
 	ZeroValue() Data
-
-	// GenerateHashID returns the hash of the Data as an ID
+ 	// GenerateHashID returns the hash of the Data as an ID
 	// * Returns ID of empty string when the value of Data is that Data type's zero value
 	GenerateHashID() ID
 

@@ -21,6 +21,7 @@ import (
 
 type maintainer struct {
 	qualified.Document
+	MaintainedProperties types.Properties
 }
 
 var _ mappables.Maintainer = (*maintainer)(nil)
@@ -44,12 +45,8 @@ func (maintainer maintainer) GetIdentityID() types.ID {
 func (maintainer maintainer) GetMaintainedClassificationID() types.ID {
 	return key.ReadClassificationID(maintainer.ID)
 }
-func (maintainer maintainer) GetMaintainedProperties() types.Property {
-	if property := maintainer.GetProperty(ids.MaintainedPropertiesProperty); property != nil {
-		return property
-	}
-
-	return properties.MaintainedProperties
+func (maintainer maintainer) GetMaintainedProperties() types.Properties {
+		return maintainer.MaintainedProperties
 }
 func (maintainer maintainer) CanMintAsset() bool {
 	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
