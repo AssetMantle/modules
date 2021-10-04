@@ -9,7 +9,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -51,10 +50,7 @@ func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Param
 
 func (queryKeeper queryKeeper) RegisterGRPCGatewayRoute(clientContext client.Context, serveMux *runtime.ServeMux) {
 	err := RegisterQueryHandlerClient(context.Background(), serveMux, NewQueryClient(clientContext))
-	fmt.Println("ERROR")
-	fmt.Println(err)
 	if err != nil {
-		fmt.Println("RGRPC")
 		panic(err)
 	}
 

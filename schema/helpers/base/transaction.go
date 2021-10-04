@@ -7,7 +7,6 @@ package base
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -128,7 +127,6 @@ func (transaction transaction) RegisterInterface(registry codecTypes.InterfaceRe
 	transaction.messagePrototype().RegisterInterface(registry)
 }
 func (transaction transaction) RegisterService(configurator sdkModule.Configurator) {
-	fmt.Println(transaction.keeperPrototype(), "Registering Transaction Service")
 	transaction.keeperPrototype().RegisterService(configurator)
 }
 func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessage) (sdkTypes.Msg, error) {

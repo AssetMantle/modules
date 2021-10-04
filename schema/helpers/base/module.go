@@ -273,7 +273,6 @@ func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
 }
 
 func (module module) RegisterServices(configurator sdkTypesModule.Configurator) {
-	fmt.Println(module.Name())
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterService(configurator)
 	}

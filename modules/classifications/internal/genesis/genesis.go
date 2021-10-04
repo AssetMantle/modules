@@ -1,7 +1,6 @@
 package genesis
 
 import (
-	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -95,9 +94,7 @@ func (genesis Genesis) LegacyAminoDecode(byte []byte) helpers.Genesis {
 }
 
 func (genesis Genesis) Encode(cdc codec.JSONMarshaler) []byte {
-
 	bytes, Error := cdc.MarshalJSON(&genesis)
-	fmt.Println(string(bytes))
 	if Error != nil {
 		panic(Error)
 	}
@@ -107,7 +104,6 @@ func (genesis Genesis) Encode(cdc codec.JSONMarshaler) []byte {
 
 func (genesis Genesis) Decode(cdc codec.JSONMarshaler, byte []byte) helpers.Genesis {
 	var newGenesis Genesis
-	fmt.Println(string(byte), newGenesis)
 	if Error := cdc.UnmarshalJSON(byte, &newGenesis); Error != nil {
 		panic(Error)
 	}
@@ -116,6 +112,7 @@ func (genesis Genesis) Decode(cdc codec.JSONMarshaler, byte []byte) helpers.Gene
 }
 
 func (genesis Genesis) Initialize(mappableList []helpers.Mappable, parameterList []types.Parameter) helpers.Genesis {
+	genesis.DefaultParameterList = []types.Parameter{dummy.Parameter.Mutate(dummy.Parameter.GetData())}
 	if len(mappableList) == 0 {
 		genesis.MappableList = genesis.DefaultMappableList
 	} else {

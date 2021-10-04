@@ -112,6 +112,7 @@ func (genesis Genesis) Decode(cdc codec.JSONMarshaler, byte []byte) helpers.Gene
 }
 
 func (genesis Genesis) Initialize(mappableList []helpers.Mappable, parameterList []types.Parameter) helpers.Genesis {
+	genesis.DefaultParameterList = []types.Parameter{dummy.Parameter.Mutate(dummy.Parameter.GetData())}
 	if len(mappableList) == 0 {
 		genesis.MappableList = genesis.DefaultMappableList
 	} else {

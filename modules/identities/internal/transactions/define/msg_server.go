@@ -2,7 +2,6 @@ package define
 
 import (
 	"context"
-	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
@@ -55,7 +54,6 @@ func (msgServer msgServer) Define(goCtx context.Context, message *Message) (*Tra
 	mutableProperties := base.NewProperties(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
 	classificationID, Error := define.GetClassificationIDFromResponse(msgServer.transactionKeeper.defineAuxiliary.GetKeeper().Help(ctx, define.NewAuxiliaryRequest(immutableProperties, mutableProperties)))
-	fmt.Println(classificationID, "Printing Classification ID")
 	if Error != nil {
 		return nil, Error
 	}
