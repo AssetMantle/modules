@@ -11,7 +11,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables" //nolint:typecheck
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
@@ -34,7 +35,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 
-	switch fromSplit = fromSplit.(mappables.Split).Send(auxiliaryRequest.Value).(mappables.Split); {
+	newSplit := fromSplit.(mappables.Split).Send(auxiliaryRequest.Value)
+	switch fromSplit = mappable.NewSplit(base.NewID(fromSplitID.String()), newSplit.GetValue()); {
 	case fromSplit.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	case fromSplit.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):

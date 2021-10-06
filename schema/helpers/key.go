@@ -12,4 +12,5 @@ type Key interface {
 	RegisterLegacyAminoCodec(amino *codec.LegacyAmino)
 	IsPartial() bool
 	Equals(Key) bool
+	GetStructReference() codec.ProtoMarshaler
 }

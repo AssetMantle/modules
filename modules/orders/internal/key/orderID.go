@@ -7,9 +7,6 @@ package key
 
 import (
 	"bytes"
-	"strconv"
-	"strings"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants"
@@ -17,12 +14,18 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"strconv"
+	"strings"
 )
 
 var _ types.ID = (*OrderID)(nil)
 var _ helpers.Key = (*OrderID)(nil)
 
+func (orderID OrderID) GetStructReference() codec.ProtoMarshaler {
+	return &orderID
+}
 func (orderID OrderID) Bytes() []byte {
 	var Bytes []byte
 
@@ -65,7 +68,7 @@ func (orderID OrderID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(orderID.Bytes())
 }
 func (OrderID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &OrderID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, OrderID{})
 }
 func (orderID OrderID) IsPartial() bool {
 	return len(orderID.HashID.Bytes()) == 0
@@ -119,6 +122,6 @@ func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnable
 		RateID:           rateID,
 		CreationID:       creationID,
 		MakerID:          makerID,
-		HashID:           baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID(),
+		HashID:           baseTraits.HasImmutables{Properties: *baseTypes.NewProperties(immutableProperties.GetList()...)}.GenerateHashID(),
 	}
 }

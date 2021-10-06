@@ -8,6 +8,5 @@ option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base"
 
 message StringData {
   option (gogoproto.goproto_stringer) = false;
-
   string value = 1;
 }

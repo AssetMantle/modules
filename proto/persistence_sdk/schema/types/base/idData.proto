@@ -3,12 +3,11 @@ syntax = "proto3";
 package persistence_sdk.schema.types.base;
 
 import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/id.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message IDData {
   option (gogoproto.goproto_stringer) = false;
-
-  string value = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
-
+  persistence_sdk.schema.types.base.ID value = 1 [(gogoproto.nullable) = false];
 }

@@ -48,7 +48,7 @@ func (message Message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From.AsSDKTypesAccAddress()}
 }
 func (Message) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Message{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Message{})
 }
 func (Message) RegisterInterface(registry codecTypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
@@ -71,12 +71,12 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, orderID types.ID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn types.Height, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
 	return &Message{
 		From:                  base.NewAccAddressFromSDKTypesAccAddress(from),
-		FromID:                fromID,
-		OrderID:               orderID,
+		FromID:                *base.NewID(fromID.String()),
+		OrderID:               *base.NewID(orderID.String()),
 		TakerOwnableSplit:     takerOwnableSplit,
 		MakerOwnableSplit:     makerOwnableSplit,
-		ExpiresIn:             expiresIn,
-		MutableMetaProperties: mutableMetaProperties,
-		MutableProperties:     mutableProperties,
+		ExpiresIn:             *base.NewHeight(expiresIn.Get()),
+		MutableMetaProperties: *base.NewMetaProperties(mutableMetaProperties.GetList()...),
+		MutableProperties:     *base.NewProperties(mutableProperties.GetList()...),
 	}
 }

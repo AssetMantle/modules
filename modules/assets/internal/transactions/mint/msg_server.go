@@ -20,10 +20,9 @@ type msgServer struct {
 
 var _ MsgServer = msgServer{}
 
-func (msgServer msgServer) Mint(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
-	message := messageFromInterface(msg)
+func (msgServer msgServer) Mint(goCtx context.Context, message *Message) (*TransactionResponse, error) {
 	ctx := sdkTypes.UnwrapSDKContext(goCtx)
-	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), &message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
@@ -34,7 +33,7 @@ func (msgServer msgServer) Mint(goCtx context.Context, msg *Message) (*Transacti
 
 	immutableProperties := base.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
 
-	assetID := key.NewAssetID(message.ClassificationID, immutableProperties)
+	assetID := key.NewAssetID(&message.ClassificationID, immutableProperties)
 
 	assets := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(assetID))
 	if assets.Get(key.FromID(assetID)) != nil {
@@ -48,7 +47,7 @@ func (msgServer msgServer) Mint(goCtx context.Context, msg *Message) (*Transacti
 
 	mutableProperties := base.NewProperties(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
-	if auxiliaryResponse := msgServer.transactionKeeper.conformAuxiliary.GetKeeper().Help(ctx, conform.NewAuxiliaryRequest(message.ClassificationID, immutableProperties, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := msgServer.transactionKeeper.conformAuxiliary.GetKeeper().Help(ctx, conform.NewAuxiliaryRequest(&message.ClassificationID, immutableProperties, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 

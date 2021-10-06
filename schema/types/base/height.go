@@ -18,6 +18,6 @@ func (height Height) Compare(compareHeight types.Height) int {
 	}
 	return 0
 }
-func NewHeight(value int64) types.Height {
+func NewHeight(value int64) *Height {
 	return &Height{Value: value}
 }

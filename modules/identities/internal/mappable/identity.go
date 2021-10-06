@@ -8,7 +8,6 @@ package mappable
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
@@ -23,9 +22,13 @@ import (
 
 var _ mappables.InterIdentity = (*Identity)(nil)
 
-func (identity Identity) GetID() types.ID { return identity.ID }
+func (identity Identity) GetStructReference() codec.ProtoMarshaler {
+	return &identity
+}
+
+func (identity Identity) GetID() types.ID { return &identity.ID }
 func (identity Identity) GetClassificationID() types.ID {
-	return key.ReadClassificationID(identity.ID)
+	return key.ReadClassificationID(&identity.ID)
 }
 
 func (identity Identity) GetImmutableProperties() types.Properties {
@@ -63,20 +66,19 @@ func (identity Identity) GetAuthentication() types.Property {
 	}
 }
 func (identity Identity) GetKey() helpers.Key {
-	return key.FromID(identity.ID)
+	return key.FromID(&identity.ID)
 }
 func (Identity) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Identity{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Identity{})
 }
 func NewIdentity(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.InterIdentity {
 	return &Identity{
-		ID:            id,
-		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
-		HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
+		ID:            *base.NewID(id.String()),
+		HasImmutables: baseTraits.HasImmutables{Properties: *base.NewProperties(immutableProperties.GetList()...)},
+		HasMutables:   baseTraits.HasMutables{Properties: *base.NewProperties(mutableProperties.GetList()...)},
 	}
 }
 func (identity Identity) IsProvisioned(address sdkTypes.AccAddress) bool {
-	//flag := false
 	//accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
 	//
 	//if !ok {
@@ -84,13 +86,12 @@ func (identity Identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	//}
 	//
 	//if !address.Empty() && accAddressListData.Search(base.NewAccAddressData(address)) != -1 {
-	//	flag = true
+	//
 	//}
 
 	return true
 }
 func (identity Identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
-	//flag := false
 	//accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
 	//
 	//if !ok {
@@ -98,28 +99,28 @@ func (identity Identity) IsUnprovisioned(address sdkTypes.AccAddress) bool {
 	//}
 	//
 	//if !address.Empty() && !(accAddressListData.Search(base.NewAccAddressData(address)) != -1) {
-	//	flag = true
+	//
 	//}
 
 	return true
 }
 func (identity Identity) ProvisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
-	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
-	if !ok {
-		panic(errors.IncorrectFormat)
-	}
+	//accAddressListData, ok := identity.GetAuthentication().GetFact().(types.Data).(types.ListData)
+	//if !ok {
+	//	panic(errors.IncorrectFormat)
+	//}
 
-	accAddressListData.Add(base.NewAccAddressData(address))
+	//listData.Add(base.NewAccAddressData(address))
 
 	return mappables.InterIdentity(&identity)
 }
 func (identity Identity) UnprovisionAddress(address sdkTypes.AccAddress) helpers.Mappable {
-	accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
-	if !ok {
-		panic(errors.IncorrectFormat)
-	}
-
-	accAddressListData.Remove(base.NewAccAddressData(address))
+	//accAddressListData, ok := identity.GetAuthentication().GetFact().(types.ListData)
+	//if !ok {
+	//	panic(errors.IncorrectFormat)
+	//}
+	//
+	//accAddressListData.Remove(base.NewAccAddressData(address))
 
 	return mappables.InterIdentity(&identity)
 }

@@ -19,4 +19,5 @@ type CLICommand interface {
 	ReadBaseReq(client.Context) rest.BaseReq
 
 	CreateCommand(func(command *cobra.Command, args []string) error) *cobra.Command
+	CreateQueryCommand() *cobra.Command
 }

@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/cosmos/cosmos-sdk/client"
 	"log"
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/gorilla/mux"
 
 	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
@@ -18,9 +18,9 @@ import (
 var Prototype = base.NewApplication(
 	configurations.Name,
 	configurations.ModuleBasicManager,
+	configurations.MakeEncodingConfig(),
 	configurations.EnabledWasmProposalTypeList,
 	configurations.ModuleAccountPermissions,
-	configurations.TokenReceiveAllowedModules,
 )
 
 // @title Persistence Swagger Documentation
@@ -33,7 +33,7 @@ var Prototype = base.NewApplication(
 
 func main() {
 	r := mux.NewRouter()
-	ctx := context.NewCLIContext()
+	ctx := client.Context{}
 	Prototype.GetModuleBasicManager().RegisterRESTRoutes(ctx, r)
 	r.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	log.Println("listen on :1317")

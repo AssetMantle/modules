@@ -6,12 +6,11 @@
 package simulator
 
 import (
-	simulation2 "github.com/cosmos/cosmos-sdk/x/simulation"
-	"math/rand"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/gov/types"
+	simulation2 "github.com/cosmos/cosmos-sdk/x/simulation"
+	"math/rand"
 )
 
 func (simulator) WeightedProposalContentList() []simulation.WeightedProposalContent {

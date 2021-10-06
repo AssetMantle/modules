@@ -9,7 +9,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables" //nolint:typecheck
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -19,16 +19,15 @@ type msgServer struct {
 
 var _ MsgServer = msgServer{}
 
-func (msgServer msgServer) Burn(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
-	message := messageFromInterface(msg)
+func (msgServer msgServer) Burn(goCtx context.Context, message *Message) (*TransactionResponse, error) {
 	ctx := sdkTypes.UnwrapSDKContext(goCtx)
-	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), &message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	assets := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(message.AssetID))
+	assets := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(&message.AssetID))
 
-	asset := assets.Get(key.FromID(message.AssetID))
+	asset := assets.Get(key.FromID(&message.AssetID))
 	if asset == nil {
 		return nil, errors.EntityNotFound
 	}

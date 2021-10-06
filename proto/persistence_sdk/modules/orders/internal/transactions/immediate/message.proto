@@ -3,6 +3,10 @@ syntax = "proto3";
 package persistence_sdk.modules.orders.internal.transactions.immediate;
 
 import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/id.proto";
+import "persistence_sdk/schema/types/base/height.proto";
+import "persistence_sdk/schema/types/base/properties.proto";
+import "persistence_sdk/schema/types/base/metaProperties.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/immediate";
 
@@ -15,17 +19,17 @@ message Message {
   option (gogoproto.equal) = false;
 
   string from = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types/base.AccAddress", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field From missing"'] ;
-  string from_i_d = 2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field FromID missing"'] ;
-  string classification_i_d = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field ClassificationID missing"'];
-  string maker_ownable_i_d = 4 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field MakerOwnableID missing"'];
-  string taker_ownable_i_d = 5 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field TakerOwnableID missing"'];
-  string expires_in = 6 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Height", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field ExpiresIn missing"'];
+  persistence_sdk.schema.types.base.ID from_i_d = 2 [(gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field FromID missing"'] ;
+  persistence_sdk.schema.types.base.ID classification_i_d = 3 [(gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field ClassificationID missing"'];
+  persistence_sdk.schema.types.base.ID maker_ownable_i_d = 4 [(gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field MakerOwnableID missing"'];
+  persistence_sdk.schema.types.base.ID taker_ownable_i_d = 5 [(gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field TakerOwnableID missing"'];
+  persistence_sdk.schema.types.base.Height expires_in = 6 [(gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field ExpiresIn missing"'];
   string maker_ownable_split = 7 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field MakerOwnableSplit missing"'];
   string taker_ownable_split = 8 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field TakerOwnableSplit missing"'];
-  string immutable_meta_properties = 9 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.MetaProperties", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field ImmutableMetaProperties missing"'];
-  string immutable_properties = 10 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Properties", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field ImmutableProperties missing"'];
-  string mutable_meta_properties = 11 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.MetaProperties", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field MutableMetaProperties missing"'];
-  string mutable_properties = 12 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Properties", (gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field MutableProperties missing"'];
+  persistence_sdk.schema.types.base.MetaProperties immutable_meta_properties = 9 [(gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field ImmutableMetaProperties missing"'];
+  persistence_sdk.schema.types.base.Properties immutable_properties = 10 [(gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field ImmutableProperties missing"'];
+  persistence_sdk.schema.types.base.MetaProperties mutable_meta_properties = 11 [(gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field MutableMetaProperties missing"'];
+  persistence_sdk.schema.types.base.Properties mutable_properties = 12 [(gogoproto.nullable) = false, (gogoproto.moretags) = 'valid:"required~required field MutableProperties missing"'];
 }
 
 message TransactionResponse {}

@@ -19,11 +19,9 @@ type msgServer struct {
 
 var _ MsgServer = msgServer{}
 
-func (msgServer msgServer) Issue(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
-	message := messageFromInterface(msg)
+func (msgServer msgServer) Issue(goCtx context.Context, message *Message) (*TransactionResponse, error) {
 	ctx := sdkTypes.UnwrapSDKContext(goCtx)
-
-	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), &message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
@@ -34,7 +32,7 @@ func (msgServer msgServer) Issue(goCtx context.Context, msg *Message) (*Transact
 
 	immutableProperties := base.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
 
-	identityID := key.NewIdentityID(message.ClassificationID, immutableProperties)
+	identityID := key.NewIdentityID(&message.ClassificationID, immutableProperties)
 
 	identities := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(identityID))
 	if identities.Get(key.FromID(identityID)) != nil {
@@ -42,17 +40,17 @@ func (msgServer msgServer) Issue(goCtx context.Context, msg *Message) (*Transact
 	}
 
 	authenticationProperty := base.NewMetaProperty(base.NewID(properties.Authentication), base.NewMetaFact(base.NewListData(base.NewAccAddressData(message.To.AsSDKTypesAccAddress()))))
+
 	updatedMutableMetaProperties := append(message.MutableMetaProperties.GetList(), authenticationProperty)
 
 	mutableMetaProperties, Error := scrub.GetPropertiesFromResponse(msgServer.transactionKeeper.scrubAuxiliary.GetKeeper().Help(ctx, scrub.NewAuxiliaryRequest(updatedMutableMetaProperties...)))
-
 	if Error != nil {
 		return nil, Error
 	}
 
 	mutableProperties := base.NewProperties(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
-	if auxiliaryResponse := msgServer.transactionKeeper.conformAuxiliary.GetKeeper().Help(ctx, conform.NewAuxiliaryRequest(message.ClassificationID, immutableProperties, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := msgServer.transactionKeeper.conformAuxiliary.GetKeeper().Help(ctx, conform.NewAuxiliaryRequest(&message.ClassificationID, immutableProperties, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 

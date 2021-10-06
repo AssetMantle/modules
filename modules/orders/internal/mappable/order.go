@@ -6,8 +6,6 @@
 package mappable
 
 import (
-	"strconv"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
@@ -19,16 +17,21 @@ import (
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"strconv"
 )
 
 var _ mappables.Order = (*Order)(nil)
 
+func (order Order) GetStructReference() codec.ProtoMarshaler {
+	return &order
+}
 func (order Order) GetID() types.ID {
-	return order.ID
+	return &order.ID
 }
 func (order Order) GetClassificationID() types.ID {
-	return key.ReadClassificationID(order.ID)
+	return key.ReadClassificationID(&order.ID)
 }
 func (order Order) GetImmutableProperties() types.Properties {
 	return order.HasImmutables.GetImmutableProperties()
@@ -46,22 +49,22 @@ func (order Order) Mutate(propertyList ...types.Property) traits.HasMutables {
 	return order.HasMutables.Mutate(propertyList...)
 }
 func (order Order) GetRateID() types.ID {
-	return key.ReadRateID(order.ID)
+	return key.ReadRateID(&order.ID)
 }
 func (order Order) GetCreationID() types.ID {
-	return key.ReadCreationID(order.ID)
+	return key.ReadCreationID(&order.ID)
 }
 func (order Order) GetMakerOwnableID() types.ID {
-	return key.ReadMakerOwnableID(order.ID)
+	return key.ReadMakerOwnableID(&order.ID)
 }
 func (order Order) GetTakerOwnableID() types.ID {
-	return key.ReadTakerOwnableID(order.ID)
+	return key.ReadTakerOwnableID(&order.ID)
 }
 func (order Order) GetMakerID() types.ID {
-	return key.ReadMakerID(order.ID)
+	return key.ReadMakerID(&order.ID)
 }
 func (order Order) GetCreation() types.MetaProperty {
-	heightValue, Error := strconv.ParseInt(key.ReadCreationID(order.ID).String(), 10, 64)
+	heightValue, Error := strconv.ParseInt(key.ReadCreationID(&order.ID).String(), 10, 64)
 	if Error != nil {
 		return base.NewMetaProperty(base.NewID(properties.Creation), base.NewMetaFact(base.NewHeightData(base.NewHeight(0))))
 	}
@@ -69,7 +72,7 @@ func (order Order) GetCreation() types.MetaProperty {
 	return base.NewMetaProperty(base.NewID(properties.Creation), base.NewMetaFact(base.NewHeightData(base.NewHeight(heightValue))))
 }
 func (order Order) GetExchangeRate() types.MetaProperty {
-	decValue, Error := sdkTypes.NewDecFromStr(key.ReadRateID(order.ID).String())
+	decValue, Error := sdkTypes.NewDecFromStr(key.ReadRateID(&order.ID).String())
 	if Error != nil {
 		return base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewDecData(sdkTypes.ZeroDec())))
 	}
@@ -106,16 +109,16 @@ func (order Order) GetMakerOwnableSplit() types.Property {
 	}
 }
 func (order Order) GetKey() helpers.Key {
-	return key.FromID(order.ID)
+	return key.FromID(&order.ID)
 }
 func (Order) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Order{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Order{})
 }
 
 func NewOrder(orderID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Order {
 	return &Order{
-		ID:            orderID,
-		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
-		HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
+		ID:            *base.NewID(orderID.String()),
+		HasImmutables: baseTraits.HasImmutables{Properties: *baseTypes.NewProperties(immutableProperties.GetList()...)},
+		HasMutables:   baseTraits.HasMutables{Properties: *baseTypes.NewProperties(mutableProperties.GetList()...)},
 	}
 }

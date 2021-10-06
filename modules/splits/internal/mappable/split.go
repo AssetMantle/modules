@@ -14,17 +14,21 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 var _ mappables.Split = (*Split)(nil)
 
-func (split Split) GetID() types.ID { return split.ID }
+func (split Split) GetStructReference() codec.ProtoMarshaler {
+	return &split
+}
+func (split Split) GetID() types.ID { return &split.ID }
 func (split Split) GetOwnerID() types.ID {
-	return key.ReadOwnerID(split.ID)
+	return key.ReadOwnerID(&split.ID)
 }
 func (split Split) GetOwnableID() types.ID {
-	return key.ReadOwnableID(split.ID)
+	return key.ReadOwnableID(&split.ID)
 }
 func (split Split) GetValue() sdkTypes.Dec {
 	return split.Value
@@ -43,15 +47,15 @@ func (split Split) CanSend(outValue sdkTypes.Dec) bool {
 	return split.Value.GTE(outValue)
 }
 func (split Split) GetKey() helpers.Key {
-	return key.FromID(split.ID)
+	return key.FromID(&split.ID)
 }
 func (Split) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Split{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Split{})
 }
 
 func NewSplit(splitID types.ID, value sdkTypes.Dec) mappables.Split {
 	return &Split{
-		ID:    splitID,
+		ID:    *base.NewID(splitID.String()),
 		Value: value,
 	}
 }

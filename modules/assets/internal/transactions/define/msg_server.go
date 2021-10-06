@@ -16,10 +16,9 @@ type msgServer struct {
 
 var _ MsgServer = msgServer{}
 
-func (msgServer msgServer) Define(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
-	message := messageFromInterface(msg)
+func (msgServer msgServer) Define(goCtx context.Context, message *Message) (*TransactionResponse, error) {
 	ctx := sdkTypes.UnwrapSDKContext(goCtx)
-	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), &message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
@@ -42,7 +41,7 @@ func (msgServer msgServer) Define(goCtx context.Context, msg *Message) (*Transac
 		return nil, Error
 	}
 
-	if auxiliaryResponse := msgServer.transactionKeeper.superAuxiliary.GetKeeper().Help(ctx, super.NewAuxiliaryRequest(classificationID, message.FromID, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := msgServer.transactionKeeper.superAuxiliary.GetKeeper().Help(ctx, super.NewAuxiliaryRequest(classificationID, &message.FromID, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
@@ -52,5 +51,3 @@ func (msgServer msgServer) Define(goCtx context.Context, msg *Message) (*Transac
 func NewMsgServerImpl(keeper transactionKeeper) MsgServer {
 	return &msgServer{keeper}
 }
-
-var _ MsgServer = msgServer{}

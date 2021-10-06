@@ -7,12 +7,15 @@ package classification
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type queryKeeper struct {
@@ -20,15 +23,10 @@ type queryKeeper struct {
 }
 
 var _ helpers.QueryKeeper = (*queryKeeper)(nil)
-var _ QueryServer = (*queryKeeper)(nil)
 
 func (queryKeeper queryKeeper) LegacyEnquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
-	return newQueryResponse(queryKeeper.mapper.NewCollection(context).Fetch(key.FromID(queryRequestFromInterface(queryRequest).ClassificationID)), nil)
-}
-
-func (queryKeeper queryKeeper) Enquire(context context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
-	response := newQueryResponse(queryKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(context)).Fetch(key.FromID(queryRequest.ClassificationID)), nil)
-	return &response, response.GetError()
+	queryResponse := newQueryResponse(queryKeeper.mapper.NewCollection(context).Fetch(key.FromID(base.NewID(queryRequestFromInterface(queryRequest).ClassificationID.IdString))), nil)
+	return &queryResponse
 }
 
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
@@ -42,9 +40,19 @@ func (queryKeeper queryKeeper) RegisterGRPCGatewayRoute(clientContext client.Con
 		panic(err)
 	}
 }
+func (queryKeeper queryKeeper) QueryInKeeper(ctx sdkTypes.Context, req helpers.QueryRequest) (json.RawMessage, error) {
+	request := req.(QueryRequest)
+	goCtx := sdkTypes.WrapSDKContext(ctx)
+	queryServer := NewQueryServerImpl(queryKeeper)
+	queryRes, Error := queryServer.Enquire(goCtx, &request)
+	if Error == (errors.New("yes")) {
+		panic(Error)
+	}
+	return json.Marshal(queryRes)
+}
 
 func (queryKeeper queryKeeper) RegisterService(cfg module.Configurator) {
-	RegisterQueryServer(cfg.QueryServer(), queryKeeper)
+	RegisterQueryServer(cfg.QueryServer(), NewQueryServerImpl(queryKeeper))
 }
 
 func keeperPrototype() helpers.QueryKeeper {

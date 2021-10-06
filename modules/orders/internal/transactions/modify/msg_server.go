@@ -13,7 +13,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables" //nolint:typecheck
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -21,16 +21,15 @@ type msgServer struct {
 	transactionKeeper
 }
 
-func (msgServer msgServer) Modify(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
-	message := messageFromInterface(msg)
+func (msgServer msgServer) Modify(goCtx context.Context, message *Message) (*TransactionResponse, error) {
 	ctx := sdkTypes.UnwrapSDKContext(goCtx)
-	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := msgServer.transactionKeeper.verifyAuxiliary.GetKeeper().Help(ctx, verify.NewAuxiliaryRequest(message.From.AsSDKTypesAccAddress(), &message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	orders := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(message.OrderID))
+	orders := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(&message.OrderID))
 
-	order := orders.Get(key.FromID(message.OrderID))
+	order := orders.Get(key.FromID(&message.OrderID))
 	if order == nil {
 		return nil, errors.EntityNotFound
 	}
@@ -54,11 +53,11 @@ func (msgServer msgServer) Modify(goCtx context.Context, msg *Message) (*Transac
 	}
 
 	if transferMakerOwnableSplit.LT(sdkTypes.ZeroDec()) {
-		if auxiliaryResponse := msgServer.transactionKeeper.transferAuxiliary.GetKeeper().Help(ctx, transfer.NewAuxiliaryRequest(base.NewID(module.Name), message.FromID, order.(mappables.Order).GetMakerOwnableID(), transferMakerOwnableSplit.Abs())); !auxiliaryResponse.IsSuccessful() {
+		if auxiliaryResponse := msgServer.transactionKeeper.transferAuxiliary.GetKeeper().Help(ctx, transfer.NewAuxiliaryRequest(base.NewID(module.Name), &message.FromID, order.(mappables.Order).GetMakerOwnableID(), transferMakerOwnableSplit.Abs())); !auxiliaryResponse.IsSuccessful() {
 			return nil, auxiliaryResponse.GetError()
 		}
 	} else if transferMakerOwnableSplit.GT(sdkTypes.ZeroDec()) {
-		if auxiliaryResponse := msgServer.transactionKeeper.transferAuxiliary.GetKeeper().Help(ctx, transfer.NewAuxiliaryRequest(message.FromID, base.NewID(module.Name), order.(mappables.Order).GetMakerOwnableID(), transferMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+		if auxiliaryResponse := msgServer.transactionKeeper.transferAuxiliary.GetKeeper().Help(ctx, transfer.NewAuxiliaryRequest(&message.FromID, base.NewID(module.Name), order.(mappables.Order).GetMakerOwnableID(), transferMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 			return nil, auxiliaryResponse.GetError()
 		}
 	}

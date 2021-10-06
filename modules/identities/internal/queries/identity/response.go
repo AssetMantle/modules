@@ -6,7 +6,8 @@
 package identity
 
 import (
-	"fmt"
+	"errors"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/common"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
@@ -17,7 +18,7 @@ func (queryResponse QueryResponse) IsSuccessful() bool {
 	return queryResponse.Success
 }
 func (queryResponse QueryResponse) GetError() error {
-	return fmt.Errorf(queryResponse.Error)
+	return errors.New(queryResponse.Error)
 }
 func (queryResponse QueryResponse) LegacyAminoEncode() ([]byte, error) {
 	return common.LegacyAminoCodec.MarshalJSON(queryResponse)
@@ -27,20 +28,37 @@ func (queryResponse QueryResponse) LegacyAminoDecode(bytes []byte) (helpers.Quer
 		return nil, Error
 	}
 
-	return queryResponse, nil
+	return &queryResponse, nil
 }
+func (queryResponse QueryResponse) Encode(cdc codec.JSONMarshaler) ([]byte, error) {
+	return cdc.MarshalJSON(&queryResponse)
+}
+
+func (queryResponse QueryResponse) Decode(cdc codec.JSONMarshaler, bytes []byte) (helpers.QueryResponse, error) {
+	if Error := cdc.UnmarshalJSON(bytes, &queryResponse); Error != nil {
+		return nil, Error
+	}
+	return &queryResponse, nil
+}
+
 func responsePrototype() helpers.QueryResponse {
-	return QueryResponse{}
+	return &QueryResponse{}
 }
+
 func newQueryResponse(collection helpers.Collection, error error) QueryResponse {
 	success := true
 	if error != nil {
 		success = false
+		return QueryResponse{
+			Success: success,
+			Error:   "yes",
+			List:    collection.GetList(),
+		}
 	}
-
 	return QueryResponse{
 		Success: success,
-		Error:   error.Error(),
+		Error:   "no",
 		List:    collection.GetList(),
 	}
+
 }

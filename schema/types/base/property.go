@@ -11,12 +11,12 @@ import (
 
 var _ types.Property = (*Property)(nil)
 
-func (property Property) GetID() types.ID     { return property.Id }
-func (property Property) GetFact() types.Fact { return property.Fact }
-func NewProperty(id types.ID, fact types.Fact) types.Property {
+func (property Property) GetID() types.ID     { return &property.Id }
+func (property Property) GetFact() types.Fact { return &property.Fact }
+func NewProperty(id types.ID, fact types.Fact) *Property {
 	return &Property{
-		Id:   id,
-		Fact: fact,
+		Id:   *NewID(id.String()),
+		Fact: *NewFactProperty(fact.GetHashID(), fact.GetTypeID(), fact.GetSignatures()),
 	}
 }
 func ReadProperty(propertyString string) (types.Property, error) {

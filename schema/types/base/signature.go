@@ -18,21 +18,21 @@ func (baseSignature Signature) String() string {
 	return base64.URLEncoding.EncodeToString(baseSignature.Bytes())
 }
 func (baseSignature Signature) Bytes() []byte   { return baseSignature.SignatureBytes }
-func (baseSignature Signature) GetID() types.ID { return baseSignature.Id }
+func (baseSignature Signature) GetID() types.ID { return &baseSignature.Id }
 func (baseSignature Signature) Verify(pubKey crypto.PubKey, bytes []byte) bool {
 	return pubKey.VerifySignature(bytes, baseSignature.Bytes())
 }
 func (baseSignature Signature) GetValidityHeight() types.Height {
-	return baseSignature.ValidityHeight
+	return &baseSignature.ValidityHeight
 }
 func (baseSignature Signature) HasExpired(height types.Height) bool {
 	return baseSignature.GetValidityHeight().Compare(height) > 0
 }
 
-func NewSignature(id types.ID, signatureBytes []byte, validityHeight types.Height) types.Signature {
+func NewSignature(id types.ID, signatureBytes []byte, validityHeight types.Height) *Signature {
 	return &Signature{
-		Id:             id,
+		Id:             *NewID(id.String()),
 		SignatureBytes: signatureBytes,
-		ValidityHeight: validityHeight,
+		ValidityHeight: *NewHeight(validityHeight.Get()),
 	}
 }

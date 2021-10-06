@@ -8,21 +8,21 @@ package base
 import (
 	"encoding/json"
 	"fmt"
-	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
-	simTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"math/rand"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	simTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"math/rand"
 )
 
 type module struct {
@@ -72,14 +72,12 @@ func (module module) Name() string {
 	return module.name
 }
 
-// TODO
 func (module module) DefaultGenesis(codec codec.JSONMarshaler) json.RawMessage {
-	return module.genesisPrototype().Default().LegacyAminoEncode()
+	return module.genesisPrototype().Default().Encode(codec)
 }
 
-// TODO
 func (module module) ValidateGenesis(codec codec.JSONMarshaler, txConfig client.TxEncodingConfig, rawMessage json.RawMessage) error {
-	genesisState := module.genesisPrototype().LegacyAminoDecode(rawMessage)
+	genesisState := module.genesisPrototype().Decode(codec, rawMessage)
 	return genesisState.Validate()
 }
 func (module module) RegisterRESTRoutes(cliContext client.Context, router *mux.Router) {
@@ -92,7 +90,7 @@ func (module module) RegisterRESTRoutes(cliContext client.Context, router *mux.R
 	}
 }
 func (module module) RegisterGRPCGatewayRoutes(clientContext client.Context, serveMux *runtime.ServeMux) {
-	for _, query := range module.queries.GetList() {
+	for _, query := range module.queriesPrototype().GetList() {
 		query.RegisterGRPCGatewayRoute(clientContext, serveMux)
 	}
 }
@@ -148,7 +146,9 @@ func (module module) NewHandler() sdkTypes.Handler {
 			panic(errors.UninitializedUsage)
 		}
 
-		if transaction := module.transactions.Get(msg.Type()); transaction != nil {
+		transaction := module.transactions.Get(msg.Type())
+
+		if transaction != nil {
 			return transaction.HandleMessage(context, msg)
 		}
 
@@ -165,14 +165,15 @@ func (module module) LegacyQuerierHandler(legacyAmino *codec.LegacyAmino) sdkTyp
 		}
 
 		if query := module.queries.Get(path[0]); query != nil {
-			return query.HandleMessageByLegacyAmino(context, legacyAmino, requestQuery)
+			return query.HandleMessage(context, requestQuery)
 		}
 
 		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())
 	}
 }
-func (module module) InitGenesis(context sdkTypes.Context, _ codec.JSONMarshaler, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
-	genesisState := module.genesisPrototype().LegacyAminoDecode(rawMessage)
+
+func (module module) InitGenesis(context sdkTypes.Context, codec codec.JSONMarshaler, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
+	genesisState := module.genesisPrototype().Decode(codec, rawMessage)
 
 	if module.mapper == nil || module.parameters == nil {
 		panic(errors.UninitializedUsage)
@@ -182,12 +183,12 @@ func (module module) InitGenesis(context sdkTypes.Context, _ codec.JSONMarshaler
 
 	return []abciTypes.ValidatorUpdate{}
 }
-func (module module) ExportGenesis(context sdkTypes.Context, _ codec.JSONMarshaler) json.RawMessage {
+func (module module) ExportGenesis(context sdkTypes.Context, codec codec.JSONMarshaler) json.RawMessage {
 	if module.mapper == nil || module.parameters == nil {
 		panic(errors.UninitializedUsage)
 	}
 
-	return module.genesisPrototype().Export(context, module.mapper, module.parameters).LegacyAminoEncode()
+	return module.genesisPrototype().Export(context, module.mapper, module.parameters).Encode(codec)
 }
 func (module module) BeginBlock(context sdkTypes.Context, beginBlockRequest abciTypes.RequestBeginBlock) {
 	module.block.Begin(context, beginBlockRequest)
@@ -264,6 +265,8 @@ func (module module) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 }
 
 func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
+	schema.RegisterProtoCodec(registry)
+	module.genesisPrototype().RegisterInterface(registry)
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterInterface(registry)
 	}
@@ -276,6 +279,7 @@ func (module module) RegisterServices(configurator sdkTypesModule.Configurator) 
 	for _, query := range module.queriesPrototype().GetList() {
 		query.RegisterService(configurator)
 	}
+
 }
 
 func NewModule(name string, auxiliariesPrototype func() helpers.Auxiliaries, genesisPrototype func() helpers.Genesis, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.Parameters, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions, blockPrototype func() helpers.Block) helpers.Module {

@@ -6,14 +6,14 @@
 package utilities
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables" //nolint:typecheck
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 func AddSplits(splits helpers.Collection, ownerID types.ID, ownableID types.ID, value sdkTypes.Dec) (helpers.Collection, error) {
@@ -27,7 +27,8 @@ func AddSplits(splits helpers.Collection, ownerID types.ID, ownableID types.ID, 
 	if split == nil {
 		splits.Add(mappable.NewSplit(splitID, value))
 	} else {
-		splits.Mutate(split.(mappables.Split).Receive(value).(mappables.Split))
+		newSplit := split.(mappables.Split).Receive(value)
+		splits.Mutate(mappable.NewSplit(base.NewID(key.NewSplitID(ownerID, ownableID).String()), newSplit.GetValue()))
 	}
 
 	return splits, nil
@@ -45,7 +46,8 @@ func SubtractSplits(splits helpers.Collection, ownerID types.ID, ownableID types
 		return nil, errors.EntityNotFound
 	}
 
-	switch split = split.(mappables.Split).Send(value).(mappables.Split); {
+	newSplit := split.(mappables.Split).Send(value)
+	switch split = mappable.NewSplit(base.NewID(key.NewSplitID(ownerID, ownableID).String()), newSplit.GetValue()); {
 	case split.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
 		return nil, errors.NotAuthorized
 	case split.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):

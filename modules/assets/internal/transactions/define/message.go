@@ -40,7 +40,7 @@ func (message Message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From.AsSDKTypesAccAddress()}
 }
 func (Message) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Message{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Message{})
 }
 func (Message) RegisterInterface(registry codecTypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
@@ -63,10 +63,10 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID types.ID, immutableMetaProperties types.MetaProperties, immutableProperties types.Properties, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
 	return &Message{
 		From:                    base.NewAccAddressFromSDKTypesAccAddress(from),
-		FromID:                  fromID,
-		ImmutableMetaProperties: immutableMetaProperties,
-		ImmutableProperties:     immutableProperties,
-		MutableMetaProperties:   mutableMetaProperties,
-		MutableProperties:       mutableProperties,
+		FromID:                  *base.NewID(fromID.String()),
+		ImmutableMetaProperties: *base.NewMetaProperties(immutableMetaProperties.GetList()...),
+		ImmutableProperties:     *base.NewProperties(immutableProperties.GetList()...),
+		MutableMetaProperties:   *base.NewMetaProperties(mutableMetaProperties.GetList()...),
+		MutableProperties:       *base.NewProperties(mutableProperties.GetList()...),
 	}
 }

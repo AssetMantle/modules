@@ -16,7 +16,7 @@ import (
 )
 
 type auxiliaryKeeper struct {
-	mapper           helpers.Mapper
+	mapper helpers.Mapper
 	conformAuxiliary helpers.Auxiliary
 }
 
@@ -85,8 +85,6 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpe
 			switch value.GetName() {
 			case conform.Auxiliary.GetName():
 				auxiliaryKeeper.conformAuxiliary = value
-			default:
-				break
 			}
 		default:
 			panic(errors.UninitializedUsage)

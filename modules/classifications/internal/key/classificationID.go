@@ -22,6 +22,9 @@ import (
 var _ types.ID = (*ClassificationID)(nil)
 var _ helpers.Key = (*ClassificationID)(nil)
 
+func (classificationID ClassificationID) GetStructReference() codec.ProtoMarshaler {
+	return &classificationID
+}
 func (classificationID ClassificationID) Bytes() []byte {
 	return append(
 		classificationID.ChainID.Bytes(),
@@ -41,7 +44,7 @@ func (classificationID ClassificationID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(classificationID.Bytes())
 }
 func (ClassificationID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &ClassificationID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, ClassificationID{})
 }
 func (classificationID ClassificationID) IsPartial() bool {
 	return len(classificationID.HashID.Bytes()) == 0

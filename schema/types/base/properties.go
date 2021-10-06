@@ -21,7 +21,11 @@ func (properties Properties) Get(id types.ID) types.Property {
 	return nil
 }
 func (properties Properties) GetList() []types.Property {
-	return properties.PropertyList
+	newPropertyList := make([]types.Property, len(properties.PropertyList))
+	for i, _ := range properties.PropertyList {
+		newPropertyList[i] = &properties.PropertyList[i]
+	}
+	return newPropertyList
 }
 func (properties Properties) Add(propertyList ...types.Property) types.Properties {
 	newPropertyList := properties.GetList()
@@ -62,11 +66,16 @@ func (properties Properties) Mutate(propertyList ...types.Property) types.Proper
 
 	return NewProperties(newPropertyList...)
 }
-func NewProperties(propertyList ...types.Property) types.Properties {
+func NewProperties(propertyList ...types.Property) *Properties {
+	newPropertyList := make([]Property, len(propertyList))
+	for i, element := range propertyList {
+		newPropertyList[i] = *NewProperty(element.GetID(), element.GetFact())
+	}
 	return &Properties{
-		PropertyList: propertyList,
+		PropertyList: newPropertyList,
 	}
 }
+
 func ReadProperties(propertiesString string) (types.Properties, error) {
 	properties, Error := ReadMetaProperties(propertiesString)
 	if Error != nil {

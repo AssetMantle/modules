@@ -15,12 +15,9 @@ var Query = base.NewQuery(
 	"assets",
 	"",
 	"",
-
 	module.Name,
-
 	requestPrototype,
 	responsePrototype,
 	keeperPrototype,
-
 	flags.AssetID,
 )

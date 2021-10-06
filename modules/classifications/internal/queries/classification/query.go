@@ -17,7 +17,6 @@ var Query = base.NewQuery(
 	"",
 
 	module.Name,
-
 	requestPrototype,
 	responsePrototype,
 	keeperPrototype,

@@ -1,11 +1,11 @@
 package cuckoo
 
-type id struct {
+type ID struct {
 	IDString string `json:"idString"`
 }
 
-func newId(idString string) *id {
-	return &id{
+func NewID(idString string) *ID {
+	return &ID{
 		IDString: idString,
 	}
 }

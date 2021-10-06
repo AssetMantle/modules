@@ -24,7 +24,11 @@ func (metaProperties MetaProperties) Get(id types.ID) types.MetaProperty {
 	return nil
 }
 func (metaProperties MetaProperties) GetList() []types.MetaProperty {
-	return metaProperties.MetaPropertyList
+	newMetaPropertiesList := make([]types.MetaProperty, len(metaProperties.MetaPropertyList))
+	for i, _ := range metaProperties.MetaPropertyList {
+		newMetaPropertiesList[i] = &metaProperties.MetaPropertyList[i]
+	}
+	return newMetaPropertiesList
 }
 func (metaProperties MetaProperties) Add(metaPropertyList ...types.MetaProperty) types.MetaProperties {
 	newMetaPropertyList := metaProperties.GetList()
@@ -74,9 +78,13 @@ func (metaProperties MetaProperties) RemoveData() types.Properties {
 	return NewProperties(propertyList...)
 }
 
-func NewMetaProperties(metaPropertyList ...types.MetaProperty) types.MetaProperties {
+func NewMetaProperties(metaPropertyList ...types.MetaProperty) *MetaProperties {
+	newMetaPropertyList := make([]MetaProperty, len(metaPropertyList))
+	for i, element := range metaPropertyList {
+		newMetaPropertyList[i] = *NewMetaProperty(element.GetID(), element.GetMetaFact())
+	}
 	return &MetaProperties{
-		MetaPropertyList: metaPropertyList,
+		MetaPropertyList: newMetaPropertyList,
 	}
 }
 

@@ -127,7 +127,7 @@ func (transaction transaction) RegisterInterface(registry codecTypes.InterfaceRe
 	transaction.messagePrototype().RegisterInterface(registry)
 }
 func (transaction transaction) RegisterService(configurator sdkModule.Configurator) {
-	transaction.keeper.RegisterService(configurator)
+	transaction.keeperPrototype().RegisterService(configurator)
 }
 func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessage) (sdkTypes.Msg, error) {
 	transactionRequest, Error := transaction.requestPrototype().FromJSON(rawMessage)

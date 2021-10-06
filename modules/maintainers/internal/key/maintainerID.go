@@ -20,6 +20,9 @@ import (
 var _ types.ID = (*MaintainerID)(nil)
 var _ helpers.Key = (*MaintainerID)(nil)
 
+func (maintainerID MaintainerID) GetStructReference() codec.ProtoMarshaler {
+	return &maintainerID
+}
 func (maintainerID MaintainerID) Bytes() []byte {
 	return append(
 		maintainerID.ClassificationID.Bytes(),
@@ -39,7 +42,7 @@ func (maintainerID MaintainerID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(maintainerID.Bytes())
 }
 func (MaintainerID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &MaintainerID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, MaintainerID{})
 }
 func (maintainerID MaintainerID) IsPartial() bool {
 	return len(maintainerID.IdentityID.Bytes()) == 0

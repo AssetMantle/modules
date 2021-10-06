@@ -6,25 +6,23 @@
 package key
 
 import (
-	"strings"
-
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"strings"
 )
 
 func readMetaID(metaIDString string) MetaID {
 	idList := strings.Split(metaIDString, constants.FirstOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return MetaID{
-			TypeID: base.NewID(idList[0]),
-			HashID: base.NewID(idList[1]),
+			TypeID: *base.NewID(idList[0]),
+			HashID: *base.NewID(idList[1]),
 		}
 	}
 
-	return MetaID{TypeID: base.NewID(""), HashID: base.NewID("")}
+	return MetaID{TypeID: *base.NewID(""), HashID: *base.NewID("")}
 }
 func metaIDFromInterface(i interface{}) MetaID {
 	switch value := i.(type) {
@@ -39,8 +37,8 @@ func metaIDFromInterface(i interface{}) MetaID {
 
 func GenerateMetaID(data types.Data) types.ID {
 	return &MetaID{
-		TypeID: data.GetTypeID(),
-		HashID: data.GenerateHashID(),
+		TypeID: *base.NewID(data.GetTypeID().String()),
+		HashID: *base.NewID(data.GenerateHashID().String()),
 	}
 }
 

@@ -6,11 +6,10 @@
 package key
 
 import (
-	"testing"
-
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func Test_MetaID_Methods(t *testing.T) {

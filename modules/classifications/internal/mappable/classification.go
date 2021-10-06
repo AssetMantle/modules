@@ -14,14 +14,18 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 var _ mappables.Classification = (*Classification)(nil)
 
-func (classification Classification) GetID() types.ID { return classification.ID }
+func (classification Classification) GetStructReference() codec.ProtoMarshaler {
+	return &classification
+}
+func (classification Classification) GetID() types.ID { return &classification.ID }
 func (classification Classification) GetKey() helpers.Key {
-	return key.FromID(classification.ID)
+	return key.FromID(&classification.ID)
 }
 
 func (classification Classification) GetImmutableProperties() types.Properties {
@@ -41,13 +45,13 @@ func (classification Classification) Mutate(propertyList ...types.Property) trai
 }
 
 func (Classification) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Classification{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Classification{})
 }
 
 func NewClassification(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Classification {
 	return &Classification{
-		ID:            id,
-		HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
-		HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
+		ID:            *baseTypes.NewID(id.String()),
+		HasImmutables: baseTraits.HasImmutables{Properties: *baseTypes.NewProperties(immutableProperties.GetList()...)},
+		HasMutables:   baseTraits.HasMutables{Properties: *baseTypes.NewProperties(mutableProperties.GetList()...)},
 	}
 }

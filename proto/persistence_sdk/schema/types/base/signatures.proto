@@ -3,12 +3,12 @@ syntax = "proto3";
 package persistence_sdk.schema.types.base;
 
 import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/signature.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message Signatures {
   option (gogoproto.stringer) = false;
 
-  repeated string signature_list = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Signature"];
-
+  repeated persistence_sdk.schema.types.base.Signature signature_list = 1 [(gogoproto.nullable) = false];
 }

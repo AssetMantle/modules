@@ -13,8 +13,7 @@ type msgServer struct {
 	transactionKeeper
 }
 
-func (msgServer msgServer) Reveal(goCtx context.Context, msg *Message) (*TransactionResponse, error) {
-	message := messageFromInterface(msg)
+func (msgServer msgServer) Reveal(goCtx context.Context, message *Message) (*TransactionResponse, error) {
 	ctx := sdkTypes.UnwrapSDKContext(goCtx)
 	metaID := key.GenerateMetaID(message.MetaFact.GetData())
 	metas := msgServer.transactionKeeper.mapper.NewCollection(ctx).Fetch(key.FromID(metaID))

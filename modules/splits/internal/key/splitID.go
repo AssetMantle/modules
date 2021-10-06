@@ -7,19 +7,21 @@ package key
 
 import (
 	"bytes"
-	"strings"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"strings"
 )
 
 var _ types.ID = (*SplitID)(nil)
 var _ helpers.Key = (*SplitID)(nil)
 
+func (splitID SplitID) GetStructReference() codec.ProtoMarshaler {
+	return &splitID
+}
 func (splitID SplitID) Bytes() []byte {
 	return append(
 		splitID.OwnerID.Bytes(),
@@ -39,7 +41,7 @@ func (splitID SplitID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(splitID.Bytes())
 }
 func (SplitID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &SplitID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, SplitID{})
 }
 func (splitID SplitID) IsPartial() bool {
 	return len(splitID.OwnableID.Bytes()) == 0

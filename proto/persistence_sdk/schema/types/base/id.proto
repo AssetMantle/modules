@@ -10,5 +10,4 @@ message ID {
   option (gogoproto.goproto_stringer) = false;
 
   string id_string = 1;
-
 }

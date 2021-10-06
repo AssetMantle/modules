@@ -40,7 +40,7 @@ func (message Message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From.AsSDKTypesAccAddress()}
 }
 func (Message) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &Message{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Message{})
 }
 func (Message) RegisterInterface(registry codecTypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
@@ -63,6 +63,6 @@ func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, identityID typ
 	return &Message{
 		From:       base.NewAccAddressFromSDKTypesAccAddress(from),
 		To:         base.NewAccAddressFromSDKTypesAccAddress(to),
-		IdentityID: identityID,
+		IdentityID: *base.NewID(identityID.String()),
 	}
 }

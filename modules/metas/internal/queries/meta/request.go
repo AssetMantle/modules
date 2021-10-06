@@ -8,6 +8,7 @@ package meta
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/common"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -40,6 +41,17 @@ func (queryRequest QueryRequest) FromMap(vars map[string]string) helpers.QueryRe
 	return newQueryRequest(base.NewID(vars[Query.GetName()]))
 }
 
+func (queryRequest QueryRequest) Encode(cdc codec.JSONMarshaler) ([]byte, error) {
+	return cdc.MarshalJSON(&queryRequest)
+}
+
+func (queryRequest QueryRequest) Decode(cdc codec.JSONMarshaler, bytes []byte) (helpers.QueryRequest, error) {
+	if Error := cdc.UnmarshalJSON(bytes, &queryRequest); Error != nil {
+		return nil, Error
+	}
+
+	return queryRequest, nil
+}
 func (queryRequest QueryRequest) LegacyAminoEncode() ([]byte, error) {
 	return common.LegacyAminoCodec.MarshalJSON(queryRequest)
 }
@@ -57,13 +69,13 @@ func requestPrototype() helpers.QueryRequest {
 
 func queryRequestFromInterface(request helpers.QueryRequest) QueryRequest {
 	switch value := request.(type) {
-	case QueryRequest:
-		return value
+	case *QueryRequest:
+		return *value
 	default:
 		return QueryRequest{}
 	}
 }
 
 func newQueryRequest(metaID types.ID) helpers.QueryRequest {
-	return QueryRequest{MetaID: metaID}
+	return QueryRequest{MetaID: *base.NewID(metaID.String())}
 }

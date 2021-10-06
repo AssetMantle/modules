@@ -3,11 +3,12 @@ syntax = "proto3";
 package persistence_sdk.schema.types.base;
 
 import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/property.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message Properties {
 
-  repeated string propertyList = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Property", (gogoproto.nullable) = false];
+  repeated persistence_sdk.schema.types.base.Property propertyList = 1 [(gogoproto.nullable) = false];
 
 }

@@ -6,12 +6,11 @@
 package key
 
 import (
-	"strings"
-	"testing"
-
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
+	"strings"
+	"testing"
 )
 
 func Test_SplitID_Methods(t *testing.T) {

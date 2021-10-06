@@ -7,7 +7,6 @@ package unwrap
 
 import (
 	"encoding/json"
-
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -81,7 +80,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	), nil
 }
 func (transactionRequest) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, &transactionRequest{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
