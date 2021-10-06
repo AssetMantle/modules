@@ -14,29 +14,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
-func idDataFromInterface(data types.Data) (Data_IdData, error) {
-	switch value := data.(type) {
-	case *Data_IdData:
-		return *value, nil
-	default:
-		return Data_IdData{}, errors.MetaDataError
-	}
-}
-
-func NewIDData(value types.ID) types.Data {
-	id := *NewID(value.String())
-	return &Data_IdData{
-		IdData: &IDData{
-			Value: id,
-		},
-	}
-}
-
-func ReadIDData(idData string) (types.Data, error) {
-	return NewIDData(NewID(idData)), nil
-}
-
-var _ types.Data = (*Data_IdData)(nil)
+var _, _ types.Data = (*Data_IdData)(nil), (*IDData)(nil)
 
 func (idData Data_IdData) Compare(data types.Data) int {
 	compareIDData, Error := idDataFromInterface(data)
@@ -89,3 +67,79 @@ func (idData Data_IdData) Unmarshal(dAtA []byte) error {
 }
 func (idData *Data_IdData) Reset() { *idData = Data_IdData{} }
 func (*Data_IdData) ProtoMessage() {}
+func idDataFromInterface(data types.Data) (Data_IdData, error) {
+	switch value := data.(type) {
+	case *Data_IdData:
+		return *value, nil
+	default:
+		return Data_IdData{}, errors.MetaDataError
+	}
+}
+
+func NewIDData(value types.ID) types.Data {
+	id := *NewID(value.String())
+	return &Data_IdData{
+		IdData: &IDData{
+			Value: id,
+		},
+	}
+}
+
+func ReadIDData(idData string) (types.Data, error) {
+	return NewIDData(NewID(idData)), nil
+}
+
+func (idData IDData) Compare(data types.Data) int {
+	compareIDData, Error := dummyIDDataFromInterface(data)
+	if Error != nil {
+		panic(Error)
+	}
+
+	return bytes.Compare(idData.Value.Bytes(), compareIDData.Value.Bytes())
+}
+func (idData IDData) String() string {
+	return idData.Value.String()
+}
+func (idData IDData) ZeroValue() types.Data {
+	return NewIDData(NewID(""))
+}
+func (idData IDData) GetTypeID() types.ID {
+	return NewID("I")
+}
+func (idData IDData) GenerateHashID() types.ID {
+	return NewID(meta.Hash(idData.Value.String()))
+}
+func (idData IDData) AsAccAddress() (sdkTypes.AccAddress, error) {
+	zeroValue, _ := AccAddressData{}.ZeroValue().AsAccAddress()
+	return zeroValue, errors.EntityNotFound
+}
+func (idData IDData) AsListData() (types.ListData, error) {
+	zeroValue, _ := ListData{}.ZeroValue().AsListData()
+	return zeroValue, errors.IncorrectFormat
+}
+func (idData IDData) AsString() (string, error) {
+	zeroValue, _ := StringData{}.ZeroValue().AsString()
+	return zeroValue, errors.IncorrectFormat
+}
+func (idData IDData) AsDec() (sdkTypes.Dec, error) {
+	zeroValue, _ := DecData{}.ZeroValue().AsDec()
+	return zeroValue, errors.IncorrectFormat
+}
+func (idData IDData) AsHeight() (types.Height, error) {
+	zeroValue, _ := HeightData{}.ZeroValue().AsHeight()
+	return zeroValue, errors.IncorrectFormat
+}
+func (idData IDData) AsID() (types.ID, error) {
+	return &idData.Value, nil
+}
+func (idData IDData) Get() interface{} {
+	return idData.Value
+}
+func dummyIDDataFromInterface(data types.Data) (IDData, error) {
+	switch value := data.(type) {
+	case *IDData:
+		return *value, nil
+	default:
+		return IDData{}, errors.MetaDataError
+	}
+}

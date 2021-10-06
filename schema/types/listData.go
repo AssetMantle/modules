@@ -15,3 +15,14 @@ type ListData interface {
 	Add(...Data) ListData
 	Remove(...Data) ListData
 }
+
+type DummyListData interface {
+	Data
+
+	BaseSearch(Data) int
+
+	BaseGetList() []Data
+
+	BaseAdd(...Data) DummyListData
+	BaseRemove(...Data) DummyListData
+}

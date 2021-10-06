@@ -41,8 +41,12 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mutableProperties := baseSimulation.GenerateRandomProperties(simulationState.Rand)
 		mappableList[i] = mappable.NewClassification(key.NewClassificationID(baseSimulation.GenerateRandomID(simulationState.Rand), immutableProperties, mutableProperties), immutableProperties, mutableProperties)
 	}
-
-	genesisState := internalGenesis.NewGenesis(nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
+	parametersList := parameters.Prototype().GetList()
+	newParametersList := make([]dummy.DummyParameter, len(parametersList))
+	for i, _ := range parametersList {
+		newParametersList[i] = *dummy.NewParameter(parametersList[i].GetID(), parametersList[i].GetData())
+	}
+	genesisState := internalGenesis.NewGenesis(nil, newParametersList).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
 
 	simulationState.GenState[classificationsModule.Name] = common.JSONCodec.MustMarshalJSON(genesisState.(proto.Message))
 }

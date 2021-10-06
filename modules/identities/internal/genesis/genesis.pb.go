@@ -7,8 +7,8 @@ import (
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	github_com_persistenceOne_persistenceSDK_schema_helpers "github.com/persistenceOne/persistenceSDK/schema/helpers"
-	github_com_persistenceOne_persistenceSDK_schema_types "github.com/persistenceOne/persistenceSDK/schema/types"
+	mappable "github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
+	dummy "github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters/dummy"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -26,10 +26,10 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Genesis struct {
-	DefaultMappableList  []github_com_persistenceOne_persistenceSDK_schema_helpers.Mappable `protobuf:"bytes,1,rep,name=defaultMappableList,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/helpers.Mappable" json:"defaultMappableList"`
-	DefaultParameterList []github_com_persistenceOne_persistenceSDK_schema_types.Parameter  `protobuf:"bytes,2,rep,name=defaultParameterList,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types.Parameter" json:"defaultParameterList"`
-	MappableList         []github_com_persistenceOne_persistenceSDK_schema_helpers.Mappable `protobuf:"bytes,3,rep,name=MappableList,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/helpers.Mappable" json:"MappableList"`
-	ParameterList        []github_com_persistenceOne_persistenceSDK_schema_types.Parameter  `protobuf:"bytes,4,rep,name=ParameterList,proto3,customtype=github.com/persistenceOne/persistenceSDK/schema/types.Parameter" json:"ParameterList"`
+	DefaultMappableList  []mappable.Identity    `protobuf:"bytes,1,rep,name=defaultMappableList,proto3" json:"defaultMappableList"`
+	DefaultParameterList []dummy.DummyParameter `protobuf:"bytes,2,rep,name=defaultParameterList,proto3" json:"defaultParameterList"`
+	MappableList         []mappable.Identity    `protobuf:"bytes,3,rep,name=MappableList,proto3" json:"MappableList"`
+	ParameterList        []dummy.DummyParameter `protobuf:"bytes,4,rep,name=ParameterList,proto3" json:"ParameterList"`
 }
 
 func (m *Genesis) Reset()         { *m = Genesis{} }
@@ -74,26 +74,28 @@ func init() {
 }
 
 var fileDescriptor_d750e73d0638d9f3 = []byte{
-	// 304 bytes of a gzipped FileDescriptorProto
+	// 331 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x72, 0x2c, 0x48, 0x2d, 0x2a,
 	0xce, 0x2c, 0x2e, 0x49, 0xcd, 0x4b, 0x4e, 0x8d, 0x2f, 0x4e, 0xc9, 0xd6, 0xcf, 0xcd, 0x4f, 0x29,
 	0xcd, 0x49, 0x2d, 0xd6, 0xcf, 0x4c, 0x49, 0xcd, 0x2b, 0xc9, 0x2c, 0xc9, 0x04, 0x31, 0xf3, 0x4a,
 	0x52, 0x8b, 0xf2, 0x12, 0x73, 0xf4, 0xd3, 0x53, 0xf3, 0x52, 0x8b, 0x33, 0x8b, 0x61, 0xb4, 0x5e,
 	0x41, 0x51, 0x7e, 0x49, 0xbe, 0x90, 0x31, 0x9a, 0x11, 0x7a, 0x50, 0x23, 0xf4, 0x10, 0x46, 0xe8,
 	0xc1, 0x8c, 0xd0, 0x83, 0x6a, 0x95, 0x12, 0x49, 0xcf, 0x4f, 0xcf, 0x07, 0xeb, 0xd7, 0x07, 0xb1,
-	0x20, 0x46, 0x29, 0xdd, 0x67, 0xe6, 0x62, 0x77, 0x87, 0xa8, 0x10, 0xaa, 0xe2, 0x12, 0x4e, 0x49,
-	0x4d, 0x4b, 0x2c, 0xcd, 0x29, 0xf1, 0x4d, 0x2c, 0x28, 0x48, 0x4c, 0xca, 0x49, 0xf5, 0xc9, 0x2c,
-	0x2e, 0x91, 0x60, 0x54, 0x60, 0xd6, 0xe0, 0x74, 0xf2, 0x38, 0x71, 0x4f, 0x9e, 0xe1, 0xd6, 0x3d,
-	0x79, 0x87, 0xf4, 0xcc, 0x92, 0x8c, 0xd2, 0x24, 0xbd, 0xe4, 0xfc, 0x5c, 0x7d, 0x24, 0x67, 0xf8,
-	0xe7, 0xa5, 0x22, 0x73, 0x83, 0x5d, 0xbc, 0xf5, 0x8b, 0x93, 0x33, 0x52, 0x73, 0x13, 0xf5, 0x33,
-	0x52, 0x73, 0x40, 0x12, 0x7a, 0x30, 0x33, 0x83, 0xb0, 0x59, 0x22, 0x54, 0xcd, 0x25, 0x02, 0x15,
-	0x0e, 0x48, 0x2c, 0x4a, 0xcc, 0x4d, 0x2d, 0x49, 0x2d, 0x02, 0x5b, 0xce, 0x04, 0xb6, 0xdc, 0x1d,
-	0x6a, 0xb9, 0x3d, 0xa9, 0x96, 0x97, 0x54, 0x16, 0xa4, 0x16, 0xeb, 0xc1, 0x8d, 0x0c, 0xc2, 0x6a,
-	0x89, 0x50, 0x0e, 0x17, 0x0f, 0x8a, 0x8f, 0x99, 0xa9, 0xec, 0x63, 0x14, 0xd3, 0x85, 0x72, 0xb9,
-	0x78, 0x51, 0xfd, 0xc8, 0x42, 0x5d, 0x3f, 0xa2, 0x9a, 0xee, 0x94, 0x76, 0xe2, 0x91, 0x1c, 0xe3,
-	0x85, 0x47, 0x72, 0x8c, 0x0f, 0x1e, 0xc9, 0x31, 0x4e, 0x78, 0x2c, 0xc7, 0x70, 0xe1, 0xb1, 0x1c,
-	0xc3, 0x8d, 0xc7, 0x72, 0x0c, 0x51, 0x3e, 0x44, 0xdb, 0x44, 0x44, 0x12, 0x4d, 0x62, 0x03, 0x27,
-	0x28, 0x63, 0x40, 0x00, 0x00, 0x00, 0xff, 0xff, 0x96, 0x23, 0x15, 0xd2, 0xe0, 0x02, 0x00, 0x00,
+	0x20, 0x46, 0x49, 0xf9, 0x90, 0xe2, 0x9a, 0x82, 0xc4, 0xa2, 0xc4, 0xdc, 0xd4, 0x92, 0xd4, 0xa2,
+	0x62, 0xfd, 0x94, 0xd2, 0xdc, 0xdc, 0x4a, 0x84, 0x00, 0xd4, 0x34, 0x67, 0x52, 0x4c, 0xcb, 0x4d,
+	0x2c, 0x28, 0x48, 0x4c, 0xca, 0x49, 0x85, 0x49, 0x56, 0x42, 0x0c, 0x51, 0x7a, 0xc8, 0xcc, 0xc5,
+	0xee, 0x0e, 0x71, 0xb4, 0x50, 0x19, 0x97, 0x70, 0x4a, 0x6a, 0x5a, 0x62, 0x69, 0x4e, 0x89, 0x2f,
+	0x54, 0xb5, 0x4f, 0x66, 0x71, 0x89, 0x04, 0xa3, 0x02, 0xb3, 0x06, 0xb7, 0x91, 0x9d, 0x1e, 0x29,
+	0xe1, 0x00, 0xb3, 0x4e, 0xcf, 0x13, 0x6a, 0x9d, 0x13, 0xcb, 0x89, 0x7b, 0xf2, 0x0c, 0x41, 0xd8,
+	0x2c, 0x10, 0xaa, 0xe5, 0x12, 0x81, 0x0a, 0x07, 0xc0, 0xbc, 0x08, 0xb6, 0x98, 0x09, 0x6c, 0xb1,
+	0x33, 0x31, 0x16, 0x23, 0x02, 0x4b, 0x0f, 0x1c, 0x58, 0x7a, 0x2e, 0x20, 0x12, 0x6e, 0x1c, 0xd4,
+	0x76, 0xac, 0xd6, 0x08, 0x65, 0x70, 0xf1, 0xa0, 0xf8, 0x97, 0x99, 0x8a, 0xfe, 0x45, 0x31, 0x59,
+	0x28, 0x9f, 0x8b, 0x17, 0xd5, 0x87, 0x2c, 0xd4, 0xf6, 0x21, 0xaa, 0xf9, 0x56, 0x2c, 0x1d, 0x0b,
+	0xe4, 0x19, 0x9c, 0xd2, 0x4e, 0x3c, 0x92, 0x63, 0xbc, 0xf0, 0x48, 0x8e, 0xf1, 0xc1, 0x23, 0x39,
+	0xc6, 0x09, 0x8f, 0xe5, 0x18, 0x2e, 0x3c, 0x96, 0x63, 0xb8, 0xf1, 0x58, 0x8e, 0x21, 0xca, 0x27,
+	0x3d, 0xb3, 0x24, 0xa3, 0x34, 0x49, 0x2f, 0x39, 0x3f, 0x57, 0x1f, 0xc9, 0x0d, 0xfe, 0x79, 0xa9,
+	0xc8, 0xdc, 0x60, 0x17, 0x6f, 0x62, 0xf2, 0x4d, 0x12, 0x1b, 0x38, 0x49, 0x19, 0x03, 0x02, 0x00,
+	0x00, 0xff, 0xff, 0x2e, 0xc9, 0x41, 0x85, 0x75, 0x03, 0x00, 0x00,
 }
 
 func (m *Genesis) Marshal() (dAtA []byte, err error) {
@@ -119,11 +121,11 @@ func (m *Genesis) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if len(m.ParameterList) > 0 {
 		for iNdEx := len(m.ParameterList) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size := m.ParameterList[iNdEx].Size()
-				i -= size
-				if _, err := m.ParameterList[iNdEx].MarshalTo(dAtA[i:]); err != nil {
+				size, err := m.ParameterList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
 					return 0, err
 				}
+				i -= size
 				i = encodeVarintGenesis(dAtA, i, uint64(size))
 			}
 			i--
@@ -133,11 +135,11 @@ func (m *Genesis) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if len(m.MappableList) > 0 {
 		for iNdEx := len(m.MappableList) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size := m.MappableList[iNdEx].Size()
-				i -= size
-				if _, err := m.MappableList[iNdEx].MarshalTo(dAtA[i:]); err != nil {
+				size, err := m.MappableList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
 					return 0, err
 				}
+				i -= size
 				i = encodeVarintGenesis(dAtA, i, uint64(size))
 			}
 			i--
@@ -147,11 +149,11 @@ func (m *Genesis) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if len(m.DefaultParameterList) > 0 {
 		for iNdEx := len(m.DefaultParameterList) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size := m.DefaultParameterList[iNdEx].Size()
-				i -= size
-				if _, err := m.DefaultParameterList[iNdEx].MarshalTo(dAtA[i:]); err != nil {
+				size, err := m.DefaultParameterList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
 					return 0, err
 				}
+				i -= size
 				i = encodeVarintGenesis(dAtA, i, uint64(size))
 			}
 			i--
@@ -161,11 +163,11 @@ func (m *Genesis) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if len(m.DefaultMappableList) > 0 {
 		for iNdEx := len(m.DefaultMappableList) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size := m.DefaultMappableList[iNdEx].Size()
-				i -= size
-				if _, err := m.DefaultMappableList[iNdEx].MarshalTo(dAtA[i:]); err != nil {
+				size, err := m.DefaultMappableList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
 					return 0, err
 				}
+				i -= size
 				i = encodeVarintGenesis(dAtA, i, uint64(size))
 			}
 			i--
@@ -258,7 +260,7 @@ func (m *Genesis) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DefaultMappableList", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenesis
@@ -268,24 +270,22 @@ func (m *Genesis) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthGenesis
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthGenesis
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			var v github_com_persistenceOne_persistenceSDK_schema_helpers.Mappable
-			m.DefaultMappableList = append(m.DefaultMappableList, v)
+			m.DefaultMappableList = append(m.DefaultMappableList, mappable.Identity{})
 			if err := m.DefaultMappableList[len(m.DefaultMappableList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -294,7 +294,7 @@ func (m *Genesis) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DefaultParameterList", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenesis
@@ -304,24 +304,22 @@ func (m *Genesis) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthGenesis
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthGenesis
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			var v github_com_persistenceOne_persistenceSDK_schema_types.Parameter
-			m.DefaultParameterList = append(m.DefaultParameterList, v)
+			m.DefaultParameterList = append(m.DefaultParameterList, dummy.DummyParameter{})
 			if err := m.DefaultParameterList[len(m.DefaultParameterList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -330,7 +328,7 @@ func (m *Genesis) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field MappableList", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenesis
@@ -340,24 +338,22 @@ func (m *Genesis) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthGenesis
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthGenesis
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			var v github_com_persistenceOne_persistenceSDK_schema_helpers.Mappable
-			m.MappableList = append(m.MappableList, v)
+			m.MappableList = append(m.MappableList, mappable.Identity{})
 			if err := m.MappableList[len(m.MappableList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -366,7 +362,7 @@ func (m *Genesis) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ParameterList", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenesis
@@ -376,24 +372,22 @@ func (m *Genesis) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthGenesis
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthGenesis
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			var v github_com_persistenceOne_persistenceSDK_schema_types.Parameter
-			m.ParameterList = append(m.ParameterList, v)
+			m.ParameterList = append(m.ParameterList, dummy.DummyParameter{})
 			if err := m.ParameterList[len(m.ParameterList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}

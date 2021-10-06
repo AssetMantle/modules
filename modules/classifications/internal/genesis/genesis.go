@@ -16,7 +16,7 @@ import (
 var _ helpers.Genesis = (*Genesis)(nil)
 
 func (genesis Genesis) Default() helpers.Genesis {
-	return genesis.Initialize(genesis.DefaultMappableList, genesis.DefaultParameterList)
+	return genesis.Initialize(genesis.GetMappableList(), genesis.GetParameterList())
 }
 
 func (genesis Genesis) Validate() error {
@@ -49,12 +49,12 @@ func (genesis Genesis) Validate() error {
 }
 
 func (genesis Genesis) Import(context sdkTypes.Context, mapper helpers.Mapper, parameters helpers.Parameters) {
-	for _, mappable := range genesis.MappableList {
-		mapper.Create(context, mappable)
+	for _, mappableValue := range genesis.MappableList {
+		mapper.Create(context, &mappableValue)
 	}
 
 	for _, parameter := range genesis.ParameterList {
-		parameters.Mutate(context, parameter)
+		parameters.Mutate(context, &parameter)
 	}
 }
 
@@ -90,7 +90,7 @@ func (genesis Genesis) LegacyAminoDecode(byte []byte) helpers.Genesis {
 		panic(Error)
 	}
 
-	return NewGenesis(genesis.DefaultMappableList, genesis.DefaultParameterList).Initialize(newGenesis.MappableList, newGenesis.ParameterList)
+	return NewGenesis(genesis.DefaultMappableList, genesis.DefaultParameterList).Initialize(newGenesis.GetMappableList(), newGenesis.GetParameterList())
 }
 
 func (genesis Genesis) Encode(cdc codec.JSONMarshaler) []byte {
@@ -108,28 +108,37 @@ func (genesis Genesis) Decode(cdc codec.JSONMarshaler, byte []byte) helpers.Gene
 		panic(Error)
 	}
 
-	return NewGenesis(newGenesis.DefaultMappableList, newGenesis.DefaultParameterList).Initialize(newGenesis.MappableList, newGenesis.ParameterList)
+	return NewGenesis(newGenesis.DefaultMappableList, newGenesis.DefaultParameterList).Initialize(newGenesis.GetMappableList(), newGenesis.GetParameterList())
 }
 
 func (genesis Genesis) Initialize(mappableList []helpers.Mappable, parameterList []types.Parameter) helpers.Genesis {
-	genesis.DefaultParameterList = []types.Parameter{dummy.Parameter.Mutate(dummy.Parameter.GetData())}
-	if len(mappableList) == 0 {
+	newParametersList := make([]dummy.DummyParameter, len(parameterList))
+	for i, _ := range parameterList {
+		newParametersList[i] = *dummy.NewParameter(parameterList[i].GetID(), parameterList[i].GetData())
+	}
+	newMappableList := make([]mappable.Classification, len(mappableList))
+	for i, _ := range mappableList {
+		newMappableList[i] = *mappableList[i].(*mappable.Classification)
+	}
+	newParameter := dummy.Parameter.Mutate(dummy.Parameter.GetData())
+	genesis.DefaultParameterList = []dummy.DummyParameter{*dummy.NewParameter(newParameter.GetID(), newParameter.GetData())}
+	if len(newMappableList) == 0 {
 		genesis.MappableList = genesis.DefaultMappableList
 	} else {
-		genesis.MappableList = mappableList
+		genesis.MappableList = newMappableList
 	}
 
-	if len(parameterList) == 0 {
+	if len(newParametersList) == 0 {
 		genesis.ParameterList = genesis.DefaultParameterList
 	} else {
 		for _, defaultParameter := range genesis.DefaultParameterList {
-			for i, parameter := range parameterList {
+			for i, parameter := range newParametersList {
 				if defaultParameter.GetID().Compare(parameter.GetID()) == 0 {
-					parameterList[i] = defaultParameter.Mutate(parameter.GetData())
+					newParametersList[i] = *dummy.NewParameter(defaultParameter.Mutate(parameter.GetData()).GetID(), defaultParameter.Mutate(parameter.GetData()).GetData())
 				}
 			}
 		}
-		genesis.ParameterList = parameterList
+		genesis.ParameterList = newParametersList
 	}
 
 	if Error := genesis.Validate(); Error != nil {
@@ -140,10 +149,18 @@ func (genesis Genesis) Initialize(mappableList []helpers.Mappable, parameterList
 }
 
 func (genesis Genesis) GetParameterList() []types.Parameter {
-	return genesis.ParameterList
+	newParameterList := make([]types.Parameter, len(genesis.ParameterList))
+	for i, _ := range genesis.ParameterList {
+		newParameterList[i] = &genesis.ParameterList[i]
+	}
+	return newParameterList
 }
 func (genesis Genesis) GetMappableList() []helpers.Mappable {
-	return genesis.MappableList
+	newMappableList := make([]helpers.Mappable, len(genesis.MappableList))
+	for i, _ := range genesis.MappableList {
+		newMappableList[i] = &genesis.MappableList[i]
+	}
+	return newMappableList
 }
 
 func (genesis Genesis) RegisterInterface(registry codecTypes.InterfaceRegistry) {
@@ -161,11 +178,11 @@ func (genesis Genesis) RegisterInterface(registry codecTypes.InterfaceRegistry) 
 	)
 }
 
-func NewGenesis(defaultMappableList []helpers.Mappable, defaultParameterList []types.Parameter) helpers.Genesis {
+func NewGenesis(defaultMappableList []mappable.Classification, defaultParameterList []dummy.DummyParameter) *Genesis {
 	return &Genesis{
 		DefaultMappableList:  defaultMappableList,
 		DefaultParameterList: defaultParameterList,
-		MappableList:         []helpers.Mappable{},
-		ParameterList:        []types.Parameter{},
+		MappableList:         []mappable.Classification{},
+		ParameterList:        []dummy.DummyParameter{},
 	}
 }

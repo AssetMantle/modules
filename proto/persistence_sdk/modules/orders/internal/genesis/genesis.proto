@@ -3,15 +3,17 @@ syntax = "proto3";
 package persistence_sdk.modules.orders.internal.genesis;
 
 import "gogoproto/gogo.proto";
+import "persistence_sdk/modules/orders/internal/parameters/dummy/parameter.proto";
+import "persistence_sdk/modules/orders/internal/mappable/order.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/modules/orders/internal/genesis";
 
 message Genesis {
+  option (gogoproto.goproto_getters) = false;
+  repeated persistence_sdk.modules.orders.internal.mappable.Order defaultMappableList = 1 [(gogoproto.nullable) = false];
+  repeated persistence_sdk.modules.orders.internal.parameters.dummy.DummyParameter defaultParameterList = 2 [(gogoproto.nullable) = false];
 
-  repeated string defaultMappableList = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/helpers.Mappable", (gogoproto.nullable) = false];
-  repeated string defaultParameterList = 2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Parameter", (gogoproto.nullable) = false];
-
-  repeated string MappableList = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/helpers.Mappable", (gogoproto.nullable) = false];
-  repeated string ParameterList = 4 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Parameter", (gogoproto.nullable) = false];
+  repeated persistence_sdk.modules.orders.internal.mappable.Order MappableList = 3 [(gogoproto.nullable) = false];
+  repeated persistence_sdk.modules.orders.internal.parameters.dummy.DummyParameter ParameterList = 4 [(gogoproto.nullable) = false];
 
 }

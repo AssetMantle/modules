@@ -15,7 +15,7 @@ import (
 var _ types.Parameter = (*DummyParameter)(nil)
 
 func (dummyParameter DummyParameter) String() string {
-	bytes, Error := json.Marshal(dummyParameter.BaseParameter)
+	bytes, Error := json.Marshal(dummyParameter)
 	if Error != nil {
 		return Error.Error()
 	}
@@ -26,7 +26,7 @@ func (dummyParameter DummyParameter) Equal(compareParameter types.Parameter) boo
 	if compareParameter == nil {
 		return false
 	}
-	return dummyParameter.BaseParameter.Data.Compare(compareParameter.GetData()) == 0
+	return dummyParameter.Data.Compare(compareParameter.GetData()) == 0
 }
 
 func (dummyParameter DummyParameter) Validate() error {
@@ -34,11 +34,11 @@ func (dummyParameter DummyParameter) Validate() error {
 }
 
 func (dummyParameter DummyParameter) GetID() types.ID {
-	return &dummyParameter.BaseParameter.ID
+	return &dummyParameter.ID
 }
 
 func (dummyParameter DummyParameter) GetData() types.Data {
-	return &dummyParameter.BaseParameter.Data
+	return &dummyParameter.Data
 }
 
 func (dummyParameter DummyParameter) GetValidator() func(interface{}) error {
@@ -46,7 +46,8 @@ func (dummyParameter DummyParameter) GetValidator() func(interface{}) error {
 }
 
 func (dummyParameter DummyParameter) Mutate(data types.Data) types.Parameter {
-	dummyParameter.BaseParameter.Data = *base.NewData(data)
+	decData, _ := data.AsDec()
+	dummyParameter.Data = *base.NewDummyDecData(decData)
 	return &dummyParameter
 }
 
@@ -54,11 +55,10 @@ func (DummyParameter) RegisterImplementation(interfaceRegistry codecTypes.Interf
 	interfaceRegistry.RegisterImplementations((*types.Parameter)(nil), &DummyParameter{})
 }
 
-func NewParameter(id types.ID, data types.Data) types.Parameter {
+func NewParameter(id types.ID, data types.Data) *DummyParameter {
+	decData, _ := data.AsDec()
 	return &DummyParameter{
-		BaseParameter: base.Parameter{
-			ID:   *base.NewID(id.String()),
-			Data: *base.NewData(data),
-		},
+		ID:   *base.NewID(id.String()),
+		Data: *base.NewDummyDecData(decData),
 	}
 }

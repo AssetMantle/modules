@@ -8,5 +8,6 @@ import "persistence_sdk/schema/types/base/accAddress.proto";
 option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
 
 message AccAddressData {
-  schema.types.base.AccAddress  value = 1 [(gogoproto.nullable) = false];
+  option (gogoproto.goproto_stringer) = false;
+  schema.types.base.AccAddress value = 1 [(gogoproto.nullable) = false];
 }

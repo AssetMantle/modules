@@ -6,10 +6,11 @@
 package genesis
 
 import (
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters/dummy"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 func Prototype() helpers.Genesis {
-	return NewGenesis([]helpers.Mappable{}, []types.Parameter{})
+	return NewGenesis([]mappable.Identity{}, []dummy.DummyParameter{})
 }

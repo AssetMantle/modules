@@ -3,14 +3,16 @@ syntax = "proto3";
 package persistence_sdk.modules.classifications.internal.genesis;
 
 import "gogoproto/gogo.proto";
+import "persistence_sdk/modules/classifications/internal/mappable/classification.proto";
+import "persistence_sdk/modules/classifications/internal/parameters/dummy/parameter.proto";
 
 option go_package = "github.com/persistenceOne/persistenceSDK/modules/classifications/internal/genesis";
 
 message Genesis {
+  option (gogoproto.goproto_getters) = false;
+  repeated persistence_sdk.modules.classifications.internal.mappable.Classification defaultMappableList = 1 [(gogoproto.nullable) = false];
+  repeated persistence_sdk.modules.classifications.internal.parameters.dummy.DummyParameter defaultParameterList = 2 [(gogoproto.nullable) = false];
 
-  repeated string defaultMappableList = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/helpers.Mappable", (gogoproto.nullable) = false];
-  repeated string defaultParameterList = 2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Parameter", (gogoproto.nullable) = false];
-
-  repeated string MappableList = 3 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/helpers.Mappable", (gogoproto.nullable) = false];
-  repeated string ParameterList = 4 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.Parameter", (gogoproto.nullable) = false];
+  repeated persistence_sdk.modules.classifications.internal.mappable.Classification MappableList = 3 [(gogoproto.nullable) = false];
+  repeated persistence_sdk.modules.classifications.internal.parameters.dummy.DummyParameter ParameterList = 4 [(gogoproto.nullable) = false];
 }
