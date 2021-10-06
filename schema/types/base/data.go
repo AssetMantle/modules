@@ -60,12 +60,3 @@ func NewData(data types.Data) *Data {
 		Data: data,
 	}
 }
-
-//func dataFromInterface(data types.Data) (Data, error) {
-//	switch value := data.(type) {
-//	case *Data:
-//		return *value, nil
-//	default:
-//		return Data{}, errors.MetaDataError
-//	}
-//}
