@@ -10,7 +10,7 @@ import (
 )
 
 type transactionResponse struct {
-	Success bool  `json:"sucess"`
+	Success bool  `json:"success"`
 	Error   error `json:"error" swaggertype:"string"`
 }
 
