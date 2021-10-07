@@ -2282,7 +2282,7 @@ var doc = `{
                 "error": {
                     "type": "string"
                 },
-                "sucess": {
+                "success": {
                     "type": "boolean"
                 }
             }
@@ -2307,7 +2307,7 @@ var doc = `{
                 "error": {
                     "type": "string"
                 },
-                "sucess": {
+                "success": {
                     "type": "boolean"
                 }
             }
