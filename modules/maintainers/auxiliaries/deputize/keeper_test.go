@@ -77,10 +77,10 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	classificationID := base.NewID("classificationID")
 	identityID := base.NewID("identityID")
 	toID := base.NewID("toID")
-
-	maintainedProperties := base.NewProperties()
+	imutableProperties := base.NewProperties()
+	mutableProperties := base.NewProperties()
 	maintainerID := key.NewMaintainerID(classificationID, identityID)
-	keepers.MaintainersKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, maintainedProperties, false, false, false))
+	keepers.MaintainersKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, imutableProperties,mutableProperties))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)

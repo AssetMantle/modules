@@ -28,7 +28,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(errors.EntityAlreadyExists)
 	}
 
-	maintainers.Add(mappable.NewMaintainer(maintainerID, auxiliaryRequest.MutableProperties, true, true, true))
+	maintainers.Add(mappable.NewMaintainer(maintainerID,nil ,auxiliaryRequest.MutableProperties))
 
 	return newAuxiliaryResponse(nil)
 }

@@ -24,7 +24,6 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context)
 
 	fromMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
@@ -45,13 +44,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(auxiliaryResponse.GetError())
 	}
 
-	removeMaintainedProperties := fromMaintainer.GetMaintainedProperties()
+	removeMaintainedProperties := fromMaintainer.GetMaintainedPropertySet()
 
 	for _, maintainedProperty := range auxiliaryRequest.MaintainedProperties.GetList() {
 		if !fromMaintainer.MaintainsProperty(maintainedProperty.GetID()) {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
-
+// TODO
 		removeMaintainedProperties.Remove(maintainedProperty)
 	}
 
@@ -63,14 +62,14 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 
-		maintainers.Add(mappable.NewMaintainer(toMaintainerID, auxiliaryRequest.MaintainedProperties, auxiliaryRequest.AddMaintainer, auxiliaryRequest.RemoveMaintainer, auxiliaryRequest.MutateMaintainer))
+		maintainers.Add(mappable.NewMaintainer(toMaintainerID, nil, auxiliaryRequest.MaintainedProperties))
 	} else {
 		if !fromMaintainer.CanMutateMaintainer() {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
-
-		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMaintainedProperties().Add(auxiliaryRequest.MaintainedProperties.GetList()...).Remove(removeMaintainedProperties.GetList()...)
-		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID, maintainedProperties, auxiliaryRequest.AddMaintainer, auxiliaryRequest.RemoveMaintainer, auxiliaryRequest.MutateMaintainer))
+// TODO
+		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMaintainedPropertySet().Add(auxiliaryRequest.MaintainedProperties.GetList()).Remove(removeMaintainedProperties.GetList()...)
+		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID, nil, maintainedProperties))
 	}
 
 	return newAuxiliaryResponse(nil)

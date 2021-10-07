@@ -5,7 +5,7 @@
 
 package mappable
 
-import (
+import  (
 	"testing"
 
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
@@ -17,13 +17,14 @@ import (
 func Test_Maintainer_Methods(t *testing.T) {
 	classificationID := base.NewID("classificationID")
 	identityID := base.NewID("identityID")
-	properties := base.NewProperties(base.NewProperty(base.NewID("ID"), base.NewStringData("MutableData")))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID"), base.NewStringData("ImmutableData")))
+	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID"), base.NewStringData("MutableData")))
 
 	testMaintainerID := key.NewMaintainerID(classificationID, identityID)
 
-	testMaintainer := NewMaintainer(testMaintainerID, properties, true, true, true).(maintainer)
+	testMaintainer := NewMaintainer(testMaintainerID, nil,mutableProperties).(maintainer)
 
-	require.Equal(t, maintainer{Document: qualified.Document{ID: testMaintainerID, MaintainedProperties: properties, AddMaintainer: true, RemoveMaintainer: true, MutateMaintainer: true}}, testMaintainer)
+	require.Equal(t, maintainer{Document:qualified.Document{ID: testMaintainerID,ClassificationID: classificationID,HasImmutables:qualified.HasImmutables{Properties: immutableProperties},HasMutables:qualified.HasMutables{Properties: mutableProperties}}},testMaintainer)
 	require.Equal(t, testMaintainerID, testMaintainer.GetID())
 	require.Equal(t, classificationID, testMaintainer.GetClassificationID())
 	require.Equal(t, identityID, testMaintainer.GetIdentityID())

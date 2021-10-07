@@ -13,7 +13,8 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
@@ -21,7 +22,6 @@ import (
 
 type maintainer struct {
 	qualified.Document
-	MaintainedProperties types.Properties
 }
 
 var _ mappables.Maintainer = (*maintainer)(nil)
@@ -45,18 +45,23 @@ func (maintainer maintainer) GetIdentityID() types.ID {
 func (maintainer maintainer) GetMaintainedClassificationID() types.ID {
 	return key.ReadClassificationID(maintainer.ID)
 }
-func (maintainer maintainer) GetMaintainedProperties() types.Properties {
-		return maintainer.MaintainedProperties
+func (maintainer maintainer) GetMaintainedPropertySet() types.Property {
+	if property := maintainer.GetProperty(ids.MaintainedPropertiesProperty); property != nil {
+		return property
+	}
+	return properties.MaintainedProperties
 }
-//TODO
+
 func (maintainer maintainer) CanMintAsset() bool {
 	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
-		impl
+		if property.GetID().Compare(properties.Permissions.GetID()) == 0 {
+			return true
+		}
 	}
-
 	return false
 }
-//TODO
+
+// TODO
 func (maintainer maintainer) CanBurnAsset() bool {
 	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
 		impl
@@ -64,15 +69,17 @@ func (maintainer maintainer) CanBurnAsset() bool {
 
 	return false
 }
-//TODO
+
+// TODO
 func (maintainer maintainer) CanRenumerateAsset() bool {
-	if property := maintainer.GetProperty(base.NewID(properties.Permissions)); property != nil {
+	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
 		impl
 	}
 
 	return false
 }
-//TODO
+
+// TODO
 func (maintainer maintainer) CanAddMaintainer() bool {
 	if property := maintainer.GetProperty(base.NewID(properties.Permissions)); property != nil {
 		impl
@@ -80,7 +87,8 @@ func (maintainer maintainer) CanAddMaintainer() bool {
 
 	return false
 }
-//TODO
+
+// TODO
 func (maintainer maintainer) CanRemoveMaintainer() bool {
 	if property := maintainer.GetProperty(base.NewID(properties.Permissions)); property != nil {
 		impl
@@ -88,19 +96,20 @@ func (maintainer maintainer) CanRemoveMaintainer() bool {
 
 	return false
 }
-//TODO
+
+// TODO
 func (maintainer maintainer) CanMutateMaintainer() bool {
-	if property := maintainer.GetProperty(base.NewID(properties.Permissions)); property != nil {
+	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
 		impl
 	}
 
 	return false
 }
-//TODO
-
 func (maintainer maintainer) MaintainsProperty(id types.ID) bool {
-	if property := maintainer.GetProperty(base.NewID(properties.Permissions)); property != nil {
-		impl
+	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
+		if property.GetID().Compare(id) == 0 {
+			return true
+		}
 	}
 
 	return false
@@ -111,13 +120,14 @@ func (maintainer maintainer) GetKey() helpers.Key {
 func (maintainer) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, maintainer{})
 }
+
 //TODO
-func NewMaintainer(id types.ID) mappables.Maintainer {
+func NewMaintainer(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Maintainer {
 	return maintainer{
 		Document: qualified.Document{
 			ID:            id,
-			HasImmutables: qualified.HasImmutables{Properties: immutableProperties},
-			HasMutables:   qualified.HasMutables{Properties: mutableProperties},
+			HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
+			HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
 		},
 	}
 }
