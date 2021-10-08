@@ -19,14 +19,14 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
+	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type identity struct {
-	qualified.Document
+	qualifiedMappables.Document //nolint:govet
 }
 
 var _ mappables.Identity = (*identity)(nil)
@@ -66,17 +66,16 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	return false
 }
 func (identity identity) ProvisionAddress(address sdkTypes.AccAddress) mappables.Identity {
-
 	return mappables.Identity(identity)
 }
-func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) mappables.Identity {
 
+func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) mappables.Identity {
 	return mappables.Identity(identity)
 }
 
 func NewIdentity(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Identity {
 	return identity{
-		Document: qualified.Document{
+		Document: qualifiedMappables.Document{
 			ID:            id,
 			HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
 			HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},

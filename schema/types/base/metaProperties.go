@@ -102,19 +102,6 @@ func ReadMetaProperties(metaPropertiesString string) (types.MetaProperties, erro
 
 	return NewMetaProperties(metaPropertyList...), nil
 }
-func ReadMetaProperty(metaPropertyString string) (types.MetaProperty, error) {
-	propertyIDAndData := strings.Split(metaPropertyString, constants.PropertyIDAndDataSeparator)
-	if len(propertyIDAndData) == 2 && propertyIDAndData[0] != "" {
-		metaFact, Error := ReadMetaFact(propertyIDAndData[1])
-		if Error != nil {
-			return nil, Error
-		}
-
-		return NewMetaProperty(NewID(propertyIDAndData[0]), metaFact), nil
-	}
-
-	return nil, errors.IncorrectFormat
-}
 
 func ReadData(dataString string) (types.Data, error) {
 	dataTypeAndString := strings.SplitN(dataString, constants.DataTypeAndValueSeparator, 2)
@@ -146,7 +133,7 @@ func ReadData(dataString string) (types.Data, error) {
 			return nil, Error
 		}
 
-		return NewMetaFact(data), nil
+		return data, nil
 	}
 
 	return nil, errors.IncorrectFormat

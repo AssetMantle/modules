@@ -52,7 +52,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	if takerIDProperty := metaProperties.Get(ids.TakerIDProperty); takerIDProperty != nil {
-		takerID, Error := takerIDProperty.GetMetaFact().GetData().AsID()
+		takerID, Error := takerIDProperty.GetData().AsID()
 		if Error != nil {
 			return newTransactionResponse(errors.MetaDataError)
 		} else if takerID.Compare(base.NewID("")) != 0 && takerID.Compare(message.FromID) != 0 {
@@ -60,7 +60,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		}
 	}
 
-	exchangeRate, Error := order.(mappables.Order).GetExchangeRate().GetMetaFact().GetData().AsDec()
+	exchangeRate, Error := order.(mappables.Order).GetExchangeRate().GetData().AsDec()
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
@@ -70,7 +70,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.MetaDataError)
 	}
 
-	makerOwnableSplit, Error := makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
+	makerOwnableSplit, Error := makerOwnableSplitProperty.GetData().AsDec()
 	if Error != nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}
@@ -95,7 +95,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		orders.Remove(order)
 	default:
 		makerReceiveTakerOwnableSplit = message.TakerOwnableSplit
-		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewMetaFact(base.NewDecData(updatedMakerOwnableSplit))))))
+		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewDecData(updatedMakerOwnableSplit)))))
 
 		if Error != nil {
 			return newTransactionResponse(Error)

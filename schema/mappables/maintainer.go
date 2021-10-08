@@ -13,7 +13,7 @@ import (
 type Maintainer interface {
 	GetIdentityID() types.ID
 	GetMaintainedClassificationID() types.ID
-	GetMaintainedProperties() types.Property
+	GetMaintainedPropertySet() types.Property
 
 	CanMintAsset() bool
 	CanBurnAsset() bool

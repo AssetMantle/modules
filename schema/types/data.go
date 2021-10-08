@@ -20,10 +20,7 @@ type Data interface {
 	String() string
 
 	GetTypeID() ID
-	GetKeyID() ID
-	GetDataID() ID
 	ZeroValue() Data
-
 	// GenerateHashID returns the hash of the Data as an ID
 	// * Returns ID of empty string when the value of Data is that Data type's zero value
 	GenerateHashID() ID

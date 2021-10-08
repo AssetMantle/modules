@@ -3,8 +3,6 @@ package base
 import (
 	"strconv"
 
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -30,7 +28,7 @@ func (booleanData booleanData) Compare(data types.Data) int {
 
 	if booleanData.Value == compareBooleanData.Value {
 		return 0
-	} else if booleanData.Value == true {
+	} else if booleanData.Value == true { //nolint:gosimple
 		return 1
 	}
 
@@ -40,7 +38,7 @@ func (booleanData booleanData) String() string {
 	return strconv.FormatBool(booleanData.Value)
 }
 func (booleanData booleanData) GetTypeID() types.ID {
-	return ids.BooleanData
+	return booleanDataID
 }
 func (booleanData booleanData) ZeroValue() types.Data {
 	return NewBooleanData(false)

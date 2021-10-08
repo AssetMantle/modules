@@ -12,7 +12,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/common"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base" //nolint:typecheck
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type queryRequest struct {

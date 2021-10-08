@@ -75,11 +75,11 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
 	defaultAddr := sdkTypes.AccAddress("addr")
-	defaultFact, Error := base.ReadMetaFact("S|default")
+	defaultFact, Error := base.ReadData("S|default")
 	require.Equal(t, nil, Error)
-	newFact, Error := base.ReadMetaFact("S|newFact")
+	newFact, Error := base.ReadData("S|newFact")
 	require.Equal(t, nil, Error)
-	keepers.MetasKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(defaultFact.GetData()))
+	keepers.MetasKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(defaultFact))
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
 		if got := keepers.MetasKeeper.Transact(context, newMessage(defaultAddr, newFact)); !reflect.DeepEqual(got, want) {

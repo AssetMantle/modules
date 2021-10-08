@@ -36,19 +36,19 @@ func Test_Reveal_Request(t *testing.T) {
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, Error)
 
-	metaFact := "S|newMetaFact"
-	newMetaFact, Error := base.ReadMetaFact(metaFact)
+	data := "S|newData"
+	newData, Error := base.ReadData(data)
 	require.Equal(t, nil, Error)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
-	testTransactionRequest := newTransactionRequest(testBaseReq, metaFact)
+	testTransactionRequest := newTransactionRequest(testBaseReq, data)
 
-	require.Equal(t, transactionRequest{BaseReq: testBaseReq, MetaFact: metaFact}, testTransactionRequest)
+	require.Equal(t, transactionRequest{BaseReq: testBaseReq, Data: data}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
 	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, cliContext)
 	require.Equal(t, nil, Error)
-	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, MetaFact: ""}, requestFromCLI)
+	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, Data: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
 	transactionRequestUnmarshalled, Error := transactionRequest{}.FromJSON(jsonMessage)
@@ -62,10 +62,10 @@ func Test_Reveal_Request(t *testing.T) {
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
 	msg, Error := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, newMetaFact), msg)
+	require.Equal(t, newMessage(fromAccAddress, newData), msg)
 	require.Nil(t, Error)
 
-	msg2, Error := newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, metaFact).MakeMsg()
+	msg2, Error := newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, data).MakeMsg()
 	require.NotNil(t, Error)
 	require.Nil(t, msg2)
 

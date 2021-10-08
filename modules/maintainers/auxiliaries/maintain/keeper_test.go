@@ -80,7 +80,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	maintainedProperties := base.NewProperties()
 	maintainerID := key.NewMaintainerID(classificationID, identityID)
-	keepers.MaintainersKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, base.NewProperties(), false, false, false))
+	keepers.MaintainersKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, maintainedProperties, base.NewProperties()))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
@@ -100,7 +100,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Maintainer Unauthorized", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
-		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(classificationID, identityID, base.NewProperties(base.NewProperty(base.NewID("ID"), base.NewFact(base.NewStringData("Data")))))); !reflect.DeepEqual(got, want) {
+		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(classificationID, identityID, base.NewProperties(base.NewProperty(base.NewID("ID"), base.NewStringData("Data"))))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

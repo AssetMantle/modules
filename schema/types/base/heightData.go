@@ -8,8 +8,6 @@ package base
 import (
 	"strconv"
 
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -40,7 +38,7 @@ func (heightData heightData) String() string {
 	return strconv.FormatInt(heightData.Value.Get(), 10)
 }
 func (heightData heightData) GetTypeID() types.ID {
-	return ids.HeightData
+	return heightDataID
 }
 func (heightData heightData) ZeroValue() types.Data {
 	return NewHeightData(NewHeight(0))
