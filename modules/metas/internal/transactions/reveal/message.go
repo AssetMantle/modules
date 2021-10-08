@@ -21,7 +21,6 @@ import (
 type message struct {
 	From sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
 	Data types.Data          `json:"data" valid:"required~required field data missing"`
-	metaProperty types.MetaProperty
 }
 
 var _ sdkTypes.Msg = message{}

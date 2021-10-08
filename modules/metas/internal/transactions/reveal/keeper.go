@@ -23,7 +23,7 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	metaID := key.GenerateMetaID(message.metaProperty.GetData())
+	metaID := key.GenerateMetaID(message.Data)
 	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(metaID))
 
 	meta := metas.Get(key.FromID(metaID))
@@ -31,8 +31,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	if message.metaProperty.GetHashID().Compare(base.NewID("")) != 0 {
-		metas.Add(mappable.NewMeta(message.metaProperty.GetData()))
+	if message.Data.GenerateHashID().Compare(base.NewID("")) != 0 {
+		metas.Add(mappable.NewMeta(message.Data))
 	}
 
 	return newTransactionResponse(nil)

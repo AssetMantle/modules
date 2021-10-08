@@ -77,10 +77,10 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	classificationID := base.NewID("classificationID")
 	identityID := base.NewID("identityID")
 	toID := base.NewID("toID")
-	imutableProperties := base.NewProperties()
+	immutableProperties := base.NewProperties()
 	mutableProperties := base.NewProperties()
 	maintainerID := key.NewMaintainerID(classificationID, identityID)
-	keepers.MaintainersKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, imutableProperties,mutableProperties))
+	keepers.MaintainersKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, immutableProperties, mutableProperties))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
@@ -95,7 +95,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(nil)
 		require.Panics(t, func() {
-			if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(identityID, identityID, classificationID, maintainedProperties, false, false, false)); !reflect.DeepEqual(got, want) {
+			if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(identityID, identityID, classificationID, base.NewProperties(), false, false, false)); !reflect.DeepEqual(got, want) {
 				t.Errorf("Transact() = %v, want %v", got, want)
 			}
 		})

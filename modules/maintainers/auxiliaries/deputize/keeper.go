@@ -13,6 +13,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
@@ -44,13 +45,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(auxiliaryResponse.GetError())
 	}
 
-	removeMaintainedProperties := fromMaintainer.GetMaintainedPropertySet()
+	removeMaintainedProperties := fromMaintainer.GetMutableProperties()
 
 	for _, maintainedProperty := range auxiliaryRequest.MaintainedProperties.GetList() {
 		if !fromMaintainer.MaintainsProperty(maintainedProperty.GetID()) {
+
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
-// TODO
 		removeMaintainedProperties.Remove(maintainedProperty)
 	}
 
@@ -62,14 +63,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 
-		maintainers.Add(mappable.NewMaintainer(toMaintainerID, nil, auxiliaryRequest.MaintainedProperties))
+		maintainers.Add(mappable.NewMaintainer(toMaintainerID, base.NewProperties(), auxiliaryRequest.MaintainedProperties))
 	} else {
 		if !fromMaintainer.CanMutateMaintainer() {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
-// TODO
-		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMaintainedPropertySet().Add(auxiliaryRequest.MaintainedProperties.GetList()).Remove(removeMaintainedProperties.GetList()...)
-		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID, nil, maintainedProperties))
+		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMutableProperties().Add(auxiliaryRequest.MaintainedProperties.GetList()...).Remove(removeMaintainedProperties.GetList()...)
+		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID, base.NewProperties(), maintainedProperties))
 	}
 
 	return newAuxiliaryResponse(nil)

@@ -21,8 +21,8 @@ import (
 )
 
 type transactionRequest struct {
-	BaseReq  rest.BaseReq `json:"baseReq"`
-	Data string       `json:"metaFact" valid:"required~required field metaFact missing, matches(^[DHIS]{1}[|]{1}.*$)"`
+	BaseReq rest.BaseReq `json:"baseReq"`
+	Data    string       `json:"data" valid:"required~required field data missing, matches(^[DHIS]{1}[|]{1}.*$)"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -81,7 +81,7 @@ func requestPrototype() helpers.TransactionRequest {
 }
 func newTransactionRequest(baseReq rest.BaseReq, data string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:  baseReq,
-		Data: data,
+		BaseReq: baseReq,
+		Data:    data,
 	}
 }

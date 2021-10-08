@@ -5,11 +5,12 @@
 
 package mappable
 
-import  (
+import (
+	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
 	"testing"
 
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
-	"github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
+	qualifiedTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
 )
@@ -22,9 +23,9 @@ func Test_Maintainer_Methods(t *testing.T) {
 
 	testMaintainerID := key.NewMaintainerID(classificationID, identityID)
 
-	testMaintainer := NewMaintainer(testMaintainerID, nil,mutableProperties).(maintainer)
+	testMaintainer := NewMaintainer(testMaintainerID, nil, mutableProperties).(maintainer)
 
-	require.Equal(t, maintainer{Document:qualified.Document{ID: testMaintainerID,ClassificationID: classificationID,HasImmutables:qualified.HasImmutables{Properties: immutableProperties},HasMutables:qualified.HasMutables{Properties: mutableProperties}}},testMaintainer)
+	require.Equal(t, maintainer{Document: qualifiedMappables.Document{ID: testMaintainerID, ClassificationID: classificationID, HasImmutables: qualifiedTraits.HasImmutables{Properties: immutableProperties}, HasMutables: qualifiedTraits.HasMutables{Properties: mutableProperties}}}, testMaintainer)
 	require.Equal(t, testMaintainerID, testMaintainer.GetID())
 	require.Equal(t, classificationID, testMaintainer.GetClassificationID())
 	require.Equal(t, identityID, testMaintainer.GetIdentityID())
