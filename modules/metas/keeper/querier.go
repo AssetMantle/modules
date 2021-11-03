@@ -19,7 +19,7 @@ func NewQuerier(k Keeper, legacyQuerierCdc *codec.LegacyAmino) sdkTypes.Querier 
 			return queryParameters(ctx, k, legacyQuerierCdc)
 
 		case types.QueryMeta:
-			return queryValidator(ctx, req, k, legacyQuerierCdc)
+			return queryMeta(ctx, req, k, legacyQuerierCdc)
 
 		default:
 			return nil, sdkErrors.Wrapf(sdkErrors.ErrUnknownRequest, "unknown %s query endpoint: %s", types.ModuleName, path[0])
@@ -27,7 +27,7 @@ func NewQuerier(k Keeper, legacyQuerierCdc *codec.LegacyAmino) sdkTypes.Querier 
 	}
 }
 
-func queryValidator(ctx sdkTypes.Context, req abci.RequestQuery, k Keeper, legacyQuerierCdc *codec.LegacyAmino) ([]byte, error) {
+func queryMeta(ctx sdkTypes.Context, req abci.RequestQuery, k Keeper, legacyQuerierCdc *codec.LegacyAmino) ([]byte, error) {
 	var metaRequest types.QueryMetaRequest
 
 	err := legacyQuerierCdc.UnmarshalJSON(req.Data, &metaRequest)

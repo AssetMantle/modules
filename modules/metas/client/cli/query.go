@@ -37,7 +37,7 @@ func GetCmdQueryMeta() *cobra.Command {
 	bech32PrefixValAddr := sdk.GetConfig().GetBech32ValidatorAddrPrefix()
 
 	cmd := &cobra.Command{
-		Use:   "query [metaID]",
+		Use:   "meta [metaID]",
 		Short: "Query meta",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Query details about an individual validator.
