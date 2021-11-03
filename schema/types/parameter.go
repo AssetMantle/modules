@@ -5,16 +5,22 @@
 
 package types
 
+import (
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/gogo/protobuf/proto"
+)
+
 type Parameter interface {
+	proto.Message
+
 	String() string
 
 	Equal(Parameter) bool
-	Validate() error
 
 	GetID() ID
 	GetData() Data
-	GetValidator() func(interface{}) error
 
-	Mutate(Data) Parameter
-	Proto
+	SetData(Data) error
+
+	codecTypes.UnpackInterfacesMessage
 }

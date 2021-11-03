@@ -4,7 +4,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/x/auth/tx"
+	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
 // EncodingConfig specifies the concrete encoding types to use for a given app.
@@ -28,4 +30,18 @@ func MakeEncodingConfig() EncodingConfig {
 		TxConfig:          txCfg,
 		LegacyAmino:       amino,
 	}
+}
+
+func (encodingConfig EncodingConfig) RegisterLegacyAminoCodec() {
+	std.RegisterLegacyAminoCodec(encodingConfig.LegacyAmino)
+	schema.RegisterLegacyAminoCodec(encodingConfig.LegacyAmino)
+
+	// In the app add ModuleBasics.RegisterLegacyAminoCodec(encodingConfig.Amino) after calling this
+}
+
+func (encodingConfig EncodingConfig) RegisterInterfaces() {
+	std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+	schema.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+
+	// In the app add ModuleBasics.RegisterInterfaces(encodingConfig.InterfaceRegistry) after calling this
 }

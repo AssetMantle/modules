@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package persistenceSDK.schema.types.base;
+
+import "gogoproto/gogo.proto";
+import "persistenceSDK/schema/types/base/signatures.proto";
+import "persistenceSDK/schema/types/base/id.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
+
+message Fact {
+  option (gogoproto.goproto_getters) = false;
+  persistenceSDK.schema.types.base.ID hash_id = 1 [(gogoproto.nullable) = false];
+  persistenceSDK.schema.types.base.ID type_id = 2 [(gogoproto.nullable) = false];
+  persistenceSDK.schema.types.base.Signatures signatures = 3 [(gogoproto.nullable) = false];
+}

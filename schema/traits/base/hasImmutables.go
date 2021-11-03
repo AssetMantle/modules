@@ -24,5 +24,5 @@ func (immutables HasImmutables) GenerateHashID() types.ID {
 		metaList[i] = immutableProperty.GetFact().GetHashID().String()
 	}
 
-	return base.NewID(metaUtilities.Hash(metaList...))
+	return base.NewTypeID(metaUtilities.Hash(metaList...))
 }

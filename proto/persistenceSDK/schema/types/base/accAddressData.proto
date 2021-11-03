@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package persistenceSDK.schema.types.base;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
+
+message AccAddressData {
+  option (gogoproto.goproto_stringer) = false;
+  bytes value = 1;
+}

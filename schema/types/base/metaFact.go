@@ -6,31 +6,65 @@
 package base
 
 import (
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"strings"
 
 	"github.com/99designs/keyring"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-var _ types.MetaFact = (*MetaFact)(nil)
+var (
+	_ types.MetaFact = (*MetaFact)(nil)
+)
 
-func (metaFact MetaFact) GetHashID() types.ID             { return metaFact.Data.GenerateHashID() }
-func (metaFact MetaFact) GetTypeID() types.ID             { return metaFact.Data.GetTypeID() }
-func (metaFact MetaFact) GetSignatures() types.Signatures { return &metaFact.Signatures }
-func (metaFact MetaFact) Sign(_ keyring.Keyring) types.MetaFact {
+func (metaFact MetaFact) GetHashID() types.ID {
+	return metaFact.GetData().GenerateHashID()
+}
+func (metaFact MetaFact) GetTypeID() types.ID {
+	return metaFact.GetData().GetTypeID()
+}
+func (metaFact MetaFact) GetSignatures() types.Signatures { return metaFact.Signatures }
+
+func (metaFact MetaFact) Sign(_ keyring.Keyring) types.Fact {
 	// TODO implement signing
 	return &metaFact
 }
-func (metaFact MetaFact) GetData() types.Data    { return metaFact.Data.GetOneOfData() }
-func (metaFact MetaFact) RemoveData() types.Fact { return NewFact(metaFact.Data.GetOneOfData()) }
-
-func NewMetaFact(data types.Data) *MetaFact {
-	return &MetaFact{
-		Data:       *NewData(data),
-		Signatures: Signatures{},
+func (metaFact MetaFact) GetData() types.Data {
+	if metaFact.Data == nil {
+		return nil
 	}
+
+	if metaFact.Data.GetCachedValue() == nil {
+		panic(errors.EmptyDataCacheValue)
+	}
+	data, ok := metaFact.Data.GetCachedValue().(types.Data)
+	if !ok {
+		panic(errors.InvalidDataCacheValue)
+	}
+	return data
+}
+func (metaFact MetaFact) setData(data types.Data) MetaFact {
+	if data == nil {
+		metaFact.Data = nil
+		return metaFact
+	}
+	any, err := codecTypes.NewAnyWithValue(data)
+	if err != nil {
+		panic(err)
+	}
+	metaFact.Data = any
+	return metaFact
+}
+
+func (metaFact MetaFact) ToFact() types.Fact {
+	return NewFact(metaFact.GetData())
+}
+
+func NewMetaFact(data types.Data) MetaFact {
+	return MetaFact{}.setData(data)
 }
 
 func ReadMetaFact(metaFactString string) (types.MetaFact, error) {
@@ -43,17 +77,17 @@ func ReadMetaFact(metaFactString string) (types.MetaFact, error) {
 		var Error error
 
 		switch NewID(dataType).String() {
-		case Data_DecData{}.GetTypeID().String():
+		case DecData{}.GetTypeID().String():
 			data, Error = ReadDecData(dataString)
-		case Data_IdData{}.GetTypeID().String():
+		case IDData{}.GetTypeID().String():
 			data, Error = ReadIDData(dataString)
-		case Data_HeightData{}.GetTypeID().String():
+		case HeightData{}.GetTypeID().String():
 			data, Error = ReadHeightData(dataString)
-		case Data_StringData{}.GetTypeID().String():
+		case StringData{}.GetTypeID().String():
 			data, Error = ReadStringData(dataString)
-		case Data_AccAddressData{}.GetTypeID().String():
+		case AccAddressData{}.GetTypeID().String():
 			data, Error = ReadAccAddressData(dataString)
-		case Data_ListData{}.GetTypeID().String():
+		case ListData{}.GetTypeID().String():
 			data, Error = ReadAccAddressListData(dataString)
 		default:
 			data, Error = nil, errors.UnsupportedParameter
@@ -63,8 +97,18 @@ func ReadMetaFact(metaFactString string) (types.MetaFact, error) {
 			return nil, Error
 		}
 
-		return NewMetaFact(data), nil
+		metaFact := NewMetaFact(data)
+		return &metaFact, nil
 	}
 
 	return nil, errors.IncorrectFormat
+}
+
+func (metaFact MetaFact) UnpackInterfaces(unpacker codecTypes.AnyUnpacker) error {
+	var data types.Data
+	err := unpacker.UnpackAny(metaFact.Data, &data)
+	if err != nil {
+		return err
+	}
+	return nil
 }

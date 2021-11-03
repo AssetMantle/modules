@@ -7,15 +7,15 @@ package module
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	cryptoCodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
-func RegisterLegacyAminoCodec(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) *codec.LegacyAmino {
-	Codec := codec.NewLegacyAmino()
-	keyPrototype().RegisterLegacyAminoCodec(Codec)
-	mappablePrototype().RegisterLegacyAminoCodec(Codec)
-	schema.RegisterLegacyAminoCodec(Codec)
-	Codec.Seal()
-	return Codec
+func RegisterLegacyAminoCodec(amino *codec.LegacyAmino, keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) *codec.AminoCodec {
+	moduleCdc := codec.NewAminoCodec(amino)
+	schema.RegisterLegacyAminoCodec(amino)
+	cryptoCodec.RegisterCrypto(amino)
+	amino.Seal()
+	return moduleCdc
 }

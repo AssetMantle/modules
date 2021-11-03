@@ -31,7 +31,7 @@ func (baseSignature Signature) HasExpired(height types.Height) bool {
 
 func NewSignature(id types.ID, signatureBytes []byte, validityHeight types.Height) *Signature {
 	return &Signature{
-		Id:             *NewID(id.String()),
+		Id:             NewID(id.String()),
 		SignatureBytes: signatureBytes,
 		ValidityHeight: *NewHeight(validityHeight.Get()),
 	}

@@ -35,16 +35,16 @@ func (fact Fact) Sign(_ keyring.Keyring) types.Fact {
 
 func NewFact(data types.Data) *Fact {
 	return &Fact{
-		HashId:     *NewID(data.GenerateHashID().String()),
-		TypeId:     *NewID(data.GetTypeID().String()),
+		HashId:     NewID(data.GenerateHashID().String()),
+		TypeId:     NewID(data.GetTypeID().String()),
 		Signatures: Signatures{},
 	}
 }
 
 func NewFactProperty(hashID types.ID, typeID types.ID, signatures types.Signatures) *Fact {
 	return &Fact{
-		HashId:     *NewID(hashID.String()),
-		TypeId:     *NewID(typeID.String()),
+		HashId:     NewID(hashID.String()),
+		TypeId:     NewID(typeID.String()),
 		Signatures: *NewSignatures(signatures.GetList()),
 	}
 }
@@ -55,5 +55,5 @@ func ReadFact(metaFactString string) (types.Fact, error) {
 		return nil, Error
 	}
 
-	return metaFact.RemoveData(), nil
+	return metaFact.ToFact(), nil
 }

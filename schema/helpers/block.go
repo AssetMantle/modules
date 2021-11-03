@@ -7,11 +7,12 @@ package helpers
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 )
 
 type Block interface {
 	Begin(sdkTypes.Context, abciTypes.RequestBeginBlock)
 	End(sdkTypes.Context, abciTypes.RequestEndBlock)
-	Initialize(Mapper, Parameters, ...interface{}) Block
+	Initialize(Mapper, []types.Parameter, ...interface{}) Block
 }

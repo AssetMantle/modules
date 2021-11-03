@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package persistenceSDK.schema.types.base;
+
+import "gogoproto/gogo.proto";
+import "persistenceSDK/schema/types/base/property.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
+
+message Properties {
+
+  repeated persistenceSDK.schema.types.base.Property propertyList = 1 [(gogoproto.nullable) = false];
+
+}

@@ -6,10 +6,13 @@
 package types
 
 import (
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/gogo/protobuf/proto"
 )
 
 type Data interface {
+	proto.Message
 	// Compare returns 1 if this > parameter
 	// returns -1 if this < parameter
 	// returns 0 if this = parameter
@@ -29,8 +32,7 @@ type Data interface {
 	AsDec() (sdkTypes.Dec, error)
 	AsHeight() (Height, error)
 	AsID() (ID, error)
+	AsAny() (*codecTypes.Any, error)
 
 	Get() interface{}
-
-	Proto
 }

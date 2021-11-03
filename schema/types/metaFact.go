@@ -6,17 +6,14 @@
 package types
 
 import (
-	"github.com/99designs/keyring"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 )
 
 type MetaFact interface {
-	GetHashID() ID
-	GetTypeID() ID
+	Fact
 	GetData() Data
-	GetSignatures() Signatures
-
-	Sign(keyring.Keyring) MetaFact
-	RemoveData() Fact
+	ToFact() Fact
 
 	Proto
+	codecTypes.UnpackInterfacesMessage
 }

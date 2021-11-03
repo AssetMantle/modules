@@ -5,12 +5,13 @@
 
 package helpers
 
-import "github.com/cosmos/cosmos-sdk/codec"
+import (
+	"github.com/persistenceOne/persistenceSDK/schema/types"
+)
 
 type Key interface {
 	GenerateStoreKeyBytes() []byte
-	RegisterLegacyAminoCodec(amino *codec.LegacyAmino)
 	IsPartial() bool
 	Equals(Key) bool
-	GetStructReference() codec.ProtoMarshaler
+	types.Proto
 }

@@ -13,22 +13,18 @@ import (
 )
 
 type Genesis interface {
-	Default() Genesis
 	Validate() error
-	Import(sdkTypes.Context, Mapper, Parameters)
-	Export(sdkTypes.Context, Mapper, Parameters) Genesis
-
-	LegacyAminoEncode() []byte
-	LegacyAminoDecode([]byte) Genesis
+	Import(sdkTypes.Context, Mapper, Genesis)
+	Export(sdkTypes.Context, Mapper) Genesis
 
 	Encode(codec.JSONMarshaler) []byte
 	Decode(codec.JSONMarshaler, []byte) Genesis
 
 	Initialize([]Mappable, []types.Parameter) Genesis
 
-	GetParameterList() []types.Parameter
+	GetParameters() []types.Parameter
 	GetMappableList() []Mappable
 
-	RegisterInterface(registry codecTypes.InterfaceRegistry)
 	types.Proto
+	codecTypes.UnpackInterfacesMessage
 }

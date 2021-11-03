@@ -7,9 +7,6 @@ package base
 
 import (
 	"encoding/json"
-	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
@@ -73,32 +70,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	sdkUpgradeKeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	sdkUpgradeTypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	"github.com/persistenceOne/persistenceSDK/modules/assets"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/define"
-	"github.com/persistenceOne/persistenceSDK/modules/identities"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
 	"github.com/persistenceOne/persistenceSDK/modules/metas"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
-	"github.com/persistenceOne/persistenceSDK/modules/orders"
-	"github.com/persistenceOne/persistenceSDK/modules/splits"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
-	splitsMint "github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/renumerate"
-	splitsTransfer "github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
+	metaKeeper "github.com/persistenceOne/persistenceSDK/modules/metas/keeper"
+	metaTypes "github.com/persistenceOne/persistenceSDK/modules/metas/types"
 	"github.com/persistenceOne/persistenceSDK/schema/applications"
 	"github.com/persistenceOne/persistenceSDK/schema/applications/base/encoding"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rakyll/statik/fs"
-	"github.com/spf13/cast"
-	"github.com/spf13/viper"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	tmJson "github.com/tendermint/tendermint/libs/json"
 	"github.com/tendermint/tendermint/libs/log"
@@ -109,7 +86,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path/filepath"
 )
 
 type application struct {
@@ -125,8 +101,7 @@ type application struct {
 
 	invCheckPeriod uint
 
-	enabledWasmProposalTypeList []wasm.ProposalType
-	moduleAccountPermissions    map[string][]string
+	moduleAccountPermissions map[string][]string
 
 	keys               map[string]*sdkTypes.KVStoreKey
 	transientStoreKeys map[string]*sdkTypes.TransientStoreKey
@@ -369,15 +344,7 @@ func (app application) Initialize(logger log.Logger, db tendermintDB.DB, traceSt
 		ibcTransferTypes.StoreKey,
 		sdkCapabilityTypes.StoreKey,
 
-		wasm.StoreKey,
-
-		assets.Prototype().Name(),
-		classifications.Prototype().Name(),
-		identities.Prototype().Name(),
-		maintainers.Prototype().Name(),
-		metas.Prototype().Name(),
-		orders.Prototype().Name(),
-		splits.Prototype().Name(),
+		metaTypes.ModuleName,
 	)
 
 	app.transientStoreKeys = sdkTypes.NewTransientStoreKeys(sdkParamsTypes.TStoreKey)
@@ -395,7 +362,6 @@ func (app application) Initialize(logger log.Logger, db tendermintDB.DB, traceSt
 	capabilityKeeper := sdkCapabilityKeeper.NewKeeper(app.codec, app.keys[sdkCapabilityTypes.StoreKey], app.memoryStoreKeys[sdkCapabilityTypes.MemStoreKey])
 	scopedIBCKeeper := capabilityKeeper.ScopeToModule(ibcHost.ModuleName)
 	scopedTransferKeeper := capabilityKeeper.ScopeToModule(ibcTransferTypes.ModuleName)
-	scopedWasmKeeper := capabilityKeeper.ScopeToModule(wasm.ModuleName)
 
 	accountKeeper := sdkAuthKeeper.NewAccountKeeper(
 		app.codec,
@@ -495,108 +461,11 @@ func (app application) Initialize(logger log.Logger, db tendermintDB.DB, traceSt
 	)
 	evidenceKeeper.SetRouter(sdkEvidenceTypes.NewRouter())
 
-	metasModule := metas.Prototype().Initialize(
-		app.keys[metas.Prototype().Name()],
-		paramsKeeper.Subspace(metas.Prototype().Name()),
-	)
-	classificationsModule := classifications.Prototype().Initialize(
-		app.keys[classifications.Prototype().Name()],
-		paramsKeeper.Subspace(classifications.Prototype().Name()),
-		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
-	)
-	maintainersModule := maintainers.Prototype().Initialize(
-		app.keys[metas.Prototype().Name()],
-		paramsKeeper.Subspace(maintainers.Prototype().Name()),
-		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
-	)
-	identitiesModule := identities.Prototype().Initialize(
-		app.keys[identities.Prototype().Name()],
-		paramsKeeper.Subspace(identities.Prototype().Name()),
-		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
-		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
-		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-	)
-	splitsModule := splits.Prototype().Initialize(
-		app.keys[splits.Prototype().Name()],
-		paramsKeeper.Subspace(splits.Prototype().Name()),
-		bankKeeper,
-		identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
-	)
-	assetsModule := assets.Prototype().Initialize(
-		app.keys[assets.Prototype().Name()],
-		paramsKeeper.Subspace(assets.Prototype().Name()),
-		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
-		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-		identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
-		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-		splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
-		splitsModule.GetAuxiliary(burn.Auxiliary.GetName()),
-		splitsModule.GetAuxiliary(renumerate.Auxiliary.GetName()),
-	)
-	ordersModule := orders.Prototype().Initialize(
-		app.keys[orders.Prototype().Name()],
-		paramsKeeper.Subspace(orders.Prototype().Name()),
-		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
-		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-		identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
-		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-		splitsModule.GetAuxiliary(splitsTransfer.Auxiliary.GetName()),
-	)
-
-	wasmDir := filepath.Join(app.GetDefaultHome(), wasmTypes.ModuleName)
-
-	wasmWrap := struct {
-		Wasm wasmTypes.WasmConfig `mapstructure:"wasm"`
-	}{
-		Wasm: wasmTypes.DefaultWasmConfig(),
-	}
-
-	err := viper.Unmarshal(&wasmWrap)
-	if err != nil {
-		panic("error while reading wasm config: " + err.Error())
-	}
-
-	wasmConfig := wasmWrap.Wasm
-
-	var wasmOpts []wasm.Option
-	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
-		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
-	}
-
-	wasmKeeper := wasm.NewKeeper(
+	metaKeeper := metaKeeper.NewKeeper(
 		app.codec,
-		app.keys[wasm.StoreKey],
-		paramsKeeper.Subspace(wasm.ModuleName),
-		accountKeeper,
-		bankKeeper,
-		app.stakingKeeper,
-		app.distributionKeeper,
-		ibcKeeper.ChannelKeeper,
-		&ibcKeeper.PortKeeper,
-		scopedWasmKeeper,
-		transferKeeper,
-		app.Router(),
-		app.GRPCQueryRouter(),
-		wasmDir,
-		wasmConfig,
-		sdkStakingTypes.ModuleName,
-		//TODO &wasm.MessageEncoders{Custom: wasmUtilities.CustomEncoder(assets.Prototype(), classifications.Prototype(), identities.Prototype(), maintainers.Prototype(), metas.Prototype(), orders.Prototype(), splits.Prototype())},
-		wasmOpts...)
+		app.keys[metaTypes.ModuleName],
+		paramsKeeper.Subspace(metaTypes.ModuleName),
+	)
 
 	govRouter := sdkGovTypes.NewRouter()
 
@@ -605,10 +474,6 @@ func (app application) Initialize(logger log.Logger, db tendermintDB.DB, traceSt
 		AddRoute(sdkDistributionTypes.RouterKey, distribution.NewCommunityPoolSpendProposalHandler(app.distributionKeeper)).
 		AddRoute(sdkUpgradeTypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(upgradeKeeper)).
 		AddRoute(ibcHost.RouterKey, ibcClient.NewClientUpdateProposalHandler(ibcKeeper.ClientKeeper))
-
-	if len(app.enabledWasmProposalTypeList) != 0 {
-		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(wasmKeeper, app.enabledWasmProposalTypeList))
-	}
 
 	govKeeper := sdkGovKeeper.NewKeeper(
 		app.codec,
@@ -644,15 +509,7 @@ func (app application) Initialize(logger log.Logger, db tendermintDB.DB, traceSt
 		params.NewAppModule(paramsKeeper),
 		transferModule,
 
-		wasm.NewAppModule(app.codec, &wasmKeeper, app.stakingKeeper),
-
-		assetsModule,
-		classificationsModule,
-		identitiesModule,
-		maintainersModule,
-		metasModule,
-		ordersModule,
-		splitsModule,
+		metas.NewAppModule(app.codec, metaKeeper),
 	)
 
 	app.moduleManager.SetOrderBeginBlockers(
@@ -668,7 +525,6 @@ func (app application) Initialize(logger log.Logger, db tendermintDB.DB, traceSt
 		sdkCrisisTypes.ModuleName,
 		sdkGovTypes.ModuleName,
 		sdkStakingTypes.ModuleName,
-		ordersModule.Name(),
 	)
 	app.moduleManager.SetOrderInitGenesis(
 		sdkCapabilityTypes.ModuleName,
@@ -685,15 +541,7 @@ func (app application) Initialize(logger log.Logger, db tendermintDB.DB, traceSt
 		sdkEvidenceTypes.ModuleName,
 		ibcTransferTypes.ModuleName,
 
-		wasm.ModuleName,
-
-		assets.Prototype().Name(),
-		classifications.Prototype().Name(),
-		identities.Prototype().Name(),
-		maintainers.Prototype().Name(),
-		metas.Prototype().Name(),
-		orders.Prototype().Name(),
-		splits.Prototype().Name(),
+		metaTypes.ModuleName,
 	)
 
 	app.moduleManager.RegisterInvariants(&app.crisisKeeper)
@@ -714,13 +562,7 @@ func (app application) Initialize(logger log.Logger, db tendermintDB.DB, traceSt
 		ibc.NewAppModule(ibcKeeper),
 		transferModule,
 
-		assets.Prototype(),
-		classifications.Prototype(),
-		identities.Prototype(),
-		maintainers.Prototype(),
-		metas.Prototype(),
-		orders.Prototype(),
-		splits.Prototype(),
+		metas.NewAppModule(app.codec, metaKeeper),
 	)
 	app.moduleSimulationManager.RegisterStoreDecoders()
 
@@ -756,14 +598,13 @@ func (app application) Initialize(logger log.Logger, db tendermintDB.DB, traceSt
 	return &app
 }
 
-func NewApplication(name string, moduleBasicManager module.BasicManager, encodingConfig encoding.EncodingConfig, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string) applications.Application {
+func NewApplication(name string, moduleBasicManager module.BasicManager, encodingConfig encoding.EncodingConfig, moduleAccountPermissions map[string][]string) applications.Application {
 	return &application{
-		name:                        name,
-		moduleBasicManager:          moduleBasicManager,
-		legacyAminoCodec:            encodingConfig.LegacyAmino,
-		codec:                       encodingConfig.Marshaler,
-		interfaceRegistry:           encodingConfig.InterfaceRegistry,
-		enabledWasmProposalTypeList: enabledWasmProposalTypeList,
-		moduleAccountPermissions:    moduleAccountPermissions,
+		name:                     name,
+		moduleBasicManager:       moduleBasicManager,
+		legacyAminoCodec:         encodingConfig.LegacyAmino,
+		codec:                    encodingConfig.Marshaler,
+		interfaceRegistry:        encodingConfig.InterfaceRegistry,
+		moduleAccountPermissions: moduleAccountPermissions,
 	}
 }

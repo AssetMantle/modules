@@ -11,7 +11,7 @@ protoc_gen_gocosmos() {
   go get github.com/regen-network/cosmos-proto/protoc-gen-gocosmos@latest 2>/dev/null
 }
 
-proto_dirs=$(find ./proto/persistence_sdk -path -prune -o -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq)
+proto_dirs=$(find ./proto/persistenceSDK -path -prune -o -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq)
 for dir in $proto_dirs; do
   buf protoc \
   -I "proto" \

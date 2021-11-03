@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package persistenceSDK.modules.metas;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "persistenceSDK/modules/metas/meta.proto";
+import "persistenceSDK/modules/metas/parameter.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/metas/types";
+
+service Query {
+  rpc GetMeta (QueryMetaRequest) returns (QueryMetaResponse) {
+    option (google.api.http).get = "/persistenceSDK/v1/metas/meta/{metaID}";
+  }
+
+  rpc GetParameters (QueryParametersRequest) returns (QueryParametersResponse) {
+    option (google.api.http).get = "/persistenceSDK/v1/metas/parameters";
+  }
+}
+
+message QueryMetaRequest {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = false;
+
+  string metaID = 1 [(gogoproto.moretags) = "valid:\"required~required MetaID missing\""];
+}
+
+message QueryMetaResponse {
+  bool success = 1;
+  string error = 2 ;
+  persistenceSDK.modules.metas.Meta value = 3 [(gogoproto.nullable) = false] ;
+}
+
+message QueryParametersRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParametersResponse {
+  bool success = 1;
+  string error = 2 ;
+  persistenceSDK.modules.metas.Parameters parameters = 3 [(gogoproto.nullable) = false];
+}

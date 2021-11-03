@@ -11,53 +11,42 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-var _ types.SortedDataList = (*ListData)(nil)
+//var _ types.SortedDataList = (*ListData)(nil)
 
-func (sortedDataList ListData) Search(data types.Data) int {
+func (listData ListData) Search(data types.Data) int {
 	index := sort.Search(
-		len(sortedDataList.Value),
+		len(listData.Value),
 		func(i int) bool {
-			return sortedDataList.Value[i].Compare(data) <= 0
+			return listData.Value[i].Compare(data) <= 0
 		},
 	)
-	if index < len(sortedDataList.Value) {
-		if sortedDataList.Value[index].Compare(data) != 0 {
-			return len(sortedDataList.Value)
+	if index < len(listData.Value) {
+		if listData.Value[index].Compare(data) != 0 {
+			return len(listData.Value)
 		}
 	}
 	return index
 }
-func (sortedDataList ListData) GetList() []types.Data {
-	newList := make([]types.Data, len(sortedDataList.Value))
-	for i, _ := range sortedDataList.Value {
-		newList[i] = &sortedDataList.Value[i]
-	}
-	return newList
+func (listData ListData) GetList() []types.Data {
+	panic("implement me")
 }
-func (sortedDataList ListData) Add(dataList ...types.Data) types.SortedDataList {
-	for _, data := range dataList {
-		if sortedDataList.Search(data) != len(sortedDataList.Value) {
-			return sortedDataList
-		}
 
-		index := sort.Search(
-			len(sortedDataList.Value),
-			func(i int) bool {
-				return sortedDataList.Value[i].Compare(data) < 0
-			},
-		)
-		newData := *NewData(data)
-		sortedDataList.Value = append(sortedDataList.Value, newData)
-		copy(sortedDataList.Value[index+1:], sortedDataList.Value[index:])
-		sortedDataList.Value[index] = *NewData(data)
-	}
-	return sortedDataList
+//func (listData ListData) Add(dataList ...types.Data) types.SortedDataList {
+//	panic("implement me")
+//}
+//func (listData ListData) Remove(dataList ...types.Data) types.SortedDataList {
+//	for _, data := range dataList {
+//		if index := listData.Search(data); index != len(listData.Value) {
+//			listData.Value = append(listData.Value[:index], listData.Value[index+1:]...)
+//		}
+//	}
+//	return listData
+//}
+
+func (listData *ListData) Add(data ...types.Data) types.ListData {
+	panic("implement me")
 }
-func (sortedDataList ListData) Remove(dataList ...types.Data) types.SortedDataList {
-	for _, data := range dataList {
-		if index := sortedDataList.Search(data); index != len(sortedDataList.Value) {
-			sortedDataList.Value = append(sortedDataList.Value[:index], sortedDataList.Value[index+1:]...)
-		}
-	}
-	return sortedDataList
+
+func (listData *ListData) Remove(data ...types.Data) types.ListData {
+	panic("implement me")
 }

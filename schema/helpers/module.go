@@ -7,6 +7,7 @@ package helpers
 
 import (
 	"encoding/json"
+	"github.com/cosmos/cosmos-sdk/codec"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
@@ -22,5 +23,5 @@ type Module interface {
 
 	DecodeModuleTransactionRequest(string, json.RawMessage) (sdkTypes.Msg, error)
 
-	Initialize(*sdkTypes.KVStoreKey, paramTypes.Subspace, ...interface{}) Module
+	Initialize(sdkTypes.StoreKey, codec.BinaryMarshaler, paramTypes.Subspace, ...interface{}) Module
 }

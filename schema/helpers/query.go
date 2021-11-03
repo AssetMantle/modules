@@ -8,6 +8,7 @@ package helpers
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -21,7 +22,7 @@ type Query interface {
 	Command() *cobra.Command
 	HandleMessage(sdkTypes.Context, abciTypes.RequestQuery) ([]byte, error)
 	RESTQueryHandler(client.Context) http.HandlerFunc
-	Initialize(Mapper, Parameters, ...interface{}) Query
+	Initialize(Mapper, []types.Parameter, ...interface{}) Query
 	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)
 	RegisterService(module.Configurator)
 }

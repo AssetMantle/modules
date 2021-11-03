@@ -8,36 +8,23 @@ package schema
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	helpersCodecs "github.com/persistenceOne/persistenceSDK/schema/helpers/codec"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
+	traitsCodecs "github.com/persistenceOne/persistenceSDK/schema/traits/codec"
+	typesCodecs "github.com/persistenceOne/persistenceSDK/schema/types/codec"
 )
 
 func RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
 	codec.RegisterInterface((*error)(nil), nil)
-	types.RegisterLegacyAminoCodec(codec)
-	baseTypes.RegisterLegacyAminoCodec(codec)
-	traits.RegisterLegacyCodec(codec)
-	baseTraits.RegisterLegacyCodec(codec)
+	typesCodecs.RegisterLegacyAminoCodec(codec)
+	traitsCodecs.RegisterLegacyCodec(codec)
+	helpersCodecs.RegisterLegacyCodec(codec)
 	mappables.RegisterLegacyCodec(codec)
-	helpers.RegisterLegacyCodec(codec)
 }
 
-func RegisterProtoCodec(registry codecTypes.InterfaceRegistry) {
-	registry.RegisterImplementations((*types.ID)(nil), &baseTypes.ID{})
-	registry.RegisterImplementations((*types.Height)(nil), &baseTypes.Height{})
-	registry.RegisterImplementations((*types.Signature)(nil), &baseTypes.Signature{})
-	registry.RegisterImplementations((*types.Signatures)(nil), &baseTypes.Signatures{})
-	registry.RegisterImplementations((*types.Fact)(nil), &baseTypes.Fact{})
-	registry.RegisterImplementations((*types.MetaFact)(nil), &baseTypes.MetaFact{})
-	registry.RegisterImplementations((*types.MetaProperties)(nil), &baseTypes.MetaProperties{})
-	//registry.RegisterImplementations((*types.Parameter)(nil), &baseTypes.Parameter{})
-	registry.RegisterImplementations((*types.Data)(nil), &baseTypes.Data{})
-	registry.RegisterImplementations((*types.Property)(nil), &baseTypes.Property{})
-	registry.RegisterImplementations((*types.Properties)(nil), &baseTypes.Properties{})
-	registry.RegisterImplementations((*traits.HasMutables)(nil), &baseTraits.HasMutables{})
-	registry.RegisterImplementations((*traits.HasImmutables)(nil), &baseTraits.HasImmutables{})
+func RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
+	typesCodecs.RegisterInterfaces(registry)
+	traitsCodecs.RegisterInterfaces(registry)
+	helpersCodecs.RegisterInterfaces(registry)
+	mappables.RegisterInterfaces(registry)
 }

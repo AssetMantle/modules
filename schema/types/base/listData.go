@@ -6,6 +6,7 @@
 package base
 
 import (
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"strings"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -15,177 +16,47 @@ import (
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
-var (
-	_ types.ListData      = (*Data_ListData)(nil)
-	_ types.DummyListData = (*ListData)(nil)
-)
+var _ types.ListData = (*ListData)(nil)
 
-// TODO: find a better impl
-func (listData Data_ListData) Compare(data types.Data) int {
-	compareListData, Error := listDataFromData(data)
-	if Error != nil {
-		panic(Error)
-	}
-
-	var listDataString []string
-	for _, data := range listData.ListData.Value {
-		listDataString = append(listDataString, data.String())
-	}
-
-	var comparisonDataString []string
-	for _, data := range compareListData.ListData.Value {
-		comparisonDataString = append(comparisonDataString, data.String())
-	}
-
-	return strings.Compare(strings.Join(listDataString, constants.ListDataStringSeparator), strings.Join(comparisonDataString, constants.ListDataStringSeparator))
-}
-func (listData Data_ListData) String() string {
-	dataStringList := make([]string, len(listData.ListData.Value))
-
-	for i, data := range listData.ListData.Value {
-		dataStringList[i] = data.String()
-	}
-
-	return strings.Join(dataStringList, constants.ListDataStringSeparator)
-}
-func (listData Data_ListData) GetTypeID() types.ID {
-	return NewID("LD")
-}
-func (listData Data_ListData) ZeroValue() types.Data {
-	return NewListData([]types.Data{}...)
-}
-func (listData Data_ListData) GenerateHashID() types.ID {
-	if len(listData.ListData.Value) == 0 {
-		return NewID("")
-	}
-
-	return NewID(meta.Hash(listData.String()))
-}
-func (listData Data_ListData) AsAccAddress() (sdkTypes.AccAddress, error) {
-	zeroValue, _ := Data_AccAddressData{}.ZeroValue().AsAccAddress()
-	return zeroValue, errors.IncorrectFormat
-}
-func (listData Data_ListData) AsListData() (types.ListData, error) {
-	return &listData, nil
-}
-func (listData Data_ListData) AsString() (string, error) {
-	zeroValue, _ := Data_StringData{}.ZeroValue().AsString()
-	return zeroValue, errors.IncorrectFormat
-}
-func (listData Data_ListData) AsDec() (sdkTypes.Dec, error) {
-	zeroValue, _ := Data_DecData{}.ZeroValue().AsDec()
-	return zeroValue, errors.IncorrectFormat
-}
-func (listData Data_ListData) AsHeight() (types.Height, error) {
-	zeroValue, _ := Data_HeightData{}.ZeroValue().AsHeight()
-	return zeroValue, errors.IncorrectFormat
-}
-func (listData Data_ListData) AsID() (types.ID, error) {
-	zeroValue, _ := Data_IdData{}.ZeroValue().AsID()
-	return zeroValue, errors.IncorrectFormat
-}
-func (listData Data_ListData) Get() interface{} {
-	return listData.ListData.Value
-}
-func (listData Data_ListData) Search(data types.Data) int {
-	return ListData{Value: listData.ListData.Value}.Search(data)
-}
-func (listData Data_ListData) GetList() []types.Data {
-	newList := make([]types.Data, len(listData.ListData.Value))
-	for i, element := range listData.ListData.Value {
-		newList[i] = element.Data
-	}
-	return newList
-}
-func (listData Data_ListData) Add(dataList ...types.Data) types.ListData {
-	for _, data := range dataList {
-		dataListElement := ListData{Value: listData.ListData.Value}.Add(data).GetList()
-		newDataList := make([]Data, len(dataListElement))
-		for i, element := range dataListElement {
-			newDataList[i] = *NewData(element)
+func (listData ListData) UnpackInterfaces(unpacker codecTypes.AnyUnpacker) error {
+	for _, any := range listData.GetValue() {
+		var data types.Data
+		err := unpacker.UnpackAny(any, &data)
+		if err != nil {
+			return err
 		}
-		listData.ListData.Value = newDataList
 	}
-
-	return &listData
+	return nil
 }
-func (listData Data_ListData) Remove(dataList ...types.Data) types.ListData {
-	for _, data := range dataList {
-		dataListElement := ListData{Value: listData.ListData.Value}.Remove(data).GetList()
-		newDataList := make([]Data, len(dataListElement))
-		for i, element := range dataListElement {
-			newDataList[i] = *NewData(element)
-		}
-		listData.ListData.Value = newDataList
-	}
 
-	return &listData
-}
-func (listData Data_ListData) Unmarshal(dAtA []byte) error {
-	return listData.ListData.Unmarshal(dAtA)
-}
-func (listData *Data_ListData) Reset() { *listData = Data_ListData{} }
-func (*Data_ListData) ProtoMessage()   {}
-
-func listDataFromData(data types.Data) (Data_ListData, error) {
+func listDataFromData(data types.Data) (ListData, error) {
 	switch value := data.(type) {
-	case *Data_ListData:
+	case *ListData:
 		return *value, nil
 	default:
-		return Data_ListData{}, errors.MetaDataError
+		return ListData{}, errors.MetaDataError
 	}
 }
 
-func NewListData(value ...types.Data) *Data_ListData {
-	newValue := make([]Data, len(value))
-	for i, element := range value {
-		newValue[i] = *NewData(element)
+func NewListData(value ...types.Data) ListData {
+	dataAnyList := make([]*codecTypes.Any, len(value))
+	for i, data := range value {
+		dataAny, err := data.AsAny()
+		if err != nil {
+			panic(err)
+		}
+		dataAnyList[i] = dataAny
 	}
-	return &Data_ListData{
-		ListData: &ListData{
-			Value: newValue,
-		},
-	}
+	return ListData{Value: dataAnyList}
 }
 
 func ReadAccAddressListData(dataString string) (types.Data, error) {
-	if dataString == "" {
-		return Data_ListData{}.ZeroValue(), nil
-	}
-
-	dataStringList := strings.Split(dataString, constants.ListDataStringSeparator)
-	dataList := make([]types.Data, len(dataStringList))
-
-	for i, accAddressString := range dataStringList {
-		accAddress, Error := sdkTypes.AccAddressFromBech32(accAddressString)
-		if Error != nil {
-			return Data_ListData{}.ZeroValue(), Error
-		}
-
-		dataList[i] = NewAccAddressData(accAddress)
-	}
-
-	return NewListData(dataList...), nil
+	panic("implement me")
 }
 
 // TODO: find a better impl for types.DummyListData
 func (listData ListData) Compare(data types.Data) int {
-	compareListData, Error := dummyListDataFromData(data)
-	if Error != nil {
-		panic(Error)
-	}
-
-	var listDataString []string
-	for _, data := range listData.Value {
-		listDataString = append(listDataString, data.String())
-	}
-
-	var comparisonDataString []string
-	for _, data := range compareListData.Value {
-		comparisonDataString = append(comparisonDataString, data.String())
-	}
-
-	return strings.Compare(strings.Join(listDataString, constants.ListDataStringSeparator), strings.Join(comparisonDataString, constants.ListDataStringSeparator))
+	panic("implement me")
 }
 func (listData ListData) String() string {
 	dataStringList := make([]string, len(listData.Value))
@@ -197,17 +68,18 @@ func (listData ListData) String() string {
 	return strings.Join(dataStringList, constants.ListDataStringSeparator)
 }
 func (listData ListData) GetTypeID() types.ID {
-	return NewID("LD")
+	return NewTypeID("LD")
 }
 func (listData ListData) ZeroValue() types.Data {
-	return NewListData([]types.Data{}...)
+	ld := NewListData([]types.Data{}...)
+	return &ld
 }
 func (listData ListData) GenerateHashID() types.ID {
 	if len(listData.Value) == 0 {
-		return NewID("")
+		return NewTypeID("")
 	}
 
-	return NewID(meta.Hash(listData.String()))
+	return NewTypeID(meta.Hash(listData.String()))
 }
 func (listData ListData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := AccAddressData{}.ZeroValue().AsAccAddress()
@@ -236,34 +108,6 @@ func (listData ListData) AsID() (types.ID, error) {
 func (listData ListData) Get() interface{} {
 	return listData.Value
 }
-func (listData ListData) BaseSearch(data types.Data) int {
-	//return listData.Value.Search(data)
-	return 0
-}
-func (listData ListData) BaseGetList() []types.Data {
-	//return listData.Value
-	return nil
-}
-func (listData ListData) BaseAdd(dataList ...types.Data) types.DummyListData {
-	//for _, data := range dataList {
-	//	listData.Value = listData.Value.Add(data).(sortedDataList)
-	//}
-
-	return &listData
-}
-func (listData ListData) BaseRemove(dataList ...types.Data) types.DummyListData {
-	//for _, data := range dataList {
-	//	listData.Value = listData.Value.Remove(data).(sortedDataList)
-	//}
-
-	return &listData
-}
-
-func dummyListDataFromData(data types.Data) (ListData, error) {
-	switch value := data.(type) {
-	case *ListData:
-		return *value, nil
-	default:
-		return ListData{}, errors.MetaDataError
-	}
+func (listData *ListData) AsAny() (*codecTypes.Any, error) {
+	return codecTypes.NewAnyWithValue(listData)
 }

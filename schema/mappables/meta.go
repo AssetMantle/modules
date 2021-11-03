@@ -6,6 +6,7 @@
 package mappables
 
 import (
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
@@ -13,4 +14,5 @@ import (
 type Meta interface {
 	GetData() types.Data
 	helpers.Mappable
+	codecTypes.UnpackInterfacesMessage
 }

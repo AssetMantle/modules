@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package persistenceSDK.modules.metas;
+
+import "gogoproto/gogo.proto";
+import "persistenceSDK/schema/types/base/id.proto";
+import "google/protobuf/any.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/metas/types";
+
+message Parameter {
+  option (gogoproto.goproto_stringer) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  persistenceSDK.schema.types.base.ID i_d = 1 [(gogoproto.nullable) = false];
+  google.protobuf.Any data = 2 [(gogoproto.nullable) = false];
+}
+
+message Parameters {
+  repeated Parameter value = 1 [(gogoproto.nullable) = false];
+}

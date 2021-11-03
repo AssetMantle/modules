@@ -72,7 +72,7 @@ func (metaProperties MetaProperties) Mutate(metaPropertyList ...types.MetaProper
 func (metaProperties MetaProperties) RemoveData() types.Properties {
 	propertyList := make([]types.Property, len(metaProperties.GetList()))
 	for i, oldMetaProperty := range metaProperties.GetList() {
-		propertyList[i] = oldMetaProperty.RemoveData()
+		propertyList[i] = oldMetaProperty.ToProperty()
 	}
 
 	return NewProperties(propertyList...)
@@ -81,7 +81,7 @@ func (metaProperties MetaProperties) RemoveData() types.Properties {
 func NewMetaProperties(metaPropertyList ...types.MetaProperty) *MetaProperties {
 	newMetaPropertyList := make([]MetaProperty, len(metaPropertyList))
 	for i, element := range metaPropertyList {
-		newMetaPropertyList[i] = *NewMetaProperty(element.GetID(), element.GetMetaFact())
+		newMetaPropertyList[i] = NewMetaProperty(element.GetID(), element.GetMetaFact())
 	}
 	return &MetaProperties{
 		MetaPropertyList: newMetaPropertyList,

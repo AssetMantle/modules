@@ -5,10 +5,12 @@
 
 package types
 
+import "github.com/gogo/protobuf/proto"
+
 type MetaProperty interface {
+	proto.Message
+
 	GetID() ID
 	GetMetaFact() MetaFact
-	RemoveData() Property
-
-	Proto
+	ToProperty() Property
 }

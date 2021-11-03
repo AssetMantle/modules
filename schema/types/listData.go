@@ -5,6 +5,8 @@
 
 package types
 
+import codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
+
 type ListData interface {
 	Data
 
@@ -14,15 +16,5 @@ type ListData interface {
 
 	Add(...Data) ListData
 	Remove(...Data) ListData
-}
-
-type DummyListData interface {
-	Data
-
-	BaseSearch(Data) int
-
-	BaseGetList() []Data
-
-	BaseAdd(...Data) DummyListData
-	BaseRemove(...Data) DummyListData
+	codecTypes.UnpackInterfacesMessage
 }

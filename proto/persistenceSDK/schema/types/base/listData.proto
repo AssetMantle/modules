@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package persistenceSDK.schema.types.base;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
+
+message ListData {
+  option (gogoproto.goproto_stringer) = false;
+  repeated google.protobuf.Any value = 1;
+}
