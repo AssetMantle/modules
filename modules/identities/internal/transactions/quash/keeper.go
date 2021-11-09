@@ -49,7 +49,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	expiryHeight, Error := expiryHeightMetaFact.GetMetaFact().GetData().AsHeight()
+	expiryHeight, Error := expiryHeightMetaFact.GetData().AsHeight()
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
