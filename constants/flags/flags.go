@@ -36,7 +36,7 @@ var (
 	MutateMaintainer        = base.NewCLIFlag("mutateMaintainer", false, "MutateMaintainer")
 	NubID                   = base.NewCLIFlag("nubID", "", "NubID")
 	OrderID                 = base.NewCLIFlag("orderID", "", "OrderID")
-	OwnableID               = base.NewCLIFlag("ownableID", "", "MakerOwnableID")
+	OwnableID               = base.NewCLIFlag("ownableID", "", "OwnableID")
 	RemoveMaintainer        = base.NewCLIFlag("removeMaintainer", false, "RemoveMaintainer")
 	Split                   = base.NewCLIFlag("split", "0", "Split")
 	SplitID                 = base.NewCLIFlag("splitID", "", "SplitID")

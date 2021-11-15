@@ -19,10 +19,10 @@ import (
 type transactionRequest struct {
 	BaseReq             rest.BaseReq `json:"baseReq"`
 	FromID              string       `json:"fromID" valid:"required~required field fromID missing"`
-	ImmutableMetaTraits string       `json:"immutableMetaTraits" valid:"required~required field immutableMetaTraits missing matches(^[A-Za-z]$)~invalid field immutableMetaProperties"`
-	ImmutableTraits     string       `json:"immutableTraits" valid:"required~required field immutableTraits missing matches(^[A-Za-z]$)~invalid field immutableProperties"`
-	MutableMetaTraits   string       `json:"mutableMetaTraits" valid:"required~required field mutableMetaTraits missing matches(^[A-Za-z]$)~invalid field mutableMetaProperties"`
-	MutableTraits       string       `json:"mutableTraits" valid:"required~required field mutableTraits missing matches(^[A-Za-z]$)~invalid field mutableProperties"`
+	ImmutableMetaTraits string       `json:"immutableMetaTraits"`
+	ImmutableTraits     string       `json:"immutableTraits"`
+	MutableMetaTraits   string       `json:"mutableMetaTraits"`
+	MutableTraits       string       `json:"mutableTraits"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)

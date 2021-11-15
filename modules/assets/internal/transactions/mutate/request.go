@@ -19,9 +19,9 @@ import (
 type transactionRequest struct {
 	BaseReq               rest.BaseReq `json:"baseReq"`
 	FromID                string       `json:"fromID" valid:"required~required field fromID missing"`
-	AssetID               string       `json:"assetID" valid:"required~required field assetID missing matches(^[A-Za-z]$)~invalid field assetID"`
-	MutableMetaProperties string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing matches(^[A-Za-z]$)~invalid field mutableMetaProperties"`
-	MutableProperties     string       `json:"mutableProperties" valid:"required~required field mutableProperties missing matches(^[A-Za-z]$)~invalid field mutableProperties"`
+	AssetID               string       `json:"assetID" valid:"required~required field assetID missing"`
+	MutableMetaProperties string       `json:"mutableMetaProperties"`
+	MutableProperties     string       `json:"mutableProperties"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)

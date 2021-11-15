@@ -7,7 +7,6 @@ package base
 
 import (
 	"encoding/json"
-	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -44,8 +43,6 @@ import (
 	auxiliariesMint "github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/applications"
-	wasmUtilities "github.com/persistenceOne/persistenceSDK/utilities/wasm"
-	"github.com/spf13/viper"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintOS "github.com/tendermint/tendermint/libs/os"
@@ -53,7 +50,6 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 	"honnef.co/go/tools/version"
 	"io"
-	"path/filepath"
 )
 
 type application struct {
@@ -190,7 +186,7 @@ func (application *application) ExportApplicationStateAndValidators(forZeroHeigh
 	return applicationState, staking.WriteValidators(context, application.stakingKeeper), nil
 }
 
-func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.NewApplication {
+func Prototype(applicationName string, codec *codec.Codec, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.NewApplication {
 	return func(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
 
 		baseApp := baseapp.NewBaseApp(
@@ -215,7 +211,6 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			params.StoreKey,
 			upgrade.StoreKey,
 			evidence.StoreKey,
-			wasm.StoreKey,
 		)
 		keys[assets.Module.Name()] = assets.Module.GetKVStoreKey()
 		keys[classifications.Module.Name()] = classifications.Module.GetKVStoreKey()
@@ -388,39 +383,6 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			identitiesModule.GetAuxiliary(verify.AuxiliaryName),
 		)
 
-		var wasmRouter = baseApp.Router()
-		wasmDir := filepath.Join(home, wasm.ModuleName)
-
-		wasmWrap := struct {
-			Wasm wasm.WasmConfig `mapstructure:"wasm"`
-		}{
-			Wasm: wasm.DefaultWasmConfig(),
-		}
-
-		err := viper.Unmarshal(&wasmWrap)
-		if err != nil {
-			panic("error while reading wasm config: " + err.Error())
-		}
-		wasmConfig := wasmWrap.Wasm
-
-		wasmKeeper := wasm.NewKeeper(
-			codec,
-			keys[wasm.StoreKey],
-			paramsKeeper.Subspace(wasm.DefaultParamspace),
-			accountKeeper,
-			bankKeeper,
-			application.stakingKeeper,
-			wasmRouter,
-			wasmDir,
-			wasmConfig,
-			"staking",
-			&wasm.MessageEncoders{Custom: wasmUtilities.CustomEncoder(assets.Module, classifications.Module, identities.Module, maintainers.Module, metas.Module, orders.Module, splits.Module)},
-			nil)
-
-		if len(enabledProposals) != 0 {
-			govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(wasmKeeper, enabledProposals))
-		}
-
 		govKeeper := gov.NewKeeper(
 			codec,
 			keys[gov.StoreKey],
@@ -442,7 +404,6 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			distribution.NewAppModule(application.distributionKeeper, accountKeeper, supplyKeeper, application.stakingKeeper),
 			staking.NewAppModule(application.stakingKeeper, accountKeeper, supplyKeeper),
 			upgrade.NewAppModule(upgradeKeeper),
-			wasm.NewAppModule(wasmKeeper),
 			evidence.NewAppModule(*evidenceKeeper),
 
 			assets.Module,
@@ -477,7 +438,6 @@ func Prototype(applicationName string, codec *codec.Codec, enabledProposals []wa
 			crisis.ModuleName,
 			genutil.ModuleName,
 			evidence.ModuleName,
-			wasm.ModuleName,
 			assets.Module.Name(),
 			classifications.Module.Name(),
 			identities.Module.Name(),

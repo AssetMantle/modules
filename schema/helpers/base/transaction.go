@@ -108,6 +108,12 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			return
 		}
 
+		Error = msg.ValidateBasic()
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+			return
+		}
+
 		baseReq = baseReq.Sanitize()
 		if !baseReq.ValidateBasic(responseWriter) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
