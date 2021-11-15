@@ -18,7 +18,7 @@ import (
 
 type transactionRequest struct {
 	BaseReq    rest.BaseReq `json:"baseReq"`
-	To         string       `json:"to" valid:"required~required field to missing matches(^mantle[a-z0-9]{39}$)~invalid field to"`
+	To         string       `json:"to" valid:"required~required field to missing"`
 	IdentityID string       `json:"identityID" valid:"required~required field identityID missing"`
 }
 
