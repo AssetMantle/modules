@@ -31,7 +31,7 @@ func (splitID splitID) String() string {
 	var values []string
 	values = append(values, splitID.OwnerID.String())
 	values = append(values, splitID.OwnableID.String())
-	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
+	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
 
 func (splitID splitID) Equal(id types.ID) bool {
@@ -39,7 +39,7 @@ func (splitID splitID) Equal(id types.ID) bool {
 }
 
 func readSplitID(splitIDString string) types.ID {
-	idList := strings.Split(splitIDString, constants.FirstOrderCompositeIDSeparator)
+	idList := strings.Split(splitIDString, constants.SecondOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return splitID{
 			OwnerID:   base.NewID(idList[0]),
