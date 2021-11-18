@@ -31,7 +31,7 @@ func (splitID splitID) String() string {
 	var values []string
 	values = append(values, splitID.OwnerID.String())
 	values = append(values, splitID.OwnableID.String())
-	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
+	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
 
 func (splitID splitID) Equal(id types.ID) bool {
@@ -39,11 +39,28 @@ func (splitID splitID) Equal(id types.ID) bool {
 }
 
 func readSplitID(splitIDString string) types.ID {
-	idList := strings.Split(splitIDString, constants.SecondOrderCompositeIDSeparator)
+	idList := strings.Split(splitIDString, constants.FirstOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return splitID{
 			OwnerID:   base.NewID(idList[0]),
 			OwnableID: base.NewID(idList[1]),
+		}
+	} else if len(idList) == 3 {
+		if idList[0] == "orders" {
+			return splitID{
+				OwnerID:   base.NewID(idList[0]),
+				OwnableID: base.NewID(strings.Join([]string{idList[1], idList[2]}, constants.FirstOrderCompositeIDSeparator)),
+			}
+		} else {
+			return splitID{
+				OwnerID:   base.NewID(strings.Join([]string{idList[0], idList[1]}, constants.FirstOrderCompositeIDSeparator)),
+				OwnableID: base.NewID(idList[2]),
+			}
+		}
+	} else if len(idList) == 4 {
+		return splitID{
+			OwnerID:   base.NewID(strings.Join([]string{idList[0], idList[1]}, constants.FirstOrderCompositeIDSeparator)),
+			OwnableID: base.NewID(strings.Join([]string{idList[2], idList[3]}, constants.FirstOrderCompositeIDSeparator)),
 		}
 	}
 	return splitID{OwnerID: base.NewID(""), OwnableID: base.NewID("")}
