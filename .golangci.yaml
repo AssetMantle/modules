@@ -4,9 +4,10 @@ run:
 linters:
   disable-all: false
   disable:
-    - golint
-    - interfacer
-    - scopelint
+    - golint # deprecated
+    - interfacer # deprecated
+    - scopelint # deprecated
+    - varnamelen
   enable:
     - bodyclose
     - deadcode
@@ -46,7 +47,6 @@ linters:
     - varcheck
     - nestif
     - nilnil
-    - varnamelen
 
 linters-settings:
   dogsled:
