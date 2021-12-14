@@ -47,17 +47,19 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetMakerOwnableSplit())))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetMakerOwnableSplit())))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	transferMakerOwnableSplit := sdkTypes.ZeroDec()
 
 	if makerOwnableSplitProperty := metaProperties.Get(base.NewID(properties.MakerOwnableSplit)); makerOwnableSplitProperty != nil {
-		oldMakerOwnableSplit, Error := makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
-		if Error != nil {
-			return newTransactionResponse(Error)
+		var oldMakerOwnableSplit sdkTypes.Dec
+
+		oldMakerOwnableSplit, err = makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
+		if err != nil {
+			return newTransactionResponse(err)
 		}
 
 		transferMakerOwnableSplit = message.MakerOwnableSplit.Sub(oldMakerOwnableSplit)

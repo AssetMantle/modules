@@ -7,6 +7,7 @@ package take
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
@@ -18,6 +19,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -46,23 +48,26 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetTakerID(), order.(mappables.Order).GetMakerOwnableSplit())))
-	if Error != nil {
-		newTransactionResponse(Error)
+	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetTakerID(), order.(mappables.Order).GetMakerOwnableSplit())))
+	if err != nil {
+		newTransactionResponse(err)
 	}
 
 	if takerIDProperty := metaProperties.Get(base.NewID(properties.TakerID)); takerIDProperty != nil {
-		takerID, Error := takerIDProperty.GetMetaFact().GetData().AsID()
-		if Error != nil {
+		var takerID types.ID
+
+		takerID, err = takerIDProperty.GetMetaFact().GetData().AsID()
+		if err != nil {
 			return newTransactionResponse(errors.MetaDataError)
 		} else if takerID.Compare(base.NewID("")) != 0 && takerID.Compare(message.FromID) != 0 {
 			return newTransactionResponse(errors.NotAuthorized)
 		}
 	}
 
-	exchangeRate, Error := order.(mappables.Order).GetExchangeRate().GetMetaFact().GetData().AsDec()
-	if Error != nil {
-		return newTransactionResponse(Error)
+	var exchangeRate sdkTypes.Dec
+	exchangeRate, err = order.(mappables.Order).GetExchangeRate().GetMetaFact().GetData().AsDec()
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	makerOwnableSplitProperty := metaProperties.Get(base.NewID(properties.MakerOwnableSplit))
@@ -70,8 +75,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.MetaDataError)
 	}
 
-	makerOwnableSplit, Error := makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
-	if Error != nil {
+	makerOwnableSplit, err := makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
+	if err != nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}
 
@@ -95,10 +100,10 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		orders.Remove(order)
 	default:
 		makerReceiveTakerOwnableSplit = message.TakerOwnableSplit
-		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(updatedMakerOwnableSplit))))))
 
-		if Error != nil {
-			return newTransactionResponse(Error)
+		mutableProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(updatedMakerOwnableSplit))))))
+		if err != nil {
+			return newTransactionResponse(err)
 		}
 
 		order = mappable.NewOrder(orderID, order.(mappables.Order).GetImmutableProperties(), order.(mappables.Order).GetImmutableProperties().Mutate(mutableProperties.GetList()...))

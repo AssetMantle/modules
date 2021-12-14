@@ -48,18 +48,20 @@ func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
 		transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(authClient.GetTxEncoder(codec))
 		cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
 
-		transactionRequest, Error := transaction.requestPrototype().FromCLI(transaction.cliCommand, cliContext)
-		if Error != nil {
-			return Error
+		transactionRequest, err := transaction.requestPrototype().FromCLI(transaction.cliCommand, cliContext)
+		if err != nil {
+			return err
 		}
 
-		msg, Error := transactionRequest.MakeMsg()
-		if Error != nil {
-			return Error
+		var msg sdkTypes.Msg
+
+		msg, err = transactionRequest.MakeMsg()
+		if err != nil {
+			return err
 		}
 
-		if Error := msg.ValidateBasic(); Error != nil {
-			return Error
+		if err = msg.ValidateBasic(); err != nil {
+			return err
 		}
 
 		return authClient.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{msg})
@@ -93,18 +95,19 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			return
 		}
 
-		Error := transactionRequest.Validate()
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+		err := transactionRequest.Validate()
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 			return
 		}
 
 		baseReq := transactionRequest.GetBaseReq()
 
-		msg, Error := transactionRequest.MakeMsg()
+		var msg sdkTypes.Msg
+		msg, err = transactionRequest.MakeMsg()
 		// TODO write one method
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -114,8 +117,8 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			return
 		}
 
-		if Error := msg.ValidateBasic(); Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+		if err = msg.ValidateBasic(); err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -129,9 +132,12 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			return
 		}
 
-		simAndExec, gas, Error := flags.ParseGas(baseReq.Gas)
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+		var simAndExec bool
+		var gas uint64
+
+		simAndExec, gas, err = flags.ParseGas(baseReq.Gas)
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -147,9 +153,9 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 				return
 			}
 
-			txBuilder, Error = authClient.EnrichWithGas(txBuilder, cliContext, msgList)
-			if Error != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+			txBuilder, err = authClient.EnrichWithGas(txBuilder, cliContext, msgList)
+			if err != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 				return
 			}
 
@@ -159,9 +165,12 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			}
 		}
 
-		fromAddress, fromName, Error := context.GetFromFields(strings.NewReader(keys.DefaultKeyPass), baseReq.From, viper.GetBool(flags.FlagGenerateOnly))
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+		var fromAddress sdkTypes.AccAddress
+		var fromName string
+
+		fromAddress, fromName, err = context.GetFromFields(strings.NewReader(keys.DefaultKeyPass), baseReq.From, viper.GetBool(flags.FlagGenerateOnly))
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -180,41 +189,50 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 				cliContext.Codec,
 			)
 
-			if _, Error := responseWriter.Write(output); Error != nil {
-				log.Printf("could not write response: %v", Error)
+			if _, err = responseWriter.Write(output); err != nil {
+				log.Printf("could not write response: %v", err)
 			}
 		} else {
-			accountNumber, sequence, Error := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
-			if Error != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+			var accountNumber uint64
+			var sequence uint64
+
+			accountNumber, sequence, err = types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
+			if err != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 				return
 			}
 
 			txBuilder = txBuilder.WithAccountNumber(accountNumber)
 			txBuilder = txBuilder.WithSequence(sequence)
 
-			stdMsg, Error := txBuilder.BuildAndSign(fromName, keys.DefaultKeyPass, msgList)
-			if Error != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+			var stdMsg []byte
+
+			stdMsg, err = txBuilder.BuildAndSign(fromName, keys.DefaultKeyPass, msgList)
+			if err != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 				return
 			}
 
 			// broadcast to a node
-			response, Error := cliContext.BroadcastTx(stdMsg)
-			if Error != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+			var response sdkTypes.TxResponse
+
+			response, err = cliContext.BroadcastTx(stdMsg)
+			if err != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 				return
 			}
 
-			output, Error := cliContext.Codec.MarshalJSON(response)
-			if Error != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+			var output []byte
+
+			output, err = cliContext.Codec.MarshalJSON(response)
+			if err != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 				return
 			}
 
 			responseWriter.Header().Set("Content-Type", "application/json")
-			if _, Error := responseWriter.Write(output); Error != nil {
-				log.Printf("could not write response: %v", Error)
+			if _, err = responseWriter.Write(output); err != nil {
+				log.Printf("could not write response: %v", err)
 			}
 		}
 	}
@@ -225,9 +243,9 @@ func (transaction transaction) RegisterCodec(codec *codec.Codec) {
 	transaction.requestPrototype().RegisterCodec(codec)
 }
 func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessage) (sdkTypes.Msg, error) {
-	transactionRequest, Error := transaction.requestPrototype().FromJSON(rawMessage)
-	if Error != nil {
-		return nil, Error
+	transactionRequest, err := transaction.requestPrototype().FromJSON(rawMessage)
+	if err != nil {
+		return nil, err
 	}
 
 	return transactionRequest.MakeMsg()

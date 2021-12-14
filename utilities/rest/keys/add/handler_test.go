@@ -7,6 +7,11 @@ package add
 
 import (
 	"bytes"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -18,10 +23,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
-	"net/http"
-	"net/http/httptest"
-	"strings"
-	"testing"
 )
 
 func TestHandler(t *testing.T) {
@@ -29,13 +30,16 @@ func TestHandler(t *testing.T) {
 	schema.RegisterCodec(Codec)
 	Codec.RegisterConcrete(request{}, "request", nil)
 	Codec.RegisterConcrete(response{}, "response", nil)
+
 	clientContext := context.NewCLIContext().WithCodec(Codec)
+
 	handler := handler(clientContext)
+
 	viper.Set(flags.FlagKeyringBackend, keys.BackendTest)
 	viper.Set(flags.FlagHome, t.TempDir())
 
-	keyring, Error := cryptoKeys.NewKeyring(sdk.KeyringServiceName(), keys.BackendTest, t.TempDir(), strings.NewReader(""))
-	require.NoError(t, Error)
+	keyring, err := cryptoKeys.NewKeyring(sdk.KeyringServiceName(), keys.BackendTest, t.TempDir(), strings.NewReader(""))
+	require.NoError(t, err)
 
 	router := mux.NewRouter()
 	RegisterRESTRoutes(clientContext, router)
@@ -48,21 +52,28 @@ func TestHandler(t *testing.T) {
 
 	getResponse := func(responseBytes []byte) response {
 		var Response rest.ResponseWithHeight
-		Error := Codec.UnmarshalJSON(responseBytes, &Response)
-		require.Nil(t, Error)
+
+		innerErr := Codec.UnmarshalJSON(responseBytes, &Response)
+		require.Nil(t, innerErr)
 
 		var ResponseValue response
-		Error = Codec.UnmarshalJSON(Response.Result, &ResponseValue)
+		innerErr = Codec.UnmarshalJSON(Response.Result, &ResponseValue)
+		require.Nil(t, innerErr)
+
 		return ResponseValue
 	}
 
 	// create account without mnemonic
-	requestBody1, Error := Codec.MarshalJSON(request{
+	var requestBody1 []byte
+	requestBody1, err = Codec.MarshalJSON(request{
 		Name: "testKey1",
 	})
-	require.Nil(t, Error)
-	testRequest1, Error := http.NewRequest("POST", "/keys/add", bytes.NewBuffer(requestBody1))
-	require.Nil(t, Error)
+	require.Nil(t, err)
+
+	var testRequest1 *http.Request
+	testRequest1, err = http.NewRequest("POST", "/keys/add", bytes.NewBuffer(requestBody1))
+	require.Nil(t, err)
+
 	responseRecorder := httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest1)
 	require.Equal(t, http.StatusOK, responseRecorder.Code)
@@ -72,13 +83,16 @@ func TestHandler(t *testing.T) {
 	require.Equal(t, true, response1.Success)
 
 	// create account with mnemonic
-	requestBody2, Error := Codec.MarshalJSON(request{
+	var requestBody2 []byte
+	requestBody2, err = Codec.MarshalJSON(request{
 		Name:     "testKey2",
 		Mnemonic: "wage thunder live sense resemble foil apple course spin horse glass mansion midnight laundry acoustic rhythm loan scale talent push green direct brick please",
 	})
-	require.Nil(t, Error)
-	testRequest2, Error := http.NewRequest("POST", "/keys/add", bytes.NewBuffer(requestBody2))
-	require.Nil(t, Error)
+	require.Nil(t, err)
+
+	var testRequest2 *http.Request
+	testRequest2, err = http.NewRequest("POST", "/keys/add", bytes.NewBuffer(requestBody2))
+	require.Nil(t, err)
 
 	responseRecorder = httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest2)
@@ -89,13 +103,16 @@ func TestHandler(t *testing.T) {
 	require.Equal(t, true, response2.Success)
 
 	// invalid mnemonic
-	requestBody3, Error := Codec.MarshalJSON(request{
+	var requestBody3 []byte
+	requestBody3, err = Codec.MarshalJSON(request{
 		Name:     "testKey3",
 		Mnemonic: "wage brick please",
 	})
-	require.Nil(t, Error)
-	testRequest3, Error := http.NewRequest("POST", "/keys/add", bytes.NewBuffer(requestBody3))
-	require.Nil(t, Error)
+	require.Nil(t, err)
+
+	var testRequest3 *http.Request
+	testRequest3, err = http.NewRequest("POST", "/keys/add", bytes.NewBuffer(requestBody3))
+	require.Nil(t, err)
 
 	responseRecorder = httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest3)
@@ -103,24 +120,26 @@ func TestHandler(t *testing.T) {
 	require.Equal(t, `{"error":"invalid mnemonic"}`, responseRecorder.Body.String())
 
 	// invalid request
-	testRequest4, Error := http.NewRequest("POST", "/keys/add", bytes.NewBuffer([]byte{}))
-	require.Nil(t, Error)
+	testRequest4, err := http.NewRequest("POST", "/keys/add", bytes.NewBuffer([]byte{}))
+	require.Nil(t, err)
 
 	responseRecorder = httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest4)
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 
-	//Retry adding same account
-	requestBody5, Error := Codec.MarshalJSON(request{
+	// Retry adding same account
+	var requestBody5 []byte
+	requestBody5, err = Codec.MarshalJSON(request{
 		Name: "testKey1",
 	})
-	require.Nil(t, Error)
-	testRequest5, Error := http.NewRequest("POST", "/keys/add", bytes.NewBuffer(requestBody5))
-	require.Nil(t, Error)
+	require.Nil(t, err)
+
+	var testRequest5 *http.Request
+	testRequest5, err = http.NewRequest("POST", "/keys/add", bytes.NewBuffer(requestBody5))
+	require.Nil(t, err)
 
 	responseRecorder = httptest.NewRecorder()
 	handler.ServeHTTP(responseRecorder, testRequest5)
 	require.Equal(t, http.StatusInternalServerError, responseRecorder.Code)
 	require.Equal(t, `{"error":"Account for keyname testKey1 already exists"}`, responseRecorder.Body.String())
-
 }

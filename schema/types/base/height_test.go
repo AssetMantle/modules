@@ -12,9 +12,10 @@ import (
 )
 
 func TestHeight(t *testing.T) {
-	height := height{Value: 10}
+	h := height{Value: 10}
 	heightByFunction := NewHeight(10)
-	require.Equal(t, height.Value, heightByFunction.Get())
+
+	require.Equal(t, h.Value, heightByFunction.Get())
 	require.Equal(t, true, heightByFunction.Compare(NewHeight(1)) > 0)
 	require.Equal(t, false, heightByFunction.Compare(NewHeight(10)) > 0)
 	require.Equal(t, false, heightByFunction.Compare(NewHeight(20)) > 0)

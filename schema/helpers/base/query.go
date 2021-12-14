@@ -61,20 +61,20 @@ func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciType
 	return query.queryKeeper.Enquire(context, request).Encode()
 }
 
-func (query query) RESTQueryHandler(cliContext context.CLIContext) http.HandlerFunc {
+func (query query) RESTQueryHandler(outerCliContext context.CLIContext) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		responseWriter.Header().Set("Content-Type", "application/json")
-		cliContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, cliContext, httpRequest)
 
+		cliContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, outerCliContext, httpRequest)
 		if !ok {
 			return
 		}
 
 		queryRequest := query.requestPrototype().FromMap(mux.Vars(httpRequest))
-		response, height, Error := query.query(queryRequest, cliContext)
 
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
+		response, height, err := query.query(queryRequest, cliContext)
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
 		}
 
