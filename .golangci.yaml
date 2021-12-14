@@ -101,7 +101,7 @@ linters-settings:
     line-length: 160
 
   misspell:
-    locale: UK
+    locale: US
 
   wsl:
     allow-trailing-comment: true
