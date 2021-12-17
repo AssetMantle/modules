@@ -63,8 +63,8 @@ func Test_Asset_Request(t *testing.T) {
 	require.Equal(t, testQueryRequest, decodedRequest)
 
 	var randomDecode helpers.QueryRequest
-	randomDecode, err = queryRequest{}.Decode(base.NewID("").Bytes())
-	require.Equal(t, nil, err)
+	// we expect to get an error here, so ignore it
+	randomDecode, _ = queryRequest{}.Decode(base.NewID("").Bytes())
 	require.Equal(t, nil, randomDecode)
 	require.Equal(t, testQueryRequest, queryRequestFromInterface(testQueryRequest))
 	require.Equal(t, queryRequest{}, queryRequestFromInterface(nil))
