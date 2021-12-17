@@ -37,14 +37,14 @@ func Test_Define_Request(t *testing.T) {
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 
-	mutableMetaProperties, Error := base.ReadMetaProperties(mutableMetaPropertiesString)
-	require.Equal(t, nil, Error)
-	mutableProperties, Error := base.ReadProperties(mutablePropertiesString)
-	require.Equal(t, nil, Error)
+	mutableMetaProperties, err := base.ReadMetaProperties(mutableMetaPropertiesString)
+	require.Equal(t, nil, err)
+	mutableProperties, err := base.ReadProperties(mutablePropertiesString)
+	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	testTransactionRequest := newTransactionRequest(testBaseReq, "fromID", "orderID", sdkTypes.OneDec().String(), "1.0", 123, mutableMetaPropertiesString, mutablePropertiesString)
@@ -52,8 +52,8 @@ func Test_Define_Request(t *testing.T) {
 	require.Equal(t, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", OrderID: "orderID", ExpiresIn: 123, MakerOwnableSplit: "1.0", TakerOwnableSplit: sdkTypes.OneDec().String(), MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
-	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, cliContext)
-	require.Equal(t, nil, Error)
+	requestFromCLI, err := transactionRequest{}.FromCLI(cliCommand, cliContext)
+	require.Equal(t, nil, err)
 	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, FromID: "", MutableMetaProperties: "", MutableProperties: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
@@ -61,35 +61,35 @@ func Test_Define_Request(t *testing.T) {
 	require.Equal(t, nil, error3)
 	require.Equal(t, testTransactionRequest, transactionRequestUnmarshalled)
 
-	randomUnmarshall, Error := transactionRequest{}.FromJSON([]byte{})
+	randomUnmarshall, err := transactionRequest{}.FromJSON([]byte{})
 	require.Equal(t, nil, randomUnmarshall)
-	require.NotNil(t, Error)
+	require.NotNil(t, err)
 
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
-	msg, Error := testTransactionRequest.MakeMsg()
+	msg, err := testTransactionRequest.MakeMsg()
 	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), base.NewID("orderID"), sdkTypes.OneDec(), sdkTypes.NewDec(1), base.NewHeight(123), mutableMetaProperties, mutableProperties), msg)
-	require.Nil(t, Error)
+	require.Nil(t, err)
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "fromAddress", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "orderID", sdkTypes.OneDec().String(), "aa", 123, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
+	msg, err = newTransactionRequest(rest.BaseReq{From: "fromAddress", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "orderID", sdkTypes.OneDec().String(), "aa", 123, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
 	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
+	require.NotNil(t, err)
 
-	msg, Error = newTransactionRequest(testBaseReq, "fromID", "orderID", sdkTypes.OneDec().String(), "aa", 123, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
+	msg, err = newTransactionRequest(testBaseReq, "fromID", "orderID", sdkTypes.OneDec().String(), "aa", 123, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
 	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
+	require.NotNil(t, err)
 
-	msg, Error = newTransactionRequest(testBaseReq, "fromID", "orderID", "aa", "2.0", 123, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
+	msg, err = newTransactionRequest(testBaseReq, "fromID", "orderID", "aa", "2.0", 123, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
 	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
+	require.NotNil(t, err)
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "orderID", sdkTypes.OneDec().String(), sdkTypes.OneDec().String(), 123, "randomString", mutableMetaPropertiesString).MakeMsg()
+	msg, err = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "orderID", sdkTypes.OneDec().String(), sdkTypes.OneDec().String(), 123, "randomString", mutableMetaPropertiesString).MakeMsg()
 	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
+	require.NotNil(t, err)
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "orderID", sdkTypes.OneDec().String(), sdkTypes.OneDec().String(), 123, mutablePropertiesString, "randomString").MakeMsg()
+	msg, err = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "orderID", sdkTypes.OneDec().String(), sdkTypes.OneDec().String(), 123, mutablePropertiesString, "randomString").MakeMsg()
 	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
+	require.NotNil(t, err)
 
 	require.Equal(t, transactionRequest{}, requestPrototype())
 	require.NotPanics(t, func() {

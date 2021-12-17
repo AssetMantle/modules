@@ -6,12 +6,13 @@
 package provision
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Provision_Message(t *testing.T) {
@@ -19,12 +20,12 @@ func Test_Provision_Message(t *testing.T) {
 	testIdentityID := base.NewID("identityID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
 	toAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	toAccAddress, Error := sdkTypes.AccAddressFromBech32(toAddress)
-	require.Nil(t, Error)
+	toAccAddress, err := sdkTypes.AccAddressFromBech32(toAddress)
+	require.Nil(t, err)
 
 	testMessage := newMessage(fromAccAddress, toAccAddress, testIdentityID)
 	require.Equal(t, message{From: fromAccAddress, To: toAccAddress, IdentityID: testIdentityID}, testMessage)

@@ -39,9 +39,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.InterIdentity).GetExpiry())))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.InterIdentity).GetExpiry())))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	expiryHeightMetaFact := metaProperties.Get(base.NewID(properties.Expiry))
@@ -49,9 +49,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	expiryHeight, Error := expiryHeightMetaFact.GetMetaFact().GetData().AsHeight()
-	if Error != nil {
-		return newTransactionResponse(Error)
+	expiryHeight, err := expiryHeightMetaFact.GetMetaFact().GetData().AsHeight()
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	if expiryHeight.Compare(base.NewHeight(context.BlockHeight())) > 0 {

@@ -24,7 +24,7 @@ func BenchmarkFullAppSimulation(b *testing.B) {
 	}
 
 	defer func() {
-		Error := db.Close()
+		err := db.Close()
 		err = os.RemoveAll(dir)
 		if err != nil {
 			b.Fatal(err)

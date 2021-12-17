@@ -43,8 +43,8 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	Error := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, Error)
+	err := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, err)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
@@ -64,10 +64,9 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 }
 
 func Test_Query_Keeper_Maintainer(t *testing.T) {
-
 	context, keepers := CreateTestInput2(t)
-	mutableProperties, Error := base.ReadProperties("burn:S|100")
-	require.Equal(t, nil, Error)
+	mutableProperties, err := base.ReadProperties("burn:S|100")
+	require.Equal(t, nil, err)
 
 	identityID := base.NewID("identityID")
 	classificationID := base.NewID("classificationID")
@@ -76,5 +75,4 @@ func Test_Query_Keeper_Maintainer(t *testing.T) {
 
 	testQueryRequest := newQueryRequest(classificationID)
 	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.FromID(maintainerID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
-
 }

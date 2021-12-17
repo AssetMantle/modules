@@ -6,12 +6,13 @@
 package burn
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Burn_Message(t *testing.T) {
@@ -20,8 +21,8 @@ func Test_Burn_Message(t *testing.T) {
 	testFromID := base.NewID("fromID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
 	testMessage := newMessage(fromAccAddress, testFromID, testAssetID)
 	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, AssetID: testAssetID}, testMessage)

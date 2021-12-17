@@ -1,10 +1,11 @@
 package key
 
 import (
+	"testing"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestFromID(t *testing.T) {
@@ -31,5 +32,4 @@ func TestReadClassificationID(t *testing.T) {
 	assetID := NewAssetID(classificationID, immutableProperties)
 
 	require.Equal(t, assetIDFromInterface(assetID).ClassificationID, ReadClassificationID(assetID))
-
 }

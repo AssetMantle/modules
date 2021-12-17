@@ -6,12 +6,13 @@
 package nub
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Nub_Message(t *testing.T) {
@@ -19,8 +20,8 @@ func Test_Nub_Message(t *testing.T) {
 	testNubID := base.NewID("nubID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
 	testMessage := newMessage(fromAccAddress, testNubID)
 	require.Equal(t, message{From: fromAccAddress, NubID: testNubID}, testMessage)

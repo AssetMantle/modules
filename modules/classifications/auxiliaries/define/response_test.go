@@ -6,10 +6,11 @@
 package define
 
 import (
+	"testing"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Define_Response(t *testing.T) {
@@ -26,15 +27,15 @@ func Test_Define_Response(t *testing.T) {
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
 	require.Equal(t, errors.IncorrectFormat, testAuxiliaryResponse2.GetError())
 
-	classificationIDFromResponse, Error := GetClassificationIDFromResponse(testAuxiliaryResponse)
+	classificationIDFromResponse, err := GetClassificationIDFromResponse(testAuxiliaryResponse)
 	require.Equal(t, classificationID, classificationIDFromResponse)
-	require.Equal(t, nil, Error)
+	require.Equal(t, nil, err)
 
-	classificationIDFromResponse2, Error := GetClassificationIDFromResponse(testAuxiliaryResponse2)
+	classificationIDFromResponse2, err := GetClassificationIDFromResponse(testAuxiliaryResponse2)
 	require.Equal(t, classificationID, classificationIDFromResponse2)
-	require.Equal(t, errors.IncorrectFormat, Error)
+	require.Equal(t, errors.IncorrectFormat, err)
 
-	_, Error = GetClassificationIDFromResponse(nil)
-	require.Equal(t, errors.InvalidRequest, Error)
+	_, err = GetClassificationIDFromResponse(nil)
+	require.Equal(t, errors.InvalidRequest, err)
 
 }

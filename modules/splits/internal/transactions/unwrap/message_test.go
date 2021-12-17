@@ -22,8 +22,8 @@ func Test_Unwrap_Message(t *testing.T) {
 	testSplit := sdkTypes.NewInt(2)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
 	testMessage := newMessage(fromAccAddress, testFromID, testOwnableID, testSplit)
 	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, OwnableID: testOwnableID, Value: testSplit}, testMessage)

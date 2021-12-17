@@ -29,8 +29,8 @@ func (queryResponse queryResponse) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryResponse)
 }
 func (queryResponse queryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
-	if Error := common.Codec.UnmarshalJSON(bytes, &queryResponse); Error != nil {
-		return nil, Error
+	if err := common.Codec.UnmarshalJSON(bytes, &queryResponse); err != nil {
+		return nil, err
 	}
 
 	return queryResponse, nil

@@ -26,7 +26,7 @@ func BenchmarkInvariants(b *testing.B) {
 	config.AllInvariants = false
 
 	defer func() {
-		Error := db.Close()
+		err := db.Close()
 		err = os.RemoveAll(dir)
 		if err != nil {
 			b.Fatal(err)

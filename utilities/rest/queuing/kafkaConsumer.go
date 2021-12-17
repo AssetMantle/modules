@@ -14,9 +14,9 @@ import (
 func newConsumer(kafkaNodes []string) sarama.Consumer {
 	config := sarama.NewConfig()
 
-	consumer, Error := sarama.NewConsumer(kafkaNodes, config)
-	if Error != nil {
-		panic(Error)
+	consumer, err := sarama.NewConsumer(kafkaNodes, config)
+	if err != nil {
+		panic(err)
 	}
 
 	return consumer
@@ -25,9 +25,9 @@ func newConsumer(kafkaNodes []string) sarama.Consumer {
 // partitionConsumers : is a child consumer
 func partitionConsumers(consumer sarama.Consumer, topic string) sarama.PartitionConsumer {
 	// partition and offset defined in configurations.go
-	partitionConsumer, Error := consumer.ConsumePartition(topic, partition, offset)
-	if Error != nil {
-		panic(Error)
+	partitionConsumer, err := consumer.ConsumePartition(topic, partition, offset)
+	if err != nil {
+		panic(err)
 	}
 
 	return partitionConsumer
@@ -43,7 +43,6 @@ func kafkaTopicConsumer(topic string, consumers map[string]sarama.PartitionConsu
 
 	var consumedKafkaMsg kafkaMsg
 	err := cdc.UnmarshalJSON((<-partitionConsumer.Messages()).Value, &consumedKafkaMsg)
-
 	if err != nil {
 		panic(err)
 	}

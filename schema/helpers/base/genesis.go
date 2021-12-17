@@ -52,14 +52,14 @@ func (genesis genesis) Validate() error {
 			return errors.InvalidParameter
 		}
 
-		if Error := parameter.Validate(); Error != nil {
-			return Error
+		if err := parameter.Validate(); err != nil {
+			return err
 		}
 	}
 
-	_, Error := govalidator.ValidateStruct(genesis)
+	_, err := govalidator.ValidateStruct(genesis)
 
-	return Error
+	return err
 }
 func (genesis genesis) Import(context sdkTypes.Context, mapper helpers.Mapper, parameters helpers.Parameters) {
 	for _, mappable := range genesis.MappableList {
@@ -86,17 +86,17 @@ func (genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper, p
 	return genesis.Initialize(mappableList, parameters.GetList())
 }
 func (genesis genesis) Encode() []byte {
-	bytes, Error := genesis.codec.MarshalJSON(genesis)
-	if Error != nil {
-		panic(Error)
+	bytes, err := genesis.codec.MarshalJSON(genesis)
+	if err != nil {
+		panic(err)
 	}
 
 	return bytes
 }
 func (genesis genesis) Decode(byte []byte) helpers.Genesis {
 	newGenesis := genesis
-	if Error := genesis.codec.UnmarshalJSON(byte, &newGenesis); Error != nil {
-		panic(Error)
+	if err := genesis.codec.UnmarshalJSON(byte, &newGenesis); err != nil {
+		panic(err)
 	}
 
 	return NewGenesis(genesis.keyPrototype, genesis.mappablePrototype, genesis.defaultMappableList, genesis.defaultParameterList).Initialize(newGenesis.MappableList, newGenesis.ParameterList)
@@ -121,8 +121,8 @@ func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList
 		genesis.ParameterList = parameterList
 	}
 
-	if Error := genesis.Validate(); Error != nil {
-		panic(Error)
+	if err := genesis.Validate(); err != nil {
+		panic(err)
 	}
 
 	return genesis

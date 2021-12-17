@@ -31,12 +31,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	splits := transactionKeeper.mapper.NewCollection(context)
-	if _, Error := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, sdkTypes.NewDecFromInt(message.Value)); Error != nil {
-		return newTransactionResponse(Error)
+	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, sdkTypes.NewDecFromInt(message.Value)); err != nil {
+		return newTransactionResponse(err)
 	}
 
-	if Error := transactionKeeper.supplyKeeper.SendCoinsFromModuleToAccount(context, module.Name, message.From, sdkTypes.NewCoins(sdkTypes.NewCoin(message.OwnableID.String(), message.Value))); Error != nil {
-		return newTransactionResponse(Error)
+	if err := transactionKeeper.supplyKeeper.SendCoinsFromModuleToAccount(context, module.Name, message.From, sdkTypes.NewCoins(sdkTypes.NewCoin(message.OwnableID.String(), message.Value))); err != nil {
+		return newTransactionResponse(err)
 	}
 
 	return newTransactionResponse(nil)

@@ -14,9 +14,9 @@ var counter int64
 // GenerateID is a random unique ID generator, output is a string.
 // Warning: Non-deterministic, do not use to generate blockchain state
 func GenerateID(prefix string) string {
-	randomNumber, Error := rand.Int(rand.Reader, big.NewInt(89999))
-	if Error != nil {
-		panic(Error)
+	randomNumber, err := rand.Int(rand.Reader, big.NewInt(89999))
+	if err != nil {
+		panic(err)
 	}
 
 	atomic.AddInt64(&counter, 1)

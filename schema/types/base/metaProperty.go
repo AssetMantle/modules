@@ -35,9 +35,9 @@ func NewMetaProperty(id types.ID, metaFact types.MetaFact) types.MetaProperty {
 func ReadMetaProperty(metaPropertyString string) (types.MetaProperty, error) {
 	propertyIDAndData := strings.Split(metaPropertyString, constants.PropertyIDAndDataSeparator)
 	if len(propertyIDAndData) == 2 && propertyIDAndData[0] != "" {
-		metaFact, Error := ReadMetaFact(propertyIDAndData[1])
-		if Error != nil {
-			return nil, Error
+		metaFact, err := ReadMetaFact(propertyIDAndData[1])
+		if err != nil {
+			return nil, err
 		}
 
 		return NewMetaProperty(NewID(propertyIDAndData[0]), metaFact), nil

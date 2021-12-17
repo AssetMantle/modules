@@ -6,10 +6,11 @@
 package base
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_MetaFact(t *testing.T) {
@@ -30,34 +31,34 @@ func Test_MetaFact(t *testing.T) {
 	require.Equal(t, NewID("I"), NewMetaFact(idData).GetTypeID())
 	require.Equal(t, NewID("H"), NewMetaFact(heightData).GetTypeID())
 
-	readMetaFact, Error := ReadMetaFact("S|testString")
+	readMetaFact, err := ReadMetaFact("S|testString")
 	require.Equal(t, testMetaFact, readMetaFact)
-	require.Nil(t, Error)
+	require.Nil(t, err)
 
-	readMetaFact2, Error := ReadMetaFact("H|123")
+	readMetaFact2, err := ReadMetaFact("H|123")
 	require.Equal(t, NewMetaFact(heightData), readMetaFact2)
-	require.Nil(t, Error)
+	require.Nil(t, err)
 
-	readMetaFact3, Error := ReadMetaFact("I|id")
+	readMetaFact3, err := ReadMetaFact("I|id")
 	require.Equal(t, NewMetaFact(idData), readMetaFact3)
-	require.Nil(t, Error)
+	require.Nil(t, err)
 
-	readMetaFact3, Error = ReadMetaFact("I|test.Class|hash")
+	readMetaFact3, err = ReadMetaFact("I|test.Class|hash")
 	require.Equal(t, NewMetaFact(NewIDData(NewID("test.Class|hash"))), readMetaFact3)
-	require.Nil(t, Error)
+	require.Nil(t, err)
 
-	//Fix the decData case in GetTypeID Method
-	readMetaFact4, Error := ReadMetaFact("D|12.0")
+	// Fix the decData case in GetTypeID Method
+	readMetaFact4, err := ReadMetaFact("D|12.0")
 	require.Equal(t, NewMetaFact(decData), readMetaFact4)
-	require.Nil(t, Error)
+	require.Nil(t, err)
 
-	readMetaFact5, Error := ReadMetaFact("Z|12.0")
+	readMetaFact5, err := ReadMetaFact("Z|12.0")
 	require.Equal(t, nil, readMetaFact5)
-	require.Equal(t, errors.UnsupportedParameter, Error)
+	require.Equal(t, errors.UnsupportedParameter, err)
 
-	readMetaFact6, Error := ReadMetaFact("randomString")
+	readMetaFact6, err := ReadMetaFact("randomString")
 	require.Equal(t, nil, readMetaFact6)
-	require.Equal(t, errors.IncorrectFormat, Error)
+	require.Equal(t, errors.IncorrectFormat, err)
 
 	require.Equal(t, readMetaFact4, readMetaFact4.Sign(nil))
 }

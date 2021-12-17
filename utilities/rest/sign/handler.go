@@ -37,9 +37,9 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			}
 		}
 
-		fromAddress, fromName, Error := context.GetFromFields(strings.NewReader(keys.DefaultKeyPass), request.BaseRequest.From, false)
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+		fromAddress, fromName, err := context.GetFromFields(strings.NewReader(keys.DefaultKeyPass), request.BaseRequest.From, false)
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -48,16 +48,16 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			request.BaseRequest.Simulate, request.BaseRequest.ChainID, request.BaseRequest.Memo, request.BaseRequest.Fees, request.BaseRequest.GasPrices,
 		)
 
-		accountNumber, sequence, Error := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+		accountNumber, sequence, err := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 			return
 		}
 
 		txBuilder = txBuilder.WithAccountNumber(accountNumber)
 		txBuilder = txBuilder.WithSequence(sequence)
 
-		stdSignature, Error := types.MakeSignature(txBuilder.Keybase(), fromName, keys.DefaultKeyPass, types.StdSignMsg{
+		stdSignature, err := types.MakeSignature(txBuilder.Keybase(), fromName, keys.DefaultKeyPass, types.StdSignMsg{
 			ChainID:       txBuilder.ChainID(),
 			AccountNumber: txBuilder.AccountNumber(),
 			Sequence:      txBuilder.Sequence(),
@@ -65,8 +65,8 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			Msgs:          request.StdTx.GetMsgs(),
 			Memo:          request.StdTx.GetMemo(),
 		})
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 			return
 		}
 

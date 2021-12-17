@@ -33,9 +33,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(auxiliaryKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.InterIdentity).GetAuthentication())))
-	if Error != nil {
-		return newAuxiliaryResponse(Error)
+	metaProperties, err := supplement.GetMetaPropertiesFromResponse(auxiliaryKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.InterIdentity).GetAuthentication())))
+	if err != nil {
+		return newAuxiliaryResponse(err)
 	}
 
 	if metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().(types.ListData).Search(base.NewAccAddressData(auxiliaryRequest.Address)) == -1 {

@@ -23,9 +23,9 @@ var _ types.ListData = (*listData)(nil)
 
 // TODO: find a better impl
 func (listData listData) Compare(data types.Data) int {
-	compareListData, Error := listDataFromData(data)
-	if Error != nil {
-		panic(Error)
+	compareListData, err := listDataFromData(data)
+	if err != nil {
+		panic(err)
 	}
 
 	var listDataString []string
@@ -130,9 +130,9 @@ func ReadAccAddressListData(dataString string) (types.Data, error) {
 	dataList := make([]types.Data, len(dataStringList))
 
 	for i, accAddressString := range dataStringList {
-		accAddress, Error := sdkTypes.AccAddressFromBech32(accAddressString)
-		if Error != nil {
-			return listData{}.ZeroValue(), Error
+		accAddress, err := sdkTypes.AccAddressFromBech32(accAddressString)
+		if err != nil {
+			return listData{}.ZeroValue(), err
 		}
 
 		dataList[i] = NewAccAddressData(accAddress)

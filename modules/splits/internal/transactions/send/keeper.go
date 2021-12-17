@@ -30,12 +30,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	splits := transactionKeeper.mapper.NewCollection(context)
 
-	if _, Error := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, message.Value); Error != nil {
-		return newTransactionResponse(Error)
+	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, message.Value); err != nil {
+		return newTransactionResponse(err)
 	}
 
-	if _, Error := utilities.AddSplits(splits, message.ToID, message.OwnableID, message.Value); Error != nil {
-		return newTransactionResponse(Error)
+	if _, err := utilities.AddSplits(splits, message.ToID, message.OwnableID, message.Value); err != nil {
+		return newTransactionResponse(err)
 	}
 
 	return newTransactionResponse(nil)

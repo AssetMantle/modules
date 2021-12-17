@@ -74,8 +74,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
 	commitMultiStore.MountStoreWithDB(authStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(supplyStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	Error := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, Error)
+	err := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, err)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
@@ -107,10 +107,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	coins := func(amount int64) sdkTypes.Coins {
 		return sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(amount)))
 	}
-	Error := keepers.BankKeeper.SetCoins(context, defaultAddr, coins(1000))
-	require.Equal(t, nil, Error)
-	Error = keepers.SupplyKeeper.SendCoinsFromAccountToModule(context, defaultAddr, module.Name, coins(1000))
-	require.Equal(t, nil, Error)
+	err := keepers.BankKeeper.SetCoins(context, defaultAddr, coins(1000))
+	require.Equal(t, nil, err)
+	err = keepers.SupplyKeeper.SendCoinsFromAccountToModule(context, defaultAddr, module.Name, coins(1000))
+	require.Equal(t, nil, err)
 	keepers.SplitsKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(key.NewSplitID(fromID, ownableID), sdkTypes.NewDec(1000)))
 
 	t.Run("PositiveCase- Send All", func(t *testing.T) {
@@ -120,8 +120,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		}
 	})
 
-	Error = keepers.SupplyKeeper.SendCoinsFromAccountToModule(context, defaultAddr, module.Name, coins(1000))
-	require.Equal(t, nil, Error)
+	err = keepers.SupplyKeeper.SendCoinsFromAccountToModule(context, defaultAddr, module.Name, coins(1000))
+	require.Equal(t, nil, err)
 	keepers.SplitsKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(key.NewSplitID(fromID, ownableID), sdkTypes.NewDec(1000)))
 
 	t.Run("PositiveCase", func(t *testing.T) {
@@ -163,8 +163,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		}
 	})
 
-	Error = keepers.SupplyKeeper.SendCoinsFromModuleToAccount(context, module.Name, defaultAddr, coins(900))
-	require.Equal(t, nil, Error)
+	err = keepers.SupplyKeeper.SendCoinsFromModuleToAccount(context, module.Name, defaultAddr, coins(900))
+	require.Equal(t, nil, err)
 	t.Run("NegativeCase-Module does not have enough coins", func(t *testing.T) {
 		want := newTransactionResponse(errors.InsufficientBalance)
 		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, fromID, ownableID, sdkTypes.NewInt(200))); !reflect.DeepEqual(got.IsSuccessful(), want.IsSuccessful()) {

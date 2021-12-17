@@ -3,11 +3,12 @@ package meta
 import (
 	"crypto/sha256"
 	"encoding/base64"
-	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/stretchr/testify/require"
 	"sort"
 	"strings"
 	"testing"
+
+	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/stretchr/testify/require"
 )
 
 func TestHash(t *testing.T) {
@@ -18,8 +19,8 @@ func TestHash(t *testing.T) {
 	toDigest := strings.Join(filteredMetaList, constants.ToHashSeparator)
 	hash := sha256.New()
 
-	if _, Error := hash.Write([]byte(toDigest)); Error != nil {
-		panic(Error)
+	if _, err := hash.Write([]byte(toDigest)); err != nil {
+		panic(err)
 	}
 
 	require.Equal(t, Hash(""), "")

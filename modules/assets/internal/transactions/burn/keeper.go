@@ -42,9 +42,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetBurn())))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetBurn())))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	burnHeightMetaFact := metaProperties.Get(base.NewID(properties.Burn))
@@ -52,9 +52,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	burnHeight, Error := burnHeightMetaFact.GetMetaFact().GetData().AsHeight()
-	if Error != nil {
-		return newTransactionResponse(Error)
+	burnHeight, err := burnHeightMetaFact.GetMetaFact().GetData().AsHeight()
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	if burnHeight.Compare(base.NewHeight(context.BlockHeight())) > 0 {

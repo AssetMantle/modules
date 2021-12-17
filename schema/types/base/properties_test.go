@@ -6,10 +6,11 @@
 package base
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Properties(t *testing.T) {
@@ -29,7 +30,7 @@ func Test_Properties(t *testing.T) {
 
 	mutatedProperty := NewProperty(NewID("ID2"), NewFact(NewIDData(NewID("IDString"))))
 	require.Equal(t, properties{PropertyList: []types.Property{mutatedProperty, testProperty2}}, testProperties.Mutate(mutatedProperty))
-	readProperties, Error := ReadProperties("ID:S|Data,ID2:H|12")
+	readProperties, err := ReadProperties("ID:S|Data,ID2:H|12")
 	require.Equal(t, properties{PropertyList: []types.Property{testProperty, testProperty2}}, readProperties)
-	require.Nil(t, Error)
+	require.Nil(t, err)
 }

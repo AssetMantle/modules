@@ -27,7 +27,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 	require.NoError(t, err, "simulation setup failed")
 
 	defer func() {
-		Error := db.Close()
+		err := db.Close()
 		require.Nil(t, Error)
 		require.NoError(t, os.RemoveAll(dir))
 	}()
@@ -68,7 +68,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 	require.NoError(t, err, "simulation setup failed")
 
 	defer func() {
-		Error := newDB.Close()
+		err := newDB.Close()
 		require.Nil(t, Error)
 		require.NoError(t, os.RemoveAll(newDir))
 	}()

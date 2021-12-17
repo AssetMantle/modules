@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/persistenceOne/persistenceSDK/constants/test"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -62,8 +63,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	Error := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, Error)
+	err := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, err)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
@@ -84,18 +85,29 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
 
-	immutableMetaProperties, Error := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
-	require.Equal(t, nil, Error)
-	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, Error)
-	mutableMetaProperties, Error := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
-	require.Equal(t, nil, Error)
-	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, Error)
-	scrubMockErrorProperties, Error := base.ReadMetaProperties("scrubError:S|mockError")
-	require.Equal(t, nil, Error)
-	conformMockErrorProperties, Error := base.ReadMetaProperties("conformError:S|mockError")
-	require.Equal(t, nil, Error)
+	immutableMetaProperties, err := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	require.Equal(t, nil, err)
+
+	var immutableProperties types.Properties
+	immutableProperties, err = base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	require.Equal(t, nil, err)
+
+	var mutableMetaProperties types.MetaProperties
+	mutableMetaProperties, err = base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	require.Equal(t, nil, err)
+
+	var mutableProperties types.Properties
+	mutableProperties, err = base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	require.Equal(t, nil, err)
+
+	var scrubMockErrorProperties types.MetaProperties
+	scrubMockErrorProperties, err = base.ReadMetaProperties("scrubError:S|mockError")
+	require.Equal(t, nil, err)
+
+	var conformMockErrorProperties types.MetaProperties
+	conformMockErrorProperties, err = base.ReadMetaProperties("conformError:S|mockError")
+	require.Equal(t, nil, err)
+
 	defaultAddr := sdkTypes.AccAddress("addr")
 	defaultClassificationID := base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
 	defaultIdentityID := key.NewIdentityID(defaultClassificationID, immutableProperties)
@@ -144,5 +156,4 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
-
 }

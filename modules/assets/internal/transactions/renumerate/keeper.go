@@ -46,14 +46,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetValue())))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(mappables.InterNFT).GetValue())))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	if valueMetaProperty := metaProperties.Get(base.NewID(properties.Value)); valueMetaProperty != nil {
-		if value, Error := valueMetaProperty.GetMetaFact().GetData().AsDec(); Error != nil {
-			return newTransactionResponse(Error)
+		if value, err := valueMetaProperty.GetMetaFact().GetData().AsDec(); err != nil {
+			return newTransactionResponse(err)
 		} else if auxiliaryResponse := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, value)); !auxiliaryResponse.IsSuccessful() {
 			return newTransactionResponse(auxiliaryResponse.GetError())
 		}

@@ -21,9 +21,9 @@ type idData struct {
 var _ types.Data = (*idData)(nil)
 
 func (idData idData) Compare(data types.Data) int {
-	compareIDData, Error := idDataFromInterface(data)
-	if Error != nil {
-		panic(Error)
+	compareIDData, err := idDataFromInterface(data)
+	if err != nil {
+		panic(err)
 	}
 
 	return bytes.Compare(idData.Value.Bytes(), compareIDData.Value.Bytes())

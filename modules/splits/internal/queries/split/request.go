@@ -32,8 +32,8 @@ var _ helpers.QueryRequest = (*queryRequest)(nil)
 // @Failure default  {object}  queryResponse "Message for an unexpected error response."
 // @Router /splits/splits/{splitID} [get]
 func (queryRequest queryRequest) Validate() error {
-	_, Error := govalidator.ValidateStruct(queryRequest)
-	return Error
+	_, err := govalidator.ValidateStruct(queryRequest)
+	return err
 }
 
 func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
@@ -46,8 +46,8 @@ func (queryRequest queryRequest) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryRequest)
 }
 func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
-	if Error := common.Codec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
-		return nil, Error
+	if err := common.Codec.UnmarshalJSON(bytes, &queryRequest); err != nil {
+		return nil, err
 	}
 
 	return queryRequest, nil

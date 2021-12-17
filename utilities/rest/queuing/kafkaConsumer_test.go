@@ -16,6 +16,7 @@ func TestKafkaTopicConsumer(t *testing.T) {
 	testConsumers := []string{"testConsumers"}
 
 	var Codec = codec.New()
+
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)

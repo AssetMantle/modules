@@ -6,12 +6,13 @@
 package base
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Fact(t *testing.T) {
@@ -31,16 +32,16 @@ func Test_Fact(t *testing.T) {
 	require.Equal(t, NewID("I"), NewFact(idData).GetTypeID())
 	require.Equal(t, NewID("H"), NewFact(heightData).GetTypeID())
 
-	readFact, Error := ReadFact("S|testString")
+	readFact, err := ReadFact("S|testString")
 	require.Equal(t, testFact, readFact)
-	require.Nil(t, Error)
+	require.Nil(t, err)
 	require.Panics(t, func() {
 		require.Equal(t, readFact, readFact.Sign(nil))
 
 	})
-	readFact2, Error := ReadFact("")
+	readFact2, err := ReadFact("")
 	require.Equal(t, nil, readFact2)
-	require.Equal(t, errors.IncorrectFormat, Error)
+	require.Equal(t, errors.IncorrectFormat, err)
 
 	cliContext := context.NewCLIContext()
 	require.Panics(t, func() {

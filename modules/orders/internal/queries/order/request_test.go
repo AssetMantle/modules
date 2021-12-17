@@ -6,6 +6,8 @@
 package order
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -17,7 +19,6 @@ import (
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Order_Request(t *testing.T) {
@@ -43,14 +44,14 @@ func Test_Order_Request(t *testing.T) {
 	vars["orders"] = "randomString"
 	require.Equal(t, newQueryRequest(base.NewID("randomString")), queryRequest{}.FromMap(vars))
 
-	encodedRequest, Error := testQueryRequest.Encode()
+	encodedRequest, err := testQueryRequest.Encode()
 	encodedResult, _ := common.Codec.MarshalJSON(testQueryRequest)
 	require.Equal(t, encodedResult, encodedRequest)
-	require.Nil(t, Error)
+	require.Nil(t, err)
 
-	decodedRequest, Error := queryRequest{}.Decode(encodedRequest)
+	decodedRequest, err := queryRequest{}.Decode(encodedRequest)
 	require.Equal(t, testQueryRequest, decodedRequest)
-	require.Equal(t, nil, Error)
+	require.Equal(t, nil, err)
 
 	randomDecode, _ := queryRequest{}.Decode(base.NewID("").Bytes())
 	require.Equal(t, nil, randomDecode)

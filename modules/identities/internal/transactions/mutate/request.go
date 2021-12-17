@@ -41,8 +41,8 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /identities/mutate [post]
 func (transactionRequest transactionRequest) Validate() error {
-	_, Error := govalidator.ValidateStruct(transactionRequest)
-	return Error
+	_, err := govalidator.ValidateStruct(transactionRequest)
+	return err
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
@@ -54,8 +54,8 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
-	if Error := json.Unmarshal(rawMessage, &transactionRequest); Error != nil {
-		return nil, Error
+	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
+		return nil, err
 	}
 
 	return transactionRequest, nil
@@ -64,19 +64,19 @@ func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
-	if Error != nil {
-		return nil, Error
+	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	if err != nil {
+		return nil, err
 	}
 
-	mutableMetaProperties, Error := base.ReadMetaProperties(transactionRequest.MutableMetaProperties)
-	if Error != nil {
-		return nil, Error
+	mutableMetaProperties, err := base.ReadMetaProperties(transactionRequest.MutableMetaProperties)
+	if err != nil {
+		return nil, err
 	}
 
-	mutableProperties, Error := base.ReadProperties(transactionRequest.MutableProperties)
-	if Error != nil {
-		return nil, Error
+	mutableProperties, err := base.ReadProperties(transactionRequest.MutableProperties)
+	if err != nil {
+		return nil, err
 	}
 
 	return newMessage(

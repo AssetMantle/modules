@@ -29,11 +29,11 @@ func Test_Super_Response(t *testing.T) {
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
 	require.Equal(t, errors.IncorrectFormat, testAuxiliaryResponse2.GetError())
 
-	properties, Error := GetMetaPropertiesFromResponse(testAuxiliaryResponse)
+	properties, err := GetMetaPropertiesFromResponse(testAuxiliaryResponse)
 	require.Equal(t, metaPropertyList, properties)
-	require.Equal(t, nil, Error)
+	require.Equal(t, nil, err)
 
-	properties2, Error := GetMetaPropertiesFromResponse(testAuxiliaryResponse2)
+	properties2, err := GetMetaPropertiesFromResponse(testAuxiliaryResponse2)
 	require.Equal(t, nil, properties2)
-	require.Equal(t, errors.IncorrectFormat, Error)
+	require.Equal(t, errors.IncorrectFormat, err)
 }

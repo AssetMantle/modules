@@ -21,9 +21,9 @@ type heightData struct {
 var _ types.Data = (*heightData)(nil)
 
 func (heightData heightData) Compare(data types.Data) int {
-	compareHeightData, Error := heightDataFromInterface(data)
-	if Error != nil {
-		panic(Error)
+	compareHeightData, err := heightDataFromInterface(data)
+	if err != nil {
+		panic(err)
 	}
 
 	return heightData.Value.Compare(compareHeightData.Value)
@@ -90,9 +90,9 @@ func ReadHeightData(dataString string) (types.Data, error) {
 		return heightData{}.ZeroValue(), nil
 	}
 
-	height, Error := strconv.ParseInt(dataString, 10, 64)
-	if Error != nil {
-		return nil, Error
+	height, err := strconv.ParseInt(dataString, 10, 64)
+	if err != nil {
+		return nil, err
 	}
 
 	return NewHeightData(NewHeight(height)), nil

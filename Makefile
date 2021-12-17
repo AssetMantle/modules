@@ -49,16 +49,16 @@ test: test-unit
 test-all: test-unit test-ledger-mock test-race test-cover
 
 test-ledger-mock:
-	@go test -mod=readonly -shuffle=on `go list github.com/cosmos/cosmos-sdk/crypto` -tags='cgo ledger test_ledger_mock'
+	@go test -mod=readonly `go list github.com/cosmos/cosmos-sdk/crypto` -tags='cgo ledger test_ledger_mock'
 
 test-ledger: test-ledger-mock
-	@go test -mod=readonly -v -shuffle=on `go list github.com/cosmos/cosmos-sdk/crypto` -tags='cgo ledger'
+	@go test -mod=readonly -v `go list github.com/cosmos/cosmos-sdk/crypto` -tags='cgo ledger'
 
 test-unit:
-	@VERSION=$(VERSION) go test -mod=readonly -shuffle=on $(PACKAGES_NOSIMULATION) -tags='ledger test_ledger_mock'
+	@VERSION=$(VERSION) go test -mod=readonly $(PACKAGES_NOSIMULATION) -tags='ledger test_ledger_mock'
 
 test-race:
-	@VERSION=$(VERSION) go test -mod=readonly -race -shuffle=on $(PACKAGES_NOSIMULATION)
+	@VERSION=$(VERSION) go test -mod=readonly -race $(PACKAGES_NOSIMULATION)
 
 .PHONY: test test-all test-ledger-mock test-ledger test-unit test-race
 

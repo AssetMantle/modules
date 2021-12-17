@@ -62,8 +62,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	Error := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, Error)
+	err := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, err)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
@@ -82,10 +82,10 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
-	maintainedProperties, Error := base.ReadProperties("maintainedProperties:S|maintainedProperties")
-	require.Equal(t, nil, Error)
-	conformMockErrorProperties, Error := base.ReadProperties("deputizeError:S|mockError")
-	require.Equal(t, nil, Error)
+	maintainedProperties, err := base.ReadProperties("maintainedProperties:S|maintainedProperties")
+	require.Equal(t, nil, err)
+	conformMockErrorProperties, err := base.ReadProperties("deputizeError:S|mockError")
+	require.Equal(t, nil, err)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultIdentityID := base.NewID("fromIdentityID")

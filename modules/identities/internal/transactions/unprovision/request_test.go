@@ -7,6 +7,8 @@ package unprovision
 
 import (
 	"encoding/json"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -18,7 +20,6 @@ import (
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Unprovision_Request(t *testing.T) {
@@ -34,12 +35,12 @@ func Test_Unprovision_Request(t *testing.T) {
 	cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
 	toAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	toAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	toAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	testTransactionRequest := newTransactionRequest(testBaseReq, toAddress, "identityID")
@@ -47,32 +48,32 @@ func Test_Unprovision_Request(t *testing.T) {
 	require.Equal(t, transactionRequest{BaseReq: testBaseReq, To: toAddress, IdentityID: "identityID"}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
-	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, cliContext)
-	require.Equal(t, nil, Error)
+	requestFromCLI, err := transactionRequest{}.FromCLI(cliCommand, cliContext)
+	require.Equal(t, nil, err)
 	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, To: "", IdentityID: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
-	transactionRequestUnmarshalled, Error := transactionRequest{}.FromJSON(jsonMessage)
-	require.Equal(t, nil, Error)
+	transactionRequestUnmarshalled, err := transactionRequest{}.FromJSON(jsonMessage)
+	require.Equal(t, nil, err)
 	require.Equal(t, testTransactionRequest, transactionRequestUnmarshalled)
 
-	randomUnmarshall, Error := transactionRequest{}.FromJSON([]byte{})
+	randomUnmarshall, err := transactionRequest{}.FromJSON([]byte{})
 	require.Equal(t, nil, randomUnmarshall)
-	require.NotNil(t, Error)
+	require.NotNil(t, err)
 
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
-	msg, Error := testTransactionRequest.MakeMsg()
+	msg, err := testTransactionRequest.MakeMsg()
 	require.Equal(t, newMessage(fromAccAddress, toAccAddress, base.NewID("identityID")), msg)
-	require.Nil(t, Error)
+	require.Nil(t, err)
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, toAddress, "identityID").MakeMsg()
+	msg, err = newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, toAddress, "identityID").MakeMsg()
 	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
+	require.NotNil(t, err)
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: fromAddress, ChainID: "test"}, "randomString", "identityID").MakeMsg()
+	msg, err = newTransactionRequest(rest.BaseReq{From: fromAddress, ChainID: "test"}, "randomString", "identityID").MakeMsg()
 	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
+	require.NotNil(t, err)
 
 	require.Equal(t, transactionRequest{}, requestPrototype())
 	require.NotPanics(t, func() {

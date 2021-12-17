@@ -22,10 +22,10 @@ func Test_Revoke_Message(t *testing.T) {
 	testClassificationID := base.NewID("classificationID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
-	require.Equal(t, nil, Error)
+	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, testFromID, testToID, testClassificationID)
 	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ToID: testToID, ClassificationID: testClassificationID}, testMessage)

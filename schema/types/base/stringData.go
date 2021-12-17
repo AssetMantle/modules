@@ -21,9 +21,9 @@ type stringData struct {
 var _ types.Data = (*stringData)(nil)
 
 func (stringData stringData) Compare(data types.Data) int {
-	compareStringData, Error := stringDataFromInterface(data)
-	if Error != nil {
-		panic(Error)
+	compareStringData, err := stringDataFromInterface(data)
+	if err != nil {
+		panic(err)
 	}
 
 	return strings.Compare(stringData.Value, compareStringData.Value)

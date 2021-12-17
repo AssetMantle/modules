@@ -25,12 +25,14 @@ import (
 func Test_Asset_Request(t *testing.T) {
 
 	var Codec = codec.New()
+
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
+
 	classificationID := base.NewID("classificationID")
 	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
 
@@ -47,16 +49,22 @@ func Test_Asset_Request(t *testing.T) {
 	vars["assets"] = "randomString"
 	require.Equal(t, newQueryRequest(base.NewID("randomString")), queryRequest{}.FromMap(vars))
 
-	encodedRequest, Error := testQueryRequest.Encode()
-	encodedResult, _ := common.Codec.MarshalJSON(testQueryRequest)
+	encodedRequest, err := testQueryRequest.Encode()
+	require.Nil(t, err)
+
+	var encodedResult []byte
+	encodedResult, err = common.Codec.MarshalJSON(testQueryRequest)
+	require.Nil(t, err)
 	require.Equal(t, encodedResult, encodedRequest)
-	require.Nil(t, Error)
 
-	decodedRequest, Error := queryRequest{}.Decode(encodedRequest)
+	var decodedRequest helpers.QueryRequest
+	decodedRequest, err = queryRequest{}.Decode(encodedRequest)
+	require.Equal(t, nil, err)
 	require.Equal(t, testQueryRequest, decodedRequest)
-	require.Equal(t, nil, Error)
 
-	randomDecode, _ := queryRequest{}.Decode(base.NewID("").Bytes())
+	var randomDecode helpers.QueryRequest
+	randomDecode, err = queryRequest{}.Decode(base.NewID("").Bytes())
+	require.Equal(t, nil, err)
 	require.Equal(t, nil, randomDecode)
 	require.Equal(t, testQueryRequest, queryRequestFromInterface(testQueryRequest))
 	require.Equal(t, queryRequest{}, queryRequestFromInterface(nil))

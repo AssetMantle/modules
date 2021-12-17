@@ -6,12 +6,13 @@
 package base
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	baseTestUtilities "github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestParameters(t *testing.T) {
@@ -34,8 +35,8 @@ func TestParameters(t *testing.T) {
 	require.Equal(t, true, Parameters.GetList()[0].Equal(Parameter))
 	require.Equal(t, `{"id":{"idString":"testParameter"},"data":{"value":"testData"}}`, Parameters.String())
 
-	Error := Parameters.Validate()
-	require.Nil(t, Error)
+	err := Parameters.Validate()
+	require.Nil(t, err)
 
 	require.NotPanics(t, func() {
 		Parameters.Fetch(context, base.NewID("testParameter"))

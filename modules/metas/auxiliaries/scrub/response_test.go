@@ -31,15 +31,15 @@ func Test_Super_Response(t *testing.T) {
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
 	require.Equal(t, errors.IncorrectFormat, testAuxiliaryResponse2.GetError())
 
-	propertiesFromResponse, Error := GetPropertiesFromResponse(testAuxiliaryResponse)
+	propertiesFromResponse, err := GetPropertiesFromResponse(testAuxiliaryResponse)
 	require.Equal(t, propertyList, propertiesFromResponse)
-	require.Equal(t, nil, Error)
+	require.Equal(t, nil, err)
 
-	propertiesFromResponse2, Error := GetPropertiesFromResponse(testAuxiliaryResponse2)
+	propertiesFromResponse2, err := GetPropertiesFromResponse(testAuxiliaryResponse2)
 	require.Equal(t, nil, propertiesFromResponse2)
-	require.Equal(t, errors.IncorrectFormat, Error)
+	require.Equal(t, errors.IncorrectFormat, err)
 
-	propertiesFromResponse3, Error := GetPropertiesFromResponse(nil)
+	propertiesFromResponse3, err := GetPropertiesFromResponse(nil)
 	require.Equal(t, nil, propertiesFromResponse3)
-	require.Equal(t, errors.NotAuthorized, Error)
+	require.Equal(t, errors.NotAuthorized, err)
 }

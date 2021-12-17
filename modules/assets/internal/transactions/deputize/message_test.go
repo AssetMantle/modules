@@ -22,12 +22,12 @@ func Test_Deputize_Message(t *testing.T) {
 	testClassificationID := base.NewID("classificationID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, Error := base.ReadProperties(maintainedProperty)
-	require.Equal(t, nil, Error)
+	maintainedProperties, err := base.ReadProperties(maintainedProperty)
+	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false)
 	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ToID: testToID, ClassificationID: testClassificationID, MaintainedProperties: maintainedProperties, AddMaintainer: false, RemoveMaintainer: false, MutateMaintainer: false}, testMessage)
@@ -40,5 +40,4 @@ func Test_Deputize_Message(t *testing.T) {
 	require.Equal(t, testMessage, messageFromInterface(testMessage))
 	require.Equal(t, message{}, messageFromInterface(nil))
 	require.Equal(t, message{}, messagePrototype())
-
 }

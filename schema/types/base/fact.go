@@ -49,9 +49,9 @@ func NewFact(data types.Data) types.Fact {
 }
 
 func ReadFact(metaFactString string) (types.Fact, error) {
-	metaFact, Error := ReadMetaFact(metaFactString)
-	if Error != nil {
-		return nil, Error
+	metaFact, err := ReadMetaFact(metaFactString)
+	if err != nil {
+		return nil, err
 	}
 
 	return metaFact.RemoveData(), nil

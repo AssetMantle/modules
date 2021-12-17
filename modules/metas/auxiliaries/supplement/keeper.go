@@ -31,10 +31,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		var meta helpers.Mappable
 
 		if property.GetFact().GetHashID().Compare(base.NewID("")) == 0 {
-			if metaFact, Error := base.ReadMetaFact(property.GetFact().GetTypeID().String() + constants.DataTypeAndValueSeparator); Error == nil {
+			if metaFact, err := base.ReadMetaFact(property.GetFact().GetTypeID().String() + constants.DataTypeAndValueSeparator); err == nil {
 				meta = mappable.NewMeta(metaFact.GetData())
 			} else {
-				return newAuxiliaryResponse(nil, Error)
+				return newAuxiliaryResponse(nil, err)
 			}
 		} else {
 			metaID := key.NewMetaID(property.GetFact().GetTypeID(), property.GetFact().GetHashID())

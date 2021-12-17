@@ -7,10 +7,11 @@ package base
 
 import (
 	"encoding/json"
-	maintainersVerify "github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/verify"
 	"io"
 	"os"
 	"path/filepath"
+
+	maintainersVerify "github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/verify"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -117,8 +118,8 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 		whiteListMap := make(map[string]bool)
 
 		for _, address := range jailWhiteList {
-			if _, Error := sdkTypes.ValAddressFromBech32(address); Error != nil {
-				panic(Error)
+			if _, err := sdkTypes.ValAddressFromBech32(address); err != nil {
+				panic(err)
 			}
 
 			whiteListMap[address] = true
@@ -214,10 +215,10 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 	}
 
 	genesisState := application.moduleManager.ExportGenesis(context)
-	applicationState, Error := codec.MarshalJSONIndent(application.codec, genesisState)
+	applicationState, err := codec.MarshalJSONIndent(application.codec, genesisState)
 
-	if Error != nil {
-		return nil, nil, Error
+	if err != nil {
+		return nil, nil, err
 	}
 
 	return applicationState, staking.WriteValidators(context, application.stakingKeeper), nil

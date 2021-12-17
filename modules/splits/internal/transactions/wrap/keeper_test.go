@@ -73,8 +73,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
 	commitMultiStore.MountStoreWithDB(authStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(supplyStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	Error := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, Error)
+	err := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, err)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
@@ -106,8 +106,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		return sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(amount)))
 	}
 
-	Error := keepers.BankKeeper.SetCoins(ctx, defaultAddr, coins(1000))
-	require.Equal(t, nil, Error)
+	err := keepers.BankKeeper.SetCoins(ctx, defaultAddr, coins(1000))
+	require.Equal(t, nil, err)
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
 		if got := keepers.SplitsKeeper.Transact(ctx, newMessage(defaultAddr, fromID, coins(100))); !reflect.DeepEqual(got, want) {

@@ -6,12 +6,13 @@
 package take
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Take_Message(t *testing.T) {
@@ -21,8 +22,8 @@ func Test_Take_Message(t *testing.T) {
 	testTakerOwnableSplit := sdkTypes.NewDec(2)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
 	testMessage := newMessage(fromAccAddress, testFromID, testTakerOwnableSplit, testOrderID)
 	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, TakerOwnableSplit: testTakerOwnableSplit, OrderID: testOrderID}, testMessage)

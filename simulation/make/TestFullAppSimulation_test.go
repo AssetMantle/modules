@@ -25,7 +25,7 @@ func TestFullAppSimulation(t *testing.T) {
 	require.NoError(t, err, "simulation setup failed")
 
 	defer func() {
-		Error := db.Close()
+		err := db.Close()
 		require.Nil(t, Error)
 		require.NoError(t, os.RemoveAll(dir))
 	}()

@@ -28,6 +28,7 @@ func Test_Asset_Methods(t *testing.T) {
 	require.Equal(t, classificationID, testAsset.GetClassificationID())
 	require.Equal(t, immutableProperties, testAsset.GetImmutableProperties())
 	require.Equal(t, mutableProperties, testAsset.GetMutableProperties())
+
 	data, _ := base.ReadHeightData("-1")
 	require.Equal(t, testAsset.GetBurn(), base.NewProperty(base.NewID(properties.Burn), base.NewFact(data)))
 	require.Equal(t, base.NewProperty(base.NewID(properties.Burn), base.NewFact(base.NewStringData("BurnImmutableData"))), asset{ID: assetID, HasImmutables: baseTraits.HasImmutables{Properties: base.NewProperties(base.NewProperty(base.NewID(properties.Burn), base.NewFact(base.NewStringData("BurnImmutableData"))))}, HasMutables: baseTraits.HasMutables{Properties: mutableProperties}}.GetBurn())
@@ -36,5 +37,4 @@ func Test_Asset_Methods(t *testing.T) {
 	require.Equal(t, base.NewProperty(base.NewID(properties.Lock), base.NewFact(base.NewStringData("LockImmutableData"))), asset{ID: assetID, HasImmutables: baseTraits.HasImmutables{Properties: base.NewProperties(base.NewProperty(base.NewID(properties.Lock), base.NewFact(base.NewStringData("LockImmutableData"))))}, HasMutables: baseTraits.HasMutables{Properties: mutableProperties}}.GetLock())
 	require.Equal(t, base.NewProperty(base.NewID(properties.Lock), base.NewFact(base.NewStringData("LockMutableData"))), asset{ID: assetID, HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties}, HasMutables: baseTraits.HasMutables{Properties: base.NewProperties(base.NewProperty(base.NewID(properties.Lock), base.NewFact(base.NewStringData("LockMutableData"))))}}.GetLock())
 	require.Equal(t, assetID, testAsset.GetKey())
-
 }

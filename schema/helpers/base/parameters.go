@@ -31,8 +31,8 @@ func (parameters parameters) String() string {
 }
 func (parameters parameters) Validate() error {
 	for _, parameter := range parameters.parameterList {
-		if Error := parameter.Validate(); Error != nil {
-			return Error
+		if err := parameter.Validate(); err != nil {
+			return err
 		}
 	}
 

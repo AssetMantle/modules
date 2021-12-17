@@ -34,12 +34,12 @@ func Test_Deputize_Request(t *testing.T) {
 	cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	maintainedProperties, Error := base.ReadProperties(maintainedProperty)
-	require.Equal(t, nil, Error)
+	maintainedProperties, err := base.ReadProperties(maintainedProperty)
+	require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	testTransactionRequest := newTransactionRequest(testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false)
@@ -47,31 +47,31 @@ func Test_Deputize_Request(t *testing.T) {
 	require.Equal(t, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", ToID: "toID", ClassificationID: "classificationID", MaintainedProperties: maintainedProperty, AddMaintainer: false, RemoveMaintainer: false, MutateMaintainer: false}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
-	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, cliContext)
-	require.Equal(t, nil, Error)
+	requestFromCLI, err := transactionRequest{}.FromCLI(cliCommand, cliContext)
+	require.Equal(t, nil, err)
 	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", AddMaintainer: false, RemoveMaintainer: false, MutateMaintainer: false}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
-	transactionRequestUnmarshalled, Error := transactionRequest{}.FromJSON(jsonMessage)
-	require.Equal(t, nil, Error)
+	transactionRequestUnmarshalled, err := transactionRequest{}.FromJSON(jsonMessage)
+	require.Equal(t, nil, err)
 	require.Equal(t, testTransactionRequest, transactionRequestUnmarshalled)
 
-	randomUnmarshall, Error := transactionRequest{}.FromJSON([]byte{})
+	randomUnmarshall, err := transactionRequest{}.FromJSON([]byte{})
 	require.Equal(t, nil, randomUnmarshall)
-	require.NotNil(t, Error)
+	require.NotNil(t, err)
 
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
-	msg, Error := testTransactionRequest.MakeMsg()
+	msg, err := testTransactionRequest.MakeMsg()
 	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), base.NewID("toID"), base.NewID("classificationID"), maintainedProperties, false, false, false), msg)
-	require.Nil(t, Error)
+	require.Nil(t, err)
 
-	msg2, Error := newTransactionRequest(rest.BaseReq{From: "randomString", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "toID", "classificationID", maintainedProperty, false, false, false).MakeMsg()
-	require.NotNil(t, Error)
+	msg2, err := newTransactionRequest(rest.BaseReq{From: "randomString", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "toID", "classificationID", maintainedProperty, false, false, false).MakeMsg()
+	require.NotNil(t, err)
 	require.Nil(t, msg2)
 
-	msg2, Error = newTransactionRequest(testBaseReq, "fromID", "toID", "classificationID", "randomString", false, false, false).MakeMsg()
-	require.NotNil(t, Error)
+	msg2, err = newTransactionRequest(testBaseReq, "fromID", "toID", "classificationID", "randomString", false, false, false).MakeMsg()
+	require.NotNil(t, err)
 	require.Nil(t, msg2)
 
 	require.Equal(t, transactionRequest{}, requestPrototype())

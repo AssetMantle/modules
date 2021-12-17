@@ -6,6 +6,8 @@
 package queuing
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -16,7 +18,6 @@ import (
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 	"github.com/persistenceOne/persistenceSDK/utilities/random"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 type testMessage struct {
@@ -43,8 +44,8 @@ func (testMessage) RegisterCodec(codec *codec.Codec) {
 }
 
 func Test_Kafka(t *testing.T) {
-
 	var Codec = codec.New()
+
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
@@ -52,11 +53,13 @@ func Test_Kafka(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
+
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test"}
 	ticketID := TicketID(random.GenerateID("ticket"))
 	kafkaPorts := []string{"localhost:9092"}
+
 	require.Panics(t, func() {
 		testKafkaState := NewKafkaState(kafkaPorts)
 		bank.RegisterCodec(Codec)

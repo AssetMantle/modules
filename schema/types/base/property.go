@@ -25,9 +25,9 @@ func NewProperty(id types.ID, fact types.Fact) types.Property {
 	}
 }
 func ReadProperty(propertyString string) (types.Property, error) {
-	property, Error := ReadMetaProperty(propertyString)
-	if Error != nil {
-		return nil, Error
+	property, err := ReadMetaProperty(propertyString)
+	if err != nil {
+		return nil, err
 	}
 
 	return property.RemoveData(), nil

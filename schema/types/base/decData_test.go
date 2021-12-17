@@ -25,33 +25,33 @@ func Test_DecData(t *testing.T) {
 	require.Equal(t, NewID(""), testDecData2.GenerateHashID())
 	require.Equal(t, NewID("D"), testDecData.GetTypeID())
 
-	dataAsString, Error := testDecData.AsString()
+	dataAsString, err := testDecData.AsString()
 	require.Equal(t, "", dataAsString)
-	require.Equal(t, errors.IncorrectFormat, Error)
+	require.Equal(t, errors.IncorrectFormat, err)
 
-	dataAsDec, Error := testDecData.AsDec()
+	dataAsDec, err := testDecData.AsDec()
 	require.Equal(t, decValue, dataAsDec)
-	require.Equal(t, nil, Error)
+	require.Equal(t, nil, err)
 
-	dataAsHeight, Error := testDecData.AsHeight()
+	dataAsHeight, err := testDecData.AsHeight()
 	require.Equal(t, height{}, dataAsHeight)
-	require.Equal(t, errors.IncorrectFormat, Error)
+	require.Equal(t, errors.IncorrectFormat, err)
 
-	dataAsID, Error := testDecData.AsID()
+	dataAsID, err := testDecData.AsID()
 	require.Equal(t, id{}, dataAsID)
-	require.Equal(t, errors.IncorrectFormat, Error)
+	require.Equal(t, errors.IncorrectFormat, err)
 	require.Equal(t, decValue, testDecData.Get())
 
-	data, Error := ReadDecData("")
+	data, err := ReadDecData("")
 	require.Equal(t, decData{Value: sdkTypes.ZeroDec()}, data)
-	require.Nil(t, Error)
+	require.Nil(t, err)
 
-	data, Error = ReadDecData("testString")
-	require.NotNil(t, Error)
+	data, err = ReadDecData("testString")
+	require.NotNil(t, err)
 
-	data, Error = ReadDecData("123")
+	data, err = ReadDecData("123")
 	require.Equal(t, decData{Value: sdkTypes.NewDec(123)}, data)
-	require.Nil(t, Error)
+	require.Nil(t, err)
 
 	require.Equal(t, false, testDecData.Compare(NewStringData("")) == 0)
 	require.Equal(t, true, testDecData.Compare(NewDecData(sdkTypes.NewDec(12))) == 0)
