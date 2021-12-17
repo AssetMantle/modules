@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
@@ -17,13 +18,17 @@ import (
 
 func Test_ListData(t *testing.T) {
 
-	listValue, err := ReadAccAddressListData("address1")
+	_, err := ReadAccAddressListData("address1")
 	require.NotNil(t, err)
-	listValue, err = ReadAccAddressListData("cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae")
+
+	_, err = ReadAccAddressListData("cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae")
 	require.Nil(t, err)
+
+	var listValue types.Data
 	testListData := NewListData(listValue)
 	listValue2, err := ReadAccAddressListData("")
 	require.Nil(t, err)
+
 	testListData2 := NewListData(listValue2)
 
 	require.Equal(t, "cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae", testListData.String())

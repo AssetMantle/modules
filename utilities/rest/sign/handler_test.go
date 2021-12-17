@@ -59,7 +59,8 @@ func TestHandler(t *testing.T) {
 
 	address := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 
-	sdkAddress, err := sdkTypes.AccAddressFromBech32(address)
+	var sdkAddress sdkTypes.AccAddress
+	sdkAddress, err = sdkTypes.AccAddressFromBech32(address)
 
 	// signWithout chainID
 	requestBody1, err := Codec.MarshalJSON(request{

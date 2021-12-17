@@ -47,7 +47,7 @@ func Test_DecData(t *testing.T) {
 	require.Equal(t, decData{Value: sdkTypes.ZeroDec()}, data)
 	require.Nil(t, err)
 
-	data, err = ReadDecData("testString")
+	_, err = ReadDecData("testString")
 	require.NotNil(t, err)
 
 	data, err = ReadDecData("123")
