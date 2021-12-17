@@ -6,9 +6,11 @@
 package provision
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 )
 
 func Test_Provision_Response(t *testing.T) {

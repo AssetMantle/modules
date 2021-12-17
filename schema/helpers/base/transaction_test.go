@@ -16,9 +16,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
 )
 
 func TestTransaction(t *testing.T) {

@@ -135,7 +135,7 @@ benchmark:
 .PHONY: benchmark
 
 lintci:
-	golangci-lint run --config .golangci.yaml
+	golangci-lint run --max-issues-per-linter 0 --max-same-issues 0 --config .golangci.yaml
 .PHONY: lintci
 
 lintci-install:
@@ -148,3 +148,6 @@ lintci-remove:
 
 lintci-update: lintci-remove lintci-install
 .PHONY: lintci-update
+
+goimports:
+	goimports -local="github.com/persistenceOne/persistenceSDK" -w .

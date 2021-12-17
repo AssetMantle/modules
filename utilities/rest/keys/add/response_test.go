@@ -6,10 +6,12 @@
 package add
 
 import (
-	"github.com/cosmos/cosmos-sdk/crypto/keys"
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/crypto/keys"
+	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 )
 
 func Test_Add_Response(t *testing.T) {

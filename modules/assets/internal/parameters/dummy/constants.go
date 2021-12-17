@@ -7,6 +7,7 @@ package dummy
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 

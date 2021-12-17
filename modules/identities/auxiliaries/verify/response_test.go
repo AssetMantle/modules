@@ -6,9 +6,11 @@
 package verify
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 )
 
 func Test_Verify_Response(t *testing.T) {

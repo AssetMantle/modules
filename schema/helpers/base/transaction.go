@@ -23,11 +23,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/utilities/random"
 	"github.com/persistenceOne/persistenceSDK/utilities/rest/queuing"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 type transaction struct {

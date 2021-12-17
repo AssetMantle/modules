@@ -9,8 +9,9 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 func Test_MetaProperties(t *testing.T) {

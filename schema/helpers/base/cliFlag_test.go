@@ -6,9 +6,10 @@
 package base
 
 import (
+	"testing"
+
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_CliFlag(t *testing.T) {

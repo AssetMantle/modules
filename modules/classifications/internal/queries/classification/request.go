@@ -8,6 +8,7 @@ package classification
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
+
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/common"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"

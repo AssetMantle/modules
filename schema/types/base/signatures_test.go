@@ -6,9 +6,11 @@
 package base
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 func Test_Signatures(t *testing.T) {

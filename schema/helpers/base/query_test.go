@@ -11,9 +11,10 @@ import (
 	"testing"
 
 	clientContext "github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
 )
 
 func TestQuery(t *testing.T) {

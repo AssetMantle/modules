@@ -14,10 +14,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/bank"
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/schema"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 	"github.com/persistenceOne/persistenceSDK/utilities/random"
-	"github.com/stretchr/testify/require"
 )
 
 type testMessage struct {

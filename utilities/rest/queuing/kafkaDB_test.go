@@ -6,15 +6,17 @@
 package queuing
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/stretchr/testify/require"
+	dbm "github.com/tendermint/tm-db"
+
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/random"
-	"github.com/stretchr/testify/require"
-	dbm "github.com/tendermint/tm-db"
-	"testing"
 )
 
 func Test_Kafka_DB(t *testing.T) {

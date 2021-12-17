@@ -7,6 +7,7 @@ package sign
 
 import (
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 

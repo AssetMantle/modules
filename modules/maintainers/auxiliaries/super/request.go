@@ -7,6 +7,7 @@ package super
 
 import (
 	"github.com/asaskevich/govalidator"
+
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )

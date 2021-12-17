@@ -9,6 +9,7 @@ import (
 	"github.com/99designs/keyring"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/keys"
+
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 

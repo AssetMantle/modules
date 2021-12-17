@@ -8,8 +8,9 @@ package define
 import (
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 func Test_Define_Request(t *testing.T) {

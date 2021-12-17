@@ -1,10 +1,12 @@
 package base
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 func Test_sortedDataList(t *testing.T) {

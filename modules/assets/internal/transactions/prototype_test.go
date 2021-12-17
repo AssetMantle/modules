@@ -1,6 +1,10 @@
 package transactions
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/burn"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/define"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/deputize"
@@ -9,8 +13,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/renumerate"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/revoke"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {

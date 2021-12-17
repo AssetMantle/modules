@@ -7,8 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/constants"
 )
 
 func TestHash(t *testing.T) {

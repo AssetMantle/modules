@@ -9,9 +9,10 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_ListData(t *testing.T) {

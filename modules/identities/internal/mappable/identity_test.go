@@ -8,11 +8,11 @@ package mappable
 import (
 	"testing"
 
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+	"github.com/stretchr/testify/require"
 
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_Identity_Methods(t *testing.T) {

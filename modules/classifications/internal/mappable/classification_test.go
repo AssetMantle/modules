@@ -10,9 +10,10 @@ import (
 
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_Classification_Methods(t *testing.T) {

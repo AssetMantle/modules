@@ -33,6 +33,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
+	"github.com/spf13/viper"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tendermintOS "github.com/tendermint/tendermint/libs/os"
+	tendermintTypes "github.com/tendermint/tendermint/types"
+	tendermintDB "github.com/tendermint/tm-db"
+	"honnef.co/go/tools/version"
+
 	"github.com/persistenceOne/persistenceSDK/modules/assets"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
@@ -56,13 +64,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/applications"
 	wasmUtilities "github.com/persistenceOne/persistenceSDK/utilities/wasm"
-	"github.com/spf13/viper"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintOS "github.com/tendermint/tendermint/libs/os"
-	tendermintTypes "github.com/tendermint/tendermint/types"
-	tendermintDB "github.com/tendermint/tm-db"
-	"honnef.co/go/tools/version"
 )
 
 type application struct {

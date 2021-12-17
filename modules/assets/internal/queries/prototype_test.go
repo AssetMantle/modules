@@ -6,9 +6,11 @@
 package queries
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/queries/asset"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/queries/asset"
 )
 
 func Test_Prototype(t *testing.T) {

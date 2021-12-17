@@ -6,9 +6,10 @@
 package base
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/crypto/openpgp/errors"
-	"testing"
 )
 
 func validator(interface{}) error {

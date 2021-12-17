@@ -9,6 +9,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 

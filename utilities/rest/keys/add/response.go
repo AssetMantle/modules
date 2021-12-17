@@ -7,6 +7,7 @@ package add
 
 import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys"
+
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 

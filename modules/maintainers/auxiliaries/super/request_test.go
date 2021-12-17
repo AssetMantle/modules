@@ -8,8 +8,9 @@ package super
 import (
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 func Test_Super_Request(t *testing.T) {

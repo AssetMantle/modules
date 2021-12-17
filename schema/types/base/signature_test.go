@@ -7,9 +7,10 @@ package base
 
 import (
 	"encoding/base64"
+	"testing"
+
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
-	"testing"
 )
 
 func Test_Signature(t *testing.T) {

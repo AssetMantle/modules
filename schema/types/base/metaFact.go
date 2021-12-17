@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/99designs/keyring"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
