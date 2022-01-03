@@ -1,0 +1,21 @@
+/*
+ Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
+
+syntax = "proto3";
+package persistenceSDK.modules.liquidStaking;
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/liquidStaking/types";
+
+import "gogoproto/gogo.proto";
+
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+
+  uint64 blockHeight = 1 [(gogoproto.moretags) = "yaml:\"blockHeight\""];
+}
+
+message Chain {
+  string chainID = 1;
+}
