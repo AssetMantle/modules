@@ -14,7 +14,6 @@ import (
 )
 
 func Test_Deputize_Request(t *testing.T) {
-
 	classificationID := base.NewID("classificationID")
 	identityID := base.NewID("identityID")
 	maintainedProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("Data1"))))

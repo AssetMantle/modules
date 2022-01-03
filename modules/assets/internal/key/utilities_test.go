@@ -10,7 +10,6 @@ import (
 )
 
 func TestFromID(t *testing.T) {
-
 	classificationID := base.NewID("classificationID")
 	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
 	newAssetID := NewAssetID(classificationID, immutableProperties)

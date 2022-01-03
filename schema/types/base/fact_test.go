@@ -40,11 +40,13 @@ func Test_Fact(t *testing.T) {
 		require.Equal(t, readFact, readFact.Sign(nil))
 
 	})
+
 	readFact2, err := ReadFact("")
 	require.Equal(t, nil, readFact2)
 	require.Equal(t, errors.IncorrectFormat, err)
 
 	cliContext := context.NewCLIContext()
+
 	require.Panics(t, func() {
 		sign, _, _ := cliContext.Keybase.Sign(cliContext.FromName, keys.DefaultKeyPass, readFact.GetHashID().Bytes())
 		Signature := signature{
@@ -55,5 +57,4 @@ func Test_Fact(t *testing.T) {
 		readFact.GetSignatures().Add(Signature)
 		require.Equal(t, readFact.GetSignatures().Get(readFact.GetHashID()), readFact.GetHashID().String())
 	})
-
 }

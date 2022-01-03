@@ -17,7 +17,6 @@ import (
 )
 
 func Test_Reveal_Message(t *testing.T) {
-
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)

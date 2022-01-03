@@ -72,7 +72,6 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 }
 
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
-
 	context, keepers := CreateTestInput(t)
 
 	classificationID := base.NewID("classificationID")

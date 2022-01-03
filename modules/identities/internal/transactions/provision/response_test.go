@@ -14,7 +14,6 @@ import (
 )
 
 func Test_Provision_Response(t *testing.T) {
-
 	testTransactionResponse := newTransactionResponse(errors.IncorrectFormat)
 	testTransactionResponse2 := newTransactionResponse(nil)
 

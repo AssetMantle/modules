@@ -74,7 +74,6 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 }
 
 func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
-
 	context, keepers := CreateTestInput(t)
 	ownerID := base.NewID("ownerID")
 	ownableID := base.NewID("ownableID")

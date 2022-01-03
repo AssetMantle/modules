@@ -17,7 +17,6 @@ import (
 )
 
 func Test_Send_Message(t *testing.T) {
-
 	testToID := base.NewID("toID")
 	testFromID := base.NewID("fromID")
 	testOwnableID := base.NewID("ownableID")

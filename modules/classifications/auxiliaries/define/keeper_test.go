@@ -73,7 +73,6 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 }
 
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
-
 	context, keepers := CreateTestInput(t)
 
 	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("Data2"))))

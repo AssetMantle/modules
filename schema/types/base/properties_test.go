@@ -15,7 +15,6 @@ import (
 )
 
 func Test_Properties(t *testing.T) {
-
 	testProperty := NewProperty(NewID("ID"), NewFact(NewStringData("Data")))
 	testProperty2 := NewProperty(NewID("ID2"), NewFact(NewHeightData(NewHeight(12))))
 	testProperties := NewProperties(testProperty, testProperty2)
@@ -31,6 +30,7 @@ func Test_Properties(t *testing.T) {
 
 	mutatedProperty := NewProperty(NewID("ID2"), NewFact(NewIDData(NewID("IDString"))))
 	require.Equal(t, properties{PropertyList: []types.Property{mutatedProperty, testProperty2}}, testProperties.Mutate(mutatedProperty))
+
 	readProperties, err := ReadProperties("ID:S|Data,ID2:H|12")
 	require.Equal(t, properties{PropertyList: []types.Property{testProperty, testProperty2}}, readProperties)
 	require.Nil(t, err)

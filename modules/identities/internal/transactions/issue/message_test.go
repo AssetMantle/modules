@@ -18,7 +18,6 @@ import (
 )
 
 func Test_Issue_Message(t *testing.T) {
-
 	testFromID := base.NewID("fromID")
 	testClassificationID := base.NewID("classificationID")
 

@@ -146,7 +146,6 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 		context = context.WithBlockHeight(0)
 
 		application.stakingKeeper.IterateValidators(context, func(_ int64, val staking.ValidatorI) (stop bool) {
-
 			scraps := application.distributionKeeper.GetValidatorOutstandingRewards(context, val.GetOperator())
 			feePool := application.distributionKeeper.GetFeePool(context)
 			feePool.CommunityPool = feePool.CommunityPool.Add(scraps...)

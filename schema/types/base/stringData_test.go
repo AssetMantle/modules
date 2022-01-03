@@ -16,7 +16,6 @@ import (
 )
 
 func Test_StringData(t *testing.T) {
-
 	value := "data"
 	testStringData := NewStringData(value)
 	testStringData2 := NewStringData("")

@@ -17,7 +17,6 @@ import (
 )
 
 func Test_Define_Message(t *testing.T) {
-
 	testFromID := base.NewID("fromID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

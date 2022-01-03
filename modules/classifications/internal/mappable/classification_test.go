@@ -17,7 +17,6 @@ import (
 )
 
 func Test_Classification_Methods(t *testing.T) {
-
 	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
 	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("MutableData"))))
 

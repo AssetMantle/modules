@@ -14,7 +14,6 @@ import (
 )
 
 func Test_Maintain_Request(t *testing.T) {
-
 	classificationID := base.NewID("classificationID")
 	identityID := base.NewID("identityID")
 	testAuxiliaryRequest := NewAuxiliaryRequest(classificationID, identityID)

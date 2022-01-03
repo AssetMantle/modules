@@ -67,6 +67,7 @@ func Test_ListData(t *testing.T) {
 	require.Panics(t, func() {
 		require.Equal(t, false, testListData.Compare(NewStringData("")) == 0)
 	})
+
 	require.Panics(t, func() {
 		require.Equal(t, false, testListData.Compare(NewHeightData(NewHeight(123))) == 0)
 	})
@@ -74,30 +75,38 @@ func Test_ListData(t *testing.T) {
 	listValue3, err := ReadAccAddressListData("cosmos1ce2gkxuug6g388qd535tk3p70ej2xkkvf5jm6r")
 	require.Nil(t, err)
 	testListData3 := NewListData(listValue3)
+
 	listValue4, err := ReadAccAddressListData("cosmos1ce2gkxuug6g388qd535tk3p70ej2xkkvf5jm6r")
 	require.Nil(t, err)
 	testListData4 := NewListData(listValue4)
 
 	listValue6, err := ReadAccAddressListData("cosmos1lmx8c6dujhgt04a3f9wzx503pp763dgvuga8ry,cosmos1zz22dfpvw3zqpeyhvhmx944a588fgcalw744ts")
 	require.Nil(t, err)
+
 	listValue8, err := ReadAccAddressListData("cosmos1lmx8c6dujhgt04a3f9wzx503pp763dgvuga8ry")
 	require.Nil(t, err)
 	dataAsList8, err := listValue8.AsListData()
 	require.Nil(t, err)
+
 	addr1, _ := sdkTypes.AccAddressFromBech32("cosmos1zz22dfpvw3zqpeyhvhmx944a588fgcalw744ts")
 	addr2, _ := sdkTypes.AccAddressFromBech32("cosmos1adf0nwjhg2anlfy5t7m4ztxvczhn342kvq806c")
 	dataAsList8 = dataAsList8.Add(NewAccAddressData(addr1), NewAccAddressData(addr2))
+
 	listValue9, err := ReadAccAddressListData("cosmos1adf0nwjhg2anlfy5t7m4ztxvczhn342kvq806c")
 	require.Nil(t, err)
+
 	listValue10, err := ReadAccAddressListData("cosmos1lmx8c6dujhgt04a3f9wzx503pp763dgvuga8ry,cosmos1tqcxq4xxwjc3wtn6hqqc5f7nfyqz86ktv6hssp,cosmos1zz22dfpvw3zqpeyhvhmx944a588fgcalw744ts")
 	require.Nil(t, err)
+
 	listValue11, err := ReadAccAddressListData("cosmos1tqcxq4xxwjc3wtn6hqqc5f7nfyqz86ktv6hssp")
 	require.Nil(t, err)
 
 	dataAsList6, err := listValue6.AsListData()
 	require.Nil(t, err)
+
 	dataAsList9, err := listValue9.AsListData()
 	require.Nil(t, err)
+
 	dataAsList10, err := listValue10.AsListData()
 	require.Nil(t, err)
 
@@ -106,5 +115,4 @@ func Test_ListData(t *testing.T) {
 	require.Equal(t, false, dataAsList8.Search(dataAsList9.(listData).Value.GetList()[0]) == len(dataAsList8.(listData).Value.GetList()))
 	require.Equal(t, dataAsList6, dataAsList8.Remove(listValue9.(listData).Value.GetList()[0]))
 	require.Equal(t, dataAsList10, dataAsList6.Add(listValue11.(listData).Value.GetList()[0]))
-
 }

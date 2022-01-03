@@ -65,7 +65,6 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 }
 
 func Test_Query_Keeper_Split(t *testing.T) {
-
 	context, keepers := CreateTestInput2(t)
 
 	ownerID := base.NewID("ownerID")

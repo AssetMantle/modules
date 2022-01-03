@@ -14,7 +14,6 @@ import (
 )
 
 func Test_Super_Request(t *testing.T) {
-
 	classificationID := base.NewID("classificationID")
 	identityID := base.NewID("identityID")
 	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("Data1"))))

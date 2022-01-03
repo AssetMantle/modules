@@ -84,7 +84,6 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-
 	ctx, keepers := CreateTestInput(t)
 	ctx = ctx.WithBlockHeight(2)
 

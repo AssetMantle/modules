@@ -69,7 +69,6 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 }
 
 func Test_Query_Keeper_Asset(t *testing.T) {
-
 	context, keepers := CreateTestInput2(t)
 
 	immutableProperties, err := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")

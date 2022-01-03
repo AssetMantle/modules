@@ -23,7 +23,6 @@ import (
 )
 
 func Test_Split_Request(t *testing.T) {
-
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)

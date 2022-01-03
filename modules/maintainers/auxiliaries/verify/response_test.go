@@ -14,7 +14,6 @@ import (
 )
 
 func Test_Maintain_Response(t *testing.T) {
-
 	testAuxiliaryResponse := newAuxiliaryResponse(nil)
 	require.Equal(t, auxiliaryResponse{Success: true, Error: nil}, testAuxiliaryResponse)
 	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())

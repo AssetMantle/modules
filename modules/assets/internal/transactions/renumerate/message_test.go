@@ -17,7 +17,6 @@ import (
 )
 
 func Test_Renumerate_Message(t *testing.T) {
-
 	testAssetID := base.NewID("assetID")
 	testFromID := base.NewID("fromID")
 

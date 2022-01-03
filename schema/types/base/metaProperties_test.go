@@ -38,9 +38,9 @@ func Test_MetaProperties(t *testing.T) {
 	newProperty := NewMetaProperty(NewID("ID3"), NewMetaFact(NewStringData("Data3")))
 	newTestMetaProperties2 := testMetaProperties.Add(newProperty)
 	propertyMutated := NewMetaProperty(NewID("ID"), NewMetaFact(NewDecData(sdkTypes.NewDec(34))))
+
 	require.Equal(t, properties{PropertyList: []types.Property{newMetaProperty.RemoveData(), newProperty.RemoveData()}}, newTestMetaProperties2.RemoveData())
 	require.Equal(t, properties{PropertyList: []types.Property{testMetaProperty2.RemoveData()}}, newTestMetaProperties.Remove(testMetaProperty).RemoveData())
 	require.Equal(t, properties{PropertyList: []types.Property{propertyMutated.RemoveData(), newProperty.RemoveData()}}, newTestMetaProperties2.Mutate(propertyMutated).RemoveData())
 	require.Equal(t, properties{PropertyList: []types.Property{testMetaProperty2.RemoveData()}}, newTestMetaProperties.Remove(testMetaProperty2).RemoveData())
-
 }

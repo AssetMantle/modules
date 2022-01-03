@@ -13,7 +13,6 @@ import (
 )
 
 func TestHash(t *testing.T) {
-
 	var filteredMetaList []string
 	filteredMetaList = append(filteredMetaList, "123")
 	sort.Strings(filteredMetaList)
@@ -26,5 +25,4 @@ func TestHash(t *testing.T) {
 
 	require.Equal(t, Hash(""), "")
 	require.Equal(t, Hash("123"), base64.URLEncoding.EncodeToString(hash.Sum(nil)))
-
 }

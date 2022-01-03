@@ -21,7 +21,6 @@ import (
 )
 
 func Test_Make_Message(t *testing.T) {
-
 	fromID := base.NewID("fromID")
 	classificationID := base.NewID("classificationID")
 	makerOwnableID := base.NewID("makerOwnableID")

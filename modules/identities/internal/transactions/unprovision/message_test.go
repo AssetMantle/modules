@@ -17,7 +17,6 @@ import (
 )
 
 func Test_Unprovision_Message(t *testing.T) {
-
 	testIdentityID := base.NewID("identityID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

@@ -18,7 +18,6 @@ import (
 )
 
 func TestMapper(t *testing.T) {
-
 	context, storeKey, _ := base.SetupTest(t)
 
 	// NewMapper

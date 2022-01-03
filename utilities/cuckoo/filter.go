@@ -42,6 +42,7 @@ func NewCuckoo(numItems uint, entriesPerBucket uint, retries int, falsePositiveR
 }
 
 // delete the fingerprint from the cuckoo filter
+// nolint:unused
 func (c *Cuckoo) delete(needle string) {
 	i1, i2, f := c.hashes(needle)
 

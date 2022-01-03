@@ -16,7 +16,6 @@ import (
 )
 
 func TestCollection(t *testing.T) {
-
 	context, storeKey, _ := base.SetupTest(t)
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 

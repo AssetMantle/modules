@@ -17,7 +17,6 @@ import (
 )
 
 func Test_Deputize_Message(t *testing.T) {
-
 	testFromID := base.NewID("fromID")
 	testToID := base.NewID("toID")
 	testClassificationID := base.NewID("classificationID")

@@ -16,7 +16,6 @@ import (
 )
 
 func Test_Split_Methods(t *testing.T) {
-
 	ownerID := base.NewID("ownerID")
 	ownableID := base.NewID("ownableID")
 

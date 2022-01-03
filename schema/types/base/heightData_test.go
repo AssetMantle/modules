@@ -16,7 +16,6 @@ import (
 )
 
 func Test_HeightData(t *testing.T) {
-
 	heightValue := NewHeight(123)
 	testHeightData := NewHeightData(heightValue)
 	testHeightData2 := NewHeightData(NewHeight(0))
@@ -58,5 +57,4 @@ func Test_HeightData(t *testing.T) {
 
 	require.Equal(t, false, testHeightData.Compare(NewStringData("")) == 0)
 	require.Equal(t, true, testHeightData.Compare(NewHeightData(NewHeight(123))) == 0)
-
 }

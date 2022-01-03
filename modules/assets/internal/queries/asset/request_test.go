@@ -24,7 +24,6 @@ import (
 )
 
 func Test_Asset_Request(t *testing.T) {
-
 	var Codec = codec.New()
 
 	schema.RegisterCodec(Codec)

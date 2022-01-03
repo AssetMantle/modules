@@ -14,13 +14,13 @@ import (
 )
 
 func Test_Signature(t *testing.T) {
-
 	privateKey := ed25519.GenPrivKey()
 	pubKey := privateKey.PubKey()
 	signatureBytes := NewID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
+
 	id := NewID("ID")
 	validityHeight := NewHeight(123)
 	testSignature := NewSignature(id, signedBytes, validityHeight)
@@ -35,5 +35,4 @@ func Test_Signature(t *testing.T) {
 
 	require.Equal(t, false, testSignature.Verify(pubKey, []byte{}))
 	require.Equal(t, true, testSignature.Verify(pubKey, signatureBytes))
-
 }

@@ -25,7 +25,6 @@ import (
 )
 
 func Test_Mint_Request(t *testing.T) {
-
 	var Codec = codec.New()
 
 	schema.RegisterCodec(Codec)

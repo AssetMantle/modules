@@ -14,7 +14,6 @@ import (
 )
 
 func Test_Prototype(t *testing.T) {
-
 	prototype := Prototype()
 	require.Equal(t, asset.Query.GetName(), prototype.Get("assets").GetName())
 }

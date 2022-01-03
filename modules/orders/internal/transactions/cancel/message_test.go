@@ -17,7 +17,6 @@ import (
 )
 
 func Test_Cancel_Message(t *testing.T) {
-
 	testOrderID := base.NewID("orderID")
 	testFromID := base.NewID("fromID")
 

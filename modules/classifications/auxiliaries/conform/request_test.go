@@ -14,7 +14,6 @@ import (
 )
 
 func Test_Conform_Request(t *testing.T) {
-
 	classificationID := base.NewID("classificationID")
 	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("Data1"))))
 	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("Data2"))))

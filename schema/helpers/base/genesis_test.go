@@ -18,7 +18,6 @@ import (
 )
 
 func TestGenesis(t *testing.T) {
-
 	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
 	codec := baseTestUtilities.MakeCodec()
 	Mapper := NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype).Initialize(storeKey)

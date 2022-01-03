@@ -16,7 +16,6 @@ import (
 )
 
 func Test_Identity_Methods(t *testing.T) {
-
 	classificationID := base.NewID("classificationID")
 	defaultImmutableProperties, _ := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	testIdentityID := key.NewIdentityID(classificationID, defaultImmutableProperties)

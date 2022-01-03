@@ -20,7 +20,6 @@ import (
 )
 
 func Test_Kafka_Types(t *testing.T) {
-
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)

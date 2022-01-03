@@ -15,7 +15,6 @@ import (
 )
 
 func Test_Verify_Request(t *testing.T) {
-
 	identityID := base.NewID("identityID")
 	testAddress := sdkTypes.AccAddress("addr")
 	testAuxiliaryRequest := NewAuxiliaryRequest(testAddress, identityID)

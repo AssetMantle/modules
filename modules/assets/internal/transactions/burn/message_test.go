@@ -17,7 +17,6 @@ import (
 )
 
 func Test_Burn_Message(t *testing.T) {
-
 	testAssetID := base.NewID("assetID")
 	testFromID := base.NewID("fromID")
 

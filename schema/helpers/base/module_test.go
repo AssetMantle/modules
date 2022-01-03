@@ -69,7 +69,6 @@ func TestModule(t *testing.T) {
 	})
 
 	require.NotPanics(t, func() {
-
 	})
 	require.Nil(t, Module.ValidateGenesis(Module.DefaultGenesis()))
 

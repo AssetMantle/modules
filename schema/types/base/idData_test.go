@@ -16,7 +16,6 @@ import (
 )
 
 func Test_IDData(t *testing.T) {
-
 	idValue := NewID("ID")
 	testIDData := NewIDData(idValue)
 	testIDData2 := NewIDData(NewID(""))
@@ -55,5 +54,4 @@ func Test_IDData(t *testing.T) {
 	require.Equal(t, true, testIDData.Compare(testIDData) == 0)
 
 	require.Equal(t, "", testIDData.ZeroValue().String())
-
 }

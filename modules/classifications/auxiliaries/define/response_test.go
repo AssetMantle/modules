@@ -15,7 +15,6 @@ import (
 )
 
 func Test_Define_Response(t *testing.T) {
-
 	classificationID := base.NewID("classificationID")
 
 	testAuxiliaryResponse := newAuxiliaryResponse(classificationID, nil)

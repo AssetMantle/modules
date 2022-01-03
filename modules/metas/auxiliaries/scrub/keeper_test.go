@@ -74,7 +74,6 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 }
 
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
-
 	context, keepers := CreateTestInput(t)
 
 	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewMetaFact(base.NewStringData("Data")))

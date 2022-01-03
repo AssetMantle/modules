@@ -15,7 +15,6 @@ import (
 )
 
 func Test_Add_Response(t *testing.T) {
-
 	testKeyOutput := keys.NewKeyOutput("name", "keyType", "address", "pubkey")
 	testResponse := newResponse(testKeyOutput, nil)
 	require.Equal(t, response{Success: true, Error: nil, KeyOutput: testKeyOutput}, testResponse)

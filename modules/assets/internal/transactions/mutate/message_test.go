@@ -17,7 +17,6 @@ import (
 )
 
 func Test_Mutate_Message(t *testing.T) {
-
 	testFromID := base.NewID("fromID")
 	testAssetID := base.NewID("assetID")
 

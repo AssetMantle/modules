@@ -19,7 +19,6 @@ import (
 )
 
 func Test_Rest_Utils(t *testing.T) {
-
 	value, err := parseGasAdjustment("")
 	require.Equal(t, flags.DefaultGasAdjustment, value)
 	require.Equal(t, nil, err)

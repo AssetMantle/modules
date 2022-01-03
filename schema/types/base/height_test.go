@@ -19,5 +19,4 @@ func TestHeight(t *testing.T) {
 	require.Equal(t, true, heightByFunction.Compare(NewHeight(1)) > 0)
 	require.Equal(t, false, heightByFunction.Compare(NewHeight(10)) > 0)
 	require.Equal(t, false, heightByFunction.Compare(NewHeight(20)) > 0)
-
 }

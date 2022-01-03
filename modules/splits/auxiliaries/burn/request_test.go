@@ -15,7 +15,6 @@ import (
 )
 
 func Test_Burn_Request(t *testing.T) {
-
 	ownerID := base.NewID("ownerID")
 	ownableID := base.NewID("ownableID")
 	splits := sdkTypes.NewDec(10)

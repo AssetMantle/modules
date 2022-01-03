@@ -16,7 +16,6 @@ import (
 )
 
 func Test_Super_Response(t *testing.T) {
-
 	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewMetaFact(base.NewStringData("Data")))
 	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty}...)
 	property := base.NewProperty(base.NewID("id"), base.NewFact(base.NewStringData("Data")))

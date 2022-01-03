@@ -24,5 +24,4 @@ func TestGenerateRandomData(t *testing.T) {
 	case 3:
 		require.Equal(t, GenerateRandomData(r), base.NewHeightData(base.NewHeight(r.Int63())))
 	}
-
 }

@@ -17,7 +17,6 @@ import (
 )
 
 func Test_Quash_Message(t *testing.T) {
-
 	testIdentityID := base.NewID("identityID")
 	testFromID := base.NewID("fromID")
 

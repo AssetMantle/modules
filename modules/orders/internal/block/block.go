@@ -86,7 +86,6 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 			orders.Iterate(
 				key.FromID(key.NewOrderID(orderMappable.(mappables.Order).GetClassificationID(), orderMappable.(mappables.Order).GetTakerOwnableID(), orderMappable.(mappables.Order).GetMakerOwnableID(), base.NewID(""), base.NewID(""), base.NewID(""), base.NewProperties())),
 				func(executableMappableOrder helpers.Mappable) bool {
-
 					var leftOrder mappables.Order
 					var rightOrder mappables.Order
 

@@ -14,7 +14,6 @@ import (
 )
 
 func Test_Mutables(t *testing.T) {
-
 	testProperty := base.NewProperty(base.NewID("ID"), base.NewFact(base.NewStringData("Data")))
 	testProperties := base.NewProperties(testProperty)
 	testMutables := HasMutables{testProperties}

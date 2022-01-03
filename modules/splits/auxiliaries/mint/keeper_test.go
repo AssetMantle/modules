@@ -73,7 +73,6 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 }
 
 func Test_Burn_Aux_Keeper_Help(t *testing.T) {
-
 	context, keepers := CreateTestInput(t)
 
 	ownerID := base.NewID("ownerID")

@@ -15,7 +15,6 @@ import (
 )
 
 func Test_Scrub_Request(t *testing.T) {
-
 	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewMetaFact(base.NewStringData("Data")))
 	testAuxiliaryRequest := NewAuxiliaryRequest(metaProperty)
 

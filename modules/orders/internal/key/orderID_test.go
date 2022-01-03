@@ -18,7 +18,6 @@ import (
 )
 
 func Test_OrderID_Methods(t *testing.T) {
-
 	classificationID := base.NewID("classificationID")
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
