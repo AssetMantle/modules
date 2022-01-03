@@ -7,6 +7,7 @@ package keeper
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/codec"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/tendermint/tendermint/libs/log"
@@ -17,16 +18,15 @@ import (
 
 // Keeper of the liquidStaking store
 type Keeper struct {
+	cdc        codec.BinaryCodec
 	storeKey   sdk.StoreKey
 	paramSpace paramsTypes.Subspace
 }
 
 // NewKeeper creates a new liquidStaking Keeper instance
-func NewKeeper(
-	key sdk.StoreKey, paramSpace paramsTypes.Subspace,
-) Keeper {
-
+func NewKeeper(cdc codec.BinaryCodec, key sdk.StoreKey, paramSpace paramsTypes.Subspace) Keeper {
 	return Keeper{
+		cdc:        cdc,
 		storeKey:   key,
 		paramSpace: paramSpace.WithKeyTable(types.ParamKeyTable()),
 	}

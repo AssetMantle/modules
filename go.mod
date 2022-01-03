@@ -8,7 +8,7 @@ require (
 	github.com/Shopify/sarama v1.19.0
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
-	github.com/cosmos/cosmos-sdk v0.42.6
+	github.com/cosmos/cosmos-sdk v0.44.3
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/gogo/gateway v1.1.0
 	github.com/gogo/protobuf v1.3.3
