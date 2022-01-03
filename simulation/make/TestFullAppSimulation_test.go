@@ -18,17 +18,14 @@ import (
 )
 
 func TestFullAppSimulation(t *testing.T) {
-	config, db, dir, logger, skip, err := simapp.SetupSimulation("leveldb-app-sim", "Simulation")
+	config, db, _, logger, skip, closeFn, err := setupRun(t, "leveldb-app-sim", "Simulation")
+	defer closeFn()
+
 	if skip {
 		t.Skip("skipping application simulation")
 	}
-	require.NoError(t, err, "simulation setup failed")
 
-	defer func() {
-		err := db.Close()
-		require.Nil(t, Error)
-		require.NoError(t, os.RemoveAll(dir))
-	}()
+	require.NoError(t, err, "simulation setup failed")
 
 	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, moduleAccountPermissions, tokenReceiveAllowedModules)
 	simulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), fauxMerkleModeOpt).(*base.SimulationApplication)

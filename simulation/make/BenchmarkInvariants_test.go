@@ -13,28 +13,19 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
 )
 
 func BenchmarkInvariants(b *testing.B) {
-	config, db, dir, logger, _, err := simapp.SetupSimulation("leveldb-app-invariant-bench", "Simulation")
-	if err != nil {
-		b.Fatalf("simulation setup failed: %s", err.Error())
-	}
+	config, db, _, logger, _, closeFn, err := setupRun(b, "leveldb-app-invariant-bench", "Simulation")
+	defer closeFn()
+
+	require.NoError(b, err, "simulation setup failed")
 
 	config.AllInvariants = false
-
-	defer func() {
-		err := db.Close()
-		err = os.RemoveAll(dir)
-		if err != nil {
-			b.Fatal(err)
-		} else if Error != nil {
-			b.Fatal(Error)
-		}
-	}()
 
 	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, moduleAccountPermissions, tokenReceiveAllowedModules)
 	simulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), interBlockCacheOpt()).(*base.SimulationApplication)
@@ -67,6 +58,7 @@ func BenchmarkInvariants(b *testing.B) {
 	// their respective metadata which makes it useful for testing/benchmarking.
 	for _, cr := range simulationApplication.CrisisKeeper.Routes() {
 		cr := cr
+
 		b.Run(fmt.Sprintf("%s/%s", cr.ModuleName, cr.Route), func(b *testing.B) {
 			if res, stop := cr.Invar(ctx); stop {
 				b.Fatalf(

@@ -20,17 +20,14 @@ import (
 )
 
 func TestAppSimulationAfterImport(t *testing.T) {
-	config, db, dir, logger, skip, err := simapp.SetupSimulation("leveldb-app-sim", "Simulation")
+	config, db, _, logger, skip, closeFn, err := setupRun(t, "leveldb-app-sim", "Simulation")
+	defer closeFn()
+
 	if skip {
 		t.Skip("skipping application simulation after import")
 	}
-	require.NoError(t, err, "simulation setup failed")
 
-	defer func() {
-		err := db.Close()
-		require.Nil(t, Error)
-		require.NoError(t, os.RemoveAll(dir))
-	}()
+	require.NoError(t, err, "simulation setup failed")
 
 	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, moduleAccountPermissions, tokenReceiveAllowedModules)
 	simulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), fauxMerkleModeOpt).(*base.SimulationApplication)
@@ -64,14 +61,10 @@ func TestAppSimulationAfterImport(t *testing.T) {
 
 	fmt.Printf("importing genesis...\n")
 
-	_, newDB, newDir, _, _, err := simapp.SetupSimulation("leveldb-app-sim-2", "Simulation-2")
-	require.NoError(t, err, "simulation setup failed")
+	_, newDB, _, _, _, newCloseFn, err := setupRun(t, "leveldb-app-sim-2", "Simulation-2")
+	defer newCloseFn()
 
-	defer func() {
-		err := newDB.Close()
-		require.Nil(t, Error)
-		require.NoError(t, os.RemoveAll(newDir))
-	}()
+	require.NoError(t, err, "simulation setup failed")
 
 	newSimulationApplication := prototype.Initialize(logger, newDB, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), fauxMerkleModeOpt).(*base.SimulationApplication)
 	require.Equal(t, "SimulationApplication", newSimulationApplication.Name())
