@@ -10,8 +10,8 @@ const (
 
 var _ sdk.Msg = &MsgAddChain{}
 
-func NewMsgAddChain(fromAddr sdk.AccAddress, amount sdk.Coin) *MsgAddChain {
-	return &MsgAddChain{FromAddress: fromAddr.String(), Amount: amount}
+func NewMsgAddChain(fromAddr sdk.AccAddress, chainID string, amount sdk.Coin) *MsgAddChain {
+	return &MsgAddChain{FromAddress: fromAddr.String(), ChainID: chainID, Amount: amount}
 }
 
 // Route Implements Msg.

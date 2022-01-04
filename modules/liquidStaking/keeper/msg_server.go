@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/persistenceOne/persistenceSDK/modules/liquidStaking/types"
 )
@@ -19,6 +20,7 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 var _ types.MsgServer = msgServer{}
 
 func (k msgServer) AddChain(goCtx context.Context, msg *types.MsgAddChain) (*types.MsgAddChainResponse, error) {
-
+	fmt.Println("from:", msg.FromAddress)
+	fmt.Println("chain id:", msg.ChainID)
 	return &types.MsgAddChainResponse{}, nil
 }
