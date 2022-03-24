@@ -7,6 +7,7 @@ package qualified
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 

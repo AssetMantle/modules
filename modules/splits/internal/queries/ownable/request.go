@@ -8,6 +8,7 @@ package ownable
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
+
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/common"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -32,8 +33,8 @@ var _ helpers.QueryRequest = (*queryRequest)(nil)
 // @Failure default  {object}  queryResponse "Message for an unexpected error response."
 // @Router /ownable/{ownableID} [get]
 func (queryRequest queryRequest) Validate() error {
-	_, Error := govalidator.ValidateStruct(queryRequest)
-	return Error
+	_, err := govalidator.ValidateStruct(queryRequest)
+	return err
 }
 
 func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
@@ -49,8 +50,8 @@ func (queryRequest queryRequest) Encode() ([]byte, error) {
 }
 
 func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
-	if Error := common.Codec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
-		return nil, Error
+	if err := common.Codec.UnmarshalJSON(bytes, &queryRequest); err != nil {
+		return nil, err
 	}
 
 	return queryRequest, nil

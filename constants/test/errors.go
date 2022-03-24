@@ -7,6 +7,7 @@ package test
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 )
 

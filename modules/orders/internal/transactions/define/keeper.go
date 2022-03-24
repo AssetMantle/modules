@@ -7,6 +7,7 @@ package define
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/define"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
@@ -33,23 +34,23 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	immutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetList()...)))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	immutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetList()...)))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	immutableProperties := base.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
 
-	mutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetList()...)))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetList()...)))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	mutableProperties := base.NewProperties(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
-	classificationID, Error := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(immutableProperties, mutableProperties)))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(immutableProperties, mutableProperties)))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	if auxiliaryResponse := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.FromID, mutableProperties)); !auxiliaryResponse.IsSuccessful() {

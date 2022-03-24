@@ -18,10 +18,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/gorilla/mux"
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
 type module struct {

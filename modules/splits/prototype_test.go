@@ -1,6 +1,10 @@
 package splits
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/block"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/genesis"
@@ -11,8 +15,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/simulator"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/transactions"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {

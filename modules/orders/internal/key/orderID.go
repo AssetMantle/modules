@@ -12,6 +12,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -36,13 +37,13 @@ var _ helpers.Key = (*orderID)(nil)
 func (orderID orderID) Bytes() []byte {
 	var Bytes []byte
 
-	rateIDBytes, Error := orderID.getRateIDBytes()
-	if Error != nil {
+	rateIDBytes, err := orderID.getRateIDBytes()
+	if err != nil {
 		return Bytes
 	}
 
-	creationIDBytes, Error := orderID.getCreationHeightBytes()
-	if Error != nil {
+	creationIDBytes, err := orderID.getCreationHeightBytes()
+	if err != nil {
 		return Bytes
 	}
 
@@ -91,15 +92,15 @@ func (orderID orderID) getRateIDBytes() ([]byte, error) {
 		return Bytes, nil
 	}
 
-	exchangeRate, Error := sdkTypes.NewDecFromStr(orderID.RateID.String())
-	if Error != nil {
-		return Bytes, Error
+	exchangeRate, err := sdkTypes.NewDecFromStr(orderID.RateID.String())
+	if err != nil {
+		return Bytes, err
 	}
 
 	Bytes = append(Bytes, uint8(len(strings.Split(exchangeRate.String(), ".")[0])))
 	Bytes = append(Bytes, []byte(exchangeRate.String())...)
 
-	return Bytes, Error
+	return Bytes, err
 }
 
 func (orderID orderID) getCreationHeightBytes() ([]byte, error) {
@@ -109,15 +110,15 @@ func (orderID orderID) getCreationHeightBytes() ([]byte, error) {
 		return Bytes, nil
 	}
 
-	height, Error := strconv.ParseInt(orderID.CreationID.String(), 10, 64)
-	if Error != nil {
-		return Bytes, Error
+	height, err := strconv.ParseInt(orderID.CreationID.String(), 10, 64)
+	if err != nil {
+		return Bytes, err
 	}
 
 	Bytes = append(Bytes, uint8(len(orderID.CreationID.String())))
 	Bytes = append(Bytes, []byte(strconv.FormatInt(height, 10))...)
 
-	return Bytes, Error
+	return Bytes, err
 }
 
 func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, rateID types.ID, creationID types.ID, makerID types.ID, immutableProperties types.Properties) types.ID {

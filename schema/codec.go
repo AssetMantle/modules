@@ -7,6 +7,7 @@ package schema
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"

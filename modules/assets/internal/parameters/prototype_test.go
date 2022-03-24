@@ -6,11 +6,13 @@
 package parameters
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters/dummy"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Prototype(t *testing.T) {

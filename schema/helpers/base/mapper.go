@@ -11,9 +11,10 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/tendermint/tendermint/libs/kv"
+
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/tendermint/tendermint/libs/kv"
 )
 
 type mapper struct {

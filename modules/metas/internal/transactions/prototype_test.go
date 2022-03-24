@@ -1,10 +1,12 @@
 package transactions
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/transactions/reveal"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {

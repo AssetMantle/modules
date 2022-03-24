@@ -9,12 +9,12 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 func Test_Burn_Request(t *testing.T) {
-
 	ownerID := base.NewID("ownerID")
 	ownableID := base.NewID("ownableID")
 	testValue := sdkTypes.NewDec(10)

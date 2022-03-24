@@ -7,6 +7,7 @@ package nub
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/constants/properties"

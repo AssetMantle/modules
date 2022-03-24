@@ -7,6 +7,7 @@ package mutate
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
@@ -42,9 +43,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	mutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetList()...)))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetList()...)))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	mutableProperties := base.NewProperties(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)

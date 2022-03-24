@@ -1,10 +1,12 @@
 package queries
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/queries/maintainer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {

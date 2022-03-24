@@ -2,11 +2,12 @@ package cuckoo
 
 import (
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/crypto"
 	"math/rand"
 	"testing"
 	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/tendermint/tendermint/crypto"
 )
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -68,7 +69,7 @@ func simulate() (int, int, int) {
 	falsePositives := 0
 	for i := 0; i < testFPRandomData; i++ {
 
-		ok := c.Lookup(randStringRunes(5)) //strconv.Itoa(i))
+		ok := c.Lookup(randStringRunes(5)) // strconv.Itoa(i))
 		if ok {
 			// all should be negative
 			falsePositives++

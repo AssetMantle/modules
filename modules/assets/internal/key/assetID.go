@@ -12,6 +12,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"

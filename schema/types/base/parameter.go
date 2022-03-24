@@ -20,9 +20,9 @@ type parameter struct {
 var _ types.Parameter = (*parameter)(nil)
 
 func (parameter parameter) String() string {
-	bytes, Error := json.Marshal(parameter)
-	if Error != nil {
-		return Error.Error()
+	bytes, err := json.Marshal(parameter)
+	if err != nil {
+		return err.Error()
 	}
 
 	return string(bytes)

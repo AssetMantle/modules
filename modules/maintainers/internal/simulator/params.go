@@ -10,6 +10,7 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/common"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/parameters/dummy"
@@ -21,9 +22,9 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulation.ParamChange {
 		simulation.NewSimParamChange(module.Name,
 			dummy.ID.String(),
 			func(r *rand.Rand) string {
-				bytes, Error := common.Codec.MarshalJSON(dummy.Parameter.Mutate(base.NewDecData(sdkTypes.NewDecWithPrec(int64(r.Intn(99)), 2))).GetData())
-				if Error != nil {
-					panic(Error)
+				bytes, err := common.Codec.MarshalJSON(dummy.Parameter.Mutate(base.NewDecData(sdkTypes.NewDecWithPrec(int64(r.Intn(99)), 2))).GetData())
+				if err != nil {
+					panic(err)
 				}
 				return string(bytes)
 			}),

@@ -6,10 +6,12 @@
 package mappable
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Meta_Methods(t *testing.T) {

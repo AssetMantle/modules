@@ -8,12 +8,12 @@ package revoke
 import (
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 )
 
 func Test_Revoke_Response(t *testing.T) {
-
 	testTransactionResponse := newTransactionResponse(errors.IncorrectFormat)
 	testTransactionResponse2 := newTransactionResponse(nil)
 

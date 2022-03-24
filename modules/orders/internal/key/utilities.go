@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
@@ -20,13 +21,13 @@ func readOrderID(orderIDString string) types.ID {
 	idList := strings.Split(orderIDString, constants.SecondOrderCompositeIDSeparator)
 
 	if len(idList) == 7 {
-		exchangeRate, Error := sdkTypes.NewDecFromStr(idList[3])
-		if Error != nil {
+		exchangeRate, err := sdkTypes.NewDecFromStr(idList[3])
+		if err != nil {
 			return orderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), RateID: base.NewID(""), CreationID: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}
 		}
 
-		height, Error := strconv.ParseInt(idList[4], 10, 64)
-		if Error != nil {
+		height, err := strconv.ParseInt(idList[4], 10, 64)
+		if err != nil {
 			return orderID{ClassificationID: base.NewID(""), MakerOwnableID: base.NewID(""), TakerOwnableID: base.NewID(""), RateID: base.NewID(""), CreationID: base.NewID(""), MakerID: base.NewID(""), HashID: base.NewID("")}
 		}
 

@@ -7,6 +7,7 @@ package supplement
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/constants/test"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"

@@ -10,6 +10,7 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/common"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"

@@ -1,6 +1,10 @@
 package identities
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/block"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/genesis"
@@ -11,8 +15,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/simulator"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {

@@ -1,13 +1,15 @@
 package genesis
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {

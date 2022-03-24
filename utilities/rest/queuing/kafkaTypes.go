@@ -26,7 +26,7 @@ type kafkaMsg struct {
 
 // NewKafkaMsgFromRest : makes a msg to send to kafka queue
 func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseReq, cliCtx context.CLIContext) kafkaMsg {
-	kafkaCliCtx := kafkaCliCtx{
+	kafkaCtx := kafkaCliCtx{
 		OutputFormat:  cliCtx.OutputFormat,
 		ChainID:       cliCtx.ChainID,
 		Height:        cliCtx.Height,
@@ -48,7 +48,7 @@ func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseRe
 		Msg:         msg,
 		TicketID:    ticketID,
 		BaseRequest: baseRequest,
-		KafkaCliCtx: kafkaCliCtx,
+		KafkaCliCtx: kafkaCtx,
 	}
 }
 

@@ -1,8 +1,9 @@
 package simulator
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func Test_Prototype(t *testing.T) {

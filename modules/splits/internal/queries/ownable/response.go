@@ -7,6 +7,7 @@ package ownable
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/common"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
@@ -29,8 +30,8 @@ func (queryResponse queryResponse) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryResponse)
 }
 func (queryResponse queryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
-	if Error := common.Codec.UnmarshalJSON(bytes, &queryResponse); Error != nil {
-		return nil, Error
+	if err := common.Codec.UnmarshalJSON(bytes, &queryResponse); err != nil {
+		return nil, err
 	}
 
 	return queryResponse, nil

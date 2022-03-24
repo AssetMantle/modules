@@ -6,23 +6,24 @@
 package reveal
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Reveal_Message(t *testing.T) {
-
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
 	metaFact := "S|newMetaFact"
-	newMetaFact, Error := base.ReadMetaFact(metaFact)
-	require.Equal(t, nil, Error)
+	newMetaFact, err := base.ReadMetaFact(metaFact)
+	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, newMetaFact)
 	require.Equal(t, message{From: fromAccAddress, MetaFact: newMetaFact}, testMessage)

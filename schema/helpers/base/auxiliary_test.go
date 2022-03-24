@@ -6,9 +6,11 @@
 package base
 
 import (
-	"github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
 )
 
 func TestAuxiliary(t *testing.T) {
