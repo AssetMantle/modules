@@ -28,12 +28,12 @@ type transactionRequest struct {
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
 // Validate godoc
-// @Summary Nub identities transaction
-// @Description Nub transaction
+// @Summary Nub an identity
+// @Description A transaction to nub an identity.
 // @Accept text/plain
 // @Produce json
 // @Tags Identities
-// @Param body body  transactionRequest true "Request body for nub identity"
+// @Param body body  transactionRequest true "A transaction to nub a base identity."
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /identities/nub [post]

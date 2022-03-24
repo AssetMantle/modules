@@ -29,7 +29,7 @@ type transactionRequest struct {
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
 // Validate godoc
-// @Summary Renumerate asset transaction
+// @Summary Renumerate an asset transaction
 // @Description Renumerate asset with mutable immutable properties
 // @Accept text/plain
 // @Produce json

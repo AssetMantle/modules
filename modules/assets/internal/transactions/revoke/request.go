@@ -30,7 +30,7 @@ type transactionRequest struct {
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
 // Validate Request godoc
-// @Summary Revoke asset transaction
+// @Summary Revoke a maintainer for an asset classification transaction
 // @Description Revoke asset
 // @Accept text/plain
 // @Produce json

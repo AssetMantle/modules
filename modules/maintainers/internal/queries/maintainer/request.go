@@ -22,12 +22,12 @@ type queryRequest struct {
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
 // Validate godoc
-// @Summary Query maintainers using maintainer id
+// @Summary Search for a maintainer by maintainer ID
 // @Description Able to query the maintainers details
 // @Accept json
 // @Produce json
 // @Tags Maintainers
-// @Param maintainerID path string true "maintainer ID"
+// @Param maintainerID path string true "Unique identifier of a maintainer."
 // @Success 200 {object} queryResponse "Message for a successful query response"
 // @Failure default  {object}  queryResponse "Message for an unexpected error response."
 // @Router /maintainers/maintainers/{maintainerID} [get]

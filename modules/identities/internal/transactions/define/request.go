@@ -32,7 +32,7 @@ type transactionRequest struct {
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
 // Validate godoc
-// @Summary Deputize identities transaction
+// @Summary Define an identity
 // @Description Define identities with mutable immutable properties
 // @Accept text/plain
 // @Produce json
