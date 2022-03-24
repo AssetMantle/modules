@@ -18,6 +18,12 @@ type decData struct {
 
 var _ types.Data = (*decData)(nil)
 
+func (decData decData) GetID() types.ID {
+	return dataID{
+		TypeID: decData.GetTypeID(),
+		HashID: decData.GenerateHashID(),
+	}
+}
 func (decData decData) Compare(data types.Data) int {
 	compareDecData, Error := decDataFromInterface(data)
 	if Error != nil {
@@ -36,7 +42,7 @@ func (decData decData) String() string {
 	return decData.Value.String()
 }
 func (decData decData) GetTypeID() types.ID {
-	return NewID("D")
+	return decDataID
 }
 func (decData decData) ZeroValue() types.Data {
 	return NewDecData(sdkTypes.ZeroDec())

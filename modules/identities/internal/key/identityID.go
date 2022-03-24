@@ -9,7 +9,7 @@ import (
 	"bytes"
 	"strings"
 
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/constants"

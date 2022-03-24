@@ -8,7 +8,7 @@ package quash
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/constants/properties"
+	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
@@ -39,17 +39,17 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.InterIdentity).GetExpiry())))
+	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.Identity).GetExpiry())))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
 
-	expiryHeightMetaFact := metaProperties.Get(base.NewID(properties.Expiry))
+	expiryHeightMetaFact := metaProperties.Get(ids.ExpiryProperty)
 	if expiryHeightMetaFact == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	expiryHeight, Error := expiryHeightMetaFact.GetMetaFact().GetData().AsHeight()
+	expiryHeight, Error := expiryHeightMetaFact.GetData().AsHeight()
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}

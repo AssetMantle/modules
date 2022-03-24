@@ -10,7 +10,7 @@ import (
 func TestFromID(t *testing.T) {
 
 	classificationID := base.NewID("classificationID")
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
 	newAssetID := NewAssetID(classificationID, immutableProperties)
 	require.Equal(t, assetIDFromInterface(newAssetID), FromID(newAssetID))
 
@@ -27,7 +27,7 @@ func TestFromID(t *testing.T) {
 
 func TestReadClassificationID(t *testing.T) {
 	classificationID := base.NewID("classificationID")
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
 	assetID := NewAssetID(classificationID, immutableProperties)
 
 	require.Equal(t, assetIDFromInterface(assetID).ClassificationID, ReadClassificationID(assetID))

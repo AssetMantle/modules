@@ -8,7 +8,9 @@ package mappable
 import (
 	"testing"
 
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
+
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
@@ -17,14 +19,14 @@ import (
 
 func Test_Classification_Methods(t *testing.T) {
 
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
-	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("MutableData"))))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
+	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewStringData("MutableData")))
 
 	chainID := base.NewID("chainID")
 	id := key.NewClassificationID(chainID, immutableProperties, mutableProperties)
 
 	testClassification := NewClassification(id, immutableProperties, mutableProperties)
-	require.Equal(t, classification{ID: id, HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties}, HasMutables: baseTraits.HasMutables{Properties: mutableProperties}}, testClassification)
+	require.Equal(t, classification{Document: qualified.Document{ID: id, HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties}, HasMutables: baseTraits.HasMutables{Properties: mutableProperties}}}, testClassification)
 	require.Equal(t, immutableProperties, testClassification.GetImmutableProperties())
 	require.Equal(t, mutableProperties, testClassification.GetMutableProperties())
 	require.Equal(t, key.FromID(id), testClassification.GetKey())

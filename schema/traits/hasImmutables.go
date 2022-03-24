@@ -10,6 +10,8 @@ import (
 )
 
 type HasImmutables interface {
+	// GetImmutableProperties return the immutable properties object
+	// does not return nil
 	GetImmutableProperties() types.Properties
 
 	GenerateHashID() types.ID

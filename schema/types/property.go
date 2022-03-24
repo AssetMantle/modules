@@ -7,5 +7,8 @@ package types
 
 type Property interface {
 	GetID() ID
-	GetFact() Fact
+	GetDataID() ID
+	GetKeyID() ID
+	GetTypeID() ID
+	GetHashID() ID
 }

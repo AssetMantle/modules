@@ -9,6 +9,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/persistenceOne/persistenceSDK/constants/ids"
+
 	"github.com/persistenceOne/persistenceSDK/constants/test"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -17,7 +19,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
@@ -95,9 +96,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	rateID := base.NewID(sdkTypes.MustNewDecFromStr("0.001").String())
 	creationID := base.NewID("100")
 	makerID := base.NewID("makerID")
-	metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
-		"," + properties.TakerID + ":I|fromID" + "," +
-		properties.ExchangeRate + ":D|0.000000000000000001")
+	metaProperties, Error := base.ReadMetaProperties(ids.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+		"," + ids.TakerIDProperty.String() + ":I|fromID" + "," +
+		ids.ExchangeRateProperty.String() + ":D|0.000000000000000001")
 	require.Equal(t, nil, Error)
 	orderID := key.NewOrderID(
 		classificationID,

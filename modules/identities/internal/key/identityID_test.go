@@ -8,7 +8,7 @@ package key
 import (
 	"testing"
 
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
 )

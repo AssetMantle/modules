@@ -8,10 +8,12 @@ package mappable
 import (
 	"testing"
 
+	"github.com/persistenceOne/persistenceSDK/constants/ids"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
 )
@@ -25,17 +27,17 @@ func Test_Order_Methods(t *testing.T) {
 	rateID := base.NewID(sdkTypes.OneDec().String())
 	creationID := base.NewID("100")
 
-	takerIDImmutableProperty := base.NewProperty(base.NewID(properties.TakerID), base.NewFact(base.NewStringData("takerIDImmutableProperty")))
-	exchangeRateImmutableProperty := base.NewMetaProperty(base.NewID(properties.ExchangeRate), base.NewMetaFact(base.NewDecData(sdkTypes.OneDec())))
-	creationImmutableProperty := base.NewMetaProperty(base.NewID(properties.Creation), base.NewMetaFact(base.NewHeightData(base.NewHeight(100))))
-	expiryImmutableProperty := base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewStringData("expiryImmutableProperty")))
-	makerOwnableSplitImmutableProperty := base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(base.NewStringData("makerOwnableSplitImmutableProperty")))
+	takerIDImmutableProperty := base.NewProperty(ids.TakerIDProperty, base.NewStringData("takerIDImmutableProperty"))
+	exchangeRateImmutableProperty := base.NewMetaProperty(ids.ExchangeRateProperty, base.NewDecData(sdkTypes.OneDec()))
+	creationImmutableProperty := base.NewMetaProperty(ids.CreationProperty, base.NewHeightData(base.NewHeight(100)))
+	expiryImmutableProperty := base.NewProperty(ids.ExpiryProperty, base.NewStringData("expiryImmutableProperty"))
+	makerOwnableSplitImmutableProperty := base.NewProperty(ids.MakerOwnableSplitProperty, base.NewStringData("makerOwnableSplitImmutableProperty"))
 
-	takerIDMutableProperty := base.NewProperty(base.NewID(properties.TakerID), base.NewFact(base.NewStringData("takerIDMutableProperty")))
-	exchangeRateMutableProperty := base.NewProperty(base.NewID(properties.ExchangeRate), base.NewFact(base.NewDecData(sdkTypes.OneDec())))
-	creationMutableProperty := base.NewProperty(base.NewID(properties.Creation), base.NewFact(base.NewHeightData(base.NewHeight(100))))
-	expiryMutableProperty := base.NewProperty(base.NewID(properties.Expiry), base.NewFact(base.NewStringData("expiryMutableProperty")))
-	makerOwnableSplitMutableProperty := base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(base.NewStringData("makerOwnableSplitMutableProperty")))
+	takerIDMutableProperty := base.NewProperty(ids.TakerIDProperty, base.NewStringData("takerIDMutableProperty"))
+	exchangeRateMutableProperty := base.NewProperty(ids.ExchangeRateProperty, base.NewDecData(sdkTypes.OneDec()))
+	creationMutableProperty := base.NewProperty(ids.CreationProperty, base.NewHeightData(base.NewHeight(100)))
+	expiryMutableProperty := base.NewProperty(ids.ExpiryProperty, base.NewStringData("expiryMutableProperty"))
+	makerOwnableSplitMutableProperty := base.NewProperty(ids.MakerOwnableSplitProperty, base.NewStringData("makerOwnableSplitMutableProperty"))
 
 	immutableProperties := base.NewProperties(takerIDImmutableProperty, exchangeRateImmutableProperty.RemoveData(), creationImmutableProperty.RemoveData(), expiryImmutableProperty, makerOwnableSplitImmutableProperty)
 	mutableProperties := base.NewProperties(takerIDMutableProperty, exchangeRateMutableProperty, creationMutableProperty, expiryMutableProperty, makerOwnableSplitMutableProperty)
@@ -45,16 +47,16 @@ func Test_Order_Methods(t *testing.T) {
 	testOrder3 := NewOrder(testOrderID, base.NewProperties(), base.NewProperties()).(order)
 
 	data, _ := base.ReadIDData("")
-	defaultTakerProperty := base.NewProperty(base.NewID(properties.TakerID), base.NewFact(data))
-	defaultExchangeRateProperty := base.NewProperty(base.NewID(properties.ExchangeRate), base.NewFact(base.NewDecData(sdkTypes.OneDec())))
+	defaultTakerProperty := base.NewProperty(ids.TakerIDProperty, data)
+	defaultExchangeRateProperty := base.NewProperty(ids.ExchangeRateProperty, base.NewDecData(sdkTypes.OneDec()))
 	data, _ = base.ReadHeightData("100")
-	defaultCreationProperty := base.NewProperty(base.NewID(properties.Creation), base.NewFact(data))
+	defaultCreationProperty := base.NewProperty(ids.CreationProperty, data)
 	data, _ = base.ReadHeightData("-1")
-	defaultExpiryProperty := base.NewProperty(base.NewID(properties.Expiry), base.NewFact(data))
+	defaultExpiryProperty := base.NewProperty(ids.ExpiryProperty, data)
 	data, _ = base.ReadDecData("")
-	defaultMakerOwnableSplitProperty := base.NewProperty(base.NewID(properties.MakerOwnableSplit), base.NewFact(data))
+	defaultMakerOwnableSplitProperty := base.NewProperty(ids.MakerOwnableSplitProperty, data)
 
-	require.Equal(t, order{ID: testOrderID, HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties}, HasMutables: baseTraits.HasMutables{Properties: base.NewProperties()}}, testOrder)
+	require.Equal(t, order{Document: qualified.Document{ID: testOrderID, HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties}, HasMutables: baseTraits.HasMutables{Properties: base.NewProperties()}}}, testOrder)
 	require.Equal(t, testOrderID, testOrder.GetID())
 	require.Equal(t, testOrderID, testOrder.GetKey())
 	require.Equal(t, classificationID, testOrder.GetClassificationID())

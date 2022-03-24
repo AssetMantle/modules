@@ -6,6 +6,8 @@
 package queuing
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -14,7 +16,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/utilities/random"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Kafka_Types(t *testing.T) {
@@ -33,7 +34,7 @@ func Test_Kafka_Types(t *testing.T) {
 
 	testMessage := sdkTypes.NewTestMsg()
 
-	ticketID := TicketID(random.GenerateID("name"))
+	ticketID := TicketID(random.GenerateUniqueIdentifier("name"))
 	testKafkaMsg := NewKafkaMsgFromRest(testMessage, ticketID, testBaseReq, cliContext)
 	kafkaCliCtx := kafkaCliCtx{
 		OutputFormat:  cliContext.OutputFormat,

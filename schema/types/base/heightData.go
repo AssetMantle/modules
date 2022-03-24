@@ -20,6 +20,12 @@ type heightData struct {
 
 var _ types.Data = (*heightData)(nil)
 
+func (heightData heightData) GetID() types.ID {
+	return dataID{
+		TypeID: heightData.GetTypeID(),
+		HashID: heightData.GenerateHashID(),
+	}
+}
 func (heightData heightData) Compare(data types.Data) int {
 	compareHeightData, Error := heightDataFromInterface(data)
 	if Error != nil {
@@ -32,7 +38,7 @@ func (heightData heightData) String() string {
 	return strconv.FormatInt(heightData.Value.Get(), 10)
 }
 func (heightData heightData) GetTypeID() types.ID {
-	return NewID("H")
+	return heightDataID
 }
 func (heightData heightData) ZeroValue() types.Data {
 	return NewHeightData(NewHeight(0))

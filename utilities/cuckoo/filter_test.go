@@ -48,7 +48,7 @@ func simulate() (int, int, int) {
 	full := 0
 
 	for _, v := range data {
-		err := c.insert(v)
+		err := c.Insert(v)
 		if err == nil {
 			insertMap[v] = true
 		} else {
@@ -58,7 +58,7 @@ func simulate() (int, int, int) {
 
 	allNegatives := 0
 	for _, v := range data {
-		ok := c.lookup(v)
+		ok := c.Lookup(v)
 		if !ok {
 			// all should be negative
 			allNegatives++
@@ -68,7 +68,7 @@ func simulate() (int, int, int) {
 	falsePositives := 0
 	for i := 0; i < testFPRandomData; i++ {
 
-		ok := c.lookup(randStringRunes(5)) //strconv.Itoa(i))
+		ok := c.Lookup(randStringRunes(5)) //strconv.Itoa(i))
 		if ok {
 			// all should be negative
 			falsePositives++

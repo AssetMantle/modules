@@ -105,7 +105,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	rateID := base.NewID(sdkTypes.OneDec().String())
 	updatedRate := sdkTypes.MustNewDecFromStr("0.002")
 	creationID := base.NewID("100")
-	//makerID := base.NewID("makerID")
+	//makerID := qualified.NewID("makerID")
 	takerOwnableID := base.NewID("takerOwnableID")
 	makerOwnableSplit := sdkTypes.SmallestDec().MulInt64(2)
 	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, defaultIdentityID, immutableProperties)

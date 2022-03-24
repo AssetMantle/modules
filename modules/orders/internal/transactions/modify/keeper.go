@@ -8,7 +8,7 @@ package modify
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/constants/properties"
+	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
@@ -54,8 +54,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	transferMakerOwnableSplit := sdkTypes.ZeroDec()
 
-	if makerOwnableSplitProperty := metaProperties.Get(base.NewID(properties.MakerOwnableSplit)); makerOwnableSplitProperty != nil {
-		oldMakerOwnableSplit, Error := makerOwnableSplitProperty.GetMetaFact().GetData().AsDec()
+	if makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplitProperty); makerOwnableSplitProperty != nil {
+		oldMakerOwnableSplit, Error := makerOwnableSplitProperty.GetData().AsDec()
 		if Error != nil {
 			return newTransactionResponse(Error)
 		}
@@ -75,8 +75,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		}
 	}
 
-	mutableMetaProperties := message.MutableMetaProperties.Add(base.NewMetaProperty(base.NewID(properties.MakerOwnableSplit), base.NewMetaFact(base.NewDecData(message.MakerOwnableSplit))))
-	mutableMetaProperties = mutableMetaProperties.Add(base.NewMetaProperty(base.NewID(properties.Expiry), base.NewMetaFact(base.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight())))))
+	mutableMetaProperties := message.MutableMetaProperties.Add(base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewDecData(message.MakerOwnableSplit)))
+	mutableMetaProperties = mutableMetaProperties.Add(base.NewMetaProperty(ids.ExpiryProperty, base.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
 
 	scrubbedMutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetList()...)))
 	if Error != nil {
@@ -96,7 +96,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			order.(mappables.Order).GetMakerOwnableID(),
 			order.(mappables.Order).GetTakerOwnableID(),
 			base.NewID(message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(message.MakerOwnableSplit).String()),
-			base.NewID(order.(mappables.Order).GetCreation().GetMetaFact().GetData().String()),
+			base.NewID(order.(mappables.Order).GetCreation().GetData().String()),
 			order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetImmutableProperties(),
 		),
 		order.(mappables.Order).GetImmutableProperties(),

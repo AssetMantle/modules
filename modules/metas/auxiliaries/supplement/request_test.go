@@ -14,7 +14,7 @@ import (
 
 func Test_Supplement_Request(t *testing.T) {
 
-	property := base.NewProperty(base.NewID("id"), base.NewFact(base.NewStringData("Data")))
+	property := base.NewProperty(base.NewID("id"), base.NewStringData("Data"))
 	testAuxiliaryRequest := NewAuxiliaryRequest(property)
 
 	require.Equal(t, auxiliaryRequest{PropertyList: []types.Property{property}}, testAuxiliaryRequest)

@@ -12,5 +12,6 @@ import (
 
 type Meta interface {
 	GetData() types.Data
+
 	helpers.Mappable
 }
