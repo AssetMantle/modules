@@ -14,8 +14,9 @@ import (
 )
 
 func Test_Define_Request(t *testing.T) {
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("Data2"))))
-	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("Data1"))))
+
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewStringData("Data2")))
+	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("Data1")))
 
 	testAuxiliaryRequest := NewAuxiliaryRequest(immutableProperties, mutableProperties)
 

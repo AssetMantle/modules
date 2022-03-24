@@ -79,12 +79,12 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	heightData, _ := base.ReadHeightData("")
 	decData, _ := base.ReadDecData("")
 
-	property1 := base.NewMetaProperty(base.NewID("id1"), base.NewMetaFact(base.NewStringData("")))
-	property2 := base.NewMetaProperty(base.NewID("id2"), base.NewMetaFact(heightData))
+	property1 := base.NewMetaProperty(base.NewID("id1"), base.NewStringData(""))
+	property2 := base.NewMetaProperty(base.NewID("id2"), heightData)
 	dec, _ := sdkTypes.NewDecFromStr("123")
-	property3 := base.NewMetaProperty(base.NewID("id3"), base.NewMetaFact(decData))
-	property4 := base.NewMetaProperty(base.NewID("id4"), base.NewMetaFact(base.NewIDData(base.NewID(""))))
-	property5 := base.NewMetaProperty(base.NewID("id5"), base.NewMetaFact(base.NewDecData(dec)))
+	property3 := base.NewMetaProperty(base.NewID("id3"), decData)
+	property4 := base.NewMetaProperty(base.NewID("id4"), base.NewIDData(base.NewID("")))
+	property5 := base.NewMetaProperty(base.NewID("id5"), base.NewDecData(dec))
 
 	var metaPropertyList []types.MetaProperty
 	metaPropertyList = append(metaPropertyList, property1, property2, property3, property4, property5)

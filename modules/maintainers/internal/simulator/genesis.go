@@ -8,6 +8,8 @@ package simulator
 import (
 	"math/rand"
 
+	"github.com/persistenceOne/persistenceSDK/simulation"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
@@ -21,7 +23,6 @@ import (
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/persistenceOne/persistenceSDK/simulation"
 	baseSimulation "github.com/persistenceOne/persistenceSDK/simulation/schema/types/base"
 )
 

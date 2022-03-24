@@ -21,6 +21,12 @@ type idData struct {
 
 var _ types.Data = (*idData)(nil)
 
+func (idData idData) GetID() types.ID {
+	return dataID{
+		TypeID: idData.GetTypeID(),
+		HashID: idData.GenerateHashID(),
+	}
+}
 func (idData idData) Compare(data types.Data) int {
 	compareIDData, err := idDataFromInterface(data)
 	if err != nil {
@@ -36,7 +42,7 @@ func (idData idData) ZeroValue() types.Data {
 	return NewIDData(NewID(""))
 }
 func (idData idData) GetTypeID() types.ID {
-	return NewID("I")
+	return idDataID
 }
 func (idData idData) GenerateHashID() types.ID {
 	return NewID(meta.Hash(idData.Value.String()))

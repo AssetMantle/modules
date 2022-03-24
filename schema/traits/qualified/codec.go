@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package base
+package qualified
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -14,6 +14,7 @@ import (
 const moduleName = "traits"
 
 func RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterXPRTConcrete(codec, moduleName, Document{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, HasImmutables{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, HasMutables{})
 }

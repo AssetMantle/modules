@@ -28,7 +28,7 @@ func Test_Kafka_DB(t *testing.T) {
 		codec.RegisterEvidences(Codec)
 		vesting.RegisterCodec(Codec)
 		Codec.Seal()
-		ticketID := TicketID(random.GenerateID("name"))
+		ticketID := TicketID(random.GenerateUniqueIdentifier("name"))
 		kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", defaultCLIHome)
 		setTicketIDtoDB(ticketID, kafkaDB, Codec, []byte{})
 		addResponseToDB(ticketID, base.NewID("").Bytes(), kafkaDB, Codec)

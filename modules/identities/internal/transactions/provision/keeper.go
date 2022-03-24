@@ -25,20 +25,20 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	identityID := message.IdentityID
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
 
-	identity := identities.Get(key.FromID(identityID))
+	identity := identities.Get(key.FromID(identityID)).(mappables.Identity)
 	if identity == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	if !identity.(mappables.InterIdentity).IsProvisioned(message.From) {
+	if !identity.IsProvisioned(message.From) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 
-	if identity.(mappables.InterIdentity).IsProvisioned(message.To) {
+	if identity.IsProvisioned(message.To) {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	identities.Mutate(identity.(mappables.InterIdentity).ProvisionAddress(message.To))
+	identities.Mutate(identity.ProvisionAddress(message.To))
 
 	return newTransactionResponse(nil)
 }

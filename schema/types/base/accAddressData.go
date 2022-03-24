@@ -6,13 +6,13 @@
 package base
 
 import (
-	"bytes"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
+
+	"bytes"
 )
 
 type accAddressData struct {
@@ -21,6 +21,12 @@ type accAddressData struct {
 
 var _ types.Data = (*accAddressData)(nil)
 
+func (accAddressData accAddressData) GetID() types.ID {
+	return dataID{
+		TypeID: accAddressData.GetTypeID(),
+		HashID: accAddressData.GenerateHashID(),
+	}
+}
 func (accAddressData accAddressData) Compare(sortable types.Data) int {
 	compareAccAddressData, err := accAddressDataFromInterface(sortable)
 	if err != nil {

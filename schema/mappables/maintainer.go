@@ -11,14 +11,18 @@ import (
 )
 
 type Maintainer interface {
-	GetClassificationID() types.ID
 	GetIdentityID() types.ID
-	GetMaintainedProperties() types.Properties
+	GetMaintainedClassificationID() types.ID
+	GetMaintainedProperties() types.Property
 
+	CanMintAsset() bool
+	CanBurnAsset() bool
+	CanRenumerateAsset() bool
 	CanAddMaintainer() bool
 	CanRemoveMaintainer() bool
 	CanMutateMaintainer() bool
-
 	MaintainsProperty(types.ID) bool
+
+	Document
 	helpers.Mappable
 }

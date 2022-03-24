@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"math/big"
 	"strconv"
+	"strings"
 	"sync/atomic"
 	"time"
 )
@@ -11,17 +12,17 @@ import (
 // counter is a counter that adds when each time a function is called
 var counter int64
 
-// GenerateID is a random unique ID generator, output is a string.
-// Warning: Non-deterministic, do not use to generate blockchain state
-func GenerateID(prefix string) string {
-	randomNumber, err := rand.Int(rand.Reader, big.NewInt(89999))
-	if err != nil {
-		panic(err)
+// GenerateUniqueIdentifier is a random unique ID generator, output is a string.
+// Warning: Non-deterministic, not to used to generate blockchain state, for testing and client utility only
+func GenerateUniqueIdentifier(prefix ...string) string {
+	randomNumber, Error := rand.Int(rand.Reader, big.NewInt(89999))
+	if Error != nil {
+		panic(Error)
 	}
 
 	atomic.AddInt64(&counter, 1)
 
-	return prefix +
+	return strings.Join(prefix, "") +
 		strconv.Itoa(10000+int(counter)%89999) +
 		strconv.Itoa(10000000+int(time.Now().UnixNano())%89999999) +
 		strconv.FormatInt(10000+randomNumber.Int64(), 10)

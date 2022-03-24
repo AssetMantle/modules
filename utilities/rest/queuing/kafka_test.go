@@ -45,8 +45,8 @@ func (testMessage) RegisterCodec(codec *codec.Codec) {
 }
 
 func Test_Kafka(t *testing.T) {
-	var Codec = codec.New()
 
+	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
@@ -54,13 +54,11 @@ func Test_Kafka(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-
+	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, Error)
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test"}
-	ticketID := TicketID(random.GenerateID("ticket"))
+	ticketID := TicketID(random.GenerateUniqueIdentifier("ticket"))
 	kafkaPorts := []string{"localhost:9092"}
-
 	require.Panics(t, func() {
 		testKafkaState := NewKafkaState(kafkaPorts)
 		bank.RegisterCodec(Codec)

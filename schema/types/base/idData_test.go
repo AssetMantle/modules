@@ -23,7 +23,7 @@ func Test_IDData(t *testing.T) {
 	require.Equal(t, "ID", testIDData.String())
 	require.Equal(t, NewID(meta.Hash("ID")), testIDData.GenerateHashID())
 	require.Equal(t, NewID(""), testIDData2.GenerateHashID())
-	require.Equal(t, NewID("I"), testIDData.GetTypeID())
+	require.Equal(t, idDataID, testIDData.GetTypeID())
 
 	dataAsString, err := testIDData.AsString()
 	require.Equal(t, "", dataAsString)

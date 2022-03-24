@@ -9,6 +9,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/persistenceOne/persistenceSDK/constants/ids"
+
 	"github.com/persistenceOne/persistenceSDK/constants/test"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -22,7 +24,6 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
@@ -40,6 +41,7 @@ type TestKeepers struct {
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
+
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
@@ -64,8 +66,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
+	Error := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, Error)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
@@ -84,6 +86,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
+
 	context, keepers := CreateTestInput(t)
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultAddr := sdkTypes.AccAddress("addr")
@@ -94,10 +97,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	rateID := base.NewID(sdkTypes.MustNewDecFromStr("0.001").String())
 	creationID := base.NewID("100")
 	makerID := base.NewID("makerID")
-	metaProperties, err := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
-		"," + properties.TakerID + ":I|fromID" + "," +
-		properties.ExchangeRate + ":D|0.000000000000000001")
-	require.Equal(t, nil, err)
+	metaProperties, Error := base.ReadMetaProperties(ids.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+		"," + ids.TakerIDProperty.String() + ":I|fromID" + "," +
+		ids.ExchangeRateProperty.String() + ":D|0.000000000000000001")
+	require.Equal(t, nil, Error)
 	orderID := key.NewOrderID(
 		classificationID,
 		makerOwnableID,

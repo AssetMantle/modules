@@ -31,20 +31,20 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	for _, property := range auxiliaryRequest.PropertyList {
 		var meta helpers.Mappable
 
-		if property.GetFact().GetHashID().Compare(base.NewID("")) == 0 {
-			if metaFact, err := base.ReadMetaFact(property.GetFact().GetTypeID().String() + constants.DataTypeAndValueSeparator); err == nil {
-				meta = mappable.NewMeta(metaFact.GetData())
+		if property.GetHashID().Compare(base.NewID("")) == 0 {
+			if data, Error := base.ReadMetaProperty(property.GetTypeID().String() + constants.DataTypeAndValueSeparator); Error == nil {
+				meta = mappable.NewMeta(data.GetData())
 			} else {
-				return newAuxiliaryResponse(nil, err)
+				return newAuxiliaryResponse(nil, Error)
 			}
 		} else {
-			metaID := key.NewMetaID(property.GetFact().GetTypeID(), property.GetFact().GetHashID())
+			metaID := key.NewMetaID(property.GetTypeID(), property.GetHashID())
 			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(metaID))
 			meta = metas.Get(key.FromID(metaID))
 		}
 
 		if meta != nil {
-			metaPropertyList = append(metaPropertyList, base.NewMetaProperty(property.GetID(), base.NewMetaFact(meta.(mappables.Meta).GetData())))
+			metaPropertyList = append(metaPropertyList, base.NewMetaProperty(property.GetID(), meta.(mappables.Meta).GetData()))
 		}
 	}
 

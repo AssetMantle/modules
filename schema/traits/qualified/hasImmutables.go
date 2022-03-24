@@ -3,12 +3,12 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package base
+package qualified
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base" //nolint:typecheck
 	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
@@ -19,13 +19,17 @@ type HasImmutables struct {
 var _ traits.HasImmutables = (*HasImmutables)(nil)
 
 func (immutables HasImmutables) GetImmutableProperties() types.Properties {
+	if immutables.Properties == nil {
+		return base.NewProperties()
+	}
+
 	return immutables.Properties
 }
 func (immutables HasImmutables) GenerateHashID() types.ID {
 	metaList := make([]string, len(immutables.Properties.GetList()))
 
 	for i, immutableProperty := range immutables.Properties.GetList() {
-		metaList[i] = immutableProperty.GetFact().GetHashID().String()
+		metaList[i] = immutableProperty.GetHashID().String()
 	}
 
 	return base.NewID(metaUtilities.Hash(metaList...))

@@ -20,6 +20,7 @@ import (
 )
 
 func Test_Kafka_Types(t *testing.T) {
+
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
@@ -34,10 +35,9 @@ func Test_Kafka_Types(t *testing.T) {
 
 	testMessage := sdkTypes.NewTestMsg()
 
-	ticketID := TicketID(random.GenerateID("name"))
-	testMsg := NewKafkaMsgFromRest(testMessage, ticketID, testBaseReq, cliContext)
-
-	kafkaCtx := kafkaCliCtx{
+	ticketID := TicketID(random.GenerateUniqueIdentifier("name"))
+	testKafkaMsg := NewKafkaMsgFromRest(testMessage, ticketID, testBaseReq, cliContext)
+	kafkaCliCtx := kafkaCliCtx{
 		OutputFormat:  cliContext.OutputFormat,
 		ChainID:       cliContext.ChainID,
 		Height:        cliContext.Height,
@@ -54,7 +54,7 @@ func Test_Kafka_Types(t *testing.T) {
 		Indent:        cliContext.Indent,
 		SkipConfirm:   cliContext.SkipConfirm,
 	}
-
-	require.Equal(t, kafkaMsg{Msg: testMessage, TicketID: ticketID, BaseRequest: testBaseReq, KafkaCliCtx: kafkaCtx}, testMsg)
-	require.Equal(t, cliContext, cliCtxFromKafkaMsg(testMsg, cliContext))
+	require.Equal(t, kafkaMsg{Msg: testMessage, TicketID: ticketID, BaseRequest: testBaseReq, KafkaCliCtx: kafkaCliCtx}, testKafkaMsg)
+	require.Equal(t, cliContext, cliCtxFromKafkaMsg(testKafkaMsg, cliContext))
+	// require
 }

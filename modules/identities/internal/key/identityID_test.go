@@ -10,11 +10,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 func Test_IdentityID_Methods(t *testing.T) {
+
 	classificationID := base.NewID("classificationID")
 	immutableProperties, _ := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	emptyImmutableProperties, _ := base.ReadProperties("")

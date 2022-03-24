@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
+	"github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -23,7 +24,7 @@ func Test_Maintainer_Methods(t *testing.T) {
 
 	testMaintainer := NewMaintainer(testMaintainerID, properties, true, true, true).(maintainer)
 
-	require.Equal(t, maintainer{ID: testMaintainerID, MaintainedProperties: properties, AddMaintainer: true, RemoveMaintainer: true, MutateMaintainer: true}, testMaintainer)
+	require.Equal(t, maintainer{Document: qualified.Document{ID: testMaintainerID, MaintainedProperties: properties, AddMaintainer: true, RemoveMaintainer: true, MutateMaintainer: true}}, testMaintainer)
 	require.Equal(t, testMaintainerID, testMaintainer.GetID())
 	require.Equal(t, classificationID, testMaintainer.GetClassificationID())
 	require.Equal(t, identityID, testMaintainer.GetIdentityID())

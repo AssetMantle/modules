@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package base
+package qualified
 
 import (
 	"testing"
@@ -14,12 +14,13 @@ import (
 )
 
 func Test_Mutables(t *testing.T) {
-	testProperty := base.NewProperty(base.NewID("ID"), base.NewFact(base.NewStringData("Data")))
+
+	testProperty := base.NewProperty(base.NewID("ID"), base.NewStringData("Data"))
 	testProperties := base.NewProperties(testProperty)
 	testMutables := HasMutables{testProperties}
 	require.Equal(t, HasMutables{Properties: testProperties}, testMutables)
 	require.Equal(t, testProperties, testMutables.GetMutableProperties())
-	mutatedTestProperty := base.NewProperty(base.NewID("ID"), base.NewFact(base.NewStringData("Data2")))
+	mutatedTestProperty := base.NewProperty(base.NewID("ID"), base.NewStringData("Data2"))
 	require.Equal(t, HasMutables{Properties: base.NewProperties(mutatedTestProperty)}, testMutables.Mutate(mutatedTestProperty))
 
 }

@@ -16,9 +16,10 @@ import (
 )
 
 func Test_Super_Response(t *testing.T) {
-	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewMetaFact(base.NewStringData("Data")))
+
+	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewStringData("Data"))
 	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty}...)
-	property := base.NewProperty(base.NewID("id"), base.NewFact(base.NewStringData("Data")))
+	property := base.NewProperty(base.NewID("id"), base.NewStringData("Data"))
 	propertyList := base.NewProperties([]types.Property{property}...)
 
 	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList.RemoveData(), nil)
@@ -31,15 +32,15 @@ func Test_Super_Response(t *testing.T) {
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
 	require.Equal(t, errors.IncorrectFormat, testAuxiliaryResponse2.GetError())
 
-	propertiesFromResponse, err := GetPropertiesFromResponse(testAuxiliaryResponse)
+	propertiesFromResponse, Error := GetPropertiesFromResponse(testAuxiliaryResponse)
 	require.Equal(t, propertyList, propertiesFromResponse)
-	require.Equal(t, nil, err)
+	require.Equal(t, nil, Error)
 
-	propertiesFromResponse2, err := GetPropertiesFromResponse(testAuxiliaryResponse2)
+	propertiesFromResponse2, Error := GetPropertiesFromResponse(testAuxiliaryResponse2)
 	require.Equal(t, nil, propertiesFromResponse2)
-	require.Equal(t, errors.IncorrectFormat, err)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
-	propertiesFromResponse3, err := GetPropertiesFromResponse(nil)
+	propertiesFromResponse3, Error := GetPropertiesFromResponse(nil)
 	require.Equal(t, nil, propertiesFromResponse3)
-	require.Equal(t, errors.NotAuthorized, err)
+	require.Equal(t, errors.NotAuthorized, Error)
 }

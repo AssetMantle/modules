@@ -36,7 +36,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		}
 
 		for _, immutableProperty := range auxiliaryRequest.ImmutableProperties.GetList() {
-			if property := classification.(mappables.Classification).GetImmutableProperties().Get(immutableProperty.GetID()); property == nil || property.GetFact().GetTypeID().Compare(immutableProperty.GetFact().GetTypeID()) != 0 || property.GetFact().GetHashID().Compare(base.NewID("")) != 0 && property.GetFact().GetHashID() != immutableProperty.GetFact().GetHashID() {
+			if property := classification.(mappables.Classification).GetImmutableProperties().Get(immutableProperty.GetID()); property == nil || property.GetTypeID().Compare(immutableProperty.GetTypeID()) != 0 || property.GetHashID().Compare(base.NewID("")) != 0 && property.GetHashID() != immutableProperty.GetHashID() {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}
@@ -48,7 +48,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		}
 
 		for _, mutableProperty := range auxiliaryRequest.MutableProperties.GetList() {
-			if property := classification.(mappables.Classification).GetMutableProperties().Get(mutableProperty.GetID()); property == nil || property.GetFact().GetTypeID().Compare(mutableProperty.GetFact().GetTypeID()) != 0 {
+			if property := classification.(mappables.Classification).GetMutableProperties().Get(mutableProperty.GetID()); property == nil || property.GetTypeID().Compare(mutableProperty.GetTypeID()) != 0 {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}

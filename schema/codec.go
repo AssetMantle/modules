@@ -11,9 +11,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base" //nolint:typecheck
 )
 
 func RegisterCodec(codec *codec.Codec) {

@@ -7,12 +7,14 @@ package mappables
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
 )
 
-type Chain interface {
-	GetID() types.ID
-	GetTrustHeight() types.Height
+type Asset interface {
+	traits.Burnable
+	traits.Lockable
+	traits.Splittable
 
+	Document
 	helpers.Mappable
 }

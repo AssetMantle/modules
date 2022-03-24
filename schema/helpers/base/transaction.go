@@ -184,7 +184,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 
 			output := queuing.SendToKafka(queuing.NewKafkaMsgFromRest(
 				msg,
-				queuing.TicketID(random.GenerateID(transaction.name)),
+				queuing.TicketID(random.GenerateUniqueIdentifier(transaction.name)),
 				baseReq,
 				cliContext),
 				cliContext.Codec,

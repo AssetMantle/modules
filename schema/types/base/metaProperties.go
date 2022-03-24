@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -100,4 +101,40 @@ func ReadMetaProperties(metaPropertiesString string) (types.MetaProperties, erro
 	}
 
 	return NewMetaProperties(metaPropertyList...), nil
+}
+
+func ReadData(dataString string) (types.Data, error) {
+	dataTypeAndString := strings.SplitN(dataString, constants.DataTypeAndValueSeparator, 2)
+	if len(dataTypeAndString) == 2 {
+		dataType, dataString := dataTypeAndString[0], dataTypeAndString[1]
+
+		var data types.Data
+
+		var Error error
+
+		switch NewID(dataType) {
+		case decData{}.GetTypeID():
+			data, Error = ReadDecData(dataString)
+		case idData{}.GetTypeID():
+			data, Error = ReadIDData(dataString)
+		case heightData{}.GetTypeID():
+			data, Error = ReadHeightData(dataString)
+		case stringData{}.GetTypeID():
+			data, Error = ReadStringData(dataString)
+		case accAddressData{}.GetTypeID():
+			data, Error = ReadAccAddressData(dataString)
+		case listData{}.GetTypeID():
+			data, Error = ReadAccAddressListData(dataString)
+		default:
+			data, Error = nil, errors.UnsupportedParameter
+		}
+
+		if Error != nil {
+			return nil, Error
+		}
+
+		return data, nil
+	}
+
+	return nil, errors.IncorrectFormat
 }
