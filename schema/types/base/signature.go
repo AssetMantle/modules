@@ -8,8 +8,9 @@ package base
 import (
 	"encoding/base64"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/tendermint/tendermint/crypto"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type signature struct {

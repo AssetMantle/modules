@@ -7,6 +7,7 @@ package base
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
@@ -25,9 +26,9 @@ func (decData decData) GetID() types.ID {
 	}
 }
 func (decData decData) Compare(data types.Data) int {
-	compareDecData, Error := decDataFromInterface(data)
-	if Error != nil {
-		panic(Error)
+	compareDecData, err := decDataFromInterface(data)
+	if err != nil {
+		panic(err)
 	}
 
 	if decData.Value.GT(compareDecData.Value) {
@@ -100,9 +101,9 @@ func ReadDecData(dataString string) (types.Data, error) {
 		return decData{}.ZeroValue(), nil
 	}
 
-	dec, Error := sdkTypes.NewDecFromStr(dataString)
-	if Error != nil {
-		return decData{}.ZeroValue(), Error
+	dec, err := sdkTypes.NewDecFromStr(dataString)
+	if err != nil {
+		return decData{}.ZeroValue(), err
 	}
 
 	return NewDecData(dec), nil

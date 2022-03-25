@@ -8,6 +8,7 @@ package send
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/supply"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/utilities"
@@ -30,12 +31,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	splits := transactionKeeper.mapper.NewCollection(context)
 
-	if _, Error := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, message.Value); Error != nil {
-		return newTransactionResponse(Error)
+	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, message.Value); err != nil {
+		return newTransactionResponse(err)
 	}
 
-	if _, Error := utilities.AddSplits(splits, message.ToID, message.OwnableID, message.Value); Error != nil {
-		return newTransactionResponse(Error)
+	if _, err := utilities.AddSplits(splits, message.ToID, message.OwnableID, message.Value); err != nil {
+		return newTransactionResponse(err)
 	}
 
 	return newTransactionResponse(nil)

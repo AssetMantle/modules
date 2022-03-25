@@ -13,9 +13,10 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
 type query struct {
@@ -36,15 +37,15 @@ func (query query) Command(codec *codec.Codec) *cobra.Command {
 		cliContext := context.NewCLIContext().WithCodec(codec)
 
 		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, cliContext)
-		responseBytes, _, Error := query.query(queryRequest, cliContext)
+		responseBytes, _, err := query.query(queryRequest, cliContext)
 
-		if Error != nil {
-			return Error
+		if err != nil {
+			return err
 		}
 
-		response, Error := query.responsePrototype().Decode(responseBytes)
-		if Error != nil {
-			return Error
+		response, err := query.responsePrototype().Decode(responseBytes)
+		if err != nil {
+			return err
 		}
 
 		return cliContext.PrintOutput(response)
@@ -53,28 +54,28 @@ func (query query) Command(codec *codec.Codec) *cobra.Command {
 	return query.cliCommand.CreateCommand(runE)
 }
 func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
-	request, Error := query.requestPrototype().Decode(requestQuery.Data)
-	if Error != nil {
-		return nil, Error
+	request, err := query.requestPrototype().Decode(requestQuery.Data)
+	if err != nil {
+		return nil, err
 	}
 
 	return query.queryKeeper.Enquire(context, request).Encode()
 }
 
-func (query query) RESTQueryHandler(cliContext context.CLIContext) http.HandlerFunc {
+func (query query) RESTQueryHandler(outerCliContext context.CLIContext) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		responseWriter.Header().Set("Content-Type", "application/json")
-		cliContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, cliContext, httpRequest)
 
+		cliContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, outerCliContext, httpRequest)
 		if !ok {
 			return
 		}
 
 		queryRequest := query.requestPrototype().FromMap(mux.Vars(httpRequest))
-		response, height, Error := query.query(queryRequest, cliContext)
 
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
+		response, height, err := query.query(queryRequest, cliContext)
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
 		}
 
@@ -88,9 +89,9 @@ func (query query) Initialize(mapper helpers.Mapper, parameters helpers.Paramete
 }
 
 func (query query) query(queryRequest helpers.QueryRequest, cliContext context.CLIContext) ([]byte, int64, error) {
-	bytes, Error := queryRequest.Encode()
-	if Error != nil {
-		return nil, 0, Error
+	bytes, err := queryRequest.Encode()
+	if err != nil {
+		return nil, 0, err
 	}
 
 	return cliContext.QueryWithData("custom"+"/"+query.moduleName+"/"+query.name, bytes)

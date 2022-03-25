@@ -18,6 +18,11 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/stretchr/testify/require"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tendermintDB "github.com/tendermint/tm-db"
+
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
@@ -31,10 +36,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintDB "github.com/tendermint/tm-db"
 )
 
 type TestKeepers struct {
@@ -42,7 +43,6 @@ type TestKeepers struct {
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
-
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
@@ -67,8 +67,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	Error := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, Error)
+	err := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, err)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
@@ -90,20 +90,19 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-
 	context, keepers := CreateTestInput(t)
-	immutableMetaProperties, Error := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
-	require.Equal(t, nil, Error)
-	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, Error)
-	mutableMetaProperties, Error := base.ReadMetaProperties("makerOwnableSplit:D|1")
-	require.Equal(t, nil, Error)
-	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, Error)
-	conformMockErrorProperties, Error := base.ReadProperties("conformError:S|mockError")
-	require.Equal(t, nil, Error)
-	scrubMockErrorProperties, Error := base.ReadMetaProperties("scrubError:S|mockError")
-	require.Equal(t, nil, Error)
+	immutableMetaProperties, err := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	require.Equal(t, nil, err)
+	immutableProperties, err := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	require.Equal(t, nil, err)
+	mutableMetaProperties, err := base.ReadMetaProperties("makerOwnableSplit:D|1")
+	require.Equal(t, nil, err)
+	mutableProperties, err := base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	require.Equal(t, nil, err)
+	conformMockErrorProperties, err := base.ReadProperties("conformError:S|mockError")
+	require.Equal(t, nil, err)
+	scrubMockErrorProperties, err := base.ReadMetaProperties("scrubError:S|mockError")
+	require.Equal(t, nil, err)
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultAddr := sdkTypes.AccAddress("addr")
 	defaultIdentityID := base.NewID("fromID")

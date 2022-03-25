@@ -11,6 +11,7 @@ go get -u github.com/swaggo/swag/cmd/swag
 ### Generate Swagger
 
 ```bash
+go mod vendor
 cd swagger
 swag init  --parseDependency true --parseInternal true --parseVendor true
 ```
@@ -26,3 +27,13 @@ import _"github.com/persistenceOne/persistenceSDK/swagger/docs"
 ```
 
 To know more about swaggo use [this](https://github.com/swaggo/swag)
+
+### Start AssetMantle server in unsafe mode
+`assetNode start`
+`assetClient rest-server --chain-id test --unsafe-cors`
+
+```yml
+# BaseRequest
+
+GasPrices     sdk.DecCoins `json:"gas_prices" swaggerignore:"true"`
+```

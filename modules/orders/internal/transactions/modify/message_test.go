@@ -13,12 +13,14 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
 
 	"github.com/cosmos/cosmos-sdk/types/errors"
+
 	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_Make_Message(t *testing.T) {
@@ -32,17 +34,17 @@ func Test_Make_Message(t *testing.T) {
 	makerID := base.NewID("makerID")
 	rateID := base.NewID("0.11")
 	creationId := base.NewID("100")
-	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, Error)
-	mutableMetaProperties, Error := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
-	require.Equal(t, nil, Error)
-	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, Error)
+	immutableProperties, err := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	require.Equal(t, nil, err)
+	mutableMetaProperties, err := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	require.Equal(t, nil, err)
+	mutableProperties, err := base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	require.Equal(t, nil, err)
 	orderID := base.NewID(key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationId, makerID, immutableProperties).String())
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
 	testMessage := newMessage(fromAccAddress, fromID, orderID, sdkTypes.OneDec(), makerOwnableSplit, expiresIn, mutableMetaProperties, mutableProperties)
 	require.Equal(t, message{From: fromAccAddress, FromID: fromID, OrderID: orderID, TakerOwnableSplit: sdkTypes.OneDec(), MakerOwnableSplit: makerOwnableSplit, ExpiresIn: expiresIn, MutableMetaProperties: mutableMetaProperties, MutableProperties: mutableProperties}, testMessage)

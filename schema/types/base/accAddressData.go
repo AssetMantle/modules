@@ -7,6 +7,7 @@ package base
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
@@ -27,9 +28,9 @@ func (accAddressData accAddressData) GetID() types.ID {
 	}
 }
 func (accAddressData accAddressData) Compare(sortable types.Data) int {
-	compareAccAddressData, Error := accAddressDataFromInterface(sortable)
-	if Error != nil {
-		panic(Error)
+	compareAccAddressData, err := accAddressDataFromInterface(sortable)
+	if err != nil {
+		panic(err)
 	}
 
 	return bytes.Compare(accAddressData.Value.Bytes(), compareAccAddressData.Value.Bytes())
@@ -96,9 +97,9 @@ func ReadAccAddressData(dataString string) (types.Data, error) {
 		return accAddressData{}.ZeroValue(), nil
 	}
 
-	accAddress, Error := sdkTypes.AccAddressFromBech32(dataString)
-	if Error != nil {
-		return accAddressData{}.ZeroValue(), Error
+	accAddress, err := sdkTypes.AccAddressFromBech32(dataString)
+	if err != nil {
+		return accAddressData{}.ZeroValue(), err
 	}
 
 	return NewAccAddressData(accAddress), nil

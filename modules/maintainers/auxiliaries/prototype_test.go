@@ -1,14 +1,16 @@
 package auxiliaries
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {

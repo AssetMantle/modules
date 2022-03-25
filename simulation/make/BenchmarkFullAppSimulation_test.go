@@ -12,26 +12,18 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
 )
 
 // Profile with:
 // /usr/local/go/bin/go test -benchmem -run=^$ github.com/persistence/persistenceSDK/simapp -bench ^BenchmarkFullAppSimulation$ -Commit=true -cpuprofile cpu.out
 func BenchmarkFullAppSimulation(b *testing.B) {
-	config, db, dir, logger, _, err := simapp.SetupSimulation("goleveldb-app-sim", "Simulation")
-	if err != nil {
-		b.Fatalf("simulation setup failed: %s", err.Error())
-	}
+	config, db, _, logger, _, closeFn, err := setupRun(b, "goleveldb-app-sim", "Simulation")
+	defer closeFn()
 
-	defer func() {
-		Error := db.Close()
-		err = os.RemoveAll(dir)
-		if err != nil {
-			b.Fatal(err)
-		} else if Error != nil {
-			b.Fatal(Error)
-		}
-	}()
+	require.NoError(b, err, "simulation setup failed")
 
 	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, moduleAccountPermissions, tokenReceiveAllowedModules)
 	simulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), interBlockCacheOpt()).(*base.SimulationApplication)

@@ -9,13 +9,13 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_SplitID_Methods(t *testing.T) {
-
 	ownerID := base.NewID("ownerID")
 	ownableID := base.NewID("ownableID")
 

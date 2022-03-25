@@ -2,6 +2,7 @@ package properties
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base" //nolint:typecheck
 )

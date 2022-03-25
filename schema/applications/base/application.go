@@ -7,10 +7,11 @@ package base
 
 import (
 	"encoding/json"
-	maintainersVerify "github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/verify"
 	"io"
 	"os"
 	"path/filepath"
+
+	maintainersVerify "github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/verify"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -32,6 +33,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
+	"github.com/spf13/viper"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tendermintOS "github.com/tendermint/tendermint/libs/os"
+	tendermintTypes "github.com/tendermint/tendermint/types"
+	tendermintDB "github.com/tendermint/tm-db"
+	"honnef.co/go/tools/version"
+
 	"github.com/persistenceOne/persistenceSDK/modules/assets"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
@@ -55,13 +64,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/applications"
 	wasmUtilities "github.com/persistenceOne/persistenceSDK/utilities/wasm"
-	"github.com/spf13/viper"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintOS "github.com/tendermint/tendermint/libs/os"
-	tendermintTypes "github.com/tendermint/tendermint/types"
-	tendermintDB "github.com/tendermint/tm-db"
-	"honnef.co/go/tools/version"
 )
 
 type application struct {
@@ -117,8 +119,8 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 		whiteListMap := make(map[string]bool)
 
 		for _, address := range jailWhiteList {
-			if _, Error := sdkTypes.ValAddressFromBech32(address); Error != nil {
-				panic(Error)
+			if _, err := sdkTypes.ValAddressFromBech32(address); err != nil {
+				panic(err)
 			}
 
 			whiteListMap[address] = true
@@ -144,7 +146,6 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 		context = context.WithBlockHeight(0)
 
 		application.stakingKeeper.IterateValidators(context, func(_ int64, val staking.ValidatorI) (stop bool) {
-
 			scraps := application.distributionKeeper.GetValidatorOutstandingRewards(context, val.GetOperator())
 			feePool := application.distributionKeeper.GetFeePool(context)
 			feePool.CommunityPool = feePool.CommunityPool.Add(scraps...)
@@ -214,10 +215,10 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 	}
 
 	genesisState := application.moduleManager.ExportGenesis(context)
-	applicationState, Error := codec.MarshalJSONIndent(application.codec, genesisState)
+	applicationState, err := codec.MarshalJSONIndent(application.codec, genesisState)
 
-	if Error != nil {
-		return nil, nil, Error
+	if err != nil {
+		return nil, nil, err
 	}
 
 	return applicationState, staking.WriteValidators(context, application.stakingKeeper), nil

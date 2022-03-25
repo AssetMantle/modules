@@ -9,13 +9,13 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_IDData(t *testing.T) {
-
 	idValue := NewID("ID")
 	testIDData := NewIDData(idValue)
 	testIDData2 := NewIDData(NewID(""))
@@ -25,27 +25,27 @@ func Test_IDData(t *testing.T) {
 	require.Equal(t, NewID(""), testIDData2.GenerateHashID())
 	require.Equal(t, idDataID, testIDData.GetTypeID())
 
-	dataAsString, Error := testIDData.AsString()
+	dataAsString, err := testIDData.AsString()
 	require.Equal(t, "", dataAsString)
-	require.Equal(t, errors.IncorrectFormat, Error)
+	require.Equal(t, errors.IncorrectFormat, err)
 
-	dataAsID, Error := testIDData.AsID()
+	dataAsID, err := testIDData.AsID()
 	require.Equal(t, idValue, dataAsID)
-	require.Equal(t, nil, Error)
+	require.Equal(t, nil, err)
 
-	dataAsHeight, Error := testIDData.AsHeight()
+	dataAsHeight, err := testIDData.AsHeight()
 	require.Equal(t, height{}, dataAsHeight)
-	require.Equal(t, errors.IncorrectFormat, Error)
+	require.Equal(t, errors.IncorrectFormat, err)
 
-	dataAsDec, Error := testIDData.AsDec()
+	dataAsDec, err := testIDData.AsDec()
 	require.Equal(t, sdkTypes.ZeroDec(), dataAsDec)
-	require.Equal(t, errors.IncorrectFormat, Error)
+	require.Equal(t, errors.IncorrectFormat, err)
 
 	require.Equal(t, idValue, testIDData.Get())
 
-	data, Error := ReadIDData("testString")
+	data, err := ReadIDData("testString")
 	require.Equal(t, idData{Value: id{IDString: "testString"}}, data)
-	require.Nil(t, Error)
+	require.Nil(t, err)
 	require.Equal(t, true, NewIDData(NewID("identity2")).Compare(NewIDData(NewID("identity2"))) == 0)
 
 	require.Panics(t, func() {
@@ -54,5 +54,4 @@ func Test_IDData(t *testing.T) {
 	require.Equal(t, true, testIDData.Compare(testIDData) == 0)
 
 	require.Equal(t, "", testIDData.ZeroValue().String())
-
 }

@@ -12,14 +12,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/schema"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
+	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
+	"github.com/persistenceOne/persistenceSDK/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {
@@ -39,8 +40,8 @@ func CreateTestInput(t *testing.T) sdkTypes.Context {
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	Error := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, Error)
+	err := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, err)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",

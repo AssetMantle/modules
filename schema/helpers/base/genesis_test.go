@@ -6,17 +6,18 @@
 package base
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	baseTestUtilities "github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestGenesis(t *testing.T) {
-
 	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
 	codec := baseTestUtilities.MakeCodec()
 	Mapper := NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype).Initialize(storeKey)
@@ -29,8 +30,8 @@ func TestGenesis(t *testing.T) {
 
 	Genesis := NewGenesis(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype, mappableList, ParameterList).Initialize(mappableList, ParameterList).(genesis)
 
-	Error := Genesis.Validate()
-	require.Nil(t, Error)
+	err := Genesis.Validate()
+	require.Nil(t, err)
 
 	require.Equal(t, mappableList, Genesis.Default().(genesis).MappableList)
 	require.Equal(t, ParameterList, Genesis.Default().(genesis).defaultParameterList)
@@ -44,7 +45,7 @@ func TestGenesis(t *testing.T) {
 		Genesis.Import(context, Mapper, Parameters)
 	})
 	require.NotPanics(t, func() {
-		Error := Genesis.Export(context, Mapper, Parameters).Validate()
-		require.Nil(t, Error)
+		err := Genesis.Export(context, Mapper, Parameters).Validate()
+		require.Nil(t, err)
 	})
 }

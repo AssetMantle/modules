@@ -16,13 +16,13 @@ import (
 
 // setTicketIDtoDB : initiates TicketID in Database
 func setTicketIDtoDB(ticket TicketID, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec, msg []byte) {
-	ticketID, Error := cdc.MarshalJSON(ticket)
-	if Error != nil {
-		panic(Error)
+	ticketID, err := cdc.MarshalJSON(ticket)
+	if err != nil {
+		panic(err)
 	}
 
-	if Error := kafkaDB.Set(ticketID, msg); Error != nil {
-		panic(Error)
+	if err := kafkaDB.Set(ticketID, msg); err != nil {
+		panic(err)
 	}
 }
 

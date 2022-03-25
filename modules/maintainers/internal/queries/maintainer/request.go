@@ -8,6 +8,7 @@ package maintainer
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
+
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/common"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -22,18 +23,18 @@ type queryRequest struct {
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
 // Validate godoc
-// @Summary Query maintainers using maintainer id
+// @Summary Search for a maintainer by maintainer ID
 // @Description Able to query the maintainers details
 // @Accept json
 // @Produce json
 // @Tags Maintainers
-// @Param maintainerID path string true "maintainer ID"
+// @Param maintainerID path string true "Unique identifier of a maintainer."
 // @Success 200 {object} queryResponse "Message for a successful query response"
 // @Failure default  {object}  queryResponse "Message for an unexpected error response."
 // @Router /maintainers/maintainers/{maintainerID} [get]
 func (queryRequest queryRequest) Validate() error {
-	_, Error := govalidator.ValidateStruct(queryRequest)
-	return Error
+	_, err := govalidator.ValidateStruct(queryRequest)
+	return err
 }
 
 func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
@@ -49,8 +50,8 @@ func (queryRequest queryRequest) Encode() ([]byte, error) {
 }
 
 func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
-	if Error := common.Codec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
-		return nil, Error
+	if err := common.Codec.UnmarshalJSON(bytes, &queryRequest); err != nil {
+		return nil, err
 	}
 
 	return queryRequest, nil

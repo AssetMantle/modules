@@ -13,6 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
+
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -28,18 +29,18 @@ type transactionRequest struct {
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
 // Validate godoc
-// @Summary Nub identities transaction
-// @Description Nub transaction
+// @Summary Nub an identity
+// @Description A transaction to nub an identity.
 // @Accept text/plain
 // @Produce json
 // @Tags Identities
-// @Param body body  transactionRequest true "Request body for nub identity"
+// @Param body body  transactionRequest true "A transaction to nub a base identity."
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /identities/nub [post]
 func (transactionRequest transactionRequest) Validate() error {
-	_, Error := govalidator.ValidateStruct(transactionRequest)
-	return Error
+	_, err := govalidator.ValidateStruct(transactionRequest)
+	return err
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
@@ -48,8 +49,8 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
-	if Error := json.Unmarshal(rawMessage, &transactionRequest); Error != nil {
-		return nil, Error
+	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
+		return nil, err
 	}
 
 	return transactionRequest, nil
@@ -58,9 +59,9 @@ func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
-	if Error != nil {
-		return nil, Error
+	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	if err != nil {
+		return nil, err
 	}
 
 	return newMessage(

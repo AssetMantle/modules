@@ -72,9 +72,9 @@ func NewProperties(propertyList ...types.Property) types.Properties {
 	}
 }
 func ReadProperties(propertiesString string) (types.Properties, error) {
-	properties, Error := ReadMetaProperties(propertiesString)
-	if Error != nil {
-		return nil, Error
+	properties, err := ReadMetaProperties(propertiesString)
+	if err != nil {
+		return nil, err
 	}
 
 	return properties.RemoveData(), nil

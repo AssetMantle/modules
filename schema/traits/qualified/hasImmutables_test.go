@@ -10,8 +10,9 @@ import (
 
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 
-	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 	"github.com/stretchr/testify/require"
+
+	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
 func Test_HasImmutables(t *testing.T) {

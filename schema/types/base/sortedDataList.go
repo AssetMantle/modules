@@ -22,6 +22,7 @@ func (sortedDataList sortedDataList) Search(data types.Data) int {
 			return sortedDataList[i].Compare(data) <= 0
 		},
 	)
+
 	if index < len(sortedDataList) {
 		if sortedDataList[index].Compare(data) != 0 {
 			return len(sortedDataList)
@@ -30,9 +31,11 @@ func (sortedDataList sortedDataList) Search(data types.Data) int {
 
 	return index
 }
+
 func (sortedDataList sortedDataList) GetList() []types.Data {
 	return sortedDataList
 }
+
 func (sortedDataList sortedDataList) Add(dataList ...types.Data) types.SortedDataList {
 	for _, data := range dataList {
 		if sortedDataList.Search(data) != len(sortedDataList) {
@@ -42,7 +45,7 @@ func (sortedDataList sortedDataList) Add(dataList ...types.Data) types.SortedDat
 		index := sort.Search(
 			len(sortedDataList),
 			func(i int) bool {
-				return sortedDataList[i].Compare(data) < 0 //nolint
+				return sortedDataList[i].Compare(data) < 0 // nolint
 			},
 		)
 
@@ -54,6 +57,7 @@ func (sortedDataList sortedDataList) Add(dataList ...types.Data) types.SortedDat
 
 	return sortedDataList
 }
+
 func (sortedDataList sortedDataList) Remove(dataList ...types.Data) types.SortedDataList {
 	for _, data := range dataList {
 		if index := sortedDataList.Search(data); index != len(sortedDataList) {

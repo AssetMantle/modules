@@ -7,6 +7,7 @@ package renumerate
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/utilities"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -24,12 +25,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	switch totalSplitsValue := utilities.GetOwnableTotalSplitsValue(splits, auxiliaryRequest.OwnableID); {
 	case totalSplitsValue.LT(auxiliaryRequest.Value):
-		if _, Error := utilities.AddSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value.Sub(totalSplitsValue)); Error != nil {
-			return newAuxiliaryResponse(Error)
+		if _, err := utilities.AddSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value.Sub(totalSplitsValue)); err != nil {
+			return newAuxiliaryResponse(err)
 		}
 	case totalSplitsValue.GT(auxiliaryRequest.Value):
-		if _, Error := utilities.SubtractSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, totalSplitsValue.Sub(auxiliaryRequest.Value)); Error != nil {
-			return newAuxiliaryResponse(Error)
+		if _, err := utilities.SubtractSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, totalSplitsValue.Sub(auxiliaryRequest.Value)); err != nil {
+			return newAuxiliaryResponse(err)
 		}
 	case totalSplitsValue.IsZero():
 		return newAuxiliaryResponse(errors.EntityNotFound)

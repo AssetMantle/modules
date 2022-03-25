@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/store"
-
 	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
@@ -27,6 +26,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
+	"github.com/stretchr/testify/require"
+	abci "github.com/tendermint/tendermint/abci/types"
+
 	"github.com/persistenceOne/persistenceSDK/modules/assets"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications"
 	"github.com/persistenceOne/persistenceSDK/modules/identities"
@@ -34,8 +36,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas"
 	"github.com/persistenceOne/persistenceSDK/modules/orders"
 	"github.com/persistenceOne/persistenceSDK/modules/splits"
-	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // Get flags every time the simulator is run
@@ -60,17 +60,14 @@ func interBlockCacheOpt() func(*baseapp.BaseApp) {
 }
 
 func TestAppImportExport(t *testing.T) {
-	config, db, dir, logger, skip, err := simapp.SetupSimulation("leveldb-app-sim", "Simulation")
+	config, db, _, logger, skip, closeFn, err := setupRun(t, "leveldb-app-sim", "Simulation")
+	defer closeFn()
+
 	if skip {
 		t.Skip("skipping application import/export simulation")
 	}
-	require.NoError(t, err, "simulation setup failed")
 
-	defer func() {
-		Error := db.Close()
-		require.Nil(t, Error)
-		require.NoError(t, os.RemoveAll(dir))
-	}()
+	require.NoError(t, err, "simulation setup failed")
 
 	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, moduleAccountPermissions, tokenReceiveAllowedModules)
 	simulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), fauxMerkleModeOpt).(*base.SimulationApplication)
@@ -99,14 +96,10 @@ func TestAppImportExport(t *testing.T) {
 
 	fmt.Printf("importing genesis...\n")
 
-	_, newDB, newDir, _, _, err := simapp.SetupSimulation("leveldb-app-sim-2", "Simulation-2")
-	require.NoError(t, err, "simulation setup failed")
+	_, _, _, logger, _, newCloseFn, err := setupRun(t, "leveldb-app-sim-2", "Simulation-2")
+	defer newCloseFn()
 
-	defer func() {
-		Error := newDB.Close()
-		require.Nil(t, Error)
-		require.NoError(t, os.RemoveAll(newDir))
-	}()
+	require.NoError(t, err, "simulation setup failed")
 
 	newSimulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome()).(*base.SimulationApplication)
 	require.Equal(t, "SimulationApplication", newSimulationApplication.Name())

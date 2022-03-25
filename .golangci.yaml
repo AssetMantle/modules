@@ -1,7 +1,13 @@
 run:
-  tests: false
+  timeout: 10m
+
 linters:
   disable-all: false
+  disable:
+    - golint # deprecated
+    - interfacer # deprecated
+    - scopelint # deprecated
+    - varnamelen
   enable:
     - bodyclose
     - deadcode
@@ -12,17 +18,12 @@ linters:
     - gocritic
     - gofmt
     - goimports
-    - golint
     - gosec
     - gosimple
     - govet
     - ineffassign
-    - interfacer
-    - maligned
-    - misspell
     - nakedret
     - prealloc
-    - scopelint
     - staticcheck
     - structcheck
     - stylecheck
@@ -33,14 +34,81 @@ linters:
     - misspell
     - wsl
     - nolintlint
+    - tparallel
+    - exhaustive
+    - asciicheck
+    - exportloopref
+    - gomnd
+    - goerr113
+    - dupl
+    - goprintffuncname
+    - whitespace
+    - revive
+    - varcheck
+    - nestif
+    - nilnil
 
 linters-settings:
   dogsled:
     max-blank-identifiers: 3
+
   maligned:
     suggest-new: true
+
   nolintlint:
     allow-unused: false
     allow-leading-space: true
     require-explanation: false
     require-specific: false
+
+  dupl:
+    threshold: 150 # minimal duplicate size
+
+  exhaustive:
+    default-signifies-exhaustive: false
+
+  funlen:
+    lines: 100 # maximum count of code lines
+    statements: 50 # maximum count of code lines
+
+  goconst:
+    min-len: 2 # length of repeating string
+    min-occurrences: 2 # number of occurrences of string
+
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+
+  gocyclo:
+    min-complexity: 25 # cyclical complexity
+
+  goimports:
+    local-prefixes: "github.com/persistenceOne/persistenceSDK"
+
+  gomnd:
+    settings:
+      mnd:
+        checks: [argument,case,condition,return] # don't include the "operation" and "assign"
+
+  govet:
+    check-shadowing: true # report about shadowed variables
+
+  lll:
+    line-length: 160
+
+  misspell:
+    locale: US
+
+  wsl:
+    allow-trailing-comment: true
+    allow-cuddle-declarations: false
+
+  nestif:
+    min-complexity: 3
+
+service:
+  golangci-lint-version: 1.43.0

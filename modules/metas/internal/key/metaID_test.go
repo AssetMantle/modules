@@ -8,15 +8,17 @@ package key
 import (
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_MetaID_Methods(t *testing.T) {
 	typeID := base.NewID("I")
 	hashID := base.NewID("hashID")
 	testMetaID := NewMetaID(typeID, hashID).(metaID)
+
 	require.NotPanics(t, func() {
 		require.Equal(t, typeID.String()+constants.FirstOrderCompositeIDSeparator+hashID.String(), testMetaID.String())
 		require.Equal(t, true, testMetaID.Equals(testMetaID))
