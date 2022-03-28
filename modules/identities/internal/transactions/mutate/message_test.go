@@ -9,25 +9,25 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_Mutate_Message(t *testing.T) {
-
 	testFromID := base.NewID("fromID")
 	testIdentityID := base.NewID("identityID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
-	mutableMetaProperties, Error := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
-	require.Equal(t, nil, Error)
-	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, Error)
+	mutableMetaProperties, err := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	require.Equal(t, nil, err)
+	mutableProperties, err := base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, testFromID, testIdentityID, mutableMetaProperties, mutableProperties)
 	require.Equal(t, Message{From: fromAccAddress, FromID: testFromID, IdentityID: testIdentityID, MutableMetaProperties: mutableMetaProperties, MutableProperties: mutableProperties}, testMessage)

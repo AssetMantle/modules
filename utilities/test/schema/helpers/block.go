@@ -7,8 +7,9 @@ package helpers
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
 type block struct {

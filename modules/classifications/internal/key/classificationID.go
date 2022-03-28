@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -70,7 +71,7 @@ func NewClassificationID(chainID types.ID, immutableProperties types.Properties,
 	defaultImmutableStringList := make([]string, len(immutableProperties.GetList()))
 
 	for i, property := range immutableProperties.GetList() {
-		if hashID := property.GetFact().GetHashID(); !(hashID.Compare(base.NewID("")) == 0) {
+		if hashID := property.GetHashID(); !(hashID.Compare(base.NewID("")) == 0) {
 			defaultImmutableStringList[i] = hashID.String()
 		}
 	}

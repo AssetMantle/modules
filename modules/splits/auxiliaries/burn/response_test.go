@@ -6,13 +6,14 @@
 package burn
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 )
 
 func Test_Burn_Response(t *testing.T) {
-
 	testAuxiliaryResponse := newAuxiliaryResponse(nil)
 	require.Equal(t, auxiliaryResponse{Success: true, Error: nil}, testAuxiliaryResponse)
 	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())

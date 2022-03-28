@@ -9,18 +9,19 @@ import (
 	"strings"
 	"testing"
 
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_ClassificationID_Methods(t *testing.T) {
 	chainID := base.NewID("chainID")
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
-	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewFact(base.NewStringData("MutableData"))))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
+	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewStringData("MutableData")))
 
 	testClassificationID := NewClassificationID(chainID, immutableProperties, mutableProperties).(classificationID)
 	require.NotPanics(t, func() {

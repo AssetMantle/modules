@@ -11,8 +11,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
+
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
 type cliCommand struct {

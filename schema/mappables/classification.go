@@ -5,13 +5,9 @@
 
 package mappables
 
-import (
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-)
+import "github.com/persistenceOne/persistenceSDK/schema/helpers"
 
 type Classification interface {
-	GetImmutableProperties() types.Properties
-	GetMutableProperties() types.Properties
-
 	Document
+	helpers.Mappable
 }

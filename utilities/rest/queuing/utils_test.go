@@ -6,21 +6,22 @@
 package queuing
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/stretchr/testify/require"
-	"testing"
+
+	"github.com/persistenceOne/persistenceSDK/schema"
 )
 
 func Test_Rest_Utils(t *testing.T) {
-
-	value, Error := parseGasAdjustment("")
+	value, err := parseGasAdjustment("")
 	require.Equal(t, flags.DefaultGasAdjustment, value)
-	require.Equal(t, nil, Error)
+	require.Equal(t, nil, err)
 
 	value2, error2 := parseGasAdjustment("test")
 	require.Equal(t, float64(0), value2)
@@ -39,10 +40,10 @@ func Test_Rest_Utils(t *testing.T) {
 	Codec.Seal()
 
 	gas := uint64(123)
-	response, Error := simulationResponse(Codec, gas)
+	response, err := simulationResponse(Codec, gas)
 	gasEst := rest.GasEstimateResponse{GasEstimate: gas}
 	resp, _ := Codec.MarshalJSON(gasEst)
 	require.Equal(t, resp, response)
-	require.Equal(t, nil, Error)
+	require.Equal(t, nil, err)
 
 }

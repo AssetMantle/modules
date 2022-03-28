@@ -7,6 +7,7 @@ package common
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/utilities/module"

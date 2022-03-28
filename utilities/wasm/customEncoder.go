@@ -11,6 +11,7 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
@@ -20,9 +21,8 @@ func CustomEncoder(moduleList ...helpers.Module) wasm.CustomEncoder {
 	return func(sender sdkTypes.AccAddress, rawMessage json.RawMessage) ([]sdkTypes.Msg, error) {
 		wasmMessage := base.WasmMessagePrototype()
 
-		Error := json.Unmarshal(rawMessage, &wasmMessage)
-
-		if Error != nil {
+		err := json.Unmarshal(rawMessage, &wasmMessage)
+		if err != nil {
 			return nil, errors.IncorrectMessage
 		}
 
@@ -30,9 +30,9 @@ func CustomEncoder(moduleList ...helpers.Module) wasm.CustomEncoder {
 
 		for _, module := range moduleList {
 			if module.Name() == path[0] {
-				msg, Error := module.DecodeModuleTransactionRequest(path[1], wasmMessage.GetRawMessage())
-				if Error != nil {
-					return nil, Error
+				msg, err := module.DecodeModuleTransactionRequest(path[1], wasmMessage.GetRawMessage())
+				if err != nil {
+					return nil, err
 				}
 
 				return []sdkTypes.Msg{msg}, nil

@@ -10,6 +10,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
@@ -58,9 +59,9 @@ func (t testQueryRequest) LegacyAminoEncode() ([]byte, error) {
 
 func (t testQueryRequest) LegacyAminoDecode(bytes []byte) (helpers.QueryRequest, error) {
 	var queryRequest testQueryRequest
-	Error := json.Unmarshal(bytes, &queryRequest)
+	err := json.Unmarshal(bytes, &queryRequest)
 
-	return queryRequest, Error
+	return queryRequest, err
 }
 
 func TestQueryRequestPrototype() helpers.QueryRequest {
@@ -88,9 +89,9 @@ func (t testQueryResponse) LegacyAminoEncode() ([]byte, error) {
 
 func (t testQueryResponse) LegacyAminoDecode(bytes []byte) (helpers.QueryResponse, error) {
 	var queryResponse testQueryResponse
-	Error := json.Unmarshal(bytes, &queryResponse)
+	err := json.Unmarshal(bytes, &queryResponse)
 
-	return queryResponse, Error
+	return queryResponse, err
 }
 func TestQueryResponsePrototype() helpers.QueryResponse {
 	return testQueryResponse{}

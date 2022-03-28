@@ -9,6 +9,7 @@ import (
 	"reflect"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 )
 

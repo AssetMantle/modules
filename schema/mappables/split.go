@@ -13,5 +13,6 @@ import (
 type Split interface {
 	traits.Ownable
 	traits.Transactional
+
 	helpers.Mappable
 }

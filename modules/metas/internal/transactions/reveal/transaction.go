@@ -18,6 +18,5 @@ var Transaction = base.NewTransaction(
 	requestPrototype,
 	messagePrototype,
 	keeperPrototype,
-	flags.FromID,
 	flags.MetaFact,
 )

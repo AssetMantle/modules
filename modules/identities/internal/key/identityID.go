@@ -10,9 +10,10 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"strings"
 
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -56,6 +57,7 @@ func (identityID IdentityID) Equals(key helpers.Key) bool {
 	return identityID.Compare(&id) == 0
 }
 
+// TODO Pass Classification & then get Classification ID
 func NewIdentityID(classificationID types.ID, immutableProperties types.Properties) types.ID {
 	return &IdentityID{
 		ClassificationID: classificationID,

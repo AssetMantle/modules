@@ -6,11 +6,12 @@
 package sign
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_SignTx_Request(t *testing.T) {

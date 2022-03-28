@@ -6,15 +6,17 @@
 package scrub
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_Scrub_Request(t *testing.T) {
 
-	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewMetaFact(base.NewStringData("Data")))
+	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewStringData("Data"))
 	testAuxiliaryRequest := NewAuxiliaryRequest(metaProperty)
 
 	require.Equal(t, auxiliaryRequest{MetaPropertyList: []types.MetaProperty{metaProperty}}, testAuxiliaryRequest)

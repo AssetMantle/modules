@@ -33,24 +33,24 @@ func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, cliContext client.Context
 	for i, kafkaMsg := range kafkaMsgList {
 		msgCLIContext := cliCtxFromKafkaMsg(kafkaMsg, cliContext)
 
-		gasAdj, Error := parseGasAdjustment(kafkaMsg.BaseRequest.GasAdjustment)
-		if Error != nil {
-			return nil, Error
+		gasAdj, err := parseGasAdjustment(kafkaMsg.BaseRequest.GasAdjustment)
+		if err != nil {
+			return nil, err
 		}
 
-		simAndExec, gas, Error := flags.ParseGas(kafkaMsg.BaseRequest.Gas)
-		if Error != nil {
-			return nil, Error
+		simAndExec, gas, err := flags.ParseGas(kafkaMsg.BaseRequest.Gas)
+		if err != nil {
+			return nil, err
 		}
 
-		keyBase, Error := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
-		if Error != nil {
-			return nil, Error
+		keyBase, err := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
+		if err != nil {
+			return nil, err
 		}
 
-		accountNumber, sequence, Error := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(msgCLIContext.FromAddress)
-		if Error != nil {
-			return nil, Error
+		accountNumber, sequence, err := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(msgCLIContext.FromAddress)
+		if err != nil {
+			return nil, err
 		}
 
 		kafkaMsg.BaseRequest.AccountNumber = accountNumber
@@ -76,9 +76,9 @@ func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, cliContext client.Context
 				return nil, errors.New("Error invalid gas adjustment")
 			}
 
-			txBuilder, Error = authClient.EnrichWithGas(txBuilder, cliContext, []sdkTypes.Msg{kafkaMsg.Msg})
-			if Error != nil {
-				return nil, Error
+			txBuilder, err = authClient.EnrichWithGas(txBuilder, cliContext, []sdkTypes.Msg{kafkaMsg.Msg})
+			if err != nil {
+				return nil, err
 			}
 
 			if kafkaMsg.BaseRequest.Simulate {
@@ -87,16 +87,16 @@ func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, cliContext client.Context
 			}
 		}
 
-		stdMsg, Error := txBuilder.BuildSignMsg(msgList)
-		if Error != nil {
-			return nil, Error
+		stdMsg, err := txBuilder.BuildSignMsg(msgList)
+		if err != nil {
+			return nil, err
 		}
 
 		stdTx := auth.NewStdTx(stdMsg.Msgs, stdMsg.Fee, nil, stdMsg.Memo)
 
-		stdTx, Error = txBuilder.SignStdTx(msgCLIContext.FromName, keys.DefaultKeyPass, stdTx, true)
-		if Error != nil {
-			return nil, Error
+		stdTx, err = txBuilder.SignStdTx(msgCLIContext.FromName, keys.DefaultKeyPass, stdTx, true)
+		if err != nil {
+			return nil, err
 		}
 
 		if i == 0 {
@@ -110,21 +110,21 @@ func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, cliContext client.Context
 		}
 
 		if i == len(kafkaMsgList)-1 {
-			txBytes, Error = txBuilder.TxEncoder()(stdTxs)
-			if Error != nil {
-				return nil, Error
+			txBytes, err = txBuilder.TxEncoder()(stdTxs)
+			if err != nil {
+				return nil, err
 			}
 		}
 	}
 
-	response, Error := cliCtxFromKafkaMsg(kafkaMsgList[0], cliContext).BroadcastTx(txBytes)
-	if Error != nil {
-		return nil, Error
+	response, err := cliCtxFromKafkaMsg(kafkaMsgList[0], cliContext).BroadcastTx(txBytes)
+	if err != nil {
+		return nil, err
 	}
 
-	output, Error := cliCtxFromKafkaMsg(kafkaMsgList[0], cliContext).Codec.MarshalJSON(response)
-	if Error != nil {
-		return nil, Error
+	output, err := cliCtxFromKafkaMsg(kafkaMsgList[0], cliContext).Codec.MarshalJSON(response)
+	if err != nil {
+		return nil, err
 	}
 
 	return output, nil

@@ -8,8 +8,9 @@ package base
 import (
 	"encoding/base64"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/tendermint/tendermint/crypto"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 var _ types.Signature = (*Signature)(nil)

@@ -7,8 +7,9 @@ package base
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestWasmMessage(t *testing.T) {

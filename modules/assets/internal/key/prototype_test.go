@@ -1,9 +1,11 @@
 package key
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 func TestPrototype(t *testing.T) {

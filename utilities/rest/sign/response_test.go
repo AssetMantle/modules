@@ -6,11 +6,13 @@
 package sign
 
 import (
+	"testing"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/stretchr/testify/require"
-	"testing"
+
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 )
 
 func Test_SignTx_Response(t *testing.T) {

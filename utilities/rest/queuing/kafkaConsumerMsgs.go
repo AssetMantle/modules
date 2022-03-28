@@ -18,14 +18,16 @@ func kafkaConsumerMessages(cliCtx client.Context) {
 	var kafkaMsgList []kafkaMsg
 
 	go func() {
+		var msg kafkaMsg
+
 		for {
 			select {
 			case <-quit:
 				return
 			default:
-				kafkaMsg := kafkaTopicConsumer("Topic", KafkaState.Consumers, cliCtx.Codec)
-				if kafkaMsg.Msg != nil {
-					kafkaMsgList = append(kafkaMsgList, kafkaMsg)
+				msg = kafkaTopicConsumer("Topic", KafkaState.Consumers, cliCtx.Codec)
+				if msg.Msg != nil {
+					kafkaMsgList = append(kafkaMsgList, msg)
 				}
 			}
 		}
@@ -44,7 +46,7 @@ func kafkaConsumerMessages(cliCtx client.Context) {
 			Error string `json:"error"`
 		}{Error: err.Error()})
 		if e != nil {
-			panic(err)
+			panic(e)
 		}
 
 		for _, kafkaMsg := range kafkaMsgList {

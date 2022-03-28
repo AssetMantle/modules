@@ -8,9 +8,10 @@ package key
 import (
 	"testing"
 
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
+
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 func Test_IdentityID_Methods(t *testing.T) {

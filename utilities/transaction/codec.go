@@ -7,6 +7,7 @@ package transaction
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )

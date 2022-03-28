@@ -6,13 +6,14 @@
 package base
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 func Test_Signatures(t *testing.T) {
-
 	testSignature := NewSignature(NewID("ID"), NewID("signature").Bytes(), NewHeight(10))
 	testSignature2 := NewSignature(NewID("ID2"), NewID("signature2").Bytes(), NewHeight(20))
 	testSignatures := NewSignatures([]types.Signature{testSignature, testSignature2})

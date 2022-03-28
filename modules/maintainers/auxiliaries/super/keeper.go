@@ -7,10 +7,12 @@ package super
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
@@ -28,7 +30,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(errors.EntityAlreadyExists)
 	}
 
-	maintainers.Add(mappable.NewMaintainer(maintainerID, auxiliaryRequest.MutableProperties, true, true, true))
+	maintainers.Add(mappable.NewMaintainer(maintainerID, base.NewProperties(), auxiliaryRequest.MutableProperties))
 
 	return newAuxiliaryResponse(nil)
 }
