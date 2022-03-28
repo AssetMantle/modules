@@ -10,6 +10,7 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
+
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
@@ -31,8 +32,8 @@ func (parameters parameters) String() string {
 }
 func (parameters parameters) Validate() error {
 	for _, parameter := range parameters.parameterList {
-		if Error := parameter.Validate(); Error != nil {
-			return Error
+		if err := parameter.Validate(); err != nil {
+			return err
 		}
 	}
 

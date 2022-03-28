@@ -91,9 +91,9 @@ func ReadMetaProperties(metaPropertiesString string) (types.MetaProperties, erro
 	metaProperties := strings.Split(metaPropertiesString, constants.PropertiesSeparator)
 	for _, metaPropertyString := range metaProperties {
 		if metaPropertyString != "" {
-			metaProperty, Error := ReadMetaProperty(metaPropertyString)
-			if Error != nil {
-				return nil, Error
+			metaProperty, err := ReadMetaProperty(metaPropertyString)
+			if err != nil {
+				return nil, err
 			}
 
 			metaPropertyList = append(metaPropertyList, metaProperty)

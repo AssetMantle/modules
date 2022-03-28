@@ -9,13 +9,13 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_StringData(t *testing.T) {
-
 	value := "data"
 	testStringData := NewStringData(value)
 	testStringData2 := NewStringData("")
@@ -26,26 +26,26 @@ func Test_StringData(t *testing.T) {
 	require.Equal(t, stringDataID, testStringData.GetTypeID())
 	require.Equal(t, testStringData.ZeroValue(), NewStringData(""))
 
-	dataAsString, Error := testStringData.AsString()
+	dataAsString, err := testStringData.AsString()
 	require.Equal(t, value, dataAsString)
-	require.Equal(t, nil, Error)
+	require.Equal(t, nil, err)
 
-	dataAsID, Error := testStringData.AsID()
+	dataAsID, err := testStringData.AsID()
 	require.Equal(t, id{}, dataAsID)
-	require.Equal(t, errors.IncorrectFormat, Error)
+	require.Equal(t, errors.IncorrectFormat, err)
 
-	dataAsHeight, Error := testStringData.AsHeight()
+	dataAsHeight, err := testStringData.AsHeight()
 	require.Equal(t, height{}, dataAsHeight)
-	require.Equal(t, errors.IncorrectFormat, Error)
+	require.Equal(t, errors.IncorrectFormat, err)
 
-	dataAsDec, Error := testStringData.AsDec()
+	dataAsDec, err := testStringData.AsDec()
 	require.Equal(t, sdkTypes.ZeroDec(), dataAsDec)
-	require.Equal(t, errors.IncorrectFormat, Error)
+	require.Equal(t, errors.IncorrectFormat, err)
 
 	require.Equal(t, value, testStringData.Get())
 
-	data, Error := ReadStringData("testString")
-	require.Nil(t, Error)
+	data, err := ReadStringData("testString")
+	require.Nil(t, err)
 	require.Equal(t, stringData{Value: "testString"}.String(), data.String())
 
 	require.Equal(t, false, testStringData.Compare(testStringData2) == 0)

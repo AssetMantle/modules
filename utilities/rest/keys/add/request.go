@@ -7,6 +7,7 @@ package add
 
 import (
 	"github.com/asaskevich/govalidator"
+
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
@@ -18,6 +19,6 @@ type request struct {
 var _ helpers.Request = request{}
 
 func (request request) Validate() error {
-	_, Error := govalidator.ValidateStruct(request)
-	return Error
+	_, err := govalidator.ValidateStruct(request)
+	return err
 }

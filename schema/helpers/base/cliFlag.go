@@ -8,9 +8,10 @@ package base
 import (
 	"fmt"
 
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
 type cliFlag struct {

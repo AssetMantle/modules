@@ -11,10 +11,11 @@ import (
 
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_ClassificationID_Methods(t *testing.T) {

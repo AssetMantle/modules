@@ -9,30 +9,38 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_Mint_Message(t *testing.T) {
-
 	testFromID := base.NewID("fromID")
 	testToID := base.NewID("toID")
 	testClassificationID := base.NewID("classificationID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
-	immutableMetaProperties, Error := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
-	require.Equal(t, nil, Error)
-	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, Error)
-	mutableMetaProperties, Error := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
-	require.Equal(t, nil, Error)
-	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, Error)
+	var immutableMetaProperties types.MetaProperties
+	immutableMetaProperties, err = base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	require.Equal(t, nil, err)
+
+	var immutableProperties types.Properties
+	immutableProperties, err = base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	require.Equal(t, nil, err)
+
+	var mutableMetaProperties types.MetaProperties
+	mutableMetaProperties, err = base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	require.Equal(t, nil, err)
+
+	var mutableProperties types.Properties
+	mutableProperties, err = base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, testFromID, testToID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ToID: testToID, ClassificationID: testClassificationID, ImmutableMetaProperties: immutableMetaProperties, ImmutableProperties: immutableProperties, MutableMetaProperties: mutableMetaProperties, MutableProperties: mutableProperties}, testMessage)
@@ -45,5 +53,4 @@ func Test_Mint_Message(t *testing.T) {
 	require.Equal(t, testMessage, messageFromInterface(testMessage))
 	require.Equal(t, message{}, messageFromInterface(nil))
 	require.Equal(t, message{}, messagePrototype())
-
 }

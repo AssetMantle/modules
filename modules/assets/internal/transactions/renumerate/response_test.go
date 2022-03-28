@@ -8,8 +8,9 @@ package renumerate
 import (
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
 )
 
 func Test_Renumerate_Response(t *testing.T) {

@@ -2,7 +2,7 @@ package ids
 
 import "github.com/persistenceOne/persistenceSDK/schema/types/base"
 
-//Note: Arranged alphabetically
+// Note: Arranged alphabetically
 var (
 	AuthenticationProperty       = base.NewID("authentication")
 	BurnProperty                 = base.NewID("burn")

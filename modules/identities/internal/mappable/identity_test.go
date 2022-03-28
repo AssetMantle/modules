@@ -13,12 +13,13 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_Identity_Methods(t *testing.T) {

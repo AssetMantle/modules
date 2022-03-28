@@ -7,6 +7,7 @@ package verify
 
 import (
 	"github.com/asaskevich/govalidator"
+
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
@@ -19,8 +20,8 @@ type auxiliaryRequest struct {
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
-	_, Error := govalidator.ValidateStruct(auxiliaryRequest)
-	return Error
+	_, err := govalidator.ValidateStruct(auxiliaryRequest)
+	return err
 }
 
 func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {

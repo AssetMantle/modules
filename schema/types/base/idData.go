@@ -9,6 +9,7 @@ import (
 	"bytes"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
@@ -27,9 +28,9 @@ func (idData idData) GetID() types.ID {
 	}
 }
 func (idData idData) Compare(data types.Data) int {
-	compareIDData, Error := idDataFromInterface(data)
-	if Error != nil {
-		panic(Error)
+	compareIDData, err := idDataFromInterface(data)
+	if err != nil {
+		panic(err)
 	}
 
 	return bytes.Compare(idData.Value.Bytes(), compareIDData.Value.Bytes())

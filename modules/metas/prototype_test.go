@@ -1,6 +1,10 @@
 package metas
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/block"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/genesis"
@@ -11,8 +15,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/simulator"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/transactions"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {

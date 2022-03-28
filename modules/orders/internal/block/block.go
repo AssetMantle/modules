@@ -7,6 +7,8 @@ package block
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
@@ -19,7 +21,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
 )
 
 type block struct {

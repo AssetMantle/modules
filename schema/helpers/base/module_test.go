@@ -15,13 +15,14 @@ import (
 	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/gorilla/mux"
+	"github.com/stretchr/testify/require"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	helpersTestUtilities "github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers"
 	baseTestUtilities "github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
 )
 
 var auxiliariesPrototype = func() helpers.Auxiliaries {
@@ -52,8 +53,8 @@ var blockPrototype = func() helpers.Block { return helpersTestUtilities.TestBloc
 func TestModule(t *testing.T) {
 	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
 	codec := baseTestUtilities.MakeCodec()
-	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test") //.WithKeyTable(parametersPrototype().GetKeyTable())
-	//subspace.SetParamSet(context, parametersPrototype())
+	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test") // .WithKeyTable(parametersPrototype().GetKeyTable())
+	// subspace.SetParamSet(context, parametersPrototype())
 	Module := NewModule("test", auxiliariesPrototype, genesisPrototype,
 		mapperPrototype, parametersPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype, blockPrototype).Initialize(storeKey, subspace).(module)
 
@@ -68,7 +69,6 @@ func TestModule(t *testing.T) {
 	})
 
 	require.NotPanics(t, func() {
-
 	})
 	require.Nil(t, Module.ValidateGenesis(Module.DefaultGenesis()))
 
@@ -83,23 +83,23 @@ func TestModule(t *testing.T) {
 	require.Equal(t, "test", Module.GetTxCmd(codec).Name())
 	require.Equal(t, "test", Module.GetQueryCmd(codec).Name())
 
-	//AppModule
+	// AppModule
 	require.NotPanics(t, func() {
 		Module.RegisterInvariants(nil)
 	})
 	require.Equal(t, "test", Module.Route())
 
-	response, Error := Module.NewHandler()(context, baseTestUtilities.NewTestMessage(sdkTypes.AccAddress("addr"), "id"))
-	require.Nil(t, Error)
+	response, err := Module.NewHandler()(context, baseTestUtilities.NewTestMessage(sdkTypes.AccAddress("addr"), "id"))
+	require.Nil(t, err)
 	require.NotNil(t, response)
 
 	require.Equal(t, "test", Module.QuerierRoute())
 
-	encodedRequest, Error := Module.queries.Get("testQuery").(query).requestPrototype().Encode()
-	require.Nil(t, Error)
+	encodedRequest, err := Module.queries.Get("testQuery").(query).requestPrototype().Encode()
+	require.Nil(t, err)
 
-	queryResponse, Error := Module.NewQuerierHandler()(context, []string{"testQuery"}, abciTypes.RequestQuery{Data: encodedRequest})
-	require.Nil(t, Error)
+	queryResponse, err := Module.NewQuerierHandler()(context, []string{"testQuery"}, abciTypes.RequestQuery{Data: encodedRequest})
+	require.Nil(t, err)
 	require.NotNil(t, queryResponse)
 
 	require.NotPanics(t, func() {
@@ -122,8 +122,8 @@ func TestModule(t *testing.T) {
 		Module.WeightedOperations(sdkModule.SimulationState{})
 	})
 
-	//types.Module
+	// types.Module
 	require.Equal(t, "testAuxiliary", Module.GetAuxiliary("testAuxiliary").GetName())
-	_, Error = Module.DecodeModuleTransactionRequest("TestMessage", json.RawMessage(`{"BaseReq":{"from":"addr"},"ID":"id"}`))
-	require.Nil(t, Error)
+	_, err = Module.DecodeModuleTransactionRequest("TestMessage", json.RawMessage(`{"BaseReq":{"from":"addr"},"ID":"id"}`))
+	require.Nil(t, err)
 }

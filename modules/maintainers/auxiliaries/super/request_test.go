@@ -8,12 +8,12 @@ package super
 import (
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 func Test_Super_Request(t *testing.T) {
-
 	classificationID := base.NewID("classificationID")
 	identityID := base.NewID("identityID")
 	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"),base.NewStringData("Data1")))

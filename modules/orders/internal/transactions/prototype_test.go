@@ -1,6 +1,10 @@
 package transactions
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/cancel"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/define"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/immediate"
@@ -8,8 +12,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/modify"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/take"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {

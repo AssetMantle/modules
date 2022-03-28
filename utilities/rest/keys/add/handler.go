@@ -7,14 +7,13 @@ package add
 
 import (
 	"fmt"
+	"net/http"
+	"strings"
 
 	"github.com/bartekn/go-bip39"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
-
-	"net/http"
-	"strings"
 
 	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -31,19 +30,20 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		if Error := request.Validate(); Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
+		err := request.Validate()
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		Keyring, Error := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
+		keyring, err := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		_, Error = Keyring.Get(request.Name)
-		if Error == nil {
+		_, err = keyring.Get(request.Name)
+		if err == nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, fmt.Sprintf("Account for keyname %v already exists", request.Name))
 			return
 		}
@@ -54,30 +54,34 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 		}
 
 		if request.Mnemonic == "" {
-			var mnemonicEntropySize = 256
+			const mnemonicEntropySize = 256
 
-			entropySeed, Error := bip39.NewEntropy(mnemonicEntropySize)
-			if Error != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
+			var entropySeed []byte
+			entropySeed, err = bip39.NewEntropy(mnemonicEntropySize)
+			if err != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 				return
 			}
 
-			request.Mnemonic, Error = bip39.NewMnemonic(entropySeed)
-			if Error != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
+			request.Mnemonic, err = bip39.NewMnemonic(entropySeed)
+			if err != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 				return
 			}
 		}
 
-		info, Error := Keyring.CreateAccount(request.Name, request.Mnemonic, cryptoKeys.DefaultBIP39Passphrase, keys.DefaultKeyPass, sdkTypes.FullFundraiserPath, cryptoKeys.Secp256k1)
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
+		var info cryptoKeys.Info
+
+		info, err = keyring.CreateAccount(request.Name, request.Mnemonic, cryptoKeys.DefaultBIP39Passphrase, keys.DefaultKeyPass, sdkTypes.FullFundraiserPath, cryptoKeys.Secp256k1)
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		keyOutput, Error := cryptoKeys.Bech32KeyOutput(info)
-		if Error != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, Error.Error())
+		var keyOutput cryptoKeys.KeyOutput
+		keyOutput, err = cryptoKeys.Bech32KeyOutput(info)
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
 		}
 

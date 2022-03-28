@@ -9,22 +9,22 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_Send_Message(t *testing.T) {
-
 	testToID := base.NewID("toID")
 	testFromID := base.NewID("fromID")
 	testOwnableID := base.NewID("ownableID")
 	testSplit := sdkTypes.NewDec(2)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
 	testMessage := newMessage(fromAccAddress, testFromID, testToID, testOwnableID, testSplit)
 	require.Equal(t, message{From: fromAccAddress, FromID: testFromID, ToID: testToID, OwnableID: testOwnableID, Value: testSplit}, testMessage)

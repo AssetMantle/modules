@@ -6,9 +6,11 @@
 package auxiliaries
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
 func Test_Auxiliary_Prototype(t *testing.T) {

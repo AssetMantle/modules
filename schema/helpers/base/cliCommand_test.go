@@ -6,16 +6,18 @@
 package base
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/persistenceOne/persistenceSDK/schema"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
-	"testing"
+
+	"github.com/persistenceOne/persistenceSDK/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 )
 
 func Test_Cli_Command(t *testing.T) {

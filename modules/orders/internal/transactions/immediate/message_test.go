@@ -9,17 +9,18 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/types/errors"
+
 	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_Make_Message(t *testing.T) {
-
 	fromID := base.NewID("fromID")
 	classificationID := base.NewID("classificationID")
 	makerOwnableID := base.NewID("makerOwnableID")
@@ -30,17 +31,17 @@ func Test_Make_Message(t *testing.T) {
 	zeroTakerOwnableSplit, _ := sdkTypes.NewDecFromStr("0")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 
-	immutableMetaProperties, Error := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
-	require.Equal(t, nil, Error)
-	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, Error)
-	mutableMetaProperties, Error := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
-	require.Equal(t, nil, Error)
-	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, Error)
+	immutableMetaProperties, err := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	require.Equal(t, nil, err)
+	immutableProperties, err := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	require.Equal(t, nil, err)
+	mutableMetaProperties, err := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	require.Equal(t, nil, err)
+	mutableProperties, err := base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, fromID, classificationID, makerOwnableID, takerOwnableID, expiresIn, makerOwnableSplit, takerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 	require.Equal(t, message{From: fromAccAddress, FromID: fromID, ClassificationID: classificationID, MakerOwnableID: makerOwnableID, TakerOwnableID: takerOwnableID, ExpiresIn: expiresIn, TakerOwnableSplit: takerOwnableSplit, MakerOwnableSplit: makerOwnableSplit, ImmutableMetaProperties: immutableMetaProperties, ImmutableProperties: immutableProperties, MutableMetaProperties: mutableMetaProperties, MutableProperties: mutableProperties}, testMessage)

@@ -31,8 +31,8 @@ func Hash(meta ...string) string {
 	toDigest := strings.Join(filteredMetaList, constants.ToHashSeparator)
 	hash := sha256.New()
 
-	if _, Error := hash.Write([]byte(toDigest)); Error != nil {
-		panic(Error)
+	if _, err := hash.Write([]byte(toDigest)); err != nil {
+		panic(err)
 	}
 
 	return base64.URLEncoding.EncodeToString(hash.Sum(nil))

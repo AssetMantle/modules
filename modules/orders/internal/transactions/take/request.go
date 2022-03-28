@@ -13,6 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
+
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -40,8 +41,8 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /orders/take [post]
 func (transactionRequest transactionRequest) Validate() error {
-	_, Error := govalidator.ValidateStruct(transactionRequest)
-	return Error
+	_, err := govalidator.ValidateStruct(transactionRequest)
+	return err
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
@@ -52,8 +53,8 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
-	if Error := json.Unmarshal(rawMessage, &transactionRequest); Error != nil {
-		return nil, Error
+	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
+		return nil, err
 	}
 
 	return transactionRequest, nil
@@ -62,14 +63,14 @@ func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
-	if Error != nil {
-		return nil, Error
+	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	if err != nil {
+		return nil, err
 	}
 
-	takerOwnableSplit, Error := sdkTypes.NewDecFromStr(transactionRequest.TakerOwnableSplit)
-	if Error != nil {
-		return nil, Error
+	takerOwnableSplit, err := sdkTypes.NewDecFromStr(transactionRequest.TakerOwnableSplit)
+	if err != nil {
+		return nil, err
 	}
 
 	return newMessage(

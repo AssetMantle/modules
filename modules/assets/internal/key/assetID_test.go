@@ -11,9 +11,10 @@ import (
 
 	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_AssetID_Methods(t *testing.T) {
@@ -21,6 +22,7 @@ func Test_AssetID_Methods(t *testing.T) {
 	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
 
 	testAssetID := NewAssetID(classificationID, immutableProperties).(assetID)
+
 	require.NotPanics(t, func() {
 		require.Equal(t, assetID{ClassificationID: classificationID, HashID: baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID()}, testAssetID)
 		require.Equal(t, strings.Join([]string{classificationID.String(), baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID().String()}, constants.FirstOrderCompositeIDSeparator), testAssetID.String())
@@ -35,5 +37,4 @@ func Test_AssetID_Methods(t *testing.T) {
 		require.Equal(t, assetID{ClassificationID: base.NewID(""), HashID: base.NewID("")}, FromID(base.NewID("")))
 		require.Equal(t, testAssetID, readAssetID(testAssetID.String()))
 	})
-
 }

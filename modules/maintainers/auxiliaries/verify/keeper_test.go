@@ -14,6 +14,11 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/stretchr/testify/require"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tendermintDB "github.com/tendermint/tm-db"
+
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
@@ -22,10 +27,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintDB "github.com/tendermint/tm-db"
 )
 
 type TestKeepers struct {
@@ -34,6 +35,7 @@ type TestKeepers struct {
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	var Codec = codec.New()
+
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
@@ -50,29 +52,30 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
+
+	parameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	Error := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, Error)
+
+	err := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, err)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		MaintainersKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
+		MaintainersKeeper: keeperPrototype().Initialize(Mapper, parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
 
 	return context, keepers
 }
 
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
-
 	context, keepers := CreateTestInput(t)
 
 	classificationID := base.NewID("classificationID")

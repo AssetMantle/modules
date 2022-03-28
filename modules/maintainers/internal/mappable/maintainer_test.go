@@ -9,10 +9,11 @@ import (
 	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
 	qualifiedTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_Maintainer_Methods(t *testing.T) {

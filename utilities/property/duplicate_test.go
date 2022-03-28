@@ -1,9 +1,10 @@
 package property
 
 import (
+	"testing"
+
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"testing"
 )
 
 func TestDuplicate(t *testing.T) {

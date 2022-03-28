@@ -10,10 +10,11 @@ import (
 
 	"github.com/persistenceOne/persistenceSDK/constants/ids"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_Asset_Methods(t *testing.T) {

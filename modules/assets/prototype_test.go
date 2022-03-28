@@ -1,6 +1,10 @@
 package assets
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/block"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
@@ -11,8 +15,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {

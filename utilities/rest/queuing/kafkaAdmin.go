@@ -14,9 +14,9 @@ func kafkaAdmin(kafkaNodes []string) sarama.ClusterAdmin {
 	config := sarama.NewConfig()
 	config.Version = sarama.V0_11_0_0 // hardcoded
 
-	admin, Error := sarama.NewClusterAdmin(kafkaNodes, config)
-	if Error != nil {
-		panic(Error)
+	admin, err := sarama.NewClusterAdmin(kafkaNodes, config)
+	if err != nil {
+		panic(err)
 	}
 
 	return admin

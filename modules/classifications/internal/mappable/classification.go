@@ -7,6 +7,7 @@ package mappable
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
