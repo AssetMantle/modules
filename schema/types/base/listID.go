@@ -23,7 +23,7 @@ func (listID listID) String() string {
 		idStringList[i] = id.String()
 	}
 
-	return strings.Join(idStringList, constants.ListIDStringSeparator)
+	return strings.Join(idStringList, constants.ListDataStringSeparator)
 }
 func (listID listID) Bytes() []byte {
 	var byteList []byte
