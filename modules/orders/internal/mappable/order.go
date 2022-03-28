@@ -31,6 +31,7 @@ type order struct {
 
 var _ mappables.Order = (*order)(nil)
 
+// TODO use get property
 func (order order) GetRateID() types.ID {
 	return key.ReadRateID(order.ID)
 }

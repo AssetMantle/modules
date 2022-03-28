@@ -13,6 +13,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/constants"
 )
 
+// TODO rename
 func RegisterXPRTConcrete(codec *codec.Codec, moduleName string, o interface{}) {
 	codec.RegisterConcrete(o, constants.ProjectRoute+"/"+moduleName+"/"+reflect.TypeOf(o).PkgPath()+"/"+reflect.TypeOf(o).Name(), nil)
 }

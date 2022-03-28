@@ -32,6 +32,8 @@ func (split split) GetOwnerID() types.ID {
 func (split split) GetOwnableID() types.ID {
 	return key.ReadOwnableID(split.ID)
 }
+
+// TODO rename to GetSupply
 func (split split) GetValue() sdkTypes.Dec {
 	return split.Value
 }

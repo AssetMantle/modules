@@ -5,6 +5,7 @@
 
 package types
 
+// TODO Do as list
 type Properties interface {
 	Get(ID) Property
 

@@ -5,6 +5,7 @@
 
 package types
 
+// TODO do sortable interface
 type Property interface {
 	GetID() ID
 	GetDataID() ID

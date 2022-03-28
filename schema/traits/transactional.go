@@ -10,6 +10,7 @@ import (
 )
 
 type Transactional interface {
+	// TODO change to getSupply
 	GetValue() sdkTypes.Dec
 	Send(sdkTypes.Dec) Transactional
 	Receive(sdkTypes.Dec) Transactional

@@ -79,13 +79,13 @@ every Major Release is denoted as stable releases.
 ## Stable Release Policy
 
 ### Patch Releases
-
+// TODO Correct
 Once a Persistence-SDK release has been completed and published, updates for it are released under certain
 circumstances.
 
 ### Rationale
 
-Unlike in-development `master` branch snapshots, **Persistence-SDK** releases are subject to much wider adoption, and by
+Unlike in-development `master` branch snapshots,// TODO correct **Persistence-SDK** releases are subject to much wider adoption, and by
 a significantly different demographic of users. During development, changes in the `master` branch affect SDK users,
 application developers, early adopters, and other advanced users that elect to use unstable experimental software at
 their own risk.
@@ -117,7 +117,7 @@ the current major release, and later, migrations are supported.
 
 * **High-impact bugs**
     * Bugs that may directly cause a security vulnerability.
-    * *Severe regressions* from a Persistence-SDK's previous release. This includes all sort of issues that may cause
+    * *Severe regressions* from a //TODO Correct Persistence-SDK's previous release. This includes all sort of issues that may cause
       the core packages or the `x/` modules unusable.
     * Bugs that may cause **loss of user's data**.
 * Other safe cases:
@@ -166,7 +166,7 @@ Release Exception*.
 
 1. Check that the bug is either fixed or not reproducible in `master`. It is, in general, not appropriate to release bug
    fixes for stable releases without first testing them in `master`. Please apply the
-   label [v0.43](https://github.com/persistenceone/persistence-sdk/milestone/26) to the issue.
+   label //TODO Correct [v0.43](https://github.com/persistenceone/persistence-sdk/milestone/26) to the issue.
 2. Add a comment to the issue and ensure it contains the following information (see the bug template below):
 
 * **[Impact]** An explanation of the bug on users and justification for backporting the fix to the stable release.
@@ -199,7 +199,7 @@ It's crucial to make the effort of thinking about what could happen in case a re
 
 ### Stable Release Managers
 
-The **Stable Release Managers** evaluate and approve or reject updates and backports to Persistence-SDK Stable Release
+The **Stable Release Managers** evaluate and approve or reject updates and backports to // TODO Correct Persistence-SDK Stable Release
 series, according to the [stable release policy](#stable-release-policy). Decisions are made by consensus.
 
 Their responsibilities include:

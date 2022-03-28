@@ -5,6 +5,7 @@
 
 package types
 
+// TODO do as list
 type MetaProperties interface {
 	Get(ID) MetaProperty
 

@@ -1,9 +1,9 @@
+// TODO Rename
 module github.com/persistenceOne/persistenceSDK
 
 go 1.17
 
 require (
-	github.com/99designs/keyring v1.1.6
 	github.com/CosmWasm/wasmd v0.10.0
 	github.com/Shopify/sarama v1.19.0
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
@@ -23,6 +23,7 @@ require (
 )
 
 require (
+	github.com/99designs/keyring v1.1.6 // indirect
 	github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d // indirect
 	github.com/CosmWasm/go-cosmwasm v0.10.0 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect

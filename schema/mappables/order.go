@@ -11,6 +11,7 @@ import (
 )
 
 type Order interface {
+	// TODO check if ID return type required
 	GetRateID() types.ID
 	GetCreationID() types.ID
 	GetMakerOwnableID() types.ID

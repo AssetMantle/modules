@@ -9,6 +9,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
+// TODO retire or send to qualified
 type Document interface {
 	GetID() types.ID
 	GetClassificationID() types.ID

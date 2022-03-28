@@ -46,16 +46,11 @@ func (identity identity) GetAuthentication() types.Property {
 
 	return properties.Authentication
 }
-func (identity identity) GetKey() helpers.Key {
-	return key.FromID(identity.ID)
-}
-func (identity) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, identity{})
-}
 func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	if authentication := identity.GetAuthentication(); authentication != nil {
 		compareAuthenticationHash := base.NewAccAddressData(address).GenerateHashID().String()
 
+		// TODO impl through list
 		authenticationHashList := strings.Split(authentication.GetHashID().String(), constants.ListHashStringSeparator)
 		for _, authenticationHash := range authenticationHashList {
 			if strings.Compare(authenticationHash, compareAuthenticationHash) == 0 {
@@ -67,17 +62,24 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	return false
 }
 func (identity identity) ProvisionAddress(address sdkTypes.AccAddress) mappables.Identity {
-	return mappables.Identity(identity)
+	// TODO
 }
 
 func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) mappables.Identity {
-	return mappables.Identity(identity)
+	// TODO
+}
+func (identity identity) GetKey() helpers.Key {
+	return key.FromID(identity.ID)
+}
+func (identity) RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterXPRTConcrete(codec, module.Name, identity{})
 }
 
 func NewIdentity(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Identity {
 	return identity{
 		Document: qualifiedMappables.Document{
-			ID:            id,
+			ID: id,
+			// TODO Add classificationID
 			HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
 			HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
 		},

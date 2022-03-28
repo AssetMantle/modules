@@ -17,6 +17,7 @@ type Document interface {
 	// * Returns nil if property is not found
 	GetProperty(types.ID) types.Property
 
+	// TODO see how to adjust in direct data
 	traits.HasImmutables
 	traits.HasMutables
 }

@@ -14,6 +14,7 @@ import (
 
 type Identity interface {
 
+	// TODO removal for expired identity
 	// GetExpiry returns the expiry property of an Identity
 	// * If the property is not found, it returns a default value and not nil
 	GetExpiry() types.Property

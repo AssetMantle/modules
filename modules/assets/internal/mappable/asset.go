@@ -39,6 +39,8 @@ func (asset asset) GetLock() types.Property {
 
 	return properties.Lock
 }
+
+// TODO change to supply
 func (asset asset) GetValue() types.Property {
 	if value := asset.GetProperty(ids.ValueProperty); value != nil {
 		return value

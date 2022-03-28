@@ -21,25 +21,13 @@ import (
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
+// TODO check structure
 type maintainer struct {
 	qualifiedMappables.Document
 }
 
 var _ mappables.Maintainer = (*maintainer)(nil)
 
-func (maintainer maintainer) GetID() types.ID { return maintainer.ID }
-func (maintainer maintainer) GetClassificationID() types.ID {
-	return key.ReadClassificationID(maintainer.ID)
-}
-func (maintainer maintainer) GetProperty(id types.ID) types.Property {
-	if property := maintainer.HasImmutables.GetImmutableProperties().Get(id); property != nil {
-		return property
-	} else if property := maintainer.HasMutables.GetMutableProperties().Get(id); property != nil {
-		return property
-	} else {
-		return nil
-	}
-}
 func (maintainer maintainer) GetIdentityID() types.ID {
 	return key.ReadIdentityID(maintainer.ID)
 }
@@ -65,7 +53,7 @@ func (maintainer maintainer) CanMintAsset() bool {
 // TODO
 func (maintainer maintainer) CanBurnAsset() bool {
 	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
-		//impl
+		// impl
 	}
 
 	return false
@@ -74,7 +62,7 @@ func (maintainer maintainer) CanBurnAsset() bool {
 // TODO
 func (maintainer maintainer) CanRenumerateAsset() bool {
 	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
-		//impl
+		// impl
 	}
 
 	return false
@@ -83,7 +71,7 @@ func (maintainer maintainer) CanRenumerateAsset() bool {
 // TODO
 func (maintainer maintainer) CanAddMaintainer() bool {
 	if property := maintainer.GetProperty(base.NewID(properties.Permissions.GetID().String())); property != nil {
-		//impl
+		// impl
 	}
 
 	return false
@@ -92,7 +80,7 @@ func (maintainer maintainer) CanAddMaintainer() bool {
 // TODO
 func (maintainer maintainer) CanRemoveMaintainer() bool {
 	if property := maintainer.GetProperty(base.NewID(properties.Permissions.GetID().String())); property != nil {
-		//impl
+		// impl
 	}
 
 	return false
@@ -101,7 +89,7 @@ func (maintainer maintainer) CanRemoveMaintainer() bool {
 // TODO
 func (maintainer maintainer) CanMutateMaintainer() bool {
 	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
-		//impl
+		// impl
 	}
 
 	return false
@@ -122,7 +110,7 @@ func (maintainer) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, module.Name, maintainer{})
 }
 
-//TODO
+// TODO
 func NewMaintainer(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Maintainer {
 	return maintainer{
 		Document: qualifiedMappables.Document{

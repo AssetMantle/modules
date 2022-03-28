@@ -10,6 +10,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
+// TODO check implementation
 type Maintainer interface {
 	GetIdentityID() types.ID
 	GetMaintainedClassificationID() types.ID

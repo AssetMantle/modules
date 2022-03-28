@@ -9,6 +9,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
+// TODO URI and ID data type
 type Data interface {
 	GetID() ID
 

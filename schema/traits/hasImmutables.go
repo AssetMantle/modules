@@ -9,6 +9,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
+// TODO rename to Immutables
 type HasImmutables interface {
 	// GetImmutableProperties return the immutable properties object
 	// does not return nil
