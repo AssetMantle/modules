@@ -57,6 +57,7 @@ func (identityID identityID) Equals(key helpers.Key) bool {
 	return identityID.Compare(identityIDFromInterface(key)) == 0
 }
 
+// TODO Pass Classification & then get Classification ID
 func NewIdentityID(classificationID types.ID, immutableProperties types.Properties) types.ID {
 	return identityID{
 		ClassificationID: classificationID,

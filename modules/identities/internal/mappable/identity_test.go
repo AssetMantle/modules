@@ -61,7 +61,7 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: qualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    baseTraits.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty, base.NewListData()))},
+				HasImmutables:    baseTraits.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty,base.NewListData()))},
 				HasMutables:      baseTraits.HasMutables{},
 			}},
 			args: args{address: randomAccAddress[0]},
@@ -83,7 +83,7 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: qualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    baseTraits.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty, base.NewListData(base.NewAccAddressData(randomAccAddress[0]))))},
+				HasImmutables:    baseTraits.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty,base.NewListData(base.NewAccAddressData(randomAccAddress[0]))))},
 				HasMutables:      baseTraits.HasMutables{},
 			}},
 			args: args{address: randomAccAddress[0]},
@@ -94,7 +94,7 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: qualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    baseTraits.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty, base.NewListData(base.NewAccAddressData(randomAccAddress[0]))))},
+				HasImmutables:    baseTraits.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty,base.NewListData(base.NewAccAddressData(randomAccAddress[0]))))},
 				HasMutables:      baseTraits.HasMutables{},
 			}},
 			args: args{address: randomAccAddress[1]},
@@ -116,7 +116,7 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: qualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    baseTraits.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty, base.NewListData(base.NewAccAddressData(randomAccAddress[0]), base.NewAccAddressData(randomAccAddress[1]), base.NewAccAddressData(randomAccAddress[2]), base.NewAccAddressData(randomAccAddress[3]))))},
+				HasImmutables:    baseTraits.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty,base.NewListData(base.NewAccAddressData(randomAccAddress[0]), base.NewAccAddressData(randomAccAddress[1]), base.NewAccAddressData(randomAccAddress[2]), base.NewAccAddressData(randomAccAddress[3]))))},
 				HasMutables:      baseTraits.HasMutables{},
 			}},
 			args: args{address: randomAccAddress[4]},

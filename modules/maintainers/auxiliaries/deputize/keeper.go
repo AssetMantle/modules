@@ -14,6 +14,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
@@ -25,7 +26,6 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context)
 
 	fromMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
@@ -46,13 +46,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(auxiliaryResponse.GetError())
 	}
 
-	removeMaintainedProperties := fromMaintainer.GetMaintainedProperties()
+	removeMaintainedProperties := fromMaintainer.GetMutableProperties()
 
 	for _, maintainedProperty := range auxiliaryRequest.MaintainedProperties.GetList() {
 		if !fromMaintainer.MaintainsProperty(maintainedProperty.GetID()) {
+
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
-
 		removeMaintainedProperties.Remove(maintainedProperty)
 	}
 
@@ -64,14 +64,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 
-		maintainers.Add(mappable.NewMaintainer(toMaintainerID, auxiliaryRequest.MaintainedProperties, auxiliaryRequest.AddMaintainer, auxiliaryRequest.RemoveMaintainer, auxiliaryRequest.MutateMaintainer))
+		maintainers.Add(mappable.NewMaintainer(toMaintainerID, base.NewProperties(), auxiliaryRequest.MaintainedProperties))
 	} else {
 		if !fromMaintainer.CanMutateMaintainer() {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
-
-		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMaintainedProperties().Add(auxiliaryRequest.MaintainedProperties.GetList()...).Remove(removeMaintainedProperties.GetList()...)
-		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID, maintainedProperties, auxiliaryRequest.AddMaintainer, auxiliaryRequest.RemoveMaintainer, auxiliaryRequest.MutateMaintainer))
+		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMutableProperties().Add(auxiliaryRequest.MaintainedProperties.GetList()...).Remove(removeMaintainedProperties.GetList()...)
+		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID, base.NewProperties(), maintainedProperties))
 	}
 
 	return newAuxiliaryResponse(nil)

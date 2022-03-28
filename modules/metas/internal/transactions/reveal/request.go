@@ -22,8 +22,8 @@ import (
 )
 
 type transactionRequest struct {
-	BaseReq  rest.BaseReq `json:"baseReq"`
-	MetaFact string       `json:"metaFact" valid:"required~required field metaFact missing, matches(^[DHIS]{1}[|]{1}.*$)"`
+	BaseReq rest.BaseReq `json:"baseReq"`
+	Data    string       `json:"data" valid:"required~required field data missing, matches(^[DHIS]{1}[|]{1}.*$)"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -64,14 +64,14 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	metaFact, err := base.ReadMetaFact(transactionRequest.MetaFact)
+	data, err := base.ReadData(transactionRequest.Data)
 	if err != nil {
 		return nil, err
 	}
 
 	return newMessage(
 		from,
-		metaFact,
+		data,
 	), nil
 }
 func (transactionRequest) RegisterCodec(codec *codec.Codec) {
@@ -80,9 +80,9 @@ func (transactionRequest) RegisterCodec(codec *codec.Codec) {
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, metaFact string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, data string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:  baseReq,
-		MetaFact: metaFact,
+		BaseReq: baseReq,
+		Data:    data,
 	}
 }

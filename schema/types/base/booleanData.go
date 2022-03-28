@@ -29,7 +29,7 @@ func (booleanData booleanData) Compare(data types.Data) int {
 
 	if booleanData.Value == compareBooleanData.Value {
 		return 0
-	} else if booleanData.Value == true {
+	} else if booleanData.Value == true { //nolint:gosimple
 		return 1
 	}
 
