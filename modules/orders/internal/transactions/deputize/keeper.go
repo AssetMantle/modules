@@ -7,7 +7,7 @@ package deputize
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
+	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
@@ -25,15 +25,10 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
+	msgServer := NewMsgServerImpl(transactionKeeper)
 
-	if auxiliaryResponse := transactionKeeper.deputizeAuxiliary.GetKeeper().Help(context, deputize.NewAuxiliaryRequest(message.FromID, message.ToID, message.ClassificationID, message.MaintainedProperties, message.AddMaintainer, message.RemoveMaintainer, message.MutateMaintainer)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
-
-	return newTransactionResponse(nil)
+	_, Error := msgServer.Deputize(sdkTypes.WrapSDKContext(context), &message)
+	return newTransactionResponse(Error)
 }
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
@@ -53,6 +48,9 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 	}
 
 	return transactionKeeper
+}
+func (transactionKeeper transactionKeeper) RegisterService(configurator module.Configurator) {
+	RegisterMsgServer(configurator.MsgServer(), NewMsgServerImpl(transactionKeeper))
 }
 func keeperPrototype() helpers.TransactionKeeper {
 	return transactionKeeper{}

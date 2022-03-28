@@ -10,18 +10,12 @@ import (
 	"testing"
 
 	"github.com/persistenceOne/persistenceSDK/constants/test"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintDB "github.com/tendermint/tm-db"
-
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
@@ -32,6 +26,10 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/stretchr/testify/require"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tendermintDB "github.com/tendermint/tm-db"
 )
 
 type TestKeepers struct {
@@ -39,11 +37,10 @@ type TestKeepers struct {
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
-	var Codec = codec.New()
-
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	var Codec = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
@@ -64,9 +61,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
+	Error := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, Error)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
@@ -84,30 +80,23 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
+
 	ctx, keepers := CreateTestInput(t)
 	ctx = ctx.WithBlockHeight(2)
-
-	immutableProperties, err := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, err)
-
-	var mutableProperties types.Properties
-	mutableProperties, err = base.ReadProperties("quash:H|100")
-	require.Equal(t, nil, err)
-
-	var supplementError types.MetaProperties
-	supplementError, err = base.ReadMetaProperties("supplementError:S|mockError")
-	require.Equal(t, nil, err)
-
+	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	require.Equal(t, nil, Error)
+	mutableProperties, Error := base.ReadProperties("quash:H|100")
+	require.Equal(t, nil, Error)
+	supplementError, Error := base.ReadMetaProperties("supplementError:S|mockError")
+	require.Equal(t, nil, Error)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultIdentityID := base.NewID("fromIdentityID")
 	quashMockErrorIdentity := base.NewID("quashError")
 	classificationID := base.NewID("ClassificationID")
-
 	identityID := key.NewIdentityID(classificationID, immutableProperties)
 	identityID2 := key.NewIdentityID(base.NewID("ClassificationID2"), immutableProperties)
 	identityID3 := key.NewIdentityID(base.NewID("ClassificationID3"), immutableProperties)
-
 	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewIdentity(identityID, immutableProperties, mutableProperties))
 	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewIdentity(identityID2, immutableProperties, supplementError.RemoveData()))
 	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewIdentity(identityID3, immutableProperties, mutableProperties))
@@ -150,7 +139,6 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
-
 	t.Run("NegativeCase - quash height error", func(t *testing.T) {
 		ctx2 := ctx.WithBlockHeight(-20)
 		want := newTransactionResponse(errors.NotAuthorized)

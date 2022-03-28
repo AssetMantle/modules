@@ -6,10 +6,11 @@
 package helpers
 
 import (
+	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
@@ -17,8 +18,10 @@ import (
 
 type Query interface {
 	GetName() string
-	Command(*codec.Codec) *cobra.Command
+	Command() *cobra.Command
 	HandleMessage(sdkTypes.Context, abciTypes.RequestQuery) ([]byte, error)
-	RESTQueryHandler(context.CLIContext) http.HandlerFunc
+	RESTQueryHandler(client.Context) http.HandlerFunc
 	Initialize(Mapper, Parameters, ...interface{}) Query
+	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)
+	RegisterService(module.Configurator)
 }

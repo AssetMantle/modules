@@ -10,7 +10,7 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/params"
+	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
 type Module interface {
@@ -22,5 +22,5 @@ type Module interface {
 
 	DecodeModuleTransactionRequest(string, json.RawMessage) (sdkTypes.Msg, error)
 
-	Initialize(*sdkTypes.KVStoreKey, params.Subspace, ...interface{}) Module
+	Initialize(*sdkTypes.KVStoreKey, paramTypes.Subspace, ...interface{}) Module
 }

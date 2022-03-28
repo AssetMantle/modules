@@ -15,4 +15,5 @@ type HasMutables interface {
 	GetMutableProperties() types.Properties
 
 	Mutate(propertyList ...types.Property) HasMutables
+	types.Proto
 }

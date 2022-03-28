@@ -7,18 +7,13 @@ package renumerate
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
+	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-	"github.com/persistenceOne/persistenceSDK/constants/properties"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/renumerate"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -33,37 +28,11 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
+	msgServer := NewMsgServerImpl(transactionKeeper)
 
-	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.AssetID))
+	_, Error := msgServer.Renumerate(sdkTypes.WrapSDKContext(context), &message)
+	return newTransactionResponse(Error)
 
-	asset := assets.Get(key.FromID(message.AssetID))
-	if asset == nil {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
-
-	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.(mappables.Asset).GetClassificationID(), message.FromID, base.NewProperties(properties.Value))); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
-
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(mappables.Asset).GetValue())))
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
-
-	if valueMetaProperty := metaProperties.Get(ids.ValueProperty); valueMetaProperty != nil {
-		if value, Error := valueMetaProperty.GetData().AsDec(); Error != nil {
-			return newTransactionResponse(Error)
-		} else if auxiliaryResponse := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, value)); !auxiliaryResponse.IsSuccessful() {
-			return newTransactionResponse(auxiliaryResponse.GetError())
-		}
-	} else {
-		return newTransactionResponse(errors.MetaDataError)
-	}
-
-	return newTransactionResponse(nil)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
@@ -88,6 +57,10 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 	}
 
 	return transactionKeeper
+}
+
+func (transactionKeeper transactionKeeper) RegisterService(configurator module.Configurator) {
+	RegisterMsgServer(configurator.MsgServer(), NewMsgServerImpl(transactionKeeper))
 }
 
 func keeperPrototype() helpers.TransactionKeeper {

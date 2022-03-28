@@ -8,7 +8,7 @@ package base
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/cobra"
@@ -87,12 +87,23 @@ func (cliCommand cliCommand) ReadString(cliFlag helpers.CLIFlag) string {
 	panic(fmt.Errorf("uregistered flag %v type %T", cliFlag.GetName(), cliFlag.GetValue()))
 }
 
-func (cliCommand cliCommand) ReadBaseReq(cliContext context.CLIContext) rest.BaseReq {
+func (cliCommand cliCommand) ReadBaseReq(cliContext client.Context) rest.BaseReq {
 	return rest.BaseReq{
 		From:     cliContext.GetFromAddress().String(),
 		ChainID:  cliContext.ChainID,
 		Simulate: cliContext.Simulate,
 	}
+}
+func (cliCommand cliCommand) CreateQueryCommand() *cobra.Command {
+	command := &cobra.Command{
+		Use:   cliCommand.use,
+		Short: cliCommand.short,
+		Long:  cliCommand.long,
+	}
+	cliCommand.registerFlags(command)
+	flags.AddTxFlagsToCmd(command)
+
+	return command
 }
 func (cliCommand cliCommand) CreateCommand(runE func(command *cobra.Command, args []string) error) *cobra.Command {
 	command := &cobra.Command{
@@ -102,8 +113,9 @@ func (cliCommand cliCommand) CreateCommand(runE func(command *cobra.Command, arg
 		RunE:  runE,
 	}
 	cliCommand.registerFlags(command)
+	flags.AddTxFlagsToCmd(command)
 
-	return flags.PostCommands(command)[0]
+	return command
 }
 
 func NewCLICommand(use string, short string, long string, cliFlagList []helpers.CLIFlag) helpers.CLICommand {

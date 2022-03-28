@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/persistenceOne/persistenceSDK/constants/test"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 
 	tendermintDB "github.com/tendermint/tm-db"
 
@@ -19,10 +18,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
@@ -32,6 +27,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/stretchr/testify/require"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
 )
 
 type TestKeepers struct {
@@ -39,11 +37,11 @@ type TestKeepers struct {
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
-	var Codec = codec.New()
 
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	var Codec = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
@@ -64,8 +62,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
+	Error := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, Error)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
@@ -84,15 +82,10 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
-
-	var maintainedProperties types.Properties
-	maintainedProperties, err := base.ReadProperties("maintainedProperties:S|maintainedProperties")
-	require.Equal(t, nil, err)
-
-	var conformMockErrorProperties types.Properties
-	conformMockErrorProperties, err = base.ReadProperties("deputizeError:S|mockError")
-	require.Equal(t, nil, err)
-
+	maintainedProperties, Error := base.ReadProperties("maintainedProperties:S|maintainedProperties")
+	require.Equal(t, nil, Error)
+	conformMockErrorProperties, Error := base.ReadProperties("deputizeError:S|mockError")
+	require.Equal(t, nil, Error)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultIdentityID := base.NewID("fromIdentityID")

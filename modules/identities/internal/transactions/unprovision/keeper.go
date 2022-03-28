@@ -7,45 +7,49 @@ package unprovision
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
+	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
+	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 )
 
 type transactionKeeper struct {
-	mapper helpers.Mapper
+	mapper              helpers.Mapper
+	supplementAuxiliary helpers.Auxiliary
+	scrubAuxiliary      helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	identityID := message.IdentityID
-	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
+	msgServer := NewMsgServerImpl(transactionKeeper)
 
-	identity := identities.Get(key.FromID(identityID)).(mappables.Identity)
-	if identity == nil {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
-
-	if !identity.IsProvisioned(message.From) {
-		return newTransactionResponse(errors.NotAuthorized)
-	}
-
-	if !identity.IsProvisioned(message.To) {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
-
-	identities.Mutate(identity.UnprovisionAddress(message.To))
-
-	return newTransactionResponse(nil)
+	_, Error := msgServer.Unprovision(sdkTypes.WrapSDKContext(context), &message)
+	return newTransactionResponse(Error)
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
+	for _, auxiliary := range auxiliaries {
+		switch value := auxiliary.(type) {
+		case helpers.Auxiliary:
+			switch value.GetName() {
+			case supplement.Auxiliary.GetName():
+				transactionKeeper.supplementAuxiliary = value
+			case scrub.Auxiliary.GetName():
+				transactionKeeper.scrubAuxiliary = value
+			}
+		default:
+			panic(errors.UninitializedUsage)
+		}
+	}
 	return transactionKeeper
+}
+
+func (transactionKeeper transactionKeeper) RegisterService(configurator module.Configurator) {
+	RegisterMsgServer(configurator.MsgServer(), NewMsgServerImpl(transactionKeeper))
 }
 
 func keeperPrototype() helpers.TransactionKeeper {

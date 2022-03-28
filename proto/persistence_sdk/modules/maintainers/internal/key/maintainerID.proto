@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package persistence_sdk.modules.maintainers.internal.key;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key";
+
+message MaintainerID {
+  option (gogoproto.goproto_stringer) = false;
+
+  string classification_i_d = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
+  string identity_i_d = 2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types.ID", (gogoproto.nullable) = false];
+}

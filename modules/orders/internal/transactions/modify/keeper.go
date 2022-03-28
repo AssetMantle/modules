@@ -7,20 +7,14 @@ package modify
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
+	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -37,74 +31,10 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
+	msgServer := NewMsgServerImpl(transactionKeeper)
 
-	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.OrderID))
-
-	order := orders.Get(key.FromID(message.OrderID))
-	if order == nil {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
-
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetMakerOwnableSplit())))
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
-
-	transferMakerOwnableSplit := sdkTypes.ZeroDec()
-
-	if makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplitProperty); makerOwnableSplitProperty != nil {
-		oldMakerOwnableSplit, Error := makerOwnableSplitProperty.GetData().AsDec()
-		if Error != nil {
-			return newTransactionResponse(Error)
-		}
-
-		transferMakerOwnableSplit = message.MakerOwnableSplit.Sub(oldMakerOwnableSplit)
-	} else {
-		return newTransactionResponse(errors.MetaDataError)
-	}
-
-	if transferMakerOwnableSplit.LT(sdkTypes.ZeroDec()) {
-		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), message.FromID, order.(mappables.Order).GetMakerOwnableID(), transferMakerOwnableSplit.Abs())); !auxiliaryResponse.IsSuccessful() {
-			return newTransactionResponse(auxiliaryResponse.GetError())
-		}
-	} else if transferMakerOwnableSplit.GT(sdkTypes.ZeroDec()) {
-		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, base.NewID(module.Name), order.(mappables.Order).GetMakerOwnableID(), transferMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
-			return newTransactionResponse(auxiliaryResponse.GetError())
-		}
-	}
-
-	mutableMetaProperties := message.MutableMetaProperties.Add(base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewDecData(message.MakerOwnableSplit)))
-	mutableMetaProperties = mutableMetaProperties.Add(base.NewMetaProperty(ids.ExpiryProperty, base.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
-
-	scrubbedMutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetList()...)))
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
-
-	updatedMutables := order.(mappables.Order).GetMutableProperties().Mutate(append(scrubbedMutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
-
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetImmutableProperties(), updatedMutables)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
-
-	orders.Remove(order)
-	orders.Add(mappable.NewOrder(
-		key.NewOrderID(
-			order.(mappables.Order).GetClassificationID(),
-			order.(mappables.Order).GetMakerOwnableID(),
-			order.(mappables.Order).GetTakerOwnableID(),
-			base.NewID(message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(message.MakerOwnableSplit).String()),
-			base.NewID(order.(mappables.Order).GetCreation().GetData().String()),
-			order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetImmutableProperties(),
-		),
-		order.(mappables.Order).GetImmutableProperties(),
-		updatedMutables),
-	)
-
-	return newTransactionResponse(nil)
+	_, Error := msgServer.Modify(sdkTypes.WrapSDKContext(context), &message)
+	return newTransactionResponse(Error)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
@@ -131,6 +61,9 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 	}
 
 	return transactionKeeper
+}
+func (transactionKeeper transactionKeeper) RegisterService(configurator sdkModule.Configurator) {
+	RegisterMsgServer(configurator.MsgServer(), NewMsgServerImpl(transactionKeeper))
 }
 func keeperPrototype() helpers.TransactionKeeper {
 	return transactionKeeper{}

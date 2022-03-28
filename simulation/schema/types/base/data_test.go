@@ -1,15 +1,13 @@
 package base
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/simulation"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/stretchr/testify/require"
 	"math"
 	"math/rand"
 	"testing"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/stretchr/testify/require"
-
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 func TestGenerateRandomData(t *testing.T) {
@@ -24,4 +22,5 @@ func TestGenerateRandomData(t *testing.T) {
 	case 3:
 		require.Equal(t, GenerateRandomData(r), base.NewHeightData(base.NewHeight(r.Int63())))
 	}
+
 }

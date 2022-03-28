@@ -9,58 +9,57 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
-
 	"github.com/cosmos/cosmos-sdk/codec"
-
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
-type assetID struct {
-	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID missing"`
-	HashID           types.ID `json:"hashID" valid:"required~required field hashID missing"`
+var _ types.ID = (*AssetID)(nil)
+var _ helpers.Key = (*AssetID)(nil)
+
+func (assetID AssetID) GetStructReference() codec.ProtoMarshaler {
+	return &assetID
 }
-
-var _ types.ID = (*assetID)(nil)
-var _ helpers.Key = (*assetID)(nil)
-
-func (assetID assetID) String() string {
-	var values []string
-	values = append(values, assetID.ClassificationID.String())
-	values = append(values, assetID.HashID.String())
-
-	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
-}
-func (assetID assetID) Bytes() []byte {
+func (assetID AssetID) Bytes() []byte {
 	var Bytes []byte
 	Bytes = append(Bytes, assetID.ClassificationID.Bytes()...)
 	Bytes = append(Bytes, assetID.HashID.Bytes()...)
 
 	return Bytes
 }
-func (assetID assetID) Compare(id types.ID) int {
+func (assetID AssetID) String() string {
+	var values []string
+	values = append(values, assetID.ClassificationID.String())
+	values = append(values, assetID.HashID.String())
+
+	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
+}
+func (assetID AssetID) Compare(id types.ID) int {
 	return bytes.Compare(assetID.Bytes(), id.Bytes())
 }
-func (assetID assetID) GenerateStoreKeyBytes() []byte {
+func (assetID AssetID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(assetID.Bytes())
 }
-func (assetID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, assetID{})
+func (AssetID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, AssetID{})
 }
-func (assetID assetID) IsPartial() bool {
+func (assetID AssetID) IsPartial() bool {
 	return len(assetID.HashID.Bytes()) == 0
 }
-func (assetID assetID) Equals(key helpers.Key) bool {
-	return assetID.Compare(assetIDFromInterface(key)) == 0
+func (assetID AssetID) Equals(key helpers.Key) bool {
+	id := assetIDFromInterface(key)
+	return assetID.Compare(&id) == 0
 }
 
+// NewAssetID TODO try removing & like in mappables
 func NewAssetID(classificationID types.ID, immutableProperties types.Properties) types.ID {
-	return assetID{
+	return &AssetID{
 		ClassificationID: classificationID,
-		HashID:           qualified.HasImmutables{Properties: immutableProperties}.GenerateHashID(),
+		HashID:           baseTraits.HasImmutables{Properties: *baseTypes.NewProperties(immutableProperties.GetList()...)}.GenerateHashID(),
 	}
 }

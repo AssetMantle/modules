@@ -15,4 +15,5 @@ type HasImmutables interface {
 	GetImmutableProperties() types.Properties
 
 	GenerateHashID() types.ID
+	types.Proto
 }

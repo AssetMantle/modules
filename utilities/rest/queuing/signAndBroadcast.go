@@ -8,7 +8,7 @@ package queuing
 import (
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, cliContext context.CLIContext) ([]byte, error) {
+func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, cliContext client.Context) ([]byte, error) {
 	var stdTxs types.StdTx
 
 	var txBytes []byte

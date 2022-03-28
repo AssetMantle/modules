@@ -15,47 +15,48 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
-type split struct {
-	ID    types.ID     `json:"id" valid:"required field key missing"`
-	Value sdkTypes.Dec `json:"value" valid:"required~required field value missing, matches(^[0-9]$)~invalid field value"`
-}
+var _ mappables.Split = (*Split)(nil)
 
-var _ mappables.Split = (*split)(nil)
-
-func (split split) GetID() types.ID { return split.ID }
-func (split split) GetOwnerID() types.ID {
-	return key.ReadOwnerID(split.ID)
+func (split Split) GetStructReference() codec.ProtoMarshaler {
+	return &split
 }
-func (split split) GetOwnableID() types.ID {
-	return key.ReadOwnableID(split.ID)
+func (split Split) GetID() types.ID { return &split.ID }
+func (split Split) GetOwnerID() types.ID {
+	return key.ReadOwnerID(&split.ID)
 }
-func (split split) GetValue() sdkTypes.Dec {
+func (split Split) GetOwnableID() types.ID {
+	return key.ReadOwnableID(&split.ID)
+}
+func (split Split) GetValue() sdkTypes.Dec {
 	return split.Value
 }
-func (split split) Send(outValue sdkTypes.Dec) traits.Transactional {
-	split.Value = split.Value.Sub(outValue)
+func (split Split) Send(outValue sdkTypes.Dec) traits.Transactional {
+	result := split.Value.Sub(outValue)
+	split.Value = result
 	return split
 }
-func (split split) Receive(inValue sdkTypes.Dec) traits.Transactional {
-	split.Value = split.Value.Add(inValue)
+func (split Split) Receive(inValue sdkTypes.Dec) traits.Transactional {
+	result := split.Value.Add(inValue)
+	split.Value = result
 	return split
 }
-func (split split) CanSend(outValue sdkTypes.Dec) bool {
+func (split Split) CanSend(outValue sdkTypes.Dec) bool {
 	return split.Value.GTE(outValue)
 }
-func (split split) GetKey() helpers.Key {
-	return key.FromID(split.ID)
+func (split Split) GetKey() helpers.Key {
+	return key.FromID(&split.ID)
 }
-func (split) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, split{})
+func (Split) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Split{})
 }
 
 func NewSplit(splitID types.ID, value sdkTypes.Dec) mappables.Split {
-	return split{
-		ID:    splitID,
+	return &Split{
+		ID:    *base.NewID(splitID.String()),
 		Value: value,
 	}
 }

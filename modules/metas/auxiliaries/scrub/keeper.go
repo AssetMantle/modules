@@ -22,10 +22,8 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-
 	scrubbedPropertyList := make([]types.Property, len(auxiliaryRequest.MetaPropertyList))
 	metas := auxiliaryKeeper.mapper.NewCollection(context)
-
 	for i, metaProperty := range auxiliaryRequest.MetaPropertyList {
 		if metaProperty.GetHashID().Compare(base.NewID("")) != 0 {
 			metas.Add(mappable.NewMeta(metaProperty.GetData()))

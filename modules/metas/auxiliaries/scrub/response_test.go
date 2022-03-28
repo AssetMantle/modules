@@ -6,20 +6,18 @@
 package scrub
 
 import (
-	"testing"
-
-	"github.com/stretchr/testify/require"
-
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func Test_Super_Response(t *testing.T) {
 
-	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewStringData("Data"))
+	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewMetaFact(base.NewStringData("Data")))
 	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty}...)
-	property := base.NewProperty(base.NewID("id"), base.NewStringData("Data"))
+	property := base.NewProperty(base.NewID("id"), base.NewFact(base.NewStringData("Data")))
 	propertyList := base.NewProperties([]types.Property{property}...)
 
 	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList.RemoveData(), nil)

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package persistence_sdk.schema.traits.base;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/properties.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/schema/traits/base";
+
+message HasMutables {
+  persistence_sdk.schema.types.base.Properties properties = 1 [(gogoproto.nullable) = false];
+}

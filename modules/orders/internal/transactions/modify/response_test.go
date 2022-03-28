@@ -6,11 +6,9 @@
 package modify
 
 import (
-	"testing"
-
-	"github.com/stretchr/testify/require"
-
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func Test_Make_Response(t *testing.T) {

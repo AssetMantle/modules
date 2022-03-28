@@ -8,24 +8,24 @@ package simulator
 import (
 	"math/rand"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/common"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters/dummy"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 
+	simTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
-func (simulator) ParamChangeList(_ *rand.Rand) []simulation.ParamChange {
-	return []simulation.ParamChange{
+func (simulator) ParamChangeList(_ *rand.Rand) []simTypes.ParamChange {
+	return []simTypes.ParamChange{
 		simulation.NewSimParamChange(module.Name,
 			dummy.ID.String(),
 			func(r *rand.Rand) string {
-				bytes, err := common.Codec.MarshalJSON(dummy.Parameter.Mutate(base.NewDecData(sdk.NewDecWithPrec(int64(r.Intn(99)), 2))).GetData())
-				if err != nil {
-					panic(err)
+				bytes, Error := common.LegacyAminoCodec.MarshalJSON(dummy.Parameter.Mutate(base.NewDecData(sdkTypes.NewDecWithPrec(int64(r.Intn(99)), 2))).GetData())
+				if Error != nil {
+					panic(Error)
 				}
 				return string(bytes)
 			}),

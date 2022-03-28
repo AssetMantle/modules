@@ -6,23 +6,13 @@
 package immediate
 
 import (
-	"reflect"
-	"testing"
-
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-
-	"github.com/persistenceOne/persistenceSDK/constants/test"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintDB "github.com/tendermint/tm-db"
-
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/constants/test"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
@@ -36,6 +26,12 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/stretchr/testify/require"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tendermintDB "github.com/tendermint/tm-db"
+	"reflect"
+	"testing"
 )
 
 type TestKeepers struct {
@@ -43,10 +39,11 @@ type TestKeepers struct {
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+
+	var Codec = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
@@ -67,8 +64,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
+	Error := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, Error)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
@@ -90,19 +87,20 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
+
 	context, keepers := CreateTestInput(t)
-	immutableMetaProperties, err := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
-	require.Equal(t, nil, err)
-	immutableProperties, err := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, err)
-	mutableMetaProperties, err := base.ReadMetaProperties("makerOwnableSplit:D|1")
-	require.Equal(t, nil, err)
-	mutableProperties, err := base.ReadProperties("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, err)
-	conformMockErrorProperties, err := base.ReadProperties("conformError:S|mockError")
-	require.Equal(t, nil, err)
-	scrubMockErrorProperties, err := base.ReadMetaProperties("scrubError:S|mockError")
-	require.Equal(t, nil, err)
+	immutableMetaProperties, Error := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	require.Equal(t, nil, Error)
+	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	require.Equal(t, nil, Error)
+	mutableMetaProperties, Error := base.ReadMetaProperties("makerOwnableSplit:D|1")
+	require.Equal(t, nil, Error)
+	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	require.Equal(t, nil, Error)
+	conformMockErrorProperties, Error := base.ReadProperties("conformError:S|mockError")
+	require.Equal(t, nil, Error)
+	scrubMockErrorProperties, Error := base.ReadMetaProperties("scrubError:S|mockError")
+	require.Equal(t, nil, Error)
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultAddr := sdkTypes.AccAddress("addr")
 	defaultIdentityID := base.NewID("fromID")

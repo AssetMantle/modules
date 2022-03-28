@@ -8,27 +8,24 @@ package nub
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
-
+	sdkTypesMsgService "github.com/cosmos/cosmos-sdk/types/msgservice"
 	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
 )
 
-type message struct {
-	From  sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	NubID types.ID            `json:"nubID" valid:"required~required field nubID missing"`
-}
+var _ helpers.Message = &Message{}
 
-var _ sdkTypes.Msg = message{}
-
-func (message message) Route() string { return module.Name }
-func (message message) Type() string  { return Transaction.GetName() }
-func (message message) ValidateBasic() error {
+func (message Message) Route() string { return module.Name }
+func (message Message) Type() string  { return Transaction.GetName() }
+func (message Message) ValidateBasic() error {
 	var _, Error = govalidator.ValidateStruct(message)
 	if Error != nil {
 		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
@@ -36,29 +33,35 @@ func (message message) ValidateBasic() error {
 
 	return nil
 }
-func (message message) GetSignBytes() []byte {
-	return sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message))
+func (message Message) GetSignBytes() []byte {
+	return sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message))
 }
-func (message message) GetSigners() []sdkTypes.AccAddress {
-	return []sdkTypes.AccAddress{message.From}
+func (message Message) GetSigners() []sdkTypes.AccAddress {
+	return []sdkTypes.AccAddress{message.From.AsSDKTypesAccAddress()}
 }
-func (message) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, message{})
+func (Message) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Message{})
 }
-func messageFromInterface(msg sdkTypes.Msg) message {
+func (Message) RegisterInterface(registry codecTypes.InterfaceRegistry) {
+	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
+		&Message{},
+	)
+	sdkTypesMsgService.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
+}
+func messageFromInterface(msg sdkTypes.Msg) Message {
 	switch value := msg.(type) {
-	case message:
-		return value
+	case *Message:
+		return *value
 	default:
-		return message{}
+		return Message{}
 	}
 }
 func messagePrototype() helpers.Message {
-	return message{}
+	return &Message{}
 }
 func newMessage(from sdkTypes.AccAddress, nubID types.ID) sdkTypes.Msg {
-	return message{
-		From:  from,
-		NubID: nubID,
+	return &Message{
+		From:  base.NewAccAddressFromSDKTypesAccAddress(from),
+		NubID: *base.NewID(nubID.String()),
 	}
 }

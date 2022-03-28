@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package persistence_sdk.modules.orders.internal.parameters.dummy;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/decData.proto";
+import "persistence_sdk/schema/types/base/id.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/orders/internal/parameters/dummy";
+
+message DummyParameter {
+  option (gogoproto.goproto_stringer) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  persistence_sdk.schema.types.base.ID i_d = 1 [(gogoproto.nullable) = false];
+  persistence_sdk.schema.types.base.DecData data = 2 [(gogoproto.nullable) = false];
+}

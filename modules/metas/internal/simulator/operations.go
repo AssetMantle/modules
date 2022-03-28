@@ -6,15 +6,15 @@
 package simulator
 
 import (
-	"math/rand"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/cosmos/cosmos-sdk/types/simulation"
+	sdkModuleSimulation "github.com/cosmos/cosmos-sdk/x/simulation"
+	"math/rand"
 )
 
-func (simulator) WeightedOperations(appParams simulation.AppParams, codec *codec.Codec) simulation.WeightedOperations {
+func (simulator) WeightedOperations(appParams simulation.AppParams, codec codec.JSONMarshaler) simulation.WeightedOperation {
 	var weightMsg int
 
 	appParams.GetOrGenerate(codec, OpWeightMsg, &weightMsg, nil,
@@ -23,12 +23,10 @@ func (simulator) WeightedOperations(appParams simulation.AppParams, codec *codec
 		},
 	)
 
-	return simulation.WeightedOperations{
-		simulation.NewWeightedOperation(
-			weightMsg,
-			simulateMsg(),
-		),
-	}
+	return sdkModuleSimulation.NewWeightedOperation(
+		weightMsg,
+		simulateMsg(),
+	)
 }
 
 func simulateMsg() simulation.Operation {

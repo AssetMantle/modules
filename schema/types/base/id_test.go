@@ -14,7 +14,7 @@ import (
 func Test_ID(t *testing.T) {
 	testID := NewID("ID")
 
-	require.Equal(t, id{IDString: "ID"}, testID)
+	require.Equal(t, ID{IdString: "ID"}, testID)
 	require.Equal(t, "ID", testID.String())
 	require.Equal(t, true, testID.Compare(testID) == 0)
 	require.Equal(t, false, testID.Compare(NewID("ID2")) == 0)

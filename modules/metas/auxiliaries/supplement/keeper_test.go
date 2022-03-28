@@ -6,19 +6,11 @@
 package supplement
 
 import (
-	"reflect"
-	"testing"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintDB "github.com/tendermint/tm-db"
-
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/parameters"
@@ -27,6 +19,12 @@ import (
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/stretchr/testify/require"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tendermintDB "github.com/tendermint/tm-db"
+	"reflect"
+	"testing"
 )
 
 type TestKeepers struct {
@@ -34,10 +32,10 @@ type TestKeepers struct {
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	var Codec = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
@@ -58,8 +56,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
+	Error := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, Error)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
@@ -74,17 +72,18 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 }
 
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
+
 	context, keepers := CreateTestInput(t)
 
 	heightData, _ := base.ReadHeightData("")
 	decData, _ := base.ReadDecData("")
 
-	property1 := base.NewMetaProperty(base.NewID("id1"), base.NewStringData(""))
-	property2 := base.NewMetaProperty(base.NewID("id2"), heightData)
+	property1 := base.NewMetaProperty(base.NewID("id1"), base.NewMetaFact(base.NewStringData("")))
+	property2 := base.NewMetaProperty(base.NewID("id2"), base.NewMetaFact(heightData))
 	dec, _ := sdkTypes.NewDecFromStr("123")
-	property3 := base.NewMetaProperty(base.NewID("id3"), decData)
-	property4 := base.NewMetaProperty(base.NewID("id4"), base.NewIDData(base.NewID("")))
-	property5 := base.NewMetaProperty(base.NewID("id5"), base.NewDecData(dec))
+	property3 := base.NewMetaProperty(base.NewID("id3"), base.NewMetaFact(decData))
+	property4 := base.NewMetaProperty(base.NewID("id4"), base.NewMetaFact(base.NewIDData(base.NewID(""))))
+	property5 := base.NewMetaProperty(base.NewID("id5"), base.NewMetaFact(base.NewDecData(dec)))
 
 	var metaPropertyList []types.MetaProperty
 	metaPropertyList = append(metaPropertyList, property1, property2, property3, property4, property5)

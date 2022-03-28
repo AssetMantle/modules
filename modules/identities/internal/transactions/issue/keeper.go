@@ -7,72 +7,32 @@ package issue
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
+	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
-	maintainersVerify "github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
-	mapper                     helpers.Mapper
-	scrubAuxiliary             helpers.Auxiliary
-	verifyAuxiliary            helpers.Auxiliary
-	conformAuxiliary           helpers.Auxiliary
-	maintainersVerifyAuxiliary helpers.Auxiliary
+	mapper           helpers.Mapper
+	scrubAuxiliary   helpers.Auxiliary
+	verifyAuxiliary  helpers.Auxiliary
+	conformAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
+	// TODO add maintainer check
 
-	if auxiliaryResponse := transactionKeeper.maintainersVerifyAuxiliary.GetKeeper().Help(context, maintainersVerify.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
+	msgServer := NewMsgServerImpl(transactionKeeper)
 
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
+	_, Error := msgServer.Issue(sdkTypes.WrapSDKContext(context), &message)
+	return newTransactionResponse(Error)
 
-	immutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetList()...)))
-	if err != nil {
-		return newTransactionResponse(err)
-	}
-
-	immutableProperties := base.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
-
-	identityID := key.NewIdentityID(message.ClassificationID, immutableProperties)
-
-	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
-	if identities.Get(key.FromID(identityID)) != nil {
-		return newTransactionResponse(errors.EntityAlreadyExists)
-	}
-
-	authenticationProperty := base.NewMetaProperty(ids.AuthenticationProperty, base.NewListData(base.NewAccAddressData(message.To)))
-	updatedMutableMetaProperties := append(message.MutableMetaProperties.GetList(), authenticationProperty)
-
-	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(updatedMutableMetaProperties...)))
-
-	if err != nil {
-		return newTransactionResponse(err)
-	}
-
-	mutableProperties := base.NewProperties(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
-
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutableProperties, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
-
-	identities.Add(mappable.NewIdentity(identityID, immutableProperties, mutableProperties))
-
-	return newTransactionResponse(nil)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
@@ -88,8 +48,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.scrubAuxiliary = value
 			case verify.Auxiliary.GetName():
 				transactionKeeper.verifyAuxiliary = value
-			case maintainersVerify.Auxiliary.GetName():
-				transactionKeeper.maintainersVerifyAuxiliary = value
 			}
 		default:
 			panic(errors.UninitializedUsage)
@@ -97,6 +55,10 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 	}
 
 	return transactionKeeper
+}
+
+func (transactionKeeper transactionKeeper) RegisterService(configurator module.Configurator) {
+	RegisterMsgServer(configurator.MsgServer(), NewMsgServerImpl(transactionKeeper))
 }
 
 func keeperPrototype() helpers.TransactionKeeper {

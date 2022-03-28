@@ -6,22 +6,21 @@
 package simulator
 
 import (
-	"math/rand"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-
+	"github.com/gogo/protobuf/proto" //nolint:typecheck
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/common"
+	internalGenesis "github.com/persistenceOne/persistenceSDK/modules/orders/internal/genesis"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
 	ordersModule "github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/parameters"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/parameters/dummy"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	baseSimulation "github.com/persistenceOne/persistenceSDK/simulation/schema/types/base"
+	"math/rand"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -41,8 +40,12 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		immutables := baseSimulation.GenerateRandomProperties(simulationState.Rand)
 		mappableList[i] = mappable.NewOrder(key.NewOrderID(baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomIDWithDec(simulationState.Rand), baseSimulation.GenerateRandomIDWithInt64(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand), immutables), immutables, baseSimulation.GenerateRandomProperties(simulationState.Rand))
 	}
+	parametersList := parameters.Prototype().GetList()
+	newParametersList := make([]dummy.DummyParameter, len(parametersList))
+	for i, _ := range parametersList {
+		newParametersList[i] = *dummy.NewParameter(parametersList[i].GetID(), parametersList[i].GetData())
+	}
+	genesisState := internalGenesis.NewGenesis(nil, newParametersList).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
-
-	simulationState.GenState[ordersModule.Name] = common.Codec.MustMarshalJSON(genesisState)
+	simulationState.GenState[ordersModule.Name] = common.JSONCodec.MustMarshalJSON(genesisState.(proto.Message))
 }

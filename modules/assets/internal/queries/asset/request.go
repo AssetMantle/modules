@@ -7,8 +7,8 @@ package asset
 
 import (
 	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/client/context"
-
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/common"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -16,54 +16,61 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-type queryRequest struct {
-	AssetID types.ID `json:"assetID" valid:"required~required field assetID missing"`
-}
+var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
-var _ helpers.QueryRequest = (*queryRequest)(nil)
-
-// Validate godoc
-// @Summary Search for an asset by Asset ID
-// @Description Unique identifier of an asset.
+// QueryRequest godoc
+// @Summary Query asset using asset id
+// @Descrption Able to query the asset
 // @Accept text/plain
 // @Produce json
 // @Tags Assets
 // @Param assetID path string true "Asset ID"
-// @Success 200 {object} queryResponse "Message for a successful search."
-// @Failure default  {object}  queryResponse "Message for an unexpected error."
+// @Success 200 {object} queryResponse "A succesful query response"
+// @Failure default  {object}  queryResponse "An unexpected error response."
 // @Router /assets/assets/{assetID} [get]
-func (queryRequest queryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(queryRequest)
-	return err
+func (queryRequest QueryRequest) Validate() error {
+	_, Error := govalidator.ValidateStruct(queryRequest)
+	return Error
 }
-func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
+func (queryRequest QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(cliCommand.ReadString(flags.AssetID)))
 }
-func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
+func (queryRequest QueryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
 	return newQueryRequest(base.NewID(vars[Query.GetName()]))
 }
-func (queryRequest queryRequest) Encode() ([]byte, error) {
-	return common.Codec.MarshalJSON(queryRequest)
+func (queryRequest QueryRequest) Encode(cdc codec.JSONMarshaler) ([]byte, error) {
+	return cdc.MarshalJSON(&queryRequest)
 }
 
-func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
-	if err := common.Codec.UnmarshalJSON(bytes, &queryRequest); err != nil {
-		return nil, err
+func (queryRequest QueryRequest) Decode(cdc codec.JSONMarshaler, bytes []byte) (helpers.QueryRequest, error) {
+	if Error := cdc.UnmarshalJSON(bytes, &queryRequest); Error != nil {
+		return nil, Error
+	}
+
+	return queryRequest, nil
+}
+func (queryRequest QueryRequest) LegacyAminoEncode() ([]byte, error) {
+	return common.LegacyAminoCodec.MarshalJSON(queryRequest)
+}
+
+func (queryRequest QueryRequest) LegacyAminoDecode(bytes []byte) (helpers.QueryRequest, error) {
+	if Error := common.LegacyAminoCodec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
+		return nil, Error
 	}
 
 	return queryRequest, nil
 }
 func requestPrototype() helpers.QueryRequest {
-	return queryRequest{}
+	return QueryRequest{}
 }
-func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
+func queryRequestFromInterface(request helpers.QueryRequest) QueryRequest {
 	switch value := request.(type) {
-	case queryRequest:
+	case QueryRequest:
 		return value
 	default:
-		return queryRequest{}
+		return QueryRequest{}
 	}
 }
 func newQueryRequest(assetID types.ID) helpers.QueryRequest {
-	return queryRequest{AssetID: assetID}
+	return QueryRequest{AssetID: *base.NewID(assetID.String())}
 }

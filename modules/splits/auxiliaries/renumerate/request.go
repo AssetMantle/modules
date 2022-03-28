@@ -7,7 +7,6 @@ package renumerate
 
 import (
 	"fmt"
-
 	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 

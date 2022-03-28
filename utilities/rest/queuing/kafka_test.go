@@ -6,19 +6,17 @@
 package queuing
 
 import (
-	"testing"
-
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/stretchr/testify/require"
-
 	"github.com/persistenceOne/persistenceSDK/schema"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 	"github.com/persistenceOne/persistenceSDK/utilities/random"
+	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 type testMessage struct {
@@ -40,16 +38,16 @@ func (message testMessage) GetSigners() []sdkTypes.AccAddress {
 	fromAccAddress, _ := sdkTypes.AccAddressFromBech32(fromAddress)
 	return []sdkTypes.AccAddress{fromAccAddress}
 }
-func (testMessage) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, "testModule", testMessage{})
+func (testMessage) RegisterCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, "testModule", testMessage{})
 }
 
 func Test_Kafka(t *testing.T) {
 
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	var Codec = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 
@@ -57,7 +55,7 @@ func Test_Kafka(t *testing.T) {
 	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, Error)
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test"}
-	ticketID := TicketID(random.GenerateUniqueIdentifier("ticket"))
+	ticketID := TicketID(random.GenerateID("ticket"))
 	kafkaPorts := []string{"localhost:9092"}
 	require.Panics(t, func() {
 		testKafkaState := NewKafkaState(kafkaPorts)

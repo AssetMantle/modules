@@ -7,27 +7,33 @@ package base
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 const moduleName = "types"
 
-func RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, accAddressData{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, booleanData{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, listData{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, decData{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, height{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, heightData{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, id{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, idData{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, metaProperties{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, parameter{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, properties{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, property{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, signature{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, signatures{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, sortedDataList{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, stringData{})
+func RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, AccAddressData{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, ListData{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, DecData{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, Fact{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, Height{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, HeightData{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, ID{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, IDData{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, MetaFact{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, MetaProperties{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, MetaProperty{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, Properties{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, Property{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, Signature{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, Signatures{})
+	//codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, sortedDataList{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, moduleName, StringData{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec,moduleName,  Data_StringData{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec,moduleName,  Data_IdData{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec,moduleName,  Data_ListData{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec,moduleName,  Data_HeightData{})
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec,moduleName,  Data_DecData{})
+
 }

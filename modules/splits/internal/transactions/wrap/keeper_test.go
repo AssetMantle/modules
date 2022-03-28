@@ -13,12 +13,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/cosmos/cosmos-sdk/x/supply"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintDB "github.com/tendermint/tm-db"
-
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/constants/test"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
@@ -30,7 +24,10 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-
+	"github.com/stretchr/testify/require"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tendermintDB "github.com/tendermint/tm-db"
 	"reflect"
 	"testing"
 )
@@ -42,13 +39,13 @@ type TestKeepers struct {
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+
+	var Codec = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
-	supply.RegisterCodec(Codec)
 	params.RegisterCodec(Codec)
 	auth.RegisterCodec(Codec)
 	Codec.Seal()
@@ -73,8 +70,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
 	commitMultiStore.MountStoreWithDB(authStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(supplyStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
+	Error := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, Error)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
@@ -96,6 +93,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
+
 	ctx, keepers := CreateTestInput(t)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
@@ -105,8 +103,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		return sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(amount)))
 	}
 
-	err := keepers.BankKeeper.SetCoins(ctx, defaultAddr, coins(1000))
-	require.Equal(t, nil, err)
+	Error := keepers.BankKeeper.SetCoins(ctx, defaultAddr, coins(1000))
+	require.Equal(t, nil, Error)
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
 		if got := keepers.SplitsKeeper.Transact(ctx, newMessage(defaultAddr, fromID, coins(100))); !reflect.DeepEqual(got, want) {

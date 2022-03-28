@@ -25,9 +25,9 @@ import (
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {
 	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
@@ -63,14 +63,14 @@ func Test_Split_Response(t *testing.T) {
 	require.Equal(t, nil, testQueryResponse.GetError())
 	require.Equal(t, errors.IncorrectFormat, testQueryResponseWithError.GetError())
 
-	encodedResponse, _ := testQueryResponse.Encode()
-	bytes, _ := common.Codec.MarshalJSON(testQueryResponse)
+	encodedResponse, _ := testQueryResponse.LegacyAminoEncode()
+	bytes, _ := common.LegacyAminoCodec.MarshalJSON(testQueryResponse)
 	require.Equal(t, bytes, encodedResponse)
 
-	decodedResponse, _ := queryResponse{}.Decode(bytes)
+	decodedResponse, _ := queryResponse{}.LegacyAminoDecode(bytes)
 	require.Equal(t, testQueryResponse, decodedResponse)
 
-	decodedResponse2, _ := queryResponse{}.Decode([]byte{})
+	decodedResponse2, _ := queryResponse{}.LegacyAminoDecode([]byte{})
 	require.Equal(t, nil, decodedResponse2)
 
 	require.Equal(t, queryResponse{}, responsePrototype())

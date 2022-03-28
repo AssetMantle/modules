@@ -7,14 +7,10 @@ package base
 
 import "github.com/persistenceOne/persistenceSDK/schema/types"
 
-type height struct {
-	Value int64 `json:"height"`
-}
+var _ types.Height = (*Height)(nil)
 
-var _ types.Height = (*height)(nil)
-
-func (height height) Get() int64 { return height.Value }
-func (height height) Compare(compareHeight types.Height) int {
+func (height Height) Get() int64 { return height.Value }
+func (height Height) Compare(compareHeight types.Height) int {
 	if height.Get() > compareHeight.Get() {
 		return 1
 	} else if height.Get() < compareHeight.Get() {
@@ -23,6 +19,6 @@ func (height height) Compare(compareHeight types.Height) int {
 
 	return 0
 }
-func NewHeight(value int64) types.Height {
-	return height{Value: value}
+func NewHeight(value int64) *Height {
+	return &Height{Value: value}
 }

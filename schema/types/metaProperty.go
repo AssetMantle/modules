@@ -6,7 +6,9 @@
 package types
 
 type MetaProperty interface {
-	Property
-	GetData() Data
+	GetID() ID
+	GetMetaFact() MetaFact
 	RemoveData() Property
+
+	Proto
 }

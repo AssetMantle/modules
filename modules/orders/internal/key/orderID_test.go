@@ -6,26 +6,25 @@
 package key
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/persistenceOne/persistenceSDK/constants"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/stretchr/testify/require"
 	"strings"
 	"testing"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-
-	"github.com/persistenceOne/persistenceSDK/constants"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 func Test_OrderID_Methods(t *testing.T) {
+
 	classificationID := base.NewID("classificationID")
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
 	makerID := base.NewID("makerID")
-	defaultImmutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
+	defaultImmutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
 	rateID := base.NewID(sdkTypes.OneDec().String())
 	creationID := base.NewID("100")
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
 
 	testOrderID := NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, makerID, immutableProperties).(orderID)
 	testOrderID2 := NewOrderID(classificationID, makerOwnableID, takerOwnableID, base.NewID(sdkTypes.MustNewDecFromStr("2.3").String()), base.NewID("creation"), makerID, base.NewProperties()).(orderID)

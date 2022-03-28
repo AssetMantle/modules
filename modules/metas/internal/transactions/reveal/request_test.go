@@ -7,27 +7,24 @@ package reveal
 
 import (
 	"encoding/json"
-	"testing"
-
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/stretchr/testify/require"
-
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func Test_Reveal_Request(t *testing.T) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	var Codec = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
@@ -35,48 +32,48 @@ func Test_Reveal_Request(t *testing.T) {
 	cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
+	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, Error)
 
-	data := "S|newData"
-	newData, err := base.ReadData(data)
-	require.Equal(t, nil, err)
+	metaFact := "S|newMetaFact"
+	newMetaFact, Error := base.ReadMetaFact(metaFact)
+	require.Equal(t, nil, Error)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
-	testTransactionRequest := newTransactionRequest(testBaseReq, data)
+	testTransactionRequest := newTransactionRequest(testBaseReq, metaFact)
 
-	require.Equal(t, transactionRequest{BaseReq: testBaseReq, Data: data}, testTransactionRequest)
+	require.Equal(t, transactionRequest{BaseReq: testBaseReq, MetaFact: metaFact}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
-	requestFromCLI, err := transactionRequest{}.FromCLI(cliCommand, cliContext)
-	require.Equal(t, nil, err)
-	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, Data: ""}, requestFromCLI)
+	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, cliContext)
+	require.Equal(t, nil, Error)
+	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, MetaFact: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
-	transactionRequestUnmarshalled, err := transactionRequest{}.FromJSON(jsonMessage)
-	require.Equal(t, nil, err)
+	transactionRequestUnmarshalled, Error := transactionRequest{}.FromJSON(jsonMessage)
+	require.Equal(t, nil, Error)
 	require.Equal(t, testTransactionRequest, transactionRequestUnmarshalled)
 
-	randomUnmarshall, err := transactionRequest{}.FromJSON([]byte{})
+	randomUnmarshall, Error := transactionRequest{}.FromJSON([]byte{})
 	require.Equal(t, nil, randomUnmarshall)
-	require.NotNil(t, err)
+	require.NotNil(t, Error)
 
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
-	msg, err := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, newData), msg)
-	require.Nil(t, err)
+	msg, Error := testTransactionRequest.MakeMsg()
+	require.Equal(t, newMessage(fromAccAddress, newMetaFact), msg)
+	require.Nil(t, Error)
 
-	msg2, err := newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, data).MakeMsg()
-	require.NotNil(t, err)
+	msg2, Error := newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, metaFact).MakeMsg()
+	require.NotNil(t, Error)
 	require.Nil(t, msg2)
 
-	msg2, err = newTransactionRequest(rest.BaseReq{From: fromAddress, ChainID: "test"}, "randomString").MakeMsg()
-	require.NotNil(t, err)
+	msg2, Error = newTransactionRequest(rest.BaseReq{From: fromAddress, ChainID: "test"}, "randomString").MakeMsg()
+	require.NotNil(t, Error)
 	require.Nil(t, msg2)
 
 	require.Equal(t, transactionRequest{}, requestPrototype())
 	require.NotPanics(t, func() {
-		requestPrototype().RegisterCodec(codec.New())
+		requestPrototype().RegisterLegacyAminoCodec(codec.New())
 	})
 }

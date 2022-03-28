@@ -13,13 +13,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type metaProperties struct {
-	MetaPropertyList []types.MetaProperty `json:"metaPropertyList,omitempty"`
-}
+var _ types.MetaProperties = (*MetaProperties)(nil)
 
-var _ types.MetaProperties = (*metaProperties)(nil)
-
-func (metaProperties metaProperties) Get(id types.ID) types.MetaProperty {
+func (metaProperties MetaProperties) Get(id types.ID) types.MetaProperty {
 	for _, metaProperty := range metaProperties.GetList() {
 		if metaProperty.GetID().Compare(id) == 0 {
 			return metaProperty
@@ -28,10 +24,14 @@ func (metaProperties metaProperties) Get(id types.ID) types.MetaProperty {
 
 	return nil
 }
-func (metaProperties metaProperties) GetList() []types.MetaProperty {
-	return metaProperties.MetaPropertyList
+func (metaProperties MetaProperties) GetList() []types.MetaProperty {
+	newMetaPropertiesList := make([]types.MetaProperty, len(metaProperties.MetaPropertyList))
+	for i, _ := range metaProperties.MetaPropertyList {
+		newMetaPropertiesList[i] = &metaProperties.MetaPropertyList[i]
+	}
+	return newMetaPropertiesList
 }
-func (metaProperties metaProperties) Add(metaPropertyList ...types.MetaProperty) types.MetaProperties {
+func (metaProperties MetaProperties) Add(metaPropertyList ...types.MetaProperty) types.MetaProperties {
 	newMetaPropertyList := metaProperties.GetList()
 
 	for _, addMetaProperty := range metaPropertyList {
@@ -42,7 +42,7 @@ func (metaProperties metaProperties) Add(metaPropertyList ...types.MetaProperty)
 
 	return NewMetaProperties(newMetaPropertyList...)
 }
-func (metaProperties metaProperties) Remove(metaPropertyList ...types.MetaProperty) types.MetaProperties {
+func (metaProperties MetaProperties) Remove(metaPropertyList ...types.MetaProperty) types.MetaProperties {
 	newMetaPropertyList := metaProperties.GetList()
 
 	for _, removeMetaProperty := range metaPropertyList {
@@ -56,7 +56,7 @@ func (metaProperties metaProperties) Remove(metaPropertyList ...types.MetaProper
 
 	return NewMetaProperties(newMetaPropertyList...)
 }
-func (metaProperties metaProperties) Mutate(metaPropertyList ...types.MetaProperty) types.MetaProperties {
+func (metaProperties MetaProperties) Mutate(metaPropertyList ...types.MetaProperty) types.MetaProperties {
 	newMetaPropertyList := metaProperties.GetList()
 
 	for _, mutateMetaProperty := range metaPropertyList {
@@ -70,7 +70,7 @@ func (metaProperties metaProperties) Mutate(metaPropertyList ...types.MetaProper
 
 	return NewMetaProperties(newMetaPropertyList...)
 }
-func (metaProperties metaProperties) RemoveData() types.Properties {
+func (metaProperties MetaProperties) RemoveData() types.Properties {
 	propertyList := make([]types.Property, len(metaProperties.GetList()))
 	for i, oldMetaProperty := range metaProperties.GetList() {
 		propertyList[i] = oldMetaProperty.RemoveData()
@@ -79,9 +79,13 @@ func (metaProperties metaProperties) RemoveData() types.Properties {
 	return NewProperties(propertyList...)
 }
 
-func NewMetaProperties(metaPropertyList ...types.MetaProperty) types.MetaProperties {
-	return metaProperties{
-		MetaPropertyList: metaPropertyList,
+func NewMetaProperties(metaPropertyList ...types.MetaProperty) *MetaProperties {
+	newMetaPropertyList := make([]MetaProperty, len(metaPropertyList))
+	for i, element := range metaPropertyList {
+		newMetaPropertyList[i] = *NewMetaProperty(element.GetID(), element.GetMetaFact())
+	}
+	return &MetaProperties{
+		MetaPropertyList: newMetaPropertyList,
 	}
 }
 

@@ -6,18 +6,17 @@
 package base
 
 import (
+	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"strings"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/params"
-
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type parameters struct {
 	parameterList  []types.Parameter
-	paramsSubspace params.Subspace
+	paramsSubspace paramTypes.Subspace
 }
 
 var _ helpers.Parameters = (*parameters)(nil)
@@ -32,8 +31,8 @@ func (parameters parameters) String() string {
 }
 func (parameters parameters) Validate() error {
 	for _, parameter := range parameters.parameterList {
-		if err := parameter.Validate(); err != nil {
-			return err
+		if Error := parameter.Validate(); Error != nil {
+			return Error
 		}
 	}
 
@@ -85,19 +84,19 @@ func (parameters parameters) Mutate(context sdkTypes.Context, newParameter types
 
 	return parameters
 }
-func (parameters parameters) ParamSetPairs() params.ParamSetPairs {
-	paramSetPairList := make([]params.ParamSetPair, len(parameters.parameterList))
+func (parameters parameters) ParamSetPairs() paramTypes.ParamSetPairs {
+	paramSetPairList := make([]paramTypes.ParamSetPair, len(parameters.parameterList))
 
 	for i, parameter := range parameters.parameterList {
-		paramSetPairList[i] = params.NewParamSetPair(parameter.GetID().Bytes(), parameter.GetData(), parameter.GetValidator())
+		paramSetPairList[i] = paramTypes.NewParamSetPair(parameter.GetID().Bytes(), parameter.GetData(), parameter.GetValidator())
 	}
 
 	return paramSetPairList
 }
-func (parameters parameters) GetKeyTable() params.KeyTable {
-	return params.NewKeyTable().RegisterParamSet(parameters)
+func (parameters parameters) GetKeyTable() paramTypes.KeyTable {
+	return paramTypes.NewKeyTable().RegisterParamSet(parameters)
 }
-func (parameters parameters) Initialize(paramsSubspace params.Subspace) helpers.Parameters {
+func (parameters parameters) Initialize(paramsSubspace paramTypes.Subspace) helpers.Parameters {
 	parameters.paramsSubspace = paramsSubspace
 	return parameters
 }

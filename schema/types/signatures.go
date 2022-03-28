@@ -13,4 +13,6 @@ type Signatures interface {
 	Add(Signature) Signatures
 	Remove(Signature) Signatures
 	Mutate(Signature) Signatures
+
+	Proto
 }

@@ -6,25 +6,23 @@
 package queuing
 
 import (
-	"testing"
-
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/stretchr/testify/require"
-
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/utilities/random"
+	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func Test_Kafka_Types(t *testing.T) {
 
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	var Codec = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
@@ -35,7 +33,7 @@ func Test_Kafka_Types(t *testing.T) {
 
 	testMessage := sdkTypes.NewTestMsg()
 
-	ticketID := TicketID(random.GenerateUniqueIdentifier("name"))
+	ticketID := TicketID(random.GenerateID("name"))
 	testKafkaMsg := NewKafkaMsgFromRest(testMessage, ticketID, testBaseReq, cliContext)
 	kafkaCliCtx := kafkaCliCtx{
 		OutputFormat:  cliContext.OutputFormat,
@@ -56,5 +54,5 @@ func Test_Kafka_Types(t *testing.T) {
 	}
 	require.Equal(t, kafkaMsg{Msg: testMessage, TicketID: ticketID, BaseRequest: testBaseReq, KafkaCliCtx: kafkaCliCtx}, testKafkaMsg)
 	require.Equal(t, cliContext, cliCtxFromKafkaMsg(testKafkaMsg, cliContext))
-	// require
+	//require
 }

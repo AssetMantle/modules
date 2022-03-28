@@ -7,12 +7,8 @@ package reveal
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
+	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -24,24 +20,18 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	metaID := key.GenerateMetaID(message.Data)
-	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(metaID))
+	msgServer := NewMsgServerImpl(transactionKeeper)
 
-	meta := metas.Get(key.FromID(metaID))
-	if meta != nil {
-		return newTransactionResponse(errors.EntityAlreadyExists)
-	}
-
-	if message.Data.GenerateHashID().Compare(base.NewID("")) != 0 {
-		metas.Add(mappable.NewMeta(message.Data))
-	}
-
-	return newTransactionResponse(nil)
+	_, Error := msgServer.Reveal(sdkTypes.WrapSDKContext(context), &message)
+	return newTransactionResponse(Error)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, _ []interface{}) helpers.Keeper {
 	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
 	return transactionKeeper
+}
+func (transactionKeeper transactionKeeper) RegisterService(configurator sdkModule.Configurator) {
+	RegisterMsgServer(configurator.MsgServer(), NewMsgServerImpl(transactionKeeper))
 }
 func keeperPrototype() helpers.TransactionKeeper {
 	return transactionKeeper{}

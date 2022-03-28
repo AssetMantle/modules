@@ -9,7 +9,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -24,10 +24,10 @@ import (
 )
 
 func Test_Deputize_Request(t *testing.T) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	var Codec = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
@@ -77,6 +77,6 @@ func Test_Deputize_Request(t *testing.T) {
 
 	require.Equal(t, transactionRequest{}, requestPrototype())
 	require.NotPanics(t, func() {
-		requestPrototype().RegisterCodec(codec.New())
+		requestPrototype().RegisterLegacyAminoCodec(codec.New())
 	})
 }

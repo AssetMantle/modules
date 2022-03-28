@@ -9,43 +9,20 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type property struct {
-	ID     propertyID `json:"id"`
-	DataID dataID     `json:"dataID"`
-}
+var _ types.Property = (*Property)(nil)
 
-var _ types.Property = (*property)(nil)
-
-func (property property) GetID() types.ID {
-	return property.ID
-}
-func (property property) GetDataID() types.ID {
-	return property.DataID
-}
-func (property property) GetKeyID() types.ID {
-	return property.ID.KeyID
-}
-func (property property) GetTypeID() types.ID {
-	return property.ID.TypeID
-}
-func (property property) GetHashID() types.ID {
-	return property.DataID.HashID
-}
-
-func NewProperty(keyID types.ID, data types.Data) types.Property {
-	return property{
-		ID: propertyID{
-			KeyID:  keyID,
-			TypeID: data.GetTypeID(),
-		},
-		DataID: dataIDFromInterface(data.GetID()),
+func (property Property) GetID() types.ID     { return &property.Id }
+func (property Property) GetFact() types.Fact { return &property.Fact }
+func NewProperty(id types.ID, fact types.Fact) *Property {
+	return &Property{
+		Id:   *NewID(id.String()),
+		Fact: *NewFactProperty(fact.GetHashID(), fact.GetTypeID(), fact.GetSignatures()),
 	}
 }
-
 func ReadProperty(propertyString string) (types.Property, error) {
-	property, err := ReadMetaProperty(propertyString)
-	if err != nil {
-		return nil, err
+	property, Error := ReadMetaProperty(propertyString)
+	if Error != nil {
+		return nil, Error
 	}
 
 	return property.RemoveData(), nil

@@ -1,2301 +1,2101 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "description": "API Documentation of Persistence custom modules",
-    "title": "Persistence Swagger Documentation",
-    "contact": {},
-    "license": {
-      "name": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    "swagger": "2.0",
+    "info": {
+        "description": "API Documentation of Persistence custom modules",
+        "title": "Persistence Swagger Documentation",
+        "contact": {},
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "0.1.0"
     },
-    "version": "0.1.0"
-  },
-  "host": "localhost:1317",
-  "paths": {
-    "/assets/assets/{assetID}": {
-      "get": {
-        "description": "Unique identifier of an asset.",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Assets"
-        ],
-        "summary": "Search for an asset by Asset ID",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Asset ID",
-            "name": "assetID",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful search.",
-            "schema": {
-              "$ref": "#/definitions/asset.queryResponse"
+    "host": "localhost:1317",
+    "paths": {
+        "/assets/assets/{assetID}": {
+            "get": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "Query asset using asset id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Asset ID",
+                        "name": "assetID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A succesful query response",
+                        "schema": {
+                            "$ref": "#/definitions/asset.queryResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/asset.queryResponse"
+                        }
+                    }
+                }
             }
-          },
-          "default": {
-            "description": "Message for an unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/asset.queryResponse"
+        },
+        "/assets/burn": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "burn asset transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/burn.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/burn.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/burn.transactionResponse"
+                        }
+                    }
+                }
             }
-          }
+        },
+        "/assets/define": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "define asset transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/define.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/define.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/define.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/deputize": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "deputize asset transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/deputize.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/deputize.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/deputize.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/mint": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "mint asset transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/mint.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/mint.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/mint.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/mutate": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "mutate asset transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/mutate.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/mutate.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/mutate.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/renumerate": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "renumerate asset transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/renumerate.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/renumerate.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/renumerate.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/revoke": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Assets"
+                ],
+                "summary": "revoke asset transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/revoke.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/revoke.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/revoke.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/classifications/classifications/{classificationID}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Classifications"
+                ],
+                "summary": "Query classification using classification id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "classification ID",
+                        "name": "classificationID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sucessful query response",
+                        "schema": {
+                            "$ref": "#/definitions/classification.queryResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/classification.queryResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/identities/define": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Identities"
+                ],
+                "summary": "define identities transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/define.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/define.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/define.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/identities/deputize": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Identities"
+                ],
+                "summary": "deputize identities transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/deputize.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/deputize.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/deputize.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/identities/identities/{identityID}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Identities"
+                ],
+                "summary": "Query identities using identity id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "identity ID",
+                        "name": "identityID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sucessful query response",
+                        "schema": {
+                            "$ref": "#/definitions/identity.queryResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/identity.queryResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/identities/issue": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Identities"
+                ],
+                "summary": "issue identities transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/issue.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/issue.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/issue.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/identities/nub": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Identities"
+                ],
+                "summary": "nub identities transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/nub.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/nub.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/nub.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/identities/provision": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Identities"
+                ],
+                "summary": "provision identities transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/provision.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/provision.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/provision.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/identities/reveal": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Metas"
+                ],
+                "summary": "reveal metas transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/reveal.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/reveal.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/reveal.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/identities/revoke": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Identities"
+                ],
+                "summary": "revoke identity transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/revoke.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/revoke.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/revoke.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/identities/unprovision": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Identities"
+                ],
+                "summary": "unprovision identity transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/unprovision.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/unprovision.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/unprovision.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/maintainers/maintainers/{maintainerID}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Maintainers"
+                ],
+                "summary": "Query maintainers using maintainer id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "maintainer ID",
+                        "name": "maintainerID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful query response",
+                        "schema": {
+                            "$ref": "#/definitions/maintainer.queryResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/maintainer.queryResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/metas/metas/{metaID}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Metas"
+                ],
+                "summary": "Query meta using meta id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "meta ID",
+                        "name": "metaID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful query response",
+                        "schema": {
+                            "$ref": "#/definitions/meta.queryResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/meta.queryResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/cancel": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "cancel order transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/cancel.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/cancel.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/cancel.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/define": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "define order transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/define.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/define.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/define.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/deputize": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "deputize order transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/deputize.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/deputize.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/deputize.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/immediate": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "immediate order transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/immediate.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/immediate.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/immediate.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/make": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "make order transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/make.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/make.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/make.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/modify": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "modify order transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modify.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/modify.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/modify.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/orders/{orderID}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Query order using order id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order ID",
+                        "name": "orderID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful query response",
+                        "schema": {
+                            "$ref": "#/definitions/order.queryResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/order.queryResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/revoke": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "revoke order transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/revoke.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/revoke.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "error",
+                        "schema": {
+                            "$ref": "#/definitions/revoke.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/take": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "take order transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/take.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/take.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/take.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/splits/send": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Splits"
+                ],
+                "summary": "send split transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/send.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/send.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/send.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/splits/splits/{splitID}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Splits"
+                ],
+                "summary": "Query split using split id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "split ID",
+                        "name": "splitID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful query response",
+                        "schema": {
+                            "$ref": "#/definitions/split.queryResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/split.queryResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/splits/unwrap": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Splits"
+                ],
+                "summary": "unwrap split transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/unwrap.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/unwrap.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/unwrap.transactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/splits/wrap": {
+            "post": {
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Splits"
+                ],
+                "summary": "wrap split transaction",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/wrap.transactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "schema": {
+                            "$ref": "#/definitions/wrap.transactionResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "schema": {
+                            "$ref": "#/definitions/wrap.transactionResponse"
+                        }
+                    }
+                }
+            }
         }
-      }
     },
-    "/assets/burn": {
-      "post": {
-        "description": "Transaction for burning an asset. request body",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Assets"
-        ],
-        "summary": "Burn an asset transaction",
-        "parameters": [
-          {
-            "description": "Transaction for burning an asset. request body",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/burn.transactionRequest"
+    "definitions": {
+        "asset.queryResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/helpers.Mappable"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful transaction.",
-            "schema": {
-              "$ref": "#/definitions/burn.transactionResponse"
+        },
+        "burn.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "assetID": {
+                    "type": "string"
+                },
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "fromID": {
+                    "type": "string"
+                }
             }
-          },
-          "default": {
-            "description": "Message for an unexpected error in the transaction.",
-            "schema": {
-              "$ref": "#/definitions/burn.transactionResponse"
+        },
+        "burn.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
             }
-          }
+        },
+        "cancel.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "orderID": {
+                    "type": "string"
+                }
+            }
+        },
+        "cancel.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "classification.queryResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/helpers.Mappable"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "define.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "immutableMetaProperties": {
+                    "type": "string"
+                },
+                "immutableProperties": {
+                    "type": "string"
+                },
+                "mutableMetaProperties": {
+                    "type": "string"
+                },
+                "mutableProperties": {
+                    "type": "string"
+                }
+            }
+        },
+        "define.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "deputize.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "addMaintainer": {
+                    "type": "boolean"
+                },
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "classificationID": {
+                    "type": "string"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "maintainedProperties": {
+                    "type": "string"
+                },
+                "mutateMaintainer": {
+                    "type": "boolean"
+                },
+                "removeMaintainer": {
+                    "type": "boolean"
+                },
+                "toID": {
+                    "type": "string"
+                }
+            }
+        },
+        "deputize.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "helpers.Mappable": {
+            "type": "object"
+        },
+        "identity.queryResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/helpers.Mappable"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "immediate.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "classificationID": {
+                    "type": "string"
+                },
+                "expiresIn": {
+                    "type": "integer"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "immutableMetaProperties": {
+                    "type": "string"
+                },
+                "immutableProperties": {
+                    "type": "string"
+                },
+                "makerOwnableID": {
+                    "type": "string"
+                },
+                "makerOwnableSplit": {
+                    "type": "string"
+                },
+                "mutableMetaProperties": {
+                    "type": "string"
+                },
+                "mutableProperties": {
+                    "type": "string"
+                },
+                "takerOwnableID": {
+                    "type": "string"
+                },
+                "takerOwnableSplit": {
+                    "type": "string"
+                }
+            }
+        },
+        "immediate.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "issue.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "classificationID": {
+                    "type": "string"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "immutableMetaProperties": {
+                    "type": "string"
+                },
+                "immutableProperties": {
+                    "type": "string"
+                },
+                "mutableMetaProperties": {
+                    "type": "string"
+                },
+                "mutableProperties": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
+        "issue.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "maintainer.queryResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/helpers.Mappable"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "make.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "classificationID": {
+                    "type": "string"
+                },
+                "expiresIn": {
+                    "type": "integer"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "immutableMetaProperties": {
+                    "type": "string"
+                },
+                "immutableProperties": {
+                    "type": "string"
+                },
+                "makerOwnableID": {
+                    "type": "string"
+                },
+                "makerOwnableSplit": {
+                    "type": "string"
+                },
+                "mutableMetaProperties": {
+                    "type": "string"
+                },
+                "mutableProperties": {
+                    "type": "string"
+                },
+                "takerOwnableID": {
+                    "type": "string"
+                },
+                "takerOwnableSplit": {
+                    "type": "string"
+                }
+            }
+        },
+        "make.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "meta.queryResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/helpers.Mappable"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "mint.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "classificationID": {
+                    "type": "string"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "immutableMetaProperties": {
+                    "type": "string"
+                },
+                "immutableProperties": {
+                    "type": "string"
+                },
+                "mutableMetaProperties": {
+                    "type": "string"
+                },
+                "mutableProperties": {
+                    "type": "string"
+                },
+                "toID": {
+                    "type": "string"
+                }
+            }
+        },
+        "mint.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "modify.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "expiresIn": {
+                    "type": "integer"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "makerOwnableSplit": {
+                    "type": "string"
+                },
+                "mutableMetaProperties": {
+                    "type": "string"
+                },
+                "mutableProperties": {
+                    "type": "string"
+                },
+                "orderID": {
+                    "type": "string"
+                },
+                "takerOwnableSplit": {
+                    "type": "string"
+                }
+            }
+        },
+        "modify.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "mutate.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "assetID": {
+                    "type": "string"
+                },
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "mutableMetaProperties": {
+                    "type": "string"
+                },
+                "mutableProperties": {
+                    "type": "string"
+                }
+            }
+        },
+        "mutate.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "nub.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "nubID": {
+                    "type": "string"
+                }
+            }
+        },
+        "nub.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "order.queryResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/helpers.Mappable"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "provision.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "identityID": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
+        "provision.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "renumerate.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "assetID": {
+                    "type": "string"
+                },
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "fromID": {
+                    "type": "string"
+                }
+            }
+        },
+        "renumerate.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "rest.BaseReq": {
+            "type": "object",
+            "properties": {
+                "account_number": {
+                    "type": "integer"
+                },
+                "chain_id": {
+                    "type": "string"
+                },
+                "fees": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.Coin"
+                    }
+                },
+                "from": {
+                    "type": "string"
+                },
+                "gas": {
+                    "type": "string"
+                },
+                "gas_adjustment": {
+                    "type": "string"
+                },
+                "memo": {
+                    "type": "string"
+                },
+                "sequence": {
+                    "type": "integer"
+                },
+                "simulate": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "reveal.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "metaFact": {
+                    "type": "string"
+                }
+            }
+        },
+        "reveal.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "revoke.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "classificationID": {
+                    "type": "string"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "toID": {
+                    "type": "string"
+                }
+            }
+        },
+        "revoke.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "send.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "ownableID": {
+                    "type": "string"
+                },
+                "toID": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "send.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "split.queryResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/helpers.Mappable"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "take.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "orderID": {
+                    "type": "string"
+                },
+                "takerOwnableSplit": {
+                    "type": "string"
+                }
+            }
+        },
+        "take.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "types.Coin": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "description": "To allow the use of unsigned integers (see: #1273) a larger refactor will\nneed to be made. So we use signed integers for now with safety measures in\nplace preventing negative values being used.",
+                    "$ref": "#/definitions/types.Int"
+                },
+                "denom": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.Int": {
+            "type": "object"
+        },
+        "unprovision.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "identityID": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
+        "unprovision.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "unwrap.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "fromID": {
+                    "type": "string"
+                },
+                "ownableID": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "unwrap.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "sucess": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "wrap.transactionRequest": {
+            "type": "object",
+            "properties": {
+                "baseReq": {
+                    "$ref": "#/definitions/rest.BaseReq"
+                },
+                "coins": {
+                    "type": "string"
+                },
+                "fromID": {
+                    "type": "string"
+                }
+            }
+        },
+        "wrap.transactionResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "sucess": {
+                    "type": "boolean"
+                }
+            }
         }
-      }
-    },
-    "/assets/define": {
-      "post": {
-        "description": "Define asset with mutable immutable properties",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Assets"
-        ],
-        "summary": "Define an asset transaction",
-        "parameters": [
-          {
-            "description": "A transaction to define the asset.",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/define.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful transaction.",
-            "schema": {
-              "$ref": "#/definitions/define.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error in the transaction.",
-            "schema": {
-              "$ref": "#/definitions/define.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/assets/deputize": {
-      "post": {
-        "description": "Deputize asset",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Assets"
-        ],
-        "summary": "Deputize an asset transaction",
-        "parameters": [
-          {
-            "description": "request body",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/deputize.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/deputize.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/deputize.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/assets/mint": {
-      "post": {
-        "description": "Mint asset with mutable immutable properties",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Assets"
-        ],
-        "summary": "Mint an asset transaction",
-        "parameters": [
-          {
-            "description": "A transaction to mint the asset.",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/mint.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/mint.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/mint.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/assets/mutate": {
-      "post": {
-        "description": "Mutate asset",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Assets"
-        ],
-        "summary": "Mutate an asset transaction",
-        "parameters": [
-          {
-            "description": "A transaction to mutate an asset.",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/github.com_persistenceOne_persistenceSDK_modules_assets_internal_transactions_mutate.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/github.com_persistenceOne_persistenceSDK_modules_assets_internal_transactions_mutate.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/github.com_persistenceOne_persistenceSDK_modules_assets_internal_transactions_mutate.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/assets/renumerate": {
-      "post": {
-        "description": "Renumerate asset with mutable immutable properties",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Assets"
-        ],
-        "summary": "Renumerate an asset transaction",
-        "parameters": [
-          {
-            "description": "A transaction to renumerate an asset.",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/renumerate.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/renumerate.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/renumerate.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/assets/revoke": {
-      "post": {
-        "description": "Revoke asset",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Assets"
-        ],
-        "summary": "Revoke a maintainer for an asset classification transaction",
-        "parameters": [
-          {
-            "description": "A transaction to revoke an asset.",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/revoke.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/revoke.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/revoke.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/classifications/classifications/{classificationID}": {
-      "get": {
-        "description": "Able to query the asset",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Classifications"
-        ],
-        "summary": "Search for an identity by identity ID",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Unique identifier of an asset classification.",
-            "name": "classificationID",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful search response.",
-            "schema": {
-              "$ref": "#/definitions/classification.queryResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/classification.queryResponse"
-            }
-          }
-        }
-      }
-    },
-    "/identities/define": {
-      "post": {
-        "description": "Define identities with mutable immutable properties",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Identities"
-        ],
-        "summary": "Define an identity",
-        "parameters": [
-          {
-            "description": "Deputize identities",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/define.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/define.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/define.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/identities/deputize": {
-      "post": {
-        "description": "A transaction to deputize a maintainer for an identity classification.",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Identities"
-        ],
-        "summary": "Deputize an identity",
-        "parameters": [
-          {
-            "description": "Request body to deputize identity",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/deputize.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/deputize.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/deputize.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/identities/identities/{identityID}": {
-      "get": {
-        "description": "Able to query the asset",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Identities"
-        ],
-        "summary": "Search for an identity by identity ID",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Query identity using identityID",
-            "name": "identityID",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/identity.queryResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/identity.queryResponse"
-            }
-          }
-        }
-      }
-    },
-    "/identities/issue": {
-      "post": {
-        "description": "Issue identities with mutable immutable properties",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Identities"
-        ],
-        "summary": "Issue an identity",
-        "parameters": [
-          {
-            "description": "A transaction to issue an identity.",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/issue.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/issue.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/issue.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/identities/mutate": {
-      "post": {
-        "description": "Mutate identity properties",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Identities"
-        ],
-        "summary": "Mutate an identity",
-        "parameters": [
-          {
-            "description": "Request body to mutate Identity",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/github.com_persistenceOne_persistenceSDK_modules_identities_internal_transactions_mutate.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/github.com_persistenceOne_persistenceSDK_modules_identities_internal_transactions_mutate.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/github.com_persistenceOne_persistenceSDK_modules_identities_internal_transactions_mutate.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/identities/nub": {
-      "post": {
-        "description": "A transaction to nub an identity.",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Identities"
-        ],
-        "summary": "Nub an identity",
-        "parameters": [
-          {
-            "description": "A transaction to nub a base identity.",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/nub.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/nub.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/nub.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/identities/provision": {
-      "post": {
-        "description": "Provision identities",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Identities"
-        ],
-        "summary": "Provision an identity",
-        "parameters": [
-          {
-            "description": "Request body for provision identity",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/provision.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/provision.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/provision.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/identities/quash": {
-      "post": {
-        "description": "Quash identity transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Identities"
-        ],
-        "summary": "Quash identity transaction",
-        "parameters": [
-          {
-            "description": "Request body for quash identity",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/quash.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/quash.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/quash.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/identities/revoke": {
-      "post": {
-        "description": "Revoke identity transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Identities"
-        ],
-        "summary": "Revoke identity transaction",
-        "parameters": [
-          {
-            "description": "Request body for revoke identity",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/revoke.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/revoke.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/revoke.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/identities/unprovision": {
-      "post": {
-        "description": "Unprovision identity transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Identities"
-        ],
-        "summary": "Unprovision identity transaction",
-        "parameters": [
-          {
-            "description": "Request body to unprovision identity",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/unprovision.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/unprovision.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/unprovision.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/maintainers/maintainers/{maintainerID}": {
-      "get": {
-        "description": "Able to query the maintainers details",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Maintainers"
-        ],
-        "summary": "Search for a maintainer by maintainer ID",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Unique identifier of a maintainer.",
-            "name": "maintainerID",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful query response",
-            "schema": {
-              "$ref": "#/definitions/maintainer.queryResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/maintainer.queryResponse"
-            }
-          }
-        }
-      }
-    },
-    "/metas/metas/{metaID}": {
-      "get": {
-        "description": "Able to query the meta data",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Metas"
-        ],
-        "summary": "Search for metadata by meta ID",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Unique identifier of metadata value.",
-            "name": "metaID",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful query response",
-            "schema": {
-              "$ref": "#/definitions/meta.queryResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/meta.queryResponse"
-            }
-          }
-        }
-      }
-    },
-    "/metas/reveal": {
-      "post": {
-        "description": "Reveal metas transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Metas"
-        ],
-        "summary": "Reveal metas transaction",
-        "parameters": [
-          {
-            "description": "Request body to reveal meta transaction",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/reveal.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/reveal.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/reveal.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/orders/cancel": {
-      "post": {
-        "description": "cancel order transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Orders"
-        ],
-        "summary": "cancel order transaction",
-        "parameters": [
-          {
-            "description": "Request body to cancel order",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/cancel.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/cancel.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/cancel.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/orders/define": {
-      "post": {
-        "description": "Define order transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Orders"
-        ],
-        "summary": "Define order transaction",
-        "parameters": [
-          {
-            "description": "Request body to define an order",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/define.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/define.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/define.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/orders/deputize": {
-      "post": {
-        "description": "Deputize order transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Orders"
-        ],
-        "summary": "Deputize order transaction",
-        "parameters": [
-          {
-            "description": "Request body to deputize an order",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/deputize.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/deputize.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/deputize.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/orders/immediate": {
-      "post": {
-        "description": "Immediate order transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Orders"
-        ],
-        "summary": "Immediate order transaction",
-        "parameters": [
-          {
-            "description": "Request body for immediate order",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/immediate.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/immediate.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/immediate.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/orders/make": {
-      "post": {
-        "description": "Make order transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Orders"
-        ],
-        "summary": "Make order transaction",
-        "parameters": [
-          {
-            "description": "Request body to make order",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/make.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/make.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/make.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/orders/modify": {
-      "post": {
-        "description": "Modify order transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Orders"
-        ],
-        "summary": "Modify order transaction",
-        "parameters": [
-          {
-            "description": "Request body to modify order transaction",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/modify.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/modify.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/modify.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/orders/orders/{orderID}": {
-      "get": {
-        "description": "Able to query the order",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Orders"
-        ],
-        "summary": "Query order using order id",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "order ID",
-            "name": "orderID",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response",
-            "schema": {
-              "$ref": "#/definitions/order.queryResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/order.queryResponse"
-            }
-          }
-        }
-      }
-    },
-    "/orders/revoke": {
-      "post": {
-        "description": "Revoke order transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Orders"
-        ],
-        "summary": "Revoke order transaction",
-        "parameters": [
-          {
-            "description": "Request body to revoke order",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/revoke.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/revoke.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/revoke.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/orders/take": {
-      "post": {
-        "description": "Take order transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Orders"
-        ],
-        "summary": "Take order transaction",
-        "parameters": [
-          {
-            "description": "Request body to take order",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/take.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/take.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/take.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/ownable/{ownableID}": {
-      "get": {
-        "description": "Able to query the asset",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Splits"
-        ],
-        "summary": "Query asset using asset id",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "ownable ID",
-            "name": "ownableID",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful query response",
-            "schema": {
-              "$ref": "#/definitions/ownable.queryResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/ownable.queryResponse"
-            }
-          }
-        }
-      }
-    },
-    "/splits/send": {
-      "post": {
-        "description": "Send split transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Splits"
-        ],
-        "summary": "Send split transaction",
-        "parameters": [
-          {
-            "description": "Request body to send split",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/send.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/send.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/send.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/splits/splits/{splitID}": {
-      "get": {
-        "description": "Able to query the asset",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Splits"
-        ],
-        "summary": "Query split using split id",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "split ID",
-            "name": "splitID",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful query response",
-            "schema": {
-              "$ref": "#/definitions/split.queryResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/split.queryResponse"
-            }
-          }
-        }
-      }
-    },
-    "/splits/unwrap": {
-      "post": {
-        "description": "Unwrap split transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Splits"
-        ],
-        "summary": "Unwrap split transaction",
-        "parameters": [
-          {
-            "description": "Request body to unwrap split",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/unwrap.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/unwrap.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/unwrap.transactionResponse"
-            }
-          }
-        }
-      }
-    },
-    "/splits/wrap": {
-      "post": {
-        "description": "Wrap split transaction",
-        "consumes": [
-          "text/plain"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "Splits"
-        ],
-        "summary": "Wrap split transaction",
-        "parameters": [
-          {
-            "description": "Request body to wrap split",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/wrap.transactionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Message for a successful response.",
-            "schema": {
-              "$ref": "#/definitions/wrap.transactionResponse"
-            }
-          },
-          "default": {
-            "description": "Message for an unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/wrap.transactionResponse"
-            }
-          }
-        }
-      }
     }
-  },
-  "definitions": {
-    "asset.queryResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "list": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/helpers.Mappable"
-          }
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "burn.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "assetID": {
-          "type": "string"
-        },
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "fromID": {
-          "type": "string"
-        }
-      }
-    },
-    "burn.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "cancel.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "orderID": {
-          "type": "string"
-        }
-      }
-    },
-    "cancel.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "classification.queryResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "list": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/helpers.Mappable"
-          }
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "define.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "immutableMetaProperties": {
-          "type": "string"
-        },
-        "immutableProperties": {
-          "type": "string"
-        },
-        "mutableMetaProperties": {
-          "type": "string"
-        },
-        "mutableProperties": {
-          "type": "string"
-        }
-      }
-    },
-    "define.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "deputize.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "addMaintainer": {
-          "type": "boolean"
-        },
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "classificationID": {
-          "type": "string"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "maintainedProperties": {
-          "type": "string"
-        },
-        "mutateMaintainer": {
-          "type": "boolean"
-        },
-        "removeMaintainer": {
-          "type": "boolean"
-        },
-        "toID": {
-          "type": "string"
-        }
-      }
-    },
-    "deputize.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "github.com_persistenceOne_persistenceSDK_modules_assets_internal_transactions_mutate.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "assetID": {
-          "type": "string"
-        },
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "mutableMetaProperties": {
-          "type": "string"
-        },
-        "mutableProperties": {
-          "type": "string"
-        }
-      }
-    },
-    "github.com_persistenceOne_persistenceSDK_modules_assets_internal_transactions_mutate.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "github.com_persistenceOne_persistenceSDK_modules_identities_internal_transactions_mutate.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "identityID": {
-          "type": "string"
-        },
-        "mutableMetaProperties": {
-          "type": "string"
-        },
-        "mutableProperties": {
-          "type": "string"
-        }
-      }
-    },
-    "github.com_persistenceOne_persistenceSDK_modules_identities_internal_transactions_mutate.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "helpers.Mappable": {
-      "type": "object"
-    },
-    "identity.queryResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "list": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/helpers.Mappable"
-          }
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "immediate.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "classificationID": {
-          "type": "string"
-        },
-        "expiresIn": {
-          "type": "integer"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "immutableMetaProperties": {
-          "type": "string"
-        },
-        "immutableProperties": {
-          "type": "string"
-        },
-        "makerOwnableID": {
-          "type": "string"
-        },
-        "makerOwnableSplit": {
-          "type": "string"
-        },
-        "mutableMetaProperties": {
-          "type": "string"
-        },
-        "mutableProperties": {
-          "type": "string"
-        },
-        "takerOwnableID": {
-          "type": "string"
-        },
-        "takerOwnableSplit": {
-          "type": "string"
-        }
-      }
-    },
-    "immediate.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "issue.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "classificationID": {
-          "type": "string"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "immutableMetaProperties": {
-          "type": "string"
-        },
-        "immutableProperties": {
-          "type": "string"
-        },
-        "mutableMetaProperties": {
-          "type": "string"
-        },
-        "mutableProperties": {
-          "type": "string"
-        },
-        "to": {
-          "type": "string"
-        }
-      }
-    },
-    "issue.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "maintainer.queryResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "list": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/helpers.Mappable"
-          }
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "make.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "classificationID": {
-          "type": "string"
-        },
-        "expiresIn": {
-          "type": "integer"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "immutableMetaProperties": {
-          "type": "string"
-        },
-        "immutableProperties": {
-          "type": "string"
-        },
-        "makerOwnableID": {
-          "type": "string"
-        },
-        "makerOwnableSplit": {
-          "type": "string"
-        },
-        "mutableMetaProperties": {
-          "type": "string"
-        },
-        "mutableProperties": {
-          "type": "string"
-        },
-        "takerOwnableID": {
-          "type": "string"
-        },
-        "takerOwnableSplit": {
-          "type": "string"
-        }
-      }
-    },
-    "make.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "meta.queryResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "list": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/helpers.Mappable"
-          }
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "mint.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "classificationID": {
-          "type": "string"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "immutableMetaProperties": {
-          "type": "string"
-        },
-        "immutableProperties": {
-          "type": "string"
-        },
-        "mutableMetaProperties": {
-          "type": "string"
-        },
-        "mutableProperties": {
-          "type": "string"
-        },
-        "toID": {
-          "type": "string"
-        }
-      }
-    },
-    "mint.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "modify.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "expiresIn": {
-          "type": "integer"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "makerOwnableSplit": {
-          "type": "string"
-        },
-        "mutableMetaProperties": {
-          "type": "string"
-        },
-        "mutableProperties": {
-          "type": "string"
-        },
-        "orderID": {
-          "type": "string"
-        },
-        "takerOwnableSplit": {
-          "type": "string"
-        }
-      }
-    },
-    "modify.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "nub.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "nubID": {
-          "type": "string"
-        }
-      }
-    },
-    "nub.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "order.queryResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "list": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/helpers.Mappable"
-          }
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "ownable.queryResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        },
-        "value": {
-          "type": "string"
-        }
-      }
-    },
-    "provision.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "identityID": {
-          "type": "string"
-        },
-        "to": {
-          "type": "string"
-        }
-      }
-    },
-    "provision.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "quash.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "identityID": {
-          "type": "string"
-        }
-      }
-    },
-    "quash.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "renumerate.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "assetID": {
-          "type": "string"
-        },
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "fromID": {
-          "type": "string"
-        }
-      }
-    },
-    "renumerate.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "rest.BaseReq": {
-      "type": "object",
-      "properties": {
-        "account_number": {
-          "type": "integer"
-        },
-        "chain_id": {
-          "type": "string"
-        },
-        "from": {
-          "type": "string"
-        },
-        "gas": {
-          "type": "string"
-        },
-        "gas_adjustment": {
-          "type": "string"
-        },
-        "memo": {
-          "type": "string"
-        },
-        "sequence": {
-          "type": "integer"
-        },
-        "simulate": {
-          "type": "boolean"
-        }
-      }
-    },
-    "reveal.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "metaFact": {
-          "type": "string"
-        }
-      }
-    },
-    "reveal.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "revoke.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "classificationID": {
-          "type": "string"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "toID": {
-          "type": "string"
-        }
-      }
-    },
-    "revoke.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "send.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "ownableID": {
-          "type": "string"
-        },
-        "toID": {
-          "type": "string"
-        },
-        "value": {
-          "type": "string"
-        }
-      }
-    },
-    "send.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "split.queryResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "list": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/helpers.Mappable"
-          }
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "take.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "orderID": {
-          "type": "string"
-        },
-        "takerOwnableSplit": {
-          "type": "string"
-        }
-      }
-    },
-    "take.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "unprovision.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "identityID": {
-          "type": "string"
-        },
-        "to": {
-          "type": "string"
-        }
-      }
-    },
-    "unprovision.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "unwrap.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "fromID": {
-          "type": "string"
-        },
-        "ownableID": {
-          "type": "string"
-        },
-        "value": {
-          "type": "string"
-        }
-      }
-    },
-    "unwrap.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "wrap.transactionRequest": {
-      "type": "object",
-      "properties": {
-        "baseReq": {
-          "$ref": "#/definitions/rest.BaseReq"
-        },
-        "coins": {
-          "type": "string"
-        },
-        "fromID": {
-          "type": "string"
-        }
-      }
-    },
-    "wrap.transactionResponse": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    }
-  }
 }

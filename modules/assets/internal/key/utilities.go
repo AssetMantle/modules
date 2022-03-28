@@ -15,20 +15,20 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-func readAssetID(assetIDString string) types.ID {
+func readAssetID(assetIDString string) AssetID {
 	idList := strings.Split(assetIDString, constants.FirstOrderCompositeIDSeparator)
 	if len(idList) == 2 {
-		return assetID{
+		return AssetID{
 			ClassificationID: base.NewID(idList[0]),
 			HashID:           base.NewID(idList[1]),
 		}
 	}
 
-	return assetID{ClassificationID: base.NewID(""), HashID: base.NewID("")}
+	return AssetID{ClassificationID: base.NewID(""), HashID: base.NewID("")}
 }
-func assetIDFromInterface(i interface{}) assetID {
+func assetIDFromInterface(i interface{}) AssetID {
 	switch value := i.(type) {
-	case assetID:
+	case AssetID:
 		return value
 	case types.ID:
 		return assetIDFromInterface(readAssetID(value.String()))

@@ -9,13 +9,13 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_HeightData(t *testing.T) {
+
 	heightValue := NewHeight(123)
 	testHeightData := NewHeightData(heightValue)
 	testHeightData2 := NewHeightData(NewHeight(0))
@@ -23,38 +23,39 @@ func Test_HeightData(t *testing.T) {
 	require.Equal(t, "123", testHeightData.String())
 	require.Equal(t, NewID(meta.Hash("123")), testHeightData.GenerateHashID())
 	require.Equal(t, NewID(""), testHeightData2.GenerateHashID())
-	require.Equal(t, heightDataID, testHeightData.GetTypeID())
+	require.Equal(t, NewID("H"), testHeightData.GetTypeID())
 
-	dataAsString, err := testHeightData.AsString()
+	dataAsString, Error := testHeightData.AsString()
 	require.Equal(t, "", dataAsString)
-	require.Equal(t, errors.IncorrectFormat, err)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
-	dataAsHeight, err := testHeightData.AsHeight()
+	dataAsHeight, Error := testHeightData.AsHeight()
 	require.Equal(t, heightValue, dataAsHeight)
-	require.Equal(t, nil, err)
+	require.Equal(t, nil, Error)
 
-	dataAsDec, err := testHeightData.AsDec()
+	dataAsDec, Error := testHeightData.AsDec()
 	require.Equal(t, sdkTypes.ZeroDec(), dataAsDec)
-	require.Equal(t, errors.IncorrectFormat, err)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
-	dataAsID, err := testHeightData.AsID()
-	require.Equal(t, id{}, dataAsID)
-	require.Equal(t, errors.IncorrectFormat, err)
+	dataAsID, Error := testHeightData.AsID()
+	require.Equal(t, ID{}, dataAsID)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
 	require.Equal(t, heightValue, testHeightData.Get())
 
-	data, err := ReadHeightData("")
-	require.Equal(t, heightData{Value: height{Value: 0}}, data)
-	require.Nil(t, err)
+	data, Error := ReadHeightData("")
+	require.Equal(t, HeightData{Value: Height{Value: 0}}, data)
+	require.Nil(t, Error)
 
-	data, err = ReadHeightData("testString")
+	data, Error = ReadHeightData("testString")
 	require.Equal(t, nil, data)
-	require.NotNil(t, err)
+	require.NotNil(t, Error)
 
-	data, err = ReadHeightData("123")
-	require.Equal(t, heightData{Value: height{Value: 123}}, data)
-	require.Nil(t, err)
+	data, Error = ReadHeightData("123")
+	require.Equal(t, HeightData{Value: Height{Value: 123}}, data)
+	require.Nil(t, Error)
 
 	require.Equal(t, false, testHeightData.Compare(NewStringData("")) == 0)
 	require.Equal(t, true, testHeightData.Compare(NewHeightData(NewHeight(123))) == 0)
+
 }

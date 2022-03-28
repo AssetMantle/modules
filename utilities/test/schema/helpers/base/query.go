@@ -8,7 +8,7 @@ package base
 import (
 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
@@ -45,7 +45,7 @@ func (t testQueryRequest) Validate() error {
 	return nil
 }
 
-func (t testQueryRequest) FromCLI(_ helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
+func (t testQueryRequest) FromCLI(_ helpers.CLICommand, _ client.Context) helpers.QueryRequest {
 	return t
 }
 
@@ -53,11 +53,11 @@ func (t testQueryRequest) FromMap(_ map[string]string) helpers.QueryRequest {
 	return t
 }
 
-func (t testQueryRequest) Encode() ([]byte, error) {
+func (t testQueryRequest) LegacyAminoEncode() ([]byte, error) {
 	return json.Marshal(t)
 }
 
-func (t testQueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
+func (t testQueryRequest) LegacyAminoDecode(bytes []byte) (helpers.QueryRequest, error) {
 	var queryRequest testQueryRequest
 	err := json.Unmarshal(bytes, &queryRequest)
 
@@ -83,11 +83,11 @@ func (t testQueryResponse) GetError() error {
 	return t.Error
 }
 
-func (t testQueryResponse) Encode() ([]byte, error) {
+func (t testQueryResponse) LegacyAminoEncode() ([]byte, error) {
 	return json.Marshal(t)
 }
 
-func (t testQueryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
+func (t testQueryResponse) LegacyAminoDecode(bytes []byte) (helpers.QueryResponse, error) {
 	var queryResponse testQueryResponse
 	err := json.Unmarshal(bytes, &queryResponse)
 

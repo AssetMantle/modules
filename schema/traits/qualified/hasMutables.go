@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package qualified
+package base
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
@@ -11,23 +11,15 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-type HasMutables struct {
-	Properties types.Properties `json:"properties"`
-}
-
 var _ traits.HasMutables = (*HasMutables)(nil)
 
 func (mutables HasMutables) GetMutableProperties() types.Properties {
-	if mutables.Properties == nil {
-		return base.NewProperties()
-	}
-
-	return mutables.Properties
+	return &mutables.Properties
 }
 func (mutables HasMutables) Mutate(propertyList ...types.Property) traits.HasMutables {
 	for _, property := range propertyList {
-		mutables.Properties = mutables.Properties.Mutate(property)
+		mutables.Properties = *base.NewProperties(mutables.Properties.Mutate(property).GetList()...)
 	}
 
-	return mutables
+	return &mutables
 }

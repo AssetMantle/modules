@@ -10,4 +10,6 @@ type ID interface {
 	Bytes() []byte
 
 	Compare(ID) int
+
+	Proto
 }

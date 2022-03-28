@@ -7,14 +7,12 @@ package verify
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
+	"github.com/persistenceOne/persistenceSDK/constants/properties"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/persistenceOne/persistenceSDK/schema/mappables" //nolint:typecheck
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -28,21 +26,21 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-
-	identity := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(auxiliaryRequest.IdentityID)).Get(key.FromID(auxiliaryRequest.IdentityID)).(mappables.Identity)
+	identity := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(auxiliaryRequest.IdentityID)).Get(key.FromID(auxiliaryRequest.IdentityID))
 	if identity == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
-
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(auxiliaryKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.GetAuthentication())))
+	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(auxiliaryKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.InterIdentity).GetAuthentication())))
 	if Error != nil {
 		return newAuxiliaryResponse(Error)
 	}
-
-	if metaProperties.Get(ids.AuthenticationProperty).(types.ListData).Search(base.NewAccAddressData(auxiliaryRequest.Address)) == -1 {
+	listData, Error := metaProperties.Get(base.NewID(properties.Authentication)).GetMetaFact().GetData().AsListData()
+	if Error != nil {
+		return newAuxiliaryResponse(Error)
+	}
+	if listData.Search(base.NewAccAddressData(auxiliaryRequest.Address)) == -1 {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
-
 	return newAuxiliaryResponse(nil)
 }
 
@@ -55,8 +53,6 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, paramet
 			switch value.GetName() {
 			case supplement.Auxiliary.GetName():
 				auxiliaryKeeper.supplementAuxiliary = value
-			default:
-				break
 			}
 		default:
 			panic(errors.UninitializedUsage)

@@ -6,16 +6,15 @@
 package add
 
 import (
-	"testing"
-
-	"github.com/cosmos/cosmos-sdk/crypto/keys"
-	"github.com/stretchr/testify/require"
-
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func Test_Add_Response(t *testing.T) {
-	testKeyOutput := keys.NewKeyOutput("name", "keyType", "address", "pubkey")
+
+	testKeyOutput := keyring.NewKeyOutput("name", "keyType", "address", "pubkey")
 	testResponse := newResponse(testKeyOutput, nil)
 	require.Equal(t, response{Success: true, Error: nil, KeyOutput: testKeyOutput}, testResponse)
 	require.Equal(t, true, testResponse.IsSuccessful())

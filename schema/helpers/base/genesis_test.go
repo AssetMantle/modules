@@ -39,7 +39,7 @@ func TestGenesis(t *testing.T) {
 	require.Equal(t, mappableList, Genesis.GetMappableList())
 	require.Equal(t, ParameterList, Genesis.GetParameterList())
 
-	require.Equal(t, Genesis.Encode(), Genesis.Decode(Genesis.Encode()).Encode())
+	require.Equal(t, Genesis.LegacyAminoEncode(), Genesis.LegacyAminoDecode(Genesis.LegacyAminoEncode()).LegacyAminoEncode())
 
 	require.NotPanics(t, func() {
 		Genesis.Import(context, Mapper, Parameters)

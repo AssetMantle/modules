@@ -7,19 +7,16 @@ package wrap
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/supply"
-
+	"github.com/cosmos/cosmos-sdk/types/module"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/utilities"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
 	mapper          helpers.Mapper
 	parameters      helpers.Parameters
-	supplyKeeper    supply.Keeper
+	bankKeeper      bankKeeper.Keeper
 	verifyAuxiliary helpers.Auxiliary
 }
 
@@ -27,21 +24,10 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
+	msgServer := NewMsgServerImpl(transactionKeeper)
 
-	if err := transactionKeeper.supplyKeeper.SendCoinsFromAccountToModule(context, message.From, module.Name, message.Coins); err != nil {
-		return newTransactionResponse(err)
-	}
-
-	for _, coin := range message.Coins {
-		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, base.NewID(coin.Denom), sdkTypes.NewDecFromInt(coin.Amount)); err != nil {
-			return newTransactionResponse(err)
-		}
-	}
-
-	return newTransactionResponse(nil)
+	_, Error := msgServer.Wrap(sdkTypes.WrapSDKContext(context), &message)
+	return newTransactionResponse(Error)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
@@ -49,19 +35,20 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
-		case supply.Keeper:
-			transactionKeeper.supplyKeeper = value
+		case bankKeeper.Keeper:
+			transactionKeeper.bankKeeper = value
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case verify.Auxiliary.GetName():
 				transactionKeeper.verifyAuxiliary = value
-			default:
-				break
 			}
 		}
 	}
 
 	return transactionKeeper
+}
+func (transactionKeeper transactionKeeper) RegisterService(configurator module.Configurator) {
+	RegisterMsgServer(configurator.MsgServer(), NewMsgServerImpl(transactionKeeper))
 }
 
 func keeperPrototype() helpers.TransactionKeeper {

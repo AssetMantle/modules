@@ -9,32 +9,31 @@ import (
 	"strings"
 	"testing"
 
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
-
-	"github.com/stretchr/testify/require"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/base"
 
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_AssetID_Methods(t *testing.T) {
 	classificationID := base.NewID("classificationID")
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewFact(base.NewStringData("ImmutableData"))))
 
-	testAssetID := NewAssetID(classificationID, immutableProperties).(assetID)
-
+	testAssetID := NewAssetID(classificationID, immutableProperties).(AssetID)
 	require.NotPanics(t, func() {
-		require.Equal(t, assetID{ClassificationID: classificationID, HashID: baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID()}, testAssetID)
+		require.Equal(t, AssetID{ClassificationID: classificationID, HashID: baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID()}, testAssetID)
 		require.Equal(t, strings.Join([]string{classificationID.String(), baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID().String()}, constants.FirstOrderCompositeIDSeparator), testAssetID.String())
 		require.Equal(t, false, testAssetID.IsPartial())
-		require.Equal(t, true, assetID{ClassificationID: classificationID, HashID: base.NewID("")}.IsPartial())
+		require.Equal(t, true, AssetID{ClassificationID: classificationID, HashID: base.NewID("")}.IsPartial())
 		require.Equal(t, true, testAssetID.Equals(testAssetID))
-		require.Equal(t, false, testAssetID.Equals(assetID{ClassificationID: classificationID, HashID: base.NewID("")}))
+		require.Equal(t, false, testAssetID.Equals(AssetID{ClassificationID: classificationID, HashID: base.NewID("")}))
 		require.Equal(t, true, testAssetID.Equals(testAssetID))
 		require.Equal(t, false, testAssetID.Equals(nil))
-		require.Equal(t, false, testAssetID.Equals(assetID{ClassificationID: classificationID, HashID: base.NewID("")}))
-		require.Equal(t, testAssetID, FromID(testAssetID))
-		require.Equal(t, assetID{ClassificationID: base.NewID(""), HashID: base.NewID("")}, FromID(base.NewID("")))
+		require.Equal(t, false, testAssetID.Equals(AssetID{ClassificationID: classificationID, HashID: base.NewID("")}))
+		require.Equal(t, testAssetID, FromID(&testAssetID))
+		require.Equal(t, AssetID{ClassificationID: base.NewID(""), HashID: base.NewID("")}, FromID(base.NewID("")))
 		require.Equal(t, testAssetID, readAssetID(testAssetID.String()))
 	})
+
 }

@@ -6,13 +6,16 @@
 package helpers
 
 import (
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
 )
 
 type QueryRequest interface {
 	Request
-	FromCLI(CLICommand, context.CLIContext) QueryRequest
+	FromCLI(CLICommand, client.Context) QueryRequest
 	FromMap(map[string]string) QueryRequest
-	Encode() ([]byte, error)
-	Decode([]byte) (QueryRequest, error)
+	LegacyAminoEncode() ([]byte, error)
+	LegacyAminoDecode([]byte) (QueryRequest, error)
+	Encode(codec.JSONMarshaler) ([]byte, error)
+	Decode(codec.JSONMarshaler, []byte) (QueryRequest, error)
 }

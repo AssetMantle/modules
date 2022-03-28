@@ -6,27 +6,23 @@
 package base
 
 import (
-	"strings"
+	"bytes"
 
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
-type id struct {
-	IDString string `json:"idString"`
+var _ types.ID = (*ID)(nil)
+
+func (id ID) String() string {
+	return id.IdString
+}
+func (id ID) Bytes() []byte {
+	return []byte(id.IdString)
+}
+func (id ID) Compare(compareID types.ID) int {
+	return bytes.Compare(id.Bytes(), compareID.Bytes())
 }
 
-var _ types.ID = (*id)(nil)
-
-func (id id) String() string {
-	return id.IDString
-}
-func (id id) Bytes() []byte {
-	return []byte(id.IDString)
-}
-func (id id) Compare(compareID types.ID) int {
-	return strings.Compare(id.String(), compareID.String())
-}
-
-func NewID(idString string) types.ID {
-	return id{IDString: idString}
+func NewID(idString string) *ID {
+	return &ID{IdString: idString}
 }

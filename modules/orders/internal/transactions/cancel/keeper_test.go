@@ -6,24 +6,15 @@
 package cancel
 
 import (
-	"reflect"
-	"testing"
-
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-
-	"github.com/persistenceOne/persistenceSDK/constants/test"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	cryptoCodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintDB "github.com/tendermint/tm-db"
-
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/constants/properties"
+	"github.com/persistenceOne/persistenceSDK/constants/test"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
@@ -34,6 +25,12 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/stretchr/testify/require"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tendermintDB "github.com/tendermint/tm-db"
+	"reflect"
+	"testing"
 )
 
 type TestKeepers struct {
@@ -42,10 +39,10 @@ type TestKeepers struct {
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	var Codec = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
@@ -97,9 +94,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	rateID := base.NewID(sdkTypes.MustNewDecFromStr("0.001").String())
 	creationID := base.NewID("100")
 	makerID := base.NewID("makerID")
-	metaProperties, Error := base.ReadMetaProperties(ids.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
-		"," + ids.TakerIDProperty.String() + ":I|fromID" + "," +
-		ids.ExchangeRateProperty.String() + ":D|0.000000000000000001")
+	metaProperties, Error := base.ReadMetaProperties(properties.MakerOwnableSplit + ":D|0.000000000000000001" +
+		"," + properties.TakerID + ":I|fromID" + "," +
+		properties.ExchangeRate + ":D|0.000000000000000001")
 	require.Equal(t, nil, Error)
 	orderID := key.NewOrderID(
 		classificationID,

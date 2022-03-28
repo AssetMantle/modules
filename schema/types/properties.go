@@ -13,4 +13,6 @@ type Properties interface {
 	Add(...Property) Properties
 	Remove(...Property) Properties
 	Mutate(...Property) Properties
+
+	Proto
 }

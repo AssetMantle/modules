@@ -6,27 +6,26 @@
 package classification
 
 import (
-	"testing"
-
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/stretchr/testify/require"
-
 	"github.com/persistenceOne/persistenceSDK/constants/flags"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/common"
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func Test_Classification_Request(t *testing.T) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+
+	var Codec = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
@@ -44,16 +43,16 @@ func Test_Classification_Request(t *testing.T) {
 	vars["classifications"] = "randomString"
 	require.Equal(t, newQueryRequest(base.NewID("randomString")), queryRequest{}.FromMap(vars))
 
-	encodedRequest, err := testQueryRequest.Encode()
-	encodedResult, _ := common.Codec.MarshalJSON(testQueryRequest)
+	encodedRequest, Error := testQueryRequest.LegacyAminoEncode()
+	encodedResult, _ := common.LegacyAminoCodec.MarshalJSON(testQueryRequest)
 	require.Equal(t, encodedResult, encodedRequest)
-	require.Nil(t, err)
+	require.Nil(t, Error)
 
-	decodedRequest, err := queryRequest{}.Decode(encodedRequest)
+	decodedRequest, Error := queryRequest{}.LegacyAminoDecode(encodedRequest)
 	require.Equal(t, testQueryRequest, decodedRequest)
-	require.Equal(t, nil, err)
+	require.Equal(t, nil, Error)
 
-	randomDecode, _ := queryRequest{}.Decode(base.NewID("").Bytes())
+	randomDecode, _ := queryRequest{}.LegacyAminoDecode(base.NewID("").Bytes())
 	require.Equal(t, nil, randomDecode)
 	require.Equal(t, testQueryRequest, queryRequestFromInterface(testQueryRequest))
 	require.Equal(t, queryRequest{}, queryRequestFromInterface(nil))

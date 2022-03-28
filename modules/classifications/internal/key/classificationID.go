@@ -20,40 +20,39 @@ import (
 	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
 
-type classificationID struct {
-	ChainID types.ID `json:"chainID" valid:"required~required field chainID missing"`
-	HashID  types.ID `json:"hashID" valid:"required~required field hashID missing"`
+var _ types.ID = (*ClassificationID)(nil)
+var _ helpers.Key = (*ClassificationID)(nil)
+
+func (classificationID ClassificationID) GetStructReference() codec.ProtoMarshaler {
+	return &classificationID
 }
-
-var _ types.ID = (*classificationID)(nil)
-var _ helpers.Key = (*classificationID)(nil)
-
-func (classificationID classificationID) Bytes() []byte {
+func (classificationID ClassificationID) Bytes() []byte {
 	return append(
 		classificationID.ChainID.Bytes(),
 		classificationID.HashID.Bytes()...)
 }
-func (classificationID classificationID) String() string {
+func (classificationID ClassificationID) String() string {
 	var values []string
 	values = append(values, classificationID.ChainID.String())
 	values = append(values, classificationID.HashID.String())
 
 	return strings.Join(values, constants.IDSeparator)
 }
-func (classificationID classificationID) Compare(id types.ID) int {
+func (classificationID ClassificationID) Compare(id types.ID) int {
 	return bytes.Compare(classificationID.Bytes(), id.Bytes())
 }
-func (classificationID classificationID) GenerateStoreKeyBytes() []byte {
+func (classificationID ClassificationID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(classificationID.Bytes())
 }
-func (classificationID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, classificationID{})
+func (ClassificationID) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, ClassificationID{})
 }
-func (classificationID classificationID) IsPartial() bool {
+func (classificationID ClassificationID) IsPartial() bool {
 	return len(classificationID.HashID.Bytes()) == 0
 }
-func (classificationID classificationID) Equals(key helpers.Key) bool {
-	return classificationID.Compare(classificationIDFromInterface(key)) == 0
+func (classificationID ClassificationID) Equals(key helpers.Key) bool {
+	id := classificationIDFromInterface(key)
+	return classificationID.Compare(&id) == 0
 }
 
 func NewClassificationID(chainID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) types.ID {
@@ -77,7 +76,7 @@ func NewClassificationID(chainID types.ID, immutableProperties types.Properties,
 		}
 	}
 
-	return classificationID{
+	return &ClassificationID{
 		ChainID: chainID,
 		HashID:  base.NewID(metaUtilities.Hash(metaUtilities.Hash(immutableIDStringList...), metaUtilities.Hash(mutableIDStringList...), metaUtilities.Hash(defaultImmutableStringList...))),
 	}

@@ -6,87 +6,35 @@
 package make
 
 import (
-	"strconv"
-
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-	maintainersVerify "github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/verify"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
+	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
-	mapper                     helpers.Mapper
-	parameters                 helpers.Parameters
-	conformAuxiliary           helpers.Auxiliary
-	scrubAuxiliary             helpers.Auxiliary
-	supplementAuxiliary        helpers.Auxiliary
-	transferAuxiliary          helpers.Auxiliary
-	verifyAuxiliary            helpers.Auxiliary
-	maintainersVerifyAuxiliary helpers.Auxiliary
+	mapper              helpers.Mapper
+	parameters          helpers.Parameters
+	conformAuxiliary    helpers.Auxiliary
+	scrubAuxiliary      helpers.Auxiliary
+	supplementAuxiliary helpers.Auxiliary
+	transferAuxiliary   helpers.Auxiliary
+	verifyAuxiliary     helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.maintainersVerifyAuxiliary.GetKeeper().Help(context, maintainersVerify.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
+	msgServer := NewMsgServerImpl(transactionKeeper)
 
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
-
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, base.NewID(module.Name), message.MakerOwnableID, message.MakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
-
-	immutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetList()...)))
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
-
-	immutableProperties := base.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
-
-	exchangeRate := message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(message.MakerOwnableSplit)
-	orderID := key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, base.NewID(exchangeRate.String()), base.NewID(strconv.FormatInt(context.BlockHeight(), 10)), message.FromID, immutableProperties)
-	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(orderID))
-	makerOwnableSplit := message.MakerOwnableSplit
-
-	order := orders.Get(key.FromID(orderID))
-	if order != nil {
-		return newTransactionResponse(errors.EntityAlreadyExists)
-	}
-
-	mutableMetaProperties := message.MutableMetaProperties.Add(base.NewMetaProperty(ids.ExpiryProperty, base.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
-	mutableMetaProperties = mutableMetaProperties.Add(base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewDecData(makerOwnableSplit)))
-
-	scrubbedMutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetList()...)))
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
-
-	mutableProperties := base.NewProperties(append(scrubbedMutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
-
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutableProperties, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
-
-	orders.Add(mappable.NewOrder(orderID, immutableProperties, mutableProperties))
-
-	return newTransactionResponse(nil)
+	_, Error := msgServer.Make(sdkTypes.WrapSDKContext(context), &message)
+	return newTransactionResponse(Error)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
@@ -106,8 +54,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.transferAuxiliary = value
 			case verify.Auxiliary.GetName():
 				transactionKeeper.verifyAuxiliary = value
-			case maintainersVerify.Auxiliary.GetName():
-				transactionKeeper.maintainersVerifyAuxiliary = value
 			}
 		default:
 			panic(errors.UninitializedUsage)
@@ -115,6 +61,9 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 	}
 
 	return transactionKeeper
+}
+func (transactionKeeper transactionKeeper) RegisterService(configurator sdkModule.Configurator) {
+	RegisterMsgServer(configurator.MsgServer(), NewMsgServerImpl(transactionKeeper))
 }
 func keeperPrototype() helpers.TransactionKeeper {
 	return transactionKeeper{}

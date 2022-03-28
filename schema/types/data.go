@@ -33,4 +33,6 @@ type Data interface {
 	AsID() (ID, error)
 
 	Get() interface{}
+
+	Proto
 }

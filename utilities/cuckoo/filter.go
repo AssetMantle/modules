@@ -4,149 +4,139 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
-	"errors"
 	"math"
 	"math/rand"
+	"strings"
 )
 
-type bucket []fingerprint
-type fingerprint []byte
+type bucket []byte
+type Fingerprint []byte
 
-// Cuckoo https://www.pdl.cmu.edu/PDL-FTP/FS/cuckoo-conext2014.pdf
+var h = sha256.New()
+
+const retries = 500
+
 type Cuckoo struct {
-	buckets           []bucket
-	numBuckets        uint // buckets
-	entriesPerBucket  uint // entries per bucket
-	fingerprintLength uint // fingerprint length
-	n                 uint // filter capacity (rename cap?)
-	retries           int  // how many times do we try to move items around?
+	buckets []bucket
+	m       uint // buckets
+	b       uint // entries per bucket
+	f       uint // Fingerprint length
+	n       uint // filter capacity (rename cap?)
 }
 
-func NewCuckoo(numItems uint, entriesPerBucket uint, retries int, falsePositiveRate float64) *Cuckoo {
-	fingerprintLength := getFingerprintLength(entriesPerBucket, falsePositiveRate)
-	numBuckets := nextPower(numItems / fingerprintLength * 8)
-	buckets := make([]bucket, numBuckets)
-
-	for i := uint(0); i < numBuckets; i++ {
-		buckets[i] = make(bucket, entriesPerBucket)
-	}
-
+func NewCuckoo(n uint, fp float64) *Cuckoo {
+	b := uint(4)
+	f := fingerprintLength(b, fp)
+	m := nextPower(n / f * 8)
+	buckets := make([]bucket, m)
+	// for i := uint(0); i < m; i++ {
+	//	buckets[i] = make(bucket, b)
+	//}
 	return &Cuckoo{
-		buckets:           buckets,
-		numBuckets:        numBuckets,
-		entriesPerBucket:  entriesPerBucket,
-		fingerprintLength: fingerprintLength,
-		n:                 numItems,
-		retries:           retries,
+		buckets: buckets,
+		m:       m,
+		b:       b,
+		f:       f,
+		n:       n,
 	}
 }
 
-// delete the fingerprint from the cuckoo filter
-func (c *Cuckoo) Delete(needle string) {
-	i1, i2, f := c.hashes(needle)
+func (c *Cuckoo) Delete(needle *ID) {
+	i1, i2, f := c.Hashes(needle.IDString)
 	// try to remove from f1
-	b1 := c.buckets[i1%c.numBuckets]
-	if ind, ok := b1.Contains(f); ok {
-		b1[ind] = nil
+	b1 := c.buckets[i1%c.m]
+
+	if _, ok := b1.contains(f); ok {
+		b1 = []byte(strings.ReplaceAll(string(b1), string(f), ""))
 		return
 	}
 
-	b2 := c.buckets[i2%c.numBuckets]
-	if ind, ok := b2.Contains(f); ok {
-		b2[ind] = nil
+	b2 := c.buckets[i2%c.m]
+	if _, ok := b2.contains(f); ok {
+		b1 = []byte(strings.ReplaceAll(string(b1), string(f), ""))
 		return
 	}
 }
 
-// lookup needle in the cuckoo filter
-func (c *Cuckoo) Lookup(needle string) bool {
-	i1, i2, f := c.hashes(needle)
-	_, b1 := c.buckets[i1%c.numBuckets].Contains(f)
-	_, b2 := c.buckets[i2%c.numBuckets].Contains(f)
-
+// Lookup needle in the cuckoo filter
+func (c *Cuckoo) Lookup(needle *ID) bool {
+	i1, i2, f := c.Hashes(needle.IDString)
+	_, b1 := c.buckets[i1%c.m].contains(f)
+	_, b2 := c.buckets[i2%c.m].contains(f)
 	return b1 || b2
 }
 
-func (b bucket) Contains(f fingerprint) (int, bool) {
-	for i, x := range b {
-		if bytes.Equal(x, f) {
+func (b bucket) contains(f Fingerprint) (int, bool) {
+	for i, x := range strings.Split(string(b), "|") {
+		if bytes.Equal([]byte(x), f) {
 			return i, true
 		}
 	}
-
 	return -1, false
 }
 
-func (c *Cuckoo) Insert(input string) error {
-	i1, i2, f := c.hashes(input)
-	// bucket one
-	b1 := c.buckets[i1%c.numBuckets]
-	if i, err := b1.nextIndex(); err == nil {
-		b1[i] = f
-		return nil
+func (c *Cuckoo) Insert(input *ID) {
+	i1, i2, f := c.Hashes(input.IDString)
+	// first try bucket one
+	b1 := c.buckets[i1%c.m]
+
+	if len(b1) < int(c.b*c.f) {
+		b1 = append(b1, []byte(f)...)
+		_ = append(b1, '|')
+		return
 	}
 
-	// bucket two
-	b2 := c.buckets[i2%c.numBuckets]
-	if i, err := b2.nextIndex(); err == nil {
-		b2[i] = f
-		return nil
+	b2 := c.buckets[i2%c.m]
+
+	if len(b2) < int(c.b*c.f) {
+		b2 = append(b2, []byte(f)...)
+		b2 = append(b2, '|')
+		return
 	}
 
 	// else we need to start relocating items
 	i := i1
-	for r := 0; r < c.retries; r++ {
-		index := i % c.numBuckets
-		entryIndex := rand.Intn(int(c.entriesPerBucket)) //nolint:gosec
+	for r := 0; r < retries; r++ {
+		index := i % c.m
+		entryIndex := rand.Intn(int(c.b))
 		// swap
-		f, c.buckets[index][entryIndex] = c.buckets[index][entryIndex], f
+		b := c.buckets[index]
 
-		i ^= uint(binary.BigEndian.Uint32(Hash(f)))
-		b := c.buckets[i%c.numBuckets]
+		f, b = Fingerprint(strings.Split(string(b), "|")[entryIndex]),
+			append(b, []byte(f)...)
+		f1 := append(f, '|')
+		b = []byte(strings.ReplaceAll(string(b), string(f1), ""))
 
-		if idx, err := b.nextIndex(); err == nil {
-			b[idx] = f
+		i ^= uint(binary.BigEndian.Uint32(hash(f)))
+		b = c.buckets[i%c.m]
 
-			return nil
+		if len(b) < int(c.b*c.f) {
+			b = append(b1, []byte(f1)...)
+			// b = append(b1, '|')
+			return
 		}
 	}
-
-	return errors.New("bucket full")
+	panic("cuckoo filter full")
 }
 
-// nextIndex returns the next index for entry, or an error if the bucket is full
-func (b bucket) nextIndex() (int, error) {
-	for i, f := range b {
-		if f == nil {
-			return i, nil
-		}
-	}
-
-	return -1, errors.New("bucket full")
-}
-
-// hashes returns h1, h2 and the fingerprint
-func (c *Cuckoo) hashes(data string) (uint, uint, fingerprint) {
-	h := Hash([]byte(data))
-	f := h[0:c.fingerprintLength]
+func (c *Cuckoo) Hashes(data string) (uint, uint, Fingerprint) {
+	h := hash([]byte(data))
+	f := h[0:c.f]
 	i1 := uint(binary.BigEndian.Uint32(h))
-	i2 := i1 ^ uint(binary.BigEndian.Uint32(Hash(f)))
-
+	i2 := i1 ^ uint(binary.BigEndian.Uint32(hash(f)))
 	return i1, i2, f
 }
 
-func Hash(data []byte) []byte {
-	hasher := sha256.New()
-	hasher.Write(data)
-	hash := hasher.Sum(nil)
-
+func hash(data []byte) []byte {
+	h.Write([]byte(data))
+	hash := h.Sum(nil)
+	h.Reset()
 	return hash
 }
 
-func getFingerprintLength(b uint, e float64) uint {
+func fingerprintLength(b uint, e float64) uint {
 	f := uint(math.Ceil(math.Log(2 * float64(b) / e)))
 	f /= 8
-
 	if f < 1 {
 		return 1
 	}

@@ -7,19 +7,19 @@ package base
 
 import (
 	"bytes"
+	cryptoCodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	vestingTypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintDB "github.com/tendermint/tm-db"
-
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/stretchr/testify/require"
+	"github.com/tendermint/tendermint/libs/log"
+	tmProto "github.com/tendermint/tendermint/proto/tendermint/types"
+	tendermintDB "github.com/tendermint/tm-db"
 )
 
 func SetupTest(t *testing.T) (sdkTypes.Context, *sdkTypes.KVStoreKey, *sdkTypes.TransientStoreKey) {
@@ -32,24 +32,24 @@ func SetupTest(t *testing.T) (sdkTypes.Context, *sdkTypes.KVStoreKey, *sdkTypes.
 	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
+	Error := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, Error)
 
-	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
+	context := sdkTypes.NewContext(commitMultiStore, tmProto.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
 	return context, storeKey, paramsTransientStoreKeys
 }
 
-func MakeCodec() *codec.Codec {
-	var Codec = codec.New()
+func MakeCodec() *codec.LegacyAmino {
+	var Codec = codec.NewLegacyAmino()
 
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
+	vestingTypes.RegisterLegacyAminoCodec(Codec)
 
 	return Codec
 }
@@ -61,11 +61,19 @@ type testKey struct {
 
 var _ helpers.Key = (*testKey)(nil)
 
+func (t testKey) RegisterLegacyAminoCodec(amino *codec.LegacyAmino) {
+	panic("implement me")
+}
+
+func (t testKey) GetStructReference() codec.ProtoMarshaler {
+	panic("implement me")
+}
+
 func (t testKey) GenerateStoreKeyBytes() []byte {
 	return append([]byte{0x11}, []byte(t.ID)...)
 }
 
-func (t testKey) RegisterCodec(codec *codec.Codec) {
+func (t testKey) RegisterCodec(codec *codec.LegacyAmino) {
 	codec.RegisterConcrete(testKey{}, "test/testKey", nil)
 }
 
@@ -93,12 +101,48 @@ type testMappable struct {
 
 var _ helpers.Mappable = (*testMappable)(nil)
 
-func (t testMappable) GetKey() helpers.Key {
-	return NewKey(t.ID)
+func (t testMappable) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codec.RegisterConcrete(testMappable{}, "test/testMappable", nil)
 }
 
-func (t testMappable) RegisterCodec(c *codec.Codec) {
-	c.RegisterConcrete(testMappable{}, "test/testMappable", nil)
+func (t testMappable) Size() int {
+	panic("implement me")
+}
+
+func (t testMappable) MarshalTo(data []byte) (int, error) {
+	panic("implement me")
+}
+
+func (t testMappable) Unmarshal(dAtA []byte) error {
+	panic("implement me")
+}
+
+func (t testMappable) Reset() {
+	panic("implement me")
+}
+
+func (t testMappable) String() string {
+	panic("implement me")
+}
+
+func (t testMappable) ProtoMessage() {
+	panic("implement me")
+}
+
+func (t testMappable) Marshal() ([]byte, error) {
+	panic("implement me")
+}
+
+func (t testMappable) MarshalToSizedBuffer(i []byte) (int, error) {
+	panic("implement me")
+}
+
+func (t testMappable) GetStructReference() codec.ProtoMarshaler {
+	panic("implement me")
+}
+
+func (t testMappable) GetKey() helpers.Key {
+	return NewKey(t.ID)
 }
 
 func NewMappable(id string, value string) helpers.Mappable {

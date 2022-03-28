@@ -6,29 +6,27 @@
 package base
 
 import (
-	"testing"
-
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/spf13/cobra"
-	"github.com/stretchr/testify/require"
-
 	"github.com/persistenceOne/persistenceSDK/schema"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/spf13/cobra"
+	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func Test_Cli_Command(t *testing.T) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	var Codec = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
-	cliContext := context.NewCLIContext().WithCodec(Codec)
+	cliContext := client.Context{}.WithLegacyAmino(Codec)
 	cliContext = cliContext.WithChainID("chainID")
 
 	testCliFlag := NewCLIFlag("name", "value", ",usage")

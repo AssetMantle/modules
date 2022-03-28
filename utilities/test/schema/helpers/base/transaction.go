@@ -8,7 +8,7 @@ package base
 import (
 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -27,7 +27,7 @@ var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
 func (transactionRequest TransactionRequest) Validate() error {
 	return nil
 }
-func (transactionRequest TransactionRequest) FromCLI(_ helpers.CLICommand, _ context.CLIContext) (helpers.TransactionRequest, error) {
+func (transactionRequest TransactionRequest) FromCLI(_ helpers.CLICommand, _ client.Context) (helpers.TransactionRequest, error) {
 	return transactionRequest, nil
 }
 func (transactionRequest TransactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
@@ -43,8 +43,8 @@ func (transactionRequest TransactionRequest) GetBaseReq() rest.BaseReq {
 func (transactionRequest TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	return NewTestMessage(sdkTypes.AccAddress(transactionRequest.BaseReq.From), transactionRequest.ID), nil
 }
-func (TransactionRequest) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, "test/TransactionRequest", TransactionRequest{})
+func (TransactionRequest) RegisterCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, "test/TransactionRequest", TransactionRequest{})
 }
 func TestTransactionRequestPrototype() helpers.TransactionRequest {
 	return TransactionRequest{}

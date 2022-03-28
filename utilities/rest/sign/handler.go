@@ -8,23 +8,21 @@ package sign
 import (
 	"bytes"
 	"fmt"
-	"net/http"
-	"strings"
-
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gorilla/mux"
+	"github.com/persistenceOne/persistenceSDK/schema/applications/base/encoding"
 	"github.com/spf13/viper"
+	"net/http"
 )
 
-func handler(cliContext context.CLIContext) http.HandlerFunc {
+func handler(cliContext client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		var request request
-		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
+		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.LegacyAmino, &request) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
@@ -37,27 +35,25 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			}
 		}
 
-		fromAddress, fromName, err := context.GetFromFields(strings.NewReader(keys.DefaultKeyPass), request.BaseRequest.From, false)
-		if err != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+		fromAddress, fromName, _, Error := client.GetFromFields(cliContext.Keyring, request.BaseRequest.From, false)
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
+		txCfg := encoding.MakeEncodingConfig()
 
-		txBuilder := types.NewTxBuilder(
-			authClient.GetTxEncoder(cliContext.Codec), request.BaseRequest.AccountNumber, request.BaseRequest.Sequence, 0, 0,
-			request.BaseRequest.Simulate, request.BaseRequest.ChainID, request.BaseRequest.Memo, request.BaseRequest.Fees, request.BaseRequest.GasPrices,
-		)
+		txBuilder := txCfg.TxConfig
 
-		accountNumber, sequence, err := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
-		if err != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+		accountNumber, sequence, Error := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
 
 		txBuilder = txBuilder.WithAccountNumber(accountNumber)
 		txBuilder = txBuilder.WithSequence(sequence)
 
-		stdSignature, err := types.MakeSignature(txBuilder.Keybase(), fromName, keys.DefaultKeyPass, types.StdSignMsg{
+		stdSignature, Error := types.MakeSignature(txBuilder.Keybase(), fromName, keys.DefaultKeyPass, types.StdSignMsg{
 			ChainID:       txBuilder.ChainID(),
 			AccountNumber: txBuilder.AccountNumber(),
 			Sequence:      txBuilder.Sequence(),
@@ -65,8 +61,8 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			Msgs:          request.StdTx.GetMsgs(),
 			Memo:          request.StdTx.GetMemo(),
 		})
-		if err != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+		if Error != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, Error.Error())
 			return
 		}
 
@@ -91,6 +87,6 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 	}
 }
 
-func RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
+func RegisterRESTRoutes(cliContext client.Context, router *mux.Router) {
 	router.HandleFunc("/sign", handler(cliContext)).Methods("POST")
 }

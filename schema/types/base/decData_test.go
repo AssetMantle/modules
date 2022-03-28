@@ -9,10 +9,9 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_DecData(t *testing.T) {
@@ -24,36 +23,37 @@ func Test_DecData(t *testing.T) {
 	require.Equal(t, decValue.String(), testDecData.String())
 	require.Equal(t, NewID(meta.Hash(decValue.String())), testDecData.GenerateHashID())
 	require.Equal(t, NewID(""), testDecData2.GenerateHashID())
-	require.Equal(t, decDataID, testDecData.GetTypeID())
+	require.Equal(t, NewID("D"), testDecData.GetTypeID())
 
-	dataAsString, err := testDecData.AsString()
+	dataAsString, Error := testDecData.AsString()
 	require.Equal(t, "", dataAsString)
-	require.Equal(t, errors.IncorrectFormat, err)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
-	dataAsDec, err := testDecData.AsDec()
+	dataAsDec, Error := testDecData.AsDec()
 	require.Equal(t, decValue, dataAsDec)
-	require.Equal(t, nil, err)
+	require.Equal(t, nil, Error)
 
-	dataAsHeight, err := testDecData.AsHeight()
-	require.Equal(t, height{}, dataAsHeight)
-	require.Equal(t, errors.IncorrectFormat, err)
+	dataAsHeight, Error := testDecData.AsHeight()
+	require.Equal(t, Height{}, dataAsHeight)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
-	dataAsID, err := testDecData.AsID()
-	require.Equal(t, id{}, dataAsID)
-	require.Equal(t, errors.IncorrectFormat, err)
+	dataAsID, Error := testDecData.AsID()
+	require.Equal(t, ID{}, dataAsID)
+	require.Equal(t, errors.IncorrectFormat, Error)
 	require.Equal(t, decValue, testDecData.Get())
 
-	data, err := ReadDecData("")
-	require.Equal(t, decData{Value: sdkTypes.ZeroDec()}, data)
-	require.Nil(t, err)
+	data, Error := ReadDecData("")
+	require.Equal(t, DecData{Value: sdkTypes.ZeroDec()}, data)
+	require.Nil(t, Error)
 
-	_, err = ReadDecData("testString")
-	require.NotNil(t, err)
+	data, Error = ReadDecData("testString")
+	require.NotNil(t, Error)
 
-	data, err = ReadDecData("123")
-	require.Equal(t, decData{Value: sdkTypes.NewDec(123)}, data)
-	require.Nil(t, err)
+	data, Error = ReadDecData("123")
+	require.Equal(t, DecData{Value: sdkTypes.NewDec(123)}, data)
+	require.Nil(t, Error)
 
 	require.Equal(t, false, testDecData.Compare(NewStringData("")) == 0)
 	require.Equal(t, true, testDecData.Compare(NewDecData(sdkTypes.NewDec(12))) == 0)
+
 }

@@ -12,16 +12,16 @@ import (
 
 func validator(i interface{}) error {
 	switch value := i.(type) {
-	case types.Parameter:
-		data, err := value.GetData().AsDec()
-		if err != nil || value.GetID().Compare(ID) != 0 || data.IsNegative() {
+	case DummyParameter:
+		data, Error := value.GetData().AsDec()
+		if Error != nil || value.GetID().Compare(ID) != 0 || data.IsNegative() {
 			return errors.InvalidParameter
 		}
 
 		return nil
 	case types.Data:
-		data, err := value.AsDec()
-		if err != nil || data.IsNegative() {
+		data, Error := value.AsDec()
+		if Error != nil || data.IsNegative() {
 			return errors.InvalidParameter
 		}
 

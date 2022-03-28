@@ -6,15 +6,14 @@
 package mint
 
 import (
-	"testing"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func Test_Mint_Request(t *testing.T) {
+
 	ownerID := base.NewID("ownerID")
 	ownableID := base.NewID("ownableID")
 	splits := sdkTypes.NewDec(10)

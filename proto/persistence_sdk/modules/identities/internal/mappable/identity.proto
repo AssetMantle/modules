@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package persistence_sdk.modules.identities.internal.mappable;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/traits/base/hasImmutables.proto";
+import "persistence_sdk/schema/traits/base/hasMutables.proto";
+import "persistence_sdk/schema/types/base/id.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable";
+
+message Identity {
+  option (gogoproto.goproto_getters) = false;
+  persistence_sdk.schema.types.base.ID i_d = 1 [(gogoproto.nullable) = false];
+  persistence_sdk.schema.traits.base.HasImmutables  has_immutables = 2 [(gogoproto.nullable) = false];
+  persistence_sdk.schema.traits.base.HasMutables  has_mutables = 3 [(gogoproto.nullable) = false];
+}

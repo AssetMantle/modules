@@ -7,17 +7,12 @@ package cancel
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
+	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
 	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -32,43 +27,10 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
+	msgServer := NewMsgServerImpl(transactionKeeper)
 
-	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.OrderID))
-
-	order := orders.Get(key.FromID(message.OrderID))
-	if order == nil {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
-
-	if message.FromID.Compare(order.(mappables.Order).GetMakerID()) != 0 {
-		return newTransactionResponse(errors.NotAuthorized)
-	}
-
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetMakerOwnableSplit())))
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
-
-	makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplitProperty)
-	if makerOwnableSplitProperty == nil {
-		return newTransactionResponse(errors.MetaDataError)
-	}
-
-	makerOwnableSplit, Error := makerOwnableSplitProperty.GetData().AsDec()
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
-
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), message.FromID, order.(mappables.Order).GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
-
-	orders.Remove(order)
-
-	return newTransactionResponse(nil)
+	_, Error := msgServer.Cancel(sdkTypes.WrapSDKContext(context), &message)
+	return newTransactionResponse(Error)
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
@@ -91,6 +53,9 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 	}
 
 	return transactionKeeper
+}
+func (transactionKeeper transactionKeeper) RegisterService(configurator sdkModule.Configurator) {
+	RegisterMsgServer(configurator.MsgServer(), NewMsgServerImpl(transactionKeeper))
 }
 func keeperPrototype() helpers.TransactionKeeper {
 	return transactionKeeper{}

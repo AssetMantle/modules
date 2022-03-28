@@ -13,8 +13,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/utilities/module"
 )
 
-var Codec *codec.Codec
+var LegacyAminoCodec *codec.LegacyAmino
+var JSONCodec codec.JSONMarshaler
 
 func init() {
-	Codec = module.RegisterCodec(key.Prototype, mappable.Prototype)
+	LegacyAminoCodec = module.RegisterLegacyAminoCodec(key.Prototype, mappable.Prototype)
 }

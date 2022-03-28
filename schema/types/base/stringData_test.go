@@ -9,13 +9,13 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_StringData(t *testing.T) {
+
 	value := "data"
 	testStringData := NewStringData(value)
 	testStringData2 := NewStringData("")
@@ -23,30 +23,30 @@ func Test_StringData(t *testing.T) {
 	require.Equal(t, value, testStringData.String())
 	require.Equal(t, NewID(meta.Hash(value)), testStringData.GenerateHashID())
 	require.Equal(t, NewID(""), testStringData2.GenerateHashID())
-	require.Equal(t, stringDataID, testStringData.GetTypeID())
+	require.Equal(t, testStringData.GetTypeID(), NewID("S"))
 	require.Equal(t, testStringData.ZeroValue(), NewStringData(""))
 
-	dataAsString, err := testStringData.AsString()
+	dataAsString, Error := testStringData.AsString()
 	require.Equal(t, value, dataAsString)
-	require.Equal(t, nil, err)
+	require.Equal(t, nil, Error)
 
-	dataAsID, err := testStringData.AsID()
-	require.Equal(t, id{}, dataAsID)
-	require.Equal(t, errors.IncorrectFormat, err)
+	dataAsID, Error := testStringData.AsID()
+	require.Equal(t, ID{}, dataAsID)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
-	dataAsHeight, err := testStringData.AsHeight()
-	require.Equal(t, height{}, dataAsHeight)
-	require.Equal(t, errors.IncorrectFormat, err)
+	dataAsHeight, Error := testStringData.AsHeight()
+	require.Equal(t, Height{}, dataAsHeight)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
-	dataAsDec, err := testStringData.AsDec()
+	dataAsDec, Error := testStringData.AsDec()
 	require.Equal(t, sdkTypes.ZeroDec(), dataAsDec)
-	require.Equal(t, errors.IncorrectFormat, err)
+	require.Equal(t, errors.IncorrectFormat, Error)
 
 	require.Equal(t, value, testStringData.Get())
 
-	data, err := ReadStringData("testString")
-	require.Nil(t, err)
-	require.Equal(t, stringData{Value: "testString"}.String(), data.String())
+	data, Error := ReadStringData("testString")
+	require.Nil(t, Error)
+	require.Equal(t, StringData{Value: "testString"}.String(), data.String())
 
 	require.Equal(t, false, testStringData.Compare(testStringData2) == 0)
 	require.Equal(t, true, testStringData.Compare(testStringData) == 0)
