@@ -66,13 +66,14 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 
 func Test_Query_Keeper_Maintainer(t *testing.T) {
 	context, keepers := CreateTestInput2(t)
+	immutableProperties, Error := base.ReadProperties("burn:S|100")
 	mutableProperties, err := base.ReadProperties("burn:S|100")
 	require.Equal(t, nil, err)
 
 	identityID := base.NewID("identityID")
 	classificationID := base.NewID("classificationID")
 	maintainerID := key.NewMaintainerID(classificationID, identityID)
-	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, mutableProperties, false, false, false))
+	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, immutableProperties,mutableProperties))
 
 	testQueryRequest := newQueryRequest(classificationID)
 	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.FromID(maintainerID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))

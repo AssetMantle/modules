@@ -17,7 +17,7 @@ import (
 
 func Test_Super_Response(t *testing.T) {
 
-	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewStringData("Data"))
+	metaProperty := base.NewMetaProperty(base.NewID("id"),base.NewStringData("Data"))
 	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty}...)
 
 	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList, nil)

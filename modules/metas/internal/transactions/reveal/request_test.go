@@ -38,19 +38,19 @@ func Test_Reveal_Request(t *testing.T) {
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	metaFact := "S|newMetaFact"
-	newMetaFact, err := base.ReadMetaFact(metaFact)
+	data := "S|newData"
+	newData, err := base.ReadData(data)
 	require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
-	testTransactionRequest := newTransactionRequest(testBaseReq, metaFact)
+	testTransactionRequest := newTransactionRequest(testBaseReq, data)
 
-	require.Equal(t, transactionRequest{BaseReq: testBaseReq, MetaFact: metaFact}, testTransactionRequest)
+	require.Equal(t, transactionRequest{BaseReq: testBaseReq, Data: data}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
 	requestFromCLI, err := transactionRequest{}.FromCLI(cliCommand, cliContext)
 	require.Equal(t, nil, err)
-	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, MetaFact: ""}, requestFromCLI)
+	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, Data: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
 	transactionRequestUnmarshalled, err := transactionRequest{}.FromJSON(jsonMessage)
@@ -64,10 +64,10 @@ func Test_Reveal_Request(t *testing.T) {
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
 	msg, err := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, newMetaFact), msg)
+	require.Equal(t, newMessage(fromAccAddress, newData), msg)
 	require.Nil(t, err)
 
-	msg2, err := newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, metaFact).MakeMsg()
+	msg2, err := newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, data).MakeMsg()
 	require.NotNil(t, err)
 	require.Nil(t, msg2)
 

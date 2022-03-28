@@ -49,13 +49,13 @@ func Test_Order_Methods(t *testing.T) {
 
 	data, _ := base.ReadIDData("")
 	defaultTakerProperty := base.NewProperty(ids.TakerIDProperty, data)
-	defaultExchangeRateProperty := base.NewProperty(ids.ExchangeRateProperty, base.NewDecData(sdkTypes.OneDec()))
+	defaultExchangeRateProperty := base.NewProperty(ids.ExchangeRateProperty,base.NewDecData(sdkTypes.OneDec()))
 	data, _ = base.ReadHeightData("100")
-	defaultCreationProperty := base.NewProperty(ids.CreationProperty, data)
+	defaultCreationProperty := base.NewProperty(ids.CreationProperty,data)
 	data, _ = base.ReadHeightData("-1")
 	defaultExpiryProperty := base.NewProperty(ids.ExpiryProperty, data)
 	data, _ = base.ReadDecData("")
-	defaultMakerOwnableSplitProperty := base.NewProperty(ids.MakerOwnableSplitProperty, data)
+	defaultMakerOwnableSplitProperty := base.NewProperty(ids.MakerOwnableSplitProperty,data)
 
 	require.Equal(t, order{Document: qualified.Document{ID: testOrderID, HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties}, HasMutables: baseTraits.HasMutables{Properties: base.NewProperties()}}}, testOrder)
 	require.Equal(t, testOrderID, testOrder.GetID())
