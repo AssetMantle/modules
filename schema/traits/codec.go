@@ -5,9 +5,13 @@
 
 package traits
 
-import "github.com/cosmos/cosmos-sdk/codec"
+import (
+	"github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/persistenceOne/persistenceSDK/schema/qualified"
+)
 
 func RegisterCodec(codec *codec.Codec) {
-	codec.RegisterInterface((*HasImmutables)(nil), nil)
-	codec.RegisterInterface((*HasMutables)(nil), nil)
+	codec.RegisterInterface((*qualified.HasImmutables)(nil), nil)
+	codec.RegisterInterface((*qualified.HasMutables)(nil), nil)
 }

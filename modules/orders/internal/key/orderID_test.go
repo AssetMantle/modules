@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/persistenceOne/persistenceSDK/constants"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 

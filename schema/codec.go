@@ -10,8 +10,8 @@ import (
 
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
 	"github.com/persistenceOne/persistenceSDK/schema/traits"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
 )

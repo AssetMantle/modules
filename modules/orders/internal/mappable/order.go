@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
+	qualified2 "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -19,7 +20,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
@@ -99,8 +99,8 @@ func NewOrder(orderID types.ID, immutableProperties types.Properties, mutablePro
 		Document: qualified.Document{
 			ID:               orderID,
 			ClassificationID: key.ReadClassificationID(orderID),
-			HasImmutables:    baseTraits.HasImmutables{Properties: immutableProperties},
-			HasMutables:      baseTraits.HasMutables{Properties: mutableProperties},
+			HasImmutables:    qualified2.HasImmutables{Properties: immutableProperties},
+			HasMutables:      qualified2.HasMutables{Properties: mutableProperties},
 		},
 	}
 }

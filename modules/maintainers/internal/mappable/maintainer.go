@@ -15,7 +15,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
-	qualifiedTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
+	"github.com/persistenceOne/persistenceSDK/schema/qualified/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
@@ -115,8 +115,8 @@ func NewMaintainer(id types.ID, immutableProperties types.Properties, mutablePro
 	return maintainer{
 		Document: qualifiedMappables.Document{
 			ID:            id,
-			HasImmutables: qualifiedTraits.HasImmutables{Properties: immutableProperties},
-			HasMutables:   qualifiedTraits.HasMutables{Properties: mutableProperties},
+			HasImmutables: base.HasImmutables{Properties: immutableProperties},
+			HasMutables:   base.HasMutables{Properties: mutableProperties},
 		},
 	}
 }

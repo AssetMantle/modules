@@ -9,13 +9,12 @@ import (
 	"bytes"
 	"strings"
 
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )

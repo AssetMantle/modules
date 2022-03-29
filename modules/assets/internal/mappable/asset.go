@@ -14,13 +14,13 @@ import (
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	qualifiedTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
+	"github.com/persistenceOne/persistenceSDK/schema/qualified/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type asset struct {
-	qualifiedTraits.Document //nolint:govet
+	base.Document //nolint:govet
 }
 
 var _ mappables.Asset = (*asset)(nil)
@@ -57,11 +57,11 @@ func (asset) RegisterCodec(codec *codec.Codec) {
 
 func NewAsset(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Asset {
 	return asset{
-		Document: qualifiedTraits.Document{
+		Document: base.Document{
 			ID:               id,
 			ClassificationID: key.ReadClassificationID(id),
-			HasImmutables:    qualifiedTraits.HasImmutables{Properties: immutableProperties},
-			HasMutables:      qualifiedTraits.HasMutables{Properties: mutableProperties},
+			HasImmutables:    base.HasImmutables{Properties: immutableProperties},
+			HasMutables:      base.HasMutables{Properties: mutableProperties},
 		},
 	}
 }

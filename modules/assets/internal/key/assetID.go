@@ -9,13 +9,12 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/qualified/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
@@ -61,6 +60,6 @@ func (assetID assetID) Equals(key helpers.Key) bool {
 func NewAssetID(classificationID types.ID, immutableProperties types.Properties) types.ID {
 	return assetID{
 		ClassificationID: classificationID,
-		HashID:           qualified.HasImmutables{Properties: immutableProperties}.GenerateHashID(),
+		HashID:           base.HasImmutables{Properties: immutableProperties}.GenerateHashID(),
 	}
 }

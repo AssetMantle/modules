@@ -1,8 +1,11 @@
 package types
 
+import (
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
+)
+
 type List interface {
-	GetPrototype() interface{}
-	GetList() []interface{}
+	GetList() []traits.Listable
 
 	Search(func()) int
 

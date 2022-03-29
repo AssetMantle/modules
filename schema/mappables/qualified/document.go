@@ -2,15 +2,15 @@ package qualified
 
 import (
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
+	"github.com/persistenceOne/persistenceSDK/schema/qualified/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type Document struct {
 	ID               types.ID `json:"id" valid:"required~required field id missing"`
 	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID missing"`
-	baseTraits.HasImmutables
-	baseTraits.HasMutables //nolint:govet
+	base.HasImmutables
+	base.HasMutables //nolint:govet
 }
 
 var _ mappables.Document = (*Document)(nil)

@@ -3,7 +3,7 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package qualified
+package base
 
 import (
 	"testing"

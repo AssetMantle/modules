@@ -8,6 +8,7 @@ package mappable
 import (
 	"strings"
 
+	"github.com/persistenceOne/persistenceSDK/schema/qualified/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -21,7 +22,6 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
@@ -80,8 +80,8 @@ func NewIdentity(id types.ID, immutableProperties types.Properties, mutablePrope
 		Document: qualifiedMappables.Document{
 			ID: id,
 			// TODO Add classificationID
-			HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
-			HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
+			HasImmutables: base.HasImmutables{Properties: immutableProperties},
+			HasMutables:   base.HasMutables{Properties: mutableProperties},
 		},
 	}
 }

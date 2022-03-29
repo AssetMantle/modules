@@ -1,7 +1,7 @@
-package qualified
+package base
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
+	"github.com/persistenceOne/persistenceSDK/schema/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -12,7 +12,7 @@ type Document struct {
 	HasMutables //nolint:govet
 }
 
-var _ traits.Document = (*Document)(nil)
+var _ qualified.Document = (*Document)(nil)
 
 func (document Document) GetID() types.ID {
 	return document.ID

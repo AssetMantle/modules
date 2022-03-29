@@ -6,7 +6,7 @@
 package mappables
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
+	"github.com/persistenceOne/persistenceSDK/schema/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -18,6 +18,6 @@ type Document interface {
 	GetProperty(types.ID) types.Property
 
 	// TODO see how to adjust in direct data
-	traits.HasImmutables
-	traits.HasMutables
+	qualified.HasImmutables
+	qualified.HasMutables
 }

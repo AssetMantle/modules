@@ -9,8 +9,7 @@ import (
 	"testing"
 
 	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
-
-	qualifiedTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
+	"github.com/persistenceOne/persistenceSDK/schema/qualified/base"
 
 	"github.com/stretchr/testify/require"
 
@@ -27,7 +26,7 @@ func Test_Classification_Methods(t *testing.T) {
 	id := key.NewClassificationID(chainID, immutableProperties, mutableProperties)
 
 	testClassification := NewClassification(id, immutableProperties, mutableProperties)
-	require.Equal(t, classification{Document: qualifiedMappables.Document{ID: id, HasImmutables: qualifiedTraits.HasImmutables{Properties: immutableProperties}, HasMutables: qualifiedTraits.HasMutables{Properties: mutableProperties}}}, testClassification)
+	require.Equal(t, classification{Document: qualifiedMappables.Document{ID: id, HasImmutables: base.HasImmutables{Properties: immutableProperties}, HasMutables: base.HasMutables{Properties: mutableProperties}}}, testClassification)
 	require.Equal(t, immutableProperties, testClassification.GetImmutableProperties())
 	require.Equal(t, mutableProperties, testClassification.GetMutableProperties())
 	require.Equal(t, key.FromID(id), testClassification.GetKey())

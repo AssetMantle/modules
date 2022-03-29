@@ -3,10 +3,10 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-package qualified
+package base
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
+	"github.com/persistenceOne/persistenceSDK/schema/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
@@ -16,7 +16,7 @@ type HasImmutables struct {
 	Properties types.Properties `json:"properties"`
 }
 
-var _ traits.HasImmutables = (*HasImmutables)(nil)
+var _ qualified.HasImmutables = (*HasImmutables)(nil)
 
 func (immutables HasImmutables) GetImmutableProperties() types.Properties {
 	if immutables.Properties == nil {

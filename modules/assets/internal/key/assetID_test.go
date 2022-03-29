@@ -9,11 +9,10 @@ import (
 	"strings"
 	"testing"
 
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
-
 	"github.com/stretchr/testify/require"
 
 	"github.com/persistenceOne/persistenceSDK/constants"
+	baseTraits "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 

@@ -10,12 +10,12 @@ import (
 
 	"github.com/persistenceOne/persistenceSDK/constants/ids"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
+	qualified2 "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
@@ -49,15 +49,15 @@ func Test_Order_Methods(t *testing.T) {
 
 	data, _ := base.ReadIDData("")
 	defaultTakerProperty := base.NewProperty(ids.TakerIDProperty, data)
-	defaultExchangeRateProperty := base.NewProperty(ids.ExchangeRateProperty,base.NewDecData(sdkTypes.OneDec()))
+	defaultExchangeRateProperty := base.NewProperty(ids.ExchangeRateProperty, base.NewDecData(sdkTypes.OneDec()))
 	data, _ = base.ReadHeightData("100")
-	defaultCreationProperty := base.NewProperty(ids.CreationProperty,data)
+	defaultCreationProperty := base.NewProperty(ids.CreationProperty, data)
 	data, _ = base.ReadHeightData("-1")
 	defaultExpiryProperty := base.NewProperty(ids.ExpiryProperty, data)
 	data, _ = base.ReadDecData("")
-	defaultMakerOwnableSplitProperty := base.NewProperty(ids.MakerOwnableSplitProperty,data)
+	defaultMakerOwnableSplitProperty := base.NewProperty(ids.MakerOwnableSplitProperty, data)
 
-	require.Equal(t, order{Document: qualified.Document{ID: testOrderID, HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties}, HasMutables: baseTraits.HasMutables{Properties: base.NewProperties()}}}, testOrder)
+	require.Equal(t, order{Document: qualified.Document{ID: testOrderID, HasImmutables: qualified2.HasImmutables{Properties: immutableProperties}, HasMutables: qualified2.HasMutables{Properties: base.NewProperties()}}}, testOrder)
 	require.Equal(t, testOrderID, testOrder.GetID())
 	require.Equal(t, testOrderID, testOrder.GetKey())
 	require.Equal(t, classificationID, testOrder.GetClassificationID())
