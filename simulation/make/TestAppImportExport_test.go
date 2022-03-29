@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/store"
+
 	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
 
 	"github.com/CosmWasm/wasmd/x/wasm"

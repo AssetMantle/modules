@@ -11,7 +11,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 )
 
-// TODO move qulaified to own package
+// TODO move qualified to own package
 // TODO rename to Mutables
 type HasMutables struct {
 	Properties types.Properties `json:"properties"`

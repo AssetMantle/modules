@@ -53,7 +53,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		paramsTransientStoreKeys,
 	)
 
-	parameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
+	testParameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -69,7 +69,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		MaintainersKeeper: keeperPrototype().Initialize(Mapper, parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
+		MaintainersKeeper: keeperPrototype().Initialize(Mapper, testParameters, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
 
 	return context, keepers

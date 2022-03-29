@@ -60,7 +60,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		paramsTransientStoreKeys,
 	)
 
-	parameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
+	testParameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -75,12 +75,12 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(mapper, parameters)
-	mintAuxiliary := mint.AuxiliaryMock.Initialize(mapper, parameters)
-	conformAuxiliary := conform.AuxiliaryMock.Initialize(mapper, parameters)
-	verifyAuxiliary := verify.AuxiliaryMock.Initialize(mapper, parameters)
+	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(mapper, testParameters)
+	mintAuxiliary := mint.AuxiliaryMock.Initialize(mapper, testParameters)
+	conformAuxiliary := conform.AuxiliaryMock.Initialize(mapper, testParameters)
+	verifyAuxiliary := verify.AuxiliaryMock.Initialize(mapper, testParameters)
 	keepers := TestKeepers{
-		AssetsKeeper: keeperPrototype().Initialize(mapper, parameters,
+		AssetsKeeper: keeperPrototype().Initialize(mapper, testParameters,
 			[]interface{}{scrubAuxiliary, verifyAuxiliary,
 				mintAuxiliary, conformAuxiliary}).(helpers.TransactionKeeper),
 	}

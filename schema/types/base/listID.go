@@ -39,20 +39,20 @@ func (listID listID) Compare(compareID types.ID) int {
 }
 
 func (listID listID) GetList() []interface{} {
-	panic("implement me")
+	// TODO
 }
 func (listID listID) Search(f func()) int {
-	panic("implement me")
+	// TODO
 }
 func (listID listID) Apply(f func()) types.List {
-	panic("implement me")
+	// TODO
 }
 func (listID listID) Add(i ...interface{}) types.List {
-	panic("implement me")
+	// TODO
 }
 func (listID listID) Remove(i ...interface{}) types.List {
-	panic("implement me")
+	// TODO
 }
 func (listID listID) Mutate(i ...interface{}) types.List {
-	panic("implement me")
+	// TODO
 }

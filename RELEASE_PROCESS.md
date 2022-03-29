@@ -56,7 +56,7 @@ A _patch release_ is an increment of the patch number (eg: `v1.2.0` → `v1.2.1`
 
 **Patch release must not break API nor consensus.**
 
-Updates to the release branch should come from `master` by backporting PRs (usually done by automatic cherry pick
+Updates to the release branch should come from `master` by backporting PRs (usually done by automatic cherry-pick
 followed by a PRs to the release branch). The backports must be marked using `backport/Y` label in PR for master. It is
 the PR author's responsibility to fix merge conflicts, update changelog entries, and ensure CI passes. If a PR
 originates from an external contributor, a core team member assumes responsibility to perform this process instead of
@@ -98,7 +98,7 @@ caution. Hence, when updates are proposed, they must be accompanied by a strong 
 regressions, i.e. even one-line changes could cause unexpected regressions due to side effects or poorly tested code. We
 never assume that any change, no matter how little or non-intrusive, is completely exempt of regression risks.
 
-Therefore, the requirements for stable changes are different than those that are candidates to be merged in the `master`
+Therefore, the requirements for stable changes are different from those that are candidates to be merged in the `master`
 branch. When preparing future major releases, our aim is to design the most elegant, user-friendly and maintainable SDK
 possible which often entails fundamental changes to the SDK's architecture design, rearranging and/or renaming packages
 as well as reducing code duplication so that we maintain common functions and data structures in one place rather than

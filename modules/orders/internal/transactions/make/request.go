@@ -44,7 +44,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Accept text/plain
 // @Produce json
 // @Tags Orders
-// @Param body body  transactionRequest true "Request body to make order"
+// @Param body  transactionRequest true "Request body to make order"
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /orders/make [post]

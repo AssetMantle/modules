@@ -41,7 +41,7 @@ func NewCuckoo(numItems uint, entriesPerBucket uint, retries int, falsePositiveR
 	}
 }
 
-// delete the fingerprint from the cuckoo filter
+// Delete delete the fingerprint from the cuckoo filter
 func (c *Cuckoo) Delete(needle string) {
 	i1, i2, f := c.hashes(needle)
 	// try to remove from f1
@@ -58,7 +58,7 @@ func (c *Cuckoo) Delete(needle string) {
 	}
 }
 
-// lookup needle in the cuckoo filter
+// Lookup find needle in the cuckoo filter
 func (c *Cuckoo) Lookup(needle string) bool {
 	i1, i2, f := c.hashes(needle)
 	_, b1 := c.buckets[i1%c.numBuckets].Contains(f)
@@ -136,9 +136,9 @@ func (c *Cuckoo) hashes(data string) (uint, uint, fingerprint) {
 }
 
 func Hash(data []byte) []byte {
-	hasher := sha256.New()
-	hasher.Write(data)
-	hash := hasher.Sum(nil)
+	shaHash := sha256.New()
+	shaHash.Write(data)
+	hash := shaHash.Sum(nil)
 
 	return hash
 }

@@ -24,7 +24,7 @@ var _ helpers.QueryRequest = (*queryRequest)(nil)
 
 // Validate godoc
 // @Summary Search for metadata by meta ID
-// @Description Able to query the meta data
+// @Description Able to query the metadata
 // @Accept json
 // @Produce json
 // @Tags Metas

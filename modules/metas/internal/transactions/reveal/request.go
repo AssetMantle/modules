@@ -34,7 +34,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Accept text/plain
 // @Produce json
 // @Tags Metas
-// @Param body body  transactionRequest true "Request body to reveal meta transaction"
+// @Param body  transactionRequest true "Request body to reveal meta transaction"
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /metas/reveal [post]

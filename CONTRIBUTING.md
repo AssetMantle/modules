@@ -116,7 +116,7 @@ to the best of their abilities before marking the PR as "Ready for Review". If y
 on the PR, open the PR as a "Draft" and leave a comment in the PR indicating that you would like early feedback and
 tagging whoever you would like to receive feedback from.
 
-Codeowners are marked automatically as the reviewers.
+Code-owners are marked automatically as the reviewers.
 
 All PRs require at least two review approvals before they can be merged. Each PR template has a reviewers checklist that must be completed before
 the PR can be merged. Each reviewer is responsible for all checked items unless they have indicated otherwise by leaving

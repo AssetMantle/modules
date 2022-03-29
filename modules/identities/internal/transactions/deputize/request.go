@@ -40,7 +40,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Accept text/plain
 // @Produce json
 // @Tags Identities
-// @Param body body  transactionRequest true "Request body to deputize identity"
+// @Param body  transactionRequest true "Request body to deputize identity"
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /identities/deputize [post]

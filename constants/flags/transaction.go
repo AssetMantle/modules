@@ -9,7 +9,7 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
 )
 
-//Note: Arranged alphabetically
+// Note: Arranged alphabetically
 var (
 	AddMaintainer           = base.NewCLIFlag("addMaintainer", false, "AddMaintainer")
 	AssetID                 = base.NewCLIFlag("assetID", "", "AssetID")

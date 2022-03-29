@@ -6,8 +6,9 @@
 package mappable
 
 import (
-	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
 	"testing"
+
+	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
 
 	"github.com/stretchr/testify/require"
 

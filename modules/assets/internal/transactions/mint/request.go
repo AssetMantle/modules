@@ -40,7 +40,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Accept text/plain
 // @Produce json
 // @Tags Assets
-// @Param body body  transactionRequest true "A transaction to mint the asset."
+// @Param body  transactionRequest true "A transaction to mint the asset."
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /assets/mint [post]

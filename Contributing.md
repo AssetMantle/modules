@@ -1,5 +1,5 @@
 # Contributing
-
+// TODO define anchors
 - [Contributing](#contributing)
     - [Architecture Decision Records (ADR)](#architecture-decision-records-adr)
     - [Development Procedure](#development-procedure)
@@ -111,7 +111,7 @@ to the best of their abilities before marking the PR as "Ready for Review". If y
 receive early feedback on the PR, open the PR as a "Draft" and leave a comment in the PR indicating
 that you would like early feedback and tagging whoever you would like to receive feedback from.
 
-Codeowners are marked automatically as the reviewers.
+Code-owners are marked automatically as the reviewers.
 
 All PRs require at least two review approvals before they can be merged (one review might be acceptable in
 the case of minor changes to [docs](./.github/PULL_REQUEST_TEMPLATE/docs.md) or [other](./.github/PULL_REQUEST_TEMPLATE/other.md) changes that do not affect production code). Each PR template has a reviewers checklist that must be completed before the PR can be merged. Each reviewer is responsible
@@ -155,7 +155,7 @@ build, in which case we can fall back on `go mod tidy -v`.
 
 We use [Protocol Buffers](https://developers.google.com/protocol-buffers) along with [gogoproto](https://github.com/gogo/protobuf) to generate code for use in Persistence SDK.
 
-For determinstic behavior around Protobuf tooling, everything is containerized using Docker. Make sure to have Docker installed on your machine, or head to [Docker's website](https://docs.docker.com/get-docker/) to install it.
+For deterministic behavior around Protobuf tooling, everything is containerized using Docker. Make sure to have Docker installed on your machine, or head to [Docker's website](https://docs.docker.com/get-docker/) to install it.
 
 For formatting code in `.proto` files, you can run `make proto-format` command.
 

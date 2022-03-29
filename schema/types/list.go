@@ -1,6 +1,7 @@
 package types
 
 type List interface {
+	GetPrototype() interface{}
 	GetList() []interface{}
 
 	Search(func()) int

@@ -34,7 +34,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Accept text/plain
 // @Produce json
 // @Tags Identities
-// @Param body body  transactionRequest true "A transaction to nub a base identity."
+// @Param body  transactionRequest true "A transaction to nub a base identity."
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /identities/nub [post]

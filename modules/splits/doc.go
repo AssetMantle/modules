@@ -3,5 +3,5 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-// Package splits defines the splits module.
+// Package splits defines the splits' module.
 package splits

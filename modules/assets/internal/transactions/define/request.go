@@ -38,7 +38,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Accept text/plain
 // @Produce json
 // @Tags Assets
-// @Param body body  transactionRequest true "A transaction to define the asset."
+// @Param body  transactionRequest true "A transaction to define the asset."
 // @Success 200 {object} transactionResponse   "Message for a successful transaction."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error in the transaction."
 // @Router /assets/define [post]

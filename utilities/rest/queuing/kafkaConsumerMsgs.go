@@ -11,7 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 )
 
-// kafkaConsumerMessages : messages to consume 5 second delay
+// kafkaConsumerMessages : messages to consume 5-second delay
 func kafkaConsumerMessages(cliCtx context.CLIContext) {
 	quit := make(chan bool)
 

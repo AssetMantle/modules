@@ -3,5 +3,5 @@
  SPDX-License-Identifier: Apache-2.0
 */
 
-// Package assets defines the assets module.
+// Package assets defines the assets' module.
 package assets
