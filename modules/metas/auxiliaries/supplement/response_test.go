@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package supplement
 
@@ -17,7 +15,7 @@ import (
 
 func Test_Super_Response(t *testing.T) {
 
-	metaProperty := base.NewMetaProperty(base.NewID("id"),base.NewStringData("Data"))
+	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewStringData("Data"))
 	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty}...)
 
 	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList, nil)
