@@ -8,12 +8,12 @@ import (
 )
 
 type List interface {
+	// TODO add search and apply methods
 	GetList() []traits.Listable
+	Size() int
 
-	Search(func()) int
-
-	Apply(func()) List
-	Add(...traits.Listable) List
-	Remove(...traits.Listable) List
-	Mutate(...traits.Listable) List
+	// TODO -1 for not found
+	Search(listable traits.Listable) int
+	Add(listableList ...traits.Listable) List
+	Remove(listableList ...traits.Listable) List
 }

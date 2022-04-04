@@ -9,6 +9,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/schema/lists"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
@@ -58,8 +59,8 @@ func (booleanData booleanData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
 	return zeroValue, errors.IncorrectFormat
 }
-func (booleanData booleanData) AsListData() (types.ListData, error) {
-	zeroValue, _ := listData{}.ZeroValue().AsListData()
+func (booleanData booleanData) AsDataList() (lists.DataList, error) {
+	zeroValue, _ := listData{}.ZeroValue().AsDataList()
 	return zeroValue, errors.IncorrectFormat
 }
 func (booleanData booleanData) AsString() (string, error) {

@@ -10,14 +10,15 @@ import (
 
 	"github.com/persistenceOne/persistenceSDK/constants"
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/schema/lists"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type listData struct {
-	Value sortedDataList `json:"value"`
+	Value lists.DataList `json:"value"`
 }
 
-var _ types.ListData = (*listData)(nil)
+var _ types.Data = (*listData)(nil)
 
 func (listData listData) GetID() types.ID {
 	return dataID{
@@ -26,6 +27,7 @@ func (listData listData) GetID() types.ID {
 	}
 }
 func (listData listData) Compare(data types.Data) int {
+	// TODO write test and see if correct
 	compareListData, Error := listDataFromInterface(data)
 	if Error != nil {
 		panic(Error)
@@ -34,9 +36,9 @@ func (listData listData) Compare(data types.Data) int {
 	return strings.Compare(listData.GenerateHashID().String(), compareListData.GenerateHashID().String())
 }
 func (listData listData) String() string {
-	dataStringList := make([]string, len(listData.Value))
+	dataStringList := make([]string, listData.Value.Size())
 
-	for i, data := range listData.Value {
+	for i, data := range listData.Value.GetList() {
 		dataStringList[i] = data.String()
 	}
 
@@ -49,13 +51,13 @@ func (listData listData) ZeroValue() types.Data {
 	return NewListData([]types.Data{}...)
 }
 func (listData listData) GenerateHashID() types.ID {
-	if len(listData.Value) == 0 {
+	if listData.Value.Size() == 0 {
 		return NewID("")
 	}
 
-	hashList := make([]string, len(listData.Value))
+	hashList := make([]string, listData.Value.Size())
 
-	for i, data := range listData.Value {
+	for i, data := range listData.Value.GetList() {
 		hashList[i] = data.GenerateHashID().String()
 	}
 
@@ -67,8 +69,8 @@ func (listData listData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
 	return zeroValue, errors.IncorrectFormat
 }
-func (listData listData) AsListData() (types.ListData, error) {
-	return listData, nil
+func (listData listData) AsDataList() (lists.DataList, error) {
+	return listData.Value, nil
 }
 func (listData listData) AsString() (string, error) {
 	zeroValue, _ := stringData{}.ZeroValue().AsString()
@@ -89,26 +91,6 @@ func (listData listData) AsID() (types.ID, error) {
 func (listData listData) Get() interface{} {
 	return listData.Value
 }
-func (listData listData) Search(data types.Data) int {
-	return listData.Value.Search(data)
-}
-func (listData listData) GetList() []types.Data {
-	return listData.Value
-}
-func (listData listData) Add(dataList ...types.Data) types.ListData {
-	for _, data := range dataList {
-		listData.Value = listData.Value.Add(data).(sortedDataList)
-	}
-
-	return listData
-}
-func (listData listData) Remove(dataList ...types.Data) types.ListData {
-	for _, data := range dataList {
-		listData.Value = listData.Value.Remove(data).(sortedDataList)
-	}
-
-	return listData
-}
 func listDataFromInterface(data types.Data) (listData, error) {
 	switch value := data.(type) {
 	case listData:
@@ -119,10 +101,12 @@ func listDataFromInterface(data types.Data) (listData, error) {
 }
 
 func NewListData(value ...types.Data) types.Data {
-	return listData{}.Add(value...)
+	// TODO Implement
+	return nil
 }
 
 func ReadAccAddressListData(dataString string) (types.Data, error) {
+	// TODO revise
 	if dataString == "" {
 		return listData{}.ZeroValue(), nil
 	}

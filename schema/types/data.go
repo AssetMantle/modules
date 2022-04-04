@@ -5,6 +5,8 @@ package types
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/persistenceOne/persistenceSDK/schema/lists"
 )
 
 // TODO URI and ID data type
@@ -25,7 +27,7 @@ type Data interface {
 	GenerateHashID() ID
 
 	AsAccAddress() (sdkTypes.AccAddress, error)
-	AsListData() (ListData, error)
+	AsDataList() (lists.DataList, error)
 	AsString() (string, error)
 	AsDec() (sdkTypes.Dec, error)
 	AsHeight() (Height, error)

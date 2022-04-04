@@ -13,24 +13,15 @@ import (
 // TODO Revise the code
 type list []traits.Listable
 
-func (list list) Search(f func()) int {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (list list) Apply(f func()) types.List {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (list list) Mutate(listable ...traits.Listable) types.List {
-	// TODO implement me
-	panic("implement me")
-}
-
 var _ types.List = (*list)(nil)
 
-func (list list) SearchListable(listable traits.Listable) int {
+func (list list) GetList() []traits.Listable {
+	return list
+}
+func (list list) Size() int { // TODO write test
+	return len(list)
+}
+func (list list) Search(listable traits.Listable) int {
 	index := sort.Search(
 		len(list),
 		func(i int) bool {
@@ -46,14 +37,9 @@ func (list list) SearchListable(listable traits.Listable) int {
 
 	return index
 }
-
-func (list list) GetList() []traits.Listable {
-	return list
-}
-
 func (list list) Add(listableList ...traits.Listable) types.List {
 	for _, listable := range listableList {
-		if list.SearchListable(listable) != len(list) {
+		if list.Search(listable) != len(list) {
 			return list
 		}
 
@@ -71,11 +57,10 @@ func (list list) Add(listableList ...traits.Listable) types.List {
 
 	return list
 }
-
 func (list list) Remove(listableList ...traits.Listable) types.List {
 	// TODO check if the return is properly assigned to
 	for _, listable := range listableList {
-		if index := list.SearchListable(listable); index != len(list) {
+		if index := list.Search(listable); index != len(list) {
 			list = append(list[:index], list[index+1:]...)
 		}
 	}

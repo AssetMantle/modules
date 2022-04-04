@@ -8,21 +8,23 @@ import (
 	"strings"
 
 	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/persistenceOne/persistenceSDK/schema/lists"
+	"github.com/persistenceOne/persistenceSDK/schema/traits"
 
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type listID struct {
-	IDList []types.ID `json:"idList"`
+	IDList lists.IDList `json:"idList"`
 }
 
 var _ types.ID = (*listID)(nil)
-var _ types.List = (*listID)()
+var _ types.List = (*listID)(nil)
 
 func (listID listID) String() string {
-	idStringList := make([]string, len(listID.IDList))
+	idStringList := make([]string, listID.Size())
 
-	for i, id := range listID.IDList {
+	for i, id := range listID.IDList.GetList() {
 		idStringList[i] = id.String()
 	}
 
@@ -31,7 +33,7 @@ func (listID listID) String() string {
 func (listID listID) Bytes() []byte {
 	var byteList []byte
 
-	for _, id := range listID.IDList {
+	for _, id := range listID.IDList.GetList() {
 		byteList = append(byteList, id.Bytes()...)
 	}
 
@@ -40,28 +42,23 @@ func (listID listID) Bytes() []byte {
 func (listID listID) Compare(compareID types.ID) int {
 	return bytes.Compare(listID.Bytes(), compareID.Bytes())
 }
-
-func (listID listID) GetList() []interface{} {
-	// TODO
-	return nil
+func (listID listID) GetList() []traits.Listable {
+	// TODO implement me
+	panic("implement me")
 }
-func (listID listID) Search(f func()) int {
-	// TODO
-	return 0
+func (listID listID) Size() int {
+	// TODO implement me
+	panic("implement me")
 }
-func (listID listID) Apply(f func()) types.List {
-	// TODO
-	return nil
+func (listID listID) Search(listable traits.Listable) int {
+	// TODO implement me
+	panic("implement me")
 }
-func (listID listID) Add(i ...interface{}) types.List {
-	// TODO
-	return nil
+func (listID listID) Add(listableList ...traits.Listable) types.List {
+	// TODO implement me
+	panic("implement me")
 }
-func (listID listID) Remove(i ...interface{}) types.List {
-	// TODO
-	return nil
-}
-func (listID listID) Mutate(i ...interface{}) types.List {
-	// TODO
-	return nil
+func (listID listID) Remove(listableList ...traits.Listable) types.List {
+	// TODO implement me
+	panic("implement me")
 }

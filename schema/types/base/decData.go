@@ -7,6 +7,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/schema/lists"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
 	"github.com/persistenceOne/persistenceSDK/utilities/meta"
 )
@@ -57,8 +58,8 @@ func (decData decData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
 	return zeroValue, errors.IncorrectFormat
 }
-func (decData decData) AsListData() (types.ListData, error) {
-	zeroValue, _ := listData{}.ZeroValue().AsListData()
+func (decData decData) AsDataList() (lists.DataList, error) {
+	zeroValue, _ := listData{}.ZeroValue().AsDataList()
 	return zeroValue, errors.IncorrectFormat
 }
 func (decData decData) AsString() (string, error) {
