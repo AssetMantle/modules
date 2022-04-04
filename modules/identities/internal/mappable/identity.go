@@ -6,8 +6,8 @@ package mappable
 import (
 	"strings"
 
-	"github.com/persistenceOne/persistenceSDK/schema/qualified/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseQualified "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
+	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -46,7 +46,7 @@ func (identity identity) GetAuthentication() types.Property {
 }
 func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	if authentication := identity.GetAuthentication(); authentication != nil {
-		compareAuthenticationHash := base.NewAccAddressData(address).GenerateHashID().String()
+		compareAuthenticationHash := baseTypes.NewAccAddressData(address).GenerateHashID().String()
 
 		// TODO impl through list
 		authenticationHashList := strings.Split(authentication.GetHashID().String(), constants.ListHashStringSeparator)
@@ -61,10 +61,12 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 }
 func (identity identity) ProvisionAddress(address sdkTypes.AccAddress) mappables.Identity {
 	// TODO
+	return nil
 }
 
 func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) mappables.Identity {
 	// TODO
+	return nil
 }
 func (identity identity) GetKey() helpers.Key {
 	return key.FromID(identity.ID)
@@ -78,8 +80,8 @@ func NewIdentity(id types.ID, immutableProperties types.Properties, mutablePrope
 		Document: qualifiedMappables.Document{
 			ID: id,
 			// TODO Add classificationID
-			HasImmutables: base.HasImmutables{Properties: immutableProperties},
-			HasMutables:   base.HasMutables{Properties: mutableProperties},
+			HasImmutables: baseQualified.HasImmutables{Properties: immutableProperties},
+			HasMutables:   baseQualified.HasMutables{Properties: mutableProperties},
 		},
 	}
 }

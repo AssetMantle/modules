@@ -13,9 +13,9 @@ import (
 	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/persistenceOne/persistenceSDK/schema/mappables"
 	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
-	"github.com/persistenceOne/persistenceSDK/schema/qualified/base"
+	baseQualified "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
 	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
 	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
@@ -68,7 +68,7 @@ func (maintainer maintainer) CanRenumerateAsset() bool {
 
 // TODO
 func (maintainer maintainer) CanAddMaintainer() bool {
-	if property := maintainer.GetProperty(base.NewID(properties.Permissions.GetID().String())); property != nil {
+	if property := maintainer.GetProperty(baseTypes.NewID(properties.Permissions.GetID().String())); property != nil {
 		// impl
 	}
 
@@ -77,7 +77,7 @@ func (maintainer maintainer) CanAddMaintainer() bool {
 
 // TODO
 func (maintainer maintainer) CanRemoveMaintainer() bool {
-	if property := maintainer.GetProperty(base.NewID(properties.Permissions.GetID().String())); property != nil {
+	if property := maintainer.GetProperty(baseTypes.NewID(properties.Permissions.GetID().String())); property != nil {
 		// impl
 	}
 
@@ -113,8 +113,8 @@ func NewMaintainer(id types.ID, immutableProperties types.Properties, mutablePro
 	return maintainer{
 		Document: qualifiedMappables.Document{
 			ID:            id,
-			HasImmutables: base.HasImmutables{Properties: immutableProperties},
-			HasMutables:   base.HasMutables{Properties: mutableProperties},
+			HasImmutables: baseQualified.HasImmutables{Properties: immutableProperties},
+			HasMutables:   baseQualified.HasMutables{Properties: mutableProperties},
 		},
 	}
 }
