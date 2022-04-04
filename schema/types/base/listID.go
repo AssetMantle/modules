@@ -43,19 +43,25 @@ func (listID listID) Compare(compareID types.ID) int {
 
 func (listID listID) GetList() []interface{} {
 	// TODO
+	return nil
 }
 func (listID listID) Search(f func()) int {
 	// TODO
+	return 0
 }
 func (listID listID) Apply(f func()) types.List {
 	// TODO
+	return nil
 }
 func (listID listID) Add(i ...interface{}) types.List {
 	// TODO
+	return nil
 }
 func (listID listID) Remove(i ...interface{}) types.List {
 	// TODO
+	return nil
 }
 func (listID listID) Mutate(i ...interface{}) types.List {
 	// TODO
+	return nil
 }
