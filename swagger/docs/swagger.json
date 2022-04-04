@@ -1,8 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "API Documentation of Persistence custom modules",
-    "title": "Persistence Swagger Documentation",
+    "description": "API Documentation of AssetMantle custom modules",
+    "title": "AssetMantle Modules Swagger Documentation",
     "contact": {},
     "license": {
       "name": "Apache 2.0",

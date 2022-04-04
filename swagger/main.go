@@ -26,9 +26,9 @@ var Prototype = base.NewApplication(
 	configurations.TokenReceiveAllowedModules,
 )
 
-// @title Persistence Swagger Documentation
+// @title AssetMantle Modules Swagger Documentation
 // @version 0.1.0
-// @description API Documentation of Persistence custom modules
+// @description API Documentation of AssetMantle custom modules
 // @host localhost:1317
 
 // @license.name Apache 2.0

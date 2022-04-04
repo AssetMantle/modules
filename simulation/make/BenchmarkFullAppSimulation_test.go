@@ -16,7 +16,7 @@ import (
 )
 
 // Profile with:
-// /usr/local/go/bin/go test -benchmem -run=^$ github.com/persistence/persistenceSDK/simapp -bench ^BenchmarkFullAppSimulation$ -Commit=true -cpuprofile cpu.out
+// /usr/local/go/bin/go test -benchmem -run=^$ github.com/AssetMantle/modules/simapp -bench ^BenchmarkFullAppSimulation$ -Commit=true -cpuprofile cpu.out
 func BenchmarkFullAppSimulation(b *testing.B) {
 	config, db, _, logger, _, closeFn, err := setupRun(b, "goleveldb-app-sim", "Simulation")
 	defer closeFn()
