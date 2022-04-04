@@ -26,6 +26,5 @@ func RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, property{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, signature{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, signatures{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, sortedDataList{})
 	codecUtilities.RegisterXPRTConcrete(codec, moduleName, stringData{})
 }
