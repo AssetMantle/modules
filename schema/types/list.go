@@ -13,7 +13,7 @@ type List interface {
 	Search(func()) int
 
 	Apply(func()) List
-	Add(...interface{}) List
-	Remove(...interface{}) List
-	Mutate(...interface{}) List
+	Add(...traits.Listable) List
+	Remove(...traits.Listable) List
+	Mutate(...traits.Listable) List
 }
