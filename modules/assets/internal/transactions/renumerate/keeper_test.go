@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/constants/test"
+	"github.com/AssetMantle/modules/constants/test"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -19,16 +19,16 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
-	"github.com/persistenceOne/persistenceSDK/schema"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/modules/assets/internal/key"
+	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
+	"github.com/AssetMantle/modules/modules/assets/internal/parameters"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 type TestKeepers struct {

@@ -6,12 +6,12 @@ package schema
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/mappables"
+	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/traits"
+	"github.com/AssetMantle/modules/schema/types"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func RegisterCodec(codec *codec.Codec) {

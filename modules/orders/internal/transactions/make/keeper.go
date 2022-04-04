@@ -6,22 +6,22 @@ package make
 import (
 	"strconv"
 
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-	maintainersVerify "github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/verify"
+	"github.com/AssetMantle/modules/constants/ids"
+	maintainersVerify "github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/supplement"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/modules/orders/internal/key"
+	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
+	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 type transactionKeeper struct {

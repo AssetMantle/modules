@@ -6,21 +6,21 @@ package mappable
 import (
 	"strconv"
 
-	"github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
-	qualified2 "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/mappables/qualified"
+	qualified2 "github.com/AssetMantle/modules/schema/qualified/base"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-	"github.com/persistenceOne/persistenceSDK/constants/properties"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"github.com/AssetMantle/modules/constants/ids"
+	"github.com/AssetMantle/modules/constants/properties"
+	"github.com/AssetMantle/modules/modules/orders/internal/key"
+	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/types/base"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type order struct {

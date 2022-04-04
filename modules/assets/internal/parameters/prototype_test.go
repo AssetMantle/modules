@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters/dummy"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/modules/assets/internal/parameters/dummy"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Prototype(t *testing.T) {

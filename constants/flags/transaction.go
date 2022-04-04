@@ -4,7 +4,7 @@
 package flags
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 // Note: Arranged alphabetically

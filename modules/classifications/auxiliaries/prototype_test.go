@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/define"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

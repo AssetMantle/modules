@@ -8,16 +8,16 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/block"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/genesis"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/queries"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/simulator"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries"
+	"github.com/AssetMantle/modules/modules/identities/internal/block"
+	"github.com/AssetMantle/modules/modules/identities/internal/genesis"
+	"github.com/AssetMantle/modules/modules/identities/internal/mapper"
+	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	"github.com/AssetMantle/modules/modules/identities/internal/parameters"
+	"github.com/AssetMantle/modules/modules/identities/internal/queries"
+	"github.com/AssetMantle/modules/modules/identities/internal/simulator"
+	"github.com/AssetMantle/modules/modules/identities/internal/transactions"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

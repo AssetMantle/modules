@@ -7,8 +7,8 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func GenerateRandomProperties(r *rand.Rand) types.Properties {

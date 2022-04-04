@@ -6,10 +6,10 @@ package deputize
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/deputize"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type transactionKeeper struct {

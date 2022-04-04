@@ -34,7 +34,7 @@ import (
 	tendermintTypes "github.com/tendermint/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/persistenceOne/persistenceSDK/schema/applications"
+	"github.com/AssetMantle/modules/schema/applications"
 )
 
 type SimulationApplication struct {

@@ -6,15 +6,15 @@ package mappable
 import (
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
-	qualified2 "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
+	"github.com/AssetMantle/modules/constants/ids"
+	"github.com/AssetMantle/modules/schema/mappables/qualified"
+	qualified2 "github.com/AssetMantle/modules/schema/qualified/base"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/modules/orders/internal/key"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Order_Methods(t *testing.T) {

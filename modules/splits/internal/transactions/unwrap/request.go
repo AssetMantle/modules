@@ -12,12 +12,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
-	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	xprtErrors "github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/constants/flags"
+	"github.com/AssetMantle/modules/modules/splits/internal/module"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/types/base"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type transactionRequest struct {

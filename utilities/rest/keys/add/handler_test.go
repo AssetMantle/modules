@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/schema"
+	"github.com/AssetMantle/modules/schema"
 )
 
 func TestHandler(t *testing.T) {

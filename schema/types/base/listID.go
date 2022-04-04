@@ -7,11 +7,11 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/schema/lists"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
+	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/traits"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type listID struct {

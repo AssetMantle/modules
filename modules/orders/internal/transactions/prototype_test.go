@@ -8,13 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/cancel"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/define"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/immediate"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/make"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/modify"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/transactions/take"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/orders/internal/transactions/cancel"
+	"github.com/AssetMantle/modules/modules/orders/internal/transactions/define"
+	"github.com/AssetMantle/modules/modules/orders/internal/transactions/immediate"
+	"github.com/AssetMantle/modules/modules/orders/internal/transactions/make"
+	"github.com/AssetMantle/modules/modules/orders/internal/transactions/modify"
+	"github.com/AssetMantle/modules/modules/orders/internal/transactions/take"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

@@ -4,8 +4,8 @@
 package mappables
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 type Asset interface {

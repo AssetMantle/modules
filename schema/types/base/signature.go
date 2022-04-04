@@ -8,7 +8,7 @@ import (
 
 	"github.com/tendermint/tendermint/crypto"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type signature struct {

@@ -4,7 +4,7 @@
 package lists
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type IDList interface {

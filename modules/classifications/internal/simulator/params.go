@@ -6,16 +6,16 @@ package simulator
 import (
 	"math/rand"
 
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/common"
+	"github.com/AssetMantle/modules/modules/classifications/internal/common"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/schema/types/base"
 
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/modules/classifications/internal/module"
+	"github.com/AssetMantle/modules/modules/classifications/internal/parameters/dummy"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulation.ParamChange {

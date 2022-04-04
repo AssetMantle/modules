@@ -9,7 +9,7 @@
 package qualified
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 // TODO rename to Immutables

@@ -11,7 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 
-	"github.com/persistenceOne/persistenceSDK/modules/splits"
+	"github.com/AssetMantle/modules/modules/splits"
 )
 
 var ModuleAccountPermissions = map[string][]string{

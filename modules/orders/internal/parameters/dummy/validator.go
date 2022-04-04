@@ -4,8 +4,8 @@
 package dummy
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 func validator(i interface{}) error {

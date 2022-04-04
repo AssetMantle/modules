@@ -3,7 +3,7 @@
 
 package block
 
-import "github.com/persistenceOne/persistenceSDK/schema/helpers"
+import "github.com/AssetMantle/modules/schema/helpers"
 
 func Prototype() helpers.Block {
 	return block{}

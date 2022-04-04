@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_IdentityID_Methods(t *testing.T) {

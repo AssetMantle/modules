@@ -6,11 +6,11 @@ package base
 import (
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/schema/types/base"
 
 	"github.com/stretchr/testify/require"
 
-	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
+	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
 )
 
 func Test_HasImmutables(t *testing.T) {

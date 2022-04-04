@@ -6,8 +6,8 @@ package identity
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type queryKeeper struct {

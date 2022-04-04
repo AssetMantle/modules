@@ -10,9 +10,9 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/constants"
+	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_OrderID_Methods(t *testing.T) {

@@ -8,11 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/burn"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/renumerate"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/transfer"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/splits/auxiliaries/burn"
+	"github.com/AssetMantle/modules/modules/splits/auxiliaries/mint"
+	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
+	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

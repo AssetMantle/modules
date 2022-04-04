@@ -3,7 +3,7 @@
 
 package flags
 
-import "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+import "github.com/AssetMantle/modules/schema/helpers/base"
 
 // Note: Arranged alphabetically
 var (

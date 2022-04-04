@@ -4,8 +4,8 @@
 package asset
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/common"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/modules/assets/internal/common"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type queryResponse struct {

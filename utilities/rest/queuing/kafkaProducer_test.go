@@ -12,7 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/schema"
+	"github.com/AssetMantle/modules/schema"
 )
 
 func TestKafkaProducerDeliverMessage(t *testing.T) {

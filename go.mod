@@ -1,5 +1,4 @@
-// TODO Rename
-module github.com/persistenceOne/persistenceSDK
+module github.com/AssetMantle/modules
 
 go 1.17
 

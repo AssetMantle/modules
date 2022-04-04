@@ -3,7 +3,7 @@
 
 package base
 
-import "github.com/persistenceOne/persistenceSDK/schema/helpers"
+import "github.com/AssetMantle/modules/schema/helpers"
 
 type transactions struct {
 	transactionList []helpers.Transaction

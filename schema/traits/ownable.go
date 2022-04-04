@@ -3,7 +3,7 @@
 
 package traits
 
-import "github.com/persistenceOne/persistenceSDK/schema/types"
+import "github.com/AssetMantle/modules/schema/types"
 
 type Ownable interface {
 	GetOwnerID() types.ID

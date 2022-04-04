@@ -7,8 +7,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/constants/test"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/constants/test"
+	"github.com/AssetMantle/modules/schema/types"
 
 	tendermintDB "github.com/tendermint/tm-db"
 
@@ -21,15 +21,15 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
-	"github.com/persistenceOne/persistenceSDK/schema"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/modules/assets/internal/key"
+	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
+	"github.com/AssetMantle/modules/modules/assets/internal/parameters"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/deputize"
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 type TestKeepers struct {

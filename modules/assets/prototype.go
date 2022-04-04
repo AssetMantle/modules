@@ -4,17 +4,17 @@
 package assets
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/assets/auxiliaries"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/block"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/genesis"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/queries"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/simulator"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/assets/auxiliaries"
+	"github.com/AssetMantle/modules/modules/assets/internal/block"
+	"github.com/AssetMantle/modules/modules/assets/internal/genesis"
+	"github.com/AssetMantle/modules/modules/assets/internal/mapper"
+	"github.com/AssetMantle/modules/modules/assets/internal/module"
+	"github.com/AssetMantle/modules/modules/assets/internal/parameters"
+	"github.com/AssetMantle/modules/modules/assets/internal/queries"
+	"github.com/AssetMantle/modules/modules/assets/internal/simulator"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Module {

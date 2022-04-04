@@ -22,7 +22,7 @@ swag init  --parseDependency true --parseInternal true --parseVendor true
 - import `/docs` into `main.go` file to use swagger.
 
 ```
-import _"github.com/persistenceOne/persistenceSDK/swagger/docs"
+import _"github.com/AssetMantle/modules/swagger/docs"
 
 ```
 

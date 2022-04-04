@@ -4,9 +4,9 @@
 package order
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/constants/flags"
+	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 var Query = base.NewQuery(

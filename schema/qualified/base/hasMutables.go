@@ -4,9 +4,9 @@
 package base
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/qualified"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/schema/qualified"
+	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 // TODO move base to own package

@@ -4,7 +4,7 @@
 package base
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type property struct {

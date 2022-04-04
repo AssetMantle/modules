@@ -6,9 +6,9 @@ package common
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/utilities/module"
+	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
+	"github.com/AssetMantle/modules/utilities/module"
 )
 
 var Codec *codec.Codec

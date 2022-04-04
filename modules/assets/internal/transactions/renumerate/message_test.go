@@ -9,9 +9,9 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
+	"github.com/AssetMantle/modules/modules/assets/internal/module"
+	"github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func Test_Renumerate_Message(t *testing.T) {

@@ -9,8 +9,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/utilities/meta"
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/utilities/meta"
 )
 
 func Test_HeightData(t *testing.T) {

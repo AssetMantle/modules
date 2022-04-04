@@ -6,7 +6,7 @@ package traits
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/persistenceOne/persistenceSDK/schema/qualified"
+	"github.com/AssetMantle/modules/schema/qualified"
 )
 
 func RegisterCodec(codec *codec.Codec) {

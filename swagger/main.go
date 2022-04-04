@@ -10,10 +10,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/gorilla/mux"
 
-	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
-	"github.com/persistenceOne/persistenceSDK/swagger/configurations"
+	"github.com/AssetMantle/modules/schema/applications/base"
+	"github.com/AssetMantle/modules/swagger/configurations"
 
-	_ "github.com/persistenceOne/persistenceSDK/swagger/docs"
+	_ "github.com/AssetMantle/modules/swagger/docs"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 )

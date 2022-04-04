@@ -6,13 +6,13 @@ package mappable
 import (
 	"testing"
 
-	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
-	baseQualified "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
+	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
-	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Maintainer_Methods(t *testing.T) {

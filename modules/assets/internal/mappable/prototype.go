@@ -4,7 +4,7 @@
 package mappable
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func Prototype() helpers.Mappable {

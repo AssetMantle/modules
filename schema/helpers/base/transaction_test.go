@@ -17,7 +17,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
+	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestTransaction(t *testing.T) {

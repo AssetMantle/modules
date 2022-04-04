@@ -6,7 +6,7 @@ package base
 import (
 	"strings"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type id struct {

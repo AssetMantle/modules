@@ -8,7 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/AssetMantle/modules/constants"
 )
 
 // TODO rename

@@ -6,22 +6,22 @@ package mappable
 import (
 	"strings"
 
-	baseQualified "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
-	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-	"github.com/persistenceOne/persistenceSDK/constants/properties"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/constants/ids"
+	"github.com/AssetMantle/modules/constants/properties"
+	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/mappables"
+	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
+	"github.com/AssetMantle/modules/schema/types"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type identity struct {

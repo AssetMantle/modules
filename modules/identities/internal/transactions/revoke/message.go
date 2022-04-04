@@ -9,12 +9,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 
-	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
-	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
+	xprtErrors "github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/types"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 type message struct {

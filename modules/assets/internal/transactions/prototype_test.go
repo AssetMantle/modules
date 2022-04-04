@@ -8,14 +8,14 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/burn"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/define"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/deputize"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/mint"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/mutate"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/renumerate"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/revoke"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/burn"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/define"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/deputize"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/mint"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/mutate"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/renumerate"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/revoke"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

@@ -3,7 +3,7 @@
 
 package maintain
 
-import "github.com/persistenceOne/persistenceSDK/schema/helpers"
+import "github.com/AssetMantle/modules/schema/helpers"
 
 type auxiliaryResponse struct {
 	Success bool  `json:"success"`

@@ -9,11 +9,11 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/modules/splits/internal/module"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/types"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type splitID struct {

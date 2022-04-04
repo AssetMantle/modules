@@ -6,8 +6,8 @@ package split
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/modules/splits/internal/key"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type queryKeeper struct {

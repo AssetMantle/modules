@@ -10,17 +10,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/common"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mappable"
-	splitsModule "github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters/dummy"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	baseSimulation "github.com/persistenceOne/persistenceSDK/simulation/schema/types/base"
+	"github.com/AssetMantle/modules/modules/splits/internal/common"
+	"github.com/AssetMantle/modules/modules/splits/internal/key"
+	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
+	splitsModule "github.com/AssetMantle/modules/modules/splits/internal/module"
+	"github.com/AssetMantle/modules/modules/splits/internal/parameters"
+	"github.com/AssetMantle/modules/modules/splits/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/types/base"
+	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {

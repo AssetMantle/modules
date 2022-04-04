@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/AssetMantle/modules/constants/errors"
 )
 
 func Test_Mint_Response(t *testing.T) {

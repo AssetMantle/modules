@@ -6,17 +6,17 @@ package mint
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	maintainersVerify "github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/constants/ids"
+	"github.com/AssetMantle/modules/modules/assets/internal/key"
+	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
+	maintainersVerify "github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
+	"github.com/AssetMantle/modules/modules/splits/auxiliaries/mint"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 type transactionKeeper struct {

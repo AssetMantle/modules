@@ -4,10 +4,10 @@
 package mapper
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/classifications/internal/key"
+	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Mapper {

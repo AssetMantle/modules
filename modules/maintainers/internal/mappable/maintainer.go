@@ -6,17 +6,17 @@ package mappable
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-	"github.com/persistenceOne/persistenceSDK/constants/properties"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
-	baseQualified "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"github.com/AssetMantle/modules/constants/ids"
+	"github.com/AssetMantle/modules/constants/properties"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/mappables"
+	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 // TODO check structure

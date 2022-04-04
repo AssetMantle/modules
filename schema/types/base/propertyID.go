@@ -7,8 +7,8 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type propertyID struct {

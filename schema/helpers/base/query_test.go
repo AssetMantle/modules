@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
+	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestQuery(t *testing.T) {

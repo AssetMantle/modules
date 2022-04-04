@@ -4,8 +4,8 @@
 package mappables
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/qualified"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/schema/qualified"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type Document interface {

@@ -8,7 +8,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
+	"github.com/AssetMantle/modules/schema/applications/base"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/simapp"

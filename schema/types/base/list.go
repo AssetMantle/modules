@@ -6,8 +6,8 @@ package base
 import (
 	"sort"
 
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/schema/traits"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 // TODO Revise the code

@@ -6,14 +6,14 @@ package mappable
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
-	"github.com/persistenceOne/persistenceSDK/schema/qualified/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"github.com/AssetMantle/modules/modules/classifications/internal/key"
+	"github.com/AssetMantle/modules/modules/classifications/internal/module"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/mappables"
+	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
+	"github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type classification struct {

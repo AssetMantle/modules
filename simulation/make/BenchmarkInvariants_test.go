@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
+	"github.com/AssetMantle/modules/schema/applications/base"
 )
 
 func BenchmarkInvariants(b *testing.B) {

@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Test_Auxiliary_Prototype(t *testing.T) {

@@ -151,4 +151,4 @@ lintci-update: lintci-remove lintci-install
 
 goimports:
 // TODO correct
-	goimports -local="github.com/persistenceOne/persistenceSDK" -w .
+	goimports -local="github.com/AssetMantle/modules" -w .

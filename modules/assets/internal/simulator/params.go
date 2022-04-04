@@ -8,10 +8,10 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/common"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters/dummy"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/modules/assets/internal/common"
+	"github.com/AssetMantle/modules/modules/assets/internal/module"
+	"github.com/AssetMantle/modules/modules/assets/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/schema/types/base"
 
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )

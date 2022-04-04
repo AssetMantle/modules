@@ -11,12 +11,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type orderID struct {

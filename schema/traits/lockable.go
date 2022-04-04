@@ -3,7 +3,7 @@
 
 package traits
 
-import "github.com/persistenceOne/persistenceSDK/schema/types"
+import "github.com/AssetMantle/modules/schema/types"
 
 type Lockable interface {
 	GetLock() types.Property

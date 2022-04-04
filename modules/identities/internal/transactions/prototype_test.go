@@ -8,14 +8,14 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/define"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/deputize"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/issue"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/nub"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/provision"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/revoke"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/unprovision"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/identities/internal/transactions/define"
+	"github.com/AssetMantle/modules/modules/identities/internal/transactions/deputize"
+	"github.com/AssetMantle/modules/modules/identities/internal/transactions/issue"
+	"github.com/AssetMantle/modules/modules/identities/internal/transactions/nub"
+	"github.com/AssetMantle/modules/modules/identities/internal/transactions/provision"
+	"github.com/AssetMantle/modules/modules/identities/internal/transactions/revoke"
+	"github.com/AssetMantle/modules/modules/identities/internal/transactions/unprovision"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

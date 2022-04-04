@@ -7,17 +7,17 @@ import (
 	"encoding/hex"
 	"testing"
 
-	qualified2 "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
-	"github.com/persistenceOne/persistenceSDK/utilities/random"
+	qualified2 "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/utilities/random"
 
 	"github.com/cosmos/cosmos-sdk/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/constants/ids"
+	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/schema/mappables/qualified"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Identity_Methods(t *testing.T) {

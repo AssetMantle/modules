@@ -12,7 +12,7 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 
-	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
+	"github.com/AssetMantle/modules/schema/applications/base"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 

@@ -4,7 +4,7 @@
 package dummy
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 var Parameter = base.NewParameter(ID, DefaultData, validator)

@@ -6,8 +6,8 @@ package ownable
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/common"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/modules/splits/internal/common"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type queryResponse struct {

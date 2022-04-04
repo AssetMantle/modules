@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys"
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/AssetMantle/modules/constants/errors"
 )
 
 func Test_Add_Response(t *testing.T) {

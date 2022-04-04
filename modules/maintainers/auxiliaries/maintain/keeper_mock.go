@@ -6,8 +6,8 @@ package maintain
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/constants/test"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/constants/test"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type auxiliaryKeeperMock struct {

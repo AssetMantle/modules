@@ -4,7 +4,7 @@
 package transfer
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type auxiliaryResponse struct {

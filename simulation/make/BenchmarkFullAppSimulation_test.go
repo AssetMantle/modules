@@ -12,7 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
+	"github.com/AssetMantle/modules/schema/applications/base"
 )
 
 // Profile with:

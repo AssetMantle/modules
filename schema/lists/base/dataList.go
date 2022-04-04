@@ -4,8 +4,8 @@
 package base
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/lists"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type dataList struct {

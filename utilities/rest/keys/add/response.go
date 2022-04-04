@@ -6,7 +6,7 @@ package add
 import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys"
 
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type response struct {

@@ -3,7 +3,7 @@
 
 package ids
 
-import "github.com/persistenceOne/persistenceSDK/schema/types/base"
+import "github.com/AssetMantle/modules/schema/types/base"
 
 // Note: Arranged alphabetically
 var (

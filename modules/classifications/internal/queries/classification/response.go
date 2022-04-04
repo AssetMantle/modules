@@ -4,8 +4,8 @@
 package classification
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/common"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/modules/classifications/internal/common"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type queryResponse struct {

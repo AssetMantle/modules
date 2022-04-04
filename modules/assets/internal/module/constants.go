@@ -4,8 +4,8 @@
 package module
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants/keys"
-	"github.com/persistenceOne/persistenceSDK/constants/names"
+	"github.com/AssetMantle/modules/constants/keys"
+	"github.com/AssetMantle/modules/constants/names"
 )
 
 const Name = names.Assets

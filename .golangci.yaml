@@ -87,7 +87,7 @@ linters-settings:
     min-complexity: 25 # cyclical complexity
 
   goimports:
-    local-prefixes: "github.com/persistenceOne/persistenceSDK"
+    local-prefixes: "github.com/AssetMantle/modules"
 
   gomnd:
     settings:

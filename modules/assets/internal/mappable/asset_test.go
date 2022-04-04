@@ -6,13 +6,13 @@ package mappable
 import (
 	"testing"
 
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-	qualified2 "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
+	"github.com/AssetMantle/modules/constants/ids"
+	qualified2 "github.com/AssetMantle/modules/schema/qualified/base"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/modules/assets/internal/key"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Asset_Methods(t *testing.T) {

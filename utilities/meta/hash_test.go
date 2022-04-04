@@ -12,7 +12,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/AssetMantle/modules/constants"
 )
 
 func TestHash(t *testing.T) {

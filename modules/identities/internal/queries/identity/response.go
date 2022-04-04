@@ -4,8 +4,8 @@
 package identity
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/common"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/modules/identities/internal/common"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type queryResponse struct {

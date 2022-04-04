@@ -3,7 +3,7 @@
 
 package simulator
 
-import "github.com/persistenceOne/persistenceSDK/schema/helpers"
+import "github.com/AssetMantle/modules/schema/helpers"
 
 func Prototype() helpers.Simulator {
 	return newSimulator()

@@ -6,7 +6,7 @@ package add
 import (
 	"github.com/asaskevich/govalidator"
 
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type request struct {

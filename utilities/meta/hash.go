@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/AssetMantle/modules/constants"
 )
 
 func Hash(meta ...string) string {

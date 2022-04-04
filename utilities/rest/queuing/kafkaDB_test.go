@@ -12,9 +12,9 @@ import (
 	"github.com/stretchr/testify/require"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/persistenceOne/persistenceSDK/schema"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/persistenceOne/persistenceSDK/utilities/random"
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/utilities/random"
 )
 
 func Test_Kafka_DB(t *testing.T) {

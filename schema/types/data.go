@@ -6,7 +6,7 @@ package types
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists"
 )
 
 // TODO URI and ID data type

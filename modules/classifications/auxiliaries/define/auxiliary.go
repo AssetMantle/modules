@@ -4,7 +4,7 @@
 package define
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 var Auxiliary = base.NewAuxiliary(

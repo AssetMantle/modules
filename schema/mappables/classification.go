@@ -3,7 +3,7 @@
 
 package mappables
 
-import "github.com/persistenceOne/persistenceSDK/schema/helpers"
+import "github.com/AssetMantle/modules/schema/helpers"
 
 type Classification interface {
 	Document

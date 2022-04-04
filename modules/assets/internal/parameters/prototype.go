@@ -4,9 +4,9 @@
 package parameters
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters/dummy"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/assets/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Parameters {

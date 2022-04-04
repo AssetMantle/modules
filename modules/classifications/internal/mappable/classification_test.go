@@ -6,13 +6,13 @@ package mappable
 import (
 	"testing"
 
-	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
-	baseQualified "github.com/persistenceOne/persistenceSDK/schema/qualified/base"
+	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
-	baseTypes "github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/modules/classifications/internal/key"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Classification_Methods(t *testing.T) {

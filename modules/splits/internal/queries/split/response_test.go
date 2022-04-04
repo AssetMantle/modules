@@ -15,10 +15,10 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/common"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema"
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/modules/splits/internal/common"
+	"github.com/AssetMantle/modules/modules/splits/internal/mapper"
+	"github.com/AssetMantle/modules/schema"
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {

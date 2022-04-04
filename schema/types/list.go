@@ -4,7 +4,7 @@
 package types
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 type List interface {

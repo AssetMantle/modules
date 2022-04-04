@@ -4,10 +4,10 @@
 package queries
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/queries/ownable"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/queries/split"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/splits/internal/queries/ownable"
+	"github.com/AssetMantle/modules/modules/splits/internal/queries/split"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Queries {

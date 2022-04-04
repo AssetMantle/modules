@@ -9,10 +9,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/common"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters/dummy"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/modules/identities/internal/common"
+	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	"github.com/AssetMantle/modules/modules/identities/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulation.ParamChange {

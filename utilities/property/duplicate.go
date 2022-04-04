@@ -4,7 +4,7 @@
 package property
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 func Duplicate(propertyList []types.Property) bool {

@@ -4,11 +4,11 @@
 package transactions
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/transactions/send"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/transactions/unwrap"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/transactions/wrap"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/splits/internal/transactions/send"
+	"github.com/AssetMantle/modules/modules/splits/internal/transactions/unwrap"
+	"github.com/AssetMantle/modules/modules/splits/internal/transactions/wrap"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Transactions {

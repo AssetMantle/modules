@@ -9,8 +9,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_MaintainerID_Methods(t *testing.T) {
