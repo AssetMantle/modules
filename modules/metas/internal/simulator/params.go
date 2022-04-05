@@ -12,7 +12,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/common"
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters/dummy"
-	"github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/data/base"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulation.ParamChange {

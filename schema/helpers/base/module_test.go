@@ -16,6 +16,7 @@ import (
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/types"
 	"github.com/AssetMantle/modules/schema/types/base"
@@ -29,13 +30,13 @@ var auxiliariesPrototype = func() helpers.Auxiliaries {
 var genesisPrototype = func() helpers.Genesis {
 	return NewGenesis(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype,
 		[]helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")},
-		[]types.Parameter{base.NewParameter(base.NewID("testParameter"), base.NewStringData("testData"), func(interface{}) error { return nil })})
+		[]types.Parameter{base.NewParameter(base.NewID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })})
 }
 var mapperPrototype = func() helpers.Mapper {
 	return NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype)
 }
 var parametersPrototype = func() helpers.Parameters {
-	return NewParameters(base.NewParameter(base.NewID("testParameter"), base.NewStringData("testData"), func(interface{}) error { return nil }))
+	return NewParameters(base.NewParameter(base.NewID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil }))
 }
 var queriesPrototype = func() helpers.Queries {
 	return queries{[]helpers.Query{NewQuery("testQuery", "q", "testQuery", "test", baseTestUtilities.TestQueryRequestPrototype,

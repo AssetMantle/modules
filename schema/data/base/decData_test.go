@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
 
@@ -20,9 +21,9 @@ func Test_DecData(t *testing.T) {
 	testDecData2 := NewDecData(sdkTypes.NewDec(0))
 
 	require.Equal(t, decValue.String(), testDecData.String())
-	require.Equal(t, NewID(meta.Hash(decValue.String())), testDecData.GenerateHashID())
-	require.Equal(t, NewID(""), testDecData2.GenerateHashID())
-	require.Equal(t, decDataID, testDecData.GetTypeID())
+	require.Equal(t, base.NewID(meta.Hash(decValue.String())), testDecData.GenerateHashID())
+	require.Equal(t, base.NewID(""), testDecData2.GenerateHashID())
+	require.Equal(t, DecDataID, testDecData.GetTypeID())
 
 	dataAsString, err := testDecData.AsString()
 	require.Equal(t, "", dataAsString)
@@ -32,12 +33,8 @@ func Test_DecData(t *testing.T) {
 	require.Equal(t, decValue, dataAsDec)
 	require.Equal(t, nil, err)
 
-	dataAsHeight, err := testDecData.AsHeight()
-	require.Equal(t, height{}, dataAsHeight)
 	require.Equal(t, errors.IncorrectFormat, err)
 
-	dataAsID, err := testDecData.AsID()
-	require.Equal(t, id{}, dataAsID)
 	require.Equal(t, errors.IncorrectFormat, err)
 	require.Equal(t, decValue, testDecData.Get())
 

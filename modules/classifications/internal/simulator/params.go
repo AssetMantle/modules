@@ -7,10 +7,9 @@ import (
 	"math/rand"
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/common"
+	"github.com/AssetMantle/modules/schema/data/base"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/schema/types/base"
 
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 

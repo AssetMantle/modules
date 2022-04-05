@@ -11,6 +11,7 @@ import (
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
 
@@ -21,10 +22,7 @@ type stringData struct {
 var _ types.Data = (*stringData)(nil)
 
 func (stringData stringData) GetID() types.ID {
-	return dataID{
-		TypeID: stringData.GetTypeID(),
-		HashID: stringData.GenerateHashID(),
-	}
+	return base.NewDataID(stringData)
 }
 func (stringData stringData) Compare(data types.Data) int {
 	compareStringData, err := stringDataFromInterface(data)
@@ -38,13 +36,13 @@ func (stringData stringData) String() string {
 	return stringData.Value
 }
 func (stringData stringData) GetTypeID() types.ID {
-	return stringDataID
+	return StringDataID
 }
 func (stringData stringData) ZeroValue() types.Data {
 	return NewStringData("")
 }
 func (stringData stringData) GenerateHashID() types.ID {
-	return NewID(meta.Hash(stringData.Value))
+	return base.NewID(meta.Hash(stringData.Value))
 }
 func (stringData stringData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()

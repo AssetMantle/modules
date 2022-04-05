@@ -11,6 +11,7 @@ import (
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
 
@@ -21,10 +22,7 @@ type heightData struct {
 var _ types.Data = (*heightData)(nil)
 
 func (heightData heightData) GetID() types.ID {
-	return dataID{
-		TypeID: heightData.GetTypeID(),
-		HashID: heightData.GenerateHashID(),
-	}
+	return base.NewDataID(heightData)
 }
 func (heightData heightData) Compare(data types.Data) int {
 	compareHeightData, err := heightDataFromInterface(data)
@@ -38,17 +36,17 @@ func (heightData heightData) String() string {
 	return strconv.FormatInt(heightData.Value.Get(), 10)
 }
 func (heightData heightData) GetTypeID() types.ID {
-	return heightDataID
+	return HeightDataID
 }
 func (heightData heightData) ZeroValue() types.Data {
-	return NewHeightData(NewHeight(0))
+	return NewHeightData(base.NewHeight(0))
 }
 func (heightData heightData) GenerateHashID() types.ID {
 	if heightData.Compare(heightData.ZeroValue()) == 0 {
-		return NewID("")
+		return base.NewID("")
 	}
 
-	return NewID(meta.Hash(strconv.FormatInt(heightData.Value.Get(), 10)))
+	return base.NewID(meta.Hash(strconv.FormatInt(heightData.Value.Get(), 10)))
 }
 func (heightData heightData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
@@ -101,5 +99,5 @@ func ReadHeightData(dataString string) (types.Data, error) {
 		return nil, err
 	}
 
-	return NewHeightData(NewHeight(height)), nil
+	return NewHeightData(base.NewHeight(height)), nil
 }

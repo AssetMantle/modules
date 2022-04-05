@@ -8,13 +8,14 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/types"
 	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Scrub_Request(t *testing.T) {
 
-	metaProperty := base.NewMetaProperty(base.NewID("id"), base.NewStringData("Data"))
+	metaProperty := base.NewMetaProperty(base.NewID("id"), baseData.NewStringData("Data"))
 	testAuxiliaryRequest := NewAuxiliaryRequest(metaProperty)
 
 	require.Equal(t, auxiliaryRequest{MetaPropertyList: []types.MetaProperty{metaProperty}}, testAuxiliaryRequest)

@@ -45,7 +45,7 @@ func (identityID identityID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(identityID.Bytes())
 }
 func (identityID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, identityID{})
+	codecUtilities.RegisterModuleConcrete(codec, module.Name, identityID{})
 }
 func (identityID identityID) IsPartial() bool {
 	return len(identityID.HashID.Bytes()) == 0

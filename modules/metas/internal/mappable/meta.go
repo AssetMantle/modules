@@ -27,7 +27,7 @@ func (meta meta) GetKey() helpers.Key {
 	return key.FromID(meta.GetID())
 }
 func (meta) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, meta{})
+	codecUtilities.RegisterModuleConcrete(codec, module.Name, meta{})
 }
 
 func NewMeta(data types.Data) mappables.Meta {

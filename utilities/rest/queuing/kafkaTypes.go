@@ -42,6 +42,7 @@ func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseRe
 		SkipConfirm:   cliCtx.SkipConfirm,
 	}
 
+	// TODO return pointer
 	return kafkaMsg{
 		Msg:         msg,
 		TicketID:    ticketID,

@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/constants"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types/base"
 )
@@ -20,10 +21,10 @@ func Test_OrderID_Methods(t *testing.T) {
 	makerOwnableID := base.NewID("makerOwnableID")
 	takerOwnableID := base.NewID("takerOwnableID")
 	makerID := base.NewID("makerID")
-	defaultImmutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
+	defaultImmutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 	rateID := base.NewID(sdkTypes.OneDec().String())
 	creationID := base.NewID("100")
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 
 	testOrderID := NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, makerID, immutableProperties).(orderID)
 	testOrderID2 := NewOrderID(classificationID, makerOwnableID, takerOwnableID, base.NewID(sdkTypes.MustNewDecFromStr("2.3").String()), base.NewID("creation"), makerID, base.NewProperties()).(orderID)

@@ -8,12 +8,12 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/cosmos/cosmos-sdk/x/simulation"
+
 	"github.com/AssetMantle/modules/modules/orders/internal/common"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/orders/internal/parameters/dummy"
-	"github.com/AssetMantle/modules/schema/types/base"
-
-	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"github.com/AssetMantle/modules/schema/data/base"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulation.ParamChange {

@@ -6,15 +6,15 @@ package base
 import (
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/types/base"
-
 	"github.com/stretchr/testify/require"
 
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/types/base"
 	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
 )
 
 func Test_HasImmutables(t *testing.T) {
-	testProperty := base.NewProperty(base.NewID("ID"), base.NewHeightData(base.NewHeight(123)))
+	testProperty := base.NewProperty(base.NewID("ID"), baseData.NewHeightData(base.NewHeight(123)))
 	testImmutables := HasImmutables{base.NewProperties(testProperty)}
 
 	require.Equal(t, HasImmutables{Properties: base.NewProperties(testProperty)}, testImmutables)

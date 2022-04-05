@@ -44,3 +44,10 @@ func dataIDFromInterface(id types.ID) dataID {
 		panic(id)
 	}
 }
+
+func NewDataID(data types.Data) types.ID {
+	return dataID{
+		TypeID: data.GetTypeID(),
+		HashID: data.GenerateHashID(),
+	}
+}

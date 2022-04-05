@@ -9,6 +9,7 @@ import (
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
 
@@ -19,10 +20,7 @@ type decData struct {
 var _ types.Data = (*decData)(nil)
 
 func (decData decData) GetID() types.ID {
-	return dataID{
-		TypeID: decData.GetTypeID(),
-		HashID: decData.GenerateHashID(),
-	}
+	return base.NewDataID(decData)
 }
 func (decData decData) Compare(data types.Data) int {
 	compareDecData, err := decDataFromInterface(data)
@@ -42,17 +40,17 @@ func (decData decData) String() string {
 	return decData.Value.String()
 }
 func (decData decData) GetTypeID() types.ID {
-	return decDataID
+	return DecDataID
 }
 func (decData decData) ZeroValue() types.Data {
 	return NewDecData(sdkTypes.ZeroDec())
 }
 func (decData decData) GenerateHashID() types.ID {
 	if decData.Compare(decData.ZeroValue()) == 0 {
-		return NewID("")
+		return base.NewID("")
 	}
 
-	return NewID(meta.Hash(decData.Value.String()))
+	return base.NewID(meta.Hash(decData.Value.String()))
 }
 func (decData decData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()

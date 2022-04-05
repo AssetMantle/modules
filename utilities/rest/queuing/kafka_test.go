@@ -39,7 +39,7 @@ func (message testMessage) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{fromAccAddress}
 }
 func (testMessage) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, "testModule", testMessage{})
+	codecUtilities.RegisterModuleConcrete(codec, "testModule", testMessage{})
 }
 
 func Test_Kafka(t *testing.T) {

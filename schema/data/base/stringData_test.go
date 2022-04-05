@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
 
@@ -19,22 +20,14 @@ func Test_StringData(t *testing.T) {
 	testStringData2 := NewStringData("")
 
 	require.Equal(t, value, testStringData.String())
-	require.Equal(t, NewID(meta.Hash(value)), testStringData.GenerateHashID())
-	require.Equal(t, NewID(""), testStringData2.GenerateHashID())
-	require.Equal(t, stringDataID, testStringData.GetTypeID())
+	require.Equal(t, base.NewID(meta.Hash(value)), testStringData.GenerateHashID())
+	require.Equal(t, base.NewID(""), testStringData2.GenerateHashID())
+	require.Equal(t, StringDataID, testStringData.GetTypeID())
 	require.Equal(t, testStringData.ZeroValue(), NewStringData(""))
 
 	dataAsString, err := testStringData.AsString()
 	require.Equal(t, value, dataAsString)
 	require.Equal(t, nil, err)
-
-	dataAsID, err := testStringData.AsID()
-	require.Equal(t, id{}, dataAsID)
-	require.Equal(t, errors.IncorrectFormat, err)
-
-	dataAsHeight, err := testStringData.AsHeight()
-	require.Equal(t, height{}, dataAsHeight)
-	require.Equal(t, errors.IncorrectFormat, err)
 
 	dataAsDec, err := testStringData.AsDec()
 	require.Equal(t, sdkTypes.ZeroDec(), dataAsDec)
@@ -49,6 +42,6 @@ func Test_StringData(t *testing.T) {
 	require.Equal(t, false, testStringData.Compare(testStringData2) == 0)
 	require.Equal(t, true, testStringData.Compare(testStringData) == 0)
 	require.Panics(t, func() {
-		require.Equal(t, false, testStringData.Compare(NewIDData(NewID("ID"))) == 0)
+		require.Equal(t, false, testStringData.Compare(NewIDData(base.NewID("ID"))) == 0)
 	})
 }

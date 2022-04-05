@@ -105,7 +105,7 @@ func (maintainer maintainer) GetKey() helpers.Key {
 	return key.FromID(maintainer.ID)
 }
 func (maintainer) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, maintainer{})
+	codecUtilities.RegisterModuleConcrete(codec, module.Name, maintainer{})
 }
 
 // TODO

@@ -38,6 +38,7 @@ func (list list) Search(listable traits.Listable) int {
 	return index
 }
 func (list list) Add(listableList ...traits.Listable) types.List {
+	// TODO check assignment
 	for _, listable := range listableList {
 		if list.Search(listable) != len(list) {
 			return list

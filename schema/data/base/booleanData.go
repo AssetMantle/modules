@@ -11,6 +11,7 @@ import (
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 type booleanData struct {
@@ -20,10 +21,7 @@ type booleanData struct {
 var _ types.Data = (*booleanData)(nil)
 
 func (booleanData booleanData) GetID() types.ID {
-	return dataID{
-		TypeID: booleanData.GetTypeID(),
-		HashID: booleanData.GenerateHashID(),
-	}
+	return base.NewDataID(booleanData)
 }
 func (booleanData booleanData) Compare(data types.Data) int {
 	compareBooleanData, Error := booleanDataFromInterface(data)
@@ -43,17 +41,17 @@ func (booleanData booleanData) String() string {
 	return strconv.FormatBool(booleanData.Value)
 }
 func (booleanData booleanData) GetTypeID() types.ID {
-	return booleanDataID
+	return BooleanDataID
 }
 func (booleanData booleanData) ZeroValue() types.Data {
 	return NewBooleanData(false)
 }
 func (booleanData booleanData) GenerateHashID() types.ID {
 	if booleanData.Compare(booleanData.ZeroValue()) == 0 {
-		return NewID(strconv.FormatBool(false))
+		return base.NewID(strconv.FormatBool(false))
 	}
 
-	return NewID(strconv.FormatBool(true))
+	return base.NewID(strconv.FormatBool(true))
 }
 func (booleanData booleanData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()

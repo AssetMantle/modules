@@ -12,6 +12,7 @@ import (
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 type listData struct {
@@ -21,10 +22,7 @@ type listData struct {
 var _ types.Data = (*listData)(nil)
 
 func (listData listData) GetID() types.ID {
-	return dataID{
-		TypeID: listData.GetTypeID(),
-		HashID: listData.GenerateHashID(),
-	}
+	return base.NewDataID(listData)
 }
 func (listData listData) Compare(data types.Data) int {
 	// TODO write test and see if correct
@@ -45,14 +43,14 @@ func (listData listData) String() string {
 	return strings.Join(dataStringList, constants.ListDataStringSeparator)
 }
 func (listData listData) GetTypeID() types.ID {
-	return listDataID
+	return ListDataID
 }
 func (listData listData) ZeroValue() types.Data {
 	return NewListData([]types.Data{}...)
 }
 func (listData listData) GenerateHashID() types.ID {
 	if listData.Value.Size() == 0 {
-		return NewID("")
+		return base.NewID("")
 	}
 
 	hashList := make([]string, listData.Value.Size())
@@ -63,7 +61,7 @@ func (listData listData) GenerateHashID() types.ID {
 
 	hashString := strings.Join(hashList, constants.ListHashStringSeparator)
 
-	return NewID(hashString)
+	return base.NewID(hashString)
 }
 func (listData listData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()

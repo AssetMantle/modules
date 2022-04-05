@@ -42,7 +42,7 @@ func (transactionRequest TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	return NewTestMessage(sdkTypes.AccAddress(transactionRequest.BaseReq.From), transactionRequest.ID), nil
 }
 func (TransactionRequest) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, "test/TransactionRequest", TransactionRequest{})
+	codecUtilities.RegisterModuleConcrete(codec, "test/TransactionRequest", TransactionRequest{})
 }
 func TestTransactionRequestPrototype() helpers.TransactionRequest {
 	return TransactionRequest{}

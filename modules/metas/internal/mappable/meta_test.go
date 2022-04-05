@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
-	"github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/data/base"
 )
 
 func Test_Meta_Methods(t *testing.T) {

@@ -20,6 +20,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/types/base"
@@ -67,7 +68,7 @@ func Test_Query_Keeper_Meta(t *testing.T) {
 	typeID := base.NewID("I")
 	hashID := base.NewID("HashID")
 	metaID := key.NewMetaID(typeID, hashID)
-	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(base.NewIDData(hashID)))
+	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(baseData.NewIDData(hashID)))
 
 	testQueryRequest := newQueryRequest(metaID)
 	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.FromID(metaID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))

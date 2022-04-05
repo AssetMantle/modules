@@ -6,20 +6,20 @@ package mappable
 import (
 	"testing"
 
-	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
+	"github.com/AssetMantle/modules/schema/data/base"
+	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Maintainer_Methods(t *testing.T) {
 	classificationID := baseTypes.NewID("classificationID")
 	identityID := baseTypes.NewID("identityID")
-	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseTypes.NewID("ID"), baseTypes.NewStringData("ImmutableData")))
-	mutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseTypes.NewID("ID"), baseTypes.NewStringData("MutableData")))
+	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseTypes.NewID("ID"), base.NewStringData("ImmutableData")))
+	mutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseTypes.NewID("ID"), base.NewStringData("MutableData")))
 
 	testMaintainerID := key.NewMaintainerID(classificationID, identityID)
 

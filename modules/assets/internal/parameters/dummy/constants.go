@@ -6,8 +6,9 @@ package dummy
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 var ID = base.NewID("dummy")
-var DefaultData = base.NewDecData(sdkTypes.SmallestDec())
+var DefaultData = baseData.NewDecData(sdkTypes.SmallestDec())

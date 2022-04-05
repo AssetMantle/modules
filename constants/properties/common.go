@@ -7,18 +7,19 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/constants/ids"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 var (
-	Authentication       = base.NewProperty(ids.AuthenticationProperty, base.NewListData().ZeroValue())
-	Burn                 = base.NewProperty(ids.BurnProperty, base.NewHeightData(base.NewHeight(-1)))
-	Expiry               = base.NewProperty(ids.ExpiryProperty, base.NewHeightData(base.NewHeight(-1)))
-	Lock                 = base.NewProperty(ids.LockProperty, base.NewHeightData(base.NewHeight(-1)))
-	MaintainedProperties = base.NewProperty(ids.MaintainedPropertiesProperty, base.NewListData())
-	MakerOwnableSplit    = base.NewProperty(ids.MakerOwnableSplitProperty, base.NewDecData(sdkTypes.ZeroDec()))
-	NubID                = base.NewProperty(ids.NubIDProperty, base.NewIDData(base.NewID("")))
-	Permissions          = base.NewProperty(ids.PermissionsProperty, base.NewListData())
-	TakerID              = base.NewProperty(ids.TakerIDProperty, base.NewIDData(base.NewID("")))
-	Value                = base.NewProperty(ids.ValueProperty, base.NewDecData(sdkTypes.SmallestDec()))
+	Authentication       = base.NewProperty(ids.AuthenticationProperty, baseData.NewListData().ZeroValue())
+	Burn                 = base.NewProperty(ids.BurnProperty, baseData.NewHeightData(base.NewHeight(-1)))
+	Expiry               = base.NewProperty(ids.ExpiryProperty, baseData.NewHeightData(base.NewHeight(-1)))
+	Lock                 = base.NewProperty(ids.LockProperty, baseData.NewHeightData(base.NewHeight(-1)))
+	MaintainedProperties = base.NewProperty(ids.MaintainedPropertiesProperty, baseData.NewListData())
+	MakerOwnableSplit    = base.NewProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(sdkTypes.ZeroDec()))
+	NubID                = base.NewProperty(ids.NubIDProperty, baseData.NewIDData(base.NewID("")))
+	Permissions          = base.NewProperty(ids.PermissionsProperty, baseData.NewListData())
+	TakerID              = base.NewProperty(ids.TakerIDProperty, baseData.NewIDData(base.NewID("")))
+	Value                = base.NewProperty(ids.ValueProperty, baseData.NewDecData(sdkTypes.SmallestDec()))
 )

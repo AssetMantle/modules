@@ -9,6 +9,7 @@ import (
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/meta"
 
 	"bytes"
@@ -21,10 +22,7 @@ type accAddressData struct {
 var _ types.Data = (*accAddressData)(nil)
 
 func (accAddressData accAddressData) GetID() types.ID {
-	return dataID{
-		TypeID: accAddressData.GetTypeID(),
-		HashID: accAddressData.GenerateHashID(),
-	}
+	return base.NewDataID(accAddressData)
 }
 func (accAddressData accAddressData) Compare(sortable types.Data) int {
 	compareAccAddressData, err := accAddressDataFromInterface(sortable)
@@ -38,17 +36,17 @@ func (accAddressData accAddressData) String() string {
 	return accAddressData.Value.String()
 }
 func (accAddressData accAddressData) GetTypeID() types.ID {
-	return NewID("A")
+	return AccAddressDataID
 }
 func (accAddressData accAddressData) ZeroValue() types.Data {
 	return NewAccAddressData(sdkTypes.AccAddress{})
 }
 func (accAddressData accAddressData) GenerateHashID() types.ID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
-		return NewID("")
+		return base.NewID("")
 	}
 
-	return NewID(meta.Hash(accAddressData.Value.String()))
+	return base.NewID(meta.Hash(accAddressData.Value.String()))
 }
 func (accAddressData accAddressData) AsAccAddress() (sdkTypes.AccAddress, error) {
 	return accAddressData.Value, nil

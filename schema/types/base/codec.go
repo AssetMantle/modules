@@ -12,19 +12,12 @@ import (
 const moduleName = "types"
 
 func RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, accAddressData{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, booleanData{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, listData{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, decData{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, height{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, heightData{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, id{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, idData{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, metaProperties{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, parameter{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, properties{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, property{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, signature{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, signatures{})
-	codecUtilities.RegisterXPRTConcrete(codec, moduleName, stringData{})
+	codecUtilities.RegisterModuleConcrete(codec, moduleName, height{})
+	codecUtilities.RegisterModuleConcrete(codec, moduleName, id{})
+	codecUtilities.RegisterModuleConcrete(codec, moduleName, metaProperties{})
+	codecUtilities.RegisterModuleConcrete(codec, moduleName, parameter{})
+	codecUtilities.RegisterModuleConcrete(codec, moduleName, properties{})
+	codecUtilities.RegisterModuleConcrete(codec, moduleName, property{})
+	codecUtilities.RegisterModuleConcrete(codec, moduleName, signature{})
+	codecUtilities.RegisterModuleConcrete(codec, moduleName, signatures{})
 }

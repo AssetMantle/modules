@@ -50,7 +50,7 @@ func (split split) GetKey() helpers.Key {
 	return key.FromID(split.ID)
 }
 func (split) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, split{})
+	codecUtilities.RegisterModuleConcrete(codec, module.Name, split{})
 }
 
 func NewSplit(splitID types.ID, value sdkTypes.Dec) mappables.Split {

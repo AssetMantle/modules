@@ -6,11 +6,11 @@ package mappable
 import (
 	"strings"
 
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	baseTypes "github.com/AssetMantle/modules/schema/data/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/ids"
@@ -72,7 +72,7 @@ func (identity identity) GetKey() helpers.Key {
 	return key.FromID(identity.ID)
 }
 func (identity) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, identity{})
+	codecUtilities.RegisterModuleConcrete(codec, module.Name, identity{})
 }
 
 func NewIdentity(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Identity {

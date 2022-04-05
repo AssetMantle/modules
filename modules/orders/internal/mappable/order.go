@@ -6,9 +6,6 @@ package mappable
 import (
 	"strconv"
 
-	"github.com/AssetMantle/modules/schema/mappables/qualified"
-	qualified2 "github.com/AssetMantle/modules/schema/qualified/base"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -16,8 +13,11 @@ import (
 	"github.com/AssetMantle/modules/constants/properties"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/mappables/qualified"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types"
 	"github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -48,18 +48,18 @@ func (order order) GetMakerID() types.ID {
 func (order order) GetCreation() types.MetaProperty {
 	heightValue, Error := strconv.ParseInt(key.ReadCreationID(order.ID).String(), 10, 64)
 	if Error != nil {
-		return base.NewMetaProperty(ids.CreationProperty, base.NewHeightData(base.NewHeight(0)))
+		return base.NewMetaProperty(ids.CreationProperty, baseData.NewHeightData(base.NewHeight(0)))
 	}
 
-	return base.NewMetaProperty(ids.CreationProperty, base.NewHeightData(base.NewHeight(heightValue)))
+	return base.NewMetaProperty(ids.CreationProperty, baseData.NewHeightData(base.NewHeight(heightValue)))
 }
 func (order order) GetExchangeRate() types.MetaProperty {
 	decValue, Error := sdkTypes.NewDecFromStr(key.ReadRateID(order.ID).String())
 	if Error != nil {
-		return base.NewMetaProperty(ids.ExchangeRateProperty, base.NewDecData(sdkTypes.ZeroDec()))
+		return base.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(sdkTypes.ZeroDec()))
 	}
 
-	return base.NewMetaProperty(ids.ExchangeRateProperty, base.NewDecData(decValue))
+	return base.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(decValue))
 }
 func (order order) GetTakerID() types.Property {
 	if takerID := order.HasImmutables.GetImmutableProperties().Get(ids.TakerIDProperty); takerID != nil {
@@ -89,7 +89,7 @@ func (order order) GetKey() helpers.Key {
 	return key.FromID(order.ID)
 }
 func (order) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, order{})
+	codecUtilities.RegisterModuleConcrete(codec, module.Name, order{})
 }
 
 func NewOrder(orderID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Order {
@@ -97,8 +97,8 @@ func NewOrder(orderID types.ID, immutableProperties types.Properties, mutablePro
 		Document: qualified.Document{
 			ID:               orderID,
 			ClassificationID: key.ReadClassificationID(orderID),
-			HasImmutables:    qualified2.HasImmutables{Properties: immutableProperties},
-			HasMutables:      qualified2.HasMutables{Properties: mutableProperties},
+			HasImmutables:    baseQualified.HasImmutables{Properties: immutableProperties},
+			HasMutables:      baseQualified.HasMutables{Properties: mutableProperties},
 		},
 	}
 }

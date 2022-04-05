@@ -8,6 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -104,25 +105,26 @@ func ReadMetaProperties(metaPropertiesString string) (types.MetaProperties, erro
 func ReadData(dataString string) (types.Data, error) {
 	dataTypeAndString := strings.SplitN(dataString, constants.DataTypeAndValueSeparator, 2)
 	if len(dataTypeAndString) == 2 {
-		dataType, dataString := dataTypeAndString[0], dataTypeAndString[1]
+		dataTypeID, dataString := dataTypeAndString[0], dataTypeAndString[1]
 
 		var data types.Data
 
 		var Error error
 
-		switch NewID(dataType) {
-		case decData{}.GetTypeID():
-			data, Error = ReadDecData(dataString)
-		case idData{}.GetTypeID():
-			data, Error = ReadIDData(dataString)
-		case heightData{}.GetTypeID():
-			data, Error = ReadHeightData(dataString)
-		case stringData{}.GetTypeID():
-			data, Error = ReadStringData(dataString)
-		case accAddressData{}.GetTypeID():
-			data, Error = ReadAccAddressData(dataString)
-		case listData{}.GetTypeID():
-			data, Error = ReadAccAddressListData(dataString)
+		switch NewID(dataTypeID) {
+		case base.DecDataID:
+			data, Error = base.ReadDecData(dataString)
+		case base.IDDataID:
+			data, Error = base.ReadIDData(dataString)
+		case base.HeightDataID:
+			data, Error = base.ReadHeightData(dataString)
+		case base.StringDataID:
+			data, Error = base.ReadStringData(dataString)
+		case base.AccAddressDataID:
+			data, Error = base.ReadAccAddressData(dataString)
+			// TODO Check
+		case base.ListDataID:
+			data, Error = base.ReadAccAddressListData(dataString)
 		default:
 			data, Error = nil, errors.UnsupportedParameter
 		}

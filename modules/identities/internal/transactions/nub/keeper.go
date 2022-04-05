@@ -13,6 +13,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/types/base"
 )
@@ -28,14 +29,14 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 
-	nubIDProperty := base.NewMetaProperty(ids.NubIDProperty, base.NewIDData(message.NubID))
+	nubIDProperty := base.NewMetaProperty(ids.NubIDProperty, baseData.NewIDData(message.NubID))
 
 	immutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(nubIDProperty)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
 
-	authenticationProperty := base.NewMetaProperty(ids.AuthenticationProperty, base.NewListData(base.NewAccAddressData(message.From)))
+	authenticationProperty := base.NewMetaProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(message.From)))
 
 	mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(authenticationProperty)))
 	if Error != nil {

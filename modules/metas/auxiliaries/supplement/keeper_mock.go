@@ -8,6 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/constants/test"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/types"
 	"github.com/AssetMantle/modules/schema/types/base"
@@ -30,11 +31,11 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 		}
 	}
 
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.BurnProperty, base.NewHeightData(base.NewHeight(1))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewDecData(sdkTypes.SmallestDec())))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.TakerIDProperty, base.NewIDData(base.NewID("fromID"))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.ExchangeRateProperty, base.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.ExpiryProperty, base.NewHeightData(base.NewHeight(900))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.BurnProperty, baseData.NewHeightData(base.NewHeight(1))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(sdkTypes.SmallestDec())))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.TakerIDProperty, baseData.NewIDData(base.NewID("fromID"))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
+	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.ExpiryProperty, baseData.NewHeightData(base.NewHeight(900))))
 
 	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
 }

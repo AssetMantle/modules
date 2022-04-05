@@ -26,7 +26,7 @@ func (classification classification) GetKey() helpers.Key {
 	return key.FromID(classification.ID)
 }
 func (classification) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, classification{})
+	codecUtilities.RegisterModuleConcrete(codec, module.Name, classification{})
 }
 
 func NewClassification(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Classification {

@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/stretchr/testify/require"
 
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/types"
 	"github.com/AssetMantle/modules/schema/types/base"
 	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
@@ -17,7 +18,7 @@ import (
 func TestParameters(t *testing.T) {
 	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
 	codec := baseTestUtilities.MakeCodec()
-	Parameter := base.NewParameter(base.NewID("testParameter"), base.NewStringData("testData"), func(interface{}) error { return nil })
+	Parameter := base.NewParameter(base.NewID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
 	ParameterList := []types.Parameter{Parameter}
 	Parameters := NewParameters(ParameterList...)
 	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
@@ -41,5 +42,5 @@ func TestParameters(t *testing.T) {
 	})
 
 	require.Equal(t, "testData123", Parameters.Mutate(context,
-		base.NewParameter(base.NewID("testParameter"), base.NewStringData("testData123"), func(interface{}) error { return nil })).Get(base.NewID("testParameter")).GetData().String())
+		base.NewParameter(base.NewID("testParameter"), baseData.NewStringData("testData123"), func(interface{}) error { return nil })).Get(base.NewID("testParameter")).GetData().String())
 }

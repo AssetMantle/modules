@@ -50,7 +50,7 @@ func (asset asset) GetKey() helpers.Key {
 	return key.FromID(asset.ID)
 }
 func (asset) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, asset{})
+	codecUtilities.RegisterModuleConcrete(codec, module.Name, asset{})
 }
 
 func NewAsset(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Asset {

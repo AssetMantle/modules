@@ -7,17 +7,17 @@ import (
 	"encoding/hex"
 	"testing"
 
-	qualified2 "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/utilities/random"
-
 	"github.com/cosmos/cosmos-sdk/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/mappables/qualified"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/utilities/random"
 )
 
 func Test_Identity_Methods(t *testing.T) {
@@ -25,11 +25,11 @@ func Test_Identity_Methods(t *testing.T) {
 	classificationID := base.NewID("classificationID")
 	defaultImmutableProperties, _ := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	testIdentityID := key.NewIdentityID(classificationID, defaultImmutableProperties)
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
-	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewStringData("MutableData")))
+	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), baseData.NewStringData("MutableData")))
 
 	testIdentity := NewIdentity(testIdentityID, immutableProperties, mutableProperties)
-	require.Equal(t, testIdentity, identity{Document: qualified.Document{ID: testIdentityID, HasImmutables: qualified2.HasImmutables{Properties: immutableProperties}, HasMutables: qualified2.HasMutables{Properties: mutableProperties}}})
+	require.Equal(t, testIdentity, identity{Document: qualified.Document{ID: testIdentityID, HasImmutables: baseQualified.HasImmutables{Properties: immutableProperties}, HasMutables: baseQualified.HasMutables{Properties: mutableProperties}}})
 	require.Equal(t, testIdentity.(identity).GetID(), testIdentityID)
 	require.Equal(t, testIdentity.GetImmutableProperties(), immutableProperties)
 	require.Equal(t, testIdentity.GetMutableProperties(), mutableProperties)
@@ -59,8 +59,8 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: qualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    qualified2.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty, base.NewListData()))},
-				HasMutables:      qualified2.HasMutables{},
+				HasImmutables:    baseQualified.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty, baseData.NewListData()))},
+				HasMutables:      baseQualified.HasMutables{},
 			}},
 			args: args{address: randomAccAddress[0]},
 			want: false,
@@ -70,8 +70,8 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: qualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    qualified2.HasImmutables{},
-				HasMutables:      qualified2.HasMutables{},
+				HasImmutables:    baseQualified.HasImmutables{},
+				HasMutables:      baseQualified.HasMutables{},
 			}},
 			args: args{address: randomAccAddress[0]},
 			want: false,
@@ -81,8 +81,8 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: qualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    qualified2.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty, base.NewListData(base.NewAccAddressData(randomAccAddress[0]))))},
-				HasMutables:      qualified2.HasMutables{},
+				HasImmutables:    baseQualified.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]))))},
+				HasMutables:      baseQualified.HasMutables{},
 			}},
 			args: args{address: randomAccAddress[0]},
 			want: true,
@@ -92,8 +92,8 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: qualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    qualified2.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty, base.NewListData(base.NewAccAddressData(randomAccAddress[0]))))},
-				HasMutables:      qualified2.HasMutables{},
+				HasImmutables:    baseQualified.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]))))},
+				HasMutables:      baseQualified.HasMutables{},
 			}},
 			args: args{address: randomAccAddress[1]},
 			want: false,
@@ -103,8 +103,8 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: qualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    qualified2.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty, base.NewListData(base.NewAccAddressData(randomAccAddress[0]), base.NewAccAddressData(randomAccAddress[1]), base.NewAccAddressData(randomAccAddress[2]), base.NewAccAddressData(randomAccAddress[3]))))},
-				HasMutables:      qualified2.HasMutables{},
+				HasImmutables:    baseQualified.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]), baseData.NewAccAddressData(randomAccAddress[1]), baseData.NewAccAddressData(randomAccAddress[2]), baseData.NewAccAddressData(randomAccAddress[3]))))},
+				HasMutables:      baseQualified.HasMutables{},
 			}},
 			args: args{address: randomAccAddress[3]},
 			want: true,
@@ -114,8 +114,8 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: qualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    qualified2.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty, base.NewListData(base.NewAccAddressData(randomAccAddress[0]), base.NewAccAddressData(randomAccAddress[1]), base.NewAccAddressData(randomAccAddress[2]), base.NewAccAddressData(randomAccAddress[3]))))},
-				HasMutables:      qualified2.HasMutables{},
+				HasImmutables:    baseQualified.HasImmutables{Properties: base.NewProperties(base.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]), baseData.NewAccAddressData(randomAccAddress[1]), baseData.NewAccAddressData(randomAccAddress[2]), baseData.NewAccAddressData(randomAccAddress[3]))))},
+				HasMutables:      baseQualified.HasMutables{},
 			}},
 			args: args{address: randomAccAddress[4]},
 			want: false,

@@ -6,6 +6,7 @@ package property
 import (
 	"testing"
 
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/types"
 	"github.com/AssetMantle/modules/schema/types/base"
 )
@@ -19,14 +20,14 @@ func TestDuplicate(t *testing.T) {
 		args args
 		want bool
 	}{
-		{"Positive Case, Unique Properties", args{propertyList: []types.Property{base.NewProperty(base.NewID("a"), base.NewStringData("factA")),
-			base.NewProperty(base.NewID("b"), base.NewStringData("factB")),
-			base.NewProperty(base.NewID("c"), base.NewStringData("factC")),
-			base.NewProperty(base.NewID("d"), base.NewStringData("factD"))}}, false},
-		{"Negative Case, DuplicateExists", args{propertyList: []types.Property{base.NewProperty(base.NewID("a"), base.NewStringData("factA")),
-			base.NewProperty(base.NewID("b"), base.NewStringData("factB")),
-			base.NewProperty(base.NewID("c"), base.NewStringData("factC")),
-			base.NewProperty(base.NewID("a"), base.NewStringData("factD"))}}, true},
+		{"Positive Case, Unique Properties", args{propertyList: []types.Property{base.NewProperty(base.NewID("a"), baseData.NewStringData("factA")),
+			base.NewProperty(base.NewID("b"), baseData.NewStringData("factB")),
+			base.NewProperty(base.NewID("c"), baseData.NewStringData("factC")),
+			base.NewProperty(base.NewID("d"), baseData.NewStringData("factD"))}}, false},
+		{"Negative Case, DuplicateExists", args{propertyList: []types.Property{base.NewProperty(base.NewID("a"), baseData.NewStringData("factA")),
+			base.NewProperty(base.NewID("b"), baseData.NewStringData("factB")),
+			base.NewProperty(base.NewID("c"), baseData.NewStringData("factC")),
+			base.NewProperty(base.NewID("a"), baseData.NewStringData("factD"))}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

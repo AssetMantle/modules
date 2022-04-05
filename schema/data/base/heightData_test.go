@@ -10,18 +10,19 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
 
 func Test_HeightData(t *testing.T) {
-	heightValue := NewHeight(123)
+	heightValue := base.NewHeight(123)
 	testHeightData := NewHeightData(heightValue)
-	testHeightData2 := NewHeightData(NewHeight(0))
+	testHeightData2 := NewHeightData(base.NewHeight(0))
 
 	require.Equal(t, "123", testHeightData.String())
-	require.Equal(t, NewID(meta.Hash("123")), testHeightData.GenerateHashID())
-	require.Equal(t, NewID(""), testHeightData2.GenerateHashID())
-	require.Equal(t, heightDataID, testHeightData.GetTypeID())
+	require.Equal(t, base.NewID(meta.Hash("123")), testHeightData.GenerateHashID())
+	require.Equal(t, base.NewID(""), testHeightData2.GenerateHashID())
+	require.Equal(t, HeightDataID, testHeightData.GetTypeID())
 
 	dataAsString, err := testHeightData.AsString()
 	require.Equal(t, "", dataAsString)
@@ -35,24 +36,8 @@ func Test_HeightData(t *testing.T) {
 	require.Equal(t, sdkTypes.ZeroDec(), dataAsDec)
 	require.Equal(t, errors.IncorrectFormat, err)
 
-	dataAsID, err := testHeightData.AsID()
-	require.Equal(t, id{}, dataAsID)
-	require.Equal(t, errors.IncorrectFormat, err)
-
 	require.Equal(t, heightValue, testHeightData.Get())
 
-	data, err := ReadHeightData("")
-	require.Equal(t, heightData{Value: height{Value: 0}}, data)
-	require.Nil(t, err)
-
-	data, err = ReadHeightData("testString")
-	require.Equal(t, nil, data)
-	require.NotNil(t, err)
-
-	data, err = ReadHeightData("123")
-	require.Equal(t, heightData{Value: height{Value: 123}}, data)
-	require.Nil(t, err)
-
 	require.Equal(t, false, testHeightData.Compare(NewStringData("")) == 0)
-	require.Equal(t, true, testHeightData.Compare(NewHeightData(NewHeight(123))) == 0)
+	require.Equal(t, true, testHeightData.Compare(NewHeightData(base.NewHeight(123))) == 0)
 }

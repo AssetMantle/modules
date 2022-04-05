@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/stretchr/testify/require"
 
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/types"
 	"github.com/AssetMantle/modules/schema/types/base"
@@ -21,7 +22,7 @@ func TestGenesis(t *testing.T) {
 	Mapper := NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype).Initialize(storeKey)
 
 	mappableList := []helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")}
-	ParameterList := []types.Parameter{base.NewParameter(base.NewID("testParameter"), base.NewStringData("testData"), func(interface{}) error { return nil })}
+	ParameterList := []types.Parameter{base.NewParameter(base.NewID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })}
 	Parameters := NewParameters(ParameterList...)
 	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
 	Parameters = Parameters.Initialize(subspace)

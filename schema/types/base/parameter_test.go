@@ -8,6 +8,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/crypto/openpgp/errors"
+
+	"github.com/AssetMantle/modules/schema/data/base"
 )
 
 func validator(interface{}) error {
@@ -17,7 +19,7 @@ func validator(interface{}) error {
 func Test_Parameter(t *testing.T) {
 
 	id := NewID("ID")
-	data := NewStringData("Data")
+	data := base.NewStringData("Data")
 
 	testParameter := NewParameter(id, data, validator)
 	require.Equal(t, id, testParameter.GetID())
@@ -26,6 +28,6 @@ func Test_Parameter(t *testing.T) {
 	require.Equal(t, data, testParameter.GetData())
 
 	require.Equal(t, `{"id":{"idString":"ID"},"data":{"value":"Data"}}`, testParameter.String())
-	require.Equal(t, "Data2", testParameter.Mutate(NewStringData("Data2")).GetData().String())
+	require.Equal(t, "Data2", testParameter.Mutate(base.NewStringData("Data2")).GetData().String())
 	require.Equal(t, errors.ErrKeyIncorrect, testParameter.GetValidator()(nil))
 }

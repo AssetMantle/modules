@@ -6,6 +6,7 @@ package mappable
 import (
 	"testing"
 
+	"github.com/AssetMantle/modules/schema/data/base"
 	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 
@@ -17,8 +18,8 @@ import (
 
 func Test_Classification_Methods(t *testing.T) {
 
-	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseTypes.NewID("ID1"), baseTypes.NewStringData("ImmutableData")))
-	mutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseTypes.NewID("ID2"), baseTypes.NewStringData("MutableData")))
+	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseTypes.NewID("ID1"), base.NewStringData("ImmutableData")))
+	mutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseTypes.NewID("ID2"), base.NewStringData("MutableData")))
 
 	chainID := baseTypes.NewID("chainID")
 	id := key.NewClassificationID(chainID, immutableProperties, mutableProperties)

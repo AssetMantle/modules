@@ -21,6 +21,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/types"
@@ -74,20 +75,20 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	heightData, _ := base.ReadHeightData("")
-	decData, _ := base.ReadDecData("")
+	heightData, _ := baseData.ReadHeightData("")
+	decData, _ := baseData.ReadDecData("")
 
-	property1 := base.NewMetaProperty(base.NewID("id1"), base.NewStringData(""))
+	property1 := base.NewMetaProperty(base.NewID("id1"), baseData.NewStringData(""))
 	property2 := base.NewMetaProperty(base.NewID("id2"), heightData)
 	dec, _ := sdkTypes.NewDecFromStr("123")
 	property3 := base.NewMetaProperty(base.NewID("id3"), decData)
-	property4 := base.NewMetaProperty(base.NewID("id4"), base.NewIDData(base.NewID("")))
-	property5 := base.NewMetaProperty(base.NewID("id5"), base.NewDecData(dec))
+	property4 := base.NewMetaProperty(base.NewID("id4"), baseData.NewIDData(base.NewID("")))
+	property5 := base.NewMetaProperty(base.NewID("id5"), baseData.NewDecData(dec))
 
 	var metaPropertyList []types.MetaProperty
 	metaPropertyList = append(metaPropertyList, property1, property2, property3, property4, property5)
 
-	keepers.MetasKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(decData)).Add(mappable.NewMeta(base.NewDecData(dec)))
+	keepers.MetasKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(decData)).Add(mappable.NewMeta(baseData.NewDecData(dec)))
 
 	t.Run("Positive Case", func(t *testing.T) {
 		want := newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
