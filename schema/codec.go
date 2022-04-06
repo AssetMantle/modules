@@ -6,6 +6,8 @@ package schema
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
+	"github.com/AssetMantle/modules/schema/data"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
 	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
@@ -16,6 +18,8 @@ import (
 
 func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*error)(nil), nil)
+	data.RegisterCodec(codec)
+	baseData.RegisterCodec(codec)
 	types.RegisterCodec(codec)
 	baseTypes.RegisterCodec(codec)
 	traits.RegisterCodec(codec)

@@ -9,7 +9,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
@@ -24,19 +23,6 @@ func Test_DecData(t *testing.T) {
 	require.Equal(t, base.NewID(meta.Hash(decValue.String())), testDecData.GenerateHashID())
 	require.Equal(t, base.NewID(""), testDecData2.GenerateHashID())
 	require.Equal(t, DecDataID, testDecData.GetTypeID())
-
-	dataAsString, err := testDecData.AsString()
-	require.Equal(t, "", dataAsString)
-	require.Equal(t, errors.IncorrectFormat, err)
-
-	dataAsDec, err := testDecData.AsDec()
-	require.Equal(t, decValue, dataAsDec)
-	require.Equal(t, nil, err)
-
-	require.Equal(t, errors.IncorrectFormat, err)
-
-	require.Equal(t, errors.IncorrectFormat, err)
-	require.Equal(t, decValue, testDecData.Get())
 
 	data, err := ReadDecData("")
 	require.Equal(t, decData{Value: sdkTypes.ZeroDec()}, data)

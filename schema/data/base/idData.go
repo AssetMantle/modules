@@ -6,10 +6,8 @@ package base
 import (
 	"bytes"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/types"
 	"github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/meta"
@@ -19,7 +17,7 @@ type idData struct {
 	Value types.ID `json:"value"`
 }
 
-var _ types.Data = (*idData)(nil)
+var _ data.IDData = (*idData)(nil)
 
 func (idData idData) GetID() types.ID {
 	return base.NewDataID(idData)
@@ -44,32 +42,10 @@ func (idData idData) GetTypeID() types.ID {
 func (idData idData) GenerateHashID() types.ID {
 	return base.NewID(meta.Hash(idData.Value.String()))
 }
-func (idData idData) AsAccAddress() (sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
-	return zeroValue, errors.EntityNotFound
-}
-func (idData idData) AsDataList() (lists.DataList, error) {
-	zeroValue, _ := listData{}.ZeroValue().AsDataList()
-	return zeroValue, errors.IncorrectFormat
-}
-func (idData idData) AsString() (string, error) {
-	zeroValue, _ := stringData{}.ZeroValue().AsString()
-	return zeroValue, errors.IncorrectFormat
-}
-func (idData idData) AsDec() (sdkTypes.Dec, error) {
-	zeroValue, _ := decData{}.ZeroValue().AsDec()
-	return zeroValue, errors.IncorrectFormat
-}
-func (idData idData) AsHeight() (types.Height, error) {
-	zeroValue, _ := heightData{}.ZeroValue().AsHeight()
-	return zeroValue, errors.IncorrectFormat
-}
-func (idData idData) AsID() (types.ID, error) {
-	return idData.Value, nil
-}
-func (idData idData) Get() interface{} {
+func (idData idData) Get() types.ID {
 	return idData.Value
 }
+
 func idDataFromInterface(data types.Data) (idData, error) {
 	switch value := data.(type) {
 	case idData:

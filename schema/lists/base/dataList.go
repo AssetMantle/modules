@@ -12,14 +12,18 @@ type dataList struct {
 	types.List
 }
 
+var _ lists.DataList = (*dataList)(nil)
+
 func (dataList dataList) Search(data types.Data) int {
 	// TODO implement me
 	panic("implement me")
 }
-
-var _ lists.DataList = (*dataList)(nil)
-
 func (dataList dataList) GetList() []types.Data {
+	// TODO implement me
+	panic("implement me")
+}
+
+func NewDataList(dataList ...types.Data) lists.DataList {
 	// TODO implement me
 	panic("implement me")
 }

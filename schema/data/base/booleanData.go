@@ -6,10 +6,8 @@ package base
 import (
 	"strconv"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/types"
 	"github.com/AssetMantle/modules/schema/types/base"
 )
@@ -18,7 +16,7 @@ type booleanData struct {
 	Value bool `json:"value"`
 }
 
-var _ types.Data = (*booleanData)(nil)
+var _ data.BooleanData = (*booleanData)(nil)
 
 func (booleanData booleanData) GetID() types.ID {
 	return base.NewDataID(booleanData)
@@ -53,33 +51,10 @@ func (booleanData booleanData) GenerateHashID() types.ID {
 
 	return base.NewID(strconv.FormatBool(true))
 }
-func (booleanData booleanData) AsAccAddress() (sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
-	return zeroValue, errors.IncorrectFormat
-}
-func (booleanData booleanData) AsDataList() (lists.DataList, error) {
-	zeroValue, _ := listData{}.ZeroValue().AsDataList()
-	return zeroValue, errors.IncorrectFormat
-}
-func (booleanData booleanData) AsString() (string, error) {
-	zeroValue, _ := stringData{}.ZeroValue().AsString()
-	return zeroValue, errors.IncorrectFormat
-}
-func (booleanData booleanData) AsDec() (sdkTypes.Dec, error) {
-	zeroValue, _ := decData{}.ZeroValue().AsDec()
-	return zeroValue, errors.IncorrectFormat
-}
-func (booleanData booleanData) AsHeight() (types.Height, error) {
-	zeroValue, _ := heightData{}.ZeroValue().AsHeight()
-	return zeroValue, errors.IncorrectFormat
-}
-func (booleanData booleanData) AsID() (types.ID, error) {
-	zeroValue, _ := idData{}.ZeroValue().AsID()
-	return zeroValue, errors.IncorrectFormat
-}
-func (booleanData booleanData) Get() interface{} {
+func (booleanData booleanData) Get() bool {
 	return booleanData.Value
 }
+
 func booleanDataFromInterface(data types.Data) (booleanData, error) {
 	switch value := data.(type) {
 	case booleanData:

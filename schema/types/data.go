@@ -3,12 +3,6 @@
 
 package types
 
-import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/schema/lists"
-)
-
 // TODO URI and ID data type
 type Data interface {
 	GetID() ID
@@ -25,13 +19,4 @@ type Data interface {
 	// GenerateHashID returns the hash of the Data as an ID
 	// * Returns ID of empty string when the value of Data is that Data type's zero value
 	GenerateHashID() ID
-
-	AsAccAddress() (sdkTypes.AccAddress, error)
-	AsDataList() (lists.DataList, error)
-	AsString() (string, error)
-	AsDec() (sdkTypes.Dec, error)
-	AsHeight() (Height, error)
-	AsID() (ID, error)
-
-	Get() interface{}
 }

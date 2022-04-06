@@ -10,19 +10,21 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/lists"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type listData struct {
 	Value lists.DataList `json:"value"`
 }
 
-var _ types.Data = (*listData)(nil)
+var _ data.ListData = (*listData)(nil)
 
 func (listData listData) GetID() types.ID {
-	return base.NewDataID(listData)
+	return baseTypes.NewDataID(listData)
 }
 func (listData listData) Compare(data types.Data) int {
 	// TODO write test and see if correct
@@ -36,8 +38,8 @@ func (listData listData) Compare(data types.Data) int {
 func (listData listData) String() string {
 	dataStringList := make([]string, listData.Value.Size())
 
-	for i, data := range listData.Value.GetList() {
-		dataStringList[i] = data.String()
+	for i, datum := range listData.Value.GetList() {
+		dataStringList[i] = datum.String()
 	}
 
 	return strings.Join(dataStringList, constants.ListDataStringSeparator)
@@ -50,45 +52,23 @@ func (listData listData) ZeroValue() types.Data {
 }
 func (listData listData) GenerateHashID() types.ID {
 	if listData.Value.Size() == 0 {
-		return base.NewID("")
+		return baseTypes.NewID("")
 	}
 
 	hashList := make([]string, listData.Value.Size())
 
-	for i, data := range listData.Value.GetList() {
-		hashList[i] = data.GenerateHashID().String()
+	for i, datum := range listData.Value.GetList() {
+		hashList[i] = datum.GenerateHashID().String()
 	}
 
 	hashString := strings.Join(hashList, constants.ListHashStringSeparator)
 
-	return base.NewID(hashString)
+	return baseTypes.NewID(hashString)
 }
-func (listData listData) AsAccAddress() (sdkTypes.AccAddress, error) {
-	zeroValue, _ := accAddressData{}.ZeroValue().AsAccAddress()
-	return zeroValue, errors.IncorrectFormat
-}
-func (listData listData) AsDataList() (lists.DataList, error) {
-	return listData.Value, nil
-}
-func (listData listData) AsString() (string, error) {
-	zeroValue, _ := stringData{}.ZeroValue().AsString()
-	return zeroValue, errors.IncorrectFormat
-}
-func (listData listData) AsDec() (sdkTypes.Dec, error) {
-	zeroValue, _ := decData{}.ZeroValue().AsDec()
-	return zeroValue, errors.IncorrectFormat
-}
-func (listData listData) AsHeight() (types.Height, error) {
-	zeroValue, _ := heightData{}.ZeroValue().AsHeight()
-	return zeroValue, errors.IncorrectFormat
-}
-func (listData listData) AsID() (types.ID, error) {
-	zeroValue, _ := idData{}.ZeroValue().AsID()
-	return zeroValue, errors.IncorrectFormat
-}
-func (listData listData) Get() interface{} {
+func (listData listData) Get() lists.DataList {
 	return listData.Value
 }
+
 func listDataFromInterface(data types.Data) (listData, error) {
 	switch value := data.(type) {
 	case listData:
@@ -98,9 +78,10 @@ func listDataFromInterface(data types.Data) (listData, error) {
 	}
 }
 
+// NewListData
+// * onus of ensuring all Data are of the same type is on DataList
 func NewListData(value ...types.Data) types.Data {
-	// TODO Implement
-	return nil
+	return listData{Value: baseLists.NewDataList(value...)}
 }
 
 func ReadAccAddressListData(dataString string) (types.Data, error) {

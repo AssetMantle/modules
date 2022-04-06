@@ -6,10 +6,8 @@ package base
 import (
 	"testing"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
@@ -24,16 +22,6 @@ func Test_StringData(t *testing.T) {
 	require.Equal(t, base.NewID(""), testStringData2.GenerateHashID())
 	require.Equal(t, StringDataID, testStringData.GetTypeID())
 	require.Equal(t, testStringData.ZeroValue(), NewStringData(""))
-
-	dataAsString, err := testStringData.AsString()
-	require.Equal(t, value, dataAsString)
-	require.Equal(t, nil, err)
-
-	dataAsDec, err := testStringData.AsDec()
-	require.Equal(t, sdkTypes.ZeroDec(), dataAsDec)
-	require.Equal(t, errors.IncorrectFormat, err)
-
-	require.Equal(t, value, testStringData.Get())
 
 	data, err := ReadStringData("testString")
 	require.Nil(t, err)
