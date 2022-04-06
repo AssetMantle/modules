@@ -13,6 +13,7 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/types/base"
@@ -55,10 +56,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.MetaDataError)
 	}
 
-	makerOwnableSplit, Error := makerOwnableSplitProperty.GetData().AsDec()
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
+	makerOwnableSplit := makerOwnableSplitProperty.GetData().(data.DecData).Get()
 
 	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), message.FromID, order.(mappables.Order).GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())

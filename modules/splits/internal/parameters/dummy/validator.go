@@ -5,21 +5,22 @@ package dummy
 
 import (
 	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
 func validator(i interface{}) error {
 	switch value := i.(type) {
 	case types.Parameter:
-		data, err := value.GetData().AsDec()
-		if err != nil || value.GetID().Compare(ID) != 0 || data.IsNegative() {
+		data := value.GetData().(data.DecData).Get()
+		if value.GetID().Compare(ID) != 0 || data.IsNegative() {
 			return errors.InvalidParameter
 		}
 
 		return nil
 	case types.Data:
-		data, err := value.AsDec()
-		if err != nil || data.IsNegative() {
+		data := value.(data.DecData).Get()
+		if data.IsNegative() {
 			return errors.InvalidParameter
 		}
 

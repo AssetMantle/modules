@@ -15,6 +15,7 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
+	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
@@ -48,20 +49,14 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 				panic(Error)
 			}
 			if expiryProperty := metaProperties.Get(ids.ExpiryProperty); expiryProperty != nil {
-				expiry, Error := expiryProperty.GetData().AsHeight()
-				if Error != nil {
-					panic(Error)
-				}
+				expiry := expiryProperty.GetData().(data.HeightData).Get()
 
 				if expiry.Compare(base.NewHeight(context.BlockHeight())) <= 0 {
 					makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplitProperty)
 					if makerOwnableSplitProperty == nil {
 						panic(errors.MetaDataError)
 					}
-					makerOwnableSplit, Error := makerOwnableSplitProperty.GetData().AsDec()
-					if Error != nil {
-						panic(Error)
-					}
+					makerOwnableSplit := makerOwnableSplitProperty.GetData().(data.DecData).Get()
 					if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 						panic(auxiliaryResponse.GetError())
 					}
@@ -89,15 +84,9 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 					var leftOrder mappables.Order
 					var rightOrder mappables.Order
 
-					orderHeight, Error := orderMappable.(mappables.Order).GetCreation().GetData().AsHeight()
-					if Error != nil {
-						panic(Error)
-					}
+					orderHeight := orderMappable.(mappables.Order).GetCreation().GetData().(data.HeightData).Get()
 
-					executableOrderHeight, Error := executableMappableOrder.(mappables.Order).GetCreation().GetData().AsHeight()
-					if Error != nil {
-						panic(Error)
-					}
+					executableOrderHeight := executableMappableOrder.(mappables.Order).GetCreation().GetData().(data.HeightData).Get()
 
 					switch {
 					case orderHeight.Compare(executableOrderHeight) > 0:
@@ -112,35 +101,23 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 						rightOrder = executableMappableOrder.(mappables.Order)
 					}
 
-					leftOrderExchangeRate, Error := leftOrder.GetExchangeRate().GetData().AsDec()
-					if Error != nil {
-						panic(Error)
-					}
+					leftOrderExchangeRate := leftOrder.GetExchangeRate().GetData().(data.DecData).Get()
 
 					leftOrderMetaProperties, Error := supplement.GetMetaPropertiesFromResponse(block.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(leftOrder.GetMakerOwnableSplit())))
 					if Error != nil {
 						panic(Error)
 					}
 
-					leftOrderMakerOwnableSplit, Error := leftOrderMetaProperties.Get(ids.MakerOwnableSplitProperty).GetData().AsDec()
-					if Error != nil {
-						panic(Error)
-					}
+					leftOrderMakerOwnableSplit := leftOrderMetaProperties.Get(ids.MakerOwnableSplitProperty).GetData().(data.DecData).Get()
 
-					rightOrderExchangeRate, Error := rightOrder.GetExchangeRate().GetData().AsDec()
-					if Error != nil {
-						panic(Error)
-					}
+					rightOrderExchangeRate := rightOrder.GetExchangeRate().GetData().(data.DecData).Get()
 
 					rightOrderMetaProperties, Error := supplement.GetMetaPropertiesFromResponse(block.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(rightOrder.GetMakerOwnableSplit())))
 					if Error != nil {
 						panic(Error)
 					}
 
-					rightOrderMakerOwnableSplit, Error := rightOrderMetaProperties.Get(ids.MakerOwnableSplitProperty).GetData().AsDec()
-					if Error != nil {
-						panic(Error)
-					}
+					rightOrderMakerOwnableSplit := rightOrderMetaProperties.Get(ids.MakerOwnableSplitProperty).GetData().(data.DecData).Get()
 
 					rightOrderTakerOwnableSplitDemanded := rightOrderExchangeRate.MulTruncate(rightOrderMakerOwnableSplit).MulTruncate(sdkTypes.SmallestDec())
 

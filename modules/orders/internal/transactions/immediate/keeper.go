@@ -18,6 +18,7 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
+	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
@@ -81,18 +82,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	orderMutated := false
 	orderLeftOverMakerOwnableSplit := message.MakerOwnableSplit
 
-	orderExchangeRate, Error := order.GetExchangeRate().GetData().AsDec()
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
+	orderExchangeRate := order.GetExchangeRate().GetData().(data.DecData).Get()
 
 	accumulator := func(mappableOrder helpers.Mappable) bool {
 		executableOrder := mappableOrder.(mappables.Order)
 
-		executableOrderExchangeRate, Error := executableOrder.GetExchangeRate().GetData().AsDec()
-		if Error != nil {
-			panic(Error)
-		}
+		executableOrderExchangeRate := executableOrder.GetExchangeRate().GetData().(data.DecData).Get()
 
 		executableOrderMetaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(executableOrder.GetMakerOwnableSplit(), executableOrder.GetExpiry())))
 		if Error != nil {
@@ -102,10 +97,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		var executableOrderMakerOwnableSplit sdkTypes.Dec
 
 		if makerOwnableSplitProperty := executableOrderMetaProperties.Get(ids.MakerOwnableSplitProperty); makerOwnableSplitProperty != nil {
-			executableOrderMakerOwnableSplit, Error = makerOwnableSplitProperty.GetData().AsDec()
-			if Error != nil {
-				panic(Error)
-			}
+			executableOrderMakerOwnableSplit = makerOwnableSplitProperty.GetData().(data.DecData).Get()
 		} else {
 			panic(errors.MetaDataError)
 		}

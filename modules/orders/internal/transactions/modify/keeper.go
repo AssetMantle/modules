@@ -16,6 +16,7 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
+	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
@@ -55,10 +56,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	transferMakerOwnableSplit := sdkTypes.ZeroDec()
 
 	if makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplitProperty); makerOwnableSplitProperty != nil {
-		oldMakerOwnableSplit, Error := makerOwnableSplitProperty.GetData().AsDec()
-		if Error != nil {
-			return newTransactionResponse(Error)
-		}
+		oldMakerOwnableSplit := makerOwnableSplitProperty.GetData().(data.DecData).Get()
 
 		transferMakerOwnableSplit = message.MakerOwnableSplit.Sub(oldMakerOwnableSplit)
 	} else {

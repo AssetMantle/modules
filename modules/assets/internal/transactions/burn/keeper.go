@@ -13,6 +13,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/burn"
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/types/base"
@@ -51,10 +52,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	burnHeight, Error := burnHeightMetaFact.GetData().AsHeight()
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
+	burnHeight := burnHeightMetaFact.GetData().(data.HeightData).Get()
 
 	if burnHeight.Compare(base.NewHeight(context.BlockHeight())) > 0 {
 		return newTransactionResponse(errors.NotAuthorized)

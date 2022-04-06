@@ -11,6 +11,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/types/base"
@@ -48,10 +49,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	expiryHeight, Error := expiryHeightMetaFact.GetData().AsHeight()
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
+	expiryHeight := expiryHeightMetaFact.GetData().(data.HeightData).Get()
 
 	if expiryHeight.Compare(base.NewHeight(context.BlockHeight())) > 0 {
 		return newTransactionResponse(errors.NotAuthorized)

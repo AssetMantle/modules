@@ -15,6 +15,7 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
+	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
@@ -52,28 +53,20 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	if takerIDProperty := metaProperties.Get(ids.TakerIDProperty); takerIDProperty != nil {
-		takerID, Error := takerIDProperty.GetData().AsID()
-		if Error != nil {
-			return newTransactionResponse(errors.MetaDataError)
-		} else if takerID.Compare(base.NewID("")) != 0 && takerID.Compare(message.FromID) != 0 {
+		takerID := takerIDProperty.GetData().(data.IDData).Get()
+		if takerID.Compare(base.NewID("")) != 0 && takerID.Compare(message.FromID) != 0 {
 			return newTransactionResponse(errors.NotAuthorized)
 		}
 	}
 
-	exchangeRate, Error := order.(mappables.Order).GetExchangeRate().GetData().AsDec()
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
+	exchangeRate := order.(mappables.Order).GetExchangeRate().GetData().(data.DecData).Get()
 
 	makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplitProperty)
 	if makerOwnableSplitProperty == nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}
 
-	makerOwnableSplit, Error := makerOwnableSplitProperty.GetData().AsDec()
-	if Error != nil {
-		return newTransactionResponse(errors.MetaDataError)
-	}
+	makerOwnableSplit := makerOwnableSplitProperty.GetData().(data.DecData).Get()
 
 	makerReceiveTakerOwnableSplit := makerOwnableSplit.MulTruncate(exchangeRate).MulTruncate(sdkTypes.SmallestDec())
 	takerReceiveMakerOwnableSplit := message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(exchangeRate)
