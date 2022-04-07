@@ -7,22 +7,22 @@ import (
 	"strings"
 
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func readIdentityID(identityIDString string) types.ID {
 	idList := strings.Split(identityIDString, constants.FirstOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return identityID{
-			ClassificationID: base.NewID(idList[0]),
-			HashID:           base.NewID(idList[1]),
+			ClassificationID: baseIDs.NewID(idList[0]),
+			HashID:           baseIDs.NewID(idList[1]),
 		}
 	}
 
-	return identityID{ClassificationID: base.NewID(""), HashID: base.NewID("")}
+	return identityID{ClassificationID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}
 }
 
 func identityIDFromInterface(i interface{}) identityID {

@@ -10,13 +10,13 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func Test_Quash_Message(t *testing.T) {
-	testIdentityID := base.NewID("identityID")
-	testFromID := base.NewID("fromID")
+	testIdentityID := baseIDs.NewID("identityID")
+	testFromID := baseIDs.NewID("fromID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

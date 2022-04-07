@@ -5,9 +5,9 @@ package transactions
 
 import (
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Transactions {
-	return base.NewTransactions()
+	return baseHelpers.NewTransactions()
 }

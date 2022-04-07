@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Test_Auxiliary_Prototype(t *testing.T) {
-	require.Equal(t, base.NewAuxiliaries(), Prototype())
+	require.Equal(t, baseHelpers.NewAuxiliaries(), Prototype())
 }

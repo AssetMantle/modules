@@ -24,7 +24,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type TestKeepers struct {
@@ -73,9 +73,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 	defaultAddr := sdkTypes.AccAddress("addr")
-	defaultFact, err := base.ReadData("S|default")
+	defaultFact, err := baseTypes.ReadData("S|default")
 	require.Equal(t, nil, err)
-	newFact, err := base.ReadData("S|newFact")
+	newFact, err := baseTypes.ReadData("S|newFact")
 	require.Equal(t, nil, err)
 	keepers.MetasKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(defaultFact))
 	t.Run("PositiveCase", func(t *testing.T) {

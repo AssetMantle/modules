@@ -15,7 +15,8 @@ import (
 	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -85,23 +86,23 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	mutableMetaProperties, err := base.ReadMetaProperties(transactionRequest.MutableMetaProperties)
+	mutableMetaProperties, err := baseTypes.ReadMetaProperties(transactionRequest.MutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
 
-	mutableProperties, err := base.ReadProperties(transactionRequest.MutableProperties)
+	mutableProperties, err := baseTypes.ReadProperties(transactionRequest.MutableProperties)
 	if err != nil {
 		return nil, err
 	}
 
 	return newMessage(
 		from,
-		base.NewID(transactionRequest.FromID),
-		base.NewID(transactionRequest.OrderID),
+		baseIDs.NewID(transactionRequest.FromID),
+		baseIDs.NewID(transactionRequest.OrderID),
 		takerOwnableSplit,
 		makerOwnableSplit,
-		base.NewHeight(transactionRequest.ExpiresIn),
+		baseTypes.NewHeight(transactionRequest.ExpiresIn),
 		mutableMetaProperties,
 		mutableProperties,
 	), nil

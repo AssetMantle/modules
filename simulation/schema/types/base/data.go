@@ -9,7 +9,7 @@ import (
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 
 	"math"
 	"math/rand"
@@ -26,7 +26,7 @@ func GenerateRandomData(r *rand.Rand) types.Data {
 	case 2:
 		return baseData.NewDecData(simulation.RandomDecAmount(r, sdkTypes.NewDec(99)))
 	case 3:
-		return baseData.NewHeightData(base.NewHeight(r.Int63()))
+		return baseData.NewHeightData(baseTypes.NewHeight(r.Int63()))
 	default:
 		return nil
 	}

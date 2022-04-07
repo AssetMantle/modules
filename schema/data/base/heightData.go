@@ -8,8 +8,10 @@ import (
 
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
 
@@ -19,8 +21,8 @@ type heightData struct {
 
 var _ data.HeightData = (*heightData)(nil)
 
-func (heightData heightData) GetID() types.ID {
-	return base.NewDataID(heightData)
+func (heightData heightData) GetID() ids.DataID {
+	return baseIDs.NewDataID(heightData)
 }
 func (heightData heightData) Compare(data types.Data) int {
 	compareHeightData, err := heightDataFromInterface(data)
@@ -33,18 +35,18 @@ func (heightData heightData) Compare(data types.Data) int {
 func (heightData heightData) String() string {
 	return strconv.FormatInt(heightData.Value.Get(), 10)
 }
-func (heightData heightData) GetTypeID() types.ID {
+func (heightData heightData) GetType() types.ID {
 	return HeightDataID
 }
 func (heightData heightData) ZeroValue() types.Data {
-	return NewHeightData(base.NewHeight(0))
+	return NewHeightData(baseTypes.NewHeight(0))
 }
-func (heightData heightData) GenerateHashID() types.ID {
+func (heightData heightData) GenerateHash() types.ID {
 	if heightData.Compare(heightData.ZeroValue()) == 0 {
-		return base.NewID("")
+		return baseIDs.NewID("")
 	}
 
-	return base.NewID(meta.Hash(strconv.FormatInt(heightData.Value.Get(), 10)))
+	return baseIDs.NewID(meta.Hash(strconv.FormatInt(heightData.Value.Get(), 10)))
 }
 func (heightData heightData) Get() types.Height {
 	return heightData.Value
@@ -75,5 +77,5 @@ func ReadHeightData(dataString string) (types.Data, error) {
 		return nil, err
 	}
 
-	return NewHeightData(base.NewHeight(height)), nil
+	return NewHeightData(baseTypes.NewHeight(height)), nil
 }

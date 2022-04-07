@@ -10,16 +10,17 @@ import (
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/schema/data/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Maintainer_Methods(t *testing.T) {
-	classificationID := baseTypes.NewID("classificationID")
-	identityID := baseTypes.NewID("identityID")
-	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseTypes.NewID("ID"), base.NewStringData("ImmutableData")))
-	mutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseTypes.NewID("ID"), base.NewStringData("MutableData")))
+	classificationID := baseIDs.NewID("classificationID")
+	identityID := baseIDs.NewID("identityID")
+	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID"), base.NewStringData("ImmutableData")))
+	mutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID"), base.NewStringData("MutableData")))
 
 	testMaintainerID := key.NewMaintainerID(classificationID, identityID)
 
@@ -32,7 +33,7 @@ func Test_Maintainer_Methods(t *testing.T) {
 	require.Equal(t, true, testMaintainer.CanAddMaintainer())
 	require.Equal(t, true, testMaintainer.CanMutateMaintainer())
 	require.Equal(t, true, testMaintainer.CanRemoveMaintainer())
-	require.Equal(t, true, testMaintainer.MaintainsProperty(baseTypes.NewID("ID")))
-	require.Equal(t, false, testMaintainer.MaintainsProperty(baseTypes.NewID("ID2")))
+	require.Equal(t, true, testMaintainer.MaintainsProperty(baseIDs.NewID("ID")))
+	require.Equal(t, false, testMaintainer.MaintainsProperty(baseIDs.NewID("ID2")))
 	require.Equal(t, testMaintainerID, testMaintainer.GetKey())
 }

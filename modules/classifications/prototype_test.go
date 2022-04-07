@@ -17,11 +17,11 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/queries"
 	"github.com/AssetMantle/modules/modules/classifications/internal/simulator"
 	"github.com/AssetMantle/modules/modules/classifications/internal/transactions"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Name(), base.NewModule(
+	require.Equal(t, Prototype().Name(), baseHelpers.NewModule(
 		module.Name,
 		auxiliaries.Prototype,
 		genesis.Prototype,

@@ -10,11 +10,11 @@ import (
 
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("supplement").GetName(), base.NewAuxiliaries(
+	require.Equal(t, Prototype().Get("supplement").GetName(), baseHelpers.NewAuxiliaries(
 		scrub.Auxiliary,
 		supplement.Auxiliary,
 	).Get("supplement").GetName())

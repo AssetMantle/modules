@@ -9,13 +9,13 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func Test_Transfer_Request(t *testing.T) {
-	fromID := base.NewID("fromID")
-	toID := base.NewID("toID")
-	ownableID := base.NewID("ownableID")
+	fromID := baseIDs.NewID("fromID")
+	toID := baseIDs.NewID("toID")
+	ownableID := baseIDs.NewID("ownableID")
 	splits := sdkTypes.NewDec(10)
 	testAuxiliaryRequest := NewAuxiliaryRequest(fromID, toID, ownableID, splits)
 

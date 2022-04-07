@@ -15,7 +15,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -46,9 +46,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	mutableProperties := base.NewProperties(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
+	mutableProperties := baseTypes.NewProperties(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(identity.GetClassificationID(), base.NewProperties(), mutableProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(identity.GetClassificationID(), baseTypes.NewProperties(), mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 

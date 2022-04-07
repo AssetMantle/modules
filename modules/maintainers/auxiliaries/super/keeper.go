@@ -10,7 +10,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
@@ -28,7 +28,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(errors.EntityAlreadyExists)
 	}
 
-	maintainers.Add(mappable.NewMaintainer(maintainerID, base.NewProperties(), auxiliaryRequest.MutableProperties))
+	maintainers.Add(mappable.NewMaintainer(maintainerID, baseTypes.NewProperties(), auxiliaryRequest.MutableProperties))
 
 	return newAuxiliaryResponse(nil)
 }

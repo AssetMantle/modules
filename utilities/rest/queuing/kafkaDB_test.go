@@ -13,7 +13,7 @@ import (
 	dbm "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/utilities/random"
 )
 
@@ -29,7 +29,7 @@ func Test_Kafka_DB(t *testing.T) {
 		ticketID := TicketID(random.GenerateUniqueIdentifier("name"))
 		kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", defaultCLIHome)
 		setTicketIDtoDB(ticketID, kafkaDB, Codec, []byte{})
-		addResponseToDB(ticketID, base.NewID("").Bytes(), kafkaDB, Codec)
-		require.Equal(t, base.NewID("").Bytes(), getResponseFromDB(ticketID, kafkaDB, Codec))
+		addResponseToDB(ticketID, baseIDs.NewID("").Bytes(), kafkaDB, Codec)
+		require.Equal(t, baseIDs.NewID("").Bytes(), getResponseFromDB(ticketID, kafkaDB, Codec))
 	})
 }

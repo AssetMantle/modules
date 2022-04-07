@@ -15,7 +15,7 @@ import (
 	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -75,9 +75,9 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 
 	return newMessage(
 		from,
-		base.NewID(transactionRequest.FromID),
-		base.NewID(transactionRequest.ToID),
-		base.NewID(transactionRequest.OwnableID),
+		baseIDs.NewID(transactionRequest.FromID),
+		baseIDs.NewID(transactionRequest.ToID),
+		baseIDs.NewID(transactionRequest.OwnableID),
 		value,
 	), nil
 }

@@ -10,15 +10,15 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/constants"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func Test_SplitID_Methods(t *testing.T) {
-	ownerID := base.NewID("ownerID")
-	ownableID := base.NewID("ownableID")
+	ownerID := baseIDs.NewID("ownerID")
+	ownableID := baseIDs.NewID("ownableID")
 
 	testSplitID := NewSplitID(ownerID, ownableID).(splitID)
-	testSplitID2 := NewSplitID(base.NewID(""), base.NewID("")).(splitID)
+	testSplitID2 := NewSplitID(baseIDs.NewID(""), baseIDs.NewID("")).(splitID)
 	require.NotPanics(t, func() {
 		require.Equal(t, strings.Join([]string{ownerID.String(), ownableID.String()}, constants.SecondOrderCompositeIDSeparator), testSplitID.String())
 		require.Equal(t, true, testSplitID.Equals(testSplitID))
@@ -30,7 +30,7 @@ func Test_SplitID_Methods(t *testing.T) {
 		require.Equal(t, false, testSplitID.Equals(testSplitID2))
 		require.Equal(t, false, testSplitID.Equals(nil))
 		require.Equal(t, testSplitID, FromID(testSplitID))
-		require.Equal(t, testSplitID2, FromID(base.NewID("")))
-		require.Equal(t, splitID{OwnerID: base.NewID("ID1"), OwnableID: base.NewID("ID2")}, readSplitID("ID1*ID2"))
+		require.Equal(t, testSplitID2, FromID(baseIDs.NewID("")))
+		require.Equal(t, splitID{OwnerID: baseIDs.NewID("ID1"), OwnableID: baseIDs.NewID("ID2")}, readSplitID("ID1*ID2"))
 	})
 }

@@ -14,11 +14,11 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/simulator"
 	"github.com/AssetMantle/modules/modules/metas/internal/transactions"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Module {
-	return base.NewModule(
+	return baseHelpers.NewModule(
 		module.Name,
 		auxiliaries.Prototype,
 		genesis.Prototype,

@@ -8,12 +8,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func Test_Revoke_Request(t *testing.T) {
-	identityID := base.NewID("identityID")
-	classificationID := base.NewID("classificationID")
+	identityID := baseIDs.NewID("identityID")
+	classificationID := baseIDs.NewID("classificationID")
 	testAuxiliaryRequest := NewAuxiliaryRequest(identityID, identityID, classificationID)
 
 	require.Equal(t, auxiliaryRequest{

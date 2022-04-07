@@ -4,15 +4,15 @@
 package mint
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
-var Auxiliary = base.NewAuxiliary(
+var Auxiliary = baseHelpers.NewAuxiliary(
 	"mint",
 	keeperPrototype,
 )
 
-var AuxiliaryMock = base.NewAuxiliary(
+var AuxiliaryMock = baseHelpers.NewAuxiliary(
 	"mint",
 	keeperPrototypeMock,
 )

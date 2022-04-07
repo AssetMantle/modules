@@ -3,20 +3,22 @@
 
 package ids
 
-import "github.com/AssetMantle/modules/schema/types/base"
+import (
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+)
 
 // Note: Arranged alphabetically
 var (
-	AuthenticationProperty       = base.NewID("authentication")
-	BurnProperty                 = base.NewID("burn")
-	CreationProperty             = base.NewID("creation")
-	ExchangeRateProperty         = base.NewID("exchangeRate")
-	ExpiryProperty               = base.NewID("expiry")
-	LockProperty                 = base.NewID("lock")
-	MaintainedPropertiesProperty = base.NewID("maintainedProperties")
-	MakerOwnableSplitProperty    = base.NewID("makerOwnableSplit")
-	NubIDProperty                = base.NewID("nubID")
-	PermissionsProperty          = base.NewID("permissions")
-	TakerIDProperty              = base.NewID("takerID")
-	ValueProperty                = base.NewID("value")
+	AuthenticationProperty       = baseIDs.NewID("authentication")
+	BurnProperty                 = baseIDs.NewID("burn")
+	CreationProperty             = baseIDs.NewID("creation")
+	ExchangeRateProperty         = baseIDs.NewID("exchangeRate")
+	ExpiryProperty               = baseIDs.NewID("expiry")
+	LockProperty                 = baseIDs.NewID("lock")
+	MaintainedPropertiesProperty = baseIDs.NewID("maintainedProperties")
+	MakerOwnableSplitProperty    = baseIDs.NewID("makerOwnableSplit")
+	NubIDProperty                = baseIDs.NewID("nubID")
+	PermissionsProperty          = baseIDs.NewID("permissions")
+	TakerIDProperty              = baseIDs.NewID("takerID")
+	ValueProperty                = baseIDs.NewID("value")
 )

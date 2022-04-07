@@ -6,10 +6,10 @@ package meta
 import (
 	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
-var Query = base.NewQuery(
+var Query = baseHelpers.NewQuery(
 	"metas",
 	"",
 	"",

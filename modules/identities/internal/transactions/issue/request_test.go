@@ -18,8 +18,9 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Mint_Request(t *testing.T) {
@@ -40,19 +41,19 @@ func Test_Mint_Request(t *testing.T) {
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 
-	immutableMetaProperties, err := base.ReadMetaProperties(immutableMetaPropertiesString)
+	immutableMetaProperties, err := baseTypes.ReadMetaProperties(immutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 
 	var immutableProperties types.Properties
-	immutableProperties, err = base.ReadProperties(immutablePropertiesString)
+	immutableProperties, err = baseTypes.ReadProperties(immutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties types.MetaProperties
-	mutableMetaProperties, err = base.ReadMetaProperties(mutableMetaPropertiesString)
+	mutableMetaProperties, err = baseTypes.ReadMetaProperties(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 
 	var mutableProperties types.Properties
-	mutableProperties, err = base.ReadProperties(mutablePropertiesString)
+	mutableProperties, err = baseTypes.ReadProperties(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
@@ -93,7 +94,7 @@ func Test_Mint_Request(t *testing.T) {
 
 	var msg sdkTypes.Msg
 	msg, err = testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, toAccAddress, base.NewID("fromID"), base.NewID("classificationID"), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
+	require.Equal(t, newMessage(fromAccAddress, toAccAddress, baseIDs.NewID("fromID"), baseIDs.NewID("classificationID"), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
 	require.Nil(t, err)
 
 	msg, err = newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()

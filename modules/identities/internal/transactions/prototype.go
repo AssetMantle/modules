@@ -14,11 +14,11 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/transactions/revoke"
 	"github.com/AssetMantle/modules/modules/identities/internal/transactions/unprovision"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Transactions {
-	return base.NewTransactions(
+	return baseHelpers.NewTransactions(
 		define.Transaction,
 		deputize.Transaction,
 		issue.Transaction,

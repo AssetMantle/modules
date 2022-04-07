@@ -16,7 +16,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -54,7 +54,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	burnHeight := burnHeightMetaFact.GetData().(data.HeightData).Get()
 
-	if burnHeight.Compare(base.NewHeight(context.BlockHeight())) > 0 {
+	if burnHeight.Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 

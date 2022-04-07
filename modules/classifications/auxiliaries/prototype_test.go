@@ -10,11 +10,11 @@ import (
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, base.NewAuxiliaries(
+	require.Equal(t, baseHelpers.NewAuxiliaries(
 		conform.Auxiliary,
 		define.Auxiliary,
 	).Get(""), Prototype().Get(""))

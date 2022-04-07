@@ -24,7 +24,8 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type TestKeepers struct {
@@ -74,10 +75,10 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	unprovisionedAddr := sdkTypes.AccAddress("unProvisionedAddr")
-	immutableProperties, _ := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
-	defaultClassificationID := base.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
+	immutableProperties, _ := baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	defaultClassificationID := baseIDs.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
 	defaultIdentityID := key.NewIdentityID(defaultClassificationID, immutableProperties)
-	keepers.IdentitiesKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(defaultIdentityID, base.NewProperties(), base.NewProperties()))
+	keepers.IdentitiesKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(defaultIdentityID, baseTypes.NewProperties(), baseTypes.NewProperties()))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
@@ -91,7 +92,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Nil Identity", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.EntityNotFound)
-		if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(defaultAddr, base.NewID("id"))); !reflect.DeepEqual(got, want) {
+		if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(defaultAddr, baseIDs.NewID("id"))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

@@ -10,8 +10,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 type auxiliaryRequest struct {
@@ -38,8 +38,8 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 
 func NewAuxiliaryRequest(ownerID fmt.Stringer, ownableID fmt.Stringer, value sdkTypes.Dec) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		OwnerID:   base.NewID(ownerID.String()),
-		OwnableID: base.NewID(ownableID.String()),
+		OwnerID:   baseIDs.NewID(ownerID.String()),
+		OwnableID: baseIDs.NewID(ownableID.String()),
 		Value:     value,
 	}
 }

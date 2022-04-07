@@ -10,11 +10,12 @@ import (
 
 	"github.com/AssetMantle/modules/constants/errors"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Validator(t *testing.T) {
-	require.Equal(t, errors.IncorrectFormat, validator(base.NewID("")))
+	require.Equal(t, errors.IncorrectFormat, validator(baseIDs.NewID("")))
 	require.Equal(t, nil, validator(Parameter))
-	require.Equal(t, errors.InvalidParameter, validator(base.NewParameter(base.NewID(""), baseData.NewStringData(""), validator)))
+	require.Equal(t, errors.InvalidParameter, validator(baseTypes.NewParameter(baseIDs.NewID(""), baseData.NewStringData(""), validator)))
 }

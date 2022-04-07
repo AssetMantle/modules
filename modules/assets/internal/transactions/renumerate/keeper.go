@@ -17,7 +17,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -43,7 +43,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.(mappables.Asset).GetClassificationID(), message.FromID, base.NewProperties(properties.Value))); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.(mappables.Asset).GetClassificationID(), message.FromID, baseTypes.NewProperties(properties.Value))); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 

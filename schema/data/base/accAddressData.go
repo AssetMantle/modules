@@ -4,15 +4,16 @@
 package base
 
 import (
+	"bytes"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/meta"
-
-	"bytes"
 )
 
 type accAddressData struct {
@@ -21,8 +22,8 @@ type accAddressData struct {
 
 var _ data.AccAddressData = (*accAddressData)(nil)
 
-func (accAddressData accAddressData) GetID() types.ID {
-	return base.NewDataID(accAddressData)
+func (accAddressData accAddressData) GetID() ids.DataID {
+	return baseIDs.NewDataID(accAddressData)
 }
 func (accAddressData accAddressData) Compare(sortable types.Data) int {
 	compareAccAddressData, err := accAddressDataFromInterface(sortable)
@@ -35,18 +36,18 @@ func (accAddressData accAddressData) Compare(sortable types.Data) int {
 func (accAddressData accAddressData) String() string {
 	return accAddressData.Value.String()
 }
-func (accAddressData accAddressData) GetTypeID() types.ID {
+func (accAddressData accAddressData) GetType() types.ID {
 	return AccAddressDataID
 }
 func (accAddressData accAddressData) ZeroValue() types.Data {
 	return NewAccAddressData(sdkTypes.AccAddress{})
 }
-func (accAddressData accAddressData) GenerateHashID() types.ID {
+func (accAddressData accAddressData) GenerateHash() types.ID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
-		return base.NewID("")
+		return baseIDs.NewID("")
 	}
 
-	return base.NewID(meta.Hash(accAddressData.Value.String()))
+	return baseIDs.NewID(meta.Hash(accAddressData.Value.String()))
 }
 func (accAddressData accAddressData) Get() sdkTypes.AccAddress {
 	return accAddressData.Value

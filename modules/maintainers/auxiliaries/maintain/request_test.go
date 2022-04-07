@@ -9,13 +9,14 @@ import (
 	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Maintain_Request(t *testing.T) {
-	classificationID := base.NewID("classificationID")
-	identityID := base.NewID("identityID")
-	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), baseData.NewStringData("Data1")))
+	classificationID := baseIDs.NewID("classificationID")
+	identityID := baseIDs.NewID("identityID")
+	mutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("Data1")))
 
 	testAuxiliaryRequest := NewAuxiliaryRequest(classificationID, identityID, mutableProperties)
 

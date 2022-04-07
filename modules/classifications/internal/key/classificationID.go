@@ -12,8 +12,8 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
 )
@@ -70,13 +70,13 @@ func NewClassificationID(chainID types.ID, immutableProperties types.Properties,
 	defaultImmutableStringList := make([]string, len(immutableProperties.GetList()))
 
 	for i, property := range immutableProperties.GetList() {
-		if hashID := property.GetHashID(); !(hashID.Compare(base.NewID("")) == 0) {
+		if hashID := property.GetHash(); !(hashID.Compare(baseIDs.NewID("")) == 0) {
 			defaultImmutableStringList[i] = hashID.String()
 		}
 	}
 
 	return classificationID{
 		ChainID: chainID,
-		HashID:  base.NewID(metaUtilities.Hash(metaUtilities.Hash(immutableIDStringList...), metaUtilities.Hash(mutableIDStringList...), metaUtilities.Hash(defaultImmutableStringList...))),
+		HashID:  baseIDs.NewID(metaUtilities.Hash(metaUtilities.Hash(immutableIDStringList...), metaUtilities.Hash(mutableIDStringList...), metaUtilities.Hash(defaultImmutableStringList...))),
 	}
 }

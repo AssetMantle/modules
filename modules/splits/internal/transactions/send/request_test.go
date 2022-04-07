@@ -18,7 +18,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func Test_Send_Request(t *testing.T) {
@@ -58,7 +58,7 @@ func Test_Send_Request(t *testing.T) {
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
 	msg, err := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), base.NewID("toID"), base.NewID("ownableID"), sdkTypes.NewDec(2)), msg)
+	require.Equal(t, newMessage(fromAccAddress, baseIDs.NewID("fromID"), baseIDs.NewID("toID"), baseIDs.NewID("ownableID"), sdkTypes.NewDec(2)), msg)
 	require.Nil(t, err)
 
 	msg2, err := newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, "fromID", "toID", "ownableID", "2").MakeMsg()

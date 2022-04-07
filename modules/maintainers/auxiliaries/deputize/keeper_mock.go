@@ -8,7 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/constants/test"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type auxiliaryKeeperMock struct {
@@ -19,7 +19,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	if auxiliaryRequest.MaintainedProperties.Get(base.NewID("deputizeError")) != nil {
+	if auxiliaryRequest.MaintainedProperties.Get(baseIDs.NewID("deputizeError")) != nil {
 		return newAuxiliaryResponse(test.MockError)
 	}
 

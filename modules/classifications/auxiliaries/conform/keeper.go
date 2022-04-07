@@ -9,8 +9,8 @@ import (
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
@@ -34,7 +34,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		}
 
 		for _, immutableProperty := range auxiliaryRequest.ImmutableProperties.GetList() {
-			if property := classification.(mappables.Classification).GetImmutableProperties().Get(immutableProperty.GetID()); property == nil || property.GetTypeID().Compare(immutableProperty.GetTypeID()) != 0 || property.GetHashID().Compare(base.NewID("")) != 0 && property.GetHashID() != immutableProperty.GetHashID() {
+			if property := classification.(mappables.Classification).GetImmutableProperties().Get(immutableProperty.GetID()); property == nil || property.GetType().Compare(immutableProperty.GetType()) != 0 || property.GetHash().Compare(baseIDs.NewID("")) != 0 && property.GetHash() != immutableProperty.GetHash() {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}
@@ -46,7 +46,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		}
 
 		for _, mutableProperty := range auxiliaryRequest.MutableProperties.GetList() {
-			if property := classification.(mappables.Classification).GetMutableProperties().Get(mutableProperty.GetID()); property == nil || property.GetTypeID().Compare(mutableProperty.GetTypeID()) != 0 {
+			if property := classification.(mappables.Classification).GetMutableProperties().Get(mutableProperty.GetID()); property == nil || property.GetType().Compare(mutableProperty.GetType()) != 0 {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}

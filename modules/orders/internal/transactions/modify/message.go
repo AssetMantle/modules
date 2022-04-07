@@ -13,7 +13,7 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
@@ -43,7 +43,7 @@ func (message message) ValidateBasic() error {
 		return errors.Wrap(xprtErrors.IncorrectMessage, "")
 	}
 
-	if message.ExpiresIn.Compare(base.NewHeight(0)) <= 0 {
+	if message.ExpiresIn.Compare(baseTypes.NewHeight(0)) <= 0 {
 		return errors.Wrap(xprtErrors.IncorrectMessage, "")
 	}
 

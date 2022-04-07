@@ -17,7 +17,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func Test_Split_Request(t *testing.T) {
@@ -29,7 +29,7 @@ func Test_Split_Request(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
 
-	testSplitID := base.NewID("OwnableID")
+	testSplitID := baseIDs.NewID("OwnableID")
 	testQueryRequest := newQueryRequest(testSplitID)
 	require.Equal(t, nil, testQueryRequest.Validate())
 	require.Equal(t, queryRequest{}, requestPrototype())
@@ -37,12 +37,12 @@ func Test_Split_Request(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.SplitID})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
 	require.Panics(t, func() {
-		require.Equal(t, newQueryRequest(base.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
+		require.Equal(t, newQueryRequest(baseIDs.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
 	})
 
 	vars := make(map[string]string)
 	vars["ownables"] = "randomString"
-	require.Equal(t, newQueryRequest(base.NewID("randomString")), queryRequest{}.FromMap(vars))
+	require.Equal(t, newQueryRequest(baseIDs.NewID("randomString")), queryRequest{}.FromMap(vars))
 
 	encodedRequest, err := testQueryRequest.Encode()
 	encodedResult, _ := common.Codec.MarshalJSON(testQueryRequest)
@@ -53,7 +53,7 @@ func Test_Split_Request(t *testing.T) {
 	require.Equal(t, testQueryRequest, decodedRequest)
 	require.Equal(t, nil, err)
 
-	randomDecode, _ := queryRequest{}.Decode(base.NewID("").Bytes())
+	randomDecode, _ := queryRequest{}.Decode(baseIDs.NewID("").Bytes())
 	require.Equal(t, nil, randomDecode)
 	require.Equal(t, testQueryRequest, queryRequestFromInterface(testQueryRequest))
 	require.Equal(t, queryRequest{}, queryRequestFromInterface(nil))

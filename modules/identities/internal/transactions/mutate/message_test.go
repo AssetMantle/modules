@@ -10,21 +10,22 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func Test_Mutate_Message(t *testing.T) {
-	testFromID := base.NewID("fromID")
-	testIdentityID := base.NewID("identityID")
+	testFromID := baseIDs.NewID("fromID")
+	testIdentityID := baseIDs.NewID("identityID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	mutableMetaProperties, err := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := baseTypes.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := baseTypes.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, testFromID, testIdentityID, mutableMetaProperties, mutableProperties)

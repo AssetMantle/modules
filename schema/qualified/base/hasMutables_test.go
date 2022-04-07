@@ -9,17 +9,18 @@ import (
 	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Mutables(t *testing.T) {
 
-	testProperty := base.NewProperty(base.NewID("ID"), baseData.NewStringData("Data"))
-	testProperties := base.NewProperties(testProperty)
+	testProperty := baseTypes.NewProperty(baseIDs.NewID("ID"), baseData.NewStringData("Data"))
+	testProperties := baseTypes.NewProperties(testProperty)
 	testMutables := HasMutables{testProperties}
 	require.Equal(t, HasMutables{Properties: testProperties}, testMutables)
 	require.Equal(t, testProperties, testMutables.GetMutableProperties())
-	mutatedTestProperty := base.NewProperty(base.NewID("ID"), baseData.NewStringData("Data2"))
-	require.Equal(t, HasMutables{Properties: base.NewProperties(mutatedTestProperty)}, testMutables.Mutate(mutatedTestProperty))
+	mutatedTestProperty := baseTypes.NewProperty(baseIDs.NewID("ID"), baseData.NewStringData("Data2"))
+	require.Equal(t, HasMutables{Properties: baseTypes.NewProperties(mutatedTestProperty)}, testMutables.Mutate(mutatedTestProperty))
 
 }

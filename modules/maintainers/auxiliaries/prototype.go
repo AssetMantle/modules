@@ -10,11 +10,11 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Auxiliaries {
-	return base.NewAuxiliaries(
+	return baseHelpers.NewAuxiliaries(
 		deputize.Auxiliary,
 		maintain.Auxiliary,
 		revoke.Auxiliary,

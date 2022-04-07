@@ -22,7 +22,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
@@ -65,8 +65,8 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 func Test_Query_Keeper_Split(t *testing.T) {
 	context, keepers := CreateTestInput2(t)
 
-	ownerID := base.NewID("ownerID")
-	ownableID := base.NewID("ownableID")
+	ownerID := baseIDs.NewID("ownerID")
+	ownableID := baseIDs.NewID("ownableID")
 	splitID := key.NewSplitID(ownerID, ownableID)
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(splitID, sdkTypes.NewDec(123)))
 

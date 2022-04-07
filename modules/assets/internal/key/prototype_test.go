@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype(), assetIDFromInterface(base.NewID("")))
+	require.Equal(t, Prototype(), assetIDFromInterface(baseIDs.NewID("")))
 }

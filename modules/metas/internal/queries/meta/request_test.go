@@ -17,7 +17,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func Test_Meta_Request(t *testing.T) {
@@ -29,18 +29,18 @@ func Test_Meta_Request(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
 
-	testMetaID := base.NewID("MetaID")
+	testMetaID := baseIDs.NewID("MetaID")
 	testQueryRequest := newQueryRequest(testMetaID)
 	require.Equal(t, nil, testQueryRequest.Validate())
 	require.Equal(t, queryRequest{}, requestPrototype())
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.MetaID})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
-	require.Equal(t, newQueryRequest(base.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
+	require.Equal(t, newQueryRequest(baseIDs.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
 
 	vars := make(map[string]string)
 	vars["metas"] = "randomString"
-	require.Equal(t, newQueryRequest(base.NewID("randomString")), queryRequest{}.FromMap(vars))
+	require.Equal(t, newQueryRequest(baseIDs.NewID("randomString")), queryRequest{}.FromMap(vars))
 
 	encodedRequest, err := testQueryRequest.Encode()
 	encodedResult, _ := common.Codec.MarshalJSON(testQueryRequest)
@@ -51,7 +51,7 @@ func Test_Meta_Request(t *testing.T) {
 	require.Equal(t, testQueryRequest, decodedRequest)
 	require.Equal(t, nil, err)
 
-	randomDecode, _ := queryRequest{}.Decode(base.NewID("").Bytes())
+	randomDecode, _ := queryRequest{}.Decode(baseIDs.NewID("").Bytes())
 	require.Equal(t, nil, randomDecode)
 	require.Equal(t, testQueryRequest, queryRequestFromInterface(testQueryRequest))
 	require.Equal(t, queryRequest{}, queryRequestFromInterface(nil))

@@ -10,9 +10,10 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
@@ -29,24 +30,24 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	for _, property := range auxiliaryRequest.PropertyList {
 		var meta helpers.Mappable
 
-		if property.GetHashID().Compare(base.NewID("")) == 0 {
-			if data, Error := base.ReadMetaProperty(property.GetTypeID().String() + constants.DataTypeAndValueSeparator); Error == nil {
+		if property.GetHash().Compare(baseIDs.NewID("")) == 0 {
+			if data, Error := baseTypes.ReadMetaProperty(property.GetType().String() + constants.DataTypeAndValueSeparator); Error == nil {
 				meta = mappable.NewMeta(data.GetData())
 			} else {
 				return newAuxiliaryResponse(nil, Error)
 			}
 		} else {
-			metaID := key.NewMetaID(property.GetTypeID(), property.GetHashID())
+			metaID := key.NewMetaID(property.GetType(), property.GetHash())
 			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(metaID))
 			meta = metas.Get(key.FromID(metaID))
 		}
 
 		if meta != nil {
-			metaPropertyList = append(metaPropertyList, base.NewMetaProperty(property.GetID(), meta.(mappables.Meta).GetData()))
+			metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(property.GetID(), meta.(mappables.Meta).GetData()))
 		}
 	}
 
-	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
+	return newAuxiliaryResponse(baseTypes.NewMetaProperties(metaPropertyList...), nil)
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

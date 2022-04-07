@@ -13,7 +13,6 @@ const moduleName = "types"
 
 func RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, height{})
-	codecUtilities.RegisterModuleConcrete(codec, moduleName, id{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, metaProperties{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, parameter{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, properties{})

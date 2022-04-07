@@ -24,8 +24,9 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type TestKeepers struct {
@@ -78,12 +79,12 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	heightData, _ := baseData.ReadHeightData("")
 	decData, _ := baseData.ReadDecData("")
 
-	property1 := base.NewMetaProperty(base.NewID("id1"), baseData.NewStringData(""))
-	property2 := base.NewMetaProperty(base.NewID("id2"), heightData)
+	property1 := baseTypes.NewMetaProperty(baseIDs.NewID("id1"), baseData.NewStringData(""))
+	property2 := baseTypes.NewMetaProperty(baseIDs.NewID("id2"), heightData)
 	dec, _ := sdkTypes.NewDecFromStr("123")
-	property3 := base.NewMetaProperty(base.NewID("id3"), decData)
-	property4 := base.NewMetaProperty(base.NewID("id4"), baseData.NewIDData(base.NewID("")))
-	property5 := base.NewMetaProperty(base.NewID("id5"), baseData.NewDecData(dec))
+	property3 := baseTypes.NewMetaProperty(baseIDs.NewID("id3"), decData)
+	property4 := baseTypes.NewMetaProperty(baseIDs.NewID("id4"), baseData.NewIDData(baseIDs.NewID("")))
+	property5 := baseTypes.NewMetaProperty(baseIDs.NewID("id5"), baseData.NewDecData(dec))
 
 	var metaPropertyList []types.MetaProperty
 	metaPropertyList = append(metaPropertyList, property1, property2, property3, property4, property5)
@@ -91,7 +92,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	keepers.MetasKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(decData)).Add(mappable.NewMeta(baseData.NewDecData(dec)))
 
 	t.Run("Positive Case", func(t *testing.T) {
-		want := newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
+		want := newAuxiliaryResponse(baseTypes.NewMetaProperties(metaPropertyList...), nil)
 		if got := keepers.MetasKeeper.Help(context, NewAuxiliaryRequest(property1.RemoveData(), property2.RemoveData(), property3.RemoveData(), property4.RemoveData(), property5.RemoveData())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

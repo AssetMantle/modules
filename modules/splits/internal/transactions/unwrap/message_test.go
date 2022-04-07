@@ -10,13 +10,13 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func Test_Unwrap_Message(t *testing.T) {
-	testFromID := base.NewID("fromID")
-	testOwnableID := base.NewID("ownableID")
+	testFromID := baseIDs.NewID("fromID")
+	testOwnableID := baseIDs.NewID("ownableID")
 	testSplit := sdkTypes.NewInt(2)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

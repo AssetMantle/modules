@@ -18,7 +18,8 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Define_Request(t *testing.T) {
@@ -37,13 +38,13 @@ func Test_Define_Request(t *testing.T) {
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 
-	immutableMetaProperties, err := base.ReadMetaProperties(immutableMetaPropertiesString)
+	immutableMetaProperties, err := baseTypes.ReadMetaProperties(immutableMetaPropertiesString)
 	require.Equal(t, nil, err)
-	immutableProperties, err := base.ReadProperties(immutablePropertiesString)
+	immutableProperties, err := baseTypes.ReadProperties(immutablePropertiesString)
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := base.ReadMetaProperties(mutableMetaPropertiesString)
+	mutableMetaProperties, err := baseTypes.ReadMetaProperties(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
-	mutableProperties, err := base.ReadProperties(mutablePropertiesString)
+	mutableProperties, err := baseTypes.ReadProperties(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
@@ -72,7 +73,7 @@ func Test_Define_Request(t *testing.T) {
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
 	msg, err := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), base.NewID("classificationID"), base.NewID("makerOwnableID"), base.NewID("takerOwnableID"), base.NewHeight(123), sdkTypes.NewDec(2), sdkTypes.OneDec(), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
+	require.Equal(t, newMessage(fromAccAddress, baseIDs.NewID("fromID"), baseIDs.NewID("classificationID"), baseIDs.NewID("makerOwnableID"), baseIDs.NewID("takerOwnableID"), baseTypes.NewHeight(123), sdkTypes.NewDec(2), sdkTypes.OneDec(), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
 	require.Nil(t, err)
 
 	msg, err = newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", sdkTypes.OneDec().String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()

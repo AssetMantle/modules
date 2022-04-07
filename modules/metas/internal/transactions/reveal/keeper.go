@@ -10,7 +10,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type transactionKeeper struct {
@@ -30,7 +30,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	if message.Data.GenerateHashID().Compare(base.NewID("")) != 0 {
+	if message.Data.GenerateHash().Compare(baseIDs.NewID("")) != 0 {
 		metas.Add(mappable.NewMeta(message.Data))
 	}
 

@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/AssetMantle/modules/constants/test"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
 	tendermintDB "github.com/tendermint/tm-db"
 
@@ -28,7 +29,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type TestKeepers struct {
@@ -79,16 +80,16 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
-	maintainedProperties, err := base.ReadProperties("maintainedProperties:S|maintainedProperties")
+	maintainedProperties, err := baseTypes.ReadProperties("maintainedProperties:S|maintainedProperties")
 	require.Equal(t, nil, err)
-	conformMockErrorProperties, err := base.ReadProperties("deputizeError:S|mockError")
+	conformMockErrorProperties, err := baseTypes.ReadProperties("deputizeError:S|mockError")
 	require.Equal(t, nil, err)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
-	defaultIdentityID := base.NewID("fromIdentityID")
-	toID := base.NewID("toID")
-	toID2 := base.NewID("toID2")
-	classificationID := base.NewID("ClassificationID")
+	defaultIdentityID := baseIDs.NewID("fromIdentityID")
+	toID := baseIDs.NewID("toID")
+	toID2 := baseIDs.NewID("toID2")
+	classificationID := baseIDs.NewID("ClassificationID")
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

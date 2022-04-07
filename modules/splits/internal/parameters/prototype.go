@@ -6,9 +6,9 @@ package parameters
 import (
 	"github.com/AssetMantle/modules/modules/splits/internal/parameters/dummy"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Parameters {
-	return base.NewParameters(dummy.Parameter)
+	return baseHelpers.NewParameters(dummy.Parameter)
 }

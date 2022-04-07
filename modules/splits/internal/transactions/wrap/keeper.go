@@ -11,7 +11,7 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/internal/utilities"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type transactionKeeper struct {
@@ -34,7 +34,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	for _, coin := range message.Coins {
-		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, base.NewID(coin.Denom), sdkTypes.NewDecFromInt(coin.Amount)); err != nil {
+		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, baseIDs.NewID(coin.Denom), sdkTypes.NewDecFromInt(coin.Amount)); err != nil {
 			return newTransactionResponse(err)
 		}
 	}

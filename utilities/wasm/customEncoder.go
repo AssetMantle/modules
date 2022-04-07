@@ -12,12 +12,12 @@ import (
 
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func CustomEncoder(moduleList ...helpers.Module) wasm.CustomEncoder {
 	return func(sender sdkTypes.AccAddress, rawMessage json.RawMessage) ([]sdkTypes.Msg, error) {
-		wasmMessage := base.WasmMessagePrototype()
+		wasmMessage := baseHelpers.WasmMessagePrototype()
 
 		err := json.Unmarshal(rawMessage, &wasmMessage)
 		if err != nil {

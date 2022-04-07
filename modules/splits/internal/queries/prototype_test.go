@@ -10,16 +10,16 @@ import (
 
 	"github.com/AssetMantle/modules/modules/splits/internal/queries/ownable"
 	"github.com/AssetMantle/modules/modules/splits/internal/queries/split"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
 	require.Panics(t, func() {
-		require.Equal(t, Prototype().Get("splits").GetName(), base.NewQueries(
+		require.Equal(t, Prototype().Get("splits").GetName(), baseHelpers.NewQueries(
 			split.Query,
 			ownable.Query,
 		).Get("splits").GetName())
-		require.Equal(t, Prototype().Get("ownable").GetName(), base.NewQueries(
+		require.Equal(t, Prototype().Get("ownable").GetName(), baseHelpers.NewQueries(
 			split.Query,
 			ownable.Query,
 		).Get("ownable").GetName())

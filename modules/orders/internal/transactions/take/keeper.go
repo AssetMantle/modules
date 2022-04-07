@@ -18,8 +18,9 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -54,7 +55,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	if takerIDProperty := metaProperties.Get(ids.TakerIDProperty); takerIDProperty != nil {
 		takerID := takerIDProperty.GetData().(data.IDData).Get()
-		if takerID.Compare(base.NewID("")) != 0 && takerID.Compare(message.FromID) != 0 {
+		if takerID.Compare(baseIDs.NewID("")) != 0 && takerID.Compare(message.FromID) != 0 {
 			return newTransactionResponse(errors.NotAuthorized)
 		}
 	}
@@ -88,7 +89,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		orders.Remove(order)
 	default:
 		makerReceiveTakerOwnableSplit = message.TakerOwnableSplit
-		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(updatedMakerOwnableSplit)))))
+		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseTypes.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(updatedMakerOwnableSplit)))))
 
 		if Error != nil {
 			return newTransactionResponse(Error)
@@ -102,7 +103,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), message.FromID, order.(mappables.Order).GetMakerOwnableID(), takerReceiveMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(baseIDs.NewID(module.Name), message.FromID, order.(mappables.Order).GetMakerOwnableID(), takerReceiveMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 

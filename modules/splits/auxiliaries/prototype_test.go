@@ -12,11 +12,11 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/mint"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("transfer").GetName(), base.NewAuxiliaries(
+	require.Equal(t, Prototype().Get("transfer").GetName(), baseHelpers.NewAuxiliaries(
 		burn.Auxiliary,
 		mint.Auxiliary,
 		renumerate.Auxiliary,

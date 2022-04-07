@@ -10,8 +10,9 @@ import (
 	"github.com/AssetMantle/modules/constants/test"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type auxiliaryKeeperMock struct {
@@ -26,18 +27,18 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 	var metaPropertyList []types.MetaProperty
 
 	for _, property := range auxiliaryRequest.PropertyList {
-		if property.GetID().Compare(ids.BurnProperty) == 0 && property.GetHashID().Compare(base.NewID("")) == 0 {
-			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), test.MockError)
+		if property.GetID().Compare(ids.BurnProperty) == 0 && property.GetHash().Compare(baseIDs.NewID("")) == 0 {
+			return newAuxiliaryResponse(baseTypes.NewMetaProperties(metaPropertyList...), test.MockError)
 		}
 	}
 
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.BurnProperty, baseData.NewHeightData(base.NewHeight(1))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(sdkTypes.SmallestDec())))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.TakerIDProperty, baseData.NewIDData(base.NewID("fromID"))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.ExpiryProperty, baseData.NewHeightData(base.NewHeight(900))))
+	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.BurnProperty, baseData.NewHeightData(baseTypes.NewHeight(1))))
+	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(sdkTypes.SmallestDec())))
+	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.TakerIDProperty, baseData.NewIDData(baseIDs.NewID("fromID"))))
+	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
+	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.ExpiryProperty, baseData.NewHeightData(baseTypes.NewHeight(900))))
 
-	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
+	return newAuxiliaryResponse(baseTypes.NewMetaProperties(metaPropertyList...), nil)
 }
 
 func (auxiliaryKeeperMock) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

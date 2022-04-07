@@ -7,8 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/constants/test"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -20,6 +18,7 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/constants/test"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
@@ -27,7 +26,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type TestKeepers struct {
@@ -79,9 +78,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 
-	fromID := base.NewID("fromID")
-	toID := base.NewID("toID")
-	ownableID := base.NewID("stake")
+	fromID := baseIDs.NewID("fromID")
+	toID := baseIDs.NewID("toID")
+	ownableID := baseIDs.NewID("stake")
 
 	keepers.SplitsKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(key.NewSplitID(fromID, ownableID), sdkTypes.NewDec(100)))
 
@@ -118,7 +117,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase-Value not found", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.EntityNotFound)
-		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, base.NewID("fakeFromID"), toID, ownableID, sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, baseIDs.NewID("fakeFromID"), toID, ownableID, sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

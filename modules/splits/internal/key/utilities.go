@@ -8,20 +8,20 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func readSplitID(splitIDString string) types.ID {
 	idList := strings.Split(splitIDString, constants.SecondOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return splitID{
-			OwnerID:   base.NewID(idList[0]),
-			OwnableID: base.NewID(idList[1]),
+			OwnerID:   baseIDs.NewID(idList[0]),
+			OwnableID: baseIDs.NewID(idList[1]),
 		}
 	}
 
-	return splitID{OwnerID: base.NewID(""), OwnableID: base.NewID("")}
+	return splitID{OwnerID: baseIDs.NewID(""), OwnableID: baseIDs.NewID("")}
 }
 
 func splitIDFromInterface(i interface{}) splitID {

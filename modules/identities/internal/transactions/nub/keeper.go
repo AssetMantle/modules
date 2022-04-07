@@ -15,7 +15,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -29,21 +29,21 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 
-	nubIDProperty := base.NewMetaProperty(ids.NubIDProperty, baseData.NewIDData(message.NubID))
+	nubIDProperty := baseTypes.NewMetaProperty(ids.NubIDProperty, baseData.NewIDData(message.NubID))
 
 	immutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(nubIDProperty)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
 
-	authenticationProperty := base.NewMetaProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(message.From)))
+	authenticationProperty := baseTypes.NewMetaProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(message.From)))
 
 	mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(authenticationProperty)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
 
-	classificationID, Error := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(base.NewProperties(properties.NubID), base.NewProperties(properties.Authentication))))
+	classificationID, Error := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(baseTypes.NewProperties(properties.NubID), baseTypes.NewProperties(properties.Authentication))))
 	if classificationID == nil && Error != nil {
 		return newTransactionResponse(Error)
 	}

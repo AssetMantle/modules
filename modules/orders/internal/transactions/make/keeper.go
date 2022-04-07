@@ -21,7 +21,8 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -47,7 +48,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, base.NewID(module.Name), message.MakerOwnableID, message.MakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, baseIDs.NewID(module.Name), message.MakerOwnableID, message.MakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
@@ -56,10 +57,10 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	immutableProperties := base.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
+	immutableProperties := baseTypes.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
 
 	exchangeRate := message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(message.MakerOwnableSplit)
-	orderID := key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, base.NewID(exchangeRate.String()), base.NewID(strconv.FormatInt(context.BlockHeight(), 10)), message.FromID, immutableProperties)
+	orderID := key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, baseIDs.NewID(exchangeRate.String()), baseIDs.NewID(strconv.FormatInt(context.BlockHeight(), 10)), message.FromID, immutableProperties)
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(orderID))
 	makerOwnableSplit := message.MakerOwnableSplit
 
@@ -68,15 +69,15 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	mutableMetaProperties := message.MutableMetaProperties.Add(base.NewMetaProperty(ids.ExpiryProperty, baseData.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
-	mutableMetaProperties = mutableMetaProperties.Add(base.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(makerOwnableSplit)))
+	mutableMetaProperties := message.MutableMetaProperties.Add(baseTypes.NewMetaProperty(ids.ExpiryProperty, baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
+	mutableMetaProperties = mutableMetaProperties.Add(baseTypes.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(makerOwnableSplit)))
 
 	scrubbedMutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetList()...)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
 
-	mutableProperties := base.NewProperties(append(scrubbedMutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
+	mutableProperties := baseTypes.NewProperties(append(scrubbedMutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
 	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutableProperties, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())

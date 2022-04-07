@@ -9,11 +9,11 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/transactions/reveal"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("reveal").GetName(), base.NewTransactions(
+	require.Equal(t, Prototype().Get("reveal").GetName(), baseHelpers.NewTransactions(
 		reveal.Transaction,
 	).Get("reveal").GetName())
 }

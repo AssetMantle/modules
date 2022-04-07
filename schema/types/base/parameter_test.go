@@ -10,6 +10,7 @@ import (
 	"github.com/tendermint/crypto/openpgp/errors"
 
 	"github.com/AssetMantle/modules/schema/data/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func validator(interface{}) error {
@@ -18,7 +19,7 @@ func validator(interface{}) error {
 
 func Test_Parameter(t *testing.T) {
 
-	id := NewID("ID")
+	id := baseIDs.NewID("ID")
 	data := base.NewStringData("Data")
 
 	testParameter := NewParameter(id, data, validator)

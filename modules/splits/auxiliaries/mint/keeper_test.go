@@ -23,7 +23,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type TestKeepers struct {
@@ -73,8 +73,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_Burn_Aux_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	ownerID := base.NewID("ownerID")
-	ownableID := base.NewID("ownableID")
+	ownerID := baseIDs.NewID("ownerID")
+	ownableID := baseIDs.NewID("ownableID")
 
 	defaultSplitID := key.NewSplitID(ownerID, ownableID)
 	splits := sdkTypes.NewDec(123)
@@ -90,7 +90,7 @@ func Test_Burn_Aux_Keeper_Help(t *testing.T) {
 
 	t.Run("PositiveCase - Mint 2nd Time", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(base.NewID("ownerID1"), base.NewID("ownableID1"), sdkTypes.NewDec(12))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewID("ownerID1"), baseIDs.NewID("ownableID1"), sdkTypes.NewDec(12))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

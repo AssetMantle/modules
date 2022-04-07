@@ -4,6 +4,9 @@
 package unwrap
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -27,10 +30,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
-
-	"reflect"
-	"testing"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type TestKeepers struct {
@@ -99,8 +99,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
-	ownableID := base.NewID("stake")
-	fromID := base.NewID("fromID")
+	ownableID := baseIDs.NewID("stake")
+	fromID := baseIDs.NewID("fromID")
 	coins := func(amount int64) sdkTypes.Coins {
 		return sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(amount)))
 	}
@@ -155,7 +155,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase-Value Not found", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.EntityNotFound)
-		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, base.NewID("id"), ownableID, sdkTypes.NewInt(10))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, baseIDs.NewID("id"), ownableID, sdkTypes.NewInt(10))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

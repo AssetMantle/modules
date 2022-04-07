@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/AssetMantle/modules/constants/test"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -30,7 +31,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type TestKeepers struct {
@@ -85,21 +86,21 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	immutableProperties, err := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := baseTypes.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := baseTypes.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
-	scrubMockErrorProperties, err := base.ReadMetaProperties("scrubError:S|mockError")
+	scrubMockErrorProperties, err := baseTypes.ReadMetaProperties("scrubError:S|mockError")
 	require.Equal(t, nil, err)
-	conformMockErrorProperties, err := base.ReadMetaProperties("conformError:S|mockError")
+	conformMockErrorProperties, err := baseTypes.ReadMetaProperties("conformError:S|mockError")
 	require.Equal(t, nil, err)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
-	defaultIdentityID := base.NewID("fromIdentityID")
-	maintainIdentityMockError := base.NewID("maintainError")
-	classificationID := base.NewID("ClassificationID")
+	defaultIdentityID := baseIDs.NewID("fromIdentityID")
+	maintainIdentityMockError := baseIDs.NewID("maintainError")
+	classificationID := baseIDs.NewID("ClassificationID")
 	identityID := key.NewIdentityID(classificationID, immutableProperties)
 	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(identityID, immutableProperties, mutableProperties))
 
@@ -125,7 +126,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - UnMinted identity", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.EntityNotFound)
-		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, base.NewID("identityID"),
+		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewID("identityID"),
 			mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

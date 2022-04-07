@@ -9,8 +9,6 @@ import (
 	"os"
 	"path/filepath"
 
-	maintainersVerify "github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
-
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -50,6 +48,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/revoke"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
+	maintainersVerify "github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/metas"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"

@@ -16,7 +16,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -45,7 +45,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	immutableProperties := base.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
+	immutableProperties := baseTypes.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
 
 	identityID := key.NewIdentityID(message.ClassificationID, immutableProperties)
 
@@ -54,7 +54,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	authenticationProperty := base.NewMetaProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(message.To)))
+	authenticationProperty := baseTypes.NewMetaProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(message.To)))
 	updatedMutableMetaProperties := append(message.MutableMetaProperties.GetList(), authenticationProperty)
 
 	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(updatedMutableMetaProperties...)))
@@ -63,7 +63,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	mutableProperties := base.NewProperties(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
+	mutableProperties := baseTypes.NewProperties(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
 	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutableProperties, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())

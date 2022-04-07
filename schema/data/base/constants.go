@@ -7,15 +7,15 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 var (
-	AccAddressDataID = base.NewID("A")
-	BooleanDataID    = base.NewID("B")
-	DecDataID        = base.NewID("D")
-	HeightDataID     = base.NewID("H")
-	IDDataID         = base.NewID("I")
-	ListDataID       = base.NewID("L")
-	StringDataID     = base.NewID("S")
+	AccAddressDataID = baseIDs.NewID("A")
+	BooleanDataID    = baseIDs.NewID("B")
+	DecDataID        = baseIDs.NewID("D")
+	HeightDataID     = baseIDs.NewID("H")
+	IDDataID         = baseIDs.NewID("I")
+	ListDataID       = baseIDs.NewID("L")
+	StringDataID     = baseIDs.NewID("S")
 )

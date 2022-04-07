@@ -9,6 +9,7 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -111,7 +112,7 @@ func ReadData(dataString string) (types.Data, error) {
 
 		var Error error
 
-		switch NewID(dataTypeID) {
+		switch baseIDs.NewID(dataTypeID) {
 		case base.DecDataID:
 			data, Error = base.ReadDecData(dataString)
 		case base.IDDataID:

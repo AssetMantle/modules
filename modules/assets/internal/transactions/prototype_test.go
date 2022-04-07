@@ -15,11 +15,11 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/mutate"
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/renumerate"
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/revoke"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
-	want := base.NewTransactions(burn.Transaction,
+	want := baseHelpers.NewTransactions(burn.Transaction,
 		define.Transaction,
 		deputize.Transaction,
 		mint.Transaction,

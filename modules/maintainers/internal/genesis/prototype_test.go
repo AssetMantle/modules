@@ -12,11 +12,11 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
 	require.Panics(t, func() {
-		require.Equal(t, Prototype(), base.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{}, parameters.Prototype().GetList()))
+		require.Equal(t, Prototype(), baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{}, parameters.Prototype().GetList()))
 	})
 }

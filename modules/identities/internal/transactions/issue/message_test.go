@@ -10,14 +10,15 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func Test_Issue_Message(t *testing.T) {
-	testFromID := base.NewID("fromID")
-	testClassificationID := base.NewID("classificationID")
+	testFromID := baseIDs.NewID("fromID")
+	testClassificationID := baseIDs.NewID("classificationID")
 
 	const fromAddress = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -29,19 +30,19 @@ func Test_Issue_Message(t *testing.T) {
 	require.Nil(t, err)
 
 	var immutableMetaProperties types.MetaProperties
-	immutableMetaProperties, err = base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err = baseTypes.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 
 	var immutableProperties types.Properties
-	immutableProperties, err = base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err = baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties types.MetaProperties
-	mutableMetaProperties, err = base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err = baseTypes.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 
 	var mutableProperties types.Properties
-	mutableProperties, err = base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err = baseTypes.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, toAccAddress, testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)

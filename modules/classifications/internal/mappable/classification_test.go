@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/AssetMantle/modules/schema/data/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 
@@ -18,10 +19,10 @@ import (
 
 func Test_Classification_Methods(t *testing.T) {
 
-	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseTypes.NewID("ID1"), base.NewStringData("ImmutableData")))
-	mutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseTypes.NewID("ID2"), base.NewStringData("MutableData")))
+	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), base.NewStringData("ImmutableData")))
+	mutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID2"), base.NewStringData("MutableData")))
 
-	chainID := baseTypes.NewID("chainID")
+	chainID := baseIDs.NewID("chainID")
 	id := key.NewClassificationID(chainID, immutableProperties, mutableProperties)
 
 	testClassification := NewClassification(id, immutableProperties, mutableProperties)

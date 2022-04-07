@@ -11,11 +11,11 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -68,7 +68,7 @@ func (maintainer maintainer) CanRenumerateAsset() bool {
 
 // TODO
 func (maintainer maintainer) CanAddMaintainer() bool {
-	if property := maintainer.GetProperty(baseTypes.NewID(properties.Permissions.GetID().String())); property != nil {
+	if property := maintainer.GetProperty(baseIDs.NewID(properties.Permissions.GetID().String())); property != nil {
 		// impl
 	}
 
@@ -77,7 +77,7 @@ func (maintainer maintainer) CanAddMaintainer() bool {
 
 // TODO
 func (maintainer maintainer) CanRemoveMaintainer() bool {
-	if property := maintainer.GetProperty(baseTypes.NewID(properties.Permissions.GetID().String())); property != nil {
+	if property := maintainer.GetProperty(baseIDs.NewID(properties.Permissions.GetID().String())); property != nil {
 		// impl
 	}
 

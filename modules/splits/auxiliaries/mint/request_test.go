@@ -9,12 +9,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func Test_Mint_Request(t *testing.T) {
-	ownerID := base.NewID("ownerID")
-	ownableID := base.NewID("ownableID")
+	ownerID := baseIDs.NewID("ownerID")
+	ownableID := baseIDs.NewID("ownableID")
 	splits := sdkTypes.NewDec(10)
 	testAuxiliaryRequest := NewAuxiliaryRequest(ownerID, ownableID, splits)
 

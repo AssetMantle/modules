@@ -5,10 +5,10 @@ package unwrap
 
 import (
 	"github.com/AssetMantle/modules/constants/flags"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
-var Transaction = base.NewTransaction(
+var Transaction = baseHelpers.NewTransaction(
 	"unwrap",
 	"",
 	"",

@@ -19,7 +19,8 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Asset_Request(t *testing.T) {
@@ -32,8 +33,8 @@ func Test_Asset_Request(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
 
-	classificationID := base.NewID("classificationID")
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	classificationID := baseIDs.NewID("classificationID")
+	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 
 	testAssetID := key.NewAssetID(classificationID, immutableProperties)
 	testQueryRequest := newQueryRequest(testAssetID)
@@ -42,11 +43,11 @@ func Test_Asset_Request(t *testing.T) {
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.AssetID})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
-	require.Equal(t, newQueryRequest(base.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
+	require.Equal(t, newQueryRequest(baseIDs.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
 
 	vars := make(map[string]string)
 	vars["assets"] = "randomString"
-	require.Equal(t, newQueryRequest(base.NewID("randomString")), queryRequest{}.FromMap(vars))
+	require.Equal(t, newQueryRequest(baseIDs.NewID("randomString")), queryRequest{}.FromMap(vars))
 
 	encodedRequest, err := testQueryRequest.Encode()
 	require.Nil(t, err)
@@ -63,7 +64,7 @@ func Test_Asset_Request(t *testing.T) {
 
 	var randomDecode helpers.QueryRequest
 	// we expect to get an error here, so ignore it
-	randomDecode, _ = queryRequest{}.Decode(base.NewID("").Bytes())
+	randomDecode, _ = queryRequest{}.Decode(baseIDs.NewID("").Bytes())
 	require.Equal(t, nil, randomDecode)
 	require.Equal(t, testQueryRequest, queryRequestFromInterface(testQueryRequest))
 	require.Equal(t, queryRequest{}, queryRequestFromInterface(nil))

@@ -19,8 +19,9 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -64,17 +65,17 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	if transferMakerOwnableSplit.LT(sdkTypes.ZeroDec()) {
-		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(base.NewID(module.Name), message.FromID, order.(mappables.Order).GetMakerOwnableID(), transferMakerOwnableSplit.Abs())); !auxiliaryResponse.IsSuccessful() {
+		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(baseIDs.NewID(module.Name), message.FromID, order.(mappables.Order).GetMakerOwnableID(), transferMakerOwnableSplit.Abs())); !auxiliaryResponse.IsSuccessful() {
 			return newTransactionResponse(auxiliaryResponse.GetError())
 		}
 	} else if transferMakerOwnableSplit.GT(sdkTypes.ZeroDec()) {
-		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, base.NewID(module.Name), order.(mappables.Order).GetMakerOwnableID(), transferMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, baseIDs.NewID(module.Name), order.(mappables.Order).GetMakerOwnableID(), transferMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 			return newTransactionResponse(auxiliaryResponse.GetError())
 		}
 	}
 
-	mutableMetaProperties := message.MutableMetaProperties.Add(base.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(message.MakerOwnableSplit)))
-	mutableMetaProperties = mutableMetaProperties.Add(base.NewMetaProperty(ids.ExpiryProperty, baseData.NewHeightData(base.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
+	mutableMetaProperties := message.MutableMetaProperties.Add(baseTypes.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(message.MakerOwnableSplit)))
+	mutableMetaProperties = mutableMetaProperties.Add(baseTypes.NewMetaProperty(ids.ExpiryProperty, baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
 
 	scrubbedMutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetList()...)))
 	if Error != nil {
@@ -93,8 +94,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			order.(mappables.Order).GetClassificationID(),
 			order.(mappables.Order).GetMakerOwnableID(),
 			order.(mappables.Order).GetTakerOwnableID(),
-			base.NewID(message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(message.MakerOwnableSplit).String()),
-			base.NewID(order.(mappables.Order).GetCreation().GetData().String()),
+			baseIDs.NewID(message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(message.MakerOwnableSplit).String()),
+			baseIDs.NewID(order.(mappables.Order).GetCreation().GetData().String()),
 			order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetImmutableProperties(),
 		),
 		order.(mappables.Order).GetImmutableProperties(),

@@ -8,8 +8,9 @@ import (
 
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
 
@@ -19,8 +20,8 @@ type idData struct {
 
 var _ data.IDData = (*idData)(nil)
 
-func (idData idData) GetID() types.ID {
-	return base.NewDataID(idData)
+func (idData idData) GetID() ids.DataID {
+	return baseIDs.NewDataID(idData)
 }
 func (idData idData) Compare(data types.Data) int {
 	compareIDData, err := idDataFromInterface(data)
@@ -33,14 +34,14 @@ func (idData idData) Compare(data types.Data) int {
 func (idData idData) String() string {
 	return idData.Value.String()
 }
-func (idData idData) ZeroValue() types.Data {
-	return NewIDData(base.NewID(""))
-}
-func (idData idData) GetTypeID() types.ID {
+func (idData idData) GetType() types.ID {
 	return IDDataID
 }
-func (idData idData) GenerateHashID() types.ID {
-	return base.NewID(meta.Hash(idData.Value.String()))
+func (idData idData) ZeroValue() types.Data {
+	return NewIDData(baseIDs.NewID(""))
+}
+func (idData idData) GenerateHash() types.ID {
+	return baseIDs.NewID(meta.Hash(idData.Value.String()))
 }
 func (idData idData) Get() types.ID {
 	return idData.Value
@@ -62,5 +63,5 @@ func NewIDData(value types.ID) types.Data {
 }
 
 func ReadIDData(idData string) (types.Data, error) {
-	return NewIDData(base.NewID(idData)), nil
+	return NewIDData(baseIDs.NewID(idData)), nil
 }

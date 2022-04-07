@@ -46,10 +46,10 @@ func (identity identity) GetAuthentication() types.Property {
 }
 func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	if authentication := identity.GetAuthentication(); authentication != nil {
-		compareAuthenticationHash := baseTypes.NewAccAddressData(address).GenerateHashID().String()
+		compareAuthenticationHash := baseTypes.NewAccAddressData(address).GenerateHash().String()
 
 		// TODO impl through list
-		authenticationHashList := strings.Split(authentication.GetHashID().String(), constants.ListHashStringSeparator)
+		authenticationHashList := strings.Split(authentication.GetHash().String(), constants.ListHashStringSeparator)
 		for _, authenticationHash := range authenticationHashList {
 			if strings.Compare(authenticationHash, compareAuthenticationHash) == 0 {
 				return true

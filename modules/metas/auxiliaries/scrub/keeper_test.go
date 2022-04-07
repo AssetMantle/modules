@@ -24,8 +24,9 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type TestKeepers struct {
@@ -75,8 +76,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	metaProperty := base.NewMetaProperty(base.NewID("id"), baseData.NewStringData("Data"))
-	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty}...)
+	metaProperty := baseTypes.NewMetaProperty(baseIDs.NewID("id"), baseData.NewStringData("Data"))
+	metaPropertyList := baseTypes.NewMetaProperties([]types.MetaProperty{metaProperty}...)
 
 	t.Run("PositiveCase - ", func(t *testing.T) {
 		want := newAuxiliaryResponse(metaPropertyList.RemoveData(), nil)

@@ -29,6 +29,7 @@ import _"github.com/AssetMantle/modules/swagger/docs"
 To know more about swaggo use [this](https://github.com/swaggo/swag)
 
 ### Start AssetMantle server in unsafe mode
+
 `assetNode start`
 `assetClient rest-server --chain-id test --unsafe-cors`
 

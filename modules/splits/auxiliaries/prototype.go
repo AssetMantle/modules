@@ -9,11 +9,11 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Auxiliaries {
-	return base.NewAuxiliaries(
+	return baseHelpers.NewAuxiliaries(
 		burn.Auxiliary,
 		mint.Auxiliary,
 		renumerate.Auxiliary,

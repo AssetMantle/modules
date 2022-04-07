@@ -8,21 +8,21 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
 
 func Test_IDData(t *testing.T) {
-	idValue := base.NewID("ID")
+	idValue := baseIDs.NewID("ID")
 	testIDData := NewIDData(idValue)
-	testIDData2 := NewIDData(base.NewID(""))
+	testIDData2 := NewIDData(baseIDs.NewID(""))
 
 	require.Equal(t, "ID", testIDData.String())
-	require.Equal(t, base.NewID(meta.Hash("ID")), testIDData.GenerateHashID())
-	require.Equal(t, base.NewID(""), testIDData2.GenerateHashID())
-	require.Equal(t, IDDataID, testIDData.GetTypeID())
+	require.Equal(t, baseIDs.NewID(meta.Hash("ID")), testIDData.GenerateHash())
+	require.Equal(t, baseIDs.NewID(""), testIDData2.GenerateHash())
+	require.Equal(t, IDDataID, testIDData.GetType())
 
-	require.Equal(t, true, NewIDData(base.NewID("identity2")).Compare(NewIDData(base.NewID("identity2"))) == 0)
+	require.Equal(t, true, NewIDData(baseIDs.NewID("identity2")).Compare(NewIDData(baseIDs.NewID("identity2"))) == 0)
 
 	require.Panics(t, func() {
 		require.Equal(t, false, testIDData.Compare(NewStringData("")) == 0)

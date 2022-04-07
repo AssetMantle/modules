@@ -4,15 +4,15 @@
 package maintain
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
-var Auxiliary = base.NewAuxiliary(
+var Auxiliary = baseHelpers.NewAuxiliary(
 	"maintain",
 	keeperPrototype,
 )
 
-var AuxiliaryMock = base.NewAuxiliary(
+var AuxiliaryMock = baseHelpers.NewAuxiliary(
 	"maintain",
 	keeperPrototypeMock,
 )

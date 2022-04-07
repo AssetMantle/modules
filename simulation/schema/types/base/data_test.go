@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func TestGenerateRandomData(t *testing.T) {
@@ -26,6 +26,6 @@ func TestGenerateRandomData(t *testing.T) {
 	case 2:
 		require.Equal(t, GenerateRandomData(r), baseData.NewDecData(simulation.RandomDecAmount(r, sdkTypes.NewDec(99))))
 	case 3:
-		require.Equal(t, GenerateRandomData(r), baseData.NewHeightData(base.NewHeight(r.Int63())))
+		require.Equal(t, GenerateRandomData(r), baseData.NewHeightData(baseTypes.NewHeight(r.Int63())))
 	}
 }

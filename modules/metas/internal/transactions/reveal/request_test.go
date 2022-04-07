@@ -18,7 +18,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Reveal_Request(t *testing.T) {
@@ -37,7 +37,7 @@ func Test_Reveal_Request(t *testing.T) {
 	require.Nil(t, err)
 
 	data := "S|newData"
-	newData, err := base.ReadData(data)
+	newData, err := baseTypes.ReadData(data)
 	require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}

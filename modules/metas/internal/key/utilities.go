@@ -7,22 +7,22 @@ import (
 	"strings"
 
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func readMetaID(metaIDString string) types.ID {
 	idList := strings.Split(metaIDString, constants.FirstOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return metaID{
-			TypeID: base.NewID(idList[0]),
-			HashID: base.NewID(idList[1]),
+			TypeID: baseIDs.NewID(idList[0]),
+			HashID: baseIDs.NewID(idList[1]),
 		}
 	}
 
-	return metaID{TypeID: base.NewID(""), HashID: base.NewID("")}
+	return metaID{TypeID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}
 }
 func metaIDFromInterface(i interface{}) metaID {
 	switch value := i.(type) {
@@ -37,8 +37,8 @@ func metaIDFromInterface(i interface{}) metaID {
 
 func GenerateMetaID(data types.Data) types.ID {
 	return metaID{
-		TypeID: data.GetTypeID(),
-		HashID: data.GenerateHashID(),
+		TypeID: data.GetType(),
+		HashID: data.GenerateHash(),
 	}
 }
 

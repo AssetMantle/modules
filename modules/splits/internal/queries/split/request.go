@@ -10,8 +10,8 @@ import (
 	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 type queryRequest struct {
@@ -36,10 +36,10 @@ func (queryRequest queryRequest) Validate() error {
 }
 
 func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return newQueryRequest(base.NewID(cliCommand.ReadString(flags.SplitID)))
+	return newQueryRequest(baseIDs.NewID(cliCommand.ReadString(flags.SplitID)))
 }
 func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(base.NewID(vars[Query.GetName()]))
+	return newQueryRequest(baseIDs.NewID(vars[Query.GetName()]))
 }
 func (queryRequest queryRequest) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryRequest)

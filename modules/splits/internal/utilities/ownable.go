@@ -8,9 +8,9 @@ import (
 
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func GetOwnableTotalSplitsValue(collection helpers.Collection, ownableID types.ID) sdkTypes.Dec {
@@ -22,7 +22,7 @@ func GetOwnableTotalSplitsValue(collection helpers.Collection, ownableID types.I
 
 		return false
 	}
-	collection.Iterate(key.FromID(base.NewID("")), accumulator)
+	collection.Iterate(key.FromID(baseIDs.NewID("")), accumulator)
 
 	return value
 }

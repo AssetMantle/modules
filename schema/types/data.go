@@ -3,9 +3,13 @@
 
 package types
 
+import (
+	"github.com/AssetMantle/modules/schema/ids"
+)
+
 // TODO URI and ID data type
 type Data interface {
-	GetID() ID
+	GetID() ids.DataID
 
 	// Compare returns 1 if this > parameter
 	// * returns -1 if this < parameter
@@ -14,9 +18,9 @@ type Data interface {
 
 	String() string
 
-	GetTypeID() ID
+	GetType() ID
 	ZeroValue() Data
-	// GenerateHashID returns the hash of the Data as an ID
+	// GenerateHash returns the hash of the Data as an ID
 	// * Returns ID of empty string when the value of Data is that Data type's zero value
-	GenerateHashID() ID
+	GenerateHash() ID
 }

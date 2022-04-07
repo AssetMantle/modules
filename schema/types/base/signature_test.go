@@ -9,17 +9,19 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
+
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func Test_Signature(t *testing.T) {
 	privateKey := ed25519.GenPrivKey()
 	pubKey := privateKey.PubKey()
-	signatureBytes := NewID("Temp").Bytes()
+	signatureBytes := baseIDs.NewID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := NewID("ID")
+	id := baseIDs.NewID("ID")
 	validityHeight := NewHeight(123)
 	testSignature := NewSignature(id, signedBytes, validityHeight)
 

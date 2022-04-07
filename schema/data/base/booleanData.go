@@ -8,8 +8,9 @@ import (
 
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 type booleanData struct {
@@ -18,8 +19,8 @@ type booleanData struct {
 
 var _ data.BooleanData = (*booleanData)(nil)
 
-func (booleanData booleanData) GetID() types.ID {
-	return base.NewDataID(booleanData)
+func (booleanData booleanData) GetID() ids.DataID {
+	return baseIDs.NewDataID(booleanData)
 }
 func (booleanData booleanData) Compare(data types.Data) int {
 	compareBooleanData, Error := booleanDataFromInterface(data)
@@ -38,18 +39,18 @@ func (booleanData booleanData) Compare(data types.Data) int {
 func (booleanData booleanData) String() string {
 	return strconv.FormatBool(booleanData.Value)
 }
-func (booleanData booleanData) GetTypeID() types.ID {
+func (booleanData booleanData) GetType() types.ID {
 	return BooleanDataID
 }
 func (booleanData booleanData) ZeroValue() types.Data {
 	return NewBooleanData(false)
 }
-func (booleanData booleanData) GenerateHashID() types.ID {
+func (booleanData booleanData) GenerateHash() types.ID {
 	if booleanData.Compare(booleanData.ZeroValue()) == 0 {
-		return base.NewID(strconv.FormatBool(false))
+		return baseIDs.NewID(strconv.FormatBool(false))
 	}
 
-	return base.NewID(strconv.FormatBool(true))
+	return baseIDs.NewID(strconv.FormatBool(true))
 }
 func (booleanData booleanData) Get() bool {
 	return booleanData.Value

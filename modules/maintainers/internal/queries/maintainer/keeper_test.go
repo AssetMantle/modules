@@ -22,7 +22,8 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
@@ -64,13 +65,13 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 
 func Test_Query_Keeper_Maintainer(t *testing.T) {
 	context, keepers := CreateTestInput2(t)
-	immutableProperties, err := base.ReadProperties("burn:S|100")
+	immutableProperties, err := baseTypes.ReadProperties("burn:S|100")
 	require.Equal(t, nil, err)
-	mutableProperties, err := base.ReadProperties("burn:S|100")
+	mutableProperties, err := baseTypes.ReadProperties("burn:S|100")
 	require.Equal(t, nil, err)
 
-	identityID := base.NewID("identityID")
-	classificationID := base.NewID("classificationID")
+	identityID := baseIDs.NewID("identityID")
+	classificationID := baseIDs.NewID("classificationID")
 	maintainerID := key.NewMaintainerID(classificationID, identityID)
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, immutableProperties, mutableProperties))
 

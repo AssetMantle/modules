@@ -9,21 +9,22 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/errors"
 
 	xprtErrors "github.com/AssetMantle/modules/constants/errors"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func Test_Make_Message(t *testing.T) {
-	fromID := base.NewID("fromID")
-	classificationID := base.NewID("classificationID")
-	makerOwnableID := base.NewID("makerOwnableID")
-	takerOwnableID := base.NewID("takerOwnableID")
-	expiresIn := base.NewHeight(12)
+	fromID := baseIDs.NewID("fromID")
+	classificationID := baseIDs.NewID("classificationID")
+	makerOwnableID := baseIDs.NewID("makerOwnableID")
+	takerOwnableID := baseIDs.NewID("takerOwnableID")
+	expiresIn := baseTypes.NewHeight(12)
 	makerOwnableSplit := sdkTypes.NewDec(2)
 	takerOwnableSplit, _ := sdkTypes.NewDecFromStr("2000000000000000000")
 	zeroTakerOwnableSplit, _ := sdkTypes.NewDecFromStr("0")
@@ -32,13 +33,13 @@ func Test_Make_Message(t *testing.T) {
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaProperties, err := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := baseTypes.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
-	immutableProperties, err := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := baseTypes.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := baseTypes.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, fromID, classificationID, makerOwnableID, takerOwnableID, expiresIn, makerOwnableSplit, takerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)

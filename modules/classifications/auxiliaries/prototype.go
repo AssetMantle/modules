@@ -7,11 +7,11 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Auxiliaries {
-	return base.NewAuxiliaries(
+	return baseHelpers.NewAuxiliaries(
 		conform.Auxiliary,
 		define.Auxiliary,
 	)

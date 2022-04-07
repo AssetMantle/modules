@@ -6,6 +6,7 @@ package modify
 import (
 	"testing"
 
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
@@ -18,27 +19,27 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Make_Message(t *testing.T) {
 
-	fromID := base.NewID("fromID")
-	classificationID := base.NewID("classificationID")
-	makerOwnableID := base.NewID("makerOwnableID")
-	takerOwnableID := base.NewID("takerOwnableID")
-	expiresIn := base.NewHeight(12)
+	fromID := baseIDs.NewID("fromID")
+	classificationID := baseIDs.NewID("classificationID")
+	makerOwnableID := baseIDs.NewID("makerOwnableID")
+	takerOwnableID := baseIDs.NewID("takerOwnableID")
+	expiresIn := baseTypes.NewHeight(12)
 	makerOwnableSplit := sdkTypes.NewDec(2)
-	makerID := base.NewID("makerID")
-	rateID := base.NewID("0.11")
-	creationId := base.NewID("100")
-	immutableProperties, err := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	makerID := baseIDs.NewID("makerID")
+	rateID := baseIDs.NewID("0.11")
+	creationId := baseIDs.NewID("100")
+	immutableProperties, err := baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := baseTypes.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := baseTypes.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
-	orderID := base.NewID(key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationId, makerID, immutableProperties).String())
+	orderID := baseIDs.NewID(key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationId, makerID, immutableProperties).String())
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -56,6 +57,6 @@ func Test_Make_Message(t *testing.T) {
 	require.Equal(t, message{}, messageFromInterface(nil))
 	require.Equal(t, message{}, messagePrototype())
 	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, fromID, orderID, sdkTypes.OneDec().Neg(), makerOwnableSplit, expiresIn, mutableMetaProperties, mutableProperties).ValidateBasic())
-	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, fromID, orderID, sdkTypes.OneDec(), makerOwnableSplit, base.NewHeight(-12), mutableMetaProperties, mutableProperties).ValidateBasic())
+	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, fromID, orderID, sdkTypes.OneDec(), makerOwnableSplit, baseTypes.NewHeight(-12), mutableMetaProperties, mutableProperties).ValidateBasic())
 
 }

@@ -10,13 +10,13 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func Test_Renumerate_Message(t *testing.T) {
-	testAssetID := base.NewID("assetID")
-	testFromID := base.NewID("fromID")
+	testAssetID := baseIDs.NewID("assetID")
+	testFromID := baseIDs.NewID("fromID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

@@ -24,7 +24,8 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Auxiliary, helpers.Auxiliary) {
@@ -71,14 +72,14 @@ func Test_Block_Methods(t *testing.T) {
 	block = block.Initialize(mapper, parameters.Prototype(), transferAuxiliary, supplementAuxiliary)
 	block.Begin(context, abciTypes.RequestBeginBlock{})
 
-	defaultIdentityID := base.NewID("fromID")
-	classificationID := base.NewID("classificationID")
-	makerOwnableID := base.NewID("makerOwnableID")
-	takerOwnableID := base.NewID("takerOwnableID")
-	rateID := base.NewID(sdkTypes.OneDec().String())
-	creationID := base.NewID("100")
-	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, defaultIdentityID, base.NewProperties())
+	defaultIdentityID := baseIDs.NewID("fromID")
+	classificationID := baseIDs.NewID("classificationID")
+	makerOwnableID := baseIDs.NewID("makerOwnableID")
+	takerOwnableID := baseIDs.NewID("takerOwnableID")
+	rateID := baseIDs.NewID(sdkTypes.OneDec().String())
+	creationID := baseIDs.NewID("100")
+	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, defaultIdentityID, baseTypes.NewProperties())
 	orders := mapper.NewCollection(context)
-	orders.Add(mappable.NewOrder(orderID, base.NewProperties(), base.NewProperties()))
+	orders.Add(mappable.NewOrder(orderID, baseTypes.NewProperties(), baseTypes.NewProperties()))
 	block.End(context, abciTypes.RequestEndBlock{})
 }

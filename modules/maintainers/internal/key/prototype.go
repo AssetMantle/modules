@@ -5,9 +5,9 @@ package key
 
 import (
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func Prototype() helpers.Key {
-	return maintainerIDFromInterface(base.NewID(""))
+	return maintainerIDFromInterface(baseIDs.NewID(""))
 }

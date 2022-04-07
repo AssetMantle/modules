@@ -92,7 +92,7 @@ linters-settings:
   gomnd:
     settings:
       mnd:
-        checks: [argument,case,condition,return] # don't include the "operation" and "assign"
+        checks: [ argument,case,condition,return ] # don't include the "operation" and "assign"
 
   govet:
     check-shadowing: true # report about shadowed variables

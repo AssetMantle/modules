@@ -4,9 +4,10 @@
 package base
 
 import (
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
 )
 
@@ -18,7 +19,7 @@ var _ qualified.HasImmutables = (*HasImmutables)(nil)
 
 func (immutables HasImmutables) GetImmutableProperties() types.Properties {
 	if immutables.Properties == nil {
-		return base.NewProperties()
+		return baseTypes.NewProperties()
 	}
 
 	return immutables.Properties
@@ -27,8 +28,8 @@ func (immutables HasImmutables) GenerateHashID() types.ID {
 	metaList := make([]string, len(immutables.Properties.GetList()))
 
 	for i, immutableProperty := range immutables.Properties.GetList() {
-		metaList[i] = immutableProperty.GetHashID().String()
+		metaList[i] = immutableProperty.GetHash().String()
 	}
 
-	return base.NewID(metaUtilities.Hash(metaList...))
+	return baseIDs.NewID(metaUtilities.Hash(metaList...))
 }

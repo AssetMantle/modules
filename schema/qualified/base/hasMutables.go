@@ -6,7 +6,7 @@ package base
 import (
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 // TODO move base to own package
@@ -19,7 +19,7 @@ var _ qualified.HasMutables = (*HasMutables)(nil)
 
 func (mutables HasMutables) GetMutableProperties() types.Properties {
 	if mutables.Properties == nil {
-		return base.NewProperties()
+		return baseTypes.NewProperties()
 	}
 
 	return mutables.Properties

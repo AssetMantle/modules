@@ -10,14 +10,14 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func Test_Revoke_Message(t *testing.T) {
-	testFromID := base.NewID("fromID")
-	testToID := base.NewID("toID")
-	testClassificationID := base.NewID("classificationID")
+	testFromID := baseIDs.NewID("fromID")
+	testToID := baseIDs.NewID("toID")
+	testClassificationID := baseIDs.NewID("classificationID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

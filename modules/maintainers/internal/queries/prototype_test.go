@@ -9,12 +9,12 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/queries/maintainer"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
 	require.Panics(t, func() {
-		require.Equal(t, Prototype().Get("maintainer").GetName(), base.NewQueries(
+		require.Equal(t, Prototype().Get("maintainer").GetName(), baseHelpers.NewQueries(
 			maintainer.Query,
 		).Get("maintainer").GetName())
 	})

@@ -26,7 +26,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type TestKeepers struct {
@@ -81,7 +81,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
-		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), base.NewID("nubID"))); !reflect.DeepEqual(got, want) {
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), baseIDs.NewID("nubID"))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -89,7 +89,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase-Duplicate", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errors.EntityAlreadyExists)
-		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), base.NewID("nubID"))); !reflect.DeepEqual(got, want) {
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), baseIDs.NewID("nubID"))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

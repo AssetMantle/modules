@@ -24,7 +24,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type TestKeepers struct {
@@ -73,10 +73,10 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
-	ownerID := base.NewID("ownerID")
-	ownableID := base.NewID("ownableID")
+	ownerID := baseIDs.NewID("ownerID")
+	ownableID := baseIDs.NewID("ownableID")
 
-	toID := base.NewID("toID")
+	toID := baseIDs.NewID("toID")
 	defaultSplitID := key.NewSplitID(ownerID, ownableID)
 	splits := sdkTypes.NewDec(123)
 	keepers.SplitsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(defaultSplitID, splits))
@@ -112,7 +112,7 @@ func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-No Value Present", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.EntityNotFound)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, base.NewID("ownableIDNotPresent"), sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, baseIDs.NewID("ownableIDNotPresent"), sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

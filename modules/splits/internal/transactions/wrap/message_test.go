@@ -10,12 +10,12 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func Test_Wrap_Message(t *testing.T) {
-	testFromID := base.NewID("fromID")
+	testFromID := baseIDs.NewID("fromID")
 	testCoins := sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(2)))
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

@@ -15,11 +15,11 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/transactions/provision"
 	"github.com/AssetMantle/modules/modules/identities/internal/transactions/revoke"
 	"github.com/AssetMantle/modules/modules/identities/internal/transactions/unprovision"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("unprovision").GetName(), base.NewTransactions(
+	require.Equal(t, Prototype().Get("unprovision").GetName(), baseHelpers.NewTransactions(
 		define.Transaction,
 		deputize.Transaction,
 		issue.Transaction,

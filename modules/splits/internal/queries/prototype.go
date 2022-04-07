@@ -7,11 +7,11 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/internal/queries/ownable"
 	"github.com/AssetMantle/modules/modules/splits/internal/queries/split"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Queries {
-	return base.NewQueries(
+	return baseHelpers.NewQueries(
 		split.Query,
 		ownable.Query,
 	)

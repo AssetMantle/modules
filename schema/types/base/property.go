@@ -4,12 +4,14 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
 type property struct {
-	ID     propertyID `json:"id"`
-	DataID dataID     `json:"dataID"`
+	ID     ids.PropertyID `json:"id"`
+	DataID ids.DataID     `json:"dataID"`
 }
 
 var _ types.Property = (*property)(nil)
@@ -20,23 +22,20 @@ func (property property) GetID() types.ID {
 func (property property) GetDataID() types.ID {
 	return property.DataID
 }
-func (property property) GetKeyID() types.ID {
-	return property.ID.KeyID
+func (property property) GetKey() types.ID {
+	return property.ID.GetKey()
 }
-func (property property) GetTypeID() types.ID {
-	return property.ID.TypeID
+func (property property) GetType() types.ID {
+	return property.ID.GetType()
 }
-func (property property) GetHashID() types.ID {
-	return property.DataID.HashID
+func (property property) GetHash() types.ID {
+	return property.DataID.GetHash()
 }
 
-func NewProperty(keyID types.ID, data types.Data) types.Property {
+func NewProperty(key types.ID, data types.Data) types.Property {
 	return property{
-		ID: propertyID{
-			KeyID:  keyID,
-			TypeID: data.GetTypeID(),
-		},
-		DataID: dataIDFromInterface(data.GetID()),
+		ID:     baseIDs.NewPropertyID(key, data.GetType()),
+		DataID: data.GetID(),
 	}
 }
 

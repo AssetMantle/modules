@@ -9,11 +9,11 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func Test_Define_Response(t *testing.T) {
-	classificationID := base.NewID("classificationID")
+	classificationID := baseIDs.NewID("classificationID")
 
 	testAuxiliaryResponse := newAuxiliaryResponse(classificationID, nil)
 	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, ClassificationID: classificationID}, testAuxiliaryResponse)

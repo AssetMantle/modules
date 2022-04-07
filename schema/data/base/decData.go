@@ -8,8 +8,9 @@ import (
 
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
 
@@ -19,8 +20,8 @@ type decData struct {
 
 var _ data.DecData = (*decData)(nil)
 
-func (decData decData) GetID() types.ID {
-	return base.NewDataID(decData)
+func (decData decData) GetID() ids.DataID {
+	return baseIDs.NewDataID(decData)
 }
 func (decData decData) Compare(data types.Data) int {
 	compareDecData, err := decDataFromInterface(data)
@@ -39,18 +40,18 @@ func (decData decData) Compare(data types.Data) int {
 func (decData decData) String() string {
 	return decData.Value.String()
 }
-func (decData decData) GetTypeID() types.ID {
+func (decData decData) GetType() types.ID {
 	return DecDataID
 }
 func (decData decData) ZeroValue() types.Data {
 	return NewDecData(sdkTypes.ZeroDec())
 }
-func (decData decData) GenerateHashID() types.ID {
+func (decData decData) GenerateHash() types.ID {
 	if decData.Compare(decData.ZeroValue()) == 0 {
-		return base.NewID("")
+		return baseIDs.NewID("")
 	}
 
-	return base.NewID(meta.Hash(decData.Value.String()))
+	return baseIDs.NewID(meta.Hash(decData.Value.String()))
 }
 func (decData decData) Get() sdkTypes.Dec {
 	return decData.Value

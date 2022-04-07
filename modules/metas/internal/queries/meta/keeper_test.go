@@ -23,7 +23,7 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
@@ -65,8 +65,8 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 
 func Test_Query_Keeper_Meta(t *testing.T) {
 	context, keepers := CreateTestInput2(t)
-	typeID := base.NewID("I")
-	hashID := base.NewID("HashID")
+	typeID := baseIDs.NewID("I")
+	hashID := baseIDs.NewID("Hash")
 	metaID := key.NewMetaID(typeID, hashID)
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(baseData.NewIDData(hashID)))
 

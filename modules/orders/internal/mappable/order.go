@@ -19,7 +19,7 @@ import (
 	"github.com/AssetMantle/modules/schema/mappables/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -48,18 +48,18 @@ func (order order) GetMakerID() types.ID {
 func (order order) GetCreation() types.MetaProperty {
 	heightValue, Error := strconv.ParseInt(key.ReadCreationID(order.ID).String(), 10, 64)
 	if Error != nil {
-		return base.NewMetaProperty(ids.CreationProperty, baseData.NewHeightData(base.NewHeight(0)))
+		return baseTypes.NewMetaProperty(ids.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(0)))
 	}
 
-	return base.NewMetaProperty(ids.CreationProperty, baseData.NewHeightData(base.NewHeight(heightValue)))
+	return baseTypes.NewMetaProperty(ids.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(heightValue)))
 }
 func (order order) GetExchangeRate() types.MetaProperty {
 	decValue, Error := sdkTypes.NewDecFromStr(key.ReadRateID(order.ID).String())
 	if Error != nil {
-		return base.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(sdkTypes.ZeroDec()))
+		return baseTypes.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(sdkTypes.ZeroDec()))
 	}
 
-	return base.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(decValue))
+	return baseTypes.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(decValue))
 }
 func (order order) GetTakerID() types.Property {
 	if takerID := order.HasImmutables.GetImmutableProperties().Get(ids.TakerIDProperty); takerID != nil {

@@ -12,9 +12,9 @@ type idList struct {
 	types.List
 }
 
-func (i idList) GetList() []types.ID {
+var _ lists.IDList = (*idList)(nil)
+
+func (idList idList) Get() []types.ID {
 	// TODO implement me
 	panic("implement me")
 }
-
-var _ lists.IDList = (*idList)(nil)

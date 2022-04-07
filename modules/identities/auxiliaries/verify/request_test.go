@@ -9,11 +9,11 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func Test_Verify_Request(t *testing.T) {
-	identityID := base.NewID("identityID")
+	identityID := baseIDs.NewID("identityID")
 	testAddress := sdkTypes.AccAddress("addr")
 	testAuxiliaryRequest := NewAuxiliaryRequest(testAddress, identityID)
 
