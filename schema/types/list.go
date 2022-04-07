@@ -12,8 +12,7 @@ type List interface {
 	GetList() []traits.Listable
 	Size() int
 
-	// TODO -1 for not found
-	Search(listable traits.Listable) int
+	Search(listable traits.Listable) (bool, int)
 	Add(listableList ...traits.Listable) List
 	Remove(listableList ...traits.Listable) List
 }

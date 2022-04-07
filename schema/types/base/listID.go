@@ -50,7 +50,7 @@ func (listID listID) Size() int {
 	// TODO implement me
 	panic("implement me")
 }
-func (listID listID) Search(listable traits.Listable) int {
+func (listID listID) Search(listable traits.Listable) (bool, int) {
 	// TODO implement me
 	panic("implement me")
 }

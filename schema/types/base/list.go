@@ -10,7 +10,6 @@ import (
 	"github.com/AssetMantle/modules/schema/types"
 )
 
-// TODO Revise the code
 type list []traits.Listable
 
 var _ types.List = (*list)(nil)
@@ -21,7 +20,7 @@ func (list list) GetList() []traits.Listable {
 func (list list) Size() int { // TODO write test
 	return len(list)
 }
-func (list list) Search(listable traits.Listable) int {
+func (list list) Search(listable traits.Listable) (bool, int) {
 	index := sort.Search(
 		len(list),
 		func(i int) bool {
@@ -29,42 +28,33 @@ func (list list) Search(listable traits.Listable) int {
 		},
 	)
 
-	if index < len(list) {
-		if list[index].Compare(listable) != 0 {
-			return len(list)
-		}
+	if list[index].Compare(listable) == 0 {
+		return true, index
 	}
 
-	return index
+	return false, index
 }
 func (list list) Add(listableList ...traits.Listable) types.List {
-	// TODO check assignment
+	updatedList := list
+
 	for _, listable := range listableList {
-		if list.Search(listable) != len(list) {
-			return list
+		if found, index := updatedList.Search(listable); !found {
+			updatedList := append(updatedList, listable)
+			copy(updatedList[index+1:], updatedList[index:])
+			updatedList[index] = listable
 		}
-
-		index := sort.Search(
-			len(list),
-			func(i int) bool {
-				return list[i].Compare(listable) < 0 // nolint
-			},
-		)
-
-		list = append(list, listable)
-		copy(list[index+1:], list[index:])
-		list[index] = listable
 	}
 
-	return list
+	return updatedList
 }
 func (list list) Remove(listableList ...traits.Listable) types.List {
-	// TODO check if the return is properly assigned to
+	updatedList := list
+
 	for _, listable := range listableList {
-		if index := list.Search(listable); index != len(list) {
-			list = append(list[:index], list[index+1:]...)
+		if found, index := updatedList.Search(listable); found {
+			updatedList = append(updatedList[:index], updatedList[index+1:]...)
 		}
 	}
 
-	return list
+	return updatedList
 }
