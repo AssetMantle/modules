@@ -7,12 +7,20 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
+// List
+// * all elements are sorted
+// * all methods are search and insertion complexity optimized
 type List interface {
 	// TODO add search and apply methods
 	GetList() []traits.Listable
+	// Size
+	// * returns the number of elements in the list
 	Size() int
 
-	Search(listable traits.Listable) (bool, int)
-	Add(listableList ...traits.Listable) List
-	Remove(listableList ...traits.Listable) List
+	// Search
+	// * returns true and index of element if element is found
+	// * return false and index of insertion if element is not found
+	Search(traits.Listable) (found bool, index int)
+	Add(...traits.Listable) List
+	Remove(...traits.Listable) List
 }
