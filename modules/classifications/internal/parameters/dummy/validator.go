@@ -12,15 +12,13 @@ import (
 func validator(i interface{}) error {
 	switch value := i.(type) {
 	case types.Parameter:
-		datum := value.GetData().(data.DecData).Get()
-		if value.GetID().Compare(ID) != 0 || datum.IsNegative() {
+		if value.GetID().Compare(ID) != 0 || value.GetData().(data.DecData).Get().IsNegative() {
 			return errors.InvalidParameter
 		}
 
 		return nil
 	case types.Data:
-		datum := value.(data.DecData).Get()
-		if datum.IsNegative() {
+		if value.(data.DecData).Get().IsNegative() {
 			return errors.InvalidParameter
 		}
 
@@ -29,5 +27,3 @@ func validator(i interface{}) error {
 		return errors.IncorrectFormat
 	}
 }
-
-// TODO search and replace Datum
