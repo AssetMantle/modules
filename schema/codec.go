@@ -9,6 +9,8 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -18,12 +20,21 @@ import (
 
 func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*error)(nil), nil)
+
 	data.RegisterCodec(codec)
 	baseData.RegisterCodec(codec)
-	types.RegisterCodec(codec)
-	baseTypes.RegisterCodec(codec)
+
+	helpers.RegisterCodec(codec)
+
+	ids.RegisterCodec(codec)
+	baseIDs.RegisterCodec(codec)
+
+	mappables.RegisterCodec(codec)
+
 	traits.RegisterCodec(codec)
 	baseTraits.RegisterCodec(codec)
-	mappables.RegisterCodec(codec)
-	helpers.RegisterCodec(codec)
+
+	types.RegisterCodec(codec)
+	baseTypes.RegisterCodec(codec)
+
 }
