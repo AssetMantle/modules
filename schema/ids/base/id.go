@@ -9,6 +9,7 @@ package base
 import (
 	"strings"
 
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -24,8 +25,12 @@ func (id id) String() string {
 func (id id) Bytes() []byte {
 	return []byte(id.IDString)
 }
-func (id id) Compare(compareID types.ID) int {
-	return strings.Compare(id.String(), compareID.String())
+func (id id) Compare(listable traits.Listable) int {
+	return strings.Compare(id.String(), idFromInterface(listable).String())
+}
+func idFromInterface(i interface{}) id {
+	// TODO implement
+	panic("")
 }
 
 func NewID(idString string) types.ID {

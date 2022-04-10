@@ -13,14 +13,16 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
 )
 
 type classificationID struct {
-	ChainID types.ID `json:"chainID" valid:"required~required field chainID missing"`
-	HashID  types.ID `json:"hashID" valid:"required~required field hashID missing"`
+	// TODO remove chainID, rename hashID to hash
+	ChainID types.ID
+	HashID  types.ID
 }
 
 var _ types.ID = (*classificationID)(nil)
@@ -38,8 +40,8 @@ func (classificationID classificationID) String() string {
 
 	return strings.Join(values, constants.IDSeparator)
 }
-func (classificationID classificationID) Compare(id types.ID) int {
-	return bytes.Compare(classificationID.Bytes(), id.Bytes())
+func (classificationID classificationID) Compare(listable traits.Listable) int {
+	return bytes.Compare(classificationID.Bytes(), classificationIDFromInterface(listable).Bytes())
 }
 func (classificationID classificationID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(classificationID.Bytes())

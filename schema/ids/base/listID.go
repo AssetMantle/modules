@@ -13,7 +13,7 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 type listID struct {
@@ -40,6 +40,11 @@ func (listID listID) Bytes() []byte {
 
 	return byteList
 }
-func (listID listID) Compare(compareID types.ID) int {
-	return bytes.Compare(listID.Bytes(), compareID.Bytes())
+func (listID listID) Compare(listable traits.Listable) int {
+	return bytes.Compare(listID.Bytes(), listIDFromInterface(listable).Bytes())
+}
+
+func listIDFromInterface(i interface{}) listID {
+	// TODO implement
+	panic("")
 }

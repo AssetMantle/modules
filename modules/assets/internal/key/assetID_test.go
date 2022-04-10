@@ -23,17 +23,17 @@ func Test_AssetID_Methods(t *testing.T) {
 	testAssetID := NewAssetID(classificationID, immutableProperties).(assetID)
 
 	require.NotPanics(t, func() {
-		require.Equal(t, assetID{ClassificationID: classificationID, HashID: baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID()}, testAssetID)
-		require.Equal(t, strings.Join([]string{classificationID.String(), baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID().String()}, constants.FirstOrderCompositeIDSeparator), testAssetID.String())
+		require.Equal(t, assetID{Classification: classificationID, Hash: baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHash()}, testAssetID)
+		require.Equal(t, strings.Join([]string{classificationID.String(), baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHash().String()}, constants.FirstOrderCompositeIDSeparator), testAssetID.String())
 		require.Equal(t, false, testAssetID.IsPartial())
-		require.Equal(t, true, assetID{ClassificationID: classificationID, HashID: baseIDs.NewID("")}.IsPartial())
+		require.Equal(t, true, assetID{Classification: classificationID, Hash: baseIDs.NewID("")}.IsPartial())
 		require.Equal(t, true, testAssetID.Equals(testAssetID))
-		require.Equal(t, false, testAssetID.Equals(assetID{ClassificationID: classificationID, HashID: baseIDs.NewID("")}))
+		require.Equal(t, false, testAssetID.Equals(assetID{Classification: classificationID, Hash: baseIDs.NewID("")}))
 		require.Equal(t, true, testAssetID.Equals(testAssetID))
 		require.Equal(t, false, testAssetID.Equals(nil))
-		require.Equal(t, false, testAssetID.Equals(assetID{ClassificationID: classificationID, HashID: baseIDs.NewID("")}))
+		require.Equal(t, false, testAssetID.Equals(assetID{Classification: classificationID, Hash: baseIDs.NewID("")}))
 		require.Equal(t, testAssetID, FromID(testAssetID))
-		require.Equal(t, assetID{ClassificationID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}, FromID(baseIDs.NewID("")))
+		require.Equal(t, assetID{Classification: baseIDs.NewID(""), Hash: baseIDs.NewID("")}, FromID(baseIDs.NewID("")))
 		require.Equal(t, testAssetID, readAssetID(testAssetID.String()))
 	})
 }

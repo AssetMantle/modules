@@ -20,6 +20,6 @@ func Test_HasImmutables(t *testing.T) {
 
 	require.Equal(t, HasImmutables{Properties: baseTypes.NewProperties(testProperty)}, testImmutables)
 	require.Equal(t, baseTypes.NewProperties(testProperty), testImmutables.GetImmutableProperties())
-	require.Equal(t, baseIDs.NewID(metaUtilities.Hash([]string{testProperty.GetHash().String()}...)), testImmutables.GenerateHashID())
-	require.Equal(t, baseIDs.NewID(""), HasImmutables{baseTypes.NewProperties()}.GenerateHashID())
+	require.Equal(t, baseIDs.NewID(metaUtilities.Hash([]string{testProperty.GetHash().String()}...)), testImmutables.GenerateHash())
+	require.Equal(t, baseIDs.NewID(""), HasImmutables{baseTypes.NewProperties()}.GenerateHash())
 }

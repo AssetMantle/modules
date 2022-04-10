@@ -17,7 +17,7 @@ func Test_CliFlag(t *testing.T) {
 	})
 	// GetName method test
 	require.Equal(t, "name", testCliFlag.GetName())
-	// GetValue method test
+	// GetSupply method test
 	require.Equal(t, "value", testCliFlag.GetValue())
 
 	// ReadCLIValue method test

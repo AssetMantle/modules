@@ -37,14 +37,12 @@ func (asset asset) GetLock() types.Property {
 
 	return properties.Lock
 }
-
-// TODO change to supply
-func (asset asset) GetValue() types.Property {
-	if value := asset.GetProperty(ids.ValueProperty); value != nil {
-		return value
+func (asset asset) GetSupply() types.Property {
+	if supply := asset.GetProperty(ids.SupplyProperty); supply != nil {
+		return supply
 	}
 
-	return properties.Value
+	return properties.Supply
 }
 func (asset asset) GetKey() helpers.Key {
 	return key.FromID(asset.ID)

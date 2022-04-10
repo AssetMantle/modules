@@ -24,7 +24,7 @@ func (immutables HasImmutables) GetImmutableProperties() types.Properties {
 
 	return immutables.Properties
 }
-func (immutables HasImmutables) GenerateHashID() types.ID {
+func (immutables HasImmutables) GenerateHash() types.ID {
 	metaList := make([]string, len(immutables.Properties.GetList()))
 
 	for i, immutableProperty := range immutables.Properties.GetList() {

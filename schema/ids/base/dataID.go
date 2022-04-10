@@ -12,6 +12,7 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -36,13 +37,16 @@ func (dataID dataID) Bytes() []byte {
 
 	return Bytes
 }
-func (dataID dataID) Compare(id types.ID) int {
-	return bytes.Compare(dataID.Bytes(), id.Bytes())
+func (dataID dataID) Compare(listable traits.Listable) int {
+	return bytes.Compare(dataID.Bytes(), dataIDFromInterface(listable).Bytes())
 }
 func (dataID dataID) GetHash() types.ID {
 	return dataID.Hash
 }
-
+func dataIDFromInterface(i interface{}) dataID {
+	// TODO impl
+	panic("impl")
+}
 func NewDataID(data types.Data) ids.DataID {
 	return dataID{
 		Type: data.GetType(),

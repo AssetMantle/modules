@@ -12,6 +12,7 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
@@ -36,8 +37,8 @@ func (splitID splitID) String() string {
 
 	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
-func (splitID splitID) Compare(id types.ID) int {
-	return bytes.Compare(splitID.Bytes(), id.Bytes())
+func (splitID splitID) Compare(listable traits.Listable) int {
+	return bytes.Compare(splitID.Bytes(), splitIDFromInterface(listable).Bytes())
 }
 func (splitID splitID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(splitID.Bytes())

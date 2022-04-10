@@ -21,13 +21,13 @@ func TestFromID(t *testing.T) {
 	require.Equal(t, assetIDFromInterface(newAssetID), FromID(newAssetID))
 
 	id := baseIDs.NewID("")
-	testAssetID := assetID{ClassificationID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}
+	testAssetID := assetID{Classification: baseIDs.NewID(""), Hash: baseIDs.NewID("")}
 	require.Equal(t, FromID(id), testAssetID)
 
 	testString1 := "string1"
 	testString2 := "string2"
 	id2 := baseIDs.NewID(testString1 + constants.FirstOrderCompositeIDSeparator + testString2)
-	testAssetID2 := assetID{ClassificationID: baseIDs.NewID(testString1), HashID: baseIDs.NewID(testString2)}
+	testAssetID2 := assetID{Classification: baseIDs.NewID(testString1), Hash: baseIDs.NewID(testString2)}
 	require.Equal(t, FromID(id2), testAssetID2)
 }
 
@@ -36,5 +36,5 @@ func TestReadClassificationID(t *testing.T) {
 	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 	assetID := NewAssetID(classificationID, immutableProperties)
 
-	require.Equal(t, assetIDFromInterface(assetID).ClassificationID, ReadClassificationID(assetID))
+	require.Equal(t, assetIDFromInterface(assetID).Classification, ReadClassificationID(assetID))
 }

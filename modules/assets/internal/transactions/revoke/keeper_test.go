@@ -91,7 +91,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	defaultIdentityID := baseIDs.NewID("fromIdentityID")
 	toID := baseIDs.NewID("toID")
 	toID2 := baseIDs.NewID("toID2")
-	classificationID := baseIDs.NewID("ClassificationID")
+	classificationID := baseIDs.NewID("Classification")
 	mockErrorClassification := baseIDs.NewID("revokeError")
 
 	t.Run("PositiveCase", func(t *testing.T) {
