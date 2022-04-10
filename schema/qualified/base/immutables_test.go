@@ -14,12 +14,12 @@ import (
 	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
 )
 
-func Test_HasImmutables(t *testing.T) {
+func Test_Immutables(t *testing.T) {
 	testProperty := baseTypes.NewProperty(baseIDs.NewID("ID"), baseData.NewHeightData(baseTypes.NewHeight(123)))
-	testImmutables := HasImmutables{baseTypes.NewProperties(testProperty)}
+	testImmutables := Immutables{baseTypes.NewProperties(testProperty)}
 
-	require.Equal(t, HasImmutables{Properties: baseTypes.NewProperties(testProperty)}, testImmutables)
+	require.Equal(t, Immutables{Properties: baseTypes.NewProperties(testProperty)}, testImmutables)
 	require.Equal(t, baseTypes.NewProperties(testProperty), testImmutables.GetImmutableProperties())
 	require.Equal(t, baseIDs.NewID(metaUtilities.Hash([]string{testProperty.GetHash().String()}...)), testImmutables.GenerateHashID())
-	require.Equal(t, baseIDs.NewID(""), HasImmutables{baseTypes.NewProperties()}.GenerateHashID())
+	require.Equal(t, baseIDs.NewID(""), Immutables{baseTypes.NewProperties()}.GenerateHashID())
 }

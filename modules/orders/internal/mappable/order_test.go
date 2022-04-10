@@ -13,7 +13,6 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/mappables/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -56,7 +55,7 @@ func Test_Order_Methods(t *testing.T) {
 	data, _ = baseData.ReadDecData("")
 	defaultMakerOwnableSplitProperty := baseTypes.NewProperty(ids.MakerOwnableSplitProperty, data)
 
-	require.Equal(t, order{Document: qualified.Document{ID: testOrderID, HasImmutables: baseQualified.HasImmutables{Properties: immutableProperties}, HasMutables: baseQualified.HasMutables{Properties: baseTypes.NewProperties()}}}, testOrder)
+	require.Equal(t, order{Document: baseQualified.Document{ID: testOrderID, Immutables: baseQualified.Immutables{Properties: immutableProperties}, Mutables: baseQualified.Mutables{Properties: baseTypes.NewProperties()}}}, testOrder)
 	require.Equal(t, testOrderID, testOrder.GetID())
 	require.Equal(t, testOrderID, testOrder.GetKey())
 	require.Equal(t, classificationID, testOrder.GetClassificationID())

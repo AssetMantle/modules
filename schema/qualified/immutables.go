@@ -12,8 +12,7 @@ import (
 	"github.com/AssetMantle/modules/schema/types"
 )
 
-// TODO rename to Immutables
-type HasImmutables interface {
+type Immutables interface {
 	// GetImmutableProperties return the immutable properties object
 	// does not return nil
 	GetImmutableProperties() types.Properties

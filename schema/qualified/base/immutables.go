@@ -11,20 +11,20 @@ import (
 	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
 )
 
-type HasImmutables struct {
+type Immutables struct {
 	Properties types.Properties `json:"properties"`
 }
 
-var _ qualified.HasImmutables = (*HasImmutables)(nil)
+var _ qualified.Immutables = (*Immutables)(nil)
 
-func (immutables HasImmutables) GetImmutableProperties() types.Properties {
+func (immutables Immutables) GetImmutableProperties() types.Properties {
 	if immutables.Properties == nil {
 		return baseTypes.NewProperties()
 	}
 
 	return immutables.Properties
 }
-func (immutables HasImmutables) GenerateHashID() types.ID {
+func (immutables Immutables) GenerateHashID() types.ID {
 	metaList := make([]string, len(immutables.Properties.GetList()))
 
 	for i, immutableProperty := range immutables.Properties.GetList() {

@@ -18,6 +18,6 @@ type Document interface {
 	// * Returns nil if property is not found
 	GetProperty(types.ID) types.Property
 
-	HasImmutables
-	HasMutables
+	Immutables
+	Mutables
 }

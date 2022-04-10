@@ -12,10 +12,10 @@ import (
 	"github.com/AssetMantle/modules/schema/types"
 )
 
-type HasMutables interface {
+type Mutables interface {
 	// GetMutableProperties return the mutable properties object
 	// does not return nil
 	GetMutableProperties() types.Properties
 
-	Mutate(propertyList ...types.Property) HasMutables
+	Mutate(propertyList ...types.Property) Mutables
 }

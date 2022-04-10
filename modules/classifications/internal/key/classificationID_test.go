@@ -24,8 +24,8 @@ func Test_ClassificationID_Methods(t *testing.T) {
 
 	testClassificationID := NewClassificationID(chainID, immutableProperties, mutableProperties).(classificationID)
 	require.NotPanics(t, func() {
-		require.Equal(t, classificationID{ChainID: chainID, HashID: baseIDs.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID().String()))}, testClassificationID)
-		require.Equal(t, strings.Join([]string{chainID.String(), baseIDs.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID().String())).String()}, constants.IDSeparator), testClassificationID.String())
+		require.Equal(t, classificationID{ChainID: chainID, HashID: baseIDs.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseTraits.Immutables{Properties: immutableProperties}.GenerateHashID().String()))}, testClassificationID)
+		require.Equal(t, strings.Join([]string{chainID.String(), baseIDs.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseTraits.Immutables{Properties: immutableProperties}.GenerateHashID().String())).String()}, constants.IDSeparator), testClassificationID.String())
 		require.Equal(t, false, testClassificationID.Equals(classificationID{ChainID: baseIDs.NewID("chainID"), HashID: baseIDs.NewID("hashID")}))
 		require.Equal(t, false, testClassificationID.Equals(nil))
 		require.Equal(t, false, testClassificationID.Compare(baseIDs.NewID("id")) == 0)

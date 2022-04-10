@@ -11,8 +11,8 @@ import (
 type Document struct {
 	ID               types.ID `json:"id" valid:"required~required field id is missing"`
 	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID is missing"`
-	HasImmutables
-	HasMutables //nolint:govet
+	Immutables
+	Mutables //nolint:govet
 }
 
 var _ qualified.Document = (*Document)(nil)
@@ -24,9 +24,9 @@ func (document Document) GetClassificationID() types.ID {
 	return document.ClassificationID
 }
 func (document Document) GetProperty(id types.ID) types.Property {
-	if property := document.HasImmutables.GetImmutableProperties().Get(id); property != nil {
+	if property := document.Immutables.GetImmutableProperties().Get(id); property != nil {
 		return property
-	} else if property := document.HasMutables.GetMutableProperties().Get(id); property != nil {
+	} else if property := document.Mutables.GetMutableProperties().Get(id); property != nil {
 		return property
 	} else {
 		return nil

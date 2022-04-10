@@ -17,10 +17,10 @@ func Test_Mutables(t *testing.T) {
 
 	testProperty := baseTypes.NewProperty(baseIDs.NewID("ID"), baseData.NewStringData("Data"))
 	testProperties := baseTypes.NewProperties(testProperty)
-	testMutables := HasMutables{testProperties}
-	require.Equal(t, HasMutables{Properties: testProperties}, testMutables)
+	testMutables := Mutables{testProperties}
+	require.Equal(t, Mutables{Properties: testProperties}, testMutables)
 	require.Equal(t, testProperties, testMutables.GetMutableProperties())
 	mutatedTestProperty := baseTypes.NewProperty(baseIDs.NewID("ID"), baseData.NewStringData("Data2"))
-	require.Equal(t, HasMutables{Properties: baseTypes.NewProperties(mutatedTestProperty)}, testMutables.Mutate(mutatedTestProperty))
+	require.Equal(t, Mutables{Properties: baseTypes.NewProperties(mutatedTestProperty)}, testMutables.Mutate(mutatedTestProperty))
 
 }

@@ -9,22 +9,20 @@ import (
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
-// TODO move base to own package
-// TODO rename to Mutables
-type HasMutables struct {
+type Mutables struct {
 	Properties types.Properties `json:"properties"`
 }
 
-var _ qualified.HasMutables = (*HasMutables)(nil)
+var _ qualified.Mutables = (*Mutables)(nil)
 
-func (mutables HasMutables) GetMutableProperties() types.Properties {
+func (mutables Mutables) GetMutableProperties() types.Properties {
 	if mutables.Properties == nil {
 		return baseTypes.NewProperties()
 	}
 
 	return mutables.Properties
 }
-func (mutables HasMutables) Mutate(propertyList ...types.Property) qualified.HasMutables {
+func (mutables Mutables) Mutate(propertyList ...types.Property) qualified.Mutables {
 	for _, property := range propertyList {
 		mutables.Properties = mutables.Properties.Mutate(property)
 	}

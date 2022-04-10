@@ -23,8 +23,8 @@ func Test_AssetID_Methods(t *testing.T) {
 	testAssetID := NewAssetID(classificationID, immutableProperties).(assetID)
 
 	require.NotPanics(t, func() {
-		require.Equal(t, assetID{ClassificationID: classificationID, HashID: baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID()}, testAssetID)
-		require.Equal(t, strings.Join([]string{classificationID.String(), baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID().String()}, constants.FirstOrderCompositeIDSeparator), testAssetID.String())
+		require.Equal(t, assetID{ClassificationID: classificationID, HashID: baseTraits.Immutables{Properties: immutableProperties}.GenerateHashID()}, testAssetID)
+		require.Equal(t, strings.Join([]string{classificationID.String(), baseTraits.Immutables{Properties: immutableProperties}.GenerateHashID().String()}, constants.FirstOrderCompositeIDSeparator), testAssetID.String())
 		require.Equal(t, false, testAssetID.IsPartial())
 		require.Equal(t, true, assetID{ClassificationID: classificationID, HashID: baseIDs.NewID("")}.IsPartial())
 		require.Equal(t, true, testAssetID.Equals(testAssetID))
