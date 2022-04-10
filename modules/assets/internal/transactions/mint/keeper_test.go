@@ -120,7 +120,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultIdentityID := baseIDs.NewID("fromIdentityID")
 	toID := baseIDs.NewID("toID")
-	classificationID := baseIDs.NewID("Classification")
+	classificationID := baseIDs.NewID("ClassificationID")
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

@@ -17,12 +17,12 @@ func readAssetID(assetIDString string) types.ID {
 	idList := strings.Split(assetIDString, constants.FirstOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return assetID{
-			Classification: baseIDs.NewID(idList[0]),
-			Hash:           baseIDs.NewID(idList[1]),
+			ClassificationID: baseIDs.NewID(idList[0]),
+			HashID:           baseIDs.NewID(idList[1]),
 		}
 	}
 
-	return assetID{Classification: baseIDs.NewID(""), Hash: baseIDs.NewID("")}
+	return assetID{ClassificationID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}
 }
 
 // TODO remove panic and add error
@@ -39,7 +39,7 @@ func assetIDFromInterface(i interface{}) assetID {
 }
 
 func ReadClassificationID(assetID types.ID) types.ID {
-	return assetIDFromInterface(assetID).Classification
+	return assetIDFromInterface(assetID).ClassificationID
 }
 
 func FromID(id types.ID) helpers.Key {

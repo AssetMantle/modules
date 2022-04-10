@@ -128,6 +128,6 @@ func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnable
 		RateID:           rateID,
 		CreationID:       creationID,
 		MakerID:          makerID,
-		HashID:           baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHash(),
+		HashID:           baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID(),
 	}
 }

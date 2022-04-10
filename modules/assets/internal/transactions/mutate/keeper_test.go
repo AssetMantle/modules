@@ -100,7 +100,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultIdentityID := baseIDs.NewID("fromIdentityID")
 	maintainIdentityMockError := baseIDs.NewID("maintainError")
-	classificationID := baseIDs.NewID("Classification")
+	classificationID := baseIDs.NewID("ClassificationID")
 	assetID := key.NewAssetID(classificationID, immutableProperties)
 	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewAsset(assetID, immutableProperties, mutableProperties))
 

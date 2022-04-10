@@ -18,5 +18,5 @@ type HasImmutables interface {
 	// does not return nil
 	GetImmutableProperties() types.Properties
 
-	GenerateHash() types.ID
+	GenerateHashID() types.ID
 }
