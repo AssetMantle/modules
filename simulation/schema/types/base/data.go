@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package base
 
@@ -9,8 +7,9 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/types"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 
 	"math"
 	"math/rand"
@@ -21,13 +20,13 @@ func GenerateRandomData(r *rand.Rand) types.Data {
 
 	switch randomPositiveInt % 4 {
 	case 0:
-		return base.NewIDData(GenerateRandomID(r))
+		return baseData.NewIDData(GenerateRandomID(r))
 	case 1:
-		return base.NewStringData(simulation.RandStringOfLength(r, r.Intn(99)))
+		return baseData.NewStringData(simulation.RandStringOfLength(r, r.Intn(99)))
 	case 2:
-		return base.NewDecData(simulation.RandomDecAmount(r, sdkTypes.NewDec(99)))
+		return baseData.NewDecData(simulation.RandomDecAmount(r, sdkTypes.NewDec(99)))
 	case 3:
-		return base.NewHeightData(base.NewHeight(r.Int63()))
+		return baseData.NewHeightData(baseTypes.NewHeight(r.Int63()))
 	default:
 		return nil
 	}

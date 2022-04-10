@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package simulator
 
@@ -11,17 +9,17 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/common"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mappable"
-	classificationsModule "github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/parameters/dummy"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	baseSimulation "github.com/persistenceOne/persistenceSDK/simulation/schema/types/base"
+	"github.com/AssetMantle/modules/modules/classifications/internal/common"
+	"github.com/AssetMantle/modules/modules/classifications/internal/key"
+	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
+	classificationsModule "github.com/AssetMantle/modules/modules/classifications/internal/module"
+	"github.com/AssetMantle/modules/modules/classifications/internal/parameters"
+	"github.com/AssetMantle/modules/modules/classifications/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/types"
+	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {

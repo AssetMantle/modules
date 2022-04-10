@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package traits
 
@@ -10,6 +8,7 @@ import (
 )
 
 type Transactional interface {
+	// TODO change to getSupply
 	GetValue() sdkTypes.Dec
 	Send(sdkTypes.Dec) Transactional
 	Receive(sdkTypes.Dec) Transactional

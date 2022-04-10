@@ -18,29 +18,27 @@ Thank you for considering making contributions to the Persistence SDK and relate
 Contributing to this repo can mean many things such as participating in discussion or proposing code changes. To ensure
 a smooth workflow for all contributors, the general procedure for contributing has been established:
 
-1. Start by browsing [new issues](https://github.com/persistenceOne/persistenceSDK/issues). If you are looking for
-   something interesting or if you have something in your mind, there is a chance it was has been discussed.
+1. Start by browsing [new issues](https://github.com/AssetMantle/modules/issues). If you are looking for something
+   interesting or if you have something in your mind, there is a chance it was has been discussed.
 
 - Looking for a good place to start contributing? How about checking out
-  some [good first issues](https://github.com/persistenceOne/persistenceSDK/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
+  some [good first issues](https://github.com/AssetMantle/modules/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
   ?
 
 2. Determine whether a GitHub issue or discussion is more appropriate for your needs:
 1. If you want to propose something new that requires specification or an additional design, or you would like to change
-   a process, start with a [new discussion](https://github.com/persistenceOne/persistenceSDK/discussions/new). With
-   discussions, we can better handle the design process using discussion threads. A discussion usually leads to one or
-   more issues.
+   a process, start with a [new discussion](https://github.com/AssetMantle/modules/discussions/new). With discussions,
+   we can better handle the design process using discussion threads. A discussion usually leads to one or more issues.
 2. If the issue you want addressed is a specific proposal or a bug, then open
-   a [new issue](https://github.com/persistenceOne/persistenceSDK/issues/new/choose).
-3. Review existing [issues](https://github.com/persistenceOne/persistenceSDK/issues) to find an issue you'd like to help
-   with.
+   a [new issue](https://github.com/AssetMantle/modules/issues/new/choose).
+3. Review existing [issues](https://github.com/AssetMantle/modules/issues) to find an issue you'd like to help with.
 3. Participate in thoughtful discussion on that issue.
 4. If you would like to contribute:
     1. Ensure that the proposal has been accepted.
     2. Ensure that nobody else has already begun working on this issue. If they have, make sure to contact them to
        collaborate.
-    3. If nobody has been assigned for the issue, and you would like to work on it, make a comment on the issue to inform
-       the community of your intentions to begin work.
+    3. If nobody has been assigned for the issue, and you would like to work on it, make a comment on the issue to
+       inform the community of your intentions to begin work.
 5. To submit your work as a contribution to the repository follow standard GitHub best practices.
    See [pull request guideline](#pull-requests) below.
 
@@ -51,9 +49,9 @@ taken place in a GitHub issue, that PR runs a high likelihood of being rejected.
 ## Architecture Decision Records (ADR)
 
 When proposing an architecture decision for the Persistence SDK, please start by opening
-an [issue](https://github.com/persistenceOne/persistenceSDK/issues/new/choose) or
-a [discussion](https://github.com/persistenceOne/persistenceSDK/discussions/new) with a summary of the proposal. Once
-the proposal has been discussed and there is rough alignment on a high-level approach to the design,
+an [issue](https://github.com/AssetMantle/modules/issues/new/choose) or
+a [discussion](https://github.com/AssetMantle/modules/discussions/new) with a summary of the proposal. Once the proposal
+has been discussed and there is rough alignment on a high-level approach to the design,
 the [ADR creation process](hhttps://github.com/persistenceOne/assetMantle/blob/puneet2019/adr/docs/adr/PROCESS.md) can
 begin. We are following this process to ensure all involved parties are in agreement before any party begins coding the
 proposed implementation. If you would like to see examples of how these are written, please refer to the
@@ -73,8 +71,8 @@ current [ADRs](https://github.com/persistenceOne/assetMantle/tree/puneet2019/adr
 - Be sure to run `make format` before every commit. The easiest way to do this is had your editor run it for you upon
   saving a file (most of the editors will do it anyway using a pre-configured setup of the programming language mode).
   Additionally, be sure that your code is lint compliant by running `make lint-fix`. A convenience git `pre-commit` hook
-  that runs the formatters automatically before each commit is available in the `contrib/githooks/` directory.
-Code is merged into master through pull request procedure.
+  that runs the formatters automatically before each commit is available in the `contrib/githooks/` directory. Code is
+  merged into master through pull request procedure.
 
 ### Testing
 
@@ -116,11 +114,11 @@ to the best of their abilities before marking the PR as "Ready for Review". If y
 on the PR, open the PR as a "Draft" and leave a comment in the PR indicating that you would like early feedback and
 tagging whoever you would like to receive feedback from.
 
-Codeowners are marked automatically as the reviewers.
+Code-owners are marked automatically as the reviewers.
 
-All PRs require at least two review approvals before they can be merged. Each PR template has a reviewers checklist that must be completed before
-the PR can be merged. Each reviewer is responsible for all checked items unless they have indicated otherwise by leaving
-their handle next to specific items. In addition, use the following review explanations:
+All PRs require at least two review approvals before they can be merged. Each PR template has a reviewers checklist that
+must be completed before the PR can be merged. Each reviewer is responsible for all checked items unless they have
+indicated otherwise by leaving their handle next to specific items. In addition, use the following review explanations:
 
 - `LGTM` without an explicit approval means that the changes look good, but you haven't thoroughly reviewed the reviewer
   checklist items.
@@ -147,7 +145,6 @@ If you open a PR on the Persistence SDK, it is mandatory to update the relevant 
 - If your changes relate to the core of the CLI (not specifically to module's CLI/Rest), then modify the content in
   the `docs/run-node/` folder.
 - If your changes relate to a module, then be sure to update the module's spec in `x/moduleName/docs/spec/`.
-
 
 ## Dependencies
 
@@ -257,7 +254,7 @@ distinct stages: **Strategy Discovery**, **Concept Approval**, and
 
 * Architecture Decision Records (ADRs) may be proposed by any contributors or maintainers of the Persistence SDK, and
   should follow the guidelines outlined in the
-  [ADR Creation Process](https://github.com/persistenceOne/persistenceSDK/blob/master/docs/architecture/PROCESS.md)
+  [ADR Creation Process](https://github.com/AssetMantle/modules/blob/master/docs/architecture/PROCESS.md)
 * After proposal, a time bound period for Request for Comment (RFC) on ADRs commences
 * ADRs are intended to be iterative, and may be merged into `master` while still in a `Proposed` status
 

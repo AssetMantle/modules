@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package verify
 
@@ -10,12 +8,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func Test_Maintain_Request(t *testing.T) {
-	classificationID := base.NewID("classificationID")
-	identityID := base.NewID("identityID")
+	classificationID := baseIDs.NewID("classificationID")
+	identityID := baseIDs.NewID("identityID")
 	testAuxiliaryRequest := NewAuxiliaryRequest(classificationID, identityID)
 
 	require.Equal(t, auxiliaryRequest{ClassificationID: classificationID, IdentityID: identityID}, testAuxiliaryRequest)

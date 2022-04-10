@@ -1,26 +1,24 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package splits
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/block"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/genesis"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/queries"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/simulator"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/transactions"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/splits/auxiliaries"
+	"github.com/AssetMantle/modules/modules/splits/internal/block"
+	"github.com/AssetMantle/modules/modules/splits/internal/genesis"
+	"github.com/AssetMantle/modules/modules/splits/internal/mapper"
+	"github.com/AssetMantle/modules/modules/splits/internal/module"
+	"github.com/AssetMantle/modules/modules/splits/internal/parameters"
+	"github.com/AssetMantle/modules/modules/splits/internal/queries"
+	"github.com/AssetMantle/modules/modules/splits/internal/simulator"
+	"github.com/AssetMantle/modules/modules/splits/internal/transactions"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Module {
-	return base.NewModule(
+	return baseHelpers.NewModule(
 		module.Name,
 		auxiliaries.Prototype,
 		genesis.Prototype,

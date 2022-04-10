@@ -1,3 +1,6 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package auxiliaries
 
 import (
@@ -5,16 +8,16 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/deputize"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/maintain"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/super"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/deputize"
+	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
+	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/revoke"
+	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
+	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("super").GetName(), base.NewAuxiliaries(
+	require.Equal(t, Prototype().Get("super").GetName(), baseHelpers.NewAuxiliaries(
 		deputize.Auxiliary,
 		maintain.Auxiliary,
 		revoke.Auxiliary,

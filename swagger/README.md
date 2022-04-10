@@ -22,13 +22,14 @@ swag init  --parseDependency true --parseInternal true --parseVendor true
 - import `/docs` into `main.go` file to use swagger.
 
 ```
-import _"github.com/persistenceOne/persistenceSDK/swagger/docs"
+import _"github.com/AssetMantle/modules/swagger/docs"
 
 ```
 
 To know more about swaggo use [this](https://github.com/swaggo/swag)
 
 ### Start AssetMantle server in unsafe mode
+
 `assetNode start`
 `assetClient rest-server --chain-id test --unsafe-cors`
 

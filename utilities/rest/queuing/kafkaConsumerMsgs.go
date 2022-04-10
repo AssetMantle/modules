@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package queuing
 
@@ -11,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 )
 
-// kafkaConsumerMessages : messages to consume 5 second delay
+// kafkaConsumerMessages : messages to consume 5-second delay
 func kafkaConsumerMessages(cliCtx context.CLIContext) {
 	quit := make(chan bool)
 

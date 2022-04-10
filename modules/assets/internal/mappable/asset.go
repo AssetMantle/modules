@@ -1,26 +1,24 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package mappable
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-	"github.com/persistenceOne/persistenceSDK/constants/properties"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	qualifiedTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"github.com/AssetMantle/modules/constants/ids"
+	"github.com/AssetMantle/modules/constants/properties"
+	"github.com/AssetMantle/modules/modules/assets/internal/key"
+	"github.com/AssetMantle/modules/modules/assets/internal/module"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type asset struct {
-	qualifiedTraits.Document //nolint:govet
+	base.Document //nolint:govet
 }
 
 var _ mappables.Asset = (*asset)(nil)
@@ -39,6 +37,8 @@ func (asset asset) GetLock() types.Property {
 
 	return properties.Lock
 }
+
+// TODO change to supply
 func (asset asset) GetValue() types.Property {
 	if value := asset.GetProperty(ids.ValueProperty); value != nil {
 		return value
@@ -50,16 +50,16 @@ func (asset asset) GetKey() helpers.Key {
 	return key.FromID(asset.ID)
 }
 func (asset) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, asset{})
+	codecUtilities.RegisterModuleConcrete(codec, module.Name, asset{})
 }
 
 func NewAsset(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Asset {
 	return asset{
-		Document: qualifiedTraits.Document{
+		Document: base.Document{
 			ID:               id,
 			ClassificationID: key.ReadClassificationID(id),
-			HasImmutables:    qualifiedTraits.HasImmutables{Properties: immutableProperties},
-			HasMutables:      qualifiedTraits.HasMutables{Properties: mutableProperties},
+			HasImmutables:    base.HasImmutables{Properties: immutableProperties},
+			HasMutables:      base.HasMutables{Properties: mutableProperties},
 		},
 	}
 }

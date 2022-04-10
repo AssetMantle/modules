@@ -1,18 +1,18 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package supplement
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-	"github.com/persistenceOne/persistenceSDK/constants/test"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/constants/ids"
+	"github.com/AssetMantle/modules/constants/test"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/types"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type auxiliaryKeeperMock struct {
@@ -27,18 +27,18 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 	var metaPropertyList []types.MetaProperty
 
 	for _, property := range auxiliaryRequest.PropertyList {
-		if property.GetID().Compare(ids.BurnProperty) == 0 && property.GetHashID().Compare(base.NewID("")) == 0 {
-			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), test.MockError)
+		if property.GetID().Compare(ids.BurnProperty) == 0 && property.GetHash().Compare(baseIDs.NewID("")) == 0 {
+			return newAuxiliaryResponse(baseTypes.NewMetaProperties(metaPropertyList...), test.MockError)
 		}
 	}
 
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.BurnProperty, base.NewHeightData(base.NewHeight(1))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.MakerOwnableSplitProperty, base.NewDecData(sdkTypes.SmallestDec())))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.TakerIDProperty, base.NewIDData(base.NewID("fromID"))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.ExchangeRateProperty, base.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
-	metaPropertyList = append(metaPropertyList, base.NewMetaProperty(ids.ExpiryProperty, base.NewHeightData(base.NewHeight(900))))
+	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.BurnProperty, baseData.NewHeightData(baseTypes.NewHeight(1))))
+	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(sdkTypes.SmallestDec())))
+	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.TakerIDProperty, baseData.NewIDData(baseIDs.NewID("fromID"))))
+	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
+	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.ExpiryProperty, baseData.NewHeightData(baseTypes.NewHeight(900))))
 
-	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
+	return newAuxiliaryResponse(baseTypes.NewMetaProperties(metaPropertyList...), nil)
 }
 
 func (auxiliaryKeeperMock) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

@@ -1,3 +1,6 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package meta
 
 import (
@@ -9,7 +12,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
+	"github.com/AssetMantle/modules/constants"
 )
 
 func TestHash(t *testing.T) {

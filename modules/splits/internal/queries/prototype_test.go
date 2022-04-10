@@ -1,3 +1,6 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package queries
 
 import (
@@ -5,18 +8,18 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/queries/ownable"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/queries/split"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/splits/internal/queries/ownable"
+	"github.com/AssetMantle/modules/modules/splits/internal/queries/split"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
 	require.Panics(t, func() {
-		require.Equal(t, Prototype().Get("splits").GetName(), base.NewQueries(
+		require.Equal(t, Prototype().Get("splits").GetName(), baseHelpers.NewQueries(
 			split.Query,
 			ownable.Query,
 		).Get("splits").GetName())
-		require.Equal(t, Prototype().Get("ownable").GetName(), base.NewQueries(
+		require.Equal(t, Prototype().Get("ownable").GetName(), baseHelpers.NewQueries(
 			split.Query,
 			ownable.Query,
 		).Get("ownable").GetName())

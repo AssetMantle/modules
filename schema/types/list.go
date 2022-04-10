@@ -1,12 +1,26 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package types
 
+import (
+	"github.com/AssetMantle/modules/schema/traits"
+)
+
+// List
+// * all elements are sorted
+// * all methods are search and insertion complexity optimized
 type List interface {
-	GetList() []interface{}
+	// TODO add search and apply methods
+	GetList() []traits.Listable
+	// Size
+	// * returns the number of elements in the list
+	Size() int
 
-	Search(func()) int
-
-	Apply(func()) List
-	Add(...interface{}) List
-	Remove(...interface{}) List
-	Mutate(...interface{}) List
+	// Search
+	// * returns true and index of element if element is found
+	// * return false and index of insertion if element is not found
+	Search(traits.Listable) (found bool, index int)
+	Add(...traits.Listable) List
+	Remove(...traits.Listable) List
 }

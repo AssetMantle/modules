@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package supplement
 
@@ -19,14 +17,16 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/schema"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/modules/metas/internal/key"
+	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
+	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
+	"github.com/AssetMantle/modules/schema"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/types"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type TestKeepers struct {
@@ -76,23 +76,23 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	heightData, _ := base.ReadHeightData("")
-	decData, _ := base.ReadDecData("")
+	heightData, _ := baseData.ReadHeightData("")
+	decData, _ := baseData.ReadDecData("")
 
-	property1 := base.NewMetaProperty(base.NewID("id1"), base.NewStringData(""))
-	property2 := base.NewMetaProperty(base.NewID("id2"), heightData)
+	property1 := baseTypes.NewMetaProperty(baseIDs.NewID("id1"), baseData.NewStringData(""))
+	property2 := baseTypes.NewMetaProperty(baseIDs.NewID("id2"), heightData)
 	dec, _ := sdkTypes.NewDecFromStr("123")
-	property3 := base.NewMetaProperty(base.NewID("id3"), decData)
-	property4 := base.NewMetaProperty(base.NewID("id4"), base.NewIDData(base.NewID("")))
-	property5 := base.NewMetaProperty(base.NewID("id5"), base.NewDecData(dec))
+	property3 := baseTypes.NewMetaProperty(baseIDs.NewID("id3"), decData)
+	property4 := baseTypes.NewMetaProperty(baseIDs.NewID("id4"), baseData.NewIDData(baseIDs.NewID("")))
+	property5 := baseTypes.NewMetaProperty(baseIDs.NewID("id5"), baseData.NewDecData(dec))
 
 	var metaPropertyList []types.MetaProperty
 	metaPropertyList = append(metaPropertyList, property1, property2, property3, property4, property5)
 
-	keepers.MetasKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(decData)).Add(mappable.NewMeta(base.NewDecData(dec)))
+	keepers.MetasKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(decData)).Add(mappable.NewMeta(baseData.NewDecData(dec)))
 
 	t.Run("Positive Case", func(t *testing.T) {
-		want := newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
+		want := newAuxiliaryResponse(baseTypes.NewMetaProperties(metaPropertyList...), nil)
 		if got := keepers.MetasKeeper.Help(context, NewAuxiliaryRequest(property1.RemoveData(), property2.RemoveData(), property3.RemoveData(), property4.RemoveData(), property5.RemoveData())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

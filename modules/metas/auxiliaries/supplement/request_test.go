@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package supplement
 
@@ -10,13 +8,15 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/types"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Supplement_Request(t *testing.T) {
 
-	property := base.NewProperty(base.NewID("id"), base.NewStringData("Data"))
+	property := baseTypes.NewProperty(baseIDs.NewID("id"), baseData.NewStringData("Data"))
 	testAuxiliaryRequest := NewAuxiliaryRequest(property)
 
 	require.Equal(t, auxiliaryRequest{PropertyList: []types.Property{property}}, testAuxiliaryRequest)

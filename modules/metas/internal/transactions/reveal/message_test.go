@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package reveal
 
@@ -11,9 +9,9 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
+	"github.com/AssetMantle/modules/modules/metas/internal/module"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func Test_Reveal_Message(t *testing.T) {
@@ -22,7 +20,7 @@ func Test_Reveal_Message(t *testing.T) {
 	require.Nil(t, err)
 
 	data := "S|newData"
-	newData, err := base.ReadData(data)
+	newData, err := baseTypes.ReadData(data)
 	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, newData)

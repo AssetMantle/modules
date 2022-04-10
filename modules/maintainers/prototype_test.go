@@ -1,3 +1,6 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package maintainers
 
 import (
@@ -5,20 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/block"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/genesis"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/queries"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/simulator"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/transactions"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/block"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/genesis"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/mapper"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/queries"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/simulator"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/transactions"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Name(), base.NewModule(
+	require.Equal(t, Prototype().Name(), baseHelpers.NewModule(
 		module.Name,
 		auxiliaries.Prototype,
 		genesis.Prototype,

@@ -1,20 +1,18 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package verify
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
-var Auxiliary = base.NewAuxiliary(
+var Auxiliary = baseHelpers.NewAuxiliary(
 	"maintainersVerify",
 	keeperPrototype,
 )
 
-var AuxiliaryMock = base.NewAuxiliary(
+var AuxiliaryMock = baseHelpers.NewAuxiliary(
 	"maintainersVerify",
 	keeperPrototypeMock,
 )

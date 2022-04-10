@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package define
 
@@ -14,11 +12,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
-	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"github.com/AssetMantle/modules/constants/flags"
+	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type transactionRequest struct {
@@ -72,29 +71,29 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	immutableMetaProperties, err := base.ReadMetaProperties(transactionRequest.ImmutableMetaProperties)
+	immutableMetaProperties, err := baseTypes.ReadMetaProperties(transactionRequest.ImmutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
 
-	immutableProperties, err := base.ReadProperties(transactionRequest.ImmutableProperties)
+	immutableProperties, err := baseTypes.ReadProperties(transactionRequest.ImmutableProperties)
 	if err != nil {
 		return nil, err
 	}
 
-	mutableMetaProperties, err := base.ReadMetaProperties(transactionRequest.MutableMetaProperties)
+	mutableMetaProperties, err := baseTypes.ReadMetaProperties(transactionRequest.MutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
 
-	mutableProperties, err := base.ReadProperties(transactionRequest.MutableProperties)
+	mutableProperties, err := baseTypes.ReadProperties(transactionRequest.MutableProperties)
 	if err != nil {
 		return nil, err
 	}
 
 	return newMessage(
 		from,
-		base.NewID(transactionRequest.FromID),
+		baseIDs.NewID(transactionRequest.FromID),
 		immutableMetaProperties,
 		immutableProperties,
 		mutableMetaProperties,
@@ -102,7 +101,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	), nil
 }
 func (transactionRequest) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, transactionRequest{})
+	codecUtilities.RegisterModuleConcrete(codec, module.Name, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}

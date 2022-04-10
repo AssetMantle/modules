@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package key
 
@@ -11,13 +9,13 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
-	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
+	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/modules/classifications/internal/module"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/types"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
 )
 
 type classificationID struct {
@@ -47,7 +45,7 @@ func (classificationID classificationID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(classificationID.Bytes())
 }
 func (classificationID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, classificationID{})
+	codecUtilities.RegisterModuleConcrete(codec, module.Name, classificationID{})
 }
 func (classificationID classificationID) IsPartial() bool {
 	return len(classificationID.HashID.Bytes()) == 0
@@ -72,13 +70,13 @@ func NewClassificationID(chainID types.ID, immutableProperties types.Properties,
 	defaultImmutableStringList := make([]string, len(immutableProperties.GetList()))
 
 	for i, property := range immutableProperties.GetList() {
-		if hashID := property.GetHashID(); !(hashID.Compare(base.NewID("")) == 0) {
+		if hashID := property.GetHash(); !(hashID.Compare(baseIDs.NewID("")) == 0) {
 			defaultImmutableStringList[i] = hashID.String()
 		}
 	}
 
 	return classificationID{
 		ChainID: chainID,
-		HashID:  base.NewID(metaUtilities.Hash(metaUtilities.Hash(immutableIDStringList...), metaUtilities.Hash(mutableIDStringList...), metaUtilities.Hash(defaultImmutableStringList...))),
+		HashID:  baseIDs.NewID(metaUtilities.Hash(metaUtilities.Hash(immutableIDStringList...), metaUtilities.Hash(mutableIDStringList...), metaUtilities.Hash(defaultImmutableStringList...))),
 	}
 }

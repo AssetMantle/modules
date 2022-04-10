@@ -1,16 +1,16 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package base
 
 import (
 	"strings"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/data/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type metaProperties struct {
@@ -106,25 +106,26 @@ func ReadMetaProperties(metaPropertiesString string) (types.MetaProperties, erro
 func ReadData(dataString string) (types.Data, error) {
 	dataTypeAndString := strings.SplitN(dataString, constants.DataTypeAndValueSeparator, 2)
 	if len(dataTypeAndString) == 2 {
-		dataType, dataString := dataTypeAndString[0], dataTypeAndString[1]
+		dataTypeID, dataString := dataTypeAndString[0], dataTypeAndString[1]
 
 		var data types.Data
 
 		var Error error
 
-		switch NewID(dataType) {
-		case decData{}.GetTypeID():
-			data, Error = ReadDecData(dataString)
-		case idData{}.GetTypeID():
-			data, Error = ReadIDData(dataString)
-		case heightData{}.GetTypeID():
-			data, Error = ReadHeightData(dataString)
-		case stringData{}.GetTypeID():
-			data, Error = ReadStringData(dataString)
-		case accAddressData{}.GetTypeID():
-			data, Error = ReadAccAddressData(dataString)
-		case listData{}.GetTypeID():
-			data, Error = ReadAccAddressListData(dataString)
+		switch baseIDs.NewID(dataTypeID) {
+		case base.DecDataID:
+			data, Error = base.ReadDecData(dataString)
+		case base.IDDataID:
+			data, Error = base.ReadIDData(dataString)
+		case base.HeightDataID:
+			data, Error = base.ReadHeightData(dataString)
+		case base.StringDataID:
+			data, Error = base.ReadStringData(dataString)
+		case base.AccAddressDataID:
+			data, Error = base.ReadAccAddressData(dataString)
+			// TODO Check
+		case base.ListDataID:
+			data, Error = base.ReadAccAddressListData(dataString)
 		default:
 			data, Error = nil, errors.UnsupportedParameter
 		}

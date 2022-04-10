@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "API Documentation of Persistence custom modules",
-    "title": "Persistence Swagger Documentation",
+    "description": "API Documentation of AssetMantle custom modules",
+    "title": "AssetMantle Modules Swagger Documentation",
     "contact": {},
     "license": {
       "name": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
     "version": "0.1.0"
   },

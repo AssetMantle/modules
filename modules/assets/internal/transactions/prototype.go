@@ -1,24 +1,22 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package transactions
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/burn"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/define"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/deputize"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/mint"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/mutate"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/renumerate"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/revoke"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/burn"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/define"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/deputize"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/mint"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/mutate"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/renumerate"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/revoke"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.Transactions {
-	return base.NewTransactions(
+	return baseHelpers.NewTransactions(
 		burn.Transaction,
 		define.Transaction,
 		deputize.Transaction,

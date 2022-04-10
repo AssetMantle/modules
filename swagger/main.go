@@ -1,3 +1,6 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package main
 
 import (
@@ -7,10 +10,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/gorilla/mux"
 
-	"github.com/persistenceOne/persistenceSDK/schema/applications/base"
-	"github.com/persistenceOne/persistenceSDK/swagger/configurations"
+	"github.com/AssetMantle/modules/schema/applications/base"
+	"github.com/AssetMantle/modules/swagger/configurations"
 
-	_ "github.com/persistenceOne/persistenceSDK/swagger/docs"
+	_ "github.com/AssetMantle/modules/swagger/docs"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -23,9 +26,9 @@ var Prototype = base.NewApplication(
 	configurations.TokenReceiveAllowedModules,
 )
 
-// @title Persistence Swagger Documentation
+// @title AssetMantle Modules Swagger Documentation
 // @version 0.1.0
-// @description API Documentation of Persistence custom modules
+// @description API Documentation of AssetMantle custom modules
 // @host localhost:1317
 
 // @license.name Apache 2.0

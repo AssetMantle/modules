@@ -1,29 +1,27 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package key
 
 import (
 	"strings"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 func readSplitID(splitIDString string) types.ID {
 	idList := strings.Split(splitIDString, constants.SecondOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return splitID{
-			OwnerID:   base.NewID(idList[0]),
-			OwnableID: base.NewID(idList[1]),
+			OwnerID:   baseIDs.NewID(idList[0]),
+			OwnableID: baseIDs.NewID(idList[1]),
 		}
 	}
 
-	return splitID{OwnerID: base.NewID(""), OwnableID: base.NewID("")}
+	return splitID{OwnerID: baseIDs.NewID(""), OwnableID: baseIDs.NewID("")}
 }
 
 func splitIDFromInterface(i interface{}) splitID {

@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package key
 
@@ -9,32 +7,33 @@ import (
 	"strings"
 	"testing"
 
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
-
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	metaUtilities "github.com/persistenceOne/persistenceSDK/utilities/meta"
+	"github.com/AssetMantle/modules/constants"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
 )
 
 func Test_ClassificationID_Methods(t *testing.T) {
-	chainID := base.NewID("chainID")
-	immutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID1"), base.NewStringData("ImmutableData")))
-	mutableProperties := base.NewProperties(base.NewProperty(base.NewID("ID2"), base.NewStringData("MutableData")))
+	chainID := baseIDs.NewID("chainID")
+	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	mutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID2"), baseData.NewStringData("MutableData")))
 
 	testClassificationID := NewClassificationID(chainID, immutableProperties, mutableProperties).(classificationID)
 	require.NotPanics(t, func() {
-		require.Equal(t, classificationID{ChainID: chainID, HashID: base.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID().String()))}, testClassificationID)
-		require.Equal(t, strings.Join([]string{chainID.String(), base.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID().String())).String()}, constants.IDSeparator), testClassificationID.String())
-		require.Equal(t, false, testClassificationID.Equals(classificationID{ChainID: base.NewID("chainID"), HashID: base.NewID("hashID")}))
+		require.Equal(t, classificationID{ChainID: chainID, HashID: baseIDs.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID().String()))}, testClassificationID)
+		require.Equal(t, strings.Join([]string{chainID.String(), baseIDs.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID().String())).String()}, constants.IDSeparator), testClassificationID.String())
+		require.Equal(t, false, testClassificationID.Equals(classificationID{ChainID: baseIDs.NewID("chainID"), HashID: baseIDs.NewID("hashID")}))
 		require.Equal(t, false, testClassificationID.Equals(nil))
-		require.Equal(t, false, testClassificationID.Compare(base.NewID("id")) == 0)
+		require.Equal(t, false, testClassificationID.Compare(baseIDs.NewID("id")) == 0)
 		require.Equal(t, true, testClassificationID.Equals(testClassificationID))
 		require.Equal(t, false, testClassificationID.IsPartial())
-		require.Equal(t, true, classificationID{ChainID: chainID, HashID: base.NewID("")}.IsPartial())
+		require.Equal(t, true, classificationID{ChainID: chainID, HashID: baseIDs.NewID("")}.IsPartial())
 		require.Equal(t, testClassificationID, FromID(testClassificationID))
-		require.Equal(t, classificationID{ChainID: base.NewID(""), HashID: base.NewID("")}, FromID(base.NewID("tempID")))
+		require.Equal(t, classificationID{ChainID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}, FromID(baseIDs.NewID("tempID")))
 		require.Equal(t, testClassificationID, readClassificationID(testClassificationID.String()))
 	})
 

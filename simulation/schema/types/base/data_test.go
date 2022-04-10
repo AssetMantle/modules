@@ -1,3 +1,6 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package base
 
 import (
@@ -9,7 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func TestGenerateRandomData(t *testing.T) {
@@ -18,10 +22,10 @@ func TestGenerateRandomData(t *testing.T) {
 
 	switch randomPositiveInt % 4 {
 	case 1:
-		require.Equal(t, GenerateRandomData(r), base.NewStringData(simulation.RandStringOfLength(r, r.Intn(99))))
+		require.Equal(t, GenerateRandomData(r), baseData.NewStringData(simulation.RandStringOfLength(r, r.Intn(99))))
 	case 2:
-		require.Equal(t, GenerateRandomData(r), base.NewDecData(simulation.RandomDecAmount(r, sdkTypes.NewDec(99))))
+		require.Equal(t, GenerateRandomData(r), baseData.NewDecData(simulation.RandomDecAmount(r, sdkTypes.NewDec(99))))
 	case 3:
-		require.Equal(t, GenerateRandomData(r), base.NewHeightData(base.NewHeight(r.Int63())))
+		require.Equal(t, GenerateRandomData(r), baseData.NewHeightData(baseTypes.NewHeight(r.Int63())))
 	}
 }

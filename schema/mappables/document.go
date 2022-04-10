@@ -1,13 +1,11 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package mappables
 
 import (
-	"github.com/persistenceOne/persistenceSDK/schema/traits"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/schema/qualified"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type Document interface {
@@ -17,6 +15,7 @@ type Document interface {
 	// * Returns nil if property is not found
 	GetProperty(types.ID) types.Property
 
-	traits.HasImmutables
-	traits.HasMutables
+	// TODO see how to adjust in direct data
+	qualified.HasImmutables
+	qualified.HasMutables
 }

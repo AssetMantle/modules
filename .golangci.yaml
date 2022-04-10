@@ -87,12 +87,12 @@ linters-settings:
     min-complexity: 25 # cyclical complexity
 
   goimports:
-    local-prefixes: "github.com/persistenceOne/persistenceSDK"
+    local-prefixes: "github.com/AssetMantle/modules"
 
   gomnd:
     settings:
       mnd:
-        checks: [argument,case,condition,return] # don't include the "operation" and "assign"
+        checks: [ argument,case,condition,return ] # don't include the "operation" and "assign"
 
   govet:
     check-shadowing: true # report about shadowed variables

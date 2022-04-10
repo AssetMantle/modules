@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package queuing
 
@@ -14,9 +12,9 @@ import (
 	"github.com/stretchr/testify/require"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/persistenceOne/persistenceSDK/schema"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/persistenceOne/persistenceSDK/utilities/random"
+	"github.com/AssetMantle/modules/schema"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/utilities/random"
 )
 
 func Test_Kafka_DB(t *testing.T) {
@@ -31,7 +29,7 @@ func Test_Kafka_DB(t *testing.T) {
 		ticketID := TicketID(random.GenerateUniqueIdentifier("name"))
 		kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", defaultCLIHome)
 		setTicketIDtoDB(ticketID, kafkaDB, Codec, []byte{})
-		addResponseToDB(ticketID, base.NewID("").Bytes(), kafkaDB, Codec)
-		require.Equal(t, base.NewID("").Bytes(), getResponseFromDB(ticketID, kafkaDB, Codec))
+		addResponseToDB(ticketID, baseIDs.NewID("").Bytes(), kafkaDB, Codec)
+		require.Equal(t, baseIDs.NewID("").Bytes(), getResponseFromDB(ticketID, kafkaDB, Codec))
 	})
 }

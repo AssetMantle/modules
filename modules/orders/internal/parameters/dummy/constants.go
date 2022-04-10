@@ -1,16 +1,15 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package dummy
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
-var ID = base.NewID("dummy")
+var ID = baseIDs.NewID("dummy")
 
-var DefaultData = base.NewDecData(sdkTypes.SmallestDec())
+var DefaultData = baseData.NewDecData(sdkTypes.SmallestDec())

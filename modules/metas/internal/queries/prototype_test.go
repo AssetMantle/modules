@@ -1,3 +1,6 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package queries
 
 import (
@@ -5,12 +8,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/queries/meta"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/metas/internal/queries/meta"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("metas").GetName(), base.NewQueries(
+	require.Equal(t, Prototype().Get("metas").GetName(), baseHelpers.NewQueries(
 		meta.Query,
 	).Get("metas").GetName())
 }

@@ -56,7 +56,7 @@ A _patch release_ is an increment of the patch number (eg: `v1.2.0` → `v1.2.1`
 
 **Patch release must not break API nor consensus.**
 
-Updates to the release branch should come from `master` by backporting PRs (usually done by automatic cherry pick
+Updates to the release branch should come from `master` by backporting PRs (usually done by automatic cherry-pick
 followed by a PRs to the release branch). The backports must be marked using `backport/Y` label in PR for master. It is
 the PR author's responsibility to fix merge conflicts, update changelog entries, and ensure CI passes. If a PR
 originates from an external contributor, a core team member assumes responsibility to perform this process instead of
@@ -80,15 +80,15 @@ every Major Release is denoted as stable releases.
 
 ### Patch Releases
 
-Once a Persistence-SDK release has been completed and published, updates for it are released under certain
-circumstances.
+// TODO Correct Once a Persistence-SDK release has been completed and published, updates for it are released under
+certain circumstances.
 
 ### Rationale
 
-Unlike in-development `master` branch snapshots, **Persistence-SDK** releases are subject to much wider adoption, and by
-a significantly different demographic of users. During development, changes in the `master` branch affect SDK users,
-application developers, early adopters, and other advanced users that elect to use unstable experimental software at
-their own risk.
+Unlike in-development `master` branch snapshots,// TODO correct **Persistence-SDK** releases are subject to much wider
+adoption, and by a significantly different demographic of users. During development, changes in the `master` branch
+affect SDK users, application developers, early adopters, and other advanced users that elect to use unstable
+experimental software at their own risk.
 
 Conversely, users of a stable release expect a high degree of stability. They build their applications on it, and the
 problems they experience with it could be potentially highly disruptive to their projects.
@@ -98,7 +98,7 @@ caution. Hence, when updates are proposed, they must be accompanied by a strong 
 regressions, i.e. even one-line changes could cause unexpected regressions due to side effects or poorly tested code. We
 never assume that any change, no matter how little or non-intrusive, is completely exempt of regression risks.
 
-Therefore, the requirements for stable changes are different than those that are candidates to be merged in the `master`
+Therefore, the requirements for stable changes are different from those that are candidates to be merged in the `master`
 branch. When preparing future major releases, our aim is to design the most elegant, user-friendly and maintainable SDK
 possible which often entails fundamental changes to the SDK's architecture design, rearranging and/or renaming packages
 as well as reducing code duplication so that we maintain common functions and data structures in one place rather than
@@ -117,8 +117,8 @@ the current major release, and later, migrations are supported.
 
 * **High-impact bugs**
     * Bugs that may directly cause a security vulnerability.
-    * *Severe regressions* from a Persistence-SDK's previous release. This includes all sort of issues that may cause
-      the core packages or the `x/` modules unusable.
+    * *Severe regressions* from a //TODO Correct Persistence-SDK's previous release. This includes all sort of issues
+      that may cause the core packages or the `x/` modules unusable.
     * Bugs that may cause **loss of user's data**.
 * Other safe cases:
     * Bugs which don't fit in the aforementioned categories for which an obvious safe patch is known.
@@ -165,8 +165,8 @@ Release Exception*.
 ### Stable Release Exception - Procedure
 
 1. Check that the bug is either fixed or not reproducible in `master`. It is, in general, not appropriate to release bug
-   fixes for stable releases without first testing them in `master`. Please apply the
-   label [v0.43](https://github.com/persistenceone/persistence-sdk/milestone/26) to the issue.
+   fixes for stable releases without first testing them in `master`. Please apply the label //TODO
+   Correct [v0.43](https://github.com/persistenceone/persistence-sdk/milestone/26) to the issue.
 2. Add a comment to the issue and ensure it contains the following information (see the bug template below):
 
 * **[Impact]** An explanation of the bug on users and justification for backporting the fix to the stable release.
@@ -199,8 +199,9 @@ It's crucial to make the effort of thinking about what could happen in case a re
 
 ### Stable Release Managers
 
-The **Stable Release Managers** evaluate and approve or reject updates and backports to Persistence-SDK Stable Release
-series, according to the [stable release policy](#stable-release-policy). Decisions are made by consensus.
+The **Stable Release Managers** evaluate and approve or reject updates and backports to // TODO Correct Persistence-SDK
+Stable Release series, according to the [stable release policy](#stable-release-policy). Decisions are made by
+consensus.
 
 Their responsibilities include:
 

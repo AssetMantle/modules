@@ -1,3 +1,6 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package transactions
 
 import (
@@ -5,18 +8,18 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/burn"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/define"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/deputize"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/mint"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/mutate"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/renumerate"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/revoke"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/burn"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/define"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/deputize"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/mint"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/mutate"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/renumerate"
+	"github.com/AssetMantle/modules/modules/assets/internal/transactions/revoke"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
-	want := base.NewTransactions(burn.Transaction,
+	want := baseHelpers.NewTransactions(burn.Transaction,
 		define.Transaction,
 		deputize.Transaction,
 		mint.Transaction,

@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package revoke
 
@@ -10,12 +8,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func Test_Revoke_Request(t *testing.T) {
-	identityID := base.NewID("identityID")
-	classificationID := base.NewID("classificationID")
+	identityID := baseIDs.NewID("identityID")
+	classificationID := baseIDs.NewID("classificationID")
 	testAuxiliaryRequest := NewAuxiliaryRequest(identityID, identityID, classificationID)
 
 	require.Equal(t, auxiliaryRequest{

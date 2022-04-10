@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package base
 
@@ -9,8 +7,8 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/schema/types"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func GenerateRandomProperties(r *rand.Rand) types.Properties {
@@ -22,5 +20,5 @@ func GenerateRandomProperties(r *rand.Rand) types.Properties {
 		propertyList[i] = GenerateRandomProperty(r)
 	}
 
-	return base.NewProperties(propertyList...)
+	return baseTypes.NewProperties(propertyList...)
 }

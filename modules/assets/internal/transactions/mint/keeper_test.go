@@ -1,16 +1,11 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package mint
 
 import (
 	"reflect"
 	"testing"
-
-	"github.com/persistenceOne/persistenceSDK/constants/test"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -22,18 +17,21 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/auxiliaries/conform"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/auxiliaries/scrub"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/auxiliaries/mint"
-	"github.com/persistenceOne/persistenceSDK/schema"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/constants/test"
+	"github.com/AssetMantle/modules/modules/assets/internal/key"
+	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
+	"github.com/AssetMantle/modules/modules/assets/internal/parameters"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
+	"github.com/AssetMantle/modules/modules/splits/auxiliaries/mint"
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/types"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type TestKeepers struct {
@@ -60,7 +58,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		paramsTransientStoreKeys,
 	)
 
-	parameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
+	testParameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -75,12 +73,12 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(mapper, parameters)
-	mintAuxiliary := mint.AuxiliaryMock.Initialize(mapper, parameters)
-	conformAuxiliary := conform.AuxiliaryMock.Initialize(mapper, parameters)
-	verifyAuxiliary := verify.AuxiliaryMock.Initialize(mapper, parameters)
+	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(mapper, testParameters)
+	mintAuxiliary := mint.AuxiliaryMock.Initialize(mapper, testParameters)
+	conformAuxiliary := conform.AuxiliaryMock.Initialize(mapper, testParameters)
+	verifyAuxiliary := verify.AuxiliaryMock.Initialize(mapper, testParameters)
 	keepers := TestKeepers{
-		AssetsKeeper: keeperPrototype().Initialize(mapper, parameters,
+		AssetsKeeper: keeperPrototype().Initialize(mapper, testParameters,
 			[]interface{}{scrubAuxiliary, verifyAuxiliary,
 				mintAuxiliary, conformAuxiliary}).(helpers.TransactionKeeper),
 	}
@@ -91,38 +89,38 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	immutableMetaProperties, err := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := baseTypes.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 
 	var immutableMetaProperties2 types.MetaProperties
-	immutableMetaProperties2, err = base.ReadMetaProperties("defaultImmutableMeta2:S|defaultImmutableMeta2")
+	immutableMetaProperties2, err = baseTypes.ReadMetaProperties("defaultImmutableMeta2:S|defaultImmutableMeta2")
 	require.Equal(t, nil, err)
 
 	var immutableProperties types.Properties
-	immutableProperties, err = base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err = baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties types.MetaProperties
-	mutableMetaProperties, err = base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err = baseTypes.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 
 	var mutableProperties types.Properties
-	mutableProperties, err = base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err = baseTypes.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 
 	var scrubMockErrorProperties types.MetaProperties
-	scrubMockErrorProperties, err = base.ReadMetaProperties("scrubError:S|mockError")
+	scrubMockErrorProperties, err = baseTypes.ReadMetaProperties("scrubError:S|mockError")
 	require.Equal(t, nil, err)
 
 	var conformMockErrorProperties types.MetaProperties
-	conformMockErrorProperties, err = base.ReadMetaProperties("conformError:S|mockError")
+	conformMockErrorProperties, err = baseTypes.ReadMetaProperties("conformError:S|mockError")
 	require.Equal(t, nil, err)
 
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
-	defaultIdentityID := base.NewID("fromIdentityID")
-	toID := base.NewID("toID")
-	classificationID := base.NewID("ClassificationID")
+	defaultIdentityID := baseIDs.NewID("fromIdentityID")
+	toID := baseIDs.NewID("toID")
+	classificationID := baseIDs.NewID("ClassificationID")
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
@@ -179,7 +177,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - Mint Auxiliary fail", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(test.MockError)
-		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, base.NewID("mintError"), classificationID,
+		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewID("mintError"), classificationID,
 			immutableMetaProperties2, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

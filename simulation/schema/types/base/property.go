@@ -1,12 +1,15 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package base
 
 import (
 	"math/rand"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/schema/types"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func GenerateRandomProperty(r *rand.Rand) types.Property {
-	return base.NewProperty(GenerateRandomID(r), GenerateRandomData(r))
+	return baseTypes.NewProperty(GenerateRandomID(r), GenerateRandomData(r))
 }

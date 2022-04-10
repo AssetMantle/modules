@@ -1,29 +1,27 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package mappable
 
 import (
 	"strings"
 
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/constants/ids"
-	"github.com/persistenceOne/persistenceSDK/constants/properties"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables"
-	qualifiedMappables "github.com/persistenceOne/persistenceSDK/schema/mappables/qualified"
-	baseTraits "github.com/persistenceOne/persistenceSDK/schema/traits/qualified"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	baseTypes "github.com/AssetMantle/modules/schema/data/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+
+	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/constants/ids"
+	"github.com/AssetMantle/modules/constants/properties"
+	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/mappables"
+	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
+	"github.com/AssetMantle/modules/schema/types"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type identity struct {
@@ -46,17 +44,12 @@ func (identity identity) GetAuthentication() types.Property {
 
 	return properties.Authentication
 }
-func (identity identity) GetKey() helpers.Key {
-	return key.FromID(identity.ID)
-}
-func (identity) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterXPRTConcrete(codec, module.Name, identity{})
-}
 func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	if authentication := identity.GetAuthentication(); authentication != nil {
-		compareAuthenticationHash := base.NewAccAddressData(address).GenerateHashID().String()
+		compareAuthenticationHash := baseTypes.NewAccAddressData(address).GenerateHash().String()
 
-		authenticationHashList := strings.Split(authentication.GetHashID().String(), constants.ListHashStringSeparator)
+		// TODO impl through list
+		authenticationHashList := strings.Split(authentication.GetHash().String(), constants.ListHashStringSeparator)
 		for _, authenticationHash := range authenticationHashList {
 			if strings.Compare(authenticationHash, compareAuthenticationHash) == 0 {
 				return true
@@ -67,19 +60,28 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 	return false
 }
 func (identity identity) ProvisionAddress(address sdkTypes.AccAddress) mappables.Identity {
-	return mappables.Identity(identity)
+	// TODO
+	return nil
 }
 
 func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) mappables.Identity {
-	return mappables.Identity(identity)
+	// TODO
+	return nil
+}
+func (identity identity) GetKey() helpers.Key {
+	return key.FromID(identity.ID)
+}
+func (identity) RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterModuleConcrete(codec, module.Name, identity{})
 }
 
 func NewIdentity(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Identity {
 	return identity{
 		Document: qualifiedMappables.Document{
-			ID:            id,
-			HasImmutables: baseTraits.HasImmutables{Properties: immutableProperties},
-			HasMutables:   baseTraits.HasMutables{Properties: mutableProperties},
+			ID: id,
+			// TODO Add classificationID
+			HasImmutables: baseQualified.HasImmutables{Properties: immutableProperties},
+			HasMutables:   baseQualified.HasMutables{Properties: mutableProperties},
 		},
 	}
 }

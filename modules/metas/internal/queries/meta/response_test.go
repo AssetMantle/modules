@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package meta
 
@@ -17,10 +15,10 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/common"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema"
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/modules/metas/internal/common"
+	"github.com/AssetMantle/modules/modules/metas/internal/mapper"
+	"github.com/AssetMantle/modules/schema"
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {

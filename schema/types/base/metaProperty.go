@@ -1,21 +1,21 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package base
 
 import (
 	"strings"
 
-	"github.com/persistenceOne/persistenceSDK/constants"
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type metaProperty struct {
-	ID   propertyID `json:"id"`
-	Data types.Data `json:"data"`
+	ID   ids.PropertyID `json:"id"`
+	Data types.Data     `json:"data"`
 }
 
 var _ types.MetaProperty = (*metaProperty)(nil)
@@ -26,25 +26,25 @@ func (metaProperty metaProperty) GetID() types.ID {
 func (metaProperty metaProperty) GetDataID() types.ID {
 	return metaProperty.Data.GetID()
 }
-func (metaProperty metaProperty) GetKeyID() types.ID {
-	return metaProperty.ID.KeyID
+func (metaProperty metaProperty) GetKey() types.ID {
+	return metaProperty.ID.GetKey()
 }
-func (metaProperty metaProperty) GetTypeID() types.ID {
-	return metaProperty.Data.GetTypeID()
+func (metaProperty metaProperty) GetType() types.ID {
+	return metaProperty.Data.GetType()
 }
-func (metaProperty metaProperty) GetHashID() types.ID {
-	return metaProperty.Data.GenerateHashID()
+func (metaProperty metaProperty) GetHash() types.ID {
+	return metaProperty.Data.GenerateHash()
 }
 func (metaProperty metaProperty) GetData() types.Data {
 	return metaProperty.Data
 }
 func (metaProperty metaProperty) RemoveData() types.Property {
-	return NewProperty(metaProperty.GetKeyID(), metaProperty.GetData())
+	return NewProperty(metaProperty.GetKey(), metaProperty.GetData())
 }
 
-func NewMetaProperty(keyID types.ID, data types.Data) types.MetaProperty {
+func NewMetaProperty(key types.ID, data types.Data) types.MetaProperty {
 	return metaProperty{
-		ID:   propertyIDFromInterface(NewProperty(keyID, data).GetID()),
+		ID:   baseIDs.NewPropertyID(key, data.GetType()),
 		Data: data,
 	}
 }
@@ -57,7 +57,7 @@ func ReadMetaProperty(metaPropertyString string) (types.MetaProperty, error) {
 			return nil, Error
 		}
 
-		return NewMetaProperty(NewID(propertyIDAndData[0]), data), nil
+		return NewMetaProperty(baseIDs.NewID(propertyIDAndData[0]), data), nil
 	}
 
 	return nil, errors.IncorrectFormat
