@@ -52,8 +52,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	if valueMetaProperty := metaProperties.Get(ids.ValueProperty); valueMetaProperty != nil {
-		value := valueMetaProperty.GetData().(data.DecData).Get()
+	if supplyMetaProperty := metaProperties.Get(ids.SupplyProperty); supplyMetaProperty != nil {
+		value := supplyMetaProperty.GetData().(data.DecData).Get()
 		if auxiliaryResponse := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, value)); !auxiliaryResponse.IsSuccessful() {
 			return newTransactionResponse(auxiliaryResponse.GetError())
 		}
