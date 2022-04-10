@@ -15,6 +15,12 @@ type idList struct {
 var _ lists.IDList = (*idList)(nil)
 
 func (idList idList) Get() []types.ID {
-	// TODO implement me
-	panic("implement me")
+	// TODO write test case
+	returnIDList := make([]types.ID, idList.Size())
+
+	for i, listable := range idList.GetList() {
+		returnIDList[i] = listable.(types.ID)
+	}
+
+	return returnIDList
 }

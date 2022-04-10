@@ -19,6 +19,6 @@ var (
 	MakerOwnableSplitProperty    = baseIDs.NewID("makerOwnableSplit")
 	NubIDProperty                = baseIDs.NewID("nubID")
 	PermissionsProperty          = baseIDs.NewID("permissions")
+	SupplyProperty               = baseIDs.NewID("supply")
 	TakerIDProperty              = baseIDs.NewID("takerID")
-	ValueProperty                = baseIDs.NewID("value")
 )

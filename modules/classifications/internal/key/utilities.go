@@ -29,8 +29,10 @@ func classificationIDFromInterface(i interface{}) classificationID {
 	case classificationID:
 		return value
 	case types.ID:
+		// TODO remove this use case
 		return classificationIDFromInterface(readClassificationID(value.String()))
 	default:
+		// TODO remove panic and introduce error
 		panic(i)
 	}
 }

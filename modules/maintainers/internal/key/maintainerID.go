@@ -12,6 +12,7 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
@@ -36,8 +37,8 @@ func (maintainerID maintainerID) String() string {
 
 	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
-func (maintainerID maintainerID) Compare(id types.ID) int {
-	return bytes.Compare(maintainerID.Bytes(), id.Bytes())
+func (maintainerID maintainerID) Compare(listable traits.Listable) int {
+	return bytes.Compare(maintainerID.Bytes(), maintainerIDFromInterface(listable).Bytes())
 }
 func (maintainerID maintainerID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(maintainerID.Bytes())

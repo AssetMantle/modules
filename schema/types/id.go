@@ -3,9 +3,12 @@
 
 package types
 
+import (
+	"github.com/AssetMantle/modules/schema/traits"
+)
+
 type ID interface {
+	traits.Listable
 	String() string
 	Bytes() []byte
-
-	Compare(ID) int
 }

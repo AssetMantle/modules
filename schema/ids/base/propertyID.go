@@ -12,6 +12,7 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -42,9 +43,14 @@ func (propertyID propertyID) Bytes() []byte {
 
 	return Bytes
 }
-func (propertyID propertyID) Compare(id types.ID) int {
-	return bytes.Compare(propertyID.Bytes(), id.Bytes())
+func (propertyID propertyID) Compare(listable traits.Listable) int {
+	return bytes.Compare(propertyID.Bytes(), propertyIDFromInterface(listable).Bytes())
 }
+func propertyIDFromInterface(i interface{}) propertyID {
+	// TODO implement
+	panic("")
+}
+
 func NewPropertyID(key, Type types.ID) ids.PropertyID {
 	return propertyID{
 		Key:  key,

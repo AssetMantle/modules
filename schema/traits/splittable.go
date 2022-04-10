@@ -8,5 +8,5 @@ import (
 )
 
 type Splittable interface {
-	GetValue() types.Property
+	GetSupply() types.Property
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
@@ -38,8 +39,8 @@ func (identityID identityID) String() string {
 
 	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
-func (identityID identityID) Compare(id types.ID) int {
-	return bytes.Compare(identityID.Bytes(), id.Bytes())
+func (identityID identityID) Compare(listable traits.Listable) int {
+	return bytes.Compare(identityID.Bytes(), identityIDFromInterface(listable).Bytes())
 }
 func (identityID identityID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(identityID.Bytes())

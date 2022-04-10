@@ -24,10 +24,13 @@ func readAssetID(assetIDString string) types.ID {
 
 	return assetID{ClassificationID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}
 }
+
+// TODO remove panic and add error
 func assetIDFromInterface(i interface{}) assetID {
 	switch value := i.(type) {
 	case assetID:
 		return value
+		// TODO remove this use case
 	case types.ID:
 		return assetIDFromInterface(readAssetID(value.String()))
 	default:

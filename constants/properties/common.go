@@ -22,5 +22,5 @@ var (
 	NubID                = baseTypes.NewProperty(ids.NubIDProperty, baseData.NewIDData(baseIDs.NewID("")))
 	Permissions          = baseTypes.NewProperty(ids.PermissionsProperty, baseData.NewListData())
 	TakerID              = baseTypes.NewProperty(ids.TakerIDProperty, baseData.NewIDData(baseIDs.NewID("")))
-	Value                = baseTypes.NewProperty(ids.ValueProperty, baseData.NewDecData(sdkTypes.SmallestDec()))
+	Supply               = baseTypes.NewProperty(ids.SupplyProperty, baseData.NewDecData(sdkTypes.SmallestDec()))
 )
