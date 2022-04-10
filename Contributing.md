@@ -1,7 +1,5 @@
 # Contributing
 
-// TODO define anchors
-
 - [Contributing](#contributing)
     - [Architecture Decision Records (ADR)](#architecture-decision-records-adr)
     - [Development Procedure](#development-procedure)
@@ -14,12 +12,10 @@
     - [Protobuf](#protobuf)
     - [Branching Model and Release](#branching-model-and-release)
         - [PR Targeting](#pr-targeting)
-        - [Major Release Procedure](#major-release-procedure)
-        - [Patch Release Procedure](#patch-release-procedure)
     - [Code Owner Membership](#code-owner-membership)
     - [Concept & Feature Approval Process](#concept--feature-approval-process)
 
-Thank you for considering making contributions to the Persistence SDK and related repositories!
+Thank you for considering making contributions to the AssetMantle modules and related repositories!
 
 Contributing to this repo can mean many things such as participating in discussion or proposing code changes. To ensure
 a smooth workflow for all contributors, the general procedure for contributing has been established:
@@ -43,7 +39,7 @@ a smooth workflow for all contributors, the general procedure for contributing h
     1. Ensure that the proposal has been accepted.
     2. Ensure that nobody else has already begun working on this issue. If they have, make sure to contact them to
        collaborate.
-    3. If nobody has been assigned for the issue and you would like to work on it, make a comment on the issue to inform
+    3. If nobody has been assigned for the issue, and you would like to work on it, make a comment on the issue to inform
        the community of your intentions to begin work.
 5. To submit your work as a contribution to the repository follow standard GitHub best practices.
    See [pull request guideline](#pull-requests) below.
@@ -54,14 +50,14 @@ taken place in a GitHub issue, that PR runs a high likelihood of being rejected.
 
 ## Architecture Decision Records (ADR)
 
-When proposing an architecture decision for the Persistence SDK, please start by opening
+When proposing an architecture decision for the AssetMantle modules, please start by opening
 an [issue](https://github.com/AssetMantle/modules/issues/new/choose) or
 a [discussion](https://github.com/AssetMantle/modules/discussions/new) with a summary of the proposal. Once the proposal
 has been discussed and there is rough alignment on a high-level approach to the design,
-the [ADR creation process](https://github.com/cosmos/cosmos-sdk/blob/master/docs/architecture/PROCESS.md) can begin. We
+the [ADR creation process](./docs/architecture/PROCESS.md) can begin. We
 are following this process to ensure all involved parties are in agreement before any party begins coding the proposed
 implementation. If you would like to see examples of how these are written, please refer to the
-current [ADRs](https://github.com/cosmos/cosmos-sdk/tree/master/docs/architecture).
+current [ADRs](./docs/architecture/).
 
 ## Development Procedure
 
@@ -69,9 +65,9 @@ current [ADRs](https://github.com/cosmos/cosmos-sdk/tree/master/docs/architectur
 - `master` must never fail `make lint test test-race`.
 - No `--force` onto `master` (except when reverting a broken commit, which should seldom happen).
 - Create a branch to start a wok:
-    - Fork the repo (core developers must create a branch directly in the Persistence SDK repo), branch from the HEAD
+    - Fork the repo (core developers must create a branch directly in the AssetMantle modules repo), branch from the HEAD
       of `master`, make some commits, and submit a PR to `master`.
-    - For core developers working within the `cosmos-sdk` repo, follow branch name conventions to ensure a clear
+    - For core developers working within the `modules` repo, follow branch name conventions to ensure a clear
       ownership of branches: `{moniker}/{issue#}-branch-name`.
     - See [Branching Model](#branching-model-and-release) for more details.
 - Be sure to run `make format` before every commit. The easiest way to do this is have your editor run it for you upon
@@ -84,7 +80,7 @@ Code is merged into master through pull request procedure.
 
 ### Testing
 
-Tests can be executed by running `make test` at the top level of the Persistence SDK repository.
+Tests can be executed by running `make test` at the top level of the AssetMantle modules repository.
 
 ### Pull Requests
 
@@ -95,7 +91,7 @@ Before submitting a pull request:
 
 Then:
 
-1. If you have something to show, **start with a `Draft` PR**. It's good to have early validation of your work and we
+1. If you have something to show, **start with a `Draft` PR**. It's good to have early validation of your work, and we
    highly recommend this practice. A Draft PR also indicates to the community that the work is in progress. Draft PRs
    also helps the core team provide early feedback and ensure the work is in the right direction.
 2. When the code is complete, change your PR from `Draft` to `Ready for Review`.
@@ -159,7 +155,7 @@ their handle next to specific items. In addition, use the following review expla
 
 ### Updating Documentation
 
-If you open a PR on the Persistence SDK, it is mandatory to update the relevant documentation in `/docs`.
+If you open a PR on the AssetMantle modules, it is mandatory to update the relevant documentation in `/docs`.
 
 - If your change relates to the core SDK (baseapp, store, ...), be sure to update the content in `docs/basics/`
   , `docs/core/` and/or `docs/building-modules/` folders.
@@ -173,7 +169,7 @@ When writing documentation, follow the [Documentation Writing Guidelines](./docs
 
 We use [Go Modules](https://github.com/golang/go/wiki/Modules) to manage dependency versions.
 
-The master branch of every Cosmos repository should just build with `go get`, which means they should be kept up-to-date
+The master branch of every modules repository should just build with `go get`, which means they should be kept up-to-date
 with their dependencies, so we can get away with telling people they can just `go get` our software.
 
 Since some dependencies are not under our control, a third party may break our build, in which case we can fall back
@@ -182,7 +178,7 @@ on `go mod tidy -v`.
 ## Protobuf
 
 We use [Protocol Buffers](https://developers.google.com/protocol-buffers) along
-with [gogoproto](https://github.com/gogo/protobuf) to generate code for use in Persistence SDK.
+with [gogoproto](https://github.com/gogo/protobuf) to generate code for use in AssetMantle modules.
 
 For deterministic behavior around Protobuf tooling, everything is containerized using Docker. Make sure to have Docker
 installed on your machine, or head to [Docker's website](https://docs.docker.com/get-docker/) to install it.
@@ -215,13 +211,13 @@ For example, in vscode your `.vscode/settings.json` should look like:
 ## Branching Model and Release
 
 User-facing repos should adhere to the trunk based development branching model: https://trunkbaseddevelopment.com/. User
-branches should start with a user name, example: `{moniker}/{issue#}-branch-name`.
+branches should start with a username, example: `{moniker}/{issue#}-branch-name`.
 
-The Persistence SDK repository is
+The AssetMantle modules repository is
 a [multi Go module](https://github.com/golang/go/wiki/Modules#is-it-possible-to-add-a-module-to-a-multi-module-repository)
 repository. It means that we have more than one Go module in a single repository.
 
-The Persistence SDK utilizes [semantic versioning](https://semver.org/).
+The AssetMantle modules utilizes [semantic versioning](https://semver.org/).
 
 ### PR Targeting
 
@@ -244,7 +240,7 @@ code owners is as follows: On a bi-monthly basis (or more frequently if agreeabl
 privately convene to discuss potential new candidates as well as the potential for existing code-owners to exit or "pass
 on the torch". This private meeting is to be a held as a phone/video meeting.
 
-Subsequently after the meeting, and pending final approval from the ICF, one of the existing code owners should open a
+Subsequently, after the meeting, and pending final approval from the ICF, one of the existing code owners should open a
 PR modifying the `CODEOWNERS` file. The other code owners should then all approve this PR to publicly display their
 support.
 
@@ -264,18 +260,18 @@ metric. Serving as a code owner is a symbol of great trust from the community of
 
 ## Concept & Feature Approval Process
 
-The process for how Persistence SDK maintainers take features and ADRs from concept to release is broken up into three
+The process for how AssetMantle modules maintainers take features and ADRs from concept to release is broken up into three
 distinct stages: **Strategy Discovery**, **Concept Approval**, and
 **Implementation & Release Approval**
 
 ### Strategy Discovery
 
-* Develop long term priorities, strategy and roadmap for the Persistence SDK
+* Develop long term priorities, strategy and roadmap for the AssetMantle modules
 * Release committee not yet defined as there is already a roadmap that can be used for the time being
 
 ### Concept Approval
 
-* Architecture Decision Records (ADRs) may be proposed by any contributors or maintainers of the Persistence SDK, and
+* Architecture Decision Records (ADRs) may be proposed by any contributors or maintainers of the AssetMantle modules, and
   should follow the guidelines outlined in the
   [ADR Creation Process](https://github.com/AssetMantle/modules/blob/master/docs/architecture/PROCESS.md)
 * After proposal, a time bound period for Request for Comment (RFC) on ADRs commences
