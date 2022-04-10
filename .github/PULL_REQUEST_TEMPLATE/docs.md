@@ -15,7 +15,7 @@ please add links to any relevant follow up issues.*
 I have...
 
 - [ ] included the correct `docs:` prefix in the PR title
-- [ ] targeted the correct branch (see [PR Targeting](https://github.com/assetmantleone/modules/blob/master/CONTRIBUTING.md#pr-targeting))
+- [ ] targeted the correct branch (see [PR Targeting](https://github.com/AssetMantle/modules/blob/master/CONTRIBUTING.md#pr-targeting))
 - [ ] provided a link to the relevant issue or specification
 - [ ] followed the [documentation writing guidelines](../../docs/DOC_WRITING_GUIDELINES.md)
 - [ ] reviewed "Files changed" and left comments if necessary
