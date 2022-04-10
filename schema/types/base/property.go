@@ -6,6 +6,7 @@ package base
 import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -30,6 +31,10 @@ func (property property) GetType() types.ID {
 }
 func (property property) GetHash() types.ID {
 	return property.DataID.GetHash()
+}
+func (property property) Compare(listable traits.Listable) int {
+	// TODO implement me
+	panic("implement me")
 }
 
 func NewProperty(key types.ID, data types.Data) types.Property {
