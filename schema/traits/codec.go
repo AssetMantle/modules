@@ -10,6 +10,6 @@ import (
 )
 
 func RegisterCodec(codec *codec.Codec) {
-	codec.RegisterInterface((*qualified.HasImmutables)(nil), nil)
-	codec.RegisterInterface((*qualified.HasMutables)(nil), nil)
+	codec.RegisterInterface((*qualified.Immutables)(nil), nil)
+	codec.RegisterInterface((*qualified.Mutables)(nil), nil)
 }

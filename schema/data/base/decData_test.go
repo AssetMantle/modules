@@ -9,6 +9,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
+	"github.com/AssetMantle/modules/constants/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
@@ -22,7 +23,7 @@ func Test_DecData(t *testing.T) {
 	require.Equal(t, decValue.String(), testDecData.String())
 	require.Equal(t, baseIDs.NewID(meta.Hash(decValue.String())), testDecData.GenerateHash())
 	require.Equal(t, baseIDs.NewID(""), testDecData2.GenerateHash())
-	require.Equal(t, DecDataID, testDecData.GetType())
+	require.Equal(t, ids.DecDataID, testDecData.GetType())
 
 	data, err := ReadDecData("")
 	require.Equal(t, decData{Value: sdkTypes.ZeroDec()}, data)

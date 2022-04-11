@@ -9,23 +9,22 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	baseTypes "github.com/AssetMantle/modules/schema/data/base"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/constants/properties"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	baseTypes "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
-	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type identity struct {
-	qualifiedMappables.Document //nolint:govet
+	baseQualified.Document //nolint:govet
 }
 
 var _ mappables.Identity = (*identity)(nil)
@@ -75,13 +74,13 @@ func (identity) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, module.Name, identity{})
 }
 
-func NewIdentity(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Identity {
+func NewIdentity(id types.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Identity {
 	return identity{
-		Document: qualifiedMappables.Document{
+		Document: baseQualified.Document{
 			ID: id,
 			// TODO Add classificationID
-			HasImmutables: baseQualified.HasImmutables{Properties: immutableProperties},
-			HasMutables:   baseQualified.HasMutables{Properties: mutableProperties},
+			Immutables: baseQualified.Immutables{Properties: immutableProperties},
+			Mutables:   baseQualified.Mutables{Properties: mutableProperties},
 		},
 	}
 }

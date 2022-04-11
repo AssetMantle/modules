@@ -3,9 +3,12 @@
 
 package mappables
 
-import "github.com/AssetMantle/modules/schema/helpers"
+import (
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/qualified"
+)
 
 type Classification interface {
-	Document
+	qualified.Document
 	helpers.Mappable
 }

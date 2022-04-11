@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
@@ -33,11 +34,11 @@ func Test_Make_Message(t *testing.T) {
 	makerID := baseIDs.NewID("makerID")
 	rateID := baseIDs.NewID("0.11")
 	creationId := baseIDs.NewID("100")
-	immutableProperties, err := baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := baseTypes.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := baseTypes.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := base.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	orderID := baseIDs.NewID(key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationId, makerID, immutableProperties).String())
 

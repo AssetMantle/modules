@@ -11,7 +11,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -19,14 +19,14 @@ import (
 func Test_Maintainer_Methods(t *testing.T) {
 	classificationID := baseIDs.NewID("classificationID")
 	identityID := baseIDs.NewID("identityID")
-	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID"), base.NewStringData("ImmutableData")))
-	mutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID"), base.NewStringData("MutableData")))
+	immutableProperties := baseLists.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID"), base.NewStringData("ImmutableData")))
+	mutableProperties := baseLists.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID"), base.NewStringData("MutableData")))
 
 	testMaintainerID := key.NewMaintainerID(classificationID, identityID)
 
 	testMaintainer := NewMaintainer(testMaintainerID, nil, mutableProperties).(maintainer)
 
-	require.Equal(t, maintainer{Document: qualifiedMappables.Document{ID: testMaintainerID, ClassificationID: classificationID, HasImmutables: baseQualified.HasImmutables{Properties: immutableProperties}, HasMutables: baseQualified.HasMutables{Properties: mutableProperties}}}, testMaintainer)
+	require.Equal(t, maintainer{Document: baseQualified.Document{ID: testMaintainerID, ClassificationID: classificationID, Immutables: baseQualified.Immutables{Properties: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}, testMaintainer)
 	require.Equal(t, testMaintainerID, testMaintainer.GetID())
 	require.Equal(t, classificationID, testMaintainer.GetClassificationID())
 	require.Equal(t, identityID, testMaintainer.GetIdentityID())

@@ -10,16 +10,17 @@ import (
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
 )
 
-func Test_HasImmutables(t *testing.T) {
+func Test_Immutables(t *testing.T) {
 	testProperty := baseTypes.NewProperty(baseIDs.NewID("ID"), baseData.NewHeightData(baseTypes.NewHeight(123)))
-	testImmutables := HasImmutables{baseTypes.NewProperties(testProperty)}
+	testImmutables := Immutables{base.NewPropertyList(testProperty)}
 
-	require.Equal(t, HasImmutables{Properties: baseTypes.NewProperties(testProperty)}, testImmutables)
-	require.Equal(t, baseTypes.NewProperties(testProperty), testImmutables.GetImmutableProperties())
+	require.Equal(t, Immutables{Properties: base.NewPropertyList(testProperty)}, testImmutables)
+	require.Equal(t, base.NewPropertyList(testProperty), testImmutables.GetImmutablePropertyList())
 	require.Equal(t, baseIDs.NewID(metaUtilities.Hash([]string{testProperty.GetHash().String()}...)), testImmutables.GenerateHashID())
-	require.Equal(t, baseIDs.NewID(""), HasImmutables{baseTypes.NewProperties()}.GenerateHashID())
+	require.Equal(t, baseIDs.NewID(""), Immutables{base.NewPropertyList()}.GenerateHashID())
 }

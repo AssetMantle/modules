@@ -28,8 +28,8 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists/base"
 )
 
 type TestKeepers struct {
@@ -82,33 +82,33 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	immutableMetaProperties, err := baseTypes.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 
-	var immutableProperties types.Properties
-	immutableProperties, err = baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	var immutableProperties lists.PropertyList
+	immutableProperties, err = base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 
-	var mutableMetaProperties types.MetaProperties
-	mutableMetaProperties, err = baseTypes.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	var mutableMetaProperties lists.MetaPropertyList
+	mutableMetaProperties, err = base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 
-	var mutableProperties types.Properties
-	mutableProperties, err = baseTypes.ReadProperties("defaultMutable1:S|defaultMutable1")
+	var mutableProperties lists.PropertyList
+	mutableProperties, err = base.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 
-	var scrubMockErrorProperties types.MetaProperties
-	scrubMockErrorProperties, err = baseTypes.ReadMetaProperties("scrubError:S|mockError")
+	var scrubMockErrorProperties lists.MetaPropertyList
+	scrubMockErrorProperties, err = base.ReadMetaProperties("scrubError:S|mockError")
 	require.Equal(t, nil, err)
 
-	var conformMockErrorProperties types.MetaProperties
-	conformMockErrorProperties, err = baseTypes.ReadMetaProperties("conformError:S|mockError")
+	var conformMockErrorProperties lists.MetaPropertyList
+	conformMockErrorProperties, err = base.ReadMetaProperties("conformError:S|mockError")
 	require.Equal(t, nil, err)
 
 	defaultAddr := sdkTypes.AccAddress("addr")
 	defaultClassificationID := baseIDs.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
 	defaultIdentityID := key.NewIdentityID(defaultClassificationID, immutableProperties)
-	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(defaultIdentityID, baseTypes.NewProperties(), baseTypes.NewProperties()))
+	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(defaultIdentityID, base.NewPropertyList(), base.NewPropertyList()))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

@@ -11,14 +11,18 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func TestFromID(t *testing.T) {
 	classificationID := baseIDs.NewID("classificationID")
-	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	immutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 	newAssetID := NewAssetID(classificationID, immutableProperties)
-	require.Equal(t, assetIDFromInterface(newAssetID), FromID(newAssetID))
+
+	assetID1, err := assetIDFromInterface(newAssetID)
+	require.Equal(t, assetID1, FromID(newAssetID))
+	require.Equal(t, nil, err)
 
 	id := baseIDs.NewID("")
 	testAssetID := assetID{ClassificationID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}
@@ -33,8 +37,10 @@ func TestFromID(t *testing.T) {
 
 func TestReadClassificationID(t *testing.T) {
 	classificationID := baseIDs.NewID("classificationID")
-	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
-	assetID := NewAssetID(classificationID, immutableProperties)
+	immutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	assetID1 := NewAssetID(classificationID, immutableProperties)
 
-	require.Equal(t, assetIDFromInterface(assetID).ClassificationID, ReadClassificationID(assetID))
+	assetID2, err := assetIDFromInterface(assetID1)
+	require.Equal(t, assetID2.ClassificationID, ReadClassificationID(assetID1))
+	require.Equal(t, nil, err)
 }

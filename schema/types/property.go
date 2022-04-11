@@ -3,11 +3,16 @@
 
 package types
 
-// TODO do sortable interface
+import (
+	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/traits"
+)
+
 type Property interface {
-	GetID() ID
-	GetDataID() ID
+	GetID() ids.PropertyID
+	GetDataID() ids.DataID
 	GetKey() ID
 	GetType() ID
 	GetHash() ID
+	traits.Listable
 }

@@ -53,7 +53,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		newTransactionResponse(Error)
 	}
 
-	if takerIDProperty := metaProperties.Get(ids.TakerIDProperty); takerIDProperty != nil {
+	if takerIDProperty := metaProperties.GetMetaProperty(ids.TakerIDProperty); takerIDProperty != nil {
 		takerID := takerIDProperty.GetData().(data.IDData).Get()
 		if takerID.Compare(baseIDs.NewID("")) != 0 && takerID.Compare(message.FromID) != 0 {
 			return newTransactionResponse(errors.NotAuthorized)
@@ -62,7 +62,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	exchangeRate := order.(mappables.Order).GetExchangeRate().GetData().(data.DecData).Get()
 
-	makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplitProperty)
+	makerOwnableSplitProperty := metaProperties.GetMetaProperty(ids.MakerOwnableSplitProperty)
 	if makerOwnableSplitProperty == nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}
@@ -95,7 +95,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return newTransactionResponse(Error)
 		}
 
-		order = mappable.NewOrder(orderID, order.(mappables.Order).GetImmutableProperties(), order.(mappables.Order).GetImmutableProperties().Mutate(mutableProperties.GetList()...))
+		order = mappable.NewOrder(orderID, order.(mappables.Order).GetImmutablePropertyList(), order.(mappables.Order).GetImmutablePropertyList().Mutate(mutableProperties.GetList()...))
 		orders.Mutate(order)
 	}
 

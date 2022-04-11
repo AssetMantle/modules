@@ -19,7 +19,7 @@ func TestNewTransactions(t *testing.T) {
 	require.Equal(t, nil, Transactions1.Get(""))
 	require.Equal(t, "", Transactions2.Get("").GetName())
 
-	// GetList
+	// Get
 	require.Equal(t, []helpers.Transaction(nil), Transactions1.GetList())
 	require.Equal(t, []helpers.Transaction{transaction{}}, Transactions2.GetList())
 }

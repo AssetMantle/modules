@@ -5,6 +5,7 @@ package mappables
 
 import (
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
@@ -13,6 +14,6 @@ type Asset interface {
 	traits.Lockable
 	traits.Splittable
 
-	Document
+	qualified.Document
 	helpers.Mappable
 }

@@ -7,13 +7,14 @@ import (
 	"github.com/asaskevich/govalidator"
 
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
 type auxiliaryRequest struct {
-	ClassificationID     types.ID         `json:"classificationID" valid:"required~required field classificationID missing"`
-	IdentityID           types.ID         `json:"identityID" valid:"required~required field identityID missing"`
-	MaintainedProperties types.Properties `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
+	ClassificationID     types.ID           `json:"classificationID" valid:"required~required field classificationID missing"`
+	IdentityID           types.ID           `json:"identityID" valid:"required~required field identityID missing"`
+	MaintainedProperties lists.PropertyList `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -32,7 +33,7 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(classificationID types.ID, identityID types.ID, maintainedProperties types.Properties) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(classificationID types.ID, identityID types.ID, maintainedProperties lists.PropertyList) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		ClassificationID:     classificationID,
 		IdentityID:           identityID,

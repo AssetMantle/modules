@@ -5,6 +5,7 @@ package mappables
 
 import (
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -23,6 +24,6 @@ type Order interface {
 	GetExpiry() types.Property
 	GetMakerOwnableSplit() types.Property
 
-	Document
+	qualified.Document
 	helpers.Mappable
 }

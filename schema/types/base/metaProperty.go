@@ -10,6 +10,8 @@ import (
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -20,10 +22,16 @@ type metaProperty struct {
 
 var _ types.MetaProperty = (*metaProperty)(nil)
 
-func (metaProperty metaProperty) GetID() types.ID {
+func (metaProperty metaProperty) GetData() types.Data {
+	return metaProperty.Data
+}
+func (metaProperty metaProperty) RemoveData() types.Property {
+	return NewProperty(metaProperty.GetKey(), metaProperty.GetData())
+}
+func (metaProperty metaProperty) GetID() ids.PropertyID {
 	return metaProperty.ID
 }
-func (metaProperty metaProperty) GetDataID() types.ID {
+func (metaProperty metaProperty) GetDataID() ids.DataID {
 	return metaProperty.Data.GetID()
 }
 func (metaProperty metaProperty) GetKey() types.ID {
@@ -35,13 +43,16 @@ func (metaProperty metaProperty) GetType() types.ID {
 func (metaProperty metaProperty) GetHash() types.ID {
 	return metaProperty.Data.GenerateHash()
 }
-func (metaProperty metaProperty) GetData() types.Data {
-	return metaProperty.Data
-}
-func (metaProperty metaProperty) RemoveData() types.Property {
-	return NewProperty(metaProperty.GetKey(), metaProperty.GetData())
+func (metaProperty metaProperty) Compare(listable traits.Listable) int {
+	// TODO implement me
+	panic("implement me")
 }
 
+func NewMetaPropertyFromID(propertyID ids.PropertyID) types.MetaProperty {
+	return metaProperty{
+		ID: propertyID,
+	}
+}
 func NewMetaProperty(key types.ID, data types.Data) types.MetaProperty {
 	return metaProperty{
 		ID:   baseIDs.NewPropertyID(key, data.GetType()),
@@ -52,7 +63,7 @@ func NewMetaProperty(key types.ID, data types.Data) types.MetaProperty {
 func ReadMetaProperty(metaPropertyString string) (types.MetaProperty, error) {
 	propertyIDAndData := strings.Split(metaPropertyString, constants.PropertyIDAndDataSeparator)
 	if len(propertyIDAndData) == 2 && propertyIDAndData[0] != "" {
-		data, Error := ReadData(propertyIDAndData[1])
+		data, Error := base.ReadData(propertyIDAndData[1])
 		if Error != nil {
 			return nil, Error
 		}

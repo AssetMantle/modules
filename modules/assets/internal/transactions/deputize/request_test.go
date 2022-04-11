@@ -19,8 +19,8 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/lists"
+	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
 )
 
 func Test_Deputize_Request(t *testing.T) {
@@ -43,7 +43,7 @@ func Test_Deputize_Request(t *testing.T) {
 
 	const maintainedProperty = "maintainedProperties:S|maintainedProperties"
 
-	var maintainedProperties types.Properties
+	var maintainedProperties lists.PropertyList
 	maintainedProperties, err = baseTypes.ReadProperties(maintainedProperty)
 	require.Equal(t, nil, err)
 

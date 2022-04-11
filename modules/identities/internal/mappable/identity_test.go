@@ -15,7 +15,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/mappables/qualified"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/random"
@@ -24,16 +24,16 @@ import (
 func Test_Identity_Methods(t *testing.T) {
 
 	classificationID := baseIDs.NewID("classificationID")
-	defaultImmutableProperties, _ := baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	defaultImmutableProperties, _ := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	testIdentityID := key.NewIdentityID(classificationID, defaultImmutableProperties)
-	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
-	mutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID2"), baseData.NewStringData("MutableData")))
+	immutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	mutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID2"), baseData.NewStringData("MutableData")))
 
 	testIdentity := NewIdentity(testIdentityID, immutableProperties, mutableProperties)
-	require.Equal(t, testIdentity, identity{Document: qualified.Document{ID: testIdentityID, HasImmutables: baseQualified.HasImmutables{Properties: immutableProperties}, HasMutables: baseQualified.HasMutables{Properties: mutableProperties}}})
+	require.Equal(t, testIdentity, identity{Document: baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{Properties: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}})
 	require.Equal(t, testIdentity.(identity).GetID(), testIdentityID)
-	require.Equal(t, testIdentity.GetImmutableProperties(), immutableProperties)
-	require.Equal(t, testIdentity.GetMutableProperties(), mutableProperties)
+	require.Equal(t, testIdentity.GetImmutablePropertyList(), immutableProperties)
+	require.Equal(t, testIdentity.GetMutablePropertyList(), mutableProperties)
 	require.Equal(t, testIdentity.GetKey(), testIdentityID)
 }
 
@@ -44,7 +44,7 @@ func Test_identity_IsProvisioned(t *testing.T) {
 	}
 
 	type fields struct {
-		Document qualified.Document
+		Document baseQualified.Document
 	}
 	type args struct {
 		address types.AccAddress
@@ -57,66 +57,66 @@ func Test_identity_IsProvisioned(t *testing.T) {
 	}{
 		{
 			name: "empty authentication",
-			fields: fields{Document: qualified.Document{
+			fields: fields{Document: baseQualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    baseQualified.HasImmutables{Properties: baseTypes.NewProperties(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData()))},
-				HasMutables:      baseQualified.HasMutables{},
+				Immutables:       baseQualified.Immutables{Properties: base.NewPropertyList(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData()))},
+				Mutables:         baseQualified.Mutables{},
 			}},
 			args: args{address: randomAccAddress[0]},
 			want: false,
 		},
 		{
 			name: "no authentication",
-			fields: fields{Document: qualified.Document{
+			fields: fields{Document: baseQualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    baseQualified.HasImmutables{},
-				HasMutables:      baseQualified.HasMutables{},
+				Immutables:       baseQualified.Immutables{},
+				Mutables:         baseQualified.Mutables{},
 			}},
 			args: args{address: randomAccAddress[0]},
 			want: false,
 		},
 		{
 			name: "one authentication provisioned positive match",
-			fields: fields{Document: qualified.Document{
+			fields: fields{Document: baseQualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    baseQualified.HasImmutables{Properties: baseTypes.NewProperties(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]))))},
-				HasMutables:      baseQualified.HasMutables{},
+				Immutables:       baseQualified.Immutables{Properties: base.NewPropertyList(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]))))},
+				Mutables:         baseQualified.Mutables{},
 			}},
 			args: args{address: randomAccAddress[0]},
 			want: true,
 		},
 		{
 			name: "one authentication provisioned negative match",
-			fields: fields{Document: qualified.Document{
+			fields: fields{Document: baseQualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    baseQualified.HasImmutables{Properties: baseTypes.NewProperties(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]))))},
-				HasMutables:      baseQualified.HasMutables{},
+				Immutables:       baseQualified.Immutables{Properties: base.NewPropertyList(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]))))},
+				Mutables:         baseQualified.Mutables{},
 			}},
 			args: args{address: randomAccAddress[1]},
 			want: false,
 		},
 		{
 			name: "multiple authentication provisioned positive match",
-			fields: fields{Document: qualified.Document{
+			fields: fields{Document: baseQualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    baseQualified.HasImmutables{Properties: baseTypes.NewProperties(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]), baseData.NewAccAddressData(randomAccAddress[1]), baseData.NewAccAddressData(randomAccAddress[2]), baseData.NewAccAddressData(randomAccAddress[3]))))},
-				HasMutables:      baseQualified.HasMutables{},
+				Immutables:       baseQualified.Immutables{Properties: base.NewPropertyList(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]), baseData.NewAccAddressData(randomAccAddress[1]), baseData.NewAccAddressData(randomAccAddress[2]), baseData.NewAccAddressData(randomAccAddress[3]))))},
+				Mutables:         baseQualified.Mutables{},
 			}},
 			args: args{address: randomAccAddress[3]},
 			want: true,
 		},
 		{
 			name: "multiple authentication provisioned negative match",
-			fields: fields{Document: qualified.Document{
+			fields: fields{Document: baseQualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				HasImmutables:    baseQualified.HasImmutables{Properties: baseTypes.NewProperties(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]), baseData.NewAccAddressData(randomAccAddress[1]), baseData.NewAccAddressData(randomAccAddress[2]), baseData.NewAccAddressData(randomAccAddress[3]))))},
-				HasMutables:      baseQualified.HasMutables{},
+				Immutables:       baseQualified.Immutables{Properties: base.NewPropertyList(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]), baseData.NewAccAddressData(randomAccAddress[1]), baseData.NewAccAddressData(randomAccAddress[2]), baseData.NewAccAddressData(randomAccAddress[3]))))},
+				Mutables:         baseQualified.Mutables{},
 			}},
 			args: args{address: randomAccAddress[4]},
 			want: false,

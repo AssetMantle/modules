@@ -9,13 +9,14 @@
 package qualified
 
 import (
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
-type HasMutables interface {
-	// GetMutableProperties return the mutable properties object
+type Immutables interface {
+	// GetImmutablePropertyList return the immutable properties object
 	// does not return nil
-	GetMutableProperties() types.Properties
+	GetImmutablePropertyList() lists.PropertyList
 
-	Mutate(propertyList ...types.Property) HasMutables
+	GenerateHashID() types.ID
 }

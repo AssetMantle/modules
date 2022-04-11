@@ -7,6 +7,7 @@
 package qualified
 
 import (
+	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -16,8 +17,8 @@ type Document interface {
 	GetClassificationID() types.ID
 	// GetProperty returns property from a document searching in both Mutables and Immutables
 	// * Returns nil if property is not found
-	GetProperty(types.ID) types.Property
+	GetProperty(ids.PropertyID) types.Property
 
-	HasImmutables
-	HasMutables
+	Immutables
+	Mutables
 }

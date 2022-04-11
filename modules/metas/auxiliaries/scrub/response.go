@@ -6,13 +6,13 @@ package scrub
 import (
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/lists"
 )
 
 type auxiliaryResponse struct {
-	Success    bool             `json:"success"`
-	Error      error            `json:"error"`
-	Properties types.Properties `json:"properties"`
+	Success    bool               `json:"success"`
+	Error      error              `json:"error"`
+	Properties lists.PropertyList `json:"properties"`
 }
 
 var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
@@ -23,7 +23,7 @@ func (auxiliaryResponse auxiliaryResponse) IsSuccessful() bool {
 func (auxiliaryResponse auxiliaryResponse) GetError() error {
 	return auxiliaryResponse.Error
 }
-func newAuxiliaryResponse(properties types.Properties, error error) helpers.AuxiliaryResponse {
+func newAuxiliaryResponse(properties lists.PropertyList, error error) helpers.AuxiliaryResponse {
 	if error != nil {
 		return auxiliaryResponse{
 			Success: false,
@@ -37,7 +37,7 @@ func newAuxiliaryResponse(properties types.Properties, error error) helpers.Auxi
 	}
 }
 
-func GetPropertiesFromResponse(response helpers.AuxiliaryResponse) (types.Properties, error) {
+func GetPropertiesFromResponse(response helpers.AuxiliaryResponse) (lists.PropertyList, error) {
 	switch value := response.(type) {
 	case auxiliaryResponse:
 		if value.IsSuccessful() {

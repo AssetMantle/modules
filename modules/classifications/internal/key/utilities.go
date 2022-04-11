@@ -6,6 +6,7 @@ package key
 import (
 	"strings"
 
+	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
@@ -24,19 +25,22 @@ func readClassificationID(classificationIDString string) types.ID {
 
 	return classificationID{ChainID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}
 }
-func classificationIDFromInterface(i interface{}) classificationID {
+func classificationIDFromInterface(i interface{}) (classificationID, error) {
 	switch value := i.(type) {
 	case classificationID:
-		return value
+		return value, nil
 	case types.ID:
 		// TODO remove this use case
 		return classificationIDFromInterface(readClassificationID(value.String()))
 	default:
-		// TODO remove panic and introduce error
-		panic(i)
+		return classificationID{}, errors.MetaDataError
 	}
 }
 
 func FromID(id types.ID) helpers.Key {
-	return classificationIDFromInterface(id)
+	if classificationID, err := classificationIDFromInterface(id); err != nil {
+		return classificationID
+	} else {
+		panic(classificationID)
+	}
 }

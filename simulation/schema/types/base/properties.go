@@ -7,11 +7,12 @@ import (
 	"math"
 	"math/rand"
 
+	"github.com/AssetMantle/modules/schema/lists"
+	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
-func GenerateRandomProperties(r *rand.Rand) types.Properties {
+func GenerateRandomProperties(r *rand.Rand) lists.PropertyList {
 	randomPositiveInt := int(math.Abs(float64(r.Int()))) % 11
 
 	propertyList := make([]types.Property, randomPositiveInt)
@@ -20,5 +21,5 @@ func GenerateRandomProperties(r *rand.Rand) types.Properties {
 		propertyList[i] = GenerateRandomProperty(r)
 	}
 
-	return baseTypes.NewProperties(propertyList...)
+	return baseTypes.NewPropertyList(propertyList...)
 }

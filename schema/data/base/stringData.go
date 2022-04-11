@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/AssetMantle/modules/constants/errors"
+	idsConstants "github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -35,7 +36,7 @@ func (stringData stringData) String() string {
 	return stringData.Value
 }
 func (stringData stringData) GetType() types.ID {
-	return StringDataID
+	return idsConstants.StringDataID
 }
 func (stringData stringData) ZeroValue() types.Data {
 	return NewStringData("")

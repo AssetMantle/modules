@@ -7,11 +7,12 @@ import (
 	"reflect"
 	"testing"
 
+	tendermintDB "github.com/tendermint/tm-db"
+
 	"github.com/AssetMantle/modules/constants/test"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
-
-	tendermintDB "github.com/tendermint/tm-db"
+	"github.com/AssetMantle/modules/schema/lists"
+	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -30,7 +31,6 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type TestKeepers struct {
@@ -84,11 +84,11 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
 
-	var maintainedProperties types.Properties
+	var maintainedProperties lists.PropertyList
 	maintainedProperties, err := baseTypes.ReadProperties("maintainedProperties:S|maintainedProperties")
 	require.Equal(t, nil, err)
 
-	var conformMockErrorProperties types.Properties
+	var conformMockErrorProperties lists.PropertyList
 	conformMockErrorProperties, err = baseTypes.ReadProperties("deputizeError:S|mockError")
 	require.Equal(t, nil, err)
 

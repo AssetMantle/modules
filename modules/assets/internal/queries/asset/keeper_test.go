@@ -23,8 +23,8 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/lists"
+	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
 )
 
 func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
@@ -73,7 +73,7 @@ func Test_Query_Keeper_Asset(t *testing.T) {
 	immutableProperties, err := baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 
-	var mutableProperties types.Properties
+	var mutableProperties lists.PropertyList
 	mutableProperties, err = baseTypes.ReadProperties("burn:S|100")
 	require.Equal(t, nil, err)
 

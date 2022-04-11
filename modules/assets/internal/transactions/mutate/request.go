@@ -16,7 +16,7 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -69,12 +69,12 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	mutableMetaProperties, err := baseTypes.ReadMetaProperties(transactionRequest.MutableMetaProperties)
+	mutableMetaProperties, err := base.ReadMetaProperties(transactionRequest.MutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
 
-	mutableProperties, err := baseTypes.ReadProperties(transactionRequest.MutableProperties)
+	mutableProperties, err := base.ReadProperties(transactionRequest.MutableProperties)
 	if err != nil {
 		return nil, err
 	}

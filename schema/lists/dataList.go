@@ -8,8 +8,7 @@ import (
 )
 
 type DataList interface {
-	GetList() []types.Data
 	Size() int
-
-	Search(types.Data) int
+	GetList() []types.Data
+	Search(data types.Data) (bool, int)
 }

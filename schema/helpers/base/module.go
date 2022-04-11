@@ -93,7 +93,7 @@ func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *m
 func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
 		Use:                        module.name,
-		Short:                      "Get root transaction command.",
+		Short:                      "GetProperty root transaction command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -113,7 +113,7 @@ func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 	rootQueryCommand := &cobra.Command{
 		Use:                        module.name,
-		Short:                      "Get root query command.",
+		Short:                      "GetProperty root query command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,

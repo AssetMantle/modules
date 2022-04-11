@@ -11,11 +11,10 @@ import (
 
 const moduleName = "types"
 
+// TODO pick module name programmatically
 func RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, height{})
-	codecUtilities.RegisterModuleConcrete(codec, moduleName, metaProperties{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, parameter{})
-	codecUtilities.RegisterModuleConcrete(codec, moduleName, properties{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, property{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, signature{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, signatures{})

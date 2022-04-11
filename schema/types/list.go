@@ -12,7 +12,7 @@ import (
 // * all methods are search and insertion complexity optimized
 type List interface {
 	// TODO add search and apply methods
-	GetList() []traits.Listable
+	Get() []traits.Listable
 	// Size
 	// * returns the number of elements in the list
 	Size() int
@@ -20,7 +20,8 @@ type List interface {
 	// Search
 	// * returns true and index of element if element is found
 	// * return false and index of insertion if element is not found
-	Search(traits.Listable) (found bool, index int)
+	Search(traits.Listable) (index int, found bool)
 	Add(...traits.Listable) List
 	Remove(...traits.Listable) List
+	Mutate(...traits.Listable) List
 }

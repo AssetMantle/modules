@@ -13,6 +13,7 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -22,24 +23,24 @@ func Test_OrderID_Methods(t *testing.T) {
 	makerOwnableID := baseIDs.NewID("makerOwnableID")
 	takerOwnableID := baseIDs.NewID("takerOwnableID")
 	makerID := baseIDs.NewID("makerID")
-	defaultImmutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	defaultImmutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 	rateID := baseIDs.NewID(sdkTypes.OneDec().String())
 	creationID := baseIDs.NewID("100")
-	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	immutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 
 	testOrderID := NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, makerID, immutableProperties).(orderID)
-	testOrderID2 := NewOrderID(classificationID, makerOwnableID, takerOwnableID, baseIDs.NewID(sdkTypes.MustNewDecFromStr("2.3").String()), baseIDs.NewID("creation"), makerID, baseTypes.NewProperties()).(orderID)
-	require.Equal(t, testOrderID, orderID{ClassificationID: classificationID, MakerOwnableID: makerOwnableID, TakerOwnableID: takerOwnableID, RateID: rateID, CreationID: creationID, MakerID: makerID, HashID: baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID()})
+	testOrderID2 := NewOrderID(classificationID, makerOwnableID, takerOwnableID, baseIDs.NewID(sdkTypes.MustNewDecFromStr("2.3").String()), baseIDs.NewID("creation"), makerID, base.NewPropertyList()).(orderID)
+	require.Equal(t, testOrderID, orderID{ClassificationID: classificationID, MakerOwnableID: makerOwnableID, TakerOwnableID: takerOwnableID, RateID: rateID, CreationID: creationID, MakerID: makerID, HashID: baseTraits.Immutables{Properties: immutableProperties}.GenerateHashID()})
 	require.Equal(t, true, testOrderID.Equals(testOrderID))
 	require.Equal(t, false, testOrderID.Compare(baseIDs.NewID("")) == 0)
-	require.Equal(t, strings.Join([]string{classificationID.String(), makerOwnableID.String(), takerOwnableID.String(), rateID.String(), creationID.String(), makerID.String(), baseTraits.HasImmutables{Properties: defaultImmutableProperties}.GenerateHashID().String()}, constants.SecondOrderCompositeIDSeparator), testOrderID.String())
+	require.Equal(t, strings.Join([]string{classificationID.String(), makerOwnableID.String(), takerOwnableID.String(), rateID.String(), creationID.String(), makerID.String(), baseTraits.Immutables{Properties: defaultImmutableProperties}.GenerateHashID().String()}, constants.SecondOrderCompositeIDSeparator), testOrderID.String())
 	require.Equal(t, false, testOrderID.IsPartial())
 	require.Equal(t, true, testOrderID.Equals(testOrderID))
 	require.Equal(t, false, testOrderID.Equals(testOrderID2))
 	require.Equal(t, false, testOrderID.Equals(FromID(baseIDs.NewID(""))))
 	require.Equal(t, testOrderID, FromID(testOrderID))
 	require.Equal(t, orderID{ClassificationID: baseIDs.NewID(""), MakerOwnableID: baseIDs.NewID(""), TakerOwnableID: baseIDs.NewID(""), RateID: baseIDs.NewID(""), CreationID: baseIDs.NewID(""), MakerID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}, FromID(baseIDs.NewID("")))
-	require.Equal(t, testOrderID, FromID(baseIDs.NewID(classificationID.String()+constants.SecondOrderCompositeIDSeparator+makerOwnableID.String()+constants.SecondOrderCompositeIDSeparator+takerOwnableID.String()+constants.SecondOrderCompositeIDSeparator+rateID.String()+constants.SecondOrderCompositeIDSeparator+creationID.String()+constants.SecondOrderCompositeIDSeparator+makerID.String()+constants.SecondOrderCompositeIDSeparator+baseTraits.HasImmutables{Properties: defaultImmutableProperties}.GenerateHashID().String())))
+	require.Equal(t, testOrderID, FromID(baseIDs.NewID(classificationID.String()+constants.SecondOrderCompositeIDSeparator+makerOwnableID.String()+constants.SecondOrderCompositeIDSeparator+takerOwnableID.String()+constants.SecondOrderCompositeIDSeparator+rateID.String()+constants.SecondOrderCompositeIDSeparator+creationID.String()+constants.SecondOrderCompositeIDSeparator+makerID.String()+constants.SecondOrderCompositeIDSeparator+baseTraits.Immutables{Properties: defaultImmutableProperties}.GenerateHashID().String())))
 	require.Equal(t, classificationID, ReadClassificationID(testOrderID))
 	require.Equal(t, makerOwnableID, ReadMakerOwnableID(testOrderID))
 	require.Equal(t, takerOwnableID, ReadTakerOwnableID(testOrderID))

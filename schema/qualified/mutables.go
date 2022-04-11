@@ -9,14 +9,14 @@
 package qualified
 
 import (
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
-// TODO rename to Immutables
-type HasImmutables interface {
-	// GetImmutableProperties return the immutable properties object
+type Mutables interface {
+	// GetMutablePropertyList return the mutable properties object
 	// does not return nil
-	GetImmutableProperties() types.Properties
+	GetMutablePropertyList() lists.PropertyList
 
-	GenerateHashID() types.ID
+	Mutate(propertyList ...types.Property) Mutables
 }

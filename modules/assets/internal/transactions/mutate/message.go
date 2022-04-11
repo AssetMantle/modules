@@ -12,17 +12,18 @@ import (
 	xprtErrors "github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 type message struct {
-	From                  sdkTypes.AccAddress  `json:"from" valid:"required~required field from missing"`
-	FromID                types.ID             `json:"fromID" valid:"required~required field fromID missing"`
-	AssetID               types.ID             `json:"assetID" valid:"required~required field assetID missing"`
-	MutableMetaProperties types.MetaProperties `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
-	MutableProperties     types.Properties     `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
+	From                  sdkTypes.AccAddress    `json:"from" valid:"required~required field from missing"`
+	FromID                types.ID               `json:"fromID" valid:"required~required field fromID missing"`
+	AssetID               types.ID               `json:"assetID" valid:"required~required field assetID missing"`
+	MutableMetaProperties lists.MetaPropertyList `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
+	MutableProperties     lists.PropertyList     `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
 }
 
 var _ helpers.Message = message{}
@@ -57,7 +58,7 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 func messagePrototype() helpers.Message {
 	return message{}
 }
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, assetID types.ID, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, assetID types.ID, mutableMetaProperties lists.MetaPropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return message{
 		From:                  from,
 		FromID:                fromID,

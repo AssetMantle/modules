@@ -15,8 +15,8 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/mappables/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
@@ -24,7 +24,7 @@ import (
 )
 
 type order struct {
-	qualified.Document //nolint:govet
+	baseQualified.Document //nolint:govet
 }
 
 var _ mappables.Order = (*order)(nil)
@@ -62,9 +62,9 @@ func (order order) GetExchangeRate() types.MetaProperty {
 	return baseTypes.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(decValue))
 }
 func (order order) GetTakerID() types.Property {
-	if takerID := order.HasImmutables.GetImmutableProperties().Get(ids.TakerIDProperty); takerID != nil {
+	if takerID := order.Immutables.GetImmutablePropertyList().GetProperty(ids.TakerIDProperty); takerID != nil {
 		return takerID
-	} else if takerID := order.HasMutables.GetMutableProperties().Get(ids.TakerIDProperty); takerID != nil {
+	} else if takerID := order.Mutables.GetMutablePropertyList().GetProperty(ids.TakerIDProperty); takerID != nil {
 		return takerID
 	} else {
 
@@ -92,13 +92,13 @@ func (order) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, module.Name, order{})
 }
 
-func NewOrder(orderID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Order {
+func NewOrder(orderID types.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Order {
 	return order{
-		Document: qualified.Document{
+		Document: baseQualified.Document{
 			ID:               orderID,
 			ClassificationID: key.ReadClassificationID(orderID),
-			HasImmutables:    baseQualified.HasImmutables{Properties: immutableProperties},
-			HasMutables:      baseQualified.HasMutables{Properties: mutableProperties},
+			Immutables:       baseQualified.Immutables{Properties: immutableProperties},
+			Mutables:         baseQualified.Mutables{Properties: mutableProperties},
 		},
 	}
 }

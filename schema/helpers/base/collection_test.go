@@ -37,7 +37,7 @@ func TestCollection(t *testing.T) {
 	// Fetch
 	require.Equal(t, []helpers.Mappable{base.NewMappable("test1", "value1")}, Collection.Fetch(base.NewKey("test1")).GetList())
 
-	// Get
+	// GetProperty
 	Collection.Get(base.NewKey("test1"))
 	require.Equal(t, nil, Collection.Get(base.NewKey("test1")))
 	require.Equal(t, base.NewMappable("test1", "value1"), Collection.Fetch(base.NewKey("test1")).Get(base.NewKey("test1")))
@@ -47,7 +47,7 @@ func TestCollection(t *testing.T) {
 	require.Equal(t, base.NewKey("test1"), Collection.Fetch(base.NewKey("test1")).GetKey())
 	require.Equal(t, base.NewKey("test4"), Collection.Fetch(base.NewKey("test4")).GetKey())
 
-	// GetList
+	// Get
 	Collection.GetList()
 	require.Equal(t, []helpers.Mappable{base.NewMappable("test1", "value1")}, Collection.Fetch(base.NewKey("test1")).GetList())
 

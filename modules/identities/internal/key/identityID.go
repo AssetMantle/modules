@@ -12,6 +12,7 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/lists"
 	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
@@ -56,9 +57,9 @@ func (identityID identityID) Equals(key helpers.Key) bool {
 }
 
 // TODO Pass Classification & then get Classification ID
-func NewIdentityID(classificationID types.ID, immutableProperties types.Properties) types.ID {
+func NewIdentityID(classificationID types.ID, immutableProperties lists.PropertyList) types.ID {
 	return identityID{
 		ClassificationID: classificationID,
-		HashID:           baseTraits.HasImmutables{Properties: immutableProperties}.GenerateHashID(),
+		HashID:           baseTraits.Immutables{Properties: immutableProperties}.GenerateHashID(),
 	}
 }

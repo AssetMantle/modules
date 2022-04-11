@@ -13,7 +13,7 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/mappables/qualified"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -39,12 +39,12 @@ func Test_Order_Methods(t *testing.T) {
 	expiryMutableProperty := baseTypes.NewProperty(ids.ExpiryProperty, baseData.NewStringData("expiryMutableProperty"))
 	makerOwnableSplitMutableProperty := baseTypes.NewProperty(ids.MakerOwnableSplitProperty, baseData.NewStringData("makerOwnableSplitMutableProperty"))
 
-	immutableProperties := baseTypes.NewProperties(takerIDImmutableProperty, exchangeRateImmutableProperty.RemoveData(), creationImmutableProperty.RemoveData(), expiryImmutableProperty, makerOwnableSplitImmutableProperty)
-	mutableProperties := baseTypes.NewProperties(takerIDMutableProperty, exchangeRateMutableProperty, creationMutableProperty, expiryMutableProperty, makerOwnableSplitMutableProperty)
+	immutableProperties := base.NewPropertyList(takerIDImmutableProperty, exchangeRateImmutableProperty.RemoveData(), creationImmutableProperty.RemoveData(), expiryImmutableProperty, makerOwnableSplitImmutableProperty)
+	mutableProperties := base.NewPropertyList(takerIDMutableProperty, exchangeRateMutableProperty, creationMutableProperty, expiryMutableProperty, makerOwnableSplitMutableProperty)
 	testOrderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, makerID, immutableProperties)
-	testOrder := NewOrder(testOrderID, immutableProperties, baseTypes.NewProperties()).(order)
-	testOrder2 := NewOrder(testOrderID, baseTypes.NewProperties(), mutableProperties).(order)
-	testOrder3 := NewOrder(testOrderID, baseTypes.NewProperties(), baseTypes.NewProperties()).(order)
+	testOrder := NewOrder(testOrderID, immutableProperties, base.NewPropertyList()).(order)
+	testOrder2 := NewOrder(testOrderID, base.NewPropertyList(), mutableProperties).(order)
+	testOrder3 := NewOrder(testOrderID, base.NewPropertyList(), base.NewPropertyList()).(order)
 
 	data, _ := baseData.ReadIDData("")
 	defaultTakerProperty := baseTypes.NewProperty(ids.TakerIDProperty, data)
@@ -56,7 +56,7 @@ func Test_Order_Methods(t *testing.T) {
 	data, _ = baseData.ReadDecData("")
 	defaultMakerOwnableSplitProperty := baseTypes.NewProperty(ids.MakerOwnableSplitProperty, data)
 
-	require.Equal(t, order{Document: qualified.Document{ID: testOrderID, HasImmutables: baseQualified.HasImmutables{Properties: immutableProperties}, HasMutables: baseQualified.HasMutables{Properties: baseTypes.NewProperties()}}}, testOrder)
+	require.Equal(t, order{Document: baseQualified.Document{ID: testOrderID, Immutables: baseQualified.Immutables{Properties: immutableProperties}, Mutables: baseQualified.Mutables{Properties: base.NewPropertyList()}}}, testOrder)
 	require.Equal(t, testOrderID, testOrder.GetID())
 	require.Equal(t, testOrderID, testOrder.GetKey())
 	require.Equal(t, classificationID, testOrder.GetClassificationID())
@@ -88,8 +88,8 @@ func Test_Order_Methods(t *testing.T) {
 	require.Equal(t, makerOwnableSplitMutableProperty, testOrder2.GetMakerOwnableSplit())
 	require.Equal(t, defaultMakerOwnableSplitProperty, testOrder3.GetMakerOwnableSplit())
 
-	require.Equal(t, immutableProperties, testOrder.GetImmutableProperties())
-	require.Equal(t, mutableProperties, testOrder2.GetMutableProperties())
+	require.Equal(t, immutableProperties, testOrder.GetImmutablePropertyList())
+	require.Equal(t, mutableProperties, testOrder2.GetMutablePropertyList())
 	require.Equal(t, testOrderID, testOrder2.GetID())
 	require.Equal(t, testOrderID, testOrder2.GetKey())
 

@@ -19,8 +19,8 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists/base"
 )
 
 func Test_Mint_Request(t *testing.T) {
@@ -41,19 +41,19 @@ func Test_Mint_Request(t *testing.T) {
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 
-	immutableMetaProperties, err := baseTypes.ReadMetaProperties(immutableMetaPropertiesString)
+	immutableMetaProperties, err := base.ReadMetaProperties(immutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 
-	var immutableProperties types.Properties
-	immutableProperties, err = baseTypes.ReadProperties(immutablePropertiesString)
+	var immutableProperties lists.PropertyList
+	immutableProperties, err = base.ReadProperties(immutablePropertiesString)
 	require.Equal(t, nil, err)
 
-	var mutableMetaProperties types.MetaProperties
-	mutableMetaProperties, err = baseTypes.ReadMetaProperties(mutableMetaPropertiesString)
+	var mutableMetaProperties lists.MetaPropertyList
+	mutableMetaProperties, err = base.ReadMetaProperties(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 
-	var mutableProperties types.Properties
-	mutableProperties, err = baseTypes.ReadProperties(mutablePropertiesString)
+	var mutableProperties lists.PropertyList
+	mutableProperties, err = base.ReadProperties(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

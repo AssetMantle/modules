@@ -9,6 +9,7 @@ import (
 
 	"github.com/AssetMantle/modules/constants/test"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -91,11 +92,11 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
-	immutableProperties, Error := baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, Error)
-	mutableProperties, Error := baseTypes.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, Error)
-	mutablePropertiesUpdated, Error := baseTypes.ReadMetaProperties("defaultMutable1:S|defaultMutable2")
+	mutablePropertiesUpdated, Error := base.ReadMetaProperties("defaultMutable1:S|defaultMutable2")
 	require.Equal(t, nil, Error)
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultAddr := sdkTypes.AccAddress("addr")
@@ -115,7 +116,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want := newTransactionResponse(nil)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, orderID,
 			updatedRate, makerOwnableSplit.Sub(sdkTypes.SmallestDec()), baseTypes.NewHeight(100),
-			baseTypes.NewMetaProperties(), mutablePropertiesUpdated.RemoveData())); !reflect.DeepEqual(got, want) {
+			base.NewMetaProperties(), mutablePropertiesUpdated.ToPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -125,7 +126,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want := newTransactionResponse(nil)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, orderID,
 			updatedRate, makerOwnableSplit.Add(sdkTypes.SmallestDec()), baseTypes.NewHeight(100),
-			baseTypes.NewMetaProperties(), mutablePropertiesUpdated.RemoveData())); !reflect.DeepEqual(got, want) {
+			base.NewMetaProperties(), mutablePropertiesUpdated.ToPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -134,7 +135,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want := newTransactionResponse(errors.EntityNotFound)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewID("orderID"),
 			updatedRate, makerOwnableSplit, baseTypes.NewHeight(100),
-			baseTypes.NewMetaProperties(), mutablePropertiesUpdated.RemoveData())); !reflect.DeepEqual(got, want) {
+			base.NewMetaProperties(), mutablePropertiesUpdated.ToPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -143,8 +144,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(test.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, orderID,
-			updatedRate, makerOwnableSplit, baseTypes.NewHeight(100), baseTypes.NewMetaProperties(),
-			mutablePropertiesUpdated.RemoveData())); !reflect.DeepEqual(got, want) {
+			updatedRate, makerOwnableSplit, baseTypes.NewHeight(100), base.NewMetaProperties(),
+			mutablePropertiesUpdated.ToPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -155,7 +156,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want := newTransactionResponse(test.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, orderID,
 			updatedRate, makerOwnableSplit.Sub(sdkTypes.SmallestDec()), baseTypes.NewHeight(100),
-			baseTypes.NewMetaProperties(), mutablePropertiesUpdated.RemoveData())); !reflect.DeepEqual(got, want) {
+			base.NewMetaProperties(), mutablePropertiesUpdated.ToPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -164,7 +165,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want := newTransactionResponse(test.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, orderID,
 			updatedRate, makerOwnableSplit.Add(sdkTypes.SmallestDec()), baseTypes.NewHeight(100),
-			baseTypes.NewMetaProperties(), mutablePropertiesUpdated.RemoveData())); !reflect.DeepEqual(got, want) {
+			base.NewMetaProperties(), mutablePropertiesUpdated.ToPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

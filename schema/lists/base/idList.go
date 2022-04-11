@@ -14,7 +14,7 @@ type idList struct {
 
 var _ lists.IDList = (*idList)(nil)
 
-func (idList idList) Get() []types.ID {
+func (idList idList) GetList() []types.ID {
 	// TODO write test case
 	returnIDList := make([]types.ID, idList.Size())
 

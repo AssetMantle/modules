@@ -11,9 +11,8 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
-	qualifiedMappables "github.com/AssetMantle/modules/schema/mappables/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -21,7 +20,7 @@ import (
 
 // TODO check structure
 type maintainer struct {
-	qualifiedMappables.Document
+	baseQualified.Document
 }
 
 var _ mappables.Maintainer = (*maintainer)(nil)
@@ -68,8 +67,8 @@ func (maintainer maintainer) CanRenumerateAsset() bool {
 
 // TODO
 func (maintainer maintainer) CanAddMaintainer() bool {
-	if property := maintainer.GetProperty(baseIDs.NewID(properties.Permissions.GetID().String())); property != nil {
-		// impl
+	if property := maintainer.GetProperty(properties.Permissions.GetID()); property != nil {
+		// TODO impl
 	}
 
 	return false
@@ -77,8 +76,8 @@ func (maintainer maintainer) CanAddMaintainer() bool {
 
 // TODO
 func (maintainer maintainer) CanRemoveMaintainer() bool {
-	if property := maintainer.GetProperty(baseIDs.NewID(properties.Permissions.GetID().String())); property != nil {
-		// impl
+	if property := maintainer.GetProperty(properties.Permissions.GetID()); property != nil {
+		// TODO impl
 	}
 
 	return false
@@ -109,12 +108,12 @@ func (maintainer) RegisterCodec(codec *codec.Codec) {
 }
 
 // TODO
-func NewMaintainer(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Maintainer {
+func NewMaintainer(id types.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Maintainer {
 	return maintainer{
-		Document: qualifiedMappables.Document{
-			ID:            id,
-			HasImmutables: baseQualified.HasImmutables{Properties: immutableProperties},
-			HasMutables:   baseQualified.HasMutables{Properties: mutableProperties},
+		Document: baseQualified.Document{
+			ID:         id,
+			Immutables: baseQualified.Immutables{Properties: immutableProperties},
+			Mutables:   baseQualified.Mutables{Properties: mutableProperties},
 		},
 	}
 }

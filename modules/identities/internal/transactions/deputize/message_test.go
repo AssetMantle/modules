@@ -11,7 +11,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
