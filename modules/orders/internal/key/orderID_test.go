@@ -13,6 +13,7 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -22,13 +23,13 @@ func Test_OrderID_Methods(t *testing.T) {
 	makerOwnableID := baseIDs.NewID("makerOwnableID")
 	takerOwnableID := baseIDs.NewID("takerOwnableID")
 	makerID := baseIDs.NewID("makerID")
-	defaultImmutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	defaultImmutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 	rateID := baseIDs.NewID(sdkTypes.OneDec().String())
 	creationID := baseIDs.NewID("100")
-	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	immutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 
 	testOrderID := NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, makerID, immutableProperties).(orderID)
-	testOrderID2 := NewOrderID(classificationID, makerOwnableID, takerOwnableID, baseIDs.NewID(sdkTypes.MustNewDecFromStr("2.3").String()), baseIDs.NewID("creation"), makerID, baseTypes.NewProperties()).(orderID)
+	testOrderID2 := NewOrderID(classificationID, makerOwnableID, takerOwnableID, baseIDs.NewID(sdkTypes.MustNewDecFromStr("2.3").String()), baseIDs.NewID("creation"), makerID, base.NewPropertyList()).(orderID)
 	require.Equal(t, testOrderID, orderID{ClassificationID: classificationID, MakerOwnableID: makerOwnableID, TakerOwnableID: takerOwnableID, RateID: rateID, CreationID: creationID, MakerID: makerID, HashID: baseTraits.Immutables{Properties: immutableProperties}.GenerateHashID()})
 	require.Equal(t, true, testOrderID.Equals(testOrderID))
 	require.Equal(t, false, testOrderID.Compare(baseIDs.NewID("")) == 0)

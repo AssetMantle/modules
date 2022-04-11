@@ -12,13 +12,14 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_AssetID_Methods(t *testing.T) {
 	classificationID := baseIDs.NewID("classificationID")
-	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	immutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 
 	testAssetID := NewAssetID(classificationID, immutableProperties).(assetID)
 

@@ -29,24 +29,24 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	}
 
 	if auxiliaryRequest.ImmutableProperties != nil {
-		if len(auxiliaryRequest.ImmutableProperties.GetList()) != len(classification.(mappables.Classification).GetImmutableProperties().GetList()) {
+		if len(auxiliaryRequest.ImmutableProperties.GetList()) != len(classification.(mappables.Classification).GetImmutablePropertyList().GetList()) {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 
 		for _, immutableProperty := range auxiliaryRequest.ImmutableProperties.GetList() {
-			if property := classification.(mappables.Classification).GetImmutableProperties().Get(immutableProperty.GetID()); property == nil || property.GetType().Compare(immutableProperty.GetType()) != 0 || property.GetHash().Compare(baseIDs.NewID("")) != 0 && property.GetHash() != immutableProperty.GetHash() {
+			if property := classification.(mappables.Classification).GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || property.GetType().Compare(immutableProperty.GetType()) != 0 || property.GetHash().Compare(baseIDs.NewID("")) != 0 && property.GetHash() != immutableProperty.GetHash() {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}
 	}
 
 	if auxiliaryRequest.MutableProperties != nil {
-		if len(auxiliaryRequest.MutableProperties.GetList()) > len(classification.(mappables.Classification).GetMutableProperties().GetList()) {
+		if len(auxiliaryRequest.MutableProperties.GetList()) > len(classification.(mappables.Classification).GetMutablePropertyList().GetList()) {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 
 		for _, mutableProperty := range auxiliaryRequest.MutableProperties.GetList() {
-			if property := classification.(mappables.Classification).GetMutableProperties().Get(mutableProperty.GetID()); property == nil || property.GetType().Compare(mutableProperty.GetType()) != 0 {
+			if property := classification.(mappables.Classification).GetMutablePropertyList().GetProperty(mutableProperty.GetID()); property == nil || property.GetType().Compare(mutableProperty.GetType()) != 0 {
 				return newAuxiliaryResponse(errors.NotAuthorized)
 			}
 		}

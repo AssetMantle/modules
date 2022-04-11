@@ -16,6 +16,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -45,7 +46,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	immutableProperties := baseTypes.NewProperties(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
+	immutableProperties := base.NewPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
 
 	identityID := key.NewIdentityID(message.ClassificationID, immutableProperties)
 
@@ -63,7 +64,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	mutableProperties := baseTypes.NewProperties(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
+	mutableProperties := base.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
 	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutableProperties, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())

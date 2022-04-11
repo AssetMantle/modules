@@ -11,6 +11,7 @@ import (
 	"github.com/AssetMantle/modules/constants/errors"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -18,7 +19,7 @@ import (
 func Test_Super_Response(t *testing.T) {
 
 	metaProperty := baseTypes.NewMetaProperty(baseIDs.NewID("id"), baseData.NewStringData("Data"))
-	metaPropertyList := baseTypes.NewMetaProperties([]types.MetaProperty{metaProperty}...)
+	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty}...)
 
 	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList, nil)
 	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, MetaProperties: metaPropertyList}, testAuxiliaryResponse)

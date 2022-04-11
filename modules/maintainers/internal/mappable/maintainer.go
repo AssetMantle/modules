@@ -11,7 +11,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types"
@@ -67,8 +67,8 @@ func (maintainer maintainer) CanRenumerateAsset() bool {
 
 // TODO
 func (maintainer maintainer) CanAddMaintainer() bool {
-	if property := maintainer.GetProperty(baseIDs.NewID(properties.Permissions.GetID().String())); property != nil {
-		// impl
+	if property := maintainer.GetProperty(properties.Permissions.GetID()); property != nil {
+		// TODO impl
 	}
 
 	return false
@@ -76,8 +76,8 @@ func (maintainer maintainer) CanAddMaintainer() bool {
 
 // TODO
 func (maintainer maintainer) CanRemoveMaintainer() bool {
-	if property := maintainer.GetProperty(baseIDs.NewID(properties.Permissions.GetID().String())); property != nil {
-		// impl
+	if property := maintainer.GetProperty(properties.Permissions.GetID()); property != nil {
+		// TODO impl
 	}
 
 	return false
@@ -108,7 +108,7 @@ func (maintainer) RegisterCodec(codec *codec.Codec) {
 }
 
 // TODO
-func NewMaintainer(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Maintainer {
+func NewMaintainer(id types.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Maintainer {
 	return maintainer{
 		Document: baseQualified.Document{
 			ID:         id,

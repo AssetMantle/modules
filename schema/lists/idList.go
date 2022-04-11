@@ -8,6 +8,6 @@ import (
 )
 
 type IDList interface {
-	Get() []types.ID
-	types.List
+	Size() int
+	GetList() []types.ID
 }

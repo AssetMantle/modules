@@ -15,11 +15,11 @@ func TestQueries(t *testing.T) {
 	Queries1 := NewQueries(query{})
 	Queries2 := NewQueries()
 
-	// Get
+	// GetProperty
 	require.Equal(t, "", Queries1.Get("").GetName())
 	require.Equal(t, nil, Queries2.Get(""))
 
-	// GetList
+	// Get
 	require.Equal(t, []helpers.Query{query{}}, Queries1.GetList())
 	require.Equal(t, []helpers.Query(nil), Queries2.GetList())
 

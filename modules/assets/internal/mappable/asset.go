@@ -11,6 +11,7 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types"
@@ -51,7 +52,7 @@ func (asset) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, module.Name, asset{})
 }
 
-func NewAsset(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Asset {
+func NewAsset(id types.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Asset {
 	return asset{
 		Document: base.Document{
 			ID:               id,

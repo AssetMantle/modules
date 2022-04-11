@@ -4,20 +4,21 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/lists"
+	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type Mutables struct {
-	Properties types.Properties `json:"properties"`
+	Properties lists.PropertyList `json:"properties"`
 }
 
 var _ qualified.Mutables = (*Mutables)(nil)
 
-func (mutables Mutables) GetMutableProperties() types.Properties {
+func (mutables Mutables) GetMutablePropertyList() lists.PropertyList {
 	if mutables.Properties == nil {
-		return baseTypes.NewProperties()
+		return baseTypes.NewPropertyList()
 	}
 
 	return mutables.Properties

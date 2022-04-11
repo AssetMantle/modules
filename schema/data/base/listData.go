@@ -10,6 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/errors"
+	idsConstants "github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -46,7 +47,7 @@ func (listData listData) String() string {
 	return strings.Join(dataStringList, constants.ListDataStringSeparator)
 }
 func (listData listData) GetType() types.ID {
-	return ListDataID
+	return idsConstants.ListDataID
 }
 func (listData listData) ZeroValue() types.Data {
 	return NewListData([]types.Data{}...)
@@ -85,7 +86,7 @@ func NewListData(value ...types.Data) types.Data {
 	return listData{Value: baseLists.NewDataList(value...)}
 }
 
-func ReadAccAddressListData(dataString string) (types.Data, error) {
+func ReadListData(dataString string) (types.Data, error) {
 	// TODO revise
 	if dataString == "" {
 		return listData{}.ZeroValue(), nil

@@ -15,6 +15,7 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types"
@@ -61,9 +62,9 @@ func (order order) GetExchangeRate() types.MetaProperty {
 	return baseTypes.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(decValue))
 }
 func (order order) GetTakerID() types.Property {
-	if takerID := order.Immutables.GetImmutableProperties().Get(ids.TakerIDProperty); takerID != nil {
+	if takerID := order.Immutables.GetImmutablePropertyList().GetProperty(ids.TakerIDProperty); takerID != nil {
 		return takerID
-	} else if takerID := order.Mutables.GetMutableProperties().Get(ids.TakerIDProperty); takerID != nil {
+	} else if takerID := order.Mutables.GetMutablePropertyList().GetProperty(ids.TakerIDProperty); takerID != nil {
 		return takerID
 	} else {
 
@@ -91,7 +92,7 @@ func (order) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, module.Name, order{})
 }
 
-func NewOrder(orderID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Order {
+func NewOrder(orderID types.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Order {
 	return order{
 		Document: baseQualified.Document{
 			ID:               orderID,

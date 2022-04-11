@@ -5,21 +5,22 @@ package base
 
 import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists"
+	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
 )
 
 type Immutables struct {
-	Properties types.Properties `json:"properties"`
+	Properties lists.PropertyList `json:"properties"`
 }
 
 var _ qualified.Immutables = (*Immutables)(nil)
 
-func (immutables Immutables) GetImmutableProperties() types.Properties {
+func (immutables Immutables) GetImmutablePropertyList() lists.PropertyList {
 	if immutables.Properties == nil {
-		return baseTypes.NewProperties()
+		return baseTypes.NewPropertyList()
 	}
 
 	return immutables.Properties

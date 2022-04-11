@@ -12,6 +12,7 @@ import (
 	xprtErrors "github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -19,14 +20,14 @@ import (
 )
 
 type message struct {
-	From                  sdkTypes.AccAddress  `json:"from" valid:"required~required field from missing"`
-	FromID                types.ID             `json:"fromID" valid:"required~required field fromID missing"`
-	OrderID               types.ID             `json:"orderID" valid:"required~required field orderID missing"`
-	MakerOwnableSplit     sdkTypes.Dec         `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing"`
-	TakerOwnableSplit     sdkTypes.Dec         `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
-	ExpiresIn             types.Height         `json:"expiresIn" valid:"required~required field expiresIn missing"`
-	MutableMetaProperties types.MetaProperties `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
-	MutableProperties     types.Properties     `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
+	From                  sdkTypes.AccAddress    `json:"from" valid:"required~required field from missing"`
+	FromID                types.ID               `json:"fromID" valid:"required~required field fromID missing"`
+	OrderID               types.ID               `json:"orderID" valid:"required~required field orderID missing"`
+	MakerOwnableSplit     sdkTypes.Dec           `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing"`
+	TakerOwnableSplit     sdkTypes.Dec           `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
+	ExpiresIn             types.Height           `json:"expiresIn" valid:"required~required field expiresIn missing"`
+	MutableMetaProperties lists.MetaPropertyList `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
+	MutableProperties     lists.PropertyList     `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -70,7 +71,7 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, orderID types.ID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn types.Height, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, orderID types.ID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn types.Height, mutableMetaProperties lists.MetaPropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return message{
 		From:                  from,
 		FromID:                fromID,

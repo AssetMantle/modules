@@ -9,6 +9,7 @@ import (
 
 	"github.com/AssetMantle/modules/constants/errors"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 
 	"github.com/AssetMantle/modules/constants/test"
 
@@ -90,17 +91,17 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
-	immutableMetaProperties, err := baseTypes.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
-	immutableProperties, err := baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := baseTypes.ReadMetaProperties("makerOwnableSplit:D|1")
+	mutableMetaProperties, err := base.ReadMetaProperties("makerOwnableSplit:D|1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := baseTypes.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := base.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
-	conformMockErrorProperties, err := baseTypes.ReadProperties("conformError:S|mockError")
+	conformMockErrorProperties, err := base.ReadProperties("conformError:S|mockError")
 	require.Equal(t, nil, err)
-	scrubMockErrorProperties, err := baseTypes.ReadMetaProperties("scrubError:S|mockError")
+	scrubMockErrorProperties, err := base.ReadMetaProperties("scrubError:S|mockError")
 	require.Equal(t, nil, err)
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultAddr := sdkTypes.AccAddress("addr")
@@ -116,9 +117,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		baseIDs.NewID(sdkTypes.OneDec().String()),
 		baseIDs.NewID("100"),
 		defaultIdentityID,
-		baseTypes.NewProperties(),
+		base.NewPropertyList(),
 	)
-	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, baseTypes.NewProperties(), baseTypes.NewProperties()))
+	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewPropertyList(), base.NewPropertyList()))
 
 	t.Run("PositiveCase Adding Order without execution", func(t *testing.T) {
 		want := newTransactionResponse(nil)

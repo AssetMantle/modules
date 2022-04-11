@@ -6,6 +6,7 @@ package key
 import (
 	"strings"
 
+	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
@@ -26,22 +27,30 @@ func readAssetID(assetIDString string) types.ID {
 }
 
 // TODO remove panic and add error
-func assetIDFromInterface(i interface{}) assetID {
+func assetIDFromInterface(i interface{}) (assetID, error) {
 	switch value := i.(type) {
 	case assetID:
-		return value
+		return value, nil
 		// TODO remove this use case
 	case types.ID:
 		return assetIDFromInterface(readAssetID(value.String()))
 	default:
-		panic(i)
+		return assetID{}, errors.MetaDataError
 	}
 }
 
-func ReadClassificationID(assetID types.ID) types.ID {
-	return assetIDFromInterface(assetID).ClassificationID
+func ReadClassificationID(id types.ID) types.ID {
+	if assetID, err := assetIDFromInterface(id); err != nil {
+		panic(assetID)
+	} else {
+		return assetID.ClassificationID
+	}
 }
 
 func FromID(id types.ID) helpers.Key {
-	return assetIDFromInterface(id)
+	if assetID, err := assetIDFromInterface(id); err != nil {
+		panic(assetID)
+	} else {
+		return assetID
+	}
 }

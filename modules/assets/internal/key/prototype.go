@@ -9,5 +9,9 @@ import (
 )
 
 func Prototype() helpers.Key {
-	return assetIDFromInterface(baseIDs.NewID(""))
+	if assetID, err := assetIDFromInterface(baseIDs.NewID("")); err != nil {
+		panic(err)
+	} else {
+		return assetID
+	}
 }

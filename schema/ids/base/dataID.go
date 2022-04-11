@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
@@ -38,14 +39,22 @@ func (dataID dataID) Bytes() []byte {
 	return Bytes
 }
 func (dataID dataID) Compare(listable traits.Listable) int {
-	return bytes.Compare(dataID.Bytes(), dataIDFromInterface(listable).Bytes())
+	if compareDataID, err := dataIDFromInterface(listable); err != nil {
+		panic(errors.MetaDataError)
+	} else {
+		return bytes.Compare(dataID.Bytes(), compareDataID.Bytes())
+	}
 }
 func (dataID dataID) GetHash() types.ID {
 	return dataID.Hash
 }
-func dataIDFromInterface(i interface{}) dataID {
-	// TODO impl
-	panic("impl")
+func dataIDFromInterface(i interface{}) (dataID, error) {
+	switch value := i.(type) {
+	case dataID:
+		return value, nil
+	default:
+		return dataID{}, errors.MetaDataError
+	}
 }
 func NewDataID(data types.Data) ids.DataID {
 	return dataID{

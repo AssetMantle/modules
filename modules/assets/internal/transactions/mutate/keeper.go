@@ -14,8 +14,8 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type transactionKeeper struct {
@@ -46,7 +46,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	mutableProperties := baseTypes.NewProperties(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
+	mutableProperties := baseTypes.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
 	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.(mappables.Asset).GetClassificationID(), nil, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
@@ -56,7 +56,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	assets.Mutate(mappable.NewAsset(asset.(mappables.Asset).GetID(), asset.(mappables.Asset).GetImmutableProperties(), asset.(mappables.Asset).GetImmutableProperties().Mutate(mutableProperties.GetList()...)))
+	assets.Mutate(mappable.NewAsset(asset.(mappables.Asset).GetID(), asset.(mappables.Asset).GetImmutablePropertyList(), asset.(mappables.Asset).GetImmutablePropertyList().Mutate(mutableProperties.GetList()...)))
 
 	return newTransactionResponse(nil)
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
@@ -19,8 +20,8 @@ import (
 
 func Test_ClassificationID_Methods(t *testing.T) {
 	chainID := baseIDs.NewID("chainID")
-	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
-	mutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID2"), baseData.NewStringData("MutableData")))
+	immutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	mutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID2"), baseData.NewStringData("MutableData")))
 
 	testClassificationID := NewClassificationID(chainID, immutableProperties, mutableProperties).(classificationID)
 	require.NotPanics(t, func() {

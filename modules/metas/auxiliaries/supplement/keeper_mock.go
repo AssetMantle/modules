@@ -11,6 +11,7 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -28,7 +29,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 
 	for _, property := range auxiliaryRequest.PropertyList {
 		if property.GetID().Compare(ids.BurnProperty) == 0 && property.GetHash().Compare(baseIDs.NewID("")) == 0 {
-			return newAuxiliaryResponse(baseTypes.NewMetaProperties(metaPropertyList...), test.MockError)
+			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), test.MockError)
 		}
 	}
 
@@ -38,7 +39,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
 	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.ExpiryProperty, baseData.NewHeightData(baseTypes.NewHeight(900))))
 
-	return newAuxiliaryResponse(baseTypes.NewMetaProperties(metaPropertyList...), nil)
+	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
 }
 
 func (auxiliaryKeeperMock) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

@@ -32,6 +32,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -90,17 +91,17 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
-	immutableMetaProperties, err := baseTypes.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
-	immutableProperties, err := baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := baseTypes.ReadMetaProperties("makerOwnableSplit:D|1")
+	mutableMetaProperties, err := base.ReadMetaProperties("makerOwnableSplit:D|1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := baseTypes.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := base.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
-	conformMockErrorProperties, err := baseTypes.ReadMetaProperties("conformError:S|mockError")
+	conformMockErrorProperties, err := base.ReadMetaProperties("conformError:S|mockError")
 	require.Equal(t, nil, err)
-	scrubMockErrorProperties, err := baseTypes.ReadMetaProperties("scrubError:S|mockError")
+	scrubMockErrorProperties, err := base.ReadMetaProperties("scrubError:S|mockError")
 	require.Equal(t, nil, err)
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultAddr := sdkTypes.AccAddress("addr")
@@ -151,7 +152,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want := newTransactionResponse(test.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			makerOwnableID, takerOwnableID, baseTypes.NewHeight(0), sdkTypes.OneDec(), sdkTypes.OneDec(),
-			immutableMetaProperties, immutableProperties, mutableMetaProperties, conformMockErrorProperties.RemoveData())); !reflect.DeepEqual(got, want) {
+			immutableMetaProperties, immutableProperties, mutableMetaProperties, conformMockErrorProperties.ToPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

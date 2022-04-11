@@ -11,6 +11,7 @@ import (
 	"github.com/AssetMantle/modules/constants/errors"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -18,16 +19,16 @@ import (
 func Test_Super_Response(t *testing.T) {
 
 	metaProperty := baseTypes.NewMetaProperty(baseIDs.NewID("id"), baseData.NewStringData("Data"))
-	metaPropertyList := baseTypes.NewMetaProperties([]types.MetaProperty{metaProperty}...)
+	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty}...)
 	property := baseTypes.NewProperty(baseIDs.NewID("id"), baseData.NewStringData("Data"))
-	propertyList := baseTypes.NewProperties([]types.Property{property}...)
+	propertyList := base.NewPropertyList([]types.Property{property}...)
 
-	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList.RemoveData(), nil)
-	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, Properties: metaPropertyList.RemoveData()}, testAuxiliaryResponse)
+	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList.ToPropertyList(), nil)
+	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, Properties: metaPropertyList.ToPropertyList()}, testAuxiliaryResponse)
 	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())
 	require.Equal(t, nil, testAuxiliaryResponse.GetError())
 
-	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList.RemoveData(), errors.IncorrectFormat)
+	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList.ToPropertyList(), errors.IncorrectFormat)
 	require.Equal(t, auxiliaryResponse{Success: false, Error: errors.IncorrectFormat, Properties: nil}, testAuxiliaryResponse2)
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
 	require.Equal(t, errors.IncorrectFormat, testAuxiliaryResponse2.GetError())

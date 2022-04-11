@@ -37,7 +37,7 @@ import (
 	"github.com/AssetMantle/modules/modules/splits"
 )
 
-// Get flags every time the simulator is run
+// GetProperty flags every time the simulator is run
 func init() {
 	simapp.GetSimulatorFlags()
 }

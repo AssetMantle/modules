@@ -16,6 +16,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	baseTypes "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types"
@@ -73,7 +74,7 @@ func (identity) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, module.Name, identity{})
 }
 
-func NewIdentity(id types.ID, immutableProperties types.Properties, mutableProperties types.Properties) mappables.Identity {
+func NewIdentity(id types.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Identity {
 	return identity{
 		Document: baseQualified.Document{
 			ID: id,

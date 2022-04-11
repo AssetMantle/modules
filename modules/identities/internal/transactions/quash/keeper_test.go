@@ -7,10 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/constants/test"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -21,6 +17,11 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
+	"github.com/AssetMantle/modules/constants/test"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists/base"
+
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
@@ -30,7 +31,6 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type TestKeepers struct {
@@ -86,15 +86,15 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	ctx, keepers := CreateTestInput(t)
 	ctx = ctx.WithBlockHeight(2)
 
-	immutableProperties, err := baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 
-	var mutableProperties types.Properties
-	mutableProperties, err = baseTypes.ReadProperties("quash:H|100")
+	var mutableProperties lists.PropertyList
+	mutableProperties, err = base.ReadProperties("quash:H|100")
 	require.Equal(t, nil, err)
 
-	var supplementError types.MetaProperties
-	supplementError, err = baseTypes.ReadMetaProperties("supplementError:S|mockError")
+	var supplementError lists.MetaPropertyList
+	supplementError, err = base.ReadMetaProperties("supplementError:S|mockError")
 	require.Equal(t, nil, err)
 
 	defaultAddr := sdkTypes.AccAddress("addr")
@@ -108,7 +108,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	identityID3 := key.NewIdentityID(baseIDs.NewID("ClassificationID3"), immutableProperties)
 
 	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewIdentity(identityID, immutableProperties, mutableProperties))
-	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewIdentity(identityID2, immutableProperties, supplementError.RemoveData()))
+	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewIdentity(identityID2, immutableProperties, supplementError.ToPropertyList()))
 	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewIdentity(identityID3, immutableProperties, mutableProperties))
 
 	t.Run("PositiveCase", func(t *testing.T) {

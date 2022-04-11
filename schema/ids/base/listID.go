@@ -25,7 +25,7 @@ var _ ids.ListID = (*listID)(nil)
 func (listID listID) String() string {
 	idStringList := make([]string, listID.Size())
 
-	for i, id := range listID.IDList.Get() {
+	for i, id := range listID.IDList.GetList() {
 		idStringList[i] = id.String()
 	}
 
@@ -34,7 +34,7 @@ func (listID listID) String() string {
 func (listID listID) Bytes() []byte {
 	var byteList []byte
 
-	for _, id := range listID.IDList.Get() {
+	for _, id := range listID.IDList.GetList() {
 		byteList = append(byteList, id.Bytes()...)
 	}
 

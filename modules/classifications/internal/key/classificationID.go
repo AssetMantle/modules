@@ -13,6 +13,7 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -41,7 +42,11 @@ func (classificationID classificationID) String() string {
 	return strings.Join(values, constants.IDSeparator)
 }
 func (classificationID classificationID) Compare(listable traits.Listable) int {
-	return bytes.Compare(classificationID.Bytes(), classificationIDFromInterface(listable).Bytes())
+	if compareClassificationID, err := classificationIDFromInterface(listable); err != nil {
+		panic(classificationID)
+	} else {
+		return bytes.Compare(classificationID.Bytes(), compareClassificationID.Bytes())
+	}
 }
 func (classificationID classificationID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(classificationID.Bytes())
@@ -53,10 +58,14 @@ func (classificationID classificationID) IsPartial() bool {
 	return len(classificationID.HashID.Bytes()) == 0
 }
 func (classificationID classificationID) Equals(key helpers.Key) bool {
-	return classificationID.Compare(classificationIDFromInterface(key)) == 0
+	if compareClassificationID, err := classificationIDFromInterface(key); err != nil {
+		return false
+	} else {
+		return classificationID.Compare(compareClassificationID) == 0
+	}
 }
 
-func NewClassificationID(chainID types.ID, immutableProperties types.Properties, mutableProperties types.Properties) types.ID {
+func NewClassificationID(chainID types.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) types.ID {
 	immutableIDStringList := make([]string, len(immutableProperties.GetList()))
 
 	for i, property := range immutableProperties.GetList() {

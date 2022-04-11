@@ -20,6 +20,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -34,7 +35,7 @@ func Test_Asset_Request(t *testing.T) {
 	Codec.Seal()
 
 	classificationID := baseIDs.NewID("classificationID")
-	immutableProperties := baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	immutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 
 	testAssetID := key.NewAssetID(classificationID, immutableProperties)
 	testQueryRequest := newQueryRequest(testAssetID)

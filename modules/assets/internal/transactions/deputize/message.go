@@ -12,6 +12,7 @@ import (
 	xprtErrors "github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/utilities/transaction"
@@ -22,7 +23,7 @@ type message struct {
 	FromID               types.ID            `json:"fromID" valid:"required~required field fromID missing"`
 	ToID                 types.ID            `json:"toID" valid:"required~required field toID missing"`
 	ClassificationID     types.ID            `json:"classificationID" valid:"required~required field classificationID missing"`
-	MaintainedProperties types.Properties    `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
+	MaintainedProperties lists.PropertyList  `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
 	AddMaintainer        bool                `json:"addMaintainer"`
 	RemoveMaintainer     bool                `json:"removeMaintainer"`
 	MutateMaintainer     bool                `json:"mutateMaintainer"`
@@ -61,7 +62,7 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, toID types.ID, classificationID types.ID, maintainedProperties types.Properties, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID types.ID, toID types.ID, classificationID types.ID, maintainedProperties lists.PropertyList, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) sdkTypes.Msg {
 	return message{
 		From:                 from,
 		FromID:               fromID,

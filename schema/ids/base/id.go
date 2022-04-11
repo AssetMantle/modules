@@ -9,6 +9,7 @@ package base
 import (
 	"strings"
 
+	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
@@ -26,11 +27,19 @@ func (id id) Bytes() []byte {
 	return []byte(id.IDString)
 }
 func (id id) Compare(listable traits.Listable) int {
-	return strings.Compare(id.String(), idFromInterface(listable).String())
+	if id, err := idFromInterface(listable); err != nil {
+		panic(err)
+	} else {
+		return strings.Compare(id.String(), id.String())
+	}
 }
-func idFromInterface(i interface{}) id {
-	// TODO implement
-	panic("")
+func idFromInterface(i interface{}) (id, error) {
+	switch value := i.(type) {
+	case id:
+		return value, nil
+	default:
+		return id{}, errors.MetaDataError
+	}
 }
 
 func NewID(idString string) types.ID {

@@ -12,6 +12,7 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
@@ -41,7 +42,11 @@ func (assetID assetID) Bytes() []byte {
 	return Bytes
 }
 func (assetID assetID) Compare(listable traits.Listable) int {
-	return bytes.Compare(assetID.Bytes(), assetIDFromInterface(listable).Bytes())
+	if compareAssetID, err := assetIDFromInterface(listable); err != nil {
+		panic(err)
+	} else {
+		return bytes.Compare(assetID.Bytes(), compareAssetID.Bytes())
+	}
 }
 func (assetID assetID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(assetID.Bytes())
@@ -53,10 +58,14 @@ func (assetID assetID) IsPartial() bool {
 	return len(assetID.HashID.Bytes()) == 0
 }
 func (assetID assetID) Equals(key helpers.Key) bool {
-	return assetID.Compare(assetIDFromInterface(key)) == 0
+	if compareAssetID, err := assetIDFromInterface(key); err != nil {
+		return false
+	} else {
+		return assetID.Compare(compareAssetID) == 0
+	}
 }
 
-func NewAssetID(classificationID types.ID, immutableProperties types.Properties) types.ID {
+func NewAssetID(classificationID types.ID, immutableProperties lists.PropertyList) types.ID {
 	return assetID{
 		ClassificationID: classificationID,
 		HashID:           base.Immutables{Properties: immutableProperties}.GenerateHashID(),

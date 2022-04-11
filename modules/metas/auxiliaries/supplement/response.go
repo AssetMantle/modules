@@ -6,13 +6,13 @@ package supplement
 import (
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/lists"
 )
 
 type auxiliaryResponse struct {
-	Success        bool                 `json:"success"`
-	Error          error                `json:"error"`
-	MetaProperties types.MetaProperties `json:"metaProperties"`
+	Success        bool                   `json:"success"`
+	Error          error                  `json:"error"`
+	MetaProperties lists.MetaPropertyList `json:"metaProperties"`
 }
 
 var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
@@ -23,7 +23,7 @@ func (auxiliaryResponse auxiliaryResponse) IsSuccessful() bool {
 func (auxiliaryResponse auxiliaryResponse) GetError() error {
 	return auxiliaryResponse.Error
 }
-func newAuxiliaryResponse(metaProperties types.MetaProperties, error error) helpers.AuxiliaryResponse {
+func newAuxiliaryResponse(metaProperties lists.MetaPropertyList, error error) helpers.AuxiliaryResponse {
 	if error != nil {
 		return auxiliaryResponse{
 			Success: false,
@@ -37,7 +37,7 @@ func newAuxiliaryResponse(metaProperties types.MetaProperties, error error) help
 	}
 }
 
-func GetMetaPropertiesFromResponse(response helpers.AuxiliaryResponse) (types.MetaProperties, error) {
+func GetMetaPropertiesFromResponse(response helpers.AuxiliaryResponse) (lists.MetaPropertyList, error) {
 	switch value := response.(type) {
 	case auxiliaryResponse:
 		if value.IsSuccessful() {

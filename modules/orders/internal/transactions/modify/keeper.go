@@ -56,7 +56,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	transferMakerOwnableSplit := sdkTypes.ZeroDec()
 
-	if makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplitProperty); makerOwnableSplitProperty != nil {
+	if makerOwnableSplitProperty := metaProperties.GetMetaProperty(ids.MakerOwnableSplitProperty); makerOwnableSplitProperty != nil {
 		oldMakerOwnableSplit := makerOwnableSplitProperty.GetData().(data.DecData).Get()
 
 		transferMakerOwnableSplit = message.MakerOwnableSplit.Sub(oldMakerOwnableSplit)
@@ -82,9 +82,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	updatedMutables := order.(mappables.Order).GetMutableProperties().Mutate(append(scrubbedMutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
+	updatedMutables := order.(mappables.Order).GetMutablePropertyList().Mutate(append(scrubbedMutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetImmutableProperties(), updatedMutables)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetImmutablePropertyList(), updatedMutables)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
@@ -96,9 +96,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			order.(mappables.Order).GetTakerOwnableID(),
 			baseIDs.NewID(message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(message.MakerOwnableSplit).String()),
 			baseIDs.NewID(order.(mappables.Order).GetCreation().GetData().String()),
-			order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetImmutableProperties(),
+			order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetImmutablePropertyList(),
 		),
-		order.(mappables.Order).GetImmutableProperties(),
+		order.(mappables.Order).GetImmutablePropertyList(),
 		updatedMutables),
 	)
 

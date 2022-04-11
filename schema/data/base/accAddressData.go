@@ -9,6 +9,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/constants/errors"
+	idsConstants "github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -37,7 +38,7 @@ func (accAddressData accAddressData) String() string {
 	return accAddressData.Value.String()
 }
 func (accAddressData accAddressData) GetType() types.ID {
-	return AccAddressDataID
+	return idsConstants.AccAddressDataID
 }
 func (accAddressData accAddressData) ZeroValue() types.Data {
 	return NewAccAddressData(sdkTypes.AccAddress{})

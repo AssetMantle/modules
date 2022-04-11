@@ -9,5 +9,9 @@ import (
 )
 
 func Prototype() helpers.Key {
-	return classificationIDFromInterface(baseIDs.NewID(""))
+	if classificationID, err := classificationIDFromInterface(baseIDs.NewID("")); err != nil {
+		panic(classificationID)
+	} else {
+		return classificationID
+	}
 }

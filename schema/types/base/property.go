@@ -17,10 +17,10 @@ type property struct {
 
 var _ types.Property = (*property)(nil)
 
-func (property property) GetID() types.ID {
+func (property property) GetID() ids.PropertyID {
 	return property.ID
 }
-func (property property) GetDataID() types.ID {
+func (property property) GetDataID() ids.DataID {
 	return property.DataID
 }
 func (property property) GetKey() types.ID {
@@ -34,21 +34,18 @@ func (property property) GetHash() types.ID {
 }
 func (property property) Compare(listable traits.Listable) int {
 	// TODO implement me
+	// Compare only id not content
 	panic("implement me")
 }
 
+func NewPropertyFromID(propertyID ids.PropertyID) types.Property {
+	return property{
+		ID: propertyID,
+	}
+}
 func NewProperty(key types.ID, data types.Data) types.Property {
 	return property{
 		ID:     baseIDs.NewPropertyID(key, data.GetType()),
 		DataID: data.GetID(),
 	}
-}
-
-func ReadProperty(propertyString string) (types.Property, error) {
-	property, err := ReadMetaProperty(propertyString)
-	if err != nil {
-		return nil, err
-	}
-
-	return property.RemoveData(), nil
 }

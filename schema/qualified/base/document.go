@@ -4,6 +4,7 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/types"
 )
@@ -23,10 +24,10 @@ func (document Document) GetID() types.ID {
 func (document Document) GetClassificationID() types.ID {
 	return document.ClassificationID
 }
-func (document Document) GetProperty(id types.ID) types.Property {
-	if property := document.Immutables.GetImmutableProperties().Get(id); property != nil {
+func (document Document) GetProperty(propertyID ids.PropertyID) types.Property {
+	if property := document.Immutables.GetImmutablePropertyList().GetProperty(propertyID); property != nil {
 		return property
-	} else if property := document.Mutables.GetMutableProperties().Get(id); property != nil {
+	} else if property := document.Mutables.GetMutablePropertyList().GetProperty(propertyID); property != nil {
 		return property
 	} else {
 		return nil

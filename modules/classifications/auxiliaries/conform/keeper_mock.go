@@ -6,6 +6,7 @@ package conform
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/constants/test"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -19,7 +20,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	if auxiliaryRequest.MutableProperties.Get(baseIDs.NewID("conformError")) != nil {
+	if auxiliaryRequest.MutableProperties.GetProperty(baseIDs.NewPropertyID(baseIDs.NewID("conformError"), ids.IDDataID)) != nil {
 		return newAuxiliaryResponse(test.MockError)
 	}
 

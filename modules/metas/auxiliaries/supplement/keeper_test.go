@@ -25,6 +25,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -92,7 +93,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	keepers.MetasKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(decData)).Add(mappable.NewMeta(baseData.NewDecData(dec)))
 
 	t.Run("Positive Case", func(t *testing.T) {
-		want := newAuxiliaryResponse(baseTypes.NewMetaProperties(metaPropertyList...), nil)
+		want := newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
 		if got := keepers.MetasKeeper.Help(context, NewAuxiliaryRequest(property1.RemoveData(), property2.RemoveData(), property3.RemoveData(), property4.RemoveData(), property5.RemoveData())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

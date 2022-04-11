@@ -14,6 +14,7 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/lists"
 	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
@@ -120,7 +121,7 @@ func (orderID orderID) getCreationHeightBytes() ([]byte, error) {
 	return Bytes, err
 }
 
-func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, rateID types.ID, creationID types.ID, makerID types.ID, immutableProperties types.Properties) types.ID {
+func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, rateID types.ID, creationID types.ID, makerID types.ID, immutableProperties lists.PropertyList) types.ID {
 	return orderID{
 		ClassificationID: classificationID,
 		MakerOwnableID:   makerOwnableID,

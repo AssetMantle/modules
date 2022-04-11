@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/AssetMantle/modules/constants/errors"
+	idsConstants "github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -36,7 +37,7 @@ func (heightData heightData) String() string {
 	return strconv.FormatInt(heightData.Value.Get(), 10)
 }
 func (heightData heightData) GetType() types.ID {
-	return HeightDataID
+	return idsConstants.HeightDataID
 }
 func (heightData heightData) ZeroValue() types.Data {
 	return NewHeightData(baseTypes.NewHeight(0))

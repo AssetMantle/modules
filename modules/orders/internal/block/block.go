@@ -19,6 +19,7 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
@@ -49,11 +50,11 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 			if Error != nil {
 				panic(Error)
 			}
-			if expiryProperty := metaProperties.Get(ids.ExpiryProperty); expiryProperty != nil {
+			if expiryProperty := metaProperties.GetMetaProperty(ids.ExpiryProperty); expiryProperty != nil {
 				expiry := expiryProperty.GetData().(data.HeightData).Get()
 
 				if expiry.Compare(baseTypes.NewHeight(context.BlockHeight())) <= 0 {
-					makerOwnableSplitProperty := metaProperties.Get(ids.MakerOwnableSplitProperty)
+					makerOwnableSplitProperty := metaProperties.GetMetaProperty(ids.MakerOwnableSplitProperty)
 					if makerOwnableSplitProperty == nil {
 						panic(errors.MetaDataError)
 					}
@@ -63,8 +64,8 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 					}
 					orders.Remove(order)
 				} else {
-					id1 := key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetMakerOwnableID(), order.(mappables.Order).GetTakerOwnableID(), baseIDs.NewID(""), baseIDs.NewID(""), baseIDs.NewID(""), baseTypes.NewProperties())
-					id2 := key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetTakerOwnableID(), order.(mappables.Order).GetMakerOwnableID(), baseIDs.NewID(""), baseIDs.NewID(""), baseIDs.NewID(""), baseTypes.NewProperties())
+					id1 := key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetMakerOwnableID(), order.(mappables.Order).GetTakerOwnableID(), baseIDs.NewID(""), baseIDs.NewID(""), baseIDs.NewID(""), base.NewPropertyList())
+					id2 := key.NewOrderID(order.(mappables.Order).GetClassificationID(), order.(mappables.Order).GetTakerOwnableID(), order.(mappables.Order).GetMakerOwnableID(), baseIDs.NewID(""), baseIDs.NewID(""), baseIDs.NewID(""), base.NewPropertyList())
 					if !executeOrders[id1] && !executeOrders[id2] {
 						executeOrders[id1] = true
 					}
@@ -79,7 +80,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 
 		orders.Iterate(key.FromID(partialOrderID), func(orderMappable helpers.Mappable) bool {
 			orders.Iterate(
-				key.FromID(key.NewOrderID(orderMappable.(mappables.Order).GetClassificationID(), orderMappable.(mappables.Order).GetTakerOwnableID(), orderMappable.(mappables.Order).GetMakerOwnableID(), baseIDs.NewID(""), baseIDs.NewID(""), baseIDs.NewID(""), baseTypes.NewProperties())),
+				key.FromID(key.NewOrderID(orderMappable.(mappables.Order).GetClassificationID(), orderMappable.(mappables.Order).GetTakerOwnableID(), orderMappable.(mappables.Order).GetMakerOwnableID(), baseIDs.NewID(""), baseIDs.NewID(""), baseIDs.NewID(""), base.NewPropertyList())),
 				func(executableMappableOrder helpers.Mappable) bool {
 
 					var leftOrder mappables.Order
@@ -109,7 +110,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 						panic(Error)
 					}
 
-					leftOrderMakerOwnableSplit := leftOrderMetaProperties.Get(ids.MakerOwnableSplitProperty).GetData().(data.DecData).Get()
+					leftOrderMakerOwnableSplit := leftOrderMetaProperties.GetMetaProperty(ids.MakerOwnableSplitProperty).GetData().(data.DecData).Get()
 
 					rightOrderExchangeRate := rightOrder.GetExchangeRate().GetData().(data.DecData).Get()
 
@@ -118,7 +119,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 						panic(Error)
 					}
 
-					rightOrderMakerOwnableSplit := rightOrderMetaProperties.Get(ids.MakerOwnableSplitProperty).GetData().(data.DecData).Get()
+					rightOrderMakerOwnableSplit := rightOrderMetaProperties.GetMetaProperty(ids.MakerOwnableSplitProperty).GetData().(data.DecData).Get()
 
 					rightOrderTakerOwnableSplitDemanded := rightOrderExchangeRate.MulTruncate(rightOrderMakerOwnableSplit).MulTruncate(sdkTypes.SmallestDec())
 
@@ -137,7 +138,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								panic(Error)
 							}
 
-							orders.Mutate(mappable.NewOrder(leftOrder.GetID(), leftOrder.GetImmutableProperties(), leftOrder.GetMutableProperties().Mutate(mutableProperties.GetList()...)))
+							orders.Mutate(mappable.NewOrder(leftOrder.GetID(), leftOrder.GetImmutablePropertyList(), leftOrder.Mutate(mutableProperties.GetList()...).GetMutablePropertyList()))
 							orders.Remove(rightOrder)
 
 							if executableOrderHeight.Compare(orderHeight) > 0 {
@@ -157,7 +158,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								panic(Error)
 							}
 
-							orders.Mutate(mappable.NewOrder(rightOrder.GetID(), rightOrder.GetImmutableProperties(), rightOrder.GetMutableProperties().Mutate(mutableProperties.GetList()...)))
+							orders.Mutate(mappable.NewOrder(rightOrder.GetID(), rightOrder.GetImmutablePropertyList(), rightOrder.GetMutablePropertyList().Mutate(mutableProperties.GetList()...)))
 							orders.Remove(leftOrder)
 
 							if orderHeight.Compare(executableOrderHeight) >= 0 {

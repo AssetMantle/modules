@@ -26,6 +26,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -78,9 +79,9 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	classificationID := baseIDs.NewID("classificationID")
 	identityID := baseIDs.NewID("identityID")
 
-	maintainedProperties := baseTypes.NewProperties()
+	maintainedProperties := base.NewPropertyList()
 	maintainerID := key.NewMaintainerID(classificationID, identityID)
-	keepers.MaintainersKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, maintainedProperties, baseTypes.NewProperties()))
+	keepers.MaintainersKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, maintainedProperties, base.NewPropertyList()))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
@@ -92,7 +93,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Maintainer not present", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.EntityNotFound)
-		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewID("classificationID1"), baseIDs.NewID("identityID1"), baseTypes.NewProperties())); !reflect.DeepEqual(got, want) {
+		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewID("classificationID1"), baseIDs.NewID("identityID1"), base.NewPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -100,7 +101,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Maintainer Unauthorized", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
-		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(classificationID, identityID, baseTypes.NewProperties(baseTypes.NewProperty(baseIDs.NewID("ID"), baseData.NewStringData("Data"))))); !reflect.DeepEqual(got, want) {
+		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(classificationID, identityID, base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID"), baseData.NewStringData("Data"))))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
