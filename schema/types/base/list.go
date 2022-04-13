@@ -35,10 +35,10 @@ func (list list) Search(listable traits.Listable) (int, bool) {
 
 	return index, false
 }
-func (list list) Add(listableList ...traits.Listable) types.List {
+func (list list) Add(listables ...traits.Listable) types.List {
 	updatedList := list
 
-	for _, listable := range listableList {
+	for _, listable := range listables {
 		if index, found := updatedList.Search(listable); !found {
 			updatedList := append(updatedList, listable)
 			copy(updatedList[index+1:], updatedList[index:])
@@ -48,10 +48,10 @@ func (list list) Add(listableList ...traits.Listable) types.List {
 
 	return updatedList
 }
-func (list list) Remove(listableList ...traits.Listable) types.List {
+func (list list) Remove(listables ...traits.Listable) types.List {
 	updatedList := list
 
-	for _, listable := range listableList {
+	for _, listable := range listables {
 		if index, found := updatedList.Search(listable); found {
 			updatedList = append(updatedList[:index], updatedList[index+1:]...)
 		}
@@ -59,9 +59,17 @@ func (list list) Remove(listableList ...traits.Listable) types.List {
 
 	return updatedList
 }
-func (list list) Mutate(listable ...traits.Listable) types.List {
-	// TODO implement me
-	panic("implement me")
+func (list list) Mutate(listables ...traits.Listable) types.List {
+	// TODO write test
+	updatedList := list
+
+	for _, listable := range listables {
+		if index, found := updatedList.Search(listable); found {
+			updatedList[index] = listable
+		}
+	}
+
+	return updatedList
 }
 
 func NewList(listables ...traits.Listable) types.List {

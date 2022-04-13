@@ -16,6 +16,7 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -28,9 +29,9 @@ var _ data.ListData = (*listData)(nil)
 func (listData listData) GetID() ids.DataID {
 	return baseIDs.NewDataID(listData)
 }
-func (listData listData) Compare(data types.Data) int {
-	// TODO write test and see if correct
-	compareListData, Error := listDataFromInterface(data)
+func (listData listData) Compare(listable traits.Listable) int {
+	// TODO write test
+	compareListData, Error := listDataFromInterface(listable)
 	if Error != nil {
 		panic(Error)
 	}
@@ -71,8 +72,8 @@ func (listData listData) Get() lists.DataList {
 	return listData.Value
 }
 
-func listDataFromInterface(data types.Data) (listData, error) {
-	switch value := data.(type) {
+func listDataFromInterface(listable traits.Listable) (listData, error) {
+	switch value := listable.(type) {
 	case listData:
 		return value, nil
 	default:

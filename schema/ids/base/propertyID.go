@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
@@ -44,11 +45,20 @@ func (propertyID propertyID) Bytes() []byte {
 	return Bytes
 }
 func (propertyID propertyID) Compare(listable traits.Listable) int {
-	return bytes.Compare(propertyID.Bytes(), propertyIDFromInterface(listable).Bytes())
+	if comparePropertyID, err := propertyIDFromInterface(listable); err != nil {
+		panic(err)
+	} else {
+		return bytes.Compare(propertyID.Bytes(), comparePropertyID.Bytes())
+
+	}
 }
-func propertyIDFromInterface(i interface{}) propertyID {
-	// TODO implement
-	panic("")
+func propertyIDFromInterface(listable traits.Listable) (propertyID, error) {
+	switch value := listable.(type) {
+	case propertyID:
+		return value, nil
+	default:
+		return propertyID{}, errors.MetaDataError
+	}
 }
 
 func NewPropertyID(key, Type types.ID) ids.PropertyID {

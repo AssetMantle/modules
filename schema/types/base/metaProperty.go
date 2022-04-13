@@ -44,11 +44,22 @@ func (metaProperty metaProperty) GetHash() types.ID {
 	return metaProperty.Data.GenerateHash()
 }
 func (metaProperty metaProperty) Compare(listable traits.Listable) int {
-	// TODO implement me
-	panic("implement me")
+	if compareMetaProperty, err := metaPropertyFromInterface(listable); err != nil {
+		panic(err)
+	} else {
+		return metaProperty.GetID().Compare(compareMetaProperty.GetID())
+	}
+}
+func metaPropertyFromInterface(listable traits.Listable) (metaProperty, error) {
+	switch value := listable.(type) {
+	case metaProperty:
+		return value, nil
+	default:
+		return metaProperty{}, errors.MetaDataError
+	}
 }
 
-func NewMetaPropertyFromID(propertyID ids.PropertyID) types.MetaProperty {
+func NewEmptyMetaPropertyFromID(propertyID ids.PropertyID) types.MetaProperty {
 	return metaProperty{
 		ID: propertyID,
 	}

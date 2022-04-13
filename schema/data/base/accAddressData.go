@@ -13,6 +13,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
@@ -26,8 +27,8 @@ var _ data.AccAddressData = (*accAddressData)(nil)
 func (accAddressData accAddressData) GetID() ids.DataID {
 	return baseIDs.NewDataID(accAddressData)
 }
-func (accAddressData accAddressData) Compare(sortable types.Data) int {
-	compareAccAddressData, err := accAddressDataFromInterface(sortable)
+func (accAddressData accAddressData) Compare(listable traits.Listable) int {
+	compareAccAddressData, err := accAddressDataFromInterface(listable)
 	if err != nil {
 		panic(err)
 	}
@@ -54,8 +55,8 @@ func (accAddressData accAddressData) Get() sdkTypes.AccAddress {
 	return accAddressData.Value
 }
 
-func accAddressDataFromInterface(data types.Data) (accAddressData, error) {
-	switch value := data.(type) {
+func accAddressDataFromInterface(listable traits.Listable) (accAddressData, error) {
+	switch value := listable.(type) {
 	case accAddressData:
 		return value, nil
 	default:

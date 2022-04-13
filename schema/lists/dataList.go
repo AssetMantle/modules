@@ -10,5 +10,5 @@ import (
 type DataList interface {
 	Size() int
 	GetList() []types.Data
-	Search(data types.Data) (bool, int)
+	Search(data types.Data) (int, bool)
 }
