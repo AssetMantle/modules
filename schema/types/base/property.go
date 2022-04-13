@@ -4,6 +4,7 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -33,12 +34,22 @@ func (property property) GetHash() types.ID {
 	return property.DataID.GetHash()
 }
 func (property property) Compare(listable traits.Listable) int {
-	// TODO implement me
-	// Compare only id not content
-	panic("implement me")
+	if compareProperty, err := propertyFromInterface(listable); err != nil {
+		panic(err)
+	} else {
+		return property.GetID().Compare(compareProperty.GetID())
+	}
+}
+func propertyFromInterface(listable traits.Listable) (property, error) {
+	switch value := listable.(type) {
+	case property:
+		return value, nil
+	default:
+		return property{}, errors.MetaDataError
+	}
 }
 
-func NewPropertyFromID(propertyID ids.PropertyID) types.Property {
+func NewEmptyPropertyFromID(propertyID ids.PropertyID) types.Property {
 	return property{
 		ID: propertyID,
 	}

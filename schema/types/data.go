@@ -5,16 +5,12 @@ package types
 
 import (
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 // TODO URI and ID data type
 type Data interface {
 	GetID() ids.DataID
-
-	// Compare returns 1 if this > parameter
-	// * returns -1 if this < parameter
-	// * returns 0 if this = parameter
-	Compare(Data) int
 
 	String() string
 
@@ -23,4 +19,6 @@ type Data interface {
 	// GenerateHash returns the hash of the Data as an ID
 	// * Returns ID of empty string when the value of Data is that Data type's zero value
 	GenerateHash() ID
+
+	traits.Listable
 }

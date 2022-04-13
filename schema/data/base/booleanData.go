@@ -11,6 +11,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -23,15 +24,15 @@ var _ data.BooleanData = (*booleanData)(nil)
 func (booleanData booleanData) GetID() ids.DataID {
 	return baseIDs.NewDataID(booleanData)
 }
-func (booleanData booleanData) Compare(data types.Data) int {
-	compareBooleanData, Error := booleanDataFromInterface(data)
+func (booleanData booleanData) Compare(listable traits.Listable) int {
+	compareBooleanData, Error := booleanDataFromInterface(listable)
 	if Error != nil {
 		panic(Error)
 	}
 
 	if booleanData.Value == compareBooleanData.Value {
 		return 0
-	} else if booleanData.Value == true { //nolint:gosimple
+	} else if booleanData.Value == true {
 		return 1
 	}
 
@@ -57,8 +58,8 @@ func (booleanData booleanData) Get() bool {
 	return booleanData.Value
 }
 
-func booleanDataFromInterface(data types.Data) (booleanData, error) {
-	switch value := data.(type) {
+func booleanDataFromInterface(listable traits.Listable) (booleanData, error) {
+	switch value := listable.(type) {
 	case booleanData:
 		return value, nil
 	default:

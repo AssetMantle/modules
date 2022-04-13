@@ -32,7 +32,7 @@ func (metaPropertyList metaPropertyList) GetList() []types.MetaProperty {
 	return metaProperties
 }
 func (metaPropertyList metaPropertyList) GetMetaProperty(propertyID ids.PropertyID) types.MetaProperty {
-	if i, found := metaPropertyList.List.Search(baseTypes.NewMetaPropertyFromID(propertyID)); found {
+	if i, found := metaPropertyList.List.Search(baseTypes.NewEmptyMetaPropertyFromID(propertyID)); found {
 		return metaPropertyList.GetList()[i]
 	}
 	return nil

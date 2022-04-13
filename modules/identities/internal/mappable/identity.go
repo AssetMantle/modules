@@ -58,14 +58,13 @@ func (identity identity) IsProvisioned(address sdkTypes.AccAddress) bool {
 
 	return false
 }
-func (identity identity) ProvisionAddress(address sdkTypes.AccAddress) mappables.Identity {
-	// TODO
-	return nil
+func (identity identity) ProvisionAddress(accAddress sdkTypes.AccAddress) mappables.Identity {
+	// TODO implement me
+	panic("implement me")
 }
-
-func (identity identity) UnprovisionAddress(address sdkTypes.AccAddress) mappables.Identity {
-	// TODO
-	return nil
+func (identity identity) UnprovisionAddress(accAddress sdkTypes.AccAddress) mappables.Identity {
+	// TODO implement me
+	panic("implement me")
 }
 func (identity identity) GetKey() helpers.Key {
 	return key.FromID(identity.ID)
