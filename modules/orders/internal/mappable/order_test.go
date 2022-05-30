@@ -56,7 +56,7 @@ func Test_Order_Methods(t *testing.T) {
 	data, _ = baseData.ReadDecData("")
 	defaultMakerOwnableSplitProperty := baseTypes.NewProperty(ids.MakerOwnableSplitProperty, data)
 
-	require.Equal(t, order{Document: baseQualified.Document{ID: testOrderID, Immutables: baseQualified.Immutables{Properties: immutableProperties}, Mutables: baseQualified.Mutables{Properties: base.NewPropertyList()}}}, testOrder)
+	require.Equal(t, order{Document: baseQualified.Document{ID: testOrderID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: base.NewPropertyList()}}}, testOrder)
 	require.Equal(t, testOrderID, testOrder.GetID())
 	require.Equal(t, testOrderID, testOrder.GetKey())
 	require.Equal(t, classificationID, testOrder.GetClassificationID())

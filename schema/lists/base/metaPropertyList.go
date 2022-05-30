@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/AssetMantle/modules/constants"
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -45,8 +45,8 @@ func (metaPropertyList metaPropertyList) Add(metaProperties ...types.MetaPropert
 	metaPropertyList.List = metaPropertyList.List.Add(metaPropertiesToListables(metaProperties...)...)
 	return metaPropertyList
 }
-func metaPropertiesToListables(metaProperties ...types.MetaProperty) []capabilities.Listable {
-	listables := make([]capabilities.Listable, len(metaProperties))
+func metaPropertiesToListables(metaProperties ...types.MetaProperty) []traits.Listable {
+	listables := make([]traits.Listable, len(metaProperties))
 	for i, property := range metaProperties {
 		listables[i] = property
 	}

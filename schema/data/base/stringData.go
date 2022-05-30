@@ -8,10 +8,10 @@ import (
 
 	"github.com/AssetMantle/modules/constants/errors"
 	idsConstants "github.com/AssetMantle/modules/constants/ids"
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
@@ -25,7 +25,7 @@ var _ data.StringData = (*stringData)(nil)
 func (stringData stringData) GetID() ids.DataID {
 	return baseIDs.NewDataID(stringData)
 }
-func (stringData stringData) Compare(listable capabilities.Listable) int {
+func (stringData stringData) Compare(listable traits.Listable) int {
 	compareStringData, err := stringDataFromInterface(listable)
 	if err != nil {
 		panic(err)
@@ -49,7 +49,7 @@ func (stringData stringData) Get() string {
 	return stringData.Value
 }
 
-func stringDataFromInterface(listable capabilities.Listable) (stringData, error) {
+func stringDataFromInterface(listable traits.Listable) (stringData, error) {
 	switch value := listable.(type) {
 	case stringData:
 		return value, nil

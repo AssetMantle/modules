@@ -33,7 +33,7 @@ func NewClassification(id types.ID, immutableProperties lists.PropertyList, muta
 	return classification{
 		Document: baseQualified.Document{
 			ID:         id,
-			Immutables: baseQualified.Immutables{Properties: immutableProperties},
+			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
 			Mutables:   baseQualified.Mutables{Properties: mutableProperties},
 		},
 	}

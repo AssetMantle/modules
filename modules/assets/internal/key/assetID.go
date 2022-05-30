@@ -68,6 +68,6 @@ func (assetID assetID) Equals(key helpers.Key) bool {
 func NewAssetID(classificationID types.ID, immutableProperties lists.PropertyList) types.ID {
 	return assetID{
 		ClassificationID: classificationID,
-		HashID:           base.Immutables{Properties: immutableProperties}.GenerateHashID(),
+		HashID:           base.Immutables{PropertyList: immutableProperties}.GenerateHashID(),
 	}
 }

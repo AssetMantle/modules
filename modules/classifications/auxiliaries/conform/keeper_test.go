@@ -104,7 +104,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase-Properties list length mismatch", func(t *testing.T) {
+	t.Run("NegativeCase-PropertyList list length mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, base.NewPropertyList(), mutableProperties)); !reflect.DeepEqual(got, want) {
@@ -112,7 +112,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase-Properties mismatch", func(t *testing.T) {
+	t.Run("NegativeCase-PropertyList mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID2"), baseData.NewStringData("Data3"))), mutableProperties)); !reflect.DeepEqual(got, want) {
@@ -120,7 +120,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase-Properties list length mismatch", func(t *testing.T) {
+	t.Run("NegativeCase-PropertyList list length mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, immutableProperties, base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID4"), baseData.NewStringData("Data4")), baseTypes.NewProperty(baseIDs.NewID("ID5"), baseData.NewStringData("Data5"))))); !reflect.DeepEqual(got, want) {
@@ -128,7 +128,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase-Properties mismatch", func(t *testing.T) {
+	t.Run("NegativeCase-PropertyList mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.NotAuthorized)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, immutableProperties, base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID6"), baseData.NewStringData("Data3"))))); !reflect.DeepEqual(got, want) {

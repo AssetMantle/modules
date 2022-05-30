@@ -57,7 +57,7 @@ func NewAsset(id types.ID, immutableProperties lists.PropertyList, mutableProper
 		Document: base.Document{
 			ID:               id,
 			ClassificationID: key.ReadClassificationID(id),
-			Immutables:       base.Immutables{Properties: immutableProperties},
+			Immutables:       base.Immutables{PropertyList: immutableProperties},
 			Mutables:         base.Mutables{Properties: mutableProperties},
 		},
 	}

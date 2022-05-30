@@ -21,7 +21,7 @@ func TestDuplicate(t *testing.T) {
 		args args
 		want bool
 	}{
-		{"Positive Case, Unique Properties", args{propertyList: []types.Property{baseTypes.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factA")),
+		{"Positive Case, Unique PropertyList", args{propertyList: []types.Property{baseTypes.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factA")),
 			baseTypes.NewProperty(baseIDs.NewID("b"), baseData.NewStringData("factB")),
 			baseTypes.NewProperty(baseIDs.NewID("c"), baseData.NewStringData("factC")),
 			baseTypes.NewProperty(baseIDs.NewID("d"), baseData.NewStringData("factD"))}}, false},

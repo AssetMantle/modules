@@ -9,8 +9,8 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -41,7 +41,7 @@ func (propertyID propertyID) Bytes() []byte {
 
 	return Bytes
 }
-func (propertyID propertyID) Compare(listable capabilities.Listable) int {
+func (propertyID propertyID) Compare(listable traits.Listable) int {
 	if comparePropertyID, err := propertyIDFromInterface(listable); err != nil {
 		panic(err)
 	} else {
@@ -49,7 +49,7 @@ func (propertyID propertyID) Compare(listable capabilities.Listable) int {
 
 	}
 }
-func propertyIDFromInterface(listable capabilities.Listable) (propertyID, error) {
+func propertyIDFromInterface(listable traits.Listable) (propertyID, error) {
 	switch value := listable.(type) {
 	case propertyID:
 		return value, nil

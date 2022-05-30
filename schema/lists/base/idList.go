@@ -4,8 +4,8 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -36,8 +36,8 @@ func (idList idList) Remove(ids ...types.ID) lists.IDList {
 	idList.List = idList.List.Remove(idsToListables(ids...)...)
 	return idList
 }
-func idsToListables(ids ...types.ID) []capabilities.Listable {
-	listables := make([]capabilities.Listable, len(ids))
+func idsToListables(ids ...types.ID) []traits.Listable {
+	listables := make([]traits.Listable, len(ids))
 	for i, id := range ids {
 		listables[i] = id
 	}

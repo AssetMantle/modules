@@ -13,22 +13,23 @@ import (
 )
 
 type Immutables struct {
-	Properties lists.PropertyList `json:"properties"`
+	lists.PropertyList
 }
 
 var _ qualified.Immutables = (*Immutables)(nil)
 
+// TODO write test case
 func (immutables Immutables) GetImmutablePropertyList() lists.PropertyList {
-	if immutables.Properties == nil {
+	if immutables.PropertyList.GetList() == nil {
 		return baseTypes.NewPropertyList()
 	}
 
-	return immutables.Properties
+	return immutables.PropertyList
 }
 func (immutables Immutables) GenerateHashID() types.ID {
-	metaList := make([]string, len(immutables.Properties.GetList()))
+	metaList := make([]string, len(immutables.PropertyList.GetList()))
 
-	for i, immutableProperty := range immutables.Properties.GetList() {
+	for i, immutableProperty := range immutables.PropertyList.GetList() {
 		metaList[i] = immutableProperty.GetHash().String()
 	}
 

@@ -8,10 +8,10 @@ import (
 
 	"github.com/AssetMantle/modules/constants/errors"
 	idsConstants "github.com/AssetMantle/modules/constants/ids"
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	"github.com/AssetMantle/modules/utilities/meta"
 )
@@ -25,7 +25,7 @@ var _ data.DecData = (*decData)(nil)
 func (decData decData) GetID() ids.DataID {
 	return baseIDs.NewDataID(decData)
 }
-func (decData decData) Compare(listable capabilities.Listable) int {
+func (decData decData) Compare(listable traits.Listable) int {
 	compareDecData, err := decDataFromInterface(listable)
 	if err != nil {
 		panic(err)
@@ -59,7 +59,7 @@ func (decData decData) Get() sdkTypes.Dec {
 	return decData.Value
 }
 
-func decDataFromInterface(listable capabilities.Listable) (decData, error) {
+func decDataFromInterface(listable traits.Listable) (decData, error) {
 	switch value := listable.(type) {
 	case decData:
 		return value, nil

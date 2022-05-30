@@ -4,8 +4,8 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	baseList "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -28,8 +28,8 @@ func (dataList dataList) GetList() []types.Data {
 func (dataList dataList) Search(data types.Data) (int, bool) {
 	return dataList.List.Search(data)
 }
-func dataToListables(data ...types.Data) []capabilities.Listable {
-	listables := make([]capabilities.Listable, len(data))
+func dataToListables(data ...types.Data) []traits.Listable {
+	listables := make([]traits.Listable, len(data))
 
 	for i, datum := range data {
 		listables[i] = datum

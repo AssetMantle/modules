@@ -19,7 +19,7 @@ func Test_Immutables(t *testing.T) {
 	testProperty := baseTypes.NewProperty(baseIDs.NewID("ID"), baseData.NewHeightData(baseTypes.NewHeight(123)))
 	testImmutables := Immutables{base.NewPropertyList(testProperty)}
 
-	require.Equal(t, Immutables{Properties: base.NewPropertyList(testProperty)}, testImmutables)
+	require.Equal(t, Immutables{PropertyList: base.NewPropertyList(testProperty)}, testImmutables)
 	require.Equal(t, base.NewPropertyList(testProperty), testImmutables.GetImmutablePropertyList())
 	require.Equal(t, baseIDs.NewID(metaUtilities.Hash([]string{testProperty.GetHash().String()}...)), testImmutables.GenerateHashID())
 	require.Equal(t, baseIDs.NewID(""), Immutables{base.NewPropertyList()}.GenerateHashID())
