@@ -10,4 +10,7 @@ import (
 type IDList interface {
 	Size() int
 	GetList() []types.ID
+	Search(types.ID) (index int, found bool)
+	Add(...types.ID) IDList
+	Remove(...types.ID) IDList
 }
