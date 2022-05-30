@@ -11,10 +11,10 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
+	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
@@ -41,7 +41,7 @@ func (assetID assetID) Bytes() []byte {
 
 	return Bytes
 }
-func (assetID assetID) Compare(listable traits.Listable) int {
+func (assetID assetID) Compare(listable capabilities.Listable) int {
 	if compareAssetID, err := assetIDFromInterface(listable); err != nil {
 		panic(err)
 	} else {

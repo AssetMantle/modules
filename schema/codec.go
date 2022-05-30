@@ -14,8 +14,8 @@ import (
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/qualified"
 	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -36,7 +36,7 @@ func RegisterCodec(codec *codec.Codec) {
 
 	mappables.RegisterCodec(codec)
 
-	traits.RegisterCodec(codec)
+	qualified.RegisterCodec(codec)
 	baseTraits.RegisterCodec(codec)
 
 	types.RegisterCodec(codec)

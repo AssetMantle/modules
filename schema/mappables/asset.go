@@ -4,15 +4,15 @@
 package mappables
 
 import (
+	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/qualified"
-	"github.com/AssetMantle/modules/schema/traits"
 )
 
 type Asset interface {
-	traits.Burnable
-	traits.Lockable
-	traits.Splittable
+	capabilities.Burnable
+	capabilities.Lockable
+	capabilities.Splittable
 
 	qualified.Document
 	helpers.Mappable

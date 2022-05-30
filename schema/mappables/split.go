@@ -4,13 +4,13 @@
 package mappables
 
 import (
+	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/traits"
 )
 
 type Split interface {
-	traits.Ownable
-	traits.Transactional
+	capabilities.Ownable
+	capabilities.Transactional
 
 	helpers.Mappable
 }

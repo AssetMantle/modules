@@ -8,10 +8,10 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/capabilities"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -43,14 +43,14 @@ func (metaProperty metaProperty) GetType() types.ID {
 func (metaProperty metaProperty) GetHash() types.ID {
 	return metaProperty.Data.GenerateHash()
 }
-func (metaProperty metaProperty) Compare(listable traits.Listable) int {
+func (metaProperty metaProperty) Compare(listable capabilities.Listable) int {
 	if compareMetaProperty, err := metaPropertyFromInterface(listable); err != nil {
 		panic(err)
 	} else {
 		return metaProperty.GetID().Compare(compareMetaProperty.GetID())
 	}
 }
-func metaPropertyFromInterface(listable traits.Listable) (metaProperty, error) {
+func metaPropertyFromInterface(listable capabilities.Listable) (metaProperty, error) {
 	switch value := listable.(type) {
 	case metaProperty:
 		return value, nil
@@ -74,7 +74,7 @@ func NewMetaProperty(key types.ID, data types.Data) types.MetaProperty {
 func ReadMetaProperty(metaPropertyString string) (types.MetaProperty, error) {
 	propertyIDAndData := strings.Split(metaPropertyString, constants.PropertyIDAndDataSeparator)
 	if len(propertyIDAndData) == 2 && propertyIDAndData[0] != "" {
-		data, Error := base.ReadData(propertyIDAndData[1])
+		data, Error := utilities.ReadData(propertyIDAndData[1])
 		if Error != nil {
 			return nil, Error
 		}

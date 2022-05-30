@@ -9,9 +9,9 @@ import (
 
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
+	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
@@ -35,11 +35,11 @@ func (split split) GetOwnableID() types.ID {
 func (split split) GetValue() sdkTypes.Dec {
 	return split.Value
 }
-func (split split) Send(outValue sdkTypes.Dec) traits.Transactional {
+func (split split) Send(outValue sdkTypes.Dec) capabilities.Transactional {
 	split.Value = split.Value.Sub(outValue)
 	return split
 }
-func (split split) Receive(inValue sdkTypes.Dec) traits.Transactional {
+func (split split) Receive(inValue sdkTypes.Dec) capabilities.Transactional {
 	split.Value = split.Value.Add(inValue)
 	return split
 }

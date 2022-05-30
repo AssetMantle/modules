@@ -4,11 +4,11 @@
 package types
 
 import (
-	"github.com/AssetMantle/modules/schema/traits"
+	"github.com/AssetMantle/modules/schema/capabilities"
 )
 
 type ID interface {
-	traits.Listable
+	capabilities.Listable
 	String() string
 	Bytes() []byte
 }

@@ -13,10 +13,10 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
@@ -69,7 +69,7 @@ func (orderID orderID) String() string {
 
 	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
-func (orderID orderID) Compare(listable traits.Listable) int {
+func (orderID orderID) Compare(listable capabilities.Listable) int {
 	return bytes.Compare(orderID.Bytes(), orderIDFromInterface(listable).Bytes())
 }
 func (orderID orderID) GenerateStoreKeyBytes() []byte {

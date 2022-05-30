@@ -3,6 +3,7 @@
 
 package types
 
+// TODO move to list
 type Signatures interface {
 	Get(ID) Signature
 

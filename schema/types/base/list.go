@@ -6,22 +6,22 @@ package base
 import (
 	"sort"
 
-	"github.com/AssetMantle/modules/schema/traits"
+	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
-// TODO type check that list is same type
-type list []traits.Listable
+// TODO type check that list is same type and test cases
+type list []capabilities.Listable
 
 var _ types.List = (*list)(nil)
 
-func (list list) Get() []traits.Listable {
+func (list list) Get() []capabilities.Listable {
 	return list
 }
 func (list list) Size() int { // TODO write test
 	return len(list)
 }
-func (list list) Search(listable traits.Listable) (int, bool) {
+func (list list) Search(listable capabilities.Listable) (int, bool) {
 	index := sort.Search(
 		len(list),
 		func(i int) bool {
@@ -35,7 +35,7 @@ func (list list) Search(listable traits.Listable) (int, bool) {
 
 	return index, false
 }
-func (list list) Add(listables ...traits.Listable) types.List {
+func (list list) Add(listables ...capabilities.Listable) types.List {
 	updatedList := list
 
 	for _, listable := range listables {
@@ -48,7 +48,7 @@ func (list list) Add(listables ...traits.Listable) types.List {
 
 	return updatedList
 }
-func (list list) Remove(listables ...traits.Listable) types.List {
+func (list list) Remove(listables ...capabilities.Listable) types.List {
 	updatedList := list
 
 	for _, listable := range listables {
@@ -59,7 +59,7 @@ func (list list) Remove(listables ...traits.Listable) types.List {
 
 	return updatedList
 }
-func (list list) Mutate(listables ...traits.Listable) types.List {
+func (list list) Mutate(listables ...capabilities.Listable) types.List {
 	// TODO write test
 	updatedList := list
 
@@ -72,7 +72,7 @@ func (list list) Mutate(listables ...traits.Listable) types.List {
 	return updatedList
 }
 
-func NewList(listables ...traits.Listable) types.List {
+func NewList(listables ...capabilities.Listable) types.List {
 	// TODO write test and check type
 	return list(listables)
 }

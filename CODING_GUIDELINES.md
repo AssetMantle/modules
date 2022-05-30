@@ -105,8 +105,7 @@ The idea is you should be able to see the
 error message and figure out exactly what failed.
 Here is an example check:
 
-```go
- <some table>
+```
 for tcIndex, tc := range cases {
   <some code>
   resp, err := doSomething()

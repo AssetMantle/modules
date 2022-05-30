@@ -4,9 +4,9 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -45,8 +45,8 @@ func (propertyList propertyList) Mutate(properties ...types.Property) lists.Prop
 	return propertyList
 }
 
-func propertiesToListables(properties ...types.Property) []traits.Listable {
-	listables := make([]traits.Listable, len(properties))
+func propertiesToListables(properties ...types.Property) []capabilities.Listable {
+	listables := make([]capabilities.Listable, len(properties))
 	for i, property := range properties {
 		listables[i] = property
 	}

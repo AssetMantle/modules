@@ -12,8 +12,8 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -38,7 +38,7 @@ func (dataID dataID) Bytes() []byte {
 
 	return Bytes
 }
-func (dataID dataID) Compare(listable traits.Listable) int {
+func (dataID dataID) Compare(listable capabilities.Listable) int {
 	if compareDataID, err := dataIDFromInterface(listable); err != nil {
 		panic(errors.MetaDataError)
 	} else {

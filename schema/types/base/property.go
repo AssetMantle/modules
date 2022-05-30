@@ -5,9 +5,9 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -33,14 +33,14 @@ func (property property) GetType() types.ID {
 func (property property) GetHash() types.ID {
 	return property.DataID.GetHash()
 }
-func (property property) Compare(listable traits.Listable) int {
+func (property property) Compare(listable capabilities.Listable) int {
 	if compareProperty, err := propertyFromInterface(listable); err != nil {
 		panic(err)
 	} else {
 		return property.GetID().Compare(compareProperty.GetID())
 	}
 }
-func propertyFromInterface(listable traits.Listable) (property, error) {
+func propertyFromInterface(listable capabilities.Listable) (property, error) {
 	switch value := listable.(type) {
 	case property:
 		return value, nil
@@ -52,6 +52,12 @@ func propertyFromInterface(listable traits.Listable) (property, error) {
 func NewEmptyPropertyFromID(propertyID ids.PropertyID) types.Property {
 	return property{
 		ID: propertyID,
+	}
+}
+func NewPropertyWithDataID(propertyID ids.PropertyID, dataID ids.DataID) types.Property {
+	return property{
+		ID:     propertyID,
+		DataID: dataID,
 	}
 }
 func NewProperty(key types.ID, data types.Data) types.Property {

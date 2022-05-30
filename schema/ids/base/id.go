@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/schema/traits"
+	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -26,7 +26,7 @@ func (id id) String() string {
 func (id id) Bytes() []byte {
 	return []byte(id.IDString)
 }
-func (id id) Compare(listable traits.Listable) int {
+func (id id) Compare(listable capabilities.Listable) int {
 	if id, err := idFromInterface(listable); err != nil {
 		panic(err)
 	} else {

@@ -11,12 +11,12 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/errors"
 	idsConstants "github.com/AssetMantle/modules/constants/ids"
+	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -29,7 +29,7 @@ var _ data.ListData = (*listData)(nil)
 func (listData listData) GetID() ids.DataID {
 	return baseIDs.NewDataID(listData)
 }
-func (listData listData) Compare(listable traits.Listable) int {
+func (listData listData) Compare(listable capabilities.Listable) int {
 	// TODO write test
 	compareListData, Error := listDataFromInterface(listable)
 	if Error != nil {
@@ -72,7 +72,7 @@ func (listData listData) Get() lists.DataList {
 	return listData.Value
 }
 
-func listDataFromInterface(listable traits.Listable) (listData, error) {
+func listDataFromInterface(listable capabilities.Listable) (listData, error) {
 	switch value := listable.(type) {
 	case listData:
 		return value, nil

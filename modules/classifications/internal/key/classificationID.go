@@ -11,15 +11,16 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
+	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
 )
 
+// TODO check if should be shifted to types/ids package
 type classificationID struct {
 	// TODO remove chainID, rename hashID to hash
 	ChainID types.ID
@@ -41,7 +42,7 @@ func (classificationID classificationID) String() string {
 
 	return strings.Join(values, constants.IDSeparator)
 }
-func (classificationID classificationID) Compare(listable traits.Listable) int {
+func (classificationID classificationID) Compare(listable capabilities.Listable) int {
 	if compareClassificationID, err := classificationIDFromInterface(listable); err != nil {
 		panic(classificationID)
 	} else {
