@@ -17,13 +17,13 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type listID struct {
+type listDataID struct {
 	lists.IDList `json:"idList"`
 }
 
-var _ ids.ListID = (*listID)(nil)
+var _ ids.ListDataID = (*listDataID)(nil)
 
-func (listID listID) String() string {
+func (listID listDataID) String() string {
 	idStringList := make([]string, listID.Size())
 
 	for i, id := range listID.IDList.GetList() {
@@ -32,7 +32,7 @@ func (listID listID) String() string {
 
 	return strings.Join(idStringList, constants.ListDataStringSeparator)
 }
-func (listID listID) Bytes() []byte {
+func (listID listDataID) Bytes() []byte {
 	var byteList []byte
 
 	for _, id := range listID.IDList.GetList() {
@@ -41,19 +41,19 @@ func (listID listID) Bytes() []byte {
 
 	return byteList
 }
-func (listID listID) Compare(listable traits.Listable) int {
-	if listID, err := listIDFromInterface(listable); err != nil {
+func (listID listDataID) Compare(listable capabilities.Listable) int {
+	if listID, err := listDataIDFromInterface(listable); err != nil {
 		panic(err)
 	} else {
 		return bytes.Compare(listID.Bytes(), listID.Bytes())
 	}
 }
 
-func listIDFromInterface(i interface{}) (listID, error) {
+func listDataIDFromInterface(i interface{}) (listDataID, error) {
 	switch value := i.(type) {
-	case listID:
+	case listDataID:
 		return value, nil
 	default:
-		return listID{}, errors.MetaDataError
+		return listDataID{}, errors.MetaDataError
 	}
 }

@@ -8,7 +8,8 @@ import (
 	"github.com/AssetMantle/modules/schema/types"
 )
 
-type ListID interface {
+type ListDataID interface {
+	DataID
 	types.ID
 	lists.IDList
 }

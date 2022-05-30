@@ -46,7 +46,7 @@ func (identity identity) GetAuthentication() types.Property {
 
 // TODO write test cases
 func (identity identity) IsProvisioned(accAddress sdkTypes.AccAddress) bool {
-	_, found := identity.GetAuthentication().GetDataID().(ids.ListID).Search(baseData.NewAccAddressData(accAddress).GetID())
+	_, found := identity.GetAuthentication().GetDataID().(ids.ListDataID).Search(baseData.NewAccAddressData(accAddress).GetID())
 	return found
 }
 
@@ -55,7 +55,7 @@ func (identity identity) ProvisionAddress(accAddress sdkTypes.AccAddress) mappab
 	identity.Document = identity.Document.Mutate(
 		baseTypes.NewPropertyWithDataID(
 			identity.GetAuthentication().GetID(),
-			base.NewListID(identity.GetAuthentication().GetDataID().(ids.ListID).Add(baseData.NewAccAddressData(accAddress).GetID())))).(baseQualified.Document)
+			base.NewListID(identity.GetAuthentication().GetDataID().(ids.ListDataID).Add(baseData.NewAccAddressData(accAddress).GetID())))).(baseQualified.Document)
 	return identity
 }
 
@@ -64,7 +64,7 @@ func (identity identity) UnprovisionAddress(accAddress sdkTypes.AccAddress) mapp
 	identity.Document = identity.Document.Mutate(
 		baseTypes.NewPropertyWithDataID(
 			identity.GetAuthentication().GetID(),
-			base.NewListID(identity.GetAuthentication().GetDataID().(ids.ListID).Remove(baseData.NewAccAddressData(accAddress).GetID())))).(baseQualified.Document)
+			base.NewListID(identity.GetAuthentication().GetDataID().(ids.ListDataID).Remove(baseData.NewAccAddressData(accAddress).GetID())))).(baseQualified.Document)
 	return identity
 }
 func (identity identity) GetKey() helpers.Key {
