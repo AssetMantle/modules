@@ -8,24 +8,23 @@ import (
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/properties"
 )
 
 func TestDuplicate(t *testing.T) {
 	type args struct {
-		propertyList []types.Property
+		propertyList []properties.Property
 	}
 	tests := []struct {
 		name string
 		args args
 		want bool
 	}{
-		{"Positive Case, Unique PropertyList", args{propertyList: []types.Property{baseTypes.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factA")),
+		{"Positive Case, Unique PropertyList", args{propertyList: []properties.Property{baseTypes.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factA")),
 			baseTypes.NewProperty(baseIDs.NewID("b"), baseData.NewStringData("factB")),
 			baseTypes.NewProperty(baseIDs.NewID("c"), baseData.NewStringData("factC")),
 			baseTypes.NewProperty(baseIDs.NewID("d"), baseData.NewStringData("factD"))}}, false},
-		{"Negative Case, DuplicateExists", args{propertyList: []types.Property{baseTypes.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factA")),
+		{"Negative Case, DuplicateExists", args{propertyList: []properties.Property{baseTypes.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factA")),
 			baseTypes.NewProperty(baseIDs.NewID("b"), baseData.NewStringData("factB")),
 			baseTypes.NewProperty(baseIDs.NewID("c"), baseData.NewStringData("factC")),
 			baseTypes.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factD"))}}, true},

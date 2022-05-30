@@ -4,11 +4,12 @@
 package property
 
 import (
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/properties"
 )
 
-func Duplicate(propertyList []types.Property) bool {
-	propertyIDMap := map[types.ID]bool{}
+func Duplicate(propertyList []properties.Property) bool {
+	propertyIDMap := map[ids.ID]bool{}
 
 	for _, property := range propertyList {
 		if _, ok := propertyIDMap[property.GetID()]; ok {
