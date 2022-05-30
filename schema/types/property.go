@@ -4,8 +4,8 @@
 package types
 
 import (
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 // TODO add update method
@@ -16,5 +16,5 @@ type Property interface {
 	GetType() ID
 	GetHash() ID
 
-	capabilities.Listable
+	traits.Listable
 }

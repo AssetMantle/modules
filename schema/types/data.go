@@ -4,8 +4,8 @@
 package types
 
 import (
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 // TODO URI and ID data type
@@ -20,5 +20,5 @@ type Data interface {
 	// * Returns ID of empty string when the value of Data is that Data type's zero value
 	GenerateHash() ID
 
-	capabilities.Listable
+	traits.Listable
 }

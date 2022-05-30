@@ -8,10 +8,10 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/data/utilities"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -43,14 +43,14 @@ func (metaProperty metaProperty) GetType() types.ID {
 func (metaProperty metaProperty) GetHash() types.ID {
 	return metaProperty.Data.GenerateHash()
 }
-func (metaProperty metaProperty) Compare(listable capabilities.Listable) int {
+func (metaProperty metaProperty) Compare(listable traits.Listable) int {
 	if compareMetaProperty, err := metaPropertyFromInterface(listable); err != nil {
 		panic(err)
 	} else {
 		return metaProperty.GetID().Compare(compareMetaProperty.GetID())
 	}
 }
-func metaPropertyFromInterface(listable capabilities.Listable) (metaProperty, error) {
+func metaPropertyFromInterface(listable traits.Listable) (metaProperty, error) {
 	switch value := listable.(type) {
 	case metaProperty:
 		return value, nil
