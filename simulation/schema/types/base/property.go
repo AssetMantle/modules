@@ -6,10 +6,9 @@ package base
 import (
 	"math/rand"
 
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/properties"
 )
 
-func GenerateRandomProperty(r *rand.Rand) types.Property {
+func GenerateRandomProperty(r *rand.Rand) properties.Property {
 	return baseTypes.NewProperty(GenerateRandomID(r), GenerateRandomData(r))
 }

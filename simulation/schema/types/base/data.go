@@ -7,15 +7,15 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
+	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 
 	"math"
 	"math/rand"
 )
 
-func GenerateRandomData(r *rand.Rand) types.Data {
+func GenerateRandomData(r *rand.Rand) data.Data {
 	randomPositiveInt := int(math.Abs(float64(r.Int())))
 
 	switch randomPositiveInt % 4 {
