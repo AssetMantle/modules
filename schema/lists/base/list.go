@@ -6,14 +6,14 @@ package base
 import (
 	"sort"
 
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 // TODO type check that list is same type and test cases
 type list []traits.Listable
 
-var _ types.List = (*list)(nil)
+var _ lists.List = (*list)(nil)
 
 func (list list) Get() []traits.Listable {
 	return list
@@ -35,7 +35,7 @@ func (list list) Search(listable traits.Listable) (int, bool) {
 
 	return index, false
 }
-func (list list) Add(listables ...traits.Listable) types.List {
+func (list list) Add(listables ...traits.Listable) lists.List {
 	updatedList := list
 
 	for _, listable := range listables {
@@ -48,7 +48,7 @@ func (list list) Add(listables ...traits.Listable) types.List {
 
 	return updatedList
 }
-func (list list) Remove(listables ...traits.Listable) types.List {
+func (list list) Remove(listables ...traits.Listable) lists.List {
 	updatedList := list
 
 	for _, listable := range listables {
@@ -59,7 +59,7 @@ func (list list) Remove(listables ...traits.Listable) types.List {
 
 	return updatedList
 }
-func (list list) Mutate(listables ...traits.Listable) types.List {
+func (list list) Mutate(listables ...traits.Listable) lists.List {
 	// TODO write test
 	updatedList := list
 
@@ -72,7 +72,7 @@ func (list list) Mutate(listables ...traits.Listable) types.List {
 	return updatedList
 }
 
-func NewList(listables ...traits.Listable) types.List {
+func NewList(listables ...traits.Listable) lists.List {
 	// TODO write test and check type
 	return list(listables)
 }

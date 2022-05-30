@@ -8,6 +8,6 @@ import (
 )
 
 type HeightData interface {
-	types.Data
+	Data
 	Get() types.Height
 }

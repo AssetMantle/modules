@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package types
+package properties
 
 import (
 	"github.com/AssetMantle/modules/schema/ids"
@@ -12,9 +12,9 @@ import (
 type Property interface {
 	GetID() ids.PropertyID
 	GetDataID() ids.DataID
-	GetKey() ID
-	GetType() ID
-	GetHash() ID
+	GetKey() ids.ID
+	GetType() ids.ID
+	GetHash() ids.ID
 
 	traits.Listable
 }

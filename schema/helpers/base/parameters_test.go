@@ -11,8 +11,8 @@ import (
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	parameters2 "github.com/AssetMantle/modules/schema/parameters"
+	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
@@ -20,7 +20,7 @@ func TestParameters(t *testing.T) {
 	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
 	codec := baseTestUtilities.MakeCodec()
 	Parameter := baseTypes.NewParameter(baseIDs.NewID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
-	ParameterList := []types.Parameter{Parameter}
+	ParameterList := []parameters2.Parameter{Parameter}
 	Parameters := NewParameters(ParameterList...)
 	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
 	subspace.SetParamSet(context, Parameters)

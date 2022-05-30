@@ -12,16 +12,16 @@ import (
 	xprtErrors "github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/ids"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 type message struct {
 	From              sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	FromID            types.ID            `json:"fromID" valid:"required~required field fromID missing"`
+	FromID            ids.ID              `json:"fromID" valid:"required~required field fromID missing"`
 	TakerOwnableSplit sdkTypes.Dec        `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
-	OrderID           types.ID            `json:"orderID" valid:"required~required field orderID missing"`
+	OrderID           ids.ID              `json:"orderID" valid:"required~required field orderID missing"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -57,7 +57,7 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, takerOwnableSplit sdkTypes.Dec, orderID types.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.ID, takerOwnableSplit sdkTypes.Dec, orderID ids.ID) sdkTypes.Msg {
 	return message{
 		From:              from,
 		FromID:            fromID,

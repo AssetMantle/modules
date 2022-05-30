@@ -18,10 +18,11 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	ids2 "github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/types"
+	base2 "github.com/AssetMantle/modules/schema/properties/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -40,7 +41,7 @@ func (block block) Begin(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {
 }
 
 func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
-	executeOrders := make(map[types.ID]bool)
+	executeOrders := make(map[ids2.ID]bool)
 	orders := block.mapper.NewCollection(context)
 
 	orders.Iterate(
@@ -133,7 +134,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								panic(auxiliaryResponse.GetError())
 							}
 
-							mutableProperties, Error := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseTypes.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))))
+							mutableProperties, Error := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base2.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))))
 							if Error != nil {
 								panic(Error)
 							}
@@ -153,7 +154,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								panic(auxiliaryResponse.GetError())
 							}
 
-							mutableProperties, Error := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseTypes.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder))))))
+							mutableProperties, Error := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base2.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder))))))
 							if Error != nil {
 								panic(Error)
 							}

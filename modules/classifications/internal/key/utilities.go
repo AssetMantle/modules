@@ -8,13 +8,13 @@ import (
 
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
 	"github.com/AssetMantle/modules/constants"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
-func readClassificationID(classificationIDString string) types.ID {
+func readClassificationID(classificationIDString string) ids.ID {
 	idList := strings.Split(classificationIDString, constants.IDSeparator)
 	if len(idList) == 2 {
 		return classificationID{
@@ -29,7 +29,7 @@ func classificationIDFromInterface(i interface{}) (classificationID, error) {
 	switch value := i.(type) {
 	case classificationID:
 		return value, nil
-	case types.ID:
+	case ids.ID:
 		// TODO remove this use case
 		return classificationIDFromInterface(readClassificationID(value.String()))
 	default:
@@ -37,7 +37,7 @@ func classificationIDFromInterface(i interface{}) (classificationID, error) {
 	}
 }
 
-func FromID(id types.ID) helpers.Key {
+func FromID(id ids.ID) helpers.Key {
 	if classificationID, err := classificationIDFromInterface(id); err != nil {
 		return classificationID
 	} else {

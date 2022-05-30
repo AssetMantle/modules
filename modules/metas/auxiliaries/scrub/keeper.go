@@ -10,7 +10,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/properties"
 )
 
 type auxiliaryKeeper struct {
@@ -22,7 +22,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	scrubbedPropertyList := make([]types.Property, len(auxiliaryRequest.MetaPropertyList))
+	scrubbedPropertyList := make([]properties.Property, len(auxiliaryRequest.MetaPropertyList))
 	metas := auxiliaryKeeper.mapper.NewCollection(context)
 
 	for i, metaProperty := range auxiliaryRequest.MetaPropertyList {

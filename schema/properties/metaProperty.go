@@ -1,10 +1,14 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package types
+package properties
+
+import (
+	"github.com/AssetMantle/modules/schema/data"
+)
 
 type MetaProperty interface {
-	GetData() Data
+	GetData() data.Data
 	RemoveData() Property
 	Property
 }

@@ -13,16 +13,16 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/ids"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type maintainerID struct {
-	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID missing"`
-	IdentityID       types.ID `json:"identityID" valid:"required~required field identityID missing"`
+	ClassificationID ids.ID `json:"classificationID" valid:"required~required field classificationID missing"`
+	IdentityID       ids.ID `json:"identityID" valid:"required~required field identityID missing"`
 }
 
-var _ types.ID = (*maintainerID)(nil)
+var _ ids.ID = (*maintainerID)(nil)
 var _ helpers.Key = (*maintainerID)(nil)
 
 func (maintainerID maintainerID) Bytes() []byte {
@@ -53,7 +53,7 @@ func (maintainerID maintainerID) Equals(key helpers.Key) bool {
 	return maintainerID.Compare(maintainerIDFromInterface(key)) == 0
 }
 
-func NewMaintainerID(classificationID types.ID, identityID types.ID) types.ID {
+func NewMaintainerID(classificationID ids.ID, identityID ids.ID) ids.ID {
 	return maintainerID{
 		ClassificationID: classificationID,
 		IdentityID:       identityID,

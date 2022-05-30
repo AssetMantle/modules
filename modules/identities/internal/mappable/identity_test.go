@@ -17,7 +17,6 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/random"
 )
 

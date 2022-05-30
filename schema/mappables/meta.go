@@ -4,12 +4,12 @@
 package mappables
 
 import (
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type Meta interface {
-	GetData() types.Data
+	GetData() data.Data
 
 	helpers.Mappable
 }

@@ -4,12 +4,12 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/qualified"
-	"github.com/AssetMantle/modules/schema/types"
-	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
+	metaUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type Immutables struct {
@@ -26,7 +26,7 @@ func (immutables Immutables) GetImmutablePropertyList() lists.PropertyList {
 
 	return immutables.PropertyList
 }
-func (immutables Immutables) GenerateHashID() types.ID {
+func (immutables Immutables) GenerateHashID() ids.ID {
 	metaList := make([]string, len(immutables.PropertyList.GetList()))
 
 	for i, immutableProperty := range immutables.PropertyList.GetList() {

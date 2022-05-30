@@ -12,7 +12,7 @@ import (
 	xprtErrors "github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/ids"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
@@ -20,7 +20,7 @@ import (
 type message struct {
 	From       sdkTypes.AccAddress `json:"from" valid:"required~required field from missing, matches(^[a-z0-9]*$)~field from is invalid"`
 	To         sdkTypes.AccAddress `json:"to" valid:"required~required field to missing, matches(^[a-z0-9]*$)~field to is invalid"`
-	IdentityID types.ID            `json:"identityID" valid:"required~required field identityID missing"`
+	IdentityID ids.ID              `json:"identityID" valid:"required~required field identityID missing"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -55,7 +55,7 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 func messagePrototype() helpers.Message {
 	return message{}
 }
-func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, identityID types.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, identityID ids.ID) sdkTypes.Msg {
 	return message{
 		From:       from,
 		To:         to,

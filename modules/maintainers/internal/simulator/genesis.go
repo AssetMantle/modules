@@ -15,15 +15,16 @@ import (
 	maintainersModule "github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/types"
+	parameters2 "github.com/AssetMantle/modules/schema/parameters"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
-	var data types.Data
+	var data data.Data
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
@@ -39,7 +40,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMaintainer(key.NewMaintainerID(baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand)), baseSimulation.GenerateRandomProperties(simulationState.Rand), baseSimulation.GenerateRandomProperties(simulationState.Rand))
 	}
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []types.Parameter{dummy.Parameter.Mutate(data)})
+	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []parameters2.Parameter{dummy.Parameter.Mutate(data)})
 
 	simulationState.GenState[maintainersModule.Name] = common.Codec.MustMarshalJSON(genesisState)
 }

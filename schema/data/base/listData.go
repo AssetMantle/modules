@@ -10,14 +10,13 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/errors"
-	idsConstants "github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/schema/data"
+	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type listData struct {
@@ -47,13 +46,13 @@ func (listData listData) String() string {
 
 	return strings.Join(dataStringList, constants.ListDataStringSeparator)
 }
-func (listData listData) GetType() types.ID {
+func (listData listData) GetType() ids.ID {
 	return idsConstants.ListDataID
 }
-func (listData listData) ZeroValue() types.Data {
-	return NewListData([]types.Data{}...)
+func (listData listData) ZeroValue() data.Data {
+	return NewListData([]data.Data{}...)
 }
-func (listData listData) GenerateHash() types.ID {
+func (listData listData) GenerateHash() ids.ID {
 	if listData.Value.Size() == 0 {
 		return baseIDs.NewID("")
 	}
@@ -83,18 +82,18 @@ func listDataFromInterface(listable traits.Listable) (listData, error) {
 
 // NewListData
 // * onus of ensuring all Data are of the same type is on DataList
-func NewListData(value ...types.Data) types.Data {
+func NewListData(value ...data.Data) data.Data {
 	return listData{Value: baseLists.NewDataList(value...)}
 }
 
-func ReadListData(dataString string) (types.Data, error) {
+func ReadListData(dataString string) (data.Data, error) {
 	// TODO revise
 	if dataString == "" {
 		return listData{}.ZeroValue(), nil
 	}
 
 	dataStringList := strings.Split(dataString, constants.ListDataStringSeparator)
-	dataList := make([]types.Data, len(dataStringList))
+	dataList := make([]data.Data, len(dataStringList))
 
 	for i, accAddressString := range dataStringList {
 		accAddress, Error := sdkTypes.AccAddressFromBech32(accAddressString)

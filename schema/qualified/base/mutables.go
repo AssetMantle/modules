@@ -6,8 +6,8 @@ package base
 import (
 	"github.com/AssetMantle/modules/schema/lists"
 	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/qualified"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type Mutables struct {
@@ -23,7 +23,7 @@ func (mutables Mutables) GetMutablePropertyList() lists.PropertyList {
 
 	return mutables.Properties
 }
-func (mutables Mutables) Mutate(propertyList ...types.Property) qualified.Mutables {
+func (mutables Mutables) Mutate(propertyList ...properties.Property) qualified.Mutables {
 	for _, property := range propertyList {
 		mutables.Properties = mutables.Properties.Mutate(property)
 	}

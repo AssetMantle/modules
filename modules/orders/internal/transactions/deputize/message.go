@@ -12,17 +12,17 @@ import (
 	xprtErrors "github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 type message struct {
 	From                 sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	FromID               types.ID            `json:"fromID" valid:"required~required field fromID missing"`
-	ToID                 types.ID            `json:"toID" valid:"required~required field toID missing"`
-	ClassificationID     types.ID            `json:"classificationID" valid:"required~required field classificationID missing"`
+	FromID               ids.ID              `json:"fromID" valid:"required~required field fromID missing"`
+	ToID                 ids.ID              `json:"toID" valid:"required~required field toID missing"`
+	ClassificationID     ids.ID              `json:"classificationID" valid:"required~required field classificationID missing"`
 	MaintainedProperties lists.PropertyList  `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
 	AddMaintainer        bool                `json:"addMaintainer"`
 	RemoveMaintainer     bool                `json:"removeMaintainer"`
@@ -62,7 +62,7 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, toID types.ID, classificationID types.ID, maintainedProperties lists.PropertyList, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.ID, toID ids.ID, classificationID ids.ID, maintainedProperties lists.PropertyList, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) sdkTypes.Msg {
 	return message{
 		From:                 from,
 		FromID:               fromID,

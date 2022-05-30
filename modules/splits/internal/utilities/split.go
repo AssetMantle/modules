@@ -4,18 +4,18 @@
 package utilities
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
+	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/types"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-func AddSplits(splits helpers.Collection, ownerID types.ID, ownableID types.ID, value sdkTypes.Dec) (helpers.Collection, error) {
+func AddSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID, value sdkTypes.Dec) (helpers.Collection, error) {
 	if value.LTE(sdkTypes.ZeroDec()) {
 		return nil, errors.NotAuthorized
 	}
@@ -32,7 +32,7 @@ func AddSplits(splits helpers.Collection, ownerID types.ID, ownableID types.ID, 
 	return splits, nil
 }
 
-func SubtractSplits(splits helpers.Collection, ownerID types.ID, ownableID types.ID, value sdkTypes.Dec) (helpers.Collection, error) {
+func SubtractSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID, value sdkTypes.Dec) (helpers.Collection, error) {
 	if value.LTE(sdkTypes.ZeroDec()) {
 		return nil, errors.NotAuthorized
 	}

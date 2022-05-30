@@ -3,8 +3,8 @@
 
 package constants
 
-const ProjectName = "xprt"
-const ProjectRoute = "/" + ProjectName
+const projectName = "AssetMantle"
+const ProjectRoute = "/" + projectName
 
 const IDSeparator = "."
 const FirstOrderCompositeIDSeparator = "|"

@@ -12,7 +12,8 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/properties"
+	base2 "github.com/AssetMantle/modules/schema/properties/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -25,7 +26,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	var metaPropertyList []types.MetaProperty
+	var metaPropertyList []properties.MetaProperty
 
 	for _, property := range auxiliaryRequest.PropertyList {
 		if property.GetID().Compare(ids.BurnProperty) == 0 && property.GetHash().Compare(baseIDs.NewID("")) == 0 {
@@ -33,11 +34,11 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 		}
 	}
 
-	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.BurnProperty, baseData.NewHeightData(baseTypes.NewHeight(1))))
-	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(sdkTypes.SmallestDec())))
-	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.TakerIDProperty, baseData.NewIDData(baseIDs.NewID("fromID"))))
-	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
-	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.ExpiryProperty, baseData.NewHeightData(baseTypes.NewHeight(900))))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(ids.BurnProperty, baseData.NewHeightData(baseTypes.NewHeight(1))))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(sdkTypes.SmallestDec())))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(ids.TakerIDProperty, baseData.NewIDData(baseIDs.NewID("fromID"))))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(ids.ExpiryProperty, baseData.NewHeightData(baseTypes.NewHeight(900))))
 
 	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
 }

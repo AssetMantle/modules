@@ -7,13 +7,12 @@ import (
 	"strings"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	idsConstants "github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/schema/data"
+	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/utilities/meta"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type stringData struct {
@@ -36,14 +35,14 @@ func (stringData stringData) Compare(listable traits.Listable) int {
 func (stringData stringData) String() string {
 	return stringData.Value
 }
-func (stringData stringData) GetType() types.ID {
+func (stringData stringData) GetType() ids.ID {
 	return idsConstants.StringDataID
 }
-func (stringData stringData) ZeroValue() types.Data {
+func (stringData stringData) ZeroValue() data.Data {
 	return NewStringData("")
 }
-func (stringData stringData) GenerateHash() types.ID {
-	return baseIDs.NewID(meta.Hash(stringData.Value))
+func (stringData stringData) GenerateHash() ids.ID {
+	return baseIDs.NewID(stringUtilities.Hash(stringData.Value))
 }
 func (stringData stringData) Get() string {
 	return stringData.Value
@@ -58,12 +57,12 @@ func stringDataFromInterface(listable traits.Listable) (stringData, error) {
 	}
 }
 
-func NewStringData(value string) types.Data {
+func NewStringData(value string) data.Data {
 	return stringData{
 		Value: value,
 	}
 }
 
-func ReadStringData(stringData string) (types.Data, error) {
+func ReadStringData(stringData string) (data.Data, error) {
 	return NewStringData(stringData), nil
 }

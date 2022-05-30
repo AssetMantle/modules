@@ -12,14 +12,14 @@ import (
 	xprtErrors "github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/ids"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 type message struct {
 	From  sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	NubID types.ID            `json:"nubID" valid:"required~required field nubID missing"`
+	NubID ids.ID              `json:"nubID" valid:"required~required field nubID missing"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -54,7 +54,7 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 func messagePrototype() helpers.Message {
 	return message{}
 }
-func newMessage(from sdkTypes.AccAddress, nubID types.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, nubID ids.ID) sdkTypes.Msg {
 	return message{
 		From:  from,
 		NubID: nubID,

@@ -12,8 +12,7 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/utilities/meta"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type listDataID struct {
@@ -22,15 +21,15 @@ type listDataID struct {
 
 var _ ids.ListDataID = (*listDataID)(nil)
 
-// TODO ambigous implementation, recheck
-func (listDataID listDataID) GetHash() types.ID {
+// TODO ambiguous implementation, recheck
+func (listDataID listDataID) GetHash() ids.ID {
 	idStringList := make([]string, listDataID.IDList.Size())
 
 	for i, id := range listDataID.IDList.GetList() {
 		idStringList[i] = id.String()
 	}
 
-	return NewID(meta.Hash(idStringList...))
+	return NewID(stringUtilities.Hash(idStringList...))
 }
 func (listDataID listDataID) String() string {
 	idStringList := make([]string, listDataID.IDList.Size())

@@ -11,12 +11,13 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
+	base2 "github.com/AssetMantle/modules/schema/properties/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
+	metaUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 func Test_Immutables(t *testing.T) {
-	testProperty := baseTypes.NewProperty(baseIDs.NewID("ID"), baseData.NewHeightData(baseTypes.NewHeight(123)))
+	testProperty := base2.NewProperty(baseIDs.NewID("ID"), baseData.NewHeightData(baseTypes.NewHeight(123)))
 	testImmutables := Immutables{base.NewPropertyList(testProperty)}
 
 	require.Equal(t, Immutables{PropertyList: base.NewPropertyList(testProperty)}, testImmutables)

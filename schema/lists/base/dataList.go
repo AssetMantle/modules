@@ -4,31 +4,30 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/AssetMantle/modules/schema/types"
-	baseList "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type dataList struct {
-	types.List
+	lists.List
 }
 
 var _ lists.DataList = (*dataList)(nil)
 
-func (dataList dataList) GetList() []types.Data {
-	data := make([]types.Data, dataList.Size())
+func (dataList dataList) GetList() []data.Data {
+	DataList := make([]data.Data, dataList.List.Size())
 
-	for i, listable := range dataList.Get() {
-		data[i] = listable.(types.Data)
+	for i, listable := range dataList.List.Get() {
+		DataList[i] = listable.(data.Data)
 	}
 
-	return data
+	return DataList
 }
-func (dataList dataList) Search(data types.Data) (int, bool) {
+func (dataList dataList) Search(data data.Data) (int, bool) {
 	return dataList.List.Search(data)
 }
-func dataToListables(data ...types.Data) []traits.Listable {
+func dataToListables(data ...data.Data) []traits.Listable {
 	listables := make([]traits.Listable, len(data))
 
 	for i, datum := range data {
@@ -38,6 +37,6 @@ func dataToListables(data ...types.Data) []traits.Listable {
 	return listables
 }
 
-func NewDataList(data ...types.Data) lists.DataList {
-	return dataList{List: baseList.NewList(dataToListables(data...)...)}
+func NewDataList(data ...data.Data) lists.DataList {
+	return dataList{List: NewList(dataToListables(data...)...)}
 }

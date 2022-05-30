@@ -14,6 +14,8 @@ const moduleName = "lists"
 func RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, dataList{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, idList{})
+	codecUtilities.RegisterModuleConcrete(codec, moduleName, list{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, metaPropertyList{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, propertyList{})
+	codecUtilities.RegisterModuleConcrete(codec, moduleName, signatures{})
 }

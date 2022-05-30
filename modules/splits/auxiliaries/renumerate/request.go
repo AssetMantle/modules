@@ -10,13 +10,13 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type auxiliaryRequest struct {
-	OwnerID   types.ID     `json:"ownerID" valid:"required~required field ownerID missing"`
-	OwnableID types.ID     `json:"ownableID" valid:"required~required field ownableID missing"`
+	OwnerID   ids.ID       `json:"ownerID" valid:"required~required field ownerID missing"`
+	OwnableID ids.ID       `json:"ownableID" valid:"required~required field ownableID missing"`
 	Value     sdkTypes.Dec `json:"value" valid:"required~required field value missing"`
 }
 

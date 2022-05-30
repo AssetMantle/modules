@@ -11,7 +11,7 @@ import (
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
+	parameters2 "github.com/AssetMantle/modules/schema/parameters"
 )
 
 type genesis struct {
@@ -21,10 +21,10 @@ type genesis struct {
 	mappablePrototype func() helpers.Mappable
 
 	defaultMappableList  []helpers.Mappable
-	defaultParameterList []types.Parameter
+	defaultParameterList []parameters2.Parameter
 
-	MappableList  []helpers.Mappable `json:"mappableList"`
-	ParameterList []types.Parameter  `json:"parameterList"`
+	MappableList  []helpers.Mappable      `json:"mappableList"`
+	ParameterList []parameters2.Parameter `json:"parameterList"`
 }
 
 var _ helpers.Genesis = (*genesis)(nil)
@@ -100,7 +100,7 @@ func (genesis genesis) Decode(byte []byte) helpers.Genesis {
 
 	return NewGenesis(genesis.keyPrototype, genesis.mappablePrototype, genesis.defaultMappableList, genesis.defaultParameterList).Initialize(newGenesis.MappableList, newGenesis.ParameterList)
 }
-func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList []types.Parameter) helpers.Genesis {
+func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList []parameters2.Parameter) helpers.Genesis {
 	if len(mappableList) == 0 {
 		genesis.MappableList = genesis.defaultMappableList
 	} else {
@@ -127,14 +127,14 @@ func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList
 	return genesis
 }
 
-func (genesis genesis) GetParameterList() []types.Parameter {
+func (genesis genesis) GetParameterList() []parameters2.Parameter {
 	return genesis.ParameterList
 }
 func (genesis genesis) GetMappableList() []helpers.Mappable {
 	return genesis.MappableList
 }
 
-func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable, defaultMappableList []helpers.Mappable, defaultParameterList []types.Parameter) helpers.Genesis {
+func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable, defaultMappableList []helpers.Mappable, defaultParameterList []parameters2.Parameter) helpers.Genesis {
 	Codec := codec.New()
 	keyPrototype().RegisterCodec(Codec)
 	mappablePrototype().RegisterCodec(Codec)
@@ -148,6 +148,6 @@ func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helper
 		defaultMappableList:  defaultMappableList,
 		defaultParameterList: defaultParameterList,
 		MappableList:         []helpers.Mappable{},
-		ParameterList:        []types.Parameter{},
+		ParameterList:        []parameters2.Parameter{},
 	}
 }

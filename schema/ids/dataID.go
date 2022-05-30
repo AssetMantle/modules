@@ -3,11 +3,7 @@
 
 package ids
 
-import (
-	"github.com/AssetMantle/modules/schema/types"
-)
-
 type DataID interface {
-	types.ID
-	GetHash() types.ID
+	ID
+	GetHash() ID
 }

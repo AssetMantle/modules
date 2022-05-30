@@ -13,18 +13,17 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
-	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type identityID struct {
-	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID missing"`
-	HashID           types.ID `json:"hashID" valid:"required~required field hashID missing"`
+	ClassificationID ids.ID `json:"classificationID" valid:"required~required field classificationID missing"`
+	HashID           ids.ID `json:"hashID" valid:"required~required field hashID missing"`
 }
 
-var _ types.ID = (*identityID)(nil)
+var _ ids.ID = (*identityID)(nil)
 var _ helpers.Key = (*identityID)(nil)
 
 func (identityID identityID) Bytes() []byte {
@@ -57,7 +56,7 @@ func (identityID identityID) Equals(key helpers.Key) bool {
 }
 
 // TODO Pass Classification & then get Classification ID
-func NewIdentityID(classificationID types.ID, immutableProperties lists.PropertyList) types.ID {
+func NewIdentityID(classificationID ids.ID, immutableProperties lists.PropertyList) ids.ID {
 	return identityID{
 		ClassificationID: classificationID,
 		HashID:           baseTraits.Immutables{PropertyList: immutableProperties}.GenerateHashID(),

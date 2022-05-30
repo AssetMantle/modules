@@ -7,15 +7,15 @@ import (
 	"strings"
 
 	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type id struct {
 	IDString string `json:"idString"`
 }
 
-var _ types.ID = (*id)(nil)
+var _ ids.ID = (*id)(nil)
 
 func (id id) String() string {
 	return id.IDString
@@ -39,6 +39,6 @@ func idFromInterface(i interface{}) (id, error) {
 	}
 }
 
-func NewID(idString string) types.ID {
+func NewID(idString string) ids.ID {
 	return id{IDString: idString}
 }

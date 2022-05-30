@@ -9,13 +9,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	idsConstants "github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/schema/data"
+	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/utilities/meta"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type accAddressData struct {
@@ -38,18 +37,18 @@ func (accAddressData accAddressData) Compare(listable traits.Listable) int {
 func (accAddressData accAddressData) String() string {
 	return accAddressData.Value.String()
 }
-func (accAddressData accAddressData) GetType() types.ID {
+func (accAddressData accAddressData) GetType() ids.ID {
 	return idsConstants.AccAddressDataID
 }
-func (accAddressData accAddressData) ZeroValue() types.Data {
+func (accAddressData accAddressData) ZeroValue() data.Data {
 	return NewAccAddressData(sdkTypes.AccAddress{})
 }
-func (accAddressData accAddressData) GenerateHash() types.ID {
+func (accAddressData accAddressData) GenerateHash() ids.ID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
 		return baseIDs.NewID("")
 	}
 
-	return baseIDs.NewID(meta.Hash(accAddressData.Value.String()))
+	return baseIDs.NewID(stringUtilities.Hash(accAddressData.Value.String()))
 }
 func (accAddressData accAddressData) Get() sdkTypes.AccAddress {
 	return accAddressData.Value
@@ -64,13 +63,13 @@ func accAddressDataFromInterface(listable traits.Listable) (accAddressData, erro
 	}
 }
 
-func NewAccAddressData(value sdkTypes.AccAddress) types.Data {
+func NewAccAddressData(value sdkTypes.AccAddress) data.Data {
 	return accAddressData{
 		Value: value,
 	}
 }
 
-func ReadAccAddressData(dataString string) (types.Data, error) {
+func ReadAccAddressData(dataString string) (data.Data, error) {
 	if dataString == "" {
 		return accAddressData{}.ZeroValue(), nil
 	}

@@ -14,7 +14,7 @@ import (
 
 	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
-	"github.com/AssetMantle/modules/schema/data/utilities"
+	string2 "github.com/AssetMantle/modules/schema/data/utlities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
@@ -62,7 +62,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	data, err := utilities.ReadData(transactionRequest.Data)
+	data, err := string2.ReadData(transactionRequest.Data)
 	if err != nil {
 		return nil, err
 	}

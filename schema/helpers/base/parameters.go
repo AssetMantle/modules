@@ -9,12 +9,14 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
 
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/ids"
+	parameters2 "github.com/AssetMantle/modules/schema/parameters"
 )
 
 type parameters struct {
-	parameterList  []types.Parameter
+	parameterList  []parameters2.Parameter
 	paramsSubspace params.Subspace
 }
 
@@ -46,7 +48,7 @@ func (parameters parameters) Equal(compareParameters helpers.Parameters) bool {
 
 	return true
 }
-func (parameters parameters) Get(id types.ID) types.Parameter {
+func (parameters parameters) Get(id ids.ID) parameters2.Parameter {
 	for _, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(id) == 0 {
 			return parameter
@@ -55,11 +57,11 @@ func (parameters parameters) Get(id types.ID) types.Parameter {
 
 	return nil
 }
-func (parameters parameters) GetList() []types.Parameter {
+func (parameters parameters) GetList() []parameters2.Parameter {
 	return parameters.parameterList
 }
-func (parameters parameters) Fetch(context sdkTypes.Context, id types.ID) helpers.Parameters {
-	var data types.Data
+func (parameters parameters) Fetch(context sdkTypes.Context, id ids.ID) helpers.Parameters {
+	var data data.Data
 
 	parameters.paramsSubspace.Get(context, id.Bytes(), &data)
 
@@ -71,7 +73,7 @@ func (parameters parameters) Fetch(context sdkTypes.Context, id types.ID) helper
 
 	return parameters
 }
-func (parameters parameters) Mutate(context sdkTypes.Context, newParameter types.Parameter) helpers.Parameters {
+func (parameters parameters) Mutate(context sdkTypes.Context, newParameter parameters2.Parameter) helpers.Parameters {
 	for i, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(newParameter.GetID()) == 0 {
 			parameters.parameterList[i] = newParameter
@@ -100,7 +102,7 @@ func (parameters parameters) Initialize(paramsSubspace params.Subspace) helpers.
 	return parameters
 }
 
-func NewParameters(parameterList ...types.Parameter) helpers.Parameters {
+func NewParameters(parameterList ...parameters2.Parameter) helpers.Parameters {
 	return parameters{
 		parameterList: parameterList,
 	}

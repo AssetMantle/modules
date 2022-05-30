@@ -3,8 +3,10 @@
 
 package capabilities
 
-import "github.com/AssetMantle/modules/schema/types"
+import (
+	"github.com/AssetMantle/modules/schema/properties"
+)
 
 type Lockable interface {
-	GetLock() types.Property
+	GetLock() properties.Property
 }

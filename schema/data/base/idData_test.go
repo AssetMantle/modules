@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants/ids"
+	"github.com/AssetMantle/modules/schema/data/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/utilities/meta"
+	"github.com/AssetMantle/modules/utilities/string"
 )
 
 func Test_IDData(t *testing.T) {
@@ -19,9 +19,9 @@ func Test_IDData(t *testing.T) {
 	testIDData2 := NewIDData(baseIDs.NewID(""))
 
 	require.Equal(t, "ID", testIDData.String())
-	require.Equal(t, baseIDs.NewID(meta.Hash("ID")), testIDData.GenerateHash())
+	require.Equal(t, baseIDs.NewID(string.Hash("ID")), testIDData.GenerateHash())
 	require.Equal(t, baseIDs.NewID(""), testIDData2.GenerateHash())
-	require.Equal(t, ids.IDDataID, testIDData.GetType())
+	require.Equal(t, constants.IDDataID, testIDData.GetType())
 
 	require.Equal(t, true, NewIDData(baseIDs.NewID("identity2")).Compare(NewIDData(baseIDs.NewID("identity2"))) == 0)
 

@@ -17,9 +17,8 @@ import (
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
+	properties2 "github.com/AssetMantle/modules/schema/properties"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -29,14 +28,14 @@ type identity struct {
 
 var _ mappables.Identity = (*identity)(nil)
 
-func (identity identity) GetExpiry() types.Property {
+func (identity identity) GetExpiry() properties2.Property {
 	if property := identity.Document.GetProperty(constantIDs.ExpiryProperty); property != nil {
 		return property
 	}
 
 	return properties.Expiry
 }
-func (identity identity) GetAuthentication() types.Property {
+func (identity identity) GetAuthentication() properties2.Property {
 	if property := identity.Document.GetProperty(constantIDs.AuthenticationProperty); property != nil {
 		return property
 	}
@@ -74,7 +73,7 @@ func (identity) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, module.Name, identity{})
 }
 
-func NewIdentity(id types.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Identity {
+func NewIdentity(id ids.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Identity {
 	return identity{
 		Document: baseQualified.Document{
 			ID: id,

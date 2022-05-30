@@ -3,11 +3,7 @@
 
 package data
 
-import (
-	"github.com/AssetMantle/modules/schema/types"
-)
-
 type BooleanData interface {
-	types.Data
+	Data
 	Get() bool
 }

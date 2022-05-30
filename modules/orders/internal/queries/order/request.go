@@ -10,12 +10,12 @@ import (
 	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/modules/orders/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type queryRequest struct {
-	OrderID types.ID `json:"orderID" valid:"required~required field orderID missing"`
+	OrderID ids.ID `json:"orderID" valid:"required~required field orderID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
@@ -61,6 +61,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 		return queryRequest{}
 	}
 }
-func newQueryRequest(orderID types.ID) helpers.QueryRequest {
+func newQueryRequest(orderID ids.ID) helpers.QueryRequest {
 	return queryRequest{OrderID: orderID}
 }

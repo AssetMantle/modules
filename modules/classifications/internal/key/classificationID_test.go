@@ -13,9 +13,7 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
+	metaUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 func Test_ClassificationID_Methods(t *testing.T) {

@@ -8,11 +8,11 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
-func readSplitID(splitIDString string) types.ID {
+func readSplitID(splitIDString string) ids.ID {
 	idList := strings.Split(splitIDString, constants.SecondOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return splitID{
@@ -28,25 +28,25 @@ func splitIDFromInterface(i interface{}) splitID {
 	switch value := i.(type) {
 	case splitID:
 		return value
-	case types.ID:
+	case ids.ID:
 		return splitIDFromInterface(readSplitID(value.String()))
 	default:
 		panic(i)
 	}
 }
 
-func ReadOwnableID(id types.ID) types.ID {
+func ReadOwnableID(id ids.ID) ids.ID {
 	return splitIDFromInterface(id).OwnableID
 }
 
-func ReadOwnerID(id types.ID) types.ID {
+func ReadOwnerID(id ids.ID) ids.ID {
 	return splitIDFromInterface(id).OwnerID
 }
 
-func FromID(id types.ID) helpers.Key {
+func FromID(id ids.ID) helpers.Key {
 	return splitIDFromInterface(id)
 }
 
-func ToID(key helpers.Key) types.ID {
+func ToID(key helpers.Key) ids.ID {
 	return splitIDFromInterface(key)
 }

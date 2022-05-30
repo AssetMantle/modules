@@ -7,13 +7,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	idsConstants "github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/schema/data"
+	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/utilities/meta"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type decData struct {
@@ -42,18 +41,18 @@ func (decData decData) Compare(listable traits.Listable) int {
 func (decData decData) String() string {
 	return decData.Value.String()
 }
-func (decData decData) GetType() types.ID {
+func (decData decData) GetType() ids.ID {
 	return idsConstants.DecDataID
 }
-func (decData decData) ZeroValue() types.Data {
+func (decData decData) ZeroValue() data.Data {
 	return NewDecData(sdkTypes.ZeroDec())
 }
-func (decData decData) GenerateHash() types.ID {
+func (decData decData) GenerateHash() ids.ID {
 	if decData.Compare(decData.ZeroValue()) == 0 {
 		return baseIDs.NewID("")
 	}
 
-	return baseIDs.NewID(meta.Hash(decData.Value.String()))
+	return baseIDs.NewID(stringUtilities.Hash(decData.Value.String()))
 }
 func (decData decData) Get() sdkTypes.Dec {
 	return decData.Value
@@ -68,13 +67,13 @@ func decDataFromInterface(listable traits.Listable) (decData, error) {
 	}
 }
 
-func NewDecData(value sdkTypes.Dec) types.Data {
+func NewDecData(value sdkTypes.Dec) data.Data {
 	return decData{
 		Value: value,
 	}
 }
 
-func ReadDecData(dataString string) (types.Data, error) {
+func ReadDecData(dataString string) (data.Data, error) {
 	if dataString == "" {
 		return decData{}.ZeroValue(), nil
 	}

@@ -9,14 +9,14 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type dataID struct {
-	Type types.ID
-	Hash types.ID
+	Type ids.ID
+	Hash ids.ID
 }
 
 var _ ids.DataID = (*dataID)(nil)
@@ -42,7 +42,7 @@ func (dataID dataID) Compare(listable traits.Listable) int {
 		return bytes.Compare(dataID.Bytes(), compareDataID.Bytes())
 	}
 }
-func (dataID dataID) GetHash() types.ID {
+func (dataID dataID) GetHash() ids.ID {
 	return dataID.Hash
 }
 func dataIDFromInterface(i interface{}) (dataID, error) {
@@ -53,7 +53,7 @@ func dataIDFromInterface(i interface{}) (dataID, error) {
 		return dataID{}, errors.MetaDataError
 	}
 }
-func NewDataID(data types.Data) ids.DataID {
+func NewDataID(data data.Data) ids.DataID {
 	return dataID{
 		Type: data.GetType(),
 		Hash: data.GenerateHash(),

@@ -13,16 +13,16 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/ids"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type splitID struct {
-	OwnerID   types.ID `json:"ownerID" valid:"required~required field ownerID missing"`
-	OwnableID types.ID `json:"ownableID" valid:"required~required field ownableID missing"`
+	OwnerID   ids.ID `json:"ownerID" valid:"required~required field ownerID missing"`
+	OwnableID ids.ID `json:"ownableID" valid:"required~required field ownableID missing"`
 }
 
-var _ types.ID = (*splitID)(nil)
+var _ ids.ID = (*splitID)(nil)
 var _ helpers.Key = (*splitID)(nil)
 
 func (splitID splitID) Bytes() []byte {
@@ -53,7 +53,7 @@ func (splitID splitID) Equals(key helpers.Key) bool {
 	return splitID.Compare(splitIDFromInterface(key)) == 0
 }
 
-func NewSplitID(ownerID types.ID, ownableID types.ID) types.ID {
+func NewSplitID(ownerID ids.ID, ownableID ids.ID) ids.ID {
 	return splitID{
 		OwnerID:   ownerID,
 		OwnableID: ownableID,

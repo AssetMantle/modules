@@ -11,10 +11,11 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	ids2 "github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
+	properties2 "github.com/AssetMantle/modules/schema/properties"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -25,13 +26,13 @@ type maintainer struct {
 
 var _ mappables.Maintainer = (*maintainer)(nil)
 
-func (maintainer maintainer) GetIdentityID() types.ID {
+func (maintainer maintainer) GetIdentityID() ids2.ID {
 	return key.ReadIdentityID(maintainer.ID)
 }
-func (maintainer maintainer) GetMaintainedClassificationID() types.ID {
+func (maintainer maintainer) GetMaintainedClassificationID() ids2.ID {
 	return key.ReadClassificationID(maintainer.ID)
 }
-func (maintainer maintainer) GetMaintainedPropertySet() types.Property {
+func (maintainer maintainer) GetMaintainedPropertySet() properties2.Property {
 	if property := maintainer.GetProperty(ids.MaintainedPropertiesProperty); property != nil {
 		return property
 	}
@@ -91,7 +92,7 @@ func (maintainer maintainer) CanMutateMaintainer() bool {
 
 	return false
 }
-func (maintainer maintainer) MaintainsProperty(id types.ID) bool {
+func (maintainer maintainer) MaintainsProperty(id ids2.ID) bool {
 	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
 		if property.GetID().Compare(id) == 0 {
 			return true
@@ -108,7 +109,7 @@ func (maintainer) RegisterCodec(codec *codec.Codec) {
 }
 
 // TODO
-func NewMaintainer(id types.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Maintainer {
+func NewMaintainer(id ids2.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Maintainer {
 	return maintainer{
 		Document: baseQualified.Document{
 			ID:         id,

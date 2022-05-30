@@ -26,8 +26,7 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/properties"
 )
 
 type TestKeepers struct {
@@ -87,7 +86,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	property4 := baseTypes.NewMetaProperty(baseIDs.NewID("id4"), baseData.NewIDData(baseIDs.NewID("")))
 	property5 := baseTypes.NewMetaProperty(baseIDs.NewID("id5"), baseData.NewDecData(dec))
 
-	var metaPropertyList []types.MetaProperty
+	var metaPropertyList []properties.MetaProperty
 	metaPropertyList = append(metaPropertyList, property1, property2, property3, property4, property5)
 
 	keepers.MetasKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(decData)).Add(mappable.NewMeta(baseData.NewDecData(dec)))

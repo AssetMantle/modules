@@ -5,13 +5,13 @@ package lists
 
 import (
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/properties"
 )
 
 type MetaPropertyList interface {
-	GetList() []types.MetaProperty
-	GetMetaProperty(ids.PropertyID) types.MetaProperty
+	GetList() []properties.MetaProperty
+	GetMetaProperty(ids.PropertyID) properties.MetaProperty
 	ToPropertyList() PropertyList
 
-	Add(...types.MetaProperty) MetaPropertyList
+	Add(...properties.MetaProperty) MetaPropertyList
 }

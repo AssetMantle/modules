@@ -8,13 +8,13 @@ import (
 
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
 	"github.com/AssetMantle/modules/constants"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
-func readAssetID(assetIDString string) types.ID {
+func readAssetID(assetIDString string) ids.ID {
 	idList := strings.Split(assetIDString, constants.FirstOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return assetID{
@@ -32,14 +32,14 @@ func assetIDFromInterface(i interface{}) (assetID, error) {
 	case assetID:
 		return value, nil
 		// TODO remove this use case
-	case types.ID:
+	case ids.ID:
 		return assetIDFromInterface(readAssetID(value.String()))
 	default:
 		return assetID{}, errors.MetaDataError
 	}
 }
 
-func ReadClassificationID(id types.ID) types.ID {
+func ReadClassificationID(id ids.ID) ids.ID {
 	if assetID, err := assetIDFromInterface(id); err != nil {
 		panic(assetID)
 	} else {
@@ -47,7 +47,7 @@ func ReadClassificationID(id types.ID) types.ID {
 	}
 }
 
-func FromID(id types.ID) helpers.Key {
+func FromID(id ids.ID) helpers.Key {
 	if assetID, err := assetIDFromInterface(id); err != nil {
 		panic(assetID)
 	} else {

@@ -3,13 +3,6 @@
 
 package ids
 
-import (
-	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/types"
-)
-
 type ListDataID interface {
 	DataID
-	types.ID
-	lists.IDList
 }

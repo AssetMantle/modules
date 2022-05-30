@@ -10,7 +10,6 @@ import (
 
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
-	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 func Test_IdentityID_Methods(t *testing.T) {

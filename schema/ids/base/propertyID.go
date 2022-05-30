@@ -11,20 +11,19 @@ import (
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type propertyID struct {
-	Key  types.ID
-	Type types.ID
+	Key  ids.ID
+	Type ids.ID
 }
 
 var _ ids.PropertyID = (*propertyID)(nil)
 
-func (propertyID propertyID) GetKey() types.ID {
+func (propertyID propertyID) GetKey() ids.ID {
 	return propertyID.Key
 }
-func (propertyID propertyID) GetType() types.ID {
+func (propertyID propertyID) GetType() ids.ID {
 	return propertyID.Type
 }
 func (propertyID propertyID) String() string {
@@ -58,7 +57,7 @@ func propertyIDFromInterface(listable traits.Listable) (propertyID, error) {
 	}
 }
 
-func NewPropertyID(key, Type types.ID) ids.PropertyID {
+func NewPropertyID(key, Type ids.ID) ids.PropertyID {
 	return propertyID{
 		Key:  key,
 		Type: Type,

@@ -4,28 +4,25 @@
 package base
 
 import (
-	"strings"
-
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/schema/data/utilities"
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type metaProperty struct {
 	ID   ids.PropertyID `json:"id"`
-	Data types.Data     `json:"data"`
+	Data data.Data      `json:"data"`
 }
 
-var _ types.MetaProperty = (*metaProperty)(nil)
+var _ properties.MetaProperty = (*metaProperty)(nil)
 
-func (metaProperty metaProperty) GetData() types.Data {
+func (metaProperty metaProperty) GetData() data.Data {
 	return metaProperty.Data
 }
-func (metaProperty metaProperty) RemoveData() types.Property {
+func (metaProperty metaProperty) RemoveData() properties.Property {
 	return NewProperty(metaProperty.GetKey(), metaProperty.GetData())
 }
 func (metaProperty metaProperty) GetID() ids.PropertyID {
@@ -34,13 +31,13 @@ func (metaProperty metaProperty) GetID() ids.PropertyID {
 func (metaProperty metaProperty) GetDataID() ids.DataID {
 	return metaProperty.Data.GetID()
 }
-func (metaProperty metaProperty) GetKey() types.ID {
+func (metaProperty metaProperty) GetKey() ids.ID {
 	return metaProperty.ID.GetKey()
 }
-func (metaProperty metaProperty) GetType() types.ID {
+func (metaProperty metaProperty) GetType() ids.ID {
 	return metaProperty.Data.GetType()
 }
-func (metaProperty metaProperty) GetHash() types.ID {
+func (metaProperty metaProperty) GetHash() ids.ID {
 	return metaProperty.Data.GenerateHash()
 }
 func (metaProperty metaProperty) Compare(listable traits.Listable) int {
@@ -59,28 +56,14 @@ func metaPropertyFromInterface(listable traits.Listable) (metaProperty, error) {
 	}
 }
 
-func NewEmptyMetaPropertyFromID(propertyID ids.PropertyID) types.MetaProperty {
+func NewEmptyMetaPropertyFromID(propertyID ids.PropertyID) properties.MetaProperty {
 	return metaProperty{
 		ID: propertyID,
 	}
 }
-func NewMetaProperty(key types.ID, data types.Data) types.MetaProperty {
+func NewMetaProperty(key ids.ID, data data.Data) properties.MetaProperty {
 	return metaProperty{
 		ID:   baseIDs.NewPropertyID(key, data.GetType()),
 		Data: data,
 	}
-}
-
-func ReadMetaProperty(metaPropertyString string) (types.MetaProperty, error) {
-	propertyIDAndData := strings.Split(metaPropertyString, constants.PropertyIDAndDataSeparator)
-	if len(propertyIDAndData) == 2 && propertyIDAndData[0] != "" {
-		data, Error := utilities.ReadData(propertyIDAndData[1])
-		if Error != nil {
-			return nil, Error
-		}
-
-		return NewMetaProperty(baseIDs.NewID(propertyIDAndData[0]), data), nil
-	}
-
-	return nil, errors.IncorrectFormat
 }

@@ -4,10 +4,10 @@
 package data
 
 import (
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/ids"
 )
 
 type IDData interface {
-	types.Data
-	Get() types.ID
+	Data
+	Get() ids.ID
 }

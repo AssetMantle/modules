@@ -5,24 +5,25 @@ package mappables
 
 import (
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/qualified"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type Order interface {
 	// TODO check if ID return type required
-	GetRateID() types.ID
-	GetCreationID() types.ID
-	GetMakerOwnableID() types.ID
-	GetTakerOwnableID() types.ID
-	GetMakerID() types.ID
+	GetRateID() ids.ID
+	GetCreationID() ids.ID
+	GetMakerOwnableID() ids.ID
+	GetTakerOwnableID() ids.ID
+	GetMakerID() ids.ID
 
-	GetCreation() types.MetaProperty
-	GetExchangeRate() types.MetaProperty
+	GetCreation() properties.MetaProperty
+	GetExchangeRate() properties.MetaProperty
 
-	GetTakerID() types.Property
-	GetExpiry() types.Property
-	GetMakerOwnableSplit() types.Property
+	GetTakerID() properties.Property
+	GetExpiry() properties.Property
+	GetMakerOwnableSplit() properties.Property
 
 	qualified.Document
 	helpers.Mappable

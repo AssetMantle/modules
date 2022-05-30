@@ -5,10 +5,11 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type property struct {
@@ -16,7 +17,7 @@ type property struct {
 	DataID ids.DataID     `json:"dataID"`
 }
 
-var _ types.Property = (*property)(nil)
+var _ properties.Property = (*property)(nil)
 
 func (property property) GetID() ids.PropertyID {
 	return property.ID
@@ -24,13 +25,13 @@ func (property property) GetID() ids.PropertyID {
 func (property property) GetDataID() ids.DataID {
 	return property.DataID
 }
-func (property property) GetKey() types.ID {
+func (property property) GetKey() ids.ID {
 	return property.ID.GetKey()
 }
-func (property property) GetType() types.ID {
+func (property property) GetType() ids.ID {
 	return property.ID.GetType()
 }
-func (property property) GetHash() types.ID {
+func (property property) GetHash() ids.ID {
 	return property.DataID.GetHash()
 }
 func (property property) Compare(listable traits.Listable) int {
@@ -49,18 +50,18 @@ func propertyFromInterface(listable traits.Listable) (property, error) {
 	}
 }
 
-func NewEmptyPropertyFromID(propertyID ids.PropertyID) types.Property {
+func NewEmptyPropertyFromID(propertyID ids.PropertyID) properties.Property {
 	return property{
 		ID: propertyID,
 	}
 }
-func NewPropertyWithDataID(propertyID ids.PropertyID, dataID ids.DataID) types.Property {
+func NewPropertyWithDataID(propertyID ids.PropertyID, dataID ids.DataID) properties.Property {
 	return property{
 		ID:     propertyID,
 		DataID: dataID,
 	}
 }
-func NewProperty(key types.ID, data types.Data) types.Property {
+func NewProperty(key ids.ID, data data.Data) properties.Property {
 	return property{
 		ID:     baseIDs.NewPropertyID(key, data.GetType()),
 		DataID: data.GetID(),

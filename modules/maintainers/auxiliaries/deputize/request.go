@@ -7,14 +7,14 @@ import (
 	"github.com/asaskevich/govalidator"
 
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type auxiliaryRequest struct {
-	FromID               types.ID           `json:"fromID" valid:"required~required field fromID missing"`
-	ToID                 types.ID           `json:"toID" valid:"required~required field toID missing"`
-	ClassificationID     types.ID           `json:"classificationID" valid:"required~required field classificationID missing"`
+	FromID               ids.ID             `json:"fromID" valid:"required~required field fromID missing"`
+	ToID                 ids.ID             `json:"toID" valid:"required~required field toID missing"`
+	ClassificationID     ids.ID             `json:"classificationID" valid:"required~required field classificationID missing"`
 	MaintainedProperties lists.PropertyList `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
 	AddMaintainer        bool               `json:"addMaintainer"`
 	RemoveMaintainer     bool               `json:"removeMaintainer"`
@@ -37,7 +37,7 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(fromID types.ID, toID types.ID, classificationID types.ID, maintainedProperties lists.PropertyList, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(fromID ids.ID, toID ids.ID, classificationID ids.ID, maintainedProperties lists.PropertyList, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		FromID:               fromID,
 		ToID:                 toID,

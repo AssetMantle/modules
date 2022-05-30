@@ -4,9 +4,9 @@
 package capabilities
 
 import (
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/properties"
 )
 
 type Burnable interface {
-	GetBurn() types.Property
+	GetBurn() properties.Property
 }

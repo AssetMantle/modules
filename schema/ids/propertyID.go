@@ -3,12 +3,8 @@
 
 package ids
 
-import (
-	"github.com/AssetMantle/modules/schema/types"
-)
-
 type PropertyID interface {
-	GetKey() types.ID
-	GetType() types.ID
-	types.ID
+	GetKey() ID
+	GetType() ID
+	ID
 }

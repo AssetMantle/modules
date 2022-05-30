@@ -6,16 +6,18 @@ package base
 import (
 	"encoding/json"
 
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/parameters"
 )
 
 type parameter struct {
-	ID        types.ID   `json:"id"`
-	Data      types.Data `json:"data"`
+	ID        ids.ID    `json:"id"`
+	Data      data.Data `json:"data"`
 	validator func(interface{}) error
 }
 
-var _ types.Parameter = (*parameter)(nil)
+var _ parameters.Parameter = (*parameter)(nil)
 
 func (parameter parameter) String() string {
 	bytes, err := json.Marshal(parameter)
@@ -25,7 +27,7 @@ func (parameter parameter) String() string {
 
 	return string(bytes)
 }
-func (parameter parameter) Equal(compareParameter types.Parameter) bool {
+func (parameter parameter) Equal(compareParameter parameters.Parameter) bool {
 	if compareParameter == nil {
 		return false
 	}
@@ -35,21 +37,21 @@ func (parameter parameter) Equal(compareParameter types.Parameter) bool {
 func (parameter parameter) Validate() error {
 	return parameter.validator(parameter)
 }
-func (parameter parameter) GetID() types.ID {
+func (parameter parameter) GetID() ids.ID {
 	return parameter.ID
 }
-func (parameter parameter) GetData() types.Data {
+func (parameter parameter) GetData() data.Data {
 	return parameter.Data
 }
 func (parameter parameter) GetValidator() func(interface{}) error {
 	return parameter.validator
 }
-func (parameter parameter) Mutate(data types.Data) types.Parameter {
+func (parameter parameter) Mutate(data data.Data) parameters.Parameter {
 	parameter.Data = data
 	return parameter
 }
 
-func NewParameter(id types.ID, data types.Data, validator func(interface{}) error) types.Parameter {
+func NewParameter(id ids.ID, data data.Data, validator func(interface{}) error) parameters.Parameter {
 	return parameter{
 		ID:        id,
 		Data:      data,

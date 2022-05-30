@@ -10,12 +10,12 @@ import (
 	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type queryRequest struct {
-	MaintainerID types.ID `json:"maintainerID" valid:"required~required field maintainerID missing"`
+	MaintainerID ids.ID `json:"maintainerID" valid:"required~required field maintainerID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
@@ -67,6 +67,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 	}
 }
 
-func newQueryRequest(maintainerID types.ID) helpers.QueryRequest {
+func newQueryRequest(maintainerID ids.ID) helpers.QueryRequest {
 	return queryRequest{MaintainerID: maintainerID}
 }

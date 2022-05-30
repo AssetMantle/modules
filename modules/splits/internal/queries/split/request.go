@@ -10,12 +10,12 @@ import (
 	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type queryRequest struct {
-	SplitID types.ID `json:"splitID" valid:"required~required field splitID missing"`
+	SplitID ids.ID `json:"splitID" valid:"required~required field splitID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
@@ -62,6 +62,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 		return queryRequest{}
 	}
 }
-func newQueryRequest(splitID types.ID) helpers.QueryRequest {
+func newQueryRequest(splitID ids.ID) helpers.QueryRequest {
 	return queryRequest{SplitID: splitID}
 }
