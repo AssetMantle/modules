@@ -33,3 +33,9 @@ func (document Document) GetProperty(propertyID ids.PropertyID) types.Property {
 		return nil
 	}
 }
+
+// TODO write test case
+func (document Document) Mutate(propertyList ...types.Property) qualified.Document {
+	document.Mutables = document.Mutables.Mutate(propertyList...).(Mutables)
+	return document
+}

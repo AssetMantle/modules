@@ -8,6 +8,7 @@ package qualified
 
 import (
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -18,7 +19,9 @@ type Document interface {
 	// GetProperty returns property from a document searching in both Mutables and Immutables
 	// * Returns nil if property is not found
 	GetProperty(ids.PropertyID) types.Property
+	GetImmutablePropertyList() lists.PropertyList
+	GetMutablePropertyList() lists.PropertyList
 
-	Immutables
-	Mutables
+	GenerateHashID() types.ID
+	Mutate(propertyList ...types.Property) Document
 }
