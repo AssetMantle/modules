@@ -7,8 +7,9 @@ import (
 	"math/rand"
 
 	"github.com/AssetMantle/modules/schema/properties"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 )
 
 func GenerateRandomProperty(r *rand.Rand) properties.Property {
-	return baseTypes.NewProperty(GenerateRandomID(r), GenerateRandomData(r))
+	return baseProperties.NewProperty(GenerateRandomID(r), GenerateRandomData(r))
 }
