@@ -7,8 +7,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	constantIDs "github.com/AssetMantle/modules/constants/ids"
-	"github.com/AssetMantle/modules/constants/properties"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
@@ -17,7 +15,9 @@ import (
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
-	properties2 "github.com/AssetMantle/modules/schema/properties"
+	propertiesSchema "github.com/AssetMantle/modules/schema/properties"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
@@ -28,42 +28,42 @@ type identity struct {
 
 var _ mappables.Identity = (*identity)(nil)
 
-func (identity identity) GetExpiry() properties2.Property {
-	if property := identity.Document.GetProperty(constantIDs.ExpiryProperty); property != nil {
+func (identity identity) GetExpiry() propertiesSchema.Property {
+	if property := identity.Document.GetProperty(constants.ExpiryProperty); property != nil {
 		return property
 	}
 
-	return properties.Expiry
+	return constants.Expiry
 }
-func (identity identity) GetAuthentication() properties2.Property {
-	if property := identity.Document.GetProperty(constantIDs.AuthenticationProperty); property != nil {
+func (identity identity) GetAuthentication() propertiesSchema.Property {
+	if property := identity.Document.GetProperty(constants.AuthenticationProperty); property != nil {
 		return property
 	}
 
-	return properties.Authentication
+	return constants.Authentication
 }
 
 // TODO write test cases
 func (identity identity) IsProvisioned(accAddress sdkTypes.AccAddress) bool {
-	_, found := identity.GetAuthentication().GetDataID().(ids.ListDataID).Search(baseData.NewAccAddressData(accAddress).GetID())
+	_, found := identity.GetAuthentication().GetDataID().Search(baseData.NewAccAddressData(accAddress).GetID())
 	return found
 }
 
 // TODO write test cases
 func (identity identity) ProvisionAddress(accAddress sdkTypes.AccAddress) mappables.Identity {
 	identity.Document = identity.Document.Mutate(
-		baseTypes.NewPropertyWithDataID(
+		baseProperties.NewPropertyWithDataID(
 			identity.GetAuthentication().GetID(),
-			base.NewListID(identity.GetAuthentication().GetDataID().(ids.ListDataID).Add(baseData.NewAccAddressData(accAddress).GetID())))).(baseQualified.Document)
+			base.NewListDataID(identity.GetAuthentication().GetDataID().Add(baseData.NewAccAddressData(accAddress).GetID())))).(baseQualified.Document)
 	return identity
 }
 
 // TODO write test cases
 func (identity identity) UnprovisionAddress(accAddress sdkTypes.AccAddress) mappables.Identity {
 	identity.Document = identity.Document.Mutate(
-		baseTypes.NewPropertyWithDataID(
+		baseProperties.NewPropertyWithDataID(
 			identity.GetAuthentication().GetID(),
-			base.NewListID(identity.GetAuthentication().GetDataID().(ids.ListDataID).Remove(baseData.NewAccAddressData(accAddress).GetID())))).(baseQualified.Document)
+			base.NewListDataID(identity.GetAuthentication().GetDataID().Remove(baseData.NewAccAddressData(accAddress).GetID())))).(baseQualified.Document)
 	return identity
 }
 func (identity identity) GetKey() helpers.Key {

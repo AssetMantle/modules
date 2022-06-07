@@ -23,7 +23,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 )
 
 func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
@@ -65,9 +65,9 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 
 func Test_Query_Keeper_Maintainer(t *testing.T) {
 	context, keepers := CreateTestInput2(t)
-	immutableProperties, err := baseTypes.ReadProperties("burn:S|100")
+	immutableProperties, err := utilities.ReadProperties("burn:S|100")
 	require.Equal(t, nil, err)
-	mutableProperties, err := baseTypes.ReadProperties("burn:S|100")
+	mutableProperties, err := utilities.ReadProperties("burn:S|100")
 	require.Equal(t, nil, err)
 
 	identityID := baseIDs.NewID("identityID")

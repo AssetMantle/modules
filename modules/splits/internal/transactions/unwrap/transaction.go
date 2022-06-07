@@ -4,8 +4,8 @@
 package unwrap
 
 import (
-	"github.com/AssetMantle/modules/constants/flags"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 var Transaction = baseHelpers.NewTransaction(
@@ -16,7 +16,7 @@ var Transaction = baseHelpers.NewTransaction(
 	requestPrototype,
 	messagePrototype,
 	keeperPrototype,
-	flags.FromID,
-	flags.OwnableID,
-	flags.Value,
+	constants.FromID,
+	constants.OwnableID,
+	constants.Value,
 )

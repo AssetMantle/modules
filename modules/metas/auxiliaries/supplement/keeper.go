@@ -14,8 +14,8 @@ import (
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties"
-	base2 "github.com/AssetMantle/modules/schema/properties/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 )
 
 type auxiliaryKeeper struct {
@@ -33,7 +33,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		var meta helpers.Mappable
 
 		if property.GetHash().Compare(baseIDs.NewID("")) == 0 {
-			if data, Error := baseTypes.ReadMetaProperty(property.GetType().String() + constants.DataTypeAndValueSeparator); Error == nil {
+			if data, Error := utilities.ReadMetaProperty(property.GetType().String() + constants.DataTypeAndValueSeparator); Error == nil {
 				meta = mappable.NewMeta(data.GetData())
 			} else {
 				return newAuxiliaryResponse(nil, Error)
@@ -45,7 +45,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		}
 
 		if meta != nil {
-			metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(property.GetID(), meta.(mappables.Meta).GetData()))
+			metaPropertyList = append(metaPropertyList, baseProperties.NewMetaProperty(property.GetID(), meta.(mappables.Meta).GetData()))
 		}
 	}
 

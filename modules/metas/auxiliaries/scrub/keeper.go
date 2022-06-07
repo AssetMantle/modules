@@ -9,7 +9,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
 )
 
@@ -33,7 +33,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		scrubbedPropertyList[i] = metaProperty.RemoveData()
 	}
 
-	return newAuxiliaryResponse(baseTypes.NewPropertyList(scrubbedPropertyList...), nil)
+	return newAuxiliaryResponse(baseLists.NewPropertyList(scrubbedPropertyList...), nil)
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

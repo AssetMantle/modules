@@ -11,7 +11,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 )
 
@@ -62,13 +62,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 
-		maintainers.Add(mappable.NewMaintainer(toMaintainerID, baseTypes.NewPropertyList(), auxiliaryRequest.MaintainedProperties))
+		maintainers.Add(mappable.NewMaintainer(toMaintainerID, baseLists.NewPropertyList(), auxiliaryRequest.MaintainedProperties))
 	} else {
 		if !fromMaintainer.CanMutateMaintainer() {
 			return newAuxiliaryResponse(errors.NotAuthorized)
 		}
 		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMutablePropertyList().Add(auxiliaryRequest.MaintainedProperties.GetList()...).Remove(removeMaintainedProperties.GetList()...)
-		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID, baseTypes.NewPropertyList(), maintainedProperties))
+		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID, baseLists.NewPropertyList(), maintainedProperties))
 	}
 
 	return newAuxiliaryResponse(nil)

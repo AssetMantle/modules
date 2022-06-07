@@ -11,11 +11,13 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/utilities/random"
 )
@@ -23,10 +25,10 @@ import (
 func Test_Identity_Methods(t *testing.T) {
 
 	classificationID := baseIDs.NewID("classificationID")
-	defaultImmutableProperties, _ := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	defaultImmutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	testIdentityID := key.NewIdentityID(classificationID, defaultImmutableProperties)
-	immutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
-	mutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID2"), baseData.NewStringData("MutableData")))
+	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	mutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID2"), baseData.NewStringData("MutableData")))
 
 	testIdentity := NewIdentity(testIdentityID, immutableProperties, mutableProperties)
 	require.Equal(t, testIdentity, identity{Document: baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}})
@@ -59,7 +61,7 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: baseQualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				Immutables:       baseQualified.Immutables{PropertyList: base.NewPropertyList(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData()))},
+				Immutables:       baseQualified.Immutables{PropertyList: base.NewPropertyList(baseProperties.NewProperty(constants.AuthenticationProperty, baseData.NewListData()))},
 				Mutables:         baseQualified.Mutables{},
 			}},
 			args: args{address: randomAccAddress[0]},
@@ -81,7 +83,7 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: baseQualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				Immutables:       baseQualified.Immutables{PropertyList: base.NewPropertyList(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]))))},
+				Immutables:       baseQualified.Immutables{PropertyList: base.NewPropertyList(baseProperties.NewProperty(constants.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]))))},
 				Mutables:         baseQualified.Mutables{},
 			}},
 			args: args{address: randomAccAddress[0]},
@@ -92,7 +94,7 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: baseQualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				Immutables:       baseQualified.Immutables{PropertyList: base.NewPropertyList(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]))))},
+				Immutables:       baseQualified.Immutables{PropertyList: base.NewPropertyList(baseProperties.NewProperty(constants.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]))))},
 				Mutables:         baseQualified.Mutables{},
 			}},
 			args: args{address: randomAccAddress[1]},
@@ -103,7 +105,7 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: baseQualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				Immutables:       baseQualified.Immutables{PropertyList: base.NewPropertyList(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]), baseData.NewAccAddressData(randomAccAddress[1]), baseData.NewAccAddressData(randomAccAddress[2]), baseData.NewAccAddressData(randomAccAddress[3]))))},
+				Immutables:       baseQualified.Immutables{PropertyList: base.NewPropertyList(baseProperties.NewProperty(constants.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]), baseData.NewAccAddressData(randomAccAddress[1]), baseData.NewAccAddressData(randomAccAddress[2]), baseData.NewAccAddressData(randomAccAddress[3]))))},
 				Mutables:         baseQualified.Mutables{},
 			}},
 			args: args{address: randomAccAddress[3]},
@@ -114,7 +116,7 @@ func Test_identity_IsProvisioned(t *testing.T) {
 			fields: fields{Document: baseQualified.Document{
 				ID:               nil,
 				ClassificationID: nil,
-				Immutables:       baseQualified.Immutables{PropertyList: base.NewPropertyList(baseTypes.NewProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]), baseData.NewAccAddressData(randomAccAddress[1]), baseData.NewAccAddressData(randomAccAddress[2]), baseData.NewAccAddressData(randomAccAddress[3]))))},
+				Immutables:       baseQualified.Immutables{PropertyList: base.NewPropertyList(baseProperties.NewProperty(constants.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(randomAccAddress[0]), baseData.NewAccAddressData(randomAccAddress[1]), baseData.NewAccAddressData(randomAccAddress[2]), baseData.NewAccAddressData(randomAccAddress[3]))))},
 				Mutables:         baseQualified.Mutables{},
 			}},
 			args: args{address: randomAccAddress[4]},

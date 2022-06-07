@@ -5,7 +5,7 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/schema/lists"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/qualified"
 )
@@ -18,7 +18,7 @@ var _ qualified.Mutables = (*Mutables)(nil)
 
 func (mutables Mutables) GetMutablePropertyList() lists.PropertyList {
 	if mutables.Properties == nil {
-		return baseTypes.NewPropertyList()
+		return baseLists.NewPropertyList()
 	}
 
 	return mutables.Properties

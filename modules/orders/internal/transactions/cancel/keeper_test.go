@@ -18,7 +18,6 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/constants/test"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
@@ -31,6 +30,8 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 )
 
 type TestKeepers struct {
@@ -94,9 +95,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	rateID := baseIDs.NewID(sdkTypes.MustNewDecFromStr("0.001").String())
 	creationID := baseIDs.NewID("100")
 	makerID := baseIDs.NewID("makerID")
-	metaProperties, Error := base.ReadMetaProperties(ids.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
-		"," + ids.TakerIDProperty.String() + ":I|fromID" + "," +
-		ids.ExchangeRateProperty.String() + ":D|0.000000000000000001")
+	metaProperties, Error := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+		"," + constants.TakerIDProperty.String() + ":I|fromID" + "," +
+		constants.ExchangeRateProperty.String() + ":D|0.000000000000000001")
 	require.Equal(t, nil, Error)
 	orderID := key.NewOrderID(
 		classificationID,

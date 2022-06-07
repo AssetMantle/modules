@@ -25,7 +25,8 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 )
 
 type TestKeepers struct {
@@ -76,10 +77,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	defaultAddr := sdkTypes.AccAddress("addr")
 	provisionedAddr2 := sdkTypes.AccAddress("addr2")
 	unprovisionedAddr := sdkTypes.AccAddress("unProvisionedAddr")
-	immutableProperties, _ := baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	defaultClassificationID := baseIDs.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
 	defaultIdentityID := key.NewIdentityID(defaultClassificationID, immutableProperties)
-	testIdentity := mappable.NewIdentity(defaultIdentityID, baseTypes.NewPropertyList(), baseTypes.NewPropertyList()).ProvisionAddress(defaultAddr)
+	testIdentity := mappable.NewIdentity(defaultIdentityID, baseLists.NewPropertyList(), baseLists.NewPropertyList()).ProvisionAddress(defaultAddr)
 	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(context).Add(testIdentity)
 
 	t.Run("PositiveCase", func(t *testing.T) {

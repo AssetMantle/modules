@@ -14,13 +14,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 )
 
 func Test_Deputize_Request(t *testing.T) {
@@ -33,7 +33,7 @@ func Test_Deputize_Request(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
 
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.FromID, flags.ToID, flags.ClassificationID, flags.MaintainedProperties, flags.AddMaintainer, flags.RemoveMaintainer, flags.MutateMaintainer})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ToID, constants.ClassificationID, constants.MaintainedProperties, constants.AddMaintainer, constants.RemoveMaintainer, constants.MutateMaintainer})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	const fromAddress = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
@@ -44,7 +44,7 @@ func Test_Deputize_Request(t *testing.T) {
 	const maintainedProperty = "maintainedProperties:S|maintainedProperties"
 
 	var maintainedProperties lists.PropertyList
-	maintainedProperties, err = baseTypes.ReadProperties(maintainedProperty)
+	maintainedProperties, err = utilities.ReadProperties(maintainedProperty)
 	require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}

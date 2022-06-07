@@ -9,8 +9,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/ids"
-	"github.com/AssetMantle/modules/constants/properties"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
@@ -20,6 +18,7 @@ import (
 	"github.com/AssetMantle/modules/schema/mappables"
 	properties2 "github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -50,42 +49,42 @@ func (order order) GetMakerID() ids2.ID {
 func (order order) GetCreation() properties2.MetaProperty {
 	heightValue, Error := strconv.ParseInt(key.ReadCreationID(order.ID).String(), 10, 64)
 	if Error != nil {
-		return base.NewMetaProperty(ids.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(0)))
+		return base.NewMetaProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(0)))
 	}
 
-	return base.NewMetaProperty(ids.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(heightValue)))
+	return base.NewMetaProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(heightValue)))
 }
 func (order order) GetExchangeRate() properties2.MetaProperty {
 	decValue, Error := sdkTypes.NewDecFromStr(key.ReadRateID(order.ID).String())
 	if Error != nil {
-		return base.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(sdkTypes.ZeroDec()))
+		return base.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.ZeroDec()))
 	}
 
-	return base.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(decValue))
+	return base.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(decValue))
 }
 func (order order) GetTakerID() properties2.Property {
-	if takerID := order.Immutables.GetImmutablePropertyList().GetProperty(ids.TakerIDProperty); takerID != nil {
+	if takerID := order.Immutables.GetImmutablePropertyList().GetProperty(constants.TakerIDProperty); takerID != nil {
 		return takerID
-	} else if takerID := order.Mutables.GetMutablePropertyList().GetProperty(ids.TakerIDProperty); takerID != nil {
+	} else if takerID := order.Mutables.GetMutablePropertyList().GetProperty(constants.TakerIDProperty); takerID != nil {
 		return takerID
 	} else {
 
-		return properties.TakerID
+		return constants.TakerID
 	}
 }
 func (order order) GetExpiry() properties2.Property {
-	if expiry := order.GetProperty(ids.ExpiryProperty); expiry != nil {
+	if expiry := order.GetProperty(constants.ExpiryProperty); expiry != nil {
 		return expiry
 	}
 
-	return properties.Expiry
+	return constants.Expiry
 }
 func (order order) GetMakerOwnableSplit() properties2.Property {
-	if makerOwnableSplit := order.GetProperty(ids.MakerOwnableSplitProperty); makerOwnableSplit != nil {
+	if makerOwnableSplit := order.GetProperty(constants.MakerOwnableSplitProperty); makerOwnableSplit != nil {
 		return makerOwnableSplit
 	}
 
-	return properties.MakerOwnableSplit
+	return constants.MakerOwnableSplit
 }
 func (order order) GetKey() helpers.Key {
 	return key.FromID(order.ID)

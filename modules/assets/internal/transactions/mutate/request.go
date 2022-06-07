@@ -12,11 +12,11 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
-	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -47,10 +47,10 @@ func (transactionRequest transactionRequest) Validate() error {
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
-		cliCommand.ReadString(flags.FromID),
-		cliCommand.ReadString(flags.AssetID),
-		cliCommand.ReadString(flags.MutableMetaProperties),
-		cliCommand.ReadString(flags.MutableProperties),
+		cliCommand.ReadString(constants.FromID),
+		cliCommand.ReadString(constants.AssetID),
+		cliCommand.ReadString(constants.MutableMetaProperties),
+		cliCommand.ReadString(constants.MutableProperties),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
@@ -69,12 +69,12 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	mutableMetaProperties, err := base.ReadMetaProperties(transactionRequest.MutableMetaProperties)
+	mutableMetaProperties, err := utilities.ReadMetaProperties(transactionRequest.MutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
 
-	mutableProperties, err := base.ReadProperties(transactionRequest.MutableProperties)
+	mutableProperties, err := utilities.ReadProperties(transactionRequest.MutableProperties)
 	if err != nil {
 		return nil, err
 	}

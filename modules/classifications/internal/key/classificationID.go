@@ -11,11 +11,11 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	metaUtilities "github.com/AssetMantle/modules/utilities/string"
 )
@@ -42,7 +42,7 @@ func (classificationID classificationID) String() string {
 
 	return strings.Join(values, constants.IDSeparator)
 }
-func (classificationID classificationID) Compare(listable capabilities.Listable) int {
+func (classificationID classificationID) Compare(listable traits.Listable) int {
 	if compareClassificationID, err := classificationIDFromInterface(listable); err != nil {
 		panic(classificationID)
 	} else {

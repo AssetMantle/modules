@@ -16,7 +16,7 @@ import (
 )
 
 type listDataID struct {
-	lists.IDList `json:"idList"`
+	lists.IDList
 }
 
 var _ ids.ListDataID = (*listDataID)(nil)
@@ -56,12 +56,17 @@ func (listDataID listDataID) Compare(listable traits.Listable) int {
 		return bytes.Compare(listID.Bytes(), listID.Bytes())
 	}
 }
-
 func listDataIDFromInterface(i interface{}) (listDataID, error) {
 	switch value := i.(type) {
 	case listDataID:
 		return value, nil
 	default:
 		return listDataID{}, errors.MetaDataError
+	}
+}
+
+func NewListDataID(idList lists.IDList) ids.ListDataID {
+	return listDataID{
+		IDList: idList,
 	}
 }

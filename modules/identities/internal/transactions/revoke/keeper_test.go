@@ -7,11 +7,11 @@ import (
 	"reflect"
 	"testing"
 
+	tendermintDB "github.com/tendermint/tm-db"
+
 	"github.com/AssetMantle/modules/constants/test"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
-
-	tendermintDB "github.com/tendermint/tm-db"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -81,9 +81,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	_, err := baseTypes.ReadProperties("maintainedProperties:S|maintainedProperties")
+	_, err := utilities.ReadProperties("maintainedProperties:S|maintainedProperties")
 	require.Equal(t, nil, err)
-	_, err = baseTypes.ReadProperties("conformError:S|mockError")
+	_, err = utilities.ReadProperties("conformError:S|mockError")
 	require.Equal(t, nil, err)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")

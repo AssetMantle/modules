@@ -4,8 +4,8 @@
 package deputize
 
 import (
-	"github.com/AssetMantle/modules/constants/flags"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 var Transaction = baseHelpers.NewTransaction(
@@ -17,11 +17,11 @@ var Transaction = baseHelpers.NewTransaction(
 	messagePrototype,
 	keeperPrototype,
 
-	flags.FromID,
-	flags.ToID,
-	flags.ClassificationID,
-	flags.MaintainedProperties,
-	flags.AddMaintainer,
-	flags.RemoveMaintainer,
-	flags.MutateMaintainer,
+	constants.FromID,
+	constants.ToID,
+	constants.ClassificationID,
+	constants.MaintainedProperties,
+	constants.AddMaintainer,
+	constants.RemoveMaintainer,
+	constants.MutateMaintainer,
 )

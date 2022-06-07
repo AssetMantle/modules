@@ -12,14 +12,15 @@ import (
 	"github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 func Test_Maintainer_Methods(t *testing.T) {
 	classificationID := baseIDs.NewID("classificationID")
 	identityID := baseIDs.NewID("identityID")
-	immutableProperties := baseLists.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID"), base.NewStringData("ImmutableData")))
-	mutableProperties := baseLists.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID"), base.NewStringData("MutableData")))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID"), base.NewStringData("ImmutableData")))
+	mutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID"), base.NewStringData("MutableData")))
 
 	testMaintainerID := key.NewMaintainerID(classificationID, identityID)
 

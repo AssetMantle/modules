@@ -7,7 +7,7 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/qualified"
 	metaUtilities "github.com/AssetMantle/modules/utilities/string"
 )
@@ -21,7 +21,7 @@ var _ qualified.Immutables = (*Immutables)(nil)
 // TODO write test case
 func (immutables Immutables) GetImmutablePropertyList() lists.PropertyList {
 	if immutables.PropertyList.GetList() == nil {
-		return baseTypes.NewPropertyList()
+		return base.NewPropertyList()
 	}
 
 	return immutables.PropertyList

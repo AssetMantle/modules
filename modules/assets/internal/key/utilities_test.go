@@ -12,11 +12,12 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 )
 
 func TestFromID(t *testing.T) {
 	classificationID := baseIDs.NewID("classificationID")
-	immutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 	newAssetID := NewAssetID(classificationID, immutableProperties)
 
 	assetID1, err := assetIDFromInterface(newAssetID)
@@ -36,7 +37,7 @@ func TestFromID(t *testing.T) {
 
 func TestReadClassificationID(t *testing.T) {
 	classificationID := baseIDs.NewID("classificationID")
-	immutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 	assetID1 := NewAssetID(classificationID, immutableProperties)
 
 	assetID2, err := assetIDFromInterface(assetID1)

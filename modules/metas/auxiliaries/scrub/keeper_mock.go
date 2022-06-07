@@ -8,7 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/constants/test"
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
 )
 
@@ -31,7 +31,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 		}
 	}
 
-	return newAuxiliaryResponse(baseTypes.NewPropertyList(scrubbedPropertyList...), nil)
+	return newAuxiliaryResponse(baseLists.NewPropertyList(scrubbedPropertyList...), nil)
 }
 
 func (auxiliaryKeeperMock) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

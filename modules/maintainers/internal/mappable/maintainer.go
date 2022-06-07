@@ -6,8 +6,6 @@ package mappable
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/AssetMantle/modules/constants/ids"
-	"github.com/AssetMantle/modules/constants/properties"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -15,6 +13,7 @@ import (
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
 	properties2 "github.com/AssetMantle/modules/schema/properties"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
@@ -33,15 +32,15 @@ func (maintainer maintainer) GetMaintainedClassificationID() ids2.ID {
 	return key.ReadClassificationID(maintainer.ID)
 }
 func (maintainer maintainer) GetMaintainedPropertySet() properties2.Property {
-	if property := maintainer.GetProperty(ids.MaintainedPropertiesProperty); property != nil {
+	if property := maintainer.GetProperty(constants.MaintainedPropertiesProperty); property != nil {
 		return property
 	}
-	return properties.MaintainedProperties
+	return constants.MaintainedProperties
 }
 
 func (maintainer maintainer) CanMintAsset() bool {
-	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
-		if property.GetID().Compare(properties.Permissions.GetID()) == 0 {
+	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
+		if property.GetID().Compare(constants.Permissions.GetID()) == 0 {
 			return true
 		}
 	}
@@ -50,7 +49,7 @@ func (maintainer maintainer) CanMintAsset() bool {
 
 // TODO
 func (maintainer maintainer) CanBurnAsset() bool {
-	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
+	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
 		// impl
 	}
 
@@ -59,7 +58,7 @@ func (maintainer maintainer) CanBurnAsset() bool {
 
 // TODO
 func (maintainer maintainer) CanRenumerateAsset() bool {
-	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
+	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
 		// impl
 	}
 
@@ -68,7 +67,7 @@ func (maintainer maintainer) CanRenumerateAsset() bool {
 
 // TODO
 func (maintainer maintainer) CanAddMaintainer() bool {
-	if property := maintainer.GetProperty(properties.Permissions.GetID()); property != nil {
+	if property := maintainer.GetProperty(constants.Permissions.GetID()); property != nil {
 		// TODO impl
 	}
 
@@ -77,7 +76,7 @@ func (maintainer maintainer) CanAddMaintainer() bool {
 
 // TODO
 func (maintainer maintainer) CanRemoveMaintainer() bool {
-	if property := maintainer.GetProperty(properties.Permissions.GetID()); property != nil {
+	if property := maintainer.GetProperty(constants.Permissions.GetID()); property != nil {
 		// TODO impl
 	}
 
@@ -86,14 +85,14 @@ func (maintainer maintainer) CanRemoveMaintainer() bool {
 
 // TODO
 func (maintainer maintainer) CanMutateMaintainer() bool {
-	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
+	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
 		// impl
 	}
 
 	return false
 }
 func (maintainer maintainer) MaintainsProperty(id ids2.ID) bool {
-	if property := maintainer.GetProperty(ids.PermissionsProperty); property != nil {
+	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
 		if property.GetID().Compare(id) == 0 {
 			return true
 		}

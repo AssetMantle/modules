@@ -9,11 +9,6 @@ import (
 
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/test"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -22,6 +17,11 @@ import (
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
+
+	"github.com/AssetMantle/modules/constants/test"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
@@ -85,11 +85,11 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
 	var maintainedProperties lists.PropertyList
-	maintainedProperties, err := baseTypes.ReadProperties("maintainedProperties:S|maintainedProperties")
+	maintainedProperties, err := utilities.ReadProperties("maintainedProperties:S|maintainedProperties")
 	require.Equal(t, nil, err)
 
 	var conformMockErrorProperties lists.PropertyList
-	conformMockErrorProperties, err = baseTypes.ReadProperties("deputizeError:S|mockError")
+	conformMockErrorProperties, err = utilities.ReadProperties("deputizeError:S|mockError")
 	require.Equal(t, nil, err)
 
 	defaultAddr := sdkTypes.AccAddress("addr")

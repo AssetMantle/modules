@@ -24,7 +24,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 )
 
 type TestKeepers struct {
@@ -76,15 +76,15 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	classificationID := baseIDs.NewID("classificationID")
 	identityID := baseIDs.NewID("identityID")
 	toID := baseIDs.NewID("toID")
-	immutableProperties := baseTypes.NewPropertyList()
-	mutableProperties := baseTypes.NewPropertyList()
+	immutableProperties := baseLists.NewPropertyList()
+	mutableProperties := baseLists.NewPropertyList()
 	maintainerID := key.NewMaintainerID(classificationID, identityID)
 	keepers.MaintainersKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, immutableProperties, mutableProperties))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
 		require.Panics(t, func() {
-			if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(identityID, toID, classificationID, baseTypes.NewPropertyList(), false, false, false)); !reflect.DeepEqual(got, want) {
+			if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(identityID, toID, classificationID, baseLists.NewPropertyList(), false, false, false)); !reflect.DeepEqual(got, want) {
 				t.Errorf("Transact() = %v, want %v", got, want)
 			}
 		})
@@ -94,7 +94,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(nil)
 		require.Panics(t, func() {
-			if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(identityID, identityID, classificationID, baseTypes.NewPropertyList(), false, false, false)); !reflect.DeepEqual(got, want) {
+			if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(identityID, identityID, classificationID, baseLists.NewPropertyList(), false, false, false)); !reflect.DeepEqual(got, want) {
 				t.Errorf("Transact() = %v, want %v", got, want)
 			}
 		})

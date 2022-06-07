@@ -4,8 +4,8 @@
 package take
 
 import (
-	"github.com/AssetMantle/modules/constants/flags"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 var Transaction = baseHelpers.NewTransaction(
@@ -16,7 +16,7 @@ var Transaction = baseHelpers.NewTransaction(
 	requestPrototype,
 	messagePrototype,
 	keeperPrototype,
-	flags.FromID,
-	flags.TakerOwnableSplit,
-	flags.OrderID,
+	constants.FromID,
+	constants.TakerOwnableSplit,
+	constants.OrderID,
 )
