@@ -7,6 +7,7 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
+// TODO use enum
 var (
 	AccAddressDataID = baseIDs.NewID("A")
 	BooleanDataID    = baseIDs.NewID("B")
