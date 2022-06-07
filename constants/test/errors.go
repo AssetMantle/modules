@@ -9,6 +9,7 @@ import (
 	"github.com/AssetMantle/modules/constants"
 )
 
+// TODO move to errors
 var (
 	MockError = errors.Register(constants.ProjectRoute, 999, "MockError")
 )

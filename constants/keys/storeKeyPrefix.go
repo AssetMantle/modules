@@ -5,8 +5,10 @@ package keys
 
 import "encoding/binary"
 
+// TODO move to helpers
 type storeKeyPrefix int16
 
+// TODO use enum
 const (
 	Assets storeKeyPrefix = iota + 8
 	Classifications
@@ -17,6 +19,7 @@ const (
 	Splits
 )
 
+// TODO migrate to utilities
 func (storeKeyPrefix storeKeyPrefix) GenerateStoreKey(key []byte) []byte {
 	bytes := make([]byte, 2)
 	binary.LittleEndian.PutUint16(bytes, uint16(storeKeyPrefix))

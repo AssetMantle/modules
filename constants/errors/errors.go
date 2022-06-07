@@ -9,6 +9,7 @@ import (
 	"github.com/AssetMantle/modules/constants"
 )
 
+// TODO create error types
 var (
 	DeletionNotAllowed   = errors.Register(constants.ProjectRoute, 101, "DeletionNotAllowed")
 	EntityAlreadyExists  = errors.Register(constants.ProjectRoute, 102, "EntityAlreadyExists")
