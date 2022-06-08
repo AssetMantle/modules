@@ -61,13 +61,13 @@ func (parameters parameters) GetList() []parameters2.Parameter {
 	return parameters.parameterList
 }
 func (parameters parameters) Fetch(context sdkTypes.Context, id ids.ID) helpers.Parameters {
-	var data data.Data
+	var Data data.Data
 
-	parameters.paramsSubspace.Get(context, id.Bytes(), &data)
+	parameters.paramsSubspace.Get(context, id.Bytes(), &Data)
 
 	for i, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(id) == 0 {
-			parameters.parameterList[i] = parameter.Mutate(data)
+			parameters.parameterList[i] = parameter.Mutate(Data)
 		}
 	}
 

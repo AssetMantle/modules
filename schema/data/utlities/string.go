@@ -18,34 +18,34 @@ func ReadData(dataString string) (data.Data, error) {
 	if len(dataTypeAndString) == 2 {
 		dataTypeID, dataString := dataTypeAndString[0], dataTypeAndString[1]
 
-		var data data.Data
+		var Data data.Data
 
 		var Error error
 
 		switch baseIDs.NewID(dataTypeID) {
 		case constantIDs.AccAddressDataID:
-			data, Error = baseData.ReadAccAddressData(dataString)
+			Data, Error = baseData.ReadAccAddressData(dataString)
 		case constantIDs.BooleanDataID:
-			data, Error = baseData.ReadBooleanData(dataString)
+			Data, Error = baseData.ReadBooleanData(dataString)
 		case constantIDs.DecDataID:
-			data, Error = baseData.ReadDecData(dataString)
+			Data, Error = baseData.ReadDecData(dataString)
 		case constantIDs.HeightDataID:
-			data, Error = baseData.ReadHeightData(dataString)
+			Data, Error = baseData.ReadHeightData(dataString)
 		case constantIDs.IDDataID:
-			data, Error = baseData.ReadIDData(dataString)
+			Data, Error = baseData.ReadIDData(dataString)
 		case constantIDs.ListDataID:
-			data, Error = baseData.ReadListData(dataString)
+			Data, Error = baseData.ReadListData(dataString)
 		case constantIDs.StringDataID:
-			data, Error = baseData.ReadStringData(dataString)
+			Data, Error = baseData.ReadStringData(dataString)
 		default:
-			data, Error = nil, errors.UnsupportedParameter
+			Data, Error = nil, errors.UnsupportedParameter
 		}
 
 		if Error != nil {
 			return nil, Error
 		}
 
-		return data, nil
+		return Data, nil
 	}
 
 	return nil, errors.IncorrectFormat
