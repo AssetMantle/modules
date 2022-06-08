@@ -9,10 +9,8 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-const moduleName = "qualified"
-
 func RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, moduleName, Document{})
-	codecUtilities.RegisterModuleConcrete(codec, moduleName, Immutables{})
-	codecUtilities.RegisterModuleConcrete(codec, moduleName, Mutables{})
+	codecUtilities.RegisterModuleConcrete(codec, Document{})
+	codecUtilities.RegisterModuleConcrete(codec, Immutables{})
+	codecUtilities.RegisterModuleConcrete(codec, Mutables{})
 }

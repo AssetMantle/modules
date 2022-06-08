@@ -9,13 +9,11 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-const moduleName = "lists"
-
 func RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, moduleName, dataList{})
-	codecUtilities.RegisterModuleConcrete(codec, moduleName, idList{})
-	codecUtilities.RegisterModuleConcrete(codec, moduleName, list{})
-	codecUtilities.RegisterModuleConcrete(codec, moduleName, metaPropertyList{})
-	codecUtilities.RegisterModuleConcrete(codec, moduleName, propertyList{})
-	codecUtilities.RegisterModuleConcrete(codec, moduleName, signatureList{})
+	codecUtilities.RegisterModuleConcrete(codec, dataList{})
+	codecUtilities.RegisterModuleConcrete(codec, idList{})
+	codecUtilities.RegisterModuleConcrete(codec, list{})
+	codecUtilities.RegisterModuleConcrete(codec, metaPropertyList{})
+	codecUtilities.RegisterModuleConcrete(codec, propertyList{})
+	codecUtilities.RegisterModuleConcrete(codec, signatureList{})
 }

@@ -7,10 +7,8 @@ import (
 	"reflect"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/constants"
 )
 
-func RegisterModuleConcrete(codec *codec.Codec, moduleName string, o interface{}) {
-	codec.RegisterConcrete(o, constants.ProjectRoute+"/"+moduleName+"/"+reflect.TypeOf(o).PkgPath()+"/"+reflect.TypeOf(o).Name(), nil)
+func RegisterModuleConcrete(codec *codec.Codec, o interface{}) {
+	codec.RegisterConcrete(o, reflect.TypeOf(o).PkgPath()+"/"+reflect.TypeOf(o).Name(), nil)
 }
