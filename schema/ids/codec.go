@@ -8,6 +8,7 @@ import (
 )
 
 func RegisterCodec(codec *codec.Codec) {
+	codec.RegisterInterface((*DataID)(nil), nil)
 	codec.RegisterInterface((*ID)(nil), nil)
-	codec.RegisterInterface((*ListDataID)(nil), nil)
+	codec.RegisterInterface((*PropertyID)(nil), nil)
 }

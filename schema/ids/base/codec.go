@@ -14,6 +14,5 @@ const moduleName = "ids"
 func RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, dataID{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, id{})
-	codecUtilities.RegisterModuleConcrete(codec, moduleName, listDataID{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, propertyID{})
 }
