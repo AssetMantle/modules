@@ -14,7 +14,7 @@ var (
 	BurnProperty           = baseIDs.NewPropertyID(baseIDs.NewID("burn"), constants.HeightDataID)
 	CreationProperty       = baseIDs.NewPropertyID(baseIDs.NewID("creation"), constants.HeightDataID)
 	ExchangeRateProperty   = baseIDs.NewPropertyID(baseIDs.NewID("exchangeRate"), constants.DecDataID)
-	// TODO Set max expirey as order module parameter
+	// TODO Set max expiry as order module parameter
 	ExpiryProperty               = baseIDs.NewPropertyID(baseIDs.NewID("expiry"), constants.HeightDataID)
 	LockProperty                 = baseIDs.NewPropertyID(baseIDs.NewID("lock"), constants.HeightDataID)
 	MaintainedPropertiesProperty = baseIDs.NewPropertyID(baseIDs.NewID("maintainedProperties"), constants.ListDataID)
