@@ -9,5 +9,6 @@ import (
 const moduleName = "properties"
 
 func RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterModuleConcrete(codec, moduleName, metaProperty{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, property{})
 }
