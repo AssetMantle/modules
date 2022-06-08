@@ -17,5 +17,5 @@ func RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, list{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, metaPropertyList{})
 	codecUtilities.RegisterModuleConcrete(codec, moduleName, propertyList{})
-	codecUtilities.RegisterModuleConcrete(codec, moduleName, signatures{})
+	codecUtilities.RegisterModuleConcrete(codec, moduleName, signatureList{})
 }

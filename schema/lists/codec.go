@@ -10,7 +10,8 @@ import (
 func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*DataList)(nil), nil)
 	codec.RegisterInterface((*IDList)(nil), nil)
+	codec.RegisterInterface((*List)(nil), nil)
 	codec.RegisterInterface((*MetaPropertyList)(nil), nil)
 	codec.RegisterInterface((*PropertyList)(nil), nil)
-	codec.RegisterInterface((*Signatures)(nil), nil)
+	codec.RegisterInterface((*SignatureList)(nil), nil)
 }
