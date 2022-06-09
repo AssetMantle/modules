@@ -7,7 +7,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
-	"github.com/AssetMantle/modules/modules/assets/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	ids2 "github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
@@ -49,7 +48,7 @@ func (asset asset) GetKey() helpers.Key {
 	return key.FromID(asset.ID)
 }
 func (asset) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, asset{})
+	codecUtilities.RegisterModuleConcrete(codec, asset{})
 }
 
 func NewAsset(id ids2.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Asset {

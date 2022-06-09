@@ -76,7 +76,7 @@ func (orderID orderID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(orderID.Bytes())
 }
 func (orderID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, orderID{})
+	codecUtilities.RegisterModuleConcrete(codec, orderID{})
 }
 func (orderID orderID) IsPartial() bool {
 	return len(orderID.HashID.Bytes()) == 0

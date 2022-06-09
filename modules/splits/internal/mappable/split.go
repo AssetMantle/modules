@@ -8,7 +8,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
-	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -50,7 +49,7 @@ func (split split) GetKey() helpers.Key {
 	return key.FromID(split.ID)
 }
 func (split) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, split{})
+	codecUtilities.RegisterModuleConcrete(codec, split{})
 }
 
 func NewSplit(splitID ids.ID, value sdkTypes.Dec) mappables.Split {

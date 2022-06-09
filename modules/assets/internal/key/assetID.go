@@ -52,7 +52,7 @@ func (assetID assetID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(assetID.Bytes())
 }
 func (assetID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, assetID{})
+	codecUtilities.RegisterModuleConcrete(codec, assetID{})
 }
 func (assetID assetID) IsPartial() bool {
 	return len(assetID.HashID.Bytes()) == 0

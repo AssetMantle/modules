@@ -7,7 +7,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
-	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	ids2 "github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
@@ -104,7 +103,7 @@ func (maintainer maintainer) GetKey() helpers.Key {
 	return key.FromID(maintainer.ID)
 }
 func (maintainer) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, maintainer{})
+	codecUtilities.RegisterModuleConcrete(codec, maintainer{})
 }
 
 // TODO

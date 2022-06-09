@@ -13,7 +13,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
 	xprtErrors "github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -80,7 +79,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	), nil
 }
 func (transactionRequest) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, transactionRequest{})
+	codecUtilities.RegisterModuleConcrete(codec, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}

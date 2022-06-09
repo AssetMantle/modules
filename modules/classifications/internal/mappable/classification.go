@@ -7,7 +7,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
-	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
@@ -26,7 +25,7 @@ func (classification classification) GetKey() helpers.Key {
 	return key.FromID(classification.ID)
 }
 func (classification) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, classification{})
+	codecUtilities.RegisterModuleConcrete(codec, classification{})
 }
 
 func NewClassification(id ids.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Classification {

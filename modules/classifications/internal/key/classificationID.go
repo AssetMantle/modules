@@ -53,7 +53,7 @@ func (classificationID classificationID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(classificationID.Bytes())
 }
 func (classificationID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, classificationID{})
+	codecUtilities.RegisterModuleConcrete(codec, classificationID{})
 }
 func (classificationID classificationID) IsPartial() bool {
 	return len(classificationID.HashID.Bytes()) == 0

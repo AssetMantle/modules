@@ -10,7 +10,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
-	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	ids2 "github.com/AssetMantle/modules/schema/ids"
@@ -90,7 +89,7 @@ func (order order) GetKey() helpers.Key {
 	return key.FromID(order.ID)
 }
 func (order) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, order{})
+	codecUtilities.RegisterModuleConcrete(codec, order{})
 }
 
 func NewOrder(orderID ids2.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Order {

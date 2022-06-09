@@ -44,7 +44,7 @@ func (splitID splitID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(splitID.Bytes())
 }
 func (splitID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, splitID{})
+	codecUtilities.RegisterModuleConcrete(codec, splitID{})
 }
 func (splitID splitID) IsPartial() bool {
 	return len(splitID.OwnableID.Bytes()) == 0

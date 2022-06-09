@@ -8,7 +8,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
-	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -70,7 +69,7 @@ func (identity identity) GetKey() helpers.Key {
 	return key.FromID(identity.Document.ID)
 }
 func (identity) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, identity{})
+	codecUtilities.RegisterModuleConcrete(codec, identity{})
 }
 
 func NewIdentity(id ids.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Identity {

@@ -46,7 +46,7 @@ func (metaID metaID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(metaID.Bytes())
 }
 func (metaID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, metaID{})
+	codecUtilities.RegisterModuleConcrete(codec, metaID{})
 }
 func (metaID metaID) IsPartial() bool {
 	return len(metaID.HashID.Bytes()) == 0
