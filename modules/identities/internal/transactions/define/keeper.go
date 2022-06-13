@@ -10,6 +10,7 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/modules/identities/internal/utilities"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -38,7 +39,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	if !identity.IsProvisioned(message.From) {
+	if !utilities.IsProvisioned(identity, message.From) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 

@@ -4,8 +4,6 @@
 package mappables
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/qualified"
@@ -21,10 +19,6 @@ type Identity interface {
 	// GetAuthentication returns the authentication property of an Identity
 	// * If the property is not found, it returns a default value and not nil
 	GetAuthentication() properties.Property
-
-	IsProvisioned(sdkTypes.AccAddress) bool
-	ProvisionAddress(sdkTypes.AccAddress) Identity
-	UnprovisionAddress(sdkTypes.AccAddress) Identity
 
 	qualified.Document
 	helpers.Mappable
