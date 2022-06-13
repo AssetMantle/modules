@@ -11,23 +11,23 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
-	metaUtilities "github.com/AssetMantle/modules/utilities/meta"
+	metaUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
-// TODO check if should be shifted to types/ids package
+// TODO check if it should be shifted to types/ids package
 type classificationID struct {
 	// TODO remove chainID, rename hashID to hash
-	ChainID types.ID
-	HashID  types.ID
+	ChainID ids.ID
+	HashID  ids.ID
 }
 
-var _ types.ID = (*classificationID)(nil)
+var _ ids.ID = (*classificationID)(nil)
 var _ helpers.Key = (*classificationID)(nil)
 
 func (classificationID classificationID) Bytes() []byte {
@@ -42,7 +42,7 @@ func (classificationID classificationID) String() string {
 
 	return strings.Join(values, constants.IDSeparator)
 }
-func (classificationID classificationID) Compare(listable capabilities.Listable) int {
+func (classificationID classificationID) Compare(listable traits.Listable) int {
 	if compareClassificationID, err := classificationIDFromInterface(listable); err != nil {
 		panic(classificationID)
 	} else {
@@ -53,7 +53,7 @@ func (classificationID classificationID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(classificationID.Bytes())
 }
 func (classificationID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, classificationID{})
+	codecUtilities.RegisterModuleConcrete(codec, classificationID{})
 }
 func (classificationID classificationID) IsPartial() bool {
 	return len(classificationID.HashID.Bytes()) == 0
@@ -66,7 +66,7 @@ func (classificationID classificationID) Equals(key helpers.Key) bool {
 	}
 }
 
-func NewClassificationID(chainID types.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) types.ID {
+func NewClassificationID(chainID ids.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) ids.ID {
 	immutableIDStringList := make([]string, len(immutableProperties.GetList()))
 
 	for i, property := range immutableProperties.GetList() {

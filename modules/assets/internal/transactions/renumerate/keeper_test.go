@@ -7,10 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/constants/test"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -20,6 +16,9 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
+
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
@@ -82,11 +81,11 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	ctx, keepers := CreateTestInput(t)
 	ctx = ctx.WithBlockHeight(2)
-	immutableProperties, err := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := base.ReadProperties("")
+	mutableProperties, err := utilities.ReadProperties("")
 	require.Equal(t, nil, err)
-	supplementError, err := base.ReadMetaProperties("supplementError:S|mockError")
+	supplementError, err := utilities.ReadMetaProperties("supplementError:S|mockError")
 	require.Equal(t, nil, err)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
@@ -110,7 +109,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - verify identity mock error", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(test.MockError)
+		want := newTransactionResponse(errors.MockError)
 		require.NotPanics(t, func() {
 			if got := keepers.AssetsKeeper.Transact(ctx, newMessage(verifyMockErrorAddress, defaultIdentityID, assetID)); !reflect.DeepEqual(got, want) {
 				t.Errorf("Transact() = %v, want %v", got, want)
@@ -130,7 +129,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - supplement mock error", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(test.MockError)
+		want := newTransactionResponse(errors.MockError)
 		require.Panics(t, func() {
 			if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, assetID2)); !reflect.DeepEqual(got, want) {
 				t.Errorf("Transact() = %v, want %v", got, want)

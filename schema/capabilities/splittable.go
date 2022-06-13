@@ -4,9 +4,9 @@
 package capabilities
 
 import (
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/properties"
 )
 
 type Splittable interface {
-	GetSupply() types.Property
+	GetSupply() properties.Property
 }

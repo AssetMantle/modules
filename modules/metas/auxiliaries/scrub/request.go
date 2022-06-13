@@ -7,11 +7,11 @@ import (
 	"github.com/asaskevich/govalidator"
 
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/properties"
 )
 
 type auxiliaryRequest struct {
-	MetaPropertyList []types.MetaProperty `json:"metaPropertyList"`
+	MetaPropertyList []properties.MetaProperty `json:"metaPropertyList"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -30,7 +30,7 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(metaPropertyList ...types.MetaProperty) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(metaPropertyList ...properties.MetaProperty) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		MetaPropertyList: metaPropertyList,
 	}

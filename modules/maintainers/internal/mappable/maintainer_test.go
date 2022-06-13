@@ -12,21 +12,21 @@ import (
 	"github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func Test_Maintainer_Methods(t *testing.T) {
 	classificationID := baseIDs.NewID("classificationID")
 	identityID := baseIDs.NewID("identityID")
-	immutableProperties := baseLists.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID"), base.NewStringData("ImmutableData")))
-	mutableProperties := baseLists.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID"), base.NewStringData("MutableData")))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID"), base.NewStringData("ImmutableData")))
+	mutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID"), base.NewStringData("MutableData")))
 
 	testMaintainerID := key.NewMaintainerID(classificationID, identityID)
 
 	testMaintainer := NewMaintainer(testMaintainerID, nil, mutableProperties).(maintainer)
 
-	require.Equal(t, maintainer{Document: baseQualified.Document{ID: testMaintainerID, ClassificationID: classificationID, Immutables: baseQualified.Immutables{Properties: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}, testMaintainer)
+	require.Equal(t, maintainer{Document: baseQualified.Document{ID: testMaintainerID, ClassificationID: classificationID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}, testMaintainer)
 	require.Equal(t, testMaintainerID, testMaintainer.GetID())
 	require.Equal(t, classificationID, testMaintainer.GetClassificationID())
 	require.Equal(t, identityID, testMaintainer.GetIdentityID())

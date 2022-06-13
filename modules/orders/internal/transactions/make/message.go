@@ -12,6 +12,7 @@ import (
 	xprtErrors "github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -20,10 +21,10 @@ import (
 
 type message struct {
 	From                    sdkTypes.AccAddress    `json:"from" valid:"required~required field from missing"`
-	FromID                  types.ID               `json:"fromID" valid:"required~required field fromID missing"`
-	ClassificationID        types.ID               `json:"classificationID" valid:"required~required field classificationID missing"`
-	MakerOwnableID          types.ID               `json:"makerOwnableID" valid:"required~required field makerOwnableID missing"`
-	TakerOwnableID          types.ID               `json:"takerOwnableID" valid:"required~required field takerOwnableID missing"`
+	FromID                  ids.ID                 `json:"fromID" valid:"required~required field fromID missing"`
+	ClassificationID        ids.ID                 `json:"classificationID" valid:"required~required field classificationID missing"`
+	MakerOwnableID          ids.ID                 `json:"makerOwnableID" valid:"required~required field makerOwnableID missing"`
+	TakerOwnableID          ids.ID                 `json:"takerOwnableID" valid:"required~required field takerOwnableID missing"`
 	ExpiresIn               types.Height           `json:"expiresIn" valid:"required~required field expiresIn missing"`
 	MakerOwnableSplit       sdkTypes.Dec           `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing"`
 	TakerOwnableSplit       sdkTypes.Dec           `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
@@ -60,7 +61,7 @@ func (message message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
 func (message) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, message{})
+	codecUtilities.RegisterModuleConcrete(codec, message{})
 }
 func messageFromInterface(msg sdkTypes.Msg) message {
 	switch value := msg.(type) {
@@ -74,7 +75,7 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, expiresIn types.Height, makerOwnableSplit sdkTypes.Dec, takerOwnableSplit sdkTypes.Dec, immutableMetaProperties lists.MetaPropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.MetaPropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.ID, classificationID ids.ID, makerOwnableID ids.ID, takerOwnableID ids.ID, expiresIn types.Height, makerOwnableSplit sdkTypes.Dec, takerOwnableSplit sdkTypes.Dec, immutableMetaProperties lists.MetaPropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.MetaPropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return message{
 		From:                    from,
 		FromID:                  fromID,

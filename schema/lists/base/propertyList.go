@@ -4,62 +4,55 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/properties"
+	"github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 type propertyList struct {
-	types.List
+	lists.List
 }
 
 var _ lists.PropertyList = (*propertyList)(nil)
 
 // TODO write test
-func (propertyList propertyList) GetProperty(propertyID ids.PropertyID) types.Property {
-	if i, found := propertyList.List.Search(baseTypes.NewEmptyPropertyFromID(propertyID)); found {
+func (propertyList propertyList) GetProperty(propertyID ids.PropertyID) properties.Property {
+	if i, found := propertyList.List.Search(base.NewEmptyPropertyFromID(propertyID)); found {
 		return propertyList.GetList()[i]
 	}
 	return nil
 }
-func (propertyList propertyList) GetList() []types.Property {
-	properties := make([]types.Property, propertyList.Size())
+func (propertyList propertyList) GetList() []properties.Property {
+	Properties := make([]properties.Property, propertyList.List.Size())
 	for i, listable := range propertyList.List.Get() {
-		properties[i] = listable.(types.Property)
+		Properties[i] = listable.(properties.Property)
 	}
 
-	return properties
+	return Properties
 }
-func (propertyList propertyList) Add(properties ...types.Property) lists.PropertyList {
+func (propertyList propertyList) Add(properties ...properties.Property) lists.PropertyList {
 	propertyList.List = propertyList.List.Add(propertiesToListables(properties...)...)
 	return propertyList
 }
-func (propertyList propertyList) Remove(properties ...types.Property) lists.PropertyList {
+func (propertyList propertyList) Remove(properties ...properties.Property) lists.PropertyList {
 	propertyList.List = propertyList.List.Remove(propertiesToListables(properties...)...)
 	return propertyList
 }
-func (propertyList propertyList) Mutate(properties ...types.Property) lists.PropertyList {
+func (propertyList propertyList) Mutate(properties ...properties.Property) lists.PropertyList {
 	propertyList.List = propertyList.List.Mutate(propertiesToListables(properties...)...)
 	return propertyList
 }
 
-func propertiesToListables(properties ...types.Property) []capabilities.Listable {
-	listables := make([]capabilities.Listable, len(properties))
+func propertiesToListables(properties ...properties.Property) []traits.Listable {
+	listables := make([]traits.Listable, len(properties))
 	for i, property := range properties {
 		listables[i] = property
 	}
 	return listables
 }
-func NewPropertyList(properties ...types.Property) lists.PropertyList {
-	return propertyList{List: baseTypes.NewList(propertiesToListables(properties...)...)}
-}
-func ReadProperties(propertiesString string) (lists.PropertyList, error) {
-	properties, err := ReadMetaProperties(propertiesString)
-	if err != nil {
-		return nil, err
-	}
 
-	return properties.ToPropertyList(), nil
+func NewPropertyList(properties ...properties.Property) lists.PropertyList {
+	return propertyList{List: NewList(propertiesToListables(properties...)...)}
 }

@@ -13,9 +13,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
 	xprtErrors "github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/constants/flags"
-	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
@@ -46,9 +45,9 @@ func (transactionRequest transactionRequest) Validate() error {
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
-		cliCommand.ReadString(flags.FromID),
-		cliCommand.ReadString(flags.OwnableID),
-		cliCommand.ReadString(flags.Value),
+		cliCommand.ReadString(constants.FromID),
+		cliCommand.ReadString(constants.OwnableID),
+		cliCommand.ReadString(constants.Value),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
@@ -80,7 +79,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	), nil
 }
 func (transactionRequest) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, transactionRequest{})
+	codecUtilities.RegisterModuleConcrete(codec, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}

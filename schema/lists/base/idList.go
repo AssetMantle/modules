@@ -4,40 +4,40 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/capabilities"
+	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 type idList struct {
-	types.List
+	lists.List
 }
 
 var _ lists.IDList = (*idList)(nil)
 
-func (idList idList) GetList() []types.ID {
+func (idList idList) GetList() []ids.ID {
 	// TODO write test case
-	returnIDList := make([]types.ID, idList.Size())
+	returnIDList := make([]ids.ID, idList.List.Size())
 
 	for i, listable := range idList.GetList() {
-		returnIDList[i] = listable.(types.ID)
+		returnIDList[i] = listable.(ids.ID)
 	}
 
 	return returnIDList
 }
-func (idList idList) Search(id types.ID) (index int, found bool) {
+func (idList idList) Search(id ids.ID) (index int, found bool) {
 	return idList.List.Search(id)
 }
-func (idList idList) Add(ids ...types.ID) lists.IDList {
+func (idList idList) Add(ids ...ids.ID) lists.IDList {
 	idList.List = idList.List.Add(idsToListables(ids...)...)
 	return idList
 }
-func (idList idList) Remove(ids ...types.ID) lists.IDList {
+func (idList idList) Remove(ids ...ids.ID) lists.IDList {
 	idList.List = idList.List.Remove(idsToListables(ids...)...)
 	return idList
 }
-func idsToListables(ids ...types.ID) []capabilities.Listable {
-	listables := make([]capabilities.Listable, len(ids))
+func idsToListables(ids ...ids.ID) []traits.Listable {
+	listables := make([]traits.Listable, len(ids))
 	for i, id := range ids {
 		listables[i] = id
 	}

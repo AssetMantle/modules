@@ -4,8 +4,8 @@
 package modify
 
 import (
-	"github.com/AssetMantle/modules/constants/flags"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 var Transaction = baseHelpers.NewTransaction(
@@ -16,13 +16,13 @@ var Transaction = baseHelpers.NewTransaction(
 	requestPrototype,
 	messagePrototype,
 	keeperPrototype,
-	flags.FromID,
-	flags.OrderID,
-	flags.MakerOwnableSplit,
-	flags.TakerOwnableSplit,
-	flags.ExpiresIn,
-	flags.ImmutableMetaProperties,
-	flags.ImmutableProperties,
-	flags.MutableMetaProperties,
-	flags.MutableProperties,
+	constants.FromID,
+	constants.OrderID,
+	constants.MakerOwnableSplit,
+	constants.TakerOwnableSplit,
+	constants.ExpiresIn,
+	constants.ImmutableMetaProperties,
+	constants.ImmutableProperties,
+	constants.MutableMetaProperties,
+	constants.MutableProperties,
 )

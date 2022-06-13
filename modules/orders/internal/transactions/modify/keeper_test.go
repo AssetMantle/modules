@@ -7,9 +7,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/constants/test"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -92,11 +92,11 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
-	immutableProperties, Error := base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, Error := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, Error)
-	mutableProperties, Error := base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, Error := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, Error)
-	mutablePropertiesUpdated, Error := base.ReadMetaProperties("defaultMutable1:S|defaultMutable2")
+	mutablePropertiesUpdated, Error := utilities.ReadMetaProperties("defaultMutable1:S|defaultMutable2")
 	require.Equal(t, nil, Error)
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultAddr := sdkTypes.AccAddress("addr")
@@ -142,7 +142,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Identity mock error", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(test.MockError)
+		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, orderID,
 			updatedRate, makerOwnableSplit, baseTypes.NewHeight(100), base.NewMetaProperties(),
 			mutablePropertiesUpdated.ToPropertyList())); !reflect.DeepEqual(got, want) {
@@ -153,7 +153,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	orderID = key.NewOrderID(classificationID, baseIDs.NewID("transferError"), takerOwnableID, rateID, creationID, defaultIdentityID, immutableProperties)
 	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, immutableProperties, mutableProperties))
 	t.Run("NegativeCase Modifying Order - transferError", func(t *testing.T) {
-		want := newTransactionResponse(test.MockError)
+		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, orderID,
 			updatedRate, makerOwnableSplit.Sub(sdkTypes.SmallestDec()), baseTypes.NewHeight(100),
 			base.NewMetaProperties(), mutablePropertiesUpdated.ToPropertyList())); !reflect.DeepEqual(got, want) {
@@ -162,7 +162,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	})
 
 	t.Run("NegativeCase Modifying Order - Changing TakerOwnableSplit, mutableProperty and adding makerOwnableSplit", func(t *testing.T) {
-		want := newTransactionResponse(test.MockError)
+		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, orderID,
 			updatedRate, makerOwnableSplit.Add(sdkTypes.SmallestDec()), baseTypes.NewHeight(100),
 			base.NewMetaProperties(), mutablePropertiesUpdated.ToPropertyList())); !reflect.DeepEqual(got, want) {

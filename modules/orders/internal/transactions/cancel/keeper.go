@@ -7,7 +7,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
@@ -17,6 +16,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 )
 
 type transactionKeeper struct {
@@ -51,7 +51,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	makerOwnableSplitProperty := metaProperties.GetMetaProperty(ids.MakerOwnableSplitProperty)
+	makerOwnableSplitProperty := metaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty)
 	if makerOwnableSplitProperty == nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}

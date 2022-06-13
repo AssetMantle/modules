@@ -126,7 +126,7 @@ func (simulationApplication SimulationApplication) GetBlackListedAddresses() map
 }
 
 func (simulationApplication SimulationApplication) CheckBalance(t *testing.T, address sdkTypes.AccAddress, coins sdkTypes.Coins) {
-	ctxCheck := simulationApplication.application.NewContext(true, abciTypes.Header{})
+	ctxCheck := simulationApplication.application.BaseApp.NewContext(true, abciTypes.Header{})
 	res := simulationApplication.AccountKeeper.GetAccount(ctxCheck, address)
 
 	require.True(t, coins.IsEqual(res.GetCoins()))
@@ -206,7 +206,7 @@ func (simulationApplication SimulationApplication) SetupWithGenesisAccounts(acco
 	)
 
 	newSimulationApplication.Commit()
-	newSimulationApplication.BeginBlock(abciTypes.RequestBeginBlock{Header: abciTypes.Header{Height: simulationApplication.application.LastBlockHeight() + 1}})
+	newSimulationApplication.BeginBlock(abciTypes.RequestBeginBlock{Header: abciTypes.Header{Height: simulationApplication.application.BaseApp.LastBlockHeight() + 1}})
 
 	return newSimulationApplication
 }

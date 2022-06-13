@@ -12,11 +12,10 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
-	"github.com/AssetMantle/modules/constants/flags"
-	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -50,13 +49,13 @@ func (transactionRequest transactionRequest) Validate() error {
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
-		cliCommand.ReadString(flags.FromID),
-		cliCommand.ReadString(flags.ToID),
-		cliCommand.ReadString(flags.ClassificationID),
-		cliCommand.ReadString(flags.MaintainedProperties),
-		cliCommand.ReadBool(flags.AddMaintainer),
-		cliCommand.ReadBool(flags.RemoveMaintainer),
-		cliCommand.ReadBool(flags.MutateMaintainer),
+		cliCommand.ReadString(constants.FromID),
+		cliCommand.ReadString(constants.ToID),
+		cliCommand.ReadString(constants.ClassificationID),
+		cliCommand.ReadString(constants.MaintainedProperties),
+		cliCommand.ReadBool(constants.AddMaintainer),
+		cliCommand.ReadBool(constants.RemoveMaintainer),
+		cliCommand.ReadBool(constants.MutateMaintainer),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
@@ -75,7 +74,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	maintainedProperties, err := baseTypes.ReadProperties(transactionRequest.MaintainedProperties)
+	maintainedProperties, err := utilities.ReadProperties(transactionRequest.MaintainedProperties)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +91,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	), nil
 }
 func (transactionRequest) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, transactionRequest{})
+	codecUtilities.RegisterModuleConcrete(codec, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}

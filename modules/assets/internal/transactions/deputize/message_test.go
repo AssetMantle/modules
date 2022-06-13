@@ -11,7 +11,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
@@ -25,7 +25,7 @@ func Test_Deputize_Message(t *testing.T) {
 	require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, err := baseTypes.ReadProperties(maintainedProperty)
+	maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
 	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false)

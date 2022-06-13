@@ -12,11 +12,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/modules/metas/internal/common"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
@@ -34,7 +34,7 @@ func Test_Meta_Request(t *testing.T) {
 	require.Equal(t, nil, testQueryRequest.Validate())
 	require.Equal(t, queryRequest{}, requestPrototype())
 
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.MetaID})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.MetaID})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
 	require.Equal(t, newQueryRequest(baseIDs.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
 

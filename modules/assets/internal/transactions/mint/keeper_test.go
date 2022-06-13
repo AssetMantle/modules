@@ -18,7 +18,6 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/constants/test"
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/assets/internal/parameters"
@@ -31,7 +30,7 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 )
 
 type TestKeepers struct {
@@ -89,31 +88,31 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	immutableMetaProperties, err := base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := utilities.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 
 	var immutableMetaProperties2 lists.MetaPropertyList
-	immutableMetaProperties2, err = base.ReadMetaProperties("defaultImmutableMeta2:S|defaultImmutableMeta2")
+	immutableMetaProperties2, err = utilities.ReadMetaProperties("defaultImmutableMeta2:S|defaultImmutableMeta2")
 	require.Equal(t, nil, err)
 
 	var immutableProperties lists.PropertyList
-	immutableProperties, err = base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err = utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties lists.MetaPropertyList
-	mutableMetaProperties, err = base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err = utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 
 	var mutableProperties lists.PropertyList
-	mutableProperties, err = base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err = utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 
 	var scrubMockErrorProperties lists.MetaPropertyList
-	scrubMockErrorProperties, err = base.ReadMetaProperties("scrubError:S|mockError")
+	scrubMockErrorProperties, err = utilities.ReadMetaProperties("scrubError:S|mockError")
 	require.Equal(t, nil, err)
 
 	var conformMockErrorProperties lists.MetaPropertyList
-	conformMockErrorProperties, err = base.ReadMetaProperties("conformError:S|mockError")
+	conformMockErrorProperties, err = utilities.ReadMetaProperties("conformError:S|mockError")
 	require.Equal(t, nil, err)
 
 	defaultAddr := sdkTypes.AccAddress("addr")
@@ -140,7 +139,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Verify Fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(test.MockError)
+		want := newTransactionResponse(errors.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, toID, classificationID,
 			immutableMetaProperties2, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -149,7 +148,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - PropertyList Scrub Auxiliary fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(test.MockError)
+		want := newTransactionResponse(errors.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID,
 			scrubMockErrorProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -158,7 +157,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - PropertyList Scrub Auxiliary fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(test.MockError)
+		want := newTransactionResponse(errors.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID,
 			immutableMetaProperties2, immutableProperties, scrubMockErrorProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -167,7 +166,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Conform Auxiliary fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(test.MockError)
+		want := newTransactionResponse(errors.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID,
 			immutableMetaProperties2, immutableProperties, conformMockErrorProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -176,7 +175,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Mint Auxiliary fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(test.MockError)
+		want := newTransactionResponse(errors.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewID("mintError"), classificationID,
 			immutableMetaProperties2, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)

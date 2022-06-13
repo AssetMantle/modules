@@ -26,8 +26,8 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/properties"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 )
 
 type TestKeepers struct {
@@ -80,14 +80,14 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	heightData, _ := baseData.ReadHeightData("")
 	decData, _ := baseData.ReadDecData("")
 
-	property1 := baseTypes.NewMetaProperty(baseIDs.NewID("id1"), baseData.NewStringData(""))
-	property2 := baseTypes.NewMetaProperty(baseIDs.NewID("id2"), heightData)
+	property1 := baseProperties.NewMetaProperty(baseIDs.NewID("id1"), baseData.NewStringData(""))
+	property2 := baseProperties.NewMetaProperty(baseIDs.NewID("id2"), heightData)
 	dec, _ := sdkTypes.NewDecFromStr("123")
-	property3 := baseTypes.NewMetaProperty(baseIDs.NewID("id3"), decData)
-	property4 := baseTypes.NewMetaProperty(baseIDs.NewID("id4"), baseData.NewIDData(baseIDs.NewID("")))
-	property5 := baseTypes.NewMetaProperty(baseIDs.NewID("id5"), baseData.NewDecData(dec))
+	property3 := baseProperties.NewMetaProperty(baseIDs.NewID("id3"), decData)
+	property4 := baseProperties.NewMetaProperty(baseIDs.NewID("id4"), baseData.NewIDData(baseIDs.NewID("")))
+	property5 := baseProperties.NewMetaProperty(baseIDs.NewID("id5"), baseData.NewDecData(dec))
 
-	var metaPropertyList []types.MetaProperty
+	var metaPropertyList []properties.MetaProperty
 	metaPropertyList = append(metaPropertyList, property1, property2, property3, property4, property5)
 
 	keepers.MetasKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(decData)).Add(mappable.NewMeta(baseData.NewDecData(dec)))

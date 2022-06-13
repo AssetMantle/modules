@@ -9,8 +9,8 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/types"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/properties"
 )
 
 type auxiliaryKeeper struct {
@@ -22,7 +22,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	scrubbedPropertyList := make([]types.Property, len(auxiliaryRequest.MetaPropertyList))
+	scrubbedPropertyList := make([]properties.Property, len(auxiliaryRequest.MetaPropertyList))
 	metas := auxiliaryKeeper.mapper.NewCollection(context)
 
 	for i, metaProperty := range auxiliaryRequest.MetaPropertyList {
@@ -33,7 +33,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		scrubbedPropertyList[i] = metaProperty.RemoveData()
 	}
 
-	return newAuxiliaryResponse(baseTypes.NewPropertyList(scrubbedPropertyList...), nil)
+	return newAuxiliaryResponse(baseLists.NewPropertyList(scrubbedPropertyList...), nil)
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

@@ -11,18 +11,18 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type metaID struct {
-	TypeID types.ID `json:"typeID" valid:"required~required field typeID missing"`
-	HashID types.ID `json:"hashID" valid:"required~required field hashID missing"`
+	TypeID ids.ID `json:"typeID" valid:"required~required field typeID missing"`
+	HashID ids.ID `json:"hashID" valid:"required~required field hashID missing"`
 }
 
-var _ types.ID = (*metaID)(nil)
+var _ ids.ID = (*metaID)(nil)
 var _ helpers.Key = (*metaID)(nil)
 
 func (metaID metaID) Bytes() []byte {
@@ -39,14 +39,14 @@ func (metaID metaID) String() string {
 
 	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
 }
-func (metaID metaID) Compare(listable capabilities.Listable) int {
+func (metaID metaID) Compare(listable traits.Listable) int {
 	return bytes.Compare(metaID.Bytes(), metaIDFromInterface(listable).Bytes())
 }
 func (metaID metaID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(metaID.Bytes())
 }
 func (metaID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, metaID{})
+	codecUtilities.RegisterModuleConcrete(codec, metaID{})
 }
 func (metaID metaID) IsPartial() bool {
 	return len(metaID.HashID.Bytes()) == 0
@@ -55,7 +55,7 @@ func (metaID metaID) Equals(key helpers.Key) bool {
 	return metaID.Compare(metaIDFromInterface(key)) == 0
 }
 
-func NewMetaID(typeID types.ID, hashID types.ID) types.ID {
+func NewMetaID(typeID ids.ID, hashID ids.ID) ids.ID {
 	return metaID{
 		TypeID: typeID,
 		HashID: hashID,

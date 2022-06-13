@@ -1,9 +1,6 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
-
 package base
 
 import (
@@ -12,22 +9,21 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 type propertyID struct {
-	Key  types.ID
-	Type types.ID
+	Key  ids.ID
+	Type ids.ID
 }
 
 var _ ids.PropertyID = (*propertyID)(nil)
 
-func (propertyID propertyID) GetKey() types.ID {
+func (propertyID propertyID) GetKey() ids.ID {
 	return propertyID.Key
 }
-func (propertyID propertyID) GetType() types.ID {
+func (propertyID propertyID) GetType() ids.ID {
 	return propertyID.Type
 }
 func (propertyID propertyID) String() string {
@@ -44,7 +40,7 @@ func (propertyID propertyID) Bytes() []byte {
 
 	return Bytes
 }
-func (propertyID propertyID) Compare(listable capabilities.Listable) int {
+func (propertyID propertyID) Compare(listable traits.Listable) int {
 	if comparePropertyID, err := propertyIDFromInterface(listable); err != nil {
 		panic(err)
 	} else {
@@ -52,7 +48,7 @@ func (propertyID propertyID) Compare(listable capabilities.Listable) int {
 
 	}
 }
-func propertyIDFromInterface(listable capabilities.Listable) (propertyID, error) {
+func propertyIDFromInterface(listable traits.Listable) (propertyID, error) {
 	switch value := listable.(type) {
 	case propertyID:
 		return value, nil
@@ -61,7 +57,7 @@ func propertyIDFromInterface(listable capabilities.Listable) (propertyID, error)
 	}
 }
 
-func NewPropertyID(key, Type types.ID) ids.PropertyID {
+func NewPropertyID(key, Type ids.ID) ids.PropertyID {
 	return propertyID{
 		Key:  key,
 		Type: Type,

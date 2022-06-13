@@ -8,13 +8,13 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/ids"
 )
 
 type auxiliaryRequest struct {
-	FromID    types.ID     `json:"fromID" valid:"required~required field fromID missing"`
-	ToID      types.ID     `json:"toID" valid:"required~required field toID missing"`
-	OwnableID types.ID     `json:"ownableID" valid:"required~required field ownableID missing"`
+	FromID    ids.ID       `json:"fromID" valid:"required~required field fromID missing"`
+	ToID      ids.ID       `json:"toID" valid:"required~required field toID missing"`
+	OwnableID ids.ID       `json:"ownableID" valid:"required~required field ownableID missing"`
 	Value     sdkTypes.Dec `json:"value" valid:"required~required field value missing"`
 }
 
@@ -34,7 +34,7 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(fromID types.ID, toID types.ID, ownableID types.ID, value sdkTypes.Dec) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(fromID ids.ID, toID ids.ID, ownableID ids.ID, value sdkTypes.Dec) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		FromID:    fromID,
 		ToID:      toID,

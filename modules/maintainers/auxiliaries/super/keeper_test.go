@@ -25,7 +25,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 )
 
 type TestKeepers struct {
@@ -78,11 +78,11 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	identityID := baseIDs.NewID("identityID")
 
 	maintainerID := key.NewMaintainerID(classificationID, identityID)
-	keepers.MaintainersKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, baseTypes.NewPropertyList(), baseTypes.NewPropertyList()))
+	keepers.MaintainersKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, baseLists.NewPropertyList(), baseLists.NewPropertyList()))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
-		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewID("classificationID1"), baseIDs.NewID("identityID1"), baseTypes.NewPropertyList())); !reflect.DeepEqual(got, want) {
+		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewID("classificationID1"), baseIDs.NewID("identityID1"), baseLists.NewPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -90,7 +90,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Maintainer not present", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(errors.EntityAlreadyExists)
-		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(classificationID, identityID, baseTypes.NewPropertyList())); !reflect.DeepEqual(got, want) {
+		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(classificationID, identityID, baseLists.NewPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

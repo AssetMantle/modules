@@ -4,11 +4,11 @@
 package lists
 
 import (
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/data"
 )
 
 type DataList interface {
 	Size() int
-	GetList() []types.Data
-	Search(data types.Data) (int, bool)
+	GetList() []data.Data
+	Search(data data.Data) (int, bool)
 }

@@ -6,7 +6,7 @@ package verify
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/test"
+	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -19,7 +19,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	if auxiliaryRequest.IdentityID.String() == "verifyError" {
-		return newAuxiliaryResponse(test.MockError)
+		return newAuxiliaryResponse(errors.MockError)
 	}
 
 	return newAuxiliaryResponse(nil)

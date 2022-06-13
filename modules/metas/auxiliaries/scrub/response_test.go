@@ -12,16 +12,16 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/properties"
+	base2 "github.com/AssetMantle/modules/schema/properties/base"
 )
 
 func Test_Super_Response(t *testing.T) {
 
-	metaProperty := baseTypes.NewMetaProperty(baseIDs.NewID("id"), baseData.NewStringData("Data"))
-	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty}...)
-	property := baseTypes.NewProperty(baseIDs.NewID("id"), baseData.NewStringData("Data"))
-	propertyList := base.NewPropertyList([]types.Property{property}...)
+	metaProperty := base2.NewMetaProperty(baseIDs.NewID("id"), baseData.NewStringData("Data"))
+	metaPropertyList := base.NewMetaProperties([]properties.MetaProperty{metaProperty}...)
+	property := base2.NewProperty(baseIDs.NewID("id"), baseData.NewStringData("Data"))
+	propertyList := base.NewPropertyList([]properties.Property{property}...)
 
 	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList.ToPropertyList(), nil)
 	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, Properties: metaPropertyList.ToPropertyList()}, testAuxiliaryResponse)

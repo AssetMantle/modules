@@ -8,6 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/modules/identities/internal/utilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
 )
@@ -28,15 +29,15 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	if !identity.IsProvisioned(message.From) {
+	if !utilities.IsProvisioned(identity, message.From) {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 
-	if identity.IsProvisioned(message.To) {
+	if utilities.IsProvisioned(identity, message.To) {
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	identities.Mutate(identity.ProvisionAddress(message.To))
+	identities.Mutate(utilities.ProvisionAddress(identity, message.To))
 
 	return newTransactionResponse(nil)
 }

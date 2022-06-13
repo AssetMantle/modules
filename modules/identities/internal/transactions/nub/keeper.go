@@ -7,16 +7,15 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/constants/ids"
-	"github.com/AssetMantle/modules/constants/properties"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/lists/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 )
 
 type transactionKeeper struct {
@@ -30,21 +29,21 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 
-	nubIDProperty := baseTypes.NewMetaProperty(ids.NubIDProperty, baseData.NewIDData(message.NubID))
+	nubIDProperty := baseProperties.NewMetaProperty(constants.NubIDProperty, baseData.NewIDData(message.NubID))
 
 	immutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(nubIDProperty)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
 
-	authenticationProperty := baseTypes.NewMetaProperty(ids.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(message.From)))
+	authenticationProperty := baseProperties.NewMetaProperty(constants.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(message.From)))
 
 	mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(authenticationProperty)))
 	if Error != nil {
 		return newTransactionResponse(Error)
 	}
 
-	classificationID, Error := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(base.NewPropertyList(properties.NubID), base.NewPropertyList(properties.Authentication))))
+	classificationID, Error := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(baseLists.NewPropertyList(constants.NubID), baseLists.NewPropertyList(constants.Authentication))))
 	if classificationID == nil && Error != nil {
 		return newTransactionResponse(Error)
 	}

@@ -101,10 +101,10 @@ func (application application) GetCodec() *codec.Codec {
 	return application.codec
 }
 func (application application) LoadHeight(height int64) error {
-	return application.LoadVersion(height, application.keys[baseapp.MainStoreKey])
+	return application.BaseApp.LoadVersion(height, application.keys[baseapp.MainStoreKey])
 }
 func (application application) ExportApplicationStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
-	context := application.NewContext(true, abciTypes.Header{Height: application.LastBlockHeight()})
+	context := application.BaseApp.NewContext(true, abciTypes.Header{Height: application.BaseApp.LastBlockHeight()})
 
 	if forZeroHeight {
 		applyWhiteList := false
@@ -229,8 +229,8 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		auth.DefaultTxDecoder(application.codec),
 		baseAppOptions...,
 	)
-	application.SetCommitMultiStoreTracer(traceStore)
-	application.SetAppVersion(version.Version)
+	application.BaseApp.SetCommitMultiStoreTracer(traceStore)
+	application.BaseApp.SetAppVersion(version.Version)
 
 	application.keys = sdkTypes.NewKVStoreKeys(
 		baseapp.MainStoreKey,
@@ -416,7 +416,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
 	)
 
-	var wasmRouter = application.Router()
+	var wasmRouter = application.BaseApp.Router()
 
 	wasmDir := filepath.Join(home, wasm.ModuleName)
 
@@ -475,7 +475,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 	)
 
 	application.moduleManager = module.NewManager(
-		genutil.NewAppModule(accountKeeper, application.stakingKeeper, application.DeliverTx),
+		genutil.NewAppModule(accountKeeper, application.stakingKeeper, application.BaseApp.DeliverTx),
 		auth.NewAppModule(accountKeeper),
 		bank.NewAppModule(bankKeeper, accountKeeper),
 		crisis.NewAppModule(&application.crisisKeeper),
@@ -532,7 +532,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		splits.Prototype().Name(),
 	)
 	application.moduleManager.RegisterInvariants(&application.crisisKeeper)
-	application.moduleManager.RegisterRoutes(application.Router(), application.QueryRouter())
+	application.moduleManager.RegisterRoutes(application.BaseApp.Router(), application.BaseApp.QueryRouter())
 
 	module.NewSimulationManager(
 		auth.NewAppModule(accountKeeper),
@@ -553,20 +553,20 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		splits.Prototype(),
 	).RegisterStoreDecoders()
 
-	application.MountKVStores(application.keys)
-	application.MountTransientStores(transientStoreKeys)
+	application.BaseApp.MountKVStores(application.keys)
+	application.BaseApp.MountTransientStores(transientStoreKeys)
 
-	application.SetBeginBlocker(application.moduleManager.BeginBlock)
-	application.SetEndBlocker(application.moduleManager.EndBlock)
-	application.SetInitChainer(func(context sdkTypes.Context, requestInitChain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
+	application.BaseApp.SetBeginBlocker(application.moduleManager.BeginBlock)
+	application.BaseApp.SetEndBlocker(application.moduleManager.EndBlock)
+	application.BaseApp.SetInitChainer(func(context sdkTypes.Context, requestInitChain abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
 		var genesisState map[string]json.RawMessage
 		application.codec.MustUnmarshalJSON(requestInitChain.AppStateBytes, &genesisState)
 		return application.moduleManager.InitGenesis(context, genesisState)
 	})
-	application.SetAnteHandler(auth.NewAnteHandler(accountKeeper, supplyKeeper, ante.DefaultSigVerificationGasConsumer))
+	application.BaseApp.SetAnteHandler(auth.NewAnteHandler(accountKeeper, supplyKeeper, ante.DefaultSigVerificationGasConsumer))
 
 	if loadLatest {
-		err := application.LoadLatestVersion(application.keys[baseapp.MainStoreKey])
+		err := application.BaseApp.LoadLatestVersion(application.keys[baseapp.MainStoreKey])
 		if err != nil {
 			tendermintOS.Exit(err.Error())
 		}

@@ -8,26 +8,25 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
-	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type split struct {
-	ID    types.ID     `json:"id" valid:"required field key missing"`
+	ID    ids.ID       `json:"id" valid:"required field key missing"`
 	Value sdkTypes.Dec `json:"value" valid:"required~required field value missing, matches(^[0-9]$)~invalid field value"`
 }
 
 var _ mappables.Split = (*split)(nil)
 
-func (split split) GetID() types.ID { return split.ID }
-func (split split) GetOwnerID() types.ID {
+func (split split) GetID() ids.ID { return split.ID }
+func (split split) GetOwnerID() ids.ID {
 	return key.ReadOwnerID(split.ID)
 }
-func (split split) GetOwnableID() types.ID {
+func (split split) GetOwnableID() ids.ID {
 	return key.ReadOwnableID(split.ID)
 }
 
@@ -50,10 +49,10 @@ func (split split) GetKey() helpers.Key {
 	return key.FromID(split.ID)
 }
 func (split) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, split{})
+	codecUtilities.RegisterModuleConcrete(codec, split{})
 }
 
-func NewSplit(splitID types.ID, value sdkTypes.Dec) mappables.Split {
+func NewSplit(splitID ids.ID, value sdkTypes.Dec) mappables.Split {
 	return split{
 		ID:    splitID,
 		Value: value,

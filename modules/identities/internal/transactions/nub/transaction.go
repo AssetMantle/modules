@@ -4,8 +4,8 @@
 package nub
 
 import (
-	"github.com/AssetMantle/modules/constants/flags"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 var Transaction = baseHelpers.NewTransaction(
@@ -17,5 +17,5 @@ var Transaction = baseHelpers.NewTransaction(
 	messagePrototype,
 	keeperPrototype,
 
-	flags.NubID,
+	constants.NubID,
 )

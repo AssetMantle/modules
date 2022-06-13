@@ -7,12 +7,11 @@ import (
 	"strconv"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	idsConstants "github.com/AssetMantle/modules/constants/ids"
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/data"
+	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 type booleanData struct {
@@ -24,7 +23,7 @@ var _ data.BooleanData = (*booleanData)(nil)
 func (booleanData booleanData) GetID() ids.DataID {
 	return baseIDs.NewDataID(booleanData)
 }
-func (booleanData booleanData) Compare(listable capabilities.Listable) int {
+func (booleanData booleanData) Compare(listable traits.Listable) int {
 	compareBooleanData, Error := booleanDataFromInterface(listable)
 	if Error != nil {
 		panic(Error)
@@ -41,13 +40,13 @@ func (booleanData booleanData) Compare(listable capabilities.Listable) int {
 func (booleanData booleanData) String() string {
 	return strconv.FormatBool(booleanData.Value)
 }
-func (booleanData booleanData) GetType() types.ID {
+func (booleanData booleanData) GetType() ids.ID {
 	return idsConstants.BooleanDataID
 }
-func (booleanData booleanData) ZeroValue() types.Data {
+func (booleanData booleanData) ZeroValue() data.Data {
 	return NewBooleanData(false)
 }
-func (booleanData booleanData) GenerateHash() types.ID {
+func (booleanData booleanData) GenerateHash() ids.ID {
 	if booleanData.Compare(booleanData.ZeroValue()) == 0 {
 		return baseIDs.NewID(strconv.FormatBool(false))
 	}
@@ -58,7 +57,7 @@ func (booleanData booleanData) Get() bool {
 	return booleanData.Value
 }
 
-func booleanDataFromInterface(listable capabilities.Listable) (booleanData, error) {
+func booleanDataFromInterface(listable traits.Listable) (booleanData, error) {
 	switch value := listable.(type) {
 	case booleanData:
 		return value, nil
@@ -67,13 +66,13 @@ func booleanDataFromInterface(listable capabilities.Listable) (booleanData, erro
 	}
 }
 
-func NewBooleanData(value bool) types.Data {
+func NewBooleanData(value bool) data.Data {
 	return booleanData{
 		Value: value,
 	}
 }
 
-func ReadBooleanData(dataString string) (types.Data, error) {
+func ReadBooleanData(dataString string) (data.Data, error) {
 	if dataString == "" {
 		return booleanData{}.ZeroValue(), nil
 	}

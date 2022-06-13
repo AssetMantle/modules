@@ -9,16 +9,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/ids"
-	"github.com/AssetMantle/modules/constants/properties"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
-	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	ids2 "github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
+	properties2 "github.com/AssetMantle/modules/schema/properties"
+	"github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
@@ -30,74 +30,74 @@ type order struct {
 var _ mappables.Order = (*order)(nil)
 
 // TODO use get property
-func (order order) GetRateID() types.ID {
+func (order order) GetRateID() ids2.ID {
 	return key.ReadRateID(order.ID)
 }
-func (order order) GetCreationID() types.ID {
+func (order order) GetCreationID() ids2.ID {
 	return key.ReadCreationID(order.ID)
 }
-func (order order) GetMakerOwnableID() types.ID {
+func (order order) GetMakerOwnableID() ids2.ID {
 	return key.ReadMakerOwnableID(order.ID)
 }
-func (order order) GetTakerOwnableID() types.ID {
+func (order order) GetTakerOwnableID() ids2.ID {
 	return key.ReadTakerOwnableID(order.ID)
 }
-func (order order) GetMakerID() types.ID {
+func (order order) GetMakerID() ids2.ID {
 	return key.ReadMakerID(order.ID)
 }
-func (order order) GetCreation() types.MetaProperty {
+func (order order) GetCreation() properties2.MetaProperty {
 	heightValue, Error := strconv.ParseInt(key.ReadCreationID(order.ID).String(), 10, 64)
 	if Error != nil {
-		return baseTypes.NewMetaProperty(ids.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(0)))
+		return base.NewMetaProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(0)))
 	}
 
-	return baseTypes.NewMetaProperty(ids.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(heightValue)))
+	return base.NewMetaProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(heightValue)))
 }
-func (order order) GetExchangeRate() types.MetaProperty {
+func (order order) GetExchangeRate() properties2.MetaProperty {
 	decValue, Error := sdkTypes.NewDecFromStr(key.ReadRateID(order.ID).String())
 	if Error != nil {
-		return baseTypes.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(sdkTypes.ZeroDec()))
+		return base.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.ZeroDec()))
 	}
 
-	return baseTypes.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(decValue))
+	return base.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(decValue))
 }
-func (order order) GetTakerID() types.Property {
-	if takerID := order.Immutables.GetImmutablePropertyList().GetProperty(ids.TakerIDProperty); takerID != nil {
+func (order order) GetTakerID() properties2.Property {
+	if takerID := order.Immutables.GetImmutablePropertyList().GetProperty(constants.TakerIDProperty); takerID != nil {
 		return takerID
-	} else if takerID := order.Mutables.GetMutablePropertyList().GetProperty(ids.TakerIDProperty); takerID != nil {
+	} else if takerID := order.Mutables.GetMutablePropertyList().GetProperty(constants.TakerIDProperty); takerID != nil {
 		return takerID
 	} else {
 
-		return properties.TakerID
+		return constants.TakerID
 	}
 }
-func (order order) GetExpiry() types.Property {
-	if expiry := order.GetProperty(ids.ExpiryProperty); expiry != nil {
+func (order order) GetExpiry() properties2.Property {
+	if expiry := order.GetProperty(constants.ExpiryProperty); expiry != nil {
 		return expiry
 	}
 
-	return properties.Expiry
+	return constants.Expiry
 }
-func (order order) GetMakerOwnableSplit() types.Property {
-	if makerOwnableSplit := order.GetProperty(ids.MakerOwnableSplitProperty); makerOwnableSplit != nil {
+func (order order) GetMakerOwnableSplit() properties2.Property {
+	if makerOwnableSplit := order.GetProperty(constants.MakerOwnableSplitProperty); makerOwnableSplit != nil {
 		return makerOwnableSplit
 	}
 
-	return properties.MakerOwnableSplit
+	return constants.MakerOwnableSplit
 }
 func (order order) GetKey() helpers.Key {
 	return key.FromID(order.ID)
 }
 func (order) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, order{})
+	codecUtilities.RegisterModuleConcrete(codec, order{})
 }
 
-func NewOrder(orderID types.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Order {
+func NewOrder(orderID ids2.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Order {
 	return order{
 		Document: baseQualified.Document{
 			ID:               orderID,
 			ClassificationID: key.ReadClassificationID(orderID),
-			Immutables:       baseQualified.Immutables{Properties: immutableProperties},
+			Immutables:       baseQualified.Immutables{PropertyList: immutableProperties},
 			Mutables:         baseQualified.Mutables{Properties: mutableProperties},
 		},
 	}

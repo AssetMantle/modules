@@ -25,7 +25,8 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 )
 
 type TestKeepers struct {
@@ -75,10 +76,10 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	unprovisionedAddr := sdkTypes.AccAddress("unProvisionedAddr")
-	immutableProperties, _ := baseTypes.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	defaultClassificationID := baseIDs.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
 	defaultIdentityID := key.NewIdentityID(defaultClassificationID, immutableProperties)
-	keepers.IdentitiesKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(defaultIdentityID, baseTypes.NewPropertyList(), baseTypes.NewPropertyList()))
+	keepers.IdentitiesKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(defaultIdentityID, baseLists.NewPropertyList(), baseLists.NewPropertyList()))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)

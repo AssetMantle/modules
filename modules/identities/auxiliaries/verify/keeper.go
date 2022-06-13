@@ -7,13 +7,13 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 )
 
 type auxiliaryKeeper struct {
@@ -38,7 +38,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	}
 
 	// TODO add test
-	if _, found := metaProperties.GetMetaProperty(ids.AuthenticationProperty).(lists.DataList).Search(base.NewAccAddressData(auxiliaryRequest.Address)); !found {
+	if _, found := metaProperties.GetMetaProperty(constants.AuthenticationProperty).(lists.DataList).Search(base.NewAccAddressData(auxiliaryRequest.Address)); !found {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
 

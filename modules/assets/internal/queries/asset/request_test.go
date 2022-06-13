@@ -12,16 +12,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/modules/assets/internal/common"
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 )
 
 func Test_Asset_Request(t *testing.T) {
@@ -35,14 +35,14 @@ func Test_Asset_Request(t *testing.T) {
 	Codec.Seal()
 
 	classificationID := baseIDs.NewID("classificationID")
-	immutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 
 	testAssetID := key.NewAssetID(classificationID, immutableProperties)
 	testQueryRequest := newQueryRequest(testAssetID)
 	require.Equal(t, nil, testQueryRequest.Validate())
 	require.Equal(t, queryRequest{}, requestPrototype())
 
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.AssetID})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
 	require.Equal(t, newQueryRequest(baseIDs.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
 

@@ -6,13 +6,14 @@ package supplement
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/ids"
-	"github.com/AssetMantle/modules/constants/test"
+	"github.com/AssetMantle/modules/constants/errors"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/properties"
+	base2 "github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -25,19 +26,19 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	var metaPropertyList []types.MetaProperty
+	var metaPropertyList []properties.MetaProperty
 
 	for _, property := range auxiliaryRequest.PropertyList {
-		if property.GetID().Compare(ids.BurnProperty) == 0 && property.GetHash().Compare(baseIDs.NewID("")) == 0 {
-			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), test.MockError)
+		if property.GetID().Compare(constants.BurnProperty) == 0 && property.GetHash().Compare(baseIDs.NewID("")) == 0 {
+			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), errors.MockError)
 		}
 	}
 
-	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.BurnProperty, baseData.NewHeightData(baseTypes.NewHeight(1))))
-	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(sdkTypes.SmallestDec())))
-	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.TakerIDProperty, baseData.NewIDData(baseIDs.NewID("fromID"))))
-	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
-	metaPropertyList = append(metaPropertyList, baseTypes.NewMetaProperty(ids.ExpiryProperty, baseData.NewHeightData(baseTypes.NewHeight(900))))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.BurnProperty, baseData.NewHeightData(baseTypes.NewHeight(1))))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(sdkTypes.SmallestDec())))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.TakerIDProperty, baseData.NewIDData(baseIDs.NewID("fromID"))))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.ExpiryProperty, baseData.NewHeightData(baseTypes.NewHeight(900))))
 
 	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
 }

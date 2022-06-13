@@ -5,26 +5,26 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/qualified"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type Document struct {
-	ID               types.ID `json:"id" valid:"required~required field id is missing"`
-	ClassificationID types.ID `json:"classificationID" valid:"required~required field classificationID is missing"`
+	ID               ids.ID `json:"id" valid:"required~required field id is missing"`
+	ClassificationID ids.ID `json:"classificationID" valid:"required~required field classificationID is missing"`
 	Immutables
 	Mutables //nolint:govet
 }
 
 var _ qualified.Document = (*Document)(nil)
 
-func (document Document) GetID() types.ID {
+func (document Document) GetID() ids.ID {
 	return document.ID
 }
-func (document Document) GetClassificationID() types.ID {
+func (document Document) GetClassificationID() ids.ID {
 	return document.ClassificationID
 }
-func (document Document) GetProperty(propertyID ids.PropertyID) types.Property {
+func (document Document) GetProperty(propertyID ids.PropertyID) properties.Property {
 	if property := document.Immutables.GetImmutablePropertyList().GetProperty(propertyID); property != nil {
 		return property
 	} else if property := document.Mutables.GetMutablePropertyList().GetProperty(propertyID); property != nil {
@@ -35,7 +35,7 @@ func (document Document) GetProperty(propertyID ids.PropertyID) types.Property {
 }
 
 // TODO write test case
-func (document Document) Mutate(propertyList ...types.Property) qualified.Document {
+func (document Document) Mutate(propertyList ...properties.Property) qualified.Document {
 	document.Mutables = document.Mutables.Mutate(propertyList...).(Mutables)
 	return document
 }

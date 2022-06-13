@@ -7,7 +7,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
@@ -20,7 +19,8 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 )
 
 type transactionKeeper struct {
@@ -53,7 +53,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		newTransactionResponse(Error)
 	}
 
-	if takerIDProperty := metaProperties.GetMetaProperty(ids.TakerIDProperty); takerIDProperty != nil {
+	if takerIDProperty := metaProperties.GetMetaProperty(constants.TakerIDProperty); takerIDProperty != nil {
 		takerID := takerIDProperty.GetData().(data.IDData).Get()
 		if takerID.Compare(baseIDs.NewID("")) != 0 && takerID.Compare(message.FromID) != 0 {
 			return newTransactionResponse(errors.NotAuthorized)
@@ -62,7 +62,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	exchangeRate := order.(mappables.Order).GetExchangeRate().GetData().(data.DecData).Get()
 
-	makerOwnableSplitProperty := metaProperties.GetMetaProperty(ids.MakerOwnableSplitProperty)
+	makerOwnableSplitProperty := metaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty)
 	if makerOwnableSplitProperty == nil {
 		return newTransactionResponse(errors.MetaDataError)
 	}
@@ -89,7 +89,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		orders.Remove(order)
 	default:
 		makerReceiveTakerOwnableSplit = message.TakerOwnableSplit
-		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseTypes.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(updatedMakerOwnableSplit)))))
+		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(updatedMakerOwnableSplit)))))
 
 		if Error != nil {
 			return newTransactionResponse(Error)

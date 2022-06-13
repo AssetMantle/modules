@@ -14,12 +14,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -32,15 +32,15 @@ func Test_Define_Request(t *testing.T) {
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.FromID, flags.OrderID, flags.MakerOwnableSplit, flags.ExpiresIn, flags.TakerOwnableSplit, flags.MutableMetaProperties, flags.MutableProperties})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.OrderID, constants.MakerOwnableSplit, constants.ExpiresIn, constants.TakerOwnableSplit, constants.MutableMetaProperties, constants.MutableProperties})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 
-	mutableMetaProperties, err := base.ReadMetaProperties(mutableMetaPropertiesString)
+	mutableMetaProperties, err := utilities.ReadMetaProperties(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
-	mutableProperties, err := base.ReadProperties(mutablePropertiesString)
+	mutableProperties, err := utilities.ReadProperties(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

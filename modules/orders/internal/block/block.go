@@ -8,7 +8,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/constants/ids"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
@@ -18,10 +17,12 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	ids2 "github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/types"
+	base2 "github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -40,7 +41,7 @@ func (block block) Begin(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {
 }
 
 func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
-	executeOrders := make(map[types.ID]bool)
+	executeOrders := make(map[ids2.ID]bool)
 	orders := block.mapper.NewCollection(context)
 
 	orders.Iterate(
@@ -50,11 +51,11 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 			if Error != nil {
 				panic(Error)
 			}
-			if expiryProperty := metaProperties.GetMetaProperty(ids.ExpiryProperty); expiryProperty != nil {
+			if expiryProperty := metaProperties.GetMetaProperty(constants.ExpiryProperty); expiryProperty != nil {
 				expiry := expiryProperty.GetData().(data.HeightData).Get()
 
 				if expiry.Compare(baseTypes.NewHeight(context.BlockHeight())) <= 0 {
-					makerOwnableSplitProperty := metaProperties.GetMetaProperty(ids.MakerOwnableSplitProperty)
+					makerOwnableSplitProperty := metaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty)
 					if makerOwnableSplitProperty == nil {
 						panic(errors.MetaDataError)
 					}
@@ -110,7 +111,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 						panic(Error)
 					}
 
-					leftOrderMakerOwnableSplit := leftOrderMetaProperties.GetMetaProperty(ids.MakerOwnableSplitProperty).GetData().(data.DecData).Get()
+					leftOrderMakerOwnableSplit := leftOrderMetaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty).GetData().(data.DecData).Get()
 
 					rightOrderExchangeRate := rightOrder.GetExchangeRate().GetData().(data.DecData).Get()
 
@@ -119,7 +120,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 						panic(Error)
 					}
 
-					rightOrderMakerOwnableSplit := rightOrderMetaProperties.GetMetaProperty(ids.MakerOwnableSplitProperty).GetData().(data.DecData).Get()
+					rightOrderMakerOwnableSplit := rightOrderMetaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty).GetData().(data.DecData).Get()
 
 					rightOrderTakerOwnableSplitDemanded := rightOrderExchangeRate.MulTruncate(rightOrderMakerOwnableSplit).MulTruncate(sdkTypes.SmallestDec())
 
@@ -133,7 +134,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								panic(auxiliaryResponse.GetError())
 							}
 
-							mutableProperties, Error := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseTypes.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))))
+							mutableProperties, Error := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base2.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))))
 							if Error != nil {
 								panic(Error)
 							}
@@ -153,7 +154,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								panic(auxiliaryResponse.GetError())
 							}
 
-							mutableProperties, Error := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseTypes.NewMetaProperty(ids.MakerOwnableSplitProperty, baseData.NewDecData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder))))))
+							mutableProperties, Error := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base2.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder))))))
 							if Error != nil {
 								panic(Error)
 							}

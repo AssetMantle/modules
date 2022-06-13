@@ -12,10 +12,9 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
-	"github.com/AssetMantle/modules/constants/flags"
-	"github.com/AssetMantle/modules/modules/metas/internal/module"
-	"github.com/AssetMantle/modules/schema/data/utilities"
+	string2 "github.com/AssetMantle/modules/schema/data/utlities"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -43,7 +42,7 @@ func (transactionRequest transactionRequest) Validate() error {
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
-		cliCommand.ReadString(flags.MetaFact),
+		cliCommand.ReadString(constants.MetaFact),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
@@ -62,7 +61,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	data, err := utilities.ReadData(transactionRequest.Data)
+	data, err := string2.ReadData(transactionRequest.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +72,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	), nil
 }
 func (transactionRequest) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, transactionRequest{})
+	codecUtilities.RegisterModuleConcrete(codec, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}

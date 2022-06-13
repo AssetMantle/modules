@@ -12,7 +12,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
@@ -30,19 +30,19 @@ func Test_Issue_Message(t *testing.T) {
 	require.Nil(t, err)
 
 	var immutableMetaProperties lists.MetaPropertyList
-	immutableMetaProperties, err = base.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err = utilities.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 
 	var immutableProperties lists.PropertyList
-	immutableProperties, err = base.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err = utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties lists.MetaPropertyList
-	mutableMetaProperties, err = base.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err = utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 
 	var mutableProperties lists.PropertyList
-	mutableProperties, err = base.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err = utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, toAccAddress, testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)

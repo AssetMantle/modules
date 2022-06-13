@@ -13,25 +13,25 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
-	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type orderID struct {
-	ClassificationID types.ID `json:"classificationID"`
-	MakerOwnableID   types.ID `json:"makerOwnableID"`
-	TakerOwnableID   types.ID `json:"takerOwnableID"`
-	RateID           types.ID `json:"rateID"`
-	CreationID       types.ID `json:"creationID"`
-	MakerID          types.ID `json:"makerID"`
-	HashID           types.ID `json:"hashID"`
+	ClassificationID ids.ID `json:"classificationID"`
+	MakerOwnableID   ids.ID `json:"makerOwnableID"`
+	TakerOwnableID   ids.ID `json:"takerOwnableID"`
+	RateID           ids.ID `json:"rateID"`
+	CreationID       ids.ID `json:"creationID"`
+	MakerID          ids.ID `json:"makerID"`
+	HashID           ids.ID `json:"hashID"`
 }
 
-var _ types.ID = (*orderID)(nil)
+var _ ids.ID = (*orderID)(nil)
 var _ helpers.Key = (*orderID)(nil)
 
 func (orderID orderID) Bytes() []byte {
@@ -69,14 +69,14 @@ func (orderID orderID) String() string {
 
 	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
 }
-func (orderID orderID) Compare(listable capabilities.Listable) int {
+func (orderID orderID) Compare(listable traits.Listable) int {
 	return bytes.Compare(orderID.Bytes(), orderIDFromInterface(listable).Bytes())
 }
 func (orderID orderID) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(orderID.Bytes())
 }
 func (orderID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, orderID{})
+	codecUtilities.RegisterModuleConcrete(codec, orderID{})
 }
 func (orderID orderID) IsPartial() bool {
 	return len(orderID.HashID.Bytes()) == 0
@@ -121,7 +121,7 @@ func (orderID orderID) getCreationHeightBytes() ([]byte, error) {
 	return Bytes, err
 }
 
-func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnableID types.ID, rateID types.ID, creationID types.ID, makerID types.ID, immutableProperties lists.PropertyList) types.ID {
+func NewOrderID(classificationID ids.ID, makerOwnableID ids.ID, takerOwnableID ids.ID, rateID ids.ID, creationID ids.ID, makerID ids.ID, immutableProperties lists.PropertyList) ids.ID {
 	return orderID{
 		ClassificationID: classificationID,
 		MakerOwnableID:   makerOwnableID,
@@ -129,6 +129,6 @@ func NewOrderID(classificationID types.ID, makerOwnableID types.ID, takerOwnable
 		RateID:           rateID,
 		CreationID:       creationID,
 		MakerID:          makerID,
-		HashID:           baseTraits.Immutables{Properties: immutableProperties}.GenerateHashID(),
+		HashID:           baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID(),
 	}
 }

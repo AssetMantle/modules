@@ -7,15 +7,15 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
 
-	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type queryRequest struct {
-	OwnableID types.ID `json:"ownableID" valid:"required~required field ownableID missing"`
+	OwnableID ids.ID `json:"ownableID" valid:"required~required field ownableID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
@@ -36,7 +36,7 @@ func (queryRequest queryRequest) Validate() error {
 }
 
 func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewID(cliCommand.ReadString(flags.OwnableID)))
+	return newQueryRequest(baseIDs.NewID(cliCommand.ReadString(constants.OwnableID)))
 }
 
 func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
@@ -67,6 +67,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 	}
 }
 
-func newQueryRequest(ownableID types.ID) helpers.QueryRequest {
+func newQueryRequest(ownableID ids.ID) helpers.QueryRequest {
 	return queryRequest{OwnableID: ownableID}
 }

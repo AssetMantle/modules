@@ -12,14 +12,14 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/properties"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 )
 
 func Test_Super_Response(t *testing.T) {
 
-	metaProperty := baseTypes.NewMetaProperty(baseIDs.NewID("id"), baseData.NewStringData("Data"))
-	metaPropertyList := base.NewMetaProperties([]types.MetaProperty{metaProperty}...)
+	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewID("id"), baseData.NewStringData("Data"))
+	metaPropertyList := base.NewMetaProperties([]properties.MetaProperty{metaProperty}...)
 
 	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList, nil)
 	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, MetaProperties: metaPropertyList}, testAuxiliaryResponse)
@@ -31,8 +31,8 @@ func Test_Super_Response(t *testing.T) {
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
 	require.Equal(t, errors.IncorrectFormat, testAuxiliaryResponse2.GetError())
 
-	properties, Error := GetMetaPropertiesFromResponse(testAuxiliaryResponse)
-	require.Equal(t, metaPropertyList, properties)
+	Properties, Error := GetMetaPropertiesFromResponse(testAuxiliaryResponse)
+	require.Equal(t, metaPropertyList, Properties)
 	require.Equal(t, nil, Error)
 
 	properties2, Error := GetMetaPropertiesFromResponse(testAuxiliaryResponse2)

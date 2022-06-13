@@ -14,13 +14,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 )
 
 func Test_Mint_Request(t *testing.T) {
@@ -33,7 +33,7 @@ func Test_Mint_Request(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
 
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.FromID, flags.To, flags.ClassificationID, flags.ImmutableMetaProperties, flags.ImmutableProperties, flags.MutableMetaProperties, flags.MutableProperties})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.To, constants.ClassificationID, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	immutableMetaPropertiesString := "defaultImmutableMeta1:S|defaultImmutableMeta1"
@@ -41,19 +41,19 @@ func Test_Mint_Request(t *testing.T) {
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 
-	immutableMetaProperties, err := base.ReadMetaProperties(immutableMetaPropertiesString)
+	immutableMetaProperties, err := utilities.ReadMetaProperties(immutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 
 	var immutableProperties lists.PropertyList
-	immutableProperties, err = base.ReadProperties(immutablePropertiesString)
+	immutableProperties, err = utilities.ReadProperties(immutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties lists.MetaPropertyList
-	mutableMetaProperties, err = base.ReadMetaProperties(mutableMetaPropertiesString)
+	mutableMetaProperties, err = utilities.ReadMetaProperties(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 
 	var mutableProperties lists.PropertyList
-	mutableProperties, err = base.ReadProperties(mutablePropertiesString)
+	mutableProperties, err = utilities.ReadProperties(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

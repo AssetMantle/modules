@@ -7,11 +7,11 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/constants/test"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
-
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/constants/errors"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -80,9 +80,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
-	maintainedProperties, err := baseTypes.ReadProperties("maintainedProperties:S|maintainedProperties")
+	maintainedProperties, err := utilities.ReadProperties("maintainedProperties:S|maintainedProperties")
 	require.Equal(t, nil, err)
-	conformMockErrorProperties, err := baseTypes.ReadProperties("deputizeError:S|mockError")
+	conformMockErrorProperties, err := utilities.ReadProperties("deputizeError:S|mockError")
 	require.Equal(t, nil, err)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
@@ -100,7 +100,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	})
 
 	t.Run("NegativeCase - verify identity fail", func(t *testing.T) {
-		want := newTransactionResponse(test.MockError)
+		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, toID, classificationID,
 			maintainedProperties, true, true, true)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -108,7 +108,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	})
 
 	t.Run("NegativeCase - conform mock error", func(t *testing.T) {
-		want := newTransactionResponse(test.MockError)
+		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID2, classificationID,
 			conformMockErrorProperties, true, true, true)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)

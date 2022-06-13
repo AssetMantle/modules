@@ -6,7 +6,7 @@ package helpers
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/parameters"
 )
 
 type Genesis interface {
@@ -18,8 +18,8 @@ type Genesis interface {
 	Encode() []byte
 	Decode([]byte) Genesis
 
-	Initialize([]Mappable, []types.Parameter) Genesis
+	Initialize([]Mappable, []parameters.Parameter) Genesis
 
-	GetParameterList() []types.Parameter
+	GetParameterList() []parameters.Parameter
 	GetMappableList() []Mappable
 }

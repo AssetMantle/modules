@@ -6,10 +6,10 @@ package scrub
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/test"
+	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/types"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/properties"
 )
 
 type auxiliaryKeeperMock struct {
@@ -21,17 +21,17 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	scrubbedPropertyList := make([]types.Property, len(auxiliaryRequest.MetaPropertyList))
+	scrubbedPropertyList := make([]properties.Property, len(auxiliaryRequest.MetaPropertyList))
 
 	for i, metaProperty := range auxiliaryRequest.MetaPropertyList {
 		scrubbedPropertyList[i] = metaProperty.RemoveData()
 
 		if metaProperty.GetID().String() == "scrubError" {
-			return newAuxiliaryResponse(nil, test.MockError)
+			return newAuxiliaryResponse(nil, errors.MockError)
 		}
 	}
 
-	return newAuxiliaryResponse(baseTypes.NewPropertyList(scrubbedPropertyList...), nil)
+	return newAuxiliaryResponse(baseLists.NewPropertyList(scrubbedPropertyList...), nil)
 }
 
 func (auxiliaryKeeperMock) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

@@ -7,15 +7,15 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
 
-	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type queryRequest struct {
-	SplitID types.ID `json:"splitID" valid:"required~required field splitID missing"`
+	SplitID ids.ID `json:"splitID" valid:"required~required field splitID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
@@ -36,7 +36,7 @@ func (queryRequest queryRequest) Validate() error {
 }
 
 func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewID(cliCommand.ReadString(flags.SplitID)))
+	return newQueryRequest(baseIDs.NewID(cliCommand.ReadString(constants.SplitID)))
 }
 func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
 	return newQueryRequest(baseIDs.NewID(vars[Query.GetName()]))
@@ -62,6 +62,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 		return queryRequest{}
 	}
 }
-func newQueryRequest(splitID types.ID) helpers.QueryRequest {
+func newQueryRequest(splitID ids.ID) helpers.QueryRequest {
 	return queryRequest{SplitID: splitID}
 }

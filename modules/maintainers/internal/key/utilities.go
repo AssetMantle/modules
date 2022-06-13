@@ -7,13 +7,13 @@ import (
 	"strings"
 
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
 	"github.com/AssetMantle/modules/constants"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
-func readMaintainerID(maintainerIDString string) types.ID {
+func readMaintainerID(maintainerIDString string) ids.ID {
 	idList := strings.Split(maintainerIDString, constants.SecondOrderCompositeIDSeparator)
 	if len(idList) == 2 {
 		return maintainerID{
@@ -28,21 +28,21 @@ func maintainerIDFromInterface(i interface{}) maintainerID {
 	switch value := i.(type) {
 	case maintainerID:
 		return value
-	case types.ID:
+	case ids.ID:
 		return maintainerIDFromInterface(readMaintainerID(value.String()))
 	default:
 		panic(i)
 	}
 }
 
-func ReadClassificationID(assetID types.ID) types.ID {
+func ReadClassificationID(assetID ids.ID) ids.ID {
 	return maintainerIDFromInterface(assetID).ClassificationID
 }
 
-func ReadIdentityID(assetID types.ID) types.ID {
+func ReadIdentityID(assetID ids.ID) ids.ID {
 	return maintainerIDFromInterface(assetID).IdentityID
 }
 
-func FromID(id types.ID) helpers.Key {
+func FromID(id ids.ID) helpers.Key {
 	return maintainerIDFromInterface(id)
 }

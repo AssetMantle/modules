@@ -4,9 +4,9 @@
 package maintainer
 
 import (
-	"github.com/AssetMantle/modules/constants/flags"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 var Query = baseHelpers.NewQuery(
@@ -20,5 +20,5 @@ var Query = baseHelpers.NewQuery(
 	responsePrototype,
 	keeperPrototype,
 
-	flags.MaintainerID,
+	constants.MaintainerID,
 )

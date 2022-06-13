@@ -5,11 +5,9 @@ package data
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type AccAddressData interface {
-	types.Data
+	Data
 	Get() sdkTypes.AccAddress
 }

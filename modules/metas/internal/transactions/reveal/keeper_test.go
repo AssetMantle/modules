@@ -22,7 +22,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/data/utilities"
+	string2 "github.com/AssetMantle/modules/schema/data/utlities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
@@ -73,9 +73,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 	defaultAddr := sdkTypes.AccAddress("addr")
-	defaultFact, err := utilities.ReadData("S|default")
+	defaultFact, err := string2.ReadData("S|default")
 	require.Equal(t, nil, err)
-	newFact, err := utilities.ReadData("S|newFact")
+	newFact, err := string2.ReadData("S|newFact")
 	require.Equal(t, nil, err)
 	keepers.MetasKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(defaultFact))
 	t.Run("PositiveCase", func(t *testing.T) {

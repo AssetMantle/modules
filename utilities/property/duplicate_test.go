@@ -8,27 +8,27 @@ import (
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/schema/properties"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 )
 
 func TestDuplicate(t *testing.T) {
 	type args struct {
-		propertyList []types.Property
+		propertyList []properties.Property
 	}
 	tests := []struct {
 		name string
 		args args
 		want bool
 	}{
-		{"Positive Case, Unique Properties", args{propertyList: []types.Property{baseTypes.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factA")),
-			baseTypes.NewProperty(baseIDs.NewID("b"), baseData.NewStringData("factB")),
-			baseTypes.NewProperty(baseIDs.NewID("c"), baseData.NewStringData("factC")),
-			baseTypes.NewProperty(baseIDs.NewID("d"), baseData.NewStringData("factD"))}}, false},
-		{"Negative Case, DuplicateExists", args{propertyList: []types.Property{baseTypes.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factA")),
-			baseTypes.NewProperty(baseIDs.NewID("b"), baseData.NewStringData("factB")),
-			baseTypes.NewProperty(baseIDs.NewID("c"), baseData.NewStringData("factC")),
-			baseTypes.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factD"))}}, true},
+		{"Positive Case, Unique PropertyList", args{propertyList: []properties.Property{baseProperties.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factA")),
+			baseProperties.NewProperty(baseIDs.NewID("b"), baseData.NewStringData("factB")),
+			baseProperties.NewProperty(baseIDs.NewID("c"), baseData.NewStringData("factC")),
+			baseProperties.NewProperty(baseIDs.NewID("d"), baseData.NewStringData("factD"))}}, false},
+		{"Negative Case, DuplicateExists", args{propertyList: []properties.Property{baseProperties.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factA")),
+			baseProperties.NewProperty(baseIDs.NewID("b"), baseData.NewStringData("factB")),
+			baseProperties.NewProperty(baseIDs.NewID("c"), baseData.NewStringData("factC")),
+			baseProperties.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factD"))}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

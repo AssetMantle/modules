@@ -11,11 +11,11 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
-func readOrderID(orderIDString string) types.ID {
+func readOrderID(orderIDString string) ids.ID {
 	idList := strings.Split(orderIDString, constants.SecondOrderCompositeIDSeparator)
 
 	if len(idList) == 7 {
@@ -46,37 +46,37 @@ func orderIDFromInterface(i interface{}) orderID {
 	switch value := i.(type) {
 	case orderID:
 		return value
-	case types.ID:
+	case ids.ID:
 		return orderIDFromInterface(readOrderID(value.String()))
 	default:
 		panic(i)
 	}
 }
 
-func ReadClassificationID(orderID types.ID) types.ID {
+func ReadClassificationID(orderID ids.ID) ids.ID {
 	return orderIDFromInterface(orderID).ClassificationID
 }
 
-func ReadRateID(orderID types.ID) types.ID {
+func ReadRateID(orderID ids.ID) ids.ID {
 	return orderIDFromInterface(orderID).RateID
 }
 
-func ReadCreationID(orderID types.ID) types.ID {
+func ReadCreationID(orderID ids.ID) ids.ID {
 	return orderIDFromInterface(orderID).CreationID
 }
 
-func ReadMakerOwnableID(orderID types.ID) types.ID {
+func ReadMakerOwnableID(orderID ids.ID) ids.ID {
 	return orderIDFromInterface(orderID).MakerOwnableID
 }
 
-func ReadTakerOwnableID(orderID types.ID) types.ID {
+func ReadTakerOwnableID(orderID ids.ID) ids.ID {
 	return orderIDFromInterface(orderID).TakerOwnableID
 }
 
-func ReadMakerID(orderID types.ID) types.ID {
+func ReadMakerID(orderID ids.ID) ids.ID {
 	return orderIDFromInterface(orderID).MakerID
 }
 
-func FromID(id types.ID) helpers.Key {
+func FromID(id ids.ID) helpers.Key {
 	return orderIDFromInterface(id)
 }

@@ -5,13 +5,15 @@ package types
 
 import (
 	"github.com/tendermint/tendermint/crypto"
+
+	"github.com/AssetMantle/modules/schema/ids"
 )
 
 type Signature interface {
 	String() string
 	Bytes() []byte
 
-	GetID() ID
+	GetID() ids.ID
 
 	Verify(crypto.PubKey, []byte) bool
 	GetValidityHeight() Height

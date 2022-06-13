@@ -3,11 +3,7 @@
 
 package data
 
-import (
-	"github.com/AssetMantle/modules/schema/types"
-)
-
 type StringData interface {
-	types.Data
+	Data
 	Get() string
 }

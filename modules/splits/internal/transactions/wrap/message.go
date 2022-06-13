@@ -12,14 +12,14 @@ import (
 	xprtErrors "github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/ids"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 type message struct {
 	From   sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	FromID types.ID            `json:"fromID" valid:"required~required field fromID missing"`
+	FromID ids.ID              `json:"fromID" valid:"required~required field fromID missing"`
 	Coins  sdkTypes.Coins      `json:"coins" valid:"required~required field coins missing"`
 }
 
@@ -42,7 +42,7 @@ func (message message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
 func (message) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, module.Name, message{})
+	codecUtilities.RegisterModuleConcrete(codec, message{})
 }
 func messageFromInterface(msg sdkTypes.Msg) message {
 	switch value := msg.(type) {
@@ -56,7 +56,7 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, coins sdkTypes.Coins) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.ID, coins sdkTypes.Coins) sdkTypes.Msg {
 	return message{
 		From:   from,
 		FromID: fromID,

@@ -1,27 +1,24 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
-
 package qualified
 
 import (
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/properties"
 )
 
 // TODO retire or send to base
 type Document interface {
-	GetID() types.ID
-	GetClassificationID() types.ID
+	GetID() ids.ID
+	GetClassificationID() ids.ID
 	// GetProperty returns property from a document searching in both Mutables and Immutables
 	// * Returns nil if property is not found
-	GetProperty(ids.PropertyID) types.Property
+	GetProperty(ids.PropertyID) properties.Property
 	GetImmutablePropertyList() lists.PropertyList
 	GetMutablePropertyList() lists.PropertyList
 
-	GenerateHashID() types.ID
-	Mutate(propertyList ...types.Property) Document
+	GenerateHashID() ids.ID
+	Mutate(propertyList ...properties.Property) Document
 }

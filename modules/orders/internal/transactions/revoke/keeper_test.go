@@ -7,11 +7,11 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/constants/test"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/lists/base"
-
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/constants/errors"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -83,9 +83,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
 
-	_, err := baseTypes.ReadProperties("maintainedProperties:S|maintainedProperties")
+	_, err := utilities.ReadProperties("maintainedProperties:S|maintainedProperties")
 	require.Equal(t, nil, err)
-	_, err = baseTypes.ReadProperties("conformError:S|mockError")
+	_, err = utilities.ReadProperties("conformError:S|mockError")
 	require.Equal(t, nil, err)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
@@ -103,14 +103,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	})
 
 	t.Run("NegativeCase - verify identity fail", func(t *testing.T) {
-		want := newTransactionResponse(test.MockError)
+		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, toID, classificationID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
 	t.Run("NegativeCase - conform mock error", func(t *testing.T) {
-		want := newTransactionResponse(test.MockError)
+		want := newTransactionResponse(errors.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID2, mockErrorClassification)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

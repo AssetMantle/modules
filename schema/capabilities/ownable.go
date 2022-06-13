@@ -3,9 +3,11 @@
 
 package capabilities
 
-import "github.com/AssetMantle/modules/schema/types"
+import (
+	"github.com/AssetMantle/modules/schema/ids"
+)
 
 type Ownable interface {
-	GetOwnerID() types.ID
-	GetOwnableID() types.ID
+	GetOwnerID() ids.ID
+	GetOwnableID() ids.ID
 }

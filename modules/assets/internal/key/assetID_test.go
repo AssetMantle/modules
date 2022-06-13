@@ -13,19 +13,19 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	baseTraits "github.com/AssetMantle/modules/schema/qualified/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 func Test_AssetID_Methods(t *testing.T) {
 	classificationID := baseIDs.NewID("classificationID")
-	immutableProperties := base.NewPropertyList(baseTypes.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
 
 	testAssetID := NewAssetID(classificationID, immutableProperties).(assetID)
 
 	require.NotPanics(t, func() {
-		require.Equal(t, assetID{ClassificationID: classificationID, HashID: baseTraits.Immutables{Properties: immutableProperties}.GenerateHashID()}, testAssetID)
-		require.Equal(t, strings.Join([]string{classificationID.String(), baseTraits.Immutables{Properties: immutableProperties}.GenerateHashID().String()}, constants.FirstOrderCompositeIDSeparator), testAssetID.String())
+		require.Equal(t, assetID{ClassificationID: classificationID, HashID: baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}, testAssetID)
+		require.Equal(t, strings.Join([]string{classificationID.String(), baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID().String()}, constants.FirstOrderCompositeIDSeparator), testAssetID.String())
 		require.Equal(t, false, testAssetID.IsPartial())
 		require.Equal(t, true, assetID{ClassificationID: classificationID, HashID: baseIDs.NewID("")}.IsPartial())
 		require.Equal(t, true, testAssetID.Equals(testAssetID))

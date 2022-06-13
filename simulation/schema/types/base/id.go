@@ -11,18 +11,18 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
-func GenerateRandomID(r *rand.Rand) types.ID {
+func GenerateRandomID(r *rand.Rand) ids.ID {
 	return baseIDs.NewID(simulation.RandStringOfLength(r, r.Intn(99)))
 }
 
-func GenerateRandomIDWithDec(r *rand.Rand) types.ID {
+func GenerateRandomIDWithDec(r *rand.Rand) ids.ID {
 	return baseIDs.NewID(sdkTypes.MustNewDecFromStr(strconv.FormatInt(r.Int63(), 10)).String())
 }
 
-func GenerateRandomIDWithInt64(r *rand.Rand) types.ID {
+func GenerateRandomIDWithInt64(r *rand.Rand) ids.ID {
 	return baseIDs.NewID(strconv.FormatInt(r.Int63(), 10))
 }
