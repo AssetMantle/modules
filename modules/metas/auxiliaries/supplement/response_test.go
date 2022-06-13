@@ -31,8 +31,8 @@ func Test_Super_Response(t *testing.T) {
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
 	require.Equal(t, errors.IncorrectFormat, testAuxiliaryResponse2.GetError())
 
-	properties, Error := GetMetaPropertiesFromResponse(testAuxiliaryResponse)
-	require.Equal(t, metaPropertyList, properties)
+	Properties, Error := GetMetaPropertiesFromResponse(testAuxiliaryResponse)
+	require.Equal(t, metaPropertyList, Properties)
 	require.Equal(t, nil, Error)
 
 	properties2, Error := GetMetaPropertiesFromResponse(testAuxiliaryResponse2)

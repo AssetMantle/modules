@@ -20,7 +20,7 @@ import (
 	metaUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
-// TODO check if should be shifted to types/ids package
+// TODO check if it should be shifted to types/ids package
 type classificationID struct {
 	// TODO remove chainID, rename hashID to hash
 	ChainID ids.ID

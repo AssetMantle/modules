@@ -25,14 +25,14 @@ import (
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
-	var data data.Data
+	var Data data.Data
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
 		dummy.ID.String(),
-		&data,
+		&Data,
 		simulationState.Rand,
-		func(rand *rand.Rand) { data = base.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
+		func(rand *rand.Rand) { Data = base.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
 	mappableList := make([]helpers.Mappable, simulationState.Rand.Intn(99))
@@ -41,7 +41,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewSplit(key.NewSplitID(baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand)), simulation.RandomDecAmount(simulationState.Rand, sdkTypes.NewDec(9999999999)))
 	}
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []parameters2.Parameter{dummy.Parameter.Mutate(data)})
+	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []parameters2.Parameter{dummy.Parameter.Mutate(Data)})
 
 	simulationState.GenState[splitsModule.Name] = common.Codec.MustMarshalJSON(genesisState)
 }
