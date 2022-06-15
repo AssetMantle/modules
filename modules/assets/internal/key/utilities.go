@@ -41,7 +41,7 @@ func assetIDFromInterface(i interface{}) (assetID, error) {
 
 func ReadClassificationID(id ids.ID) ids.ID {
 	if assetID, err := assetIDFromInterface(id); err != nil {
-		panic(assetID)
+		panic(err)
 	} else {
 		return assetID.ClassificationID
 	}
@@ -49,7 +49,7 @@ func ReadClassificationID(id ids.ID) ids.ID {
 
 func FromID(id ids.ID) helpers.Key {
 	if assetID, err := assetIDFromInterface(id); err != nil {
-		panic(assetID)
+		panic(err)
 	} else {
 		return assetID
 	}
