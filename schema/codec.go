@@ -20,6 +20,7 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -48,6 +49,8 @@ func RegisterCodec(codec *codec.Codec) {
 
 	qualified.RegisterCodec(codec)
 	baseQualified.RegisterCodec(codec)
+
+	traits.RegisterCodec(codec)
 
 	types.RegisterCodec(codec)
 	baseTypes.RegisterCodec(codec)
