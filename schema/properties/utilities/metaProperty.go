@@ -14,9 +14,9 @@ import (
 func ReadMetaProperty(metaPropertyString string) (properties.MetaProperty, error) {
 	propertyIDAndData := strings.Split(metaPropertyString, constants.PropertyIDAndDataSeparator)
 	if len(propertyIDAndData) == 2 && propertyIDAndData[0] != "" {
-		data, Error := utlities.ReadData(propertyIDAndData[1])
-		if Error != nil {
-			return nil, Error
+		data, err := utlities.ReadData(propertyIDAndData[1])
+		if err != nil {
+			return nil, err
 		}
 
 		return baseProperties.NewMetaProperty(baseIDs.NewID(propertyIDAndData[0]), data), nil
