@@ -33,4 +33,7 @@ func Test_Document(t *testing.T) {
 
 	require.Equal(t, Document{ID: creationID, Immutables: testImmutables, Mutables: testMutables}, testDocument1)
 	require.Equal(t, Document{ID: creationID, Immutables: Immutables{PropertyList: immutableProperties}, Mutables: Mutables{Properties: base.NewPropertyList()}}, testDocument)
+	require.Equal(t, testDocument.ID, creationID)
+	require.Equal(t, testDocument1.ID, creationID)
+	require.Equal(t, testDocument1.Properties, testProperties)
 }
