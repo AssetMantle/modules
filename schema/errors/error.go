@@ -1,4 +1,4 @@
-package helpers
+package errors
 
 type Error interface {
 	error
