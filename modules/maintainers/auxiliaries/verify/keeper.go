@@ -6,9 +6,9 @@ package verify
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 type auxiliaryKeeper struct {
@@ -24,7 +24,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	maintainer := maintainers.Get(key.FromID(maintainerID))
 	if maintainer == nil {
-		return newAuxiliaryResponse(errors.EntityNotFound)
+		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
 
 	return newAuxiliaryResponse(nil)

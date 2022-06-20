@@ -6,10 +6,10 @@ package reveal
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
@@ -27,7 +27,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	meta := metas.Get(key.FromID(metaID))
 	if meta != nil {
-		return newTransactionResponse(errors.EntityAlreadyExists)
+		return newTransactionResponse(constants.EntityAlreadyExists)
 	}
 
 	if message.Data.GenerateHash().Compare(baseIDs.NewID("")) != 0 {

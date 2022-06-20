@@ -17,7 +17,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/assets/internal/parameters"
@@ -28,6 +27,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
@@ -130,7 +130,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	})
 
 	t.Run("NegativeCase - duplicate asset Addition", func(t *testing.T) {
-		want := newTransactionResponse(errors.EntityAlreadyExists)
+		want := newTransactionResponse(constants.EntityAlreadyExists)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID,
 			immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -139,7 +139,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Verify Fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, toID, classificationID,
 			immutableMetaProperties2, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -148,7 +148,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - PropertyList Scrub Auxiliary fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID,
 			scrubMockErrorProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -157,7 +157,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - PropertyList Scrub Auxiliary fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID,
 			immutableMetaProperties2, immutableProperties, scrubMockErrorProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -166,7 +166,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Conform Auxiliary fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID,
 			immutableMetaProperties2, immutableProperties, conformMockErrorProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -175,7 +175,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Mint Auxiliary fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewID("mintError"), classificationID,
 			immutableMetaProperties2, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)

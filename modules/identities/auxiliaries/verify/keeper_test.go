@@ -17,13 +17,13 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
@@ -92,7 +92,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-Nil Identity", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(errors.EntityNotFound)
+		want := newAuxiliaryResponse(constants.EntityNotFound)
 		if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(defaultAddr, baseIDs.NewID("id"))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -100,7 +100,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-Unprovisioned Address", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(errors.NotAuthorized)
+		want := newAuxiliaryResponse(constants.NotAuthorized)
 		require.Panics(t, func() {
 			if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(unprovisionedAddr, defaultIdentityID)); !reflect.DeepEqual(got, want) {
 				t.Errorf("Transact() = %v, want %v", got, want)

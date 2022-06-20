@@ -7,7 +7,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
@@ -17,6 +16,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	ids2 "github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
@@ -47,9 +47,9 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 	orders.Iterate(
 		key.FromID(baseIDs.NewID("")),
 		func(order helpers.Mappable) bool {
-			metaProperties, Error := supplement.GetMetaPropertiesFromResponse(block.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetExpiry(), order.(mappables.Order).GetMakerOwnableSplit())))
-			if Error != nil {
-				panic(Error)
+			metaProperties, err := supplement.GetMetaPropertiesFromResponse(block.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetExpiry(), order.(mappables.Order).GetMakerOwnableSplit())))
+			if err != nil {
+				panic(err)
 			}
 			if expiryProperty := metaProperties.GetMetaProperty(constants.ExpiryProperty); expiryProperty != nil {
 				expiry := expiryProperty.GetData().(data.HeightData).Get()
@@ -57,7 +57,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 				if expiry.Compare(baseTypes.NewHeight(context.BlockHeight())) <= 0 {
 					makerOwnableSplitProperty := metaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty)
 					if makerOwnableSplitProperty == nil {
-						panic(errors.MetaDataError)
+						panic(constants2.MetaDataError)
 					}
 					makerOwnableSplit := makerOwnableSplitProperty.GetData().(data.DecData).Get()
 					if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(baseIDs.NewID(module.Name), order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
@@ -106,18 +106,18 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 
 					leftOrderExchangeRate := leftOrder.GetExchangeRate().GetData().(data.DecData).Get()
 
-					leftOrderMetaProperties, Error := supplement.GetMetaPropertiesFromResponse(block.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(leftOrder.GetMakerOwnableSplit())))
-					if Error != nil {
-						panic(Error)
+					leftOrderMetaProperties, err := supplement.GetMetaPropertiesFromResponse(block.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(leftOrder.GetMakerOwnableSplit())))
+					if err != nil {
+						panic(err)
 					}
 
 					leftOrderMakerOwnableSplit := leftOrderMetaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty).GetData().(data.DecData).Get()
 
 					rightOrderExchangeRate := rightOrder.GetExchangeRate().GetData().(data.DecData).Get()
 
-					rightOrderMetaProperties, Error := supplement.GetMetaPropertiesFromResponse(block.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(rightOrder.GetMakerOwnableSplit())))
-					if Error != nil {
-						panic(Error)
+					rightOrderMetaProperties, err := supplement.GetMetaPropertiesFromResponse(block.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(rightOrder.GetMakerOwnableSplit())))
+					if err != nil {
+						panic(err)
 					}
 
 					rightOrderMakerOwnableSplit := rightOrderMetaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty).GetData().(data.DecData).Get()
@@ -134,9 +134,9 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								panic(auxiliaryResponse.GetError())
 							}
 
-							mutableProperties, Error := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base2.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))))
-							if Error != nil {
-								panic(Error)
+							mutableProperties, err := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base2.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))))
+							if err != nil {
+								panic(err)
 							}
 
 							orders.Mutate(mappable.NewOrder(leftOrder.GetID(), leftOrder.GetImmutablePropertyList(), leftOrder.Mutate(mutableProperties.GetList()...).GetMutablePropertyList()))
@@ -154,9 +154,9 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								panic(auxiliaryResponse.GetError())
 							}
 
-							mutableProperties, Error := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base2.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder))))))
-							if Error != nil {
-								panic(Error)
+							mutableProperties, err := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base2.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder))))))
+							if err != nil {
+								panic(err)
 							}
 
 							orders.Mutate(mappable.NewOrder(rightOrder.GetID(), rightOrder.GetImmutablePropertyList(), rightOrder.GetMutablePropertyList().Mutate(mutableProperties.GetList()...)))
@@ -209,7 +209,7 @@ func (block block) Initialize(mapper helpers.Mapper, parameters helpers.Paramete
 				block.scrubAuxiliary = value
 			}
 		default:
-			panic(errors.UninitializedUsage)
+			panic(constants2.UninitializedUsage)
 		}
 	}
 

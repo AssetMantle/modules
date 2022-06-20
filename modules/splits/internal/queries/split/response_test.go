@@ -15,10 +15,10 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
 	"github.com/AssetMantle/modules/modules/splits/internal/mapper"
 	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {
@@ -54,12 +54,12 @@ func Test_Split_Response(t *testing.T) {
 	collection := mapper.Prototype().NewCollection(context)
 
 	testQueryResponse := newQueryResponse(collection, nil)
-	testQueryResponseWithError := newQueryResponse(collection, errors.IncorrectFormat)
+	testQueryResponseWithError := newQueryResponse(collection, constants.IncorrectFormat)
 
 	require.Equal(t, true, testQueryResponse.IsSuccessful())
 	require.Equal(t, false, testQueryResponseWithError.IsSuccessful())
 	require.Equal(t, nil, testQueryResponse.GetError())
-	require.Equal(t, errors.IncorrectFormat, testQueryResponseWithError.GetError())
+	require.Equal(t, constants.IncorrectFormat, testQueryResponseWithError.GetError())
 
 	encodedResponse, _ := testQueryResponse.Encode()
 	bytes, _ := common.Codec.MarshalJSON(testQueryResponse)

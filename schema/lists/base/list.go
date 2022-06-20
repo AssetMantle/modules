@@ -29,7 +29,7 @@ func (list list) Search(listable traits.Listable) (int, bool) {
 		},
 	)
 
-	if list[index].Compare(listable) == 0 {
+	if index < len(list) && list[index].Compare(listable) == 0 {
 		return index, true
 	}
 

@@ -6,9 +6,9 @@ package utilities
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/mappables"
 
@@ -17,7 +17,7 @@ import (
 
 func AddSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID, value sdkTypes.Dec) (helpers.Collection, error) {
 	if value.LTE(sdkTypes.ZeroDec()) {
-		return nil, errors.NotAuthorized
+		return nil, constants.NotAuthorized
 	}
 
 	splitID := key.NewSplitID(ownerID, ownableID)
@@ -34,19 +34,19 @@ func AddSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID, valu
 
 func SubtractSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID, value sdkTypes.Dec) (helpers.Collection, error) {
 	if value.LTE(sdkTypes.ZeroDec()) {
-		return nil, errors.NotAuthorized
+		return nil, constants.NotAuthorized
 	}
 
 	splitsKey := key.FromID(key.NewSplitID(ownerID, ownableID))
 
 	split := splits.Fetch(splitsKey).Get(splitsKey)
 	if split == nil {
-		return nil, errors.EntityNotFound
+		return nil, constants.EntityNotFound
 	}
 
 	switch split = split.(mappables.Split).Send(value).(mappables.Split); {
 	case split.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
-		return nil, errors.NotAuthorized
+		return nil, constants.NotAuthorized
 	case split.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):
 		splits.Remove(split)
 	default:

@@ -7,9 +7,9 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/constants"
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
@@ -23,7 +23,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(context sdkTypes.Context, reques
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
 	if len(auxiliaryRequest.ImmutableProperties.GetList())+len(auxiliaryRequest.MutableProperties.GetList()) > constants.MaxPropertyCount {
-		return newAuxiliaryResponse(nil, errors.InvalidRequest)
+		return newAuxiliaryResponse(nil, constants2.InvalidRequest)
 	}
 
 	classificationID := key.NewClassificationID(baseIDs.NewID(context.ChainID()), auxiliaryRequest.ImmutableProperties, auxiliaryRequest.MutableProperties)

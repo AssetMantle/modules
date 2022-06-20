@@ -6,12 +6,12 @@ package quash
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
@@ -36,23 +36,23 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	identity := identities.Get(key.FromID(message.IdentityID))
 	if identity == nil {
-		return newTransactionResponse(errors.EntityNotFound)
+		return newTransactionResponse(constants2.EntityNotFound)
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.Identity).GetExpiry())))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.Identity).GetExpiry())))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	expiryHeightMetaFact := metaProperties.GetMetaProperty(constants.ExpiryProperty)
 	if expiryHeightMetaFact == nil {
-		return newTransactionResponse(errors.EntityNotFound)
+		return newTransactionResponse(constants2.EntityNotFound)
 	}
 
 	expiryHeight := expiryHeightMetaFact.GetData().(data.HeightData).Get()
 
 	if expiryHeight.Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
-		return newTransactionResponse(errors.NotAuthorized)
+		return newTransactionResponse(constants2.NotAuthorized)
 	}
 
 	identities.Remove(identity)
@@ -73,7 +73,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.verifyAuxiliary = value
 			}
 		default:
-			panic(errors.UninitializedUsage)
+			panic(constants2.UninitializedUsage)
 		}
 	}
 

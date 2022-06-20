@@ -9,7 +9,7 @@ import (
 
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
 
@@ -100,7 +100,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	})
 
 	t.Run("NegativeCase - verify identity fail", func(t *testing.T) {
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, toID, classificationID,
 			maintainedProperties, true, true, true)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -108,7 +108,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	})
 
 	t.Run("NegativeCase - conform mock error", func(t *testing.T) {
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID2, classificationID,
 			conformMockErrorProperties, true, true, true)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)

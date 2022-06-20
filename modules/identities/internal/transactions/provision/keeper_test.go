@@ -17,13 +17,13 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
@@ -91,7 +91,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-Nil Identity", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.EntityNotFound)
+		want := newTransactionResponse(constants.EntityNotFound)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, addr2, baseIDs.NewID("id"))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -99,7 +99,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-ReProvisioning", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.EntityAlreadyExists)
+		want := newTransactionResponse(constants.EntityAlreadyExists)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, defaultAddr, defaultIdentityID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -107,7 +107,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-Provisioning unprovisioned Address", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.DeletionNotAllowed)
+		want := newTransactionResponse(constants.DeletionNotAllowed)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, unprovisionedAddr, defaultIdentityID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -115,7 +115,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-Identity From Address mismatch", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.NotAuthorized)
+		want := newTransactionResponse(constants.NotAuthorized)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(sdkTypes.AccAddress("randomAddr"), unprovisionedAddr, defaultIdentityID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

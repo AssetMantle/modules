@@ -6,8 +6,8 @@ package key
 import (
 	"strings"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
@@ -35,7 +35,7 @@ func assetIDFromInterface(i interface{}) (assetID, error) {
 	case ids.ID:
 		return assetIDFromInterface(readAssetID(value.String()))
 	default:
-		return assetID{}, errors.MetaDataError
+		return assetID{}, constants2.MetaDataError
 	}
 }
 

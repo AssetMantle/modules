@@ -57,7 +57,7 @@ has been discussed and there is rough alignment on a high-level approach to the 
 the [ADR creation process](./docs/architecture/PROCESS.md) can begin. We
 are following this process to ensure all involved parties are in agreement before any party begins coding the proposed
 implementation. If you would like to see examples of how these are written, please refer to the
-current [ADRs](./docs/architecture/).
+current ADR.
 
 ## Development Procedure
 

@@ -4,8 +4,8 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -52,7 +52,7 @@ func metaPropertyFromInterface(listable traits.Listable) (metaProperty, error) {
 	case metaProperty:
 		return value, nil
 	default:
-		return metaProperty{}, errors.MetaDataError
+		return metaProperty{}, constants.MetaDataError
 	}
 }
 

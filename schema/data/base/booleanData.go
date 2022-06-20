@@ -6,9 +6,9 @@ package base
 import (
 	"strconv"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
 	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -24,9 +24,9 @@ func (booleanData booleanData) GetID() ids.DataID {
 	return baseIDs.NewDataID(booleanData)
 }
 func (booleanData booleanData) Compare(listable traits.Listable) int {
-	compareBooleanData, Error := booleanDataFromInterface(listable)
-	if Error != nil {
-		panic(Error)
+	compareBooleanData, err := booleanDataFromInterface(listable)
+	if err != nil {
+		panic(err)
 	}
 
 	if booleanData.Value == compareBooleanData.Value {
@@ -62,7 +62,7 @@ func booleanDataFromInterface(listable traits.Listable) (booleanData, error) {
 	case booleanData:
 		return value, nil
 	default:
-		return booleanData{}, errors.MetaDataError
+		return booleanData{}, constants.MetaDataError
 	}
 }
 
@@ -77,9 +77,9 @@ func ReadBooleanData(dataString string) (data.Data, error) {
 		return booleanData{}.ZeroValue(), nil
 	}
 
-	Bool, Error := strconv.ParseBool(dataString)
-	if Error != nil {
-		return booleanData{}.ZeroValue(), Error
+	Bool, err := strconv.ParseBool(dataString)
+	if err != nil {
+		return booleanData{}.ZeroValue(), err
 	}
 
 	return NewBooleanData(Bool), nil

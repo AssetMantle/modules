@@ -17,13 +17,13 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 )
@@ -89,7 +89,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-Maintainer not present", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(errors.EntityNotFound)
+		want := newAuxiliaryResponse(constants.EntityNotFound)
 		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(identityID, identityID, classificationID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

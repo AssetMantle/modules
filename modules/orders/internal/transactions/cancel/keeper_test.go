@@ -17,7 +17,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
@@ -27,6 +26,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
@@ -94,10 +94,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	rateID := baseIDs.NewID(sdkTypes.MustNewDecFromStr("0.001").String())
 	creationID := baseIDs.NewID("100")
 	makerID := baseIDs.NewID("makerID")
-	metaProperties, Error := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+	metaProperties, err := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 		"," + constants.TakerIDProperty.String() + ":I|fromID" + "," +
 		constants.ExchangeRateProperty.String() + ":D|0.000000000000000001")
-	require.Equal(t, nil, Error)
+	require.Equal(t, nil, err)
 	orderID := key.NewOrderID(
 		classificationID,
 		makerOwnableID,
@@ -119,7 +119,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Identity mock error", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants2.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, orderID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -127,7 +127,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Cancel not existing order", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.EntityNotFound)
+		want := newTransactionResponse(constants2.EntityNotFound)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewID("orderID"))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -136,13 +136,13 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - Cancel with different makerID", func(t *testing.T) {
 		t.Parallel()
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewPropertyList(), metaProperties.ToPropertyList()))
-		want := newTransactionResponse(errors.NotAuthorized)
+		want := newTransactionResponse(constants2.NotAuthorized)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, baseIDs.NewID("id"), orderID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
-	t.Run("NegativeCase - transferMock Error", func(t *testing.T) {
+	t.Run("NegativeCase - transferMock err", func(t *testing.T) {
 		t.Parallel()
 		transferErrorID := key.NewOrderID(classificationID,
 			baseIDs.NewID("transferError"),
@@ -153,7 +153,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		)
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewPropertyList(), metaProperties.ToPropertyList()))
 
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants2.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, makerID, transferErrorID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

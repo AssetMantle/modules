@@ -17,7 +17,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
@@ -25,6 +24,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
@@ -99,7 +99,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-Verify Identity Failure", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.SplitsKeeper.Transact(context, newMessage(verifyMockErrorAddress, fromID, toID, ownableID, sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -107,7 +107,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-Negative Value exchange", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.NotAuthorized)
+		want := newTransactionResponse(constants.NotAuthorized)
 		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, fromID, toID, ownableID, sdkTypes.NewDec(-1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -115,7 +115,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-Value not found", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.EntityNotFound)
+		want := newTransactionResponse(constants.EntityNotFound)
 		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, baseIDs.NewID("fakeFromID"), toID, ownableID, sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -123,7 +123,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-Send More than available splits", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.NotAuthorized)
+		want := newTransactionResponse(constants.NotAuthorized)
 		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, fromID, toID, ownableID, sdkTypes.NewDec(101))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

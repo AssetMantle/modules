@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
@@ -21,7 +22,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
@@ -112,7 +112,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - IdentityNil", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.EntityNotFound)
+		want := newTransactionResponse(constants.EntityNotFound)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(defaultAddr, baseIDs.NewID(""), immutableMetaProperties,
 			immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -121,7 +121,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Identity unprovisioned address", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.NotAuthorized)
+		want := newTransactionResponse(constants.NotAuthorized)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(sdkTypes.AccAddress("addr1"), defaultIdentityID, immutableMetaProperties,
 			immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -130,7 +130,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - define classification Failure", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.InvalidRequest)
+		want := newTransactionResponse(constants.InvalidRequest)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(sdkTypes.AccAddress("addr"), defaultIdentityID, gt22Properties,
 			immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -139,7 +139,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Metas Scrub Immutable Failure", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(sdkTypes.AccAddress("addr"), defaultIdentityID, scrubMockErrorProperties,
 			immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -148,7 +148,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Metas Scrub PropertyList Failure", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(sdkTypes.AccAddress("addr"), defaultIdentityID, immutableMetaProperties,
 			immutableProperties, scrubMockErrorProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -157,7 +157,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Maintainer super Failure", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.IdentitiesKeeper.Transact(context, newMessage(sdkTypes.AccAddress("addr"), defaultIdentityID, immutableMetaProperties,
 			immutableProperties, mutableMetaProperties, superMockErrorProperties.ToPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)

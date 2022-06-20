@@ -6,10 +6,10 @@ package unprovision
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/utilities"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/mappables"
 )
 
@@ -26,15 +26,15 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	identity := identities.Get(key.FromID(identityID)).(mappables.Identity)
 	if identity == nil {
-		return newTransactionResponse(errors.EntityNotFound)
+		return newTransactionResponse(constants.EntityNotFound)
 	}
 
 	if !utilities.IsProvisioned(identity, message.From) {
-		return newTransactionResponse(errors.NotAuthorized)
+		return newTransactionResponse(constants.NotAuthorized)
 	}
 
 	if !utilities.IsProvisioned(identity, message.To) {
-		return newTransactionResponse(errors.EntityNotFound)
+		return newTransactionResponse(constants.EntityNotFound)
 	}
 
 	identities.Mutate(utilities.UnprovisionAddress(identity, message.To))

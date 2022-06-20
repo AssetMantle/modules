@@ -9,9 +9,9 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/constants"
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
 	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
@@ -30,9 +30,9 @@ func (listData listData) GetID() ids.DataID {
 }
 func (listData listData) Compare(listable traits.Listable) int {
 	// TODO write test
-	compareListData, Error := listDataFromInterface(listable)
-	if Error != nil {
-		panic(Error)
+	compareListData, err := listDataFromInterface(listable)
+	if err != nil {
+		panic(err)
 	}
 
 	return strings.Compare(listData.GenerateHash().String(), compareListData.GenerateHash().String())
@@ -76,7 +76,7 @@ func listDataFromInterface(listable traits.Listable) (listData, error) {
 	case listData:
 		return value, nil
 	default:
-		return listData{}, errors.MetaDataError
+		return listData{}, constants2.MetaDataError
 	}
 }
 
@@ -96,9 +96,9 @@ func ReadListData(dataString string) (data.Data, error) {
 	dataList := make([]data.Data, len(dataStringList))
 
 	for i, accAddressString := range dataStringList {
-		accAddress, Error := sdkTypes.AccAddressFromBech32(accAddressString)
-		if Error != nil {
-			return listData{}.ZeroValue(), Error
+		accAddress, err := sdkTypes.AccAddressFromBech32(accAddressString)
+		if err != nil {
+			return listData{}.ZeroValue(), err
 		}
 
 		dataList[i] = NewAccAddressData(accAddress)

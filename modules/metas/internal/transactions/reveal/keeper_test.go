@@ -17,7 +17,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
@@ -25,6 +24,7 @@ import (
 	string2 "github.com/AssetMantle/modules/schema/data/utlities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 type TestKeepers struct {
@@ -87,7 +87,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-Reveal metas again", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.EntityAlreadyExists)
+		want := newTransactionResponse(constants.EntityAlreadyExists)
 		if got := keepers.MetasKeeper.Transact(context, newMessage(defaultAddr, defaultFact)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

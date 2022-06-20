@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 func Test_Add_Response(t *testing.T) {
@@ -18,7 +18,7 @@ func Test_Add_Response(t *testing.T) {
 	require.Equal(t, response{Success: true, Error: nil, KeyOutput: testKeyOutput}, testResponse)
 	require.Equal(t, true, testResponse.IsSuccessful())
 	require.Equal(t, nil, testResponse.GetError())
-	testResponse2 := newResponse(testKeyOutput, errors.IncorrectFormat)
+	testResponse2 := newResponse(testKeyOutput, constants.IncorrectFormat)
 	require.Equal(t, false, testResponse2.IsSuccessful())
-	require.Equal(t, errors.IncorrectFormat, testResponse2.GetError())
+	require.Equal(t, constants.IncorrectFormat, testResponse2.GetError())
 }

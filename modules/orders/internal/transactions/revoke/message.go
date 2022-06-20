@@ -9,9 +9,9 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 
-	xprtErrors "github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
+	xprtErrors "github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/utilities/transaction"
@@ -29,9 +29,8 @@ var _ sdkTypes.Msg = message{}
 func (message message) Route() string { return module.Name }
 func (message message) Type() string  { return Transaction.GetName() }
 func (message message) ValidateBasic() error {
-	var _, Error = govalidator.ValidateStruct(message)
-	if Error != nil {
-		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
+	if _, err := govalidator.ValidateStruct(message); err != nil {
+		return errors.Wrap(xprtErrors.IncorrectMessage, err.Error())
 	}
 
 	return nil

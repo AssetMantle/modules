@@ -6,8 +6,8 @@ package scrub
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
 )
@@ -27,7 +27,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 		scrubbedPropertyList[i] = metaProperty.RemoveData()
 
 		if metaProperty.GetID().String() == "scrubError" {
-			return newAuxiliaryResponse(nil, errors.MockError)
+			return newAuxiliaryResponse(nil, constants.MockError)
 		}
 	}
 

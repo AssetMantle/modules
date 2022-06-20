@@ -6,9 +6,9 @@ package maintain
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/mappables"
 )
 
@@ -25,12 +25,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	maintainer := maintainers.Get(key.FromID(maintainerID))
 	if maintainer == nil {
-		return newAuxiliaryResponse(errors.EntityNotFound)
+		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
 
 	for _, maintainedProperty := range auxiliaryRequest.MaintainedProperties.GetList() {
 		if !maintainer.(mappables.Maintainer).MaintainsProperty(maintainedProperty.GetID()) {
-			return newAuxiliaryResponse(errors.NotAuthorized)
+			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
 	}
 

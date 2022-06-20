@@ -19,8 +19,8 @@ import (
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 type module struct {
@@ -139,7 +139,7 @@ func (module module) NewHandler() sdkTypes.Handler {
 		context = context.WithEventManager(sdkTypes.NewEventManager())
 
 		if module.transactions == nil {
-			panic(errors.UninitializedUsage)
+			panic(constants.UninitializedUsage)
 		}
 
 		if transaction := module.transactions.Get(msg.Type()); transaction != nil {
@@ -155,7 +155,7 @@ func (module module) QuerierRoute() string {
 func (module module) NewQuerierHandler() sdkTypes.Querier {
 	return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
 		if module.queries == nil {
-			panic(errors.UninitializedUsage)
+			panic(constants.UninitializedUsage)
 		}
 
 		if query := module.queries.Get(path[0]); query != nil {
@@ -169,7 +169,7 @@ func (module module) InitGenesis(context sdkTypes.Context, rawMessage json.RawMe
 	genesisState := module.genesisPrototype().Decode(rawMessage)
 
 	if module.mapper == nil || module.parameters == nil {
-		panic(errors.UninitializedUsage)
+		panic(constants.UninitializedUsage)
 	}
 
 	genesisState.Import(context, module.mapper, module.parameters)
@@ -178,7 +178,7 @@ func (module module) InitGenesis(context sdkTypes.Context, rawMessage json.RawMe
 }
 func (module module) ExportGenesis(context sdkTypes.Context) json.RawMessage {
 	if module.mapper == nil || module.parameters == nil {
-		panic(errors.UninitializedUsage)
+		panic(constants.UninitializedUsage)
 	}
 
 	return module.genesisPrototype().Export(context, module.mapper, module.parameters).Encode()
@@ -206,7 +206,7 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 		return transaction.DecodeTransactionRequest(rawMessage)
 	}
 
-	return nil, errors.IncorrectMessage
+	return nil, constants.IncorrectMessage
 }
 
 func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace params.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {

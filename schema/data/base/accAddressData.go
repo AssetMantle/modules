@@ -8,9 +8,9 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
 	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -59,7 +59,7 @@ func accAddressDataFromInterface(listable traits.Listable) (accAddressData, erro
 	case accAddressData:
 		return value, nil
 	default:
-		return accAddressData{}, errors.MetaDataError
+		return accAddressData{}, constants.MetaDataError
 	}
 }
 

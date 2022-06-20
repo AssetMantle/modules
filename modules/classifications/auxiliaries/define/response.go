@@ -4,8 +4,8 @@
 package define
 
 import (
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 )
 
@@ -48,6 +48,6 @@ func GetClassificationIDFromResponse(response helpers.AuxiliaryResponse) (ids.ID
 
 		return value.ClassificationID, value.GetError()
 	default:
-		return nil, errors.InvalidRequest
+		return nil, constants.InvalidRequest
 	}
 }

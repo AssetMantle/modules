@@ -8,7 +8,6 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
@@ -20,6 +19,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
@@ -50,9 +50,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	immutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetList()...)))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	immutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetList()...)))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	immutableProperties := base.NewPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
@@ -61,15 +61,15 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(orderID))
 
 	if order := orders.Get(key.FromID(orderID)); order != nil {
-		return newTransactionResponse(errors.EntityAlreadyExists)
+		return newTransactionResponse(constants2.EntityAlreadyExists)
 	}
 
 	mutableMetaProperties := message.MutableMetaProperties.Add(base2.NewMetaProperty(constants.ExpiryProperty, baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
 	mutableMetaProperties = mutableMetaProperties.Add(base2.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(message.MakerOwnableSplit)))
 
-	scrubbedMutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetList()...)))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	scrubbedMutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetList()...)))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	mutableProperties := base.NewPropertyList(append(scrubbedMutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
@@ -92,9 +92,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 		executableOrderExchangeRate := executableOrder.GetExchangeRate().GetData().(data.DecData).Get()
 
-		executableOrderMetaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(executableOrder.GetMakerOwnableSplit(), executableOrder.GetExpiry())))
-		if Error != nil {
-			panic(Error)
+		executableOrderMetaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(executableOrder.GetMakerOwnableSplit(), executableOrder.GetExpiry())))
+		if err != nil {
+			panic(err)
 		}
 
 		var executableOrderMakerOwnableSplit sdkTypes.Dec
@@ -102,7 +102,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		if makerOwnableSplitProperty := executableOrderMetaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty); makerOwnableSplitProperty != nil {
 			executableOrderMakerOwnableSplit = makerOwnableSplitProperty.GetData().(data.DecData).Get()
 		} else {
-			panic(errors.MetaDataError)
+			panic(constants2.MetaDataError)
 		}
 
 		executableOrderTakerOwnableSplitDemanded := executableOrderExchangeRate.MulTruncate(executableOrderMakerOwnableSplit).MulTruncate(sdkTypes.SmallestDec())
@@ -133,9 +133,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 					panic(auxiliaryResponse.GetError())
 				}
 
-				mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base2.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(executableOrderMakerOwnableSplit.Sub(sendToBuyer))))))
-				if Error != nil {
-					panic(Error)
+				mutableProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base2.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(executableOrderMakerOwnableSplit.Sub(sendToBuyer))))))
+				if err != nil {
+					panic(err)
 				}
 
 				orders.Mutate(mappable.NewOrder(executableOrder.GetID(), executableOrder.GetImmutablePropertyList(), executableOrder.GetMutablePropertyList().Mutate(mutableProperties.GetList()...)))
@@ -171,9 +171,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	orders.Iterate(key.FromID(key.NewOrderID(order.GetClassificationID(), order.GetTakerOwnableID(), order.GetMakerOwnableID(), baseIDs.NewID(""), baseIDs.NewID(""), baseIDs.NewID(""), base.NewPropertyList())), accumulator)
 
 	if !orderLeftOverMakerOwnableSplit.Equal(sdkTypes.ZeroDec()) && orderMutated {
-		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base2.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(orderLeftOverMakerOwnableSplit)))))
-		if Error != nil {
-			return newTransactionResponse(Error)
+		mutableProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base2.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(orderLeftOverMakerOwnableSplit)))))
+		if err != nil {
+			return newTransactionResponse(err)
 		}
 
 		orders.Mutate(mappable.NewOrder(orderID, order.GetImmutablePropertyList(), order.GetMutablePropertyList().Mutate(mutableProperties.GetList()...)))
@@ -201,7 +201,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.verifyAuxiliary = value
 			}
 		default:
-			panic(errors.UninitializedUsage)
+			panic(constants2.UninitializedUsage)
 		}
 	}
 

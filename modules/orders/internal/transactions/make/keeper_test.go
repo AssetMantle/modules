@@ -17,7 +17,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
@@ -30,6 +29,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
@@ -119,7 +119,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	})
 
 	t.Run("NegativeCase - Order already exists", func(t *testing.T) {
-		want := newTransactionResponse(errors.EntityAlreadyExists)
+		want := newTransactionResponse(constants.EntityAlreadyExists)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			makerOwnableID, takerOwnableID, baseTypes.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(),
 			immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
@@ -129,7 +129,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Identity mock error", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.OrdersKeeper.Transact(
 			context,
 			newMessage(
@@ -148,7 +148,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - conform mock fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			makerOwnableID, takerOwnableID, baseTypes.NewHeight(0), sdkTypes.OneDec(), sdkTypes.OneDec(),
 			immutableMetaProperties, immutableProperties, mutableMetaProperties, conformMockErrorProperties.ToPropertyList())); !reflect.DeepEqual(got, want) {
@@ -158,7 +158,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - mutables scrub mock fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			makerOwnableID, takerOwnableID, baseTypes.NewHeight(0), sdkTypes.OneDec(), sdkTypes.OneDec(),
 			immutableMetaProperties, immutableProperties, scrubMockErrorProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
@@ -168,7 +168,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - immutables scrub mock fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			makerOwnableID, takerOwnableID, baseTypes.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(),
 			scrubMockErrorProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
@@ -178,7 +178,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Transfer mock fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, classificationID,
 			baseIDs.NewID("transferError"), takerOwnableID, baseTypes.NewHeight(0), sdkTypes.SmallestDec(), sdkTypes.OneDec(),
 			immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {

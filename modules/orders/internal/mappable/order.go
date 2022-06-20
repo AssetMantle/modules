@@ -46,16 +46,16 @@ func (order order) GetMakerID() ids2.ID {
 	return key.ReadMakerID(order.ID)
 }
 func (order order) GetCreation() properties2.MetaProperty {
-	heightValue, Error := strconv.ParseInt(key.ReadCreationID(order.ID).String(), 10, 64)
-	if Error != nil {
+	heightValue, err := strconv.ParseInt(key.ReadCreationID(order.ID).String(), 10, 64)
+	if err != nil {
 		return base.NewMetaProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(0)))
 	}
 
 	return base.NewMetaProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(heightValue)))
 }
 func (order order) GetExchangeRate() properties2.MetaProperty {
-	decValue, Error := sdkTypes.NewDecFromStr(key.ReadRateID(order.ID).String())
-	if Error != nil {
+	decValue, err := sdkTypes.NewDecFromStr(key.ReadRateID(order.ID).String())
+	if err != nil {
 		return base.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.ZeroDec()))
 	}
 

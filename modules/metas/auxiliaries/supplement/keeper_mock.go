@@ -6,9 +6,9 @@ package supplement
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -30,7 +30,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 
 	for _, property := range auxiliaryRequest.PropertyList {
 		if property.GetID().Compare(constants.BurnProperty) == 0 && property.GetHash().Compare(baseIDs.NewID("")) == 0 {
-			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), errors.MockError)
+			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), constants2.MockError)
 		}
 	}
 

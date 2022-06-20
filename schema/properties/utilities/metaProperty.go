@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"github.com/AssetMantle/modules/constants"
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data/utlities"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
@@ -22,5 +22,5 @@ func ReadMetaProperty(metaPropertyString string) (properties.MetaProperty, error
 		return baseProperties.NewMetaProperty(baseIDs.NewID(propertyIDAndData[0]), data), nil
 	}
 
-	return nil, errors.IncorrectFormat
+	return nil, constants2.IncorrectFormat
 }

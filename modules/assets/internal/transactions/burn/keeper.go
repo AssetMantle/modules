@@ -6,7 +6,6 @@ package burn
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
@@ -14,6 +13,7 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/burn"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
@@ -39,23 +39,23 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	asset := assets.Get(key.FromID(message.AssetID))
 	if asset == nil {
-		return newTransactionResponse(errors.EntityNotFound)
+		return newTransactionResponse(constants2.EntityNotFound)
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(mappables.Asset).GetBurn())))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(mappables.Asset).GetBurn())))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	burnHeightMetaFact := metaProperties.GetMetaProperty(constants.BurnProperty)
 	if burnHeightMetaFact == nil {
-		return newTransactionResponse(errors.EntityNotFound)
+		return newTransactionResponse(constants2.EntityNotFound)
 	}
 
 	burnHeight := burnHeightMetaFact.GetData().(data.HeightData).Get()
 
 	if burnHeight.Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
-		return newTransactionResponse(errors.NotAuthorized)
+		return newTransactionResponse(constants2.NotAuthorized)
 	}
 
 	if auxiliaryResponse := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.SmallestDec())); !auxiliaryResponse.IsSuccessful() {
@@ -84,7 +84,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.verifyAuxiliary = value
 			}
 		default:
-			panic(errors.UninitializedUsage)
+			panic(constants2.UninitializedUsage)
 		}
 	}
 

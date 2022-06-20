@@ -52,8 +52,8 @@ func Test_Kafka(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test"}
 	ticketID := TicketID(random.GenerateUniqueIdentifier("ticket"))
 	kafkaPorts := []string{"localhost:9092"}

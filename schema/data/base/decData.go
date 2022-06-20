@@ -6,9 +6,9 @@ package base
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
 	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -63,7 +63,7 @@ func decDataFromInterface(listable traits.Listable) (decData, error) {
 	case decData:
 		return value, nil
 	default:
-		return decData{}, errors.MetaDataError
+		return decData{}, constants.MetaDataError
 	}
 }
 

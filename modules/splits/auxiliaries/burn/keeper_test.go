@@ -17,13 +17,13 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	"github.com/AssetMantle/modules/modules/splits/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
@@ -102,7 +102,7 @@ func Test_Burn_Aux_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-Nil Value", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(errors.EntityNotFound)
+		want := newAuxiliaryResponse(constants.EntityNotFound)
 		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewID("negativeTestOwner"), baseIDs.NewID("negativeTestOwnable"), sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -110,7 +110,7 @@ func Test_Burn_Aux_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-Insufficient Balance", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(errors.InsufficientBalance)
+		want := newAuxiliaryResponse(constants.InsufficientBalance)
 		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, ownableID, sdkTypes.NewDec(1234))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

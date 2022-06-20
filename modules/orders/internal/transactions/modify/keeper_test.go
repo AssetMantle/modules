@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
@@ -21,7 +22,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
@@ -92,12 +92,12 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 
 	context, keepers := CreateTestInput(t)
-	immutableProperties, Error := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, Error)
-	mutableProperties, Error := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, Error)
-	mutablePropertiesUpdated, Error := utilities.ReadMetaProperties("defaultMutable1:S|defaultMutable2")
-	require.Equal(t, nil, Error)
+	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	require.Equal(t, nil, err)
+	mutableProperties, err := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
+	require.Equal(t, nil, err)
+	mutablePropertiesUpdated, err := utilities.ReadMetaProperties("defaultMutable1:S|defaultMutable2")
+	require.Equal(t, nil, err)
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultAddr := sdkTypes.AccAddress("addr")
 	defaultIdentityID := baseIDs.NewID("fromID")
@@ -132,7 +132,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	})
 
 	t.Run("NegativeCase Modifying Order - Order not found", func(t *testing.T) {
-		want := newTransactionResponse(errors.EntityNotFound)
+		want := newTransactionResponse(constants.EntityNotFound)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewID("orderID"),
 			updatedRate, makerOwnableSplit, baseTypes.NewHeight(100),
 			base.NewMetaProperties(), mutablePropertiesUpdated.ToPropertyList())); !reflect.DeepEqual(got, want) {
@@ -142,7 +142,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Identity mock error", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, orderID,
 			updatedRate, makerOwnableSplit, baseTypes.NewHeight(100), base.NewMetaProperties(),
 			mutablePropertiesUpdated.ToPropertyList())); !reflect.DeepEqual(got, want) {
@@ -153,7 +153,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	orderID = key.NewOrderID(classificationID, baseIDs.NewID("transferError"), takerOwnableID, rateID, creationID, defaultIdentityID, immutableProperties)
 	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, immutableProperties, mutableProperties))
 	t.Run("NegativeCase Modifying Order - transferError", func(t *testing.T) {
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, orderID,
 			updatedRate, makerOwnableSplit.Sub(sdkTypes.SmallestDec()), baseTypes.NewHeight(100),
 			base.NewMetaProperties(), mutablePropertiesUpdated.ToPropertyList())); !reflect.DeepEqual(got, want) {
@@ -162,7 +162,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	})
 
 	t.Run("NegativeCase Modifying Order - Changing TakerOwnableSplit, mutableProperty and adding makerOwnableSplit", func(t *testing.T) {
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, orderID,
 			updatedRate, makerOwnableSplit.Add(sdkTypes.SmallestDec()), baseTypes.NewHeight(100),
 			base.NewMetaProperties(), mutablePropertiesUpdated.ToPropertyList())); !reflect.DeepEqual(got, want) {

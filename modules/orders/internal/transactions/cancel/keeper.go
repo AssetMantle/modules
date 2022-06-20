@@ -6,7 +6,6 @@ package cancel
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
@@ -14,6 +13,7 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties/constants"
@@ -39,21 +39,21 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	order := orders.Get(key.FromID(message.OrderID))
 	if order == nil {
-		return newTransactionResponse(errors.EntityNotFound)
+		return newTransactionResponse(constants2.EntityNotFound)
 	}
 
 	if message.FromID.Compare(order.(mappables.Order).GetMakerID()) != 0 {
-		return newTransactionResponse(errors.NotAuthorized)
+		return newTransactionResponse(constants2.NotAuthorized)
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetMakerOwnableSplit())))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetMakerOwnableSplit())))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	makerOwnableSplitProperty := metaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty)
 	if makerOwnableSplitProperty == nil {
-		return newTransactionResponse(errors.MetaDataError)
+		return newTransactionResponse(constants2.MetaDataError)
 	}
 
 	makerOwnableSplit := makerOwnableSplitProperty.GetData().(data.DecData).Get()
@@ -82,7 +82,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.verifyAuxiliary = value
 			}
 		default:
-			panic(errors.UninitializedUsage)
+			panic(constants2.UninitializedUsage)
 		}
 	}
 

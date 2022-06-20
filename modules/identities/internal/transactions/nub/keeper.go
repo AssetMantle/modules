@@ -6,13 +6,13 @@ package nub
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
@@ -31,28 +31,28 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	nubIDProperty := baseProperties.NewMetaProperty(constants.NubIDProperty, baseData.NewIDData(message.NubID))
 
-	immutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(nubIDProperty)))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	immutableProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(nubIDProperty)))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	authenticationProperty := baseProperties.NewMetaProperty(constants.AuthenticationProperty, baseData.NewListData(baseData.NewAccAddressData(message.From)))
 
-	mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(authenticationProperty)))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	mutableProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(authenticationProperty)))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
-	classificationID, Error := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(baseLists.NewPropertyList(constants.NubID), baseLists.NewPropertyList(constants.Authentication))))
-	if classificationID == nil && Error != nil {
-		return newTransactionResponse(Error)
+	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(baseLists.NewPropertyList(constants.NubID), baseLists.NewPropertyList(constants.Authentication))))
+	if classificationID == nil && err != nil {
+		return newTransactionResponse(err)
 	}
 
 	identityID := key.NewIdentityID(classificationID, immutableProperties)
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
 	if identities.Get(key.FromID(identityID)) != nil {
-		return newTransactionResponse(errors.EntityAlreadyExists)
+		return newTransactionResponse(constants2.EntityAlreadyExists)
 	}
 
 	identities.Add(mappable.NewIdentity(identityID, immutableProperties, mutableProperties))
@@ -73,7 +73,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.scrubAuxiliary = value
 			}
 		default:
-			panic(errors.UninitializedUsage)
+			panic(constants2.UninitializedUsage)
 		}
 	}
 

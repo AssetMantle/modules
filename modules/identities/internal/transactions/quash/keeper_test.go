@@ -17,7 +17,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
@@ -26,6 +25,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
@@ -118,7 +118,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - verify identity mock error", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(verifyMockErrorAddress, defaultIdentityID, identityID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -126,7 +126,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - unMinted identity", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.EntityNotFound)
+		want := newTransactionResponse(constants.EntityNotFound)
 		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewID(""))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -134,7 +134,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - supplement mock error", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, identityID2)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -142,7 +142,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - quash mock error", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants.MockError)
 		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(defaultAddr, quashMockErrorIdentity, identityID3)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -150,7 +150,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - quash height error", func(t *testing.T) {
 		ctx2 := ctx.WithBlockHeight(-20)
-		want := newTransactionResponse(errors.NotAuthorized)
+		want := newTransactionResponse(constants.NotAuthorized)
 		if got := keepers.IdentitiesKeeper.Transact(ctx2, newMessage(defaultAddr, quashMockErrorIdentity, identityID3)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

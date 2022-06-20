@@ -6,10 +6,10 @@ package transfer
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/mappables"
 )
 
@@ -22,7 +22,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	if auxiliaryRequest.Value.LTE(sdkTypes.ZeroDec()) {
-		return newAuxiliaryResponse(errors.NotAuthorized)
+		return newAuxiliaryResponse(constants.NotAuthorized)
 	}
 
 	fromSplitID := key.NewSplitID(auxiliaryRequest.FromID, auxiliaryRequest.OwnableID)
@@ -30,12 +30,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	fromSplit := splits.Fetch(key.FromID(fromSplitID)).Get(key.FromID(fromSplitID))
 	if fromSplit == nil {
-		return newAuxiliaryResponse(errors.EntityNotFound)
+		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
 
 	switch fromSplit = fromSplit.(mappables.Split).Send(auxiliaryRequest.Value).(mappables.Split); {
 	case fromSplit.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
-		return newAuxiliaryResponse(errors.NotAuthorized)
+		return newAuxiliaryResponse(constants.NotAuthorized)
 	case fromSplit.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):
 		splits.Remove(fromSplit)
 	default:

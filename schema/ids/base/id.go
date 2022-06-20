@@ -6,7 +6,7 @@ package base
 import (
 	"strings"
 
-	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -35,7 +35,7 @@ func idFromInterface(i interface{}) (id, error) {
 	case id:
 		return value, nil
 	default:
-		return id{}, errors.MetaDataError
+		return id{}, constants.MetaDataError
 	}
 }
 

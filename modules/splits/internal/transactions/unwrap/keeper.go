@@ -7,11 +7,11 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/internal/utilities"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 type transactionKeeper struct {
@@ -56,7 +56,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				break
 			}
 		default:
-			panic(errors.UninitializedUsage)
+			panic(constants.UninitializedUsage)
 		}
 	}
 

@@ -17,13 +17,13 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	"github.com/AssetMantle/modules/modules/splits/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
@@ -103,7 +103,7 @@ func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
 	})
 
 	t.Run("NegativeCase-0 Value transfer", func(t *testing.T) {
-		want := newAuxiliaryResponse(errors.NotAuthorized)
+		want := newAuxiliaryResponse(constants.NotAuthorized)
 		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, ownableID, sdkTypes.NewDec(0))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -111,7 +111,7 @@ func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-No Value Present", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(errors.EntityNotFound)
+		want := newAuxiliaryResponse(constants.EntityNotFound)
 		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, baseIDs.NewID("ownableIDNotPresent"), sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -119,7 +119,7 @@ func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-Transfer More than available splits", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(errors.NotAuthorized)
+		want := newAuxiliaryResponse(constants.NotAuthorized)
 		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, toID, ownableID, sdkTypes.NewDec(1234))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

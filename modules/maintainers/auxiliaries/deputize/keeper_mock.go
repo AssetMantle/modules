@@ -6,9 +6,9 @@ package deputize
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
@@ -21,7 +21,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	if auxiliaryRequest.MaintainedProperties.GetProperty(baseIDs.NewPropertyID(baseIDs.NewID("deputizeError"), constants.IDDataID)) != nil {
-		return newAuxiliaryResponse(errors.MockError)
+		return newAuxiliaryResponse(constants2.MockError)
 	}
 
 	return newAuxiliaryResponse(nil)

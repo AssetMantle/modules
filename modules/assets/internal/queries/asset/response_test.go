@@ -11,9 +11,9 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/assets/internal/common"
 	"github.com/AssetMantle/modules/modules/assets/internal/mapper"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
@@ -58,12 +58,12 @@ func Test_Asset_Response(t *testing.T) {
 	collection := mapper.Prototype().NewCollection(context)
 
 	testQueryResponse := newQueryResponse(collection, nil)
-	testQueryResponseWithError := newQueryResponse(collection, errors.IncorrectFormat)
+	testQueryResponseWithError := newQueryResponse(collection, constants.IncorrectFormat)
 
 	require.Equal(t, true, testQueryResponse.IsSuccessful())
 	require.Equal(t, false, testQueryResponseWithError.IsSuccessful())
 	require.Equal(t, nil, testQueryResponse.GetError())
-	require.Equal(t, errors.IncorrectFormat, testQueryResponseWithError.GetError())
+	require.Equal(t, constants.IncorrectFormat, testQueryResponseWithError.GetError())
 
 	encodedResponse, _ := testQueryResponse.Encode()
 	bytes, _ := common.Codec.MarshalJSON(testQueryResponse)

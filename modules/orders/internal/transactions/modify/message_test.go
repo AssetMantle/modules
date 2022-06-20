@@ -6,6 +6,7 @@ package modify
 import (
 	"testing"
 
+	xprtErrors "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
 	"github.com/AssetMantle/modules/utilities/transaction"
@@ -13,8 +14,6 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
 
 	"github.com/cosmos/cosmos-sdk/types/errors"
-
-	xprtErrors "github.com/AssetMantle/modules/constants/errors"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"

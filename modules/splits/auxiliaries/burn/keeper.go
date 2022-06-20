@@ -6,9 +6,9 @@ package burn
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/mappables"
 )
 
@@ -25,12 +25,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	split := splits.Get(key.FromID(splitID))
 	if split == nil {
-		return newAuxiliaryResponse(errors.EntityNotFound)
+		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
 
 	switch split = split.(mappables.Split).Send(auxiliaryRequest.Value).(mappables.Split); {
 	case split.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
-		return newAuxiliaryResponse(errors.InsufficientBalance)
+		return newAuxiliaryResponse(constants.InsufficientBalance)
 	case split.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):
 		splits.Remove(split)
 	default:

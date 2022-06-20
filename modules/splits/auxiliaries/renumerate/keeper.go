@@ -6,9 +6,9 @@ package renumerate
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/splits/internal/utilities"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 type auxiliaryKeeper struct {
@@ -31,7 +31,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 			return newAuxiliaryResponse(err)
 		}
 	case totalSplitsValue.IsZero():
-		return newAuxiliaryResponse(errors.EntityNotFound)
+		return newAuxiliaryResponse(constants.EntityNotFound)
 	default:
 		return newAuxiliaryResponse(nil)
 	}

@@ -17,7 +17,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
@@ -25,6 +24,7 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
@@ -92,7 +92,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-Maintainer not present", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(errors.EntityNotFound)
+		want := newAuxiliaryResponse(constants.EntityNotFound)
 		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewID("classificationID1"), baseIDs.NewID("identityID1"), base.NewPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -100,7 +100,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-Maintainer Unauthorized", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(errors.NotAuthorized)
+		want := newAuxiliaryResponse(constants.NotAuthorized)
 		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(classificationID, identityID, base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID"), baseData.NewStringData("Data"))))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

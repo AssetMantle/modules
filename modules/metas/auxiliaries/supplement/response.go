@@ -4,8 +4,8 @@
 package supplement
 
 import (
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/lists"
 )
 
@@ -46,6 +46,6 @@ func GetMetaPropertiesFromResponse(response helpers.AuxiliaryResponse) (lists.Me
 
 		return nil, value.GetError()
 	default:
-		return nil, errors.InvalidRequest
+		return nil, constants.InvalidRequest
 	}
 }

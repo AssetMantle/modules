@@ -6,10 +6,10 @@ package super
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 )
 
@@ -25,7 +25,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(maintainerID))
 	if maintainers.Get(key.FromID(maintainerID)) != nil {
-		return newAuxiliaryResponse(errors.EntityAlreadyExists)
+		return newAuxiliaryResponse(constants.EntityAlreadyExists)
 	}
 
 	maintainers.Add(mappable.NewMaintainer(maintainerID, baseLists.NewPropertyList(), auxiliaryRequest.MutableProperties))

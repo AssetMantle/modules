@@ -14,7 +14,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 
-	xprtErrors "github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
@@ -67,7 +66,7 @@ func Test_Unwrap_Request(t *testing.T) {
 	require.Nil(t, msg2)
 
 	msg2, err = newTransactionRequest(rest.BaseReq{From: fromAddress, ChainID: "test"}, "fromID", "ownableID", "2.5").MakeMsg()
-	require.Equal(t, xprtErrors.InvalidRequest, err)
+	require.Equal(t, constants.InvalidRequest, err)
 	require.Nil(t, msg2)
 
 	msg2, err = newTransactionRequest(testBaseReq, "fromID", "ownableID", "randomString").MakeMsg()

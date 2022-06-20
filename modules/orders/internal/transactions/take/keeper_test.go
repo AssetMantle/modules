@@ -17,7 +17,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
@@ -28,6 +27,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
@@ -98,16 +98,16 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	creationID := baseIDs.NewID("100")
 	orderID := key.NewOrderID(classificationID, makerOwnableID,
 		takerOwnableID, rateID, creationID, defaultIdentityID, base.NewPropertyList())
-	metaProperties, Error := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+	metaProperties, err := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 		"," + constants.TakerIDProperty.String() + ":I|fromID")
-	require.Equal(t, nil, Error)
+	require.Equal(t, nil, err)
 
 	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewPropertyList(), metaProperties.ToPropertyList()))
 
 	t.Run("PositiveCase", func(t *testing.T) {
-		metaProperties, Error := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+		metaProperties, err := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 			"," + constants.TakerIDProperty.String() + ":I|fromID")
-		require.Equal(t, nil, Error)
+		require.Equal(t, nil, err)
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewPropertyList(), metaProperties.ToPropertyList()))
 
 		want := newTransactionResponse(nil)
@@ -119,7 +119,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Identity mock error", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.EntityNotFound)
+		want := newTransactionResponse(constants2.EntityNotFound)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, sdkTypes.SmallestDec(), orderID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -128,7 +128,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - No order", func(t *testing.T) {
 		t.Parallel()
 
-		want := newTransactionResponse(errors.EntityNotFound)
+		want := newTransactionResponse(constants2.EntityNotFound)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec(),
 			baseIDs.NewID("orderID"))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -139,13 +139,13 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		transferErrorID := key.NewOrderID(classificationID, makerOwnableID,
 			baseIDs.NewID("transferError"), rateID, creationID, defaultIdentityID, base.NewPropertyList())
-		metaProperties, Error := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+		metaProperties, err := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 			"," + constants.TakerIDProperty.String() + ":I|fromID")
-		require.Equal(t, nil, Error)
+		require.Equal(t, nil, err)
 
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewPropertyList(), metaProperties.ToPropertyList()))
 
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants2.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec(),
 			transferErrorID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -156,14 +156,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		transferErrorID := key.NewOrderID(classificationID, baseIDs.NewID("transferError"),
 			takerOwnableID, rateID, creationID, defaultIdentityID, base.NewPropertyList())
-		metaProperties, Error := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+		metaProperties, err := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 			"," + constants.TakerIDProperty.String() + ":I|fromID" + "," +
 			constants.ExchangeRateProperty.String() + ":D|1")
-		require.Equal(t, nil, Error)
+		require.Equal(t, nil, err)
 
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewPropertyList(), metaProperties.ToPropertyList()))
 
-		want := newTransactionResponse(errors.MockError)
+		want := newTransactionResponse(constants2.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec(),
 			transferErrorID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -172,7 +172,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - transfer mock fail", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errors.NotAuthorized)
+		want := newTransactionResponse(constants2.NotAuthorized)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, baseIDs.NewID("id"), sdkTypes.SmallestDec(), orderID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -182,10 +182,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		orderID := key.NewOrderID(classificationID, makerOwnableID,
 			takerOwnableID, rateID, creationID, defaultIdentityID, base.NewPropertyList())
-		metaProperties, Error := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+		metaProperties, err := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 			"," + constants.TakerIDProperty.String() + ":I|fromID" + "," +
 			constants.ExchangeRateProperty.String() + ":D|1")
-		require.Equal(t, nil, Error)
+		require.Equal(t, nil, err)
 
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewPropertyList(), metaProperties.ToPropertyList()))
 

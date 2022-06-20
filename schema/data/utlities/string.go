@@ -4,10 +4,10 @@ import (
 	"strings"
 
 	"github.com/AssetMantle/modules/constants"
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	constantIDs "github.com/AssetMantle/modules/schema/data/constants"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
@@ -20,33 +20,33 @@ func ReadData(dataString string) (data.Data, error) {
 
 		var Data data.Data
 
-		var Error error
+		var err error
 
 		switch baseIDs.NewID(dataTypeID) {
 		case constantIDs.AccAddressDataID:
-			Data, Error = baseData.ReadAccAddressData(dataString)
+			Data, err = baseData.ReadAccAddressData(dataString)
 		case constantIDs.BooleanDataID:
-			Data, Error = baseData.ReadBooleanData(dataString)
+			Data, err = baseData.ReadBooleanData(dataString)
 		case constantIDs.DecDataID:
-			Data, Error = baseData.ReadDecData(dataString)
+			Data, err = baseData.ReadDecData(dataString)
 		case constantIDs.HeightDataID:
-			Data, Error = baseData.ReadHeightData(dataString)
+			Data, err = baseData.ReadHeightData(dataString)
 		case constantIDs.IDDataID:
-			Data, Error = baseData.ReadIDData(dataString)
+			Data, err = baseData.ReadIDData(dataString)
 		case constantIDs.ListDataID:
-			Data, Error = baseData.ReadListData(dataString)
+			Data, err = baseData.ReadListData(dataString)
 		case constantIDs.StringDataID:
-			Data, Error = baseData.ReadStringData(dataString)
+			Data, err = baseData.ReadStringData(dataString)
 		default:
-			Data, Error = nil, errors.UnsupportedParameter
+			Data, err = nil, constants2.UnsupportedParameter
 		}
 
-		if Error != nil {
-			return nil, Error
+		if err != nil {
+			return nil, err
 		}
 
 		return Data, nil
 	}
 
-	return nil, errors.IncorrectFormat
+	return nil, constants2.IncorrectFormat
 }

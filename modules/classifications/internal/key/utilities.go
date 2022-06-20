@@ -6,8 +6,8 @@ package key
 import (
 	"strings"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
+	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
@@ -33,14 +33,15 @@ func classificationIDFromInterface(i interface{}) (classificationID, error) {
 		// TODO remove this use case
 		return classificationIDFromInterface(readClassificationID(value.String()))
 	default:
-		return classificationID{}, errors.MetaDataError
+		return classificationID{}, constants2.MetaDataError
 	}
 }
 
 func FromID(id ids.ID) helpers.Key {
 	if classificationID, err := classificationIDFromInterface(id); err != nil {
-		return classificationID
+		// TODO plug all panic scenrios
+		panic(err)
 	} else {
-		panic(classificationID)
+		return classificationID
 	}
 }

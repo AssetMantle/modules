@@ -6,9 +6,9 @@ package base
 import (
 	"strconv"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
 	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -59,7 +59,7 @@ func heightDataFromInterface(listable traits.Listable) (heightData, error) {
 	case heightData:
 		return value, nil
 	default:
-		return heightData{}, errors.MetaDataError
+		return heightData{}, constants.MetaDataError
 	}
 }
 
