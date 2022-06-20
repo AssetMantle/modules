@@ -11,14 +11,14 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 
-	"github.com/AssetMantle/modules/modules/assets/internal/common"
-	"github.com/AssetMantle/modules/modules/assets/internal/mapper"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
-
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/modules/assets/internal/common"
+	"github.com/AssetMantle/modules/modules/assets/internal/mapper"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 
 	"github.com/AssetMantle/modules/schema"
 )

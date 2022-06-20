@@ -8,8 +8,8 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
@@ -23,7 +23,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(context sdkTypes.Context, reques
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
 	if len(auxiliaryRequest.ImmutableProperties.GetList())+len(auxiliaryRequest.MutableProperties.GetList()) > constants.MaxPropertyCount {
-		return newAuxiliaryResponse(nil, constants2.InvalidRequest)
+		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 	}
 
 	classificationID := key.NewClassificationID(baseIDs.NewID(context.ChainID()), auxiliaryRequest.ImmutableProperties, auxiliaryRequest.MutableProperties)

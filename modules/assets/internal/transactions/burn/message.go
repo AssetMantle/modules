@@ -10,8 +10,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
+	xprtErrors "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	xprtErrors "github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/utilities/transaction"

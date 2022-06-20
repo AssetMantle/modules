@@ -15,8 +15,8 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	ids2 "github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
@@ -57,7 +57,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 				if expiry.Compare(baseTypes.NewHeight(context.BlockHeight())) <= 0 {
 					makerOwnableSplitProperty := metaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty)
 					if makerOwnableSplitProperty == nil {
-						panic(constants2.MetaDataError)
+						panic(errorConstants.MetaDataError)
 					}
 					makerOwnableSplit := makerOwnableSplitProperty.GetData().(data.DecData).Get()
 					if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(baseIDs.NewID(module.Name), order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetMakerOwnableID(), makerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
@@ -209,7 +209,7 @@ func (block block) Initialize(mapper helpers.Mapper, parameters helpers.Paramete
 				block.scrubAuxiliary = value
 			}
 		default:
-			panic(constants2.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

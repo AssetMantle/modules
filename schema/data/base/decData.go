@@ -7,8 +7,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -42,7 +42,7 @@ func (decData decData) String() string {
 	return decData.Value.String()
 }
 func (decData decData) GetType() ids.ID {
-	return idsConstants.DecDataID
+	return dataConstants.DecDataID
 }
 func (decData decData) ZeroValue() data.Data {
 	return NewDecData(sdkTypes.ZeroDec())

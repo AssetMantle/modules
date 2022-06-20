@@ -14,8 +14,8 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/mint"
 	"github.com/AssetMantle/modules/schema/data"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 )
@@ -54,7 +54,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(assetID))
 	if assets.Get(key.FromID(assetID)) != nil {
-		return newTransactionResponse(constants2.EntityAlreadyExists)
+		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
 	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetList()...)))
@@ -102,7 +102,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.maintainersVerifyAuxiliary = value
 			}
 		default:
-			panic(constants2.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

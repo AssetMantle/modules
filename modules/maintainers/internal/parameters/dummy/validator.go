@@ -5,7 +5,7 @@ package dummy
 
 import (
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/parameters"
 )
 

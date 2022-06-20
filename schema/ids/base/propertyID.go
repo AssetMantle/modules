@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/AssetMantle/modules/constants"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -53,7 +53,7 @@ func propertyIDFromInterface(listable traits.Listable) (propertyID, error) {
 	case propertyID:
 		return value, nil
 	default:
-		return propertyID{}, constants2.MetaDataError
+		return propertyID{}, errorConstants.MetaDataError
 	}
 }
 

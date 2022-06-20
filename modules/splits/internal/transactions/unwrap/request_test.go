@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
@@ -66,7 +67,7 @@ func Test_Unwrap_Request(t *testing.T) {
 	require.Nil(t, msg2)
 
 	msg2, err = newTransactionRequest(rest.BaseReq{From: fromAddress, ChainID: "test"}, "fromID", "ownableID", "2.5").MakeMsg()
-	require.Equal(t, constants.InvalidRequest, err)
+	require.Equal(t, errorConstants.InvalidRequest, err)
 	require.Nil(t, msg2)
 
 	msg2, err = newTransactionRequest(testBaseReq, "fromID", "ownableID", "randomString").MakeMsg()

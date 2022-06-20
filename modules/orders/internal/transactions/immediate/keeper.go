@@ -18,8 +18,8 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
@@ -61,7 +61,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(orderID))
 
 	if order := orders.Get(key.FromID(orderID)); order != nil {
-		return newTransactionResponse(constants2.EntityAlreadyExists)
+		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
 	mutableMetaProperties := message.MutableMetaProperties.Add(base2.NewMetaProperty(constants.ExpiryProperty, baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
@@ -102,7 +102,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		if makerOwnableSplitProperty := executableOrderMetaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty); makerOwnableSplitProperty != nil {
 			executableOrderMakerOwnableSplit = makerOwnableSplitProperty.GetData().(data.DecData).Get()
 		} else {
-			panic(constants2.MetaDataError)
+			panic(errorConstants.MetaDataError)
 		}
 
 		executableOrderTakerOwnableSplitDemanded := executableOrderExchangeRate.MulTruncate(executableOrderMakerOwnableSplit).MulTruncate(sdkTypes.SmallestDec())
@@ -201,7 +201,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.verifyAuxiliary = value
 			}
 		default:
-			panic(constants2.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

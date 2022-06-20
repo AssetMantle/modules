@@ -9,8 +9,8 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/schema/data/base"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties/constants"
@@ -29,7 +29,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	identity := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(auxiliaryRequest.IdentityID)).Get(key.FromID(auxiliaryRequest.IdentityID))
 	if identity == nil {
-		return newAuxiliaryResponse(constants2.EntityNotFound)
+		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}
 
 	metaProperties, err := supplement.GetMetaPropertiesFromResponse(auxiliaryKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.Identity).GetAuthentication())))
@@ -39,7 +39,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	// TODO add test
 	if _, found := metaProperties.GetMetaProperty(constants.AuthenticationProperty).(lists.DataList).Search(base.NewAccAddressData(auxiliaryRequest.Address)); !found {
-		return newAuxiliaryResponse(constants2.NotAuthorized)
+		return newAuxiliaryResponse(errorConstants.NotAuthorized)
 	}
 
 	return newAuxiliaryResponse(nil)
@@ -58,7 +58,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, paramet
 				break
 			}
 		default:
-			panic(constants2.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

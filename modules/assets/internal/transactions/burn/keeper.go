@@ -12,8 +12,8 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/burn"
 	"github.com/AssetMantle/modules/schema/data"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
@@ -39,7 +39,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	asset := assets.Get(key.FromID(message.AssetID))
 	if asset == nil {
-		return newTransactionResponse(constants2.EntityNotFound)
+		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 
 	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(mappables.Asset).GetBurn())))
@@ -49,13 +49,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	burnHeightMetaFact := metaProperties.GetMetaProperty(constants.BurnProperty)
 	if burnHeightMetaFact == nil {
-		return newTransactionResponse(constants2.EntityNotFound)
+		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 
 	burnHeight := burnHeightMetaFact.GetData().(data.HeightData).Get()
 
 	if burnHeight.Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
-		return newTransactionResponse(constants2.NotAuthorized)
+		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
 	if auxiliaryResponse := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.SmallestDec())); !auxiliaryResponse.IsSuccessful() {
@@ -84,7 +84,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.verifyAuxiliary = value
 			}
 		default:
-			panic(constants2.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

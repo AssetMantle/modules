@@ -6,8 +6,8 @@ package key
 import (
 	"strings"
 
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
@@ -33,7 +33,7 @@ func classificationIDFromInterface(i interface{}) (classificationID, error) {
 		// TODO remove this use case
 		return classificationIDFromInterface(readClassificationID(value.String()))
 	default:
-		return classificationID{}, constants2.MetaDataError
+		return classificationID{}, errorConstants.MetaDataError
 	}
 }
 

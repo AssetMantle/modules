@@ -6,8 +6,8 @@ package verify
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 type auxiliaryKeeperMock struct {

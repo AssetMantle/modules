@@ -9,7 +9,7 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/data"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -37,7 +37,7 @@ func (dataID dataID) Bytes() []byte {
 }
 func (dataID dataID) Compare(listable traits.Listable) int {
 	if compareDataID, err := dataIDFromInterface(listable); err != nil {
-		panic(constants2.MetaDataError)
+		panic(errorConstants.MetaDataError)
 	} else {
 		return bytes.Compare(dataID.Bytes(), compareDataID.Bytes())
 	}
@@ -50,7 +50,7 @@ func dataIDFromInterface(i interface{}) (dataID, error) {
 	case dataID:
 		return value, nil
 	default:
-		return dataID{}, constants2.MetaDataError
+		return dataID{}, errorConstants.MetaDataError
 	}
 }
 func NewDataID(data data.Data) ids.DataID {

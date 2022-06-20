@@ -22,9 +22,9 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
 	string2 "github.com/AssetMantle/modules/schema/data/utlities"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 type TestKeepers struct {

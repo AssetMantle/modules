@@ -12,8 +12,8 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
 	"github.com/AssetMantle/modules/schema/data"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties/constants"
@@ -39,7 +39,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	asset := assets.Get(key.FromID(message.AssetID))
 	if asset == nil {
-		return newTransactionResponse(constants2.EntityNotFound)
+		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 
 	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.(mappables.Asset).GetClassificationID(), message.FromID, baseLists.NewPropertyList(constants.Supply))); !auxiliaryResponse.IsSuccessful() {
@@ -57,7 +57,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return newTransactionResponse(auxiliaryResponse.GetError())
 		}
 	} else {
-		return newTransactionResponse(constants2.MetaDataError)
+		return newTransactionResponse(errorConstants.MetaDataError)
 	}
 
 	return newTransactionResponse(nil)
@@ -80,7 +80,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.verifyAuxiliary = value
 			}
 		default:
-			panic(constants2.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

@@ -8,7 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/mappables"
 

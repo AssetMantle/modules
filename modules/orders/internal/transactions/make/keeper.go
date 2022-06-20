@@ -18,8 +18,8 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	base2 "github.com/AssetMantle/modules/schema/properties/base"
@@ -68,7 +68,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	order := orders.Get(key.FromID(orderID))
 	if order != nil {
-		return newTransactionResponse(constants2.EntityAlreadyExists)
+		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
 	mutableMetaProperties := message.MutableMetaProperties.Add(base2.NewMetaProperty(constants.ExpiryProperty, baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
@@ -111,7 +111,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.maintainersVerifyAuxiliary = value
 			}
 		default:
-			panic(constants2.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

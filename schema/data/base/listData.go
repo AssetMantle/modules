@@ -10,8 +10,8 @@ import (
 
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
@@ -47,7 +47,7 @@ func (listData listData) String() string {
 	return strings.Join(dataStringList, constants.ListDataStringSeparator)
 }
 func (listData listData) GetType() ids.ID {
-	return idsConstants.ListDataID
+	return dataConstants.ListDataID
 }
 func (listData listData) ZeroValue() data.Data {
 	return NewListData([]data.Data{}...)
@@ -76,7 +76,7 @@ func listDataFromInterface(listable traits.Listable) (listData, error) {
 	case listData:
 		return value, nil
 	default:
-		return listData{}, constants2.MetaDataError
+		return listData{}, errorConstants.MetaDataError
 	}
 }
 

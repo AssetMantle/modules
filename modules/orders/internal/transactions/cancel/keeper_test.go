@@ -24,9 +24,9 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/parameters"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	"github.com/AssetMantle/modules/schema"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
@@ -119,7 +119,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Identity mock error", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(constants2.MockError)
+		want := newTransactionResponse(errorConstants.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, orderID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -127,7 +127,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - Cancel not existing order", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(constants2.EntityNotFound)
+		want := newTransactionResponse(errorConstants.EntityNotFound)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewID("orderID"))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -136,7 +136,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - Cancel with different makerID", func(t *testing.T) {
 		t.Parallel()
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewPropertyList(), metaProperties.ToPropertyList()))
-		want := newTransactionResponse(constants2.NotAuthorized)
+		want := newTransactionResponse(errorConstants.NotAuthorized)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, baseIDs.NewID("id"), orderID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -153,7 +153,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		)
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewPropertyList(), metaProperties.ToPropertyList()))
 
-		want := newTransactionResponse(constants2.MockError)
+		want := newTransactionResponse(errorConstants.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, makerID, transferErrorID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

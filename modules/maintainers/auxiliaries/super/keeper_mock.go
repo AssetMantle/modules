@@ -7,8 +7,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
@@ -21,7 +21,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	if auxiliaryRequest.MutableProperties.GetProperty(baseIDs.NewPropertyID(baseIDs.NewID("superError"), constants.IDDataID)) != nil {
-		return newAuxiliaryResponse(constants2.MockError)
+		return newAuxiliaryResponse(errorConstants.MockError)
 	}
 
 	return newAuxiliaryResponse(nil)

@@ -9,8 +9,8 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/utilities/property"
 )
@@ -25,18 +25,18 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
 	if len(auxiliaryRequest.ImmutableProperties.GetList())+len(auxiliaryRequest.MutableProperties.GetList()) > constants.MaxPropertyCount {
-		return newAuxiliaryResponse(nil, constants2.InvalidRequest)
+		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 	}
 
 	if property.Duplicate(append(auxiliaryRequest.ImmutableProperties.GetList(), auxiliaryRequest.MutableProperties.GetList()...)) {
-		return newAuxiliaryResponse(nil, constants2.InvalidRequest)
+		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 	}
 
 	classificationID := key.NewClassificationID(baseIDs.NewID(context.ChainID()), auxiliaryRequest.ImmutableProperties, auxiliaryRequest.MutableProperties)
 
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(classificationID))
 	if classifications.Get(key.FromID(classificationID)) != nil {
-		return newAuxiliaryResponse(baseIDs.NewID(classificationID.String()), constants2.EntityAlreadyExists)
+		return newAuxiliaryResponse(baseIDs.NewID(classificationID.String()), errorConstants.EntityAlreadyExists)
 	}
 
 	classifications.Add(mappable.NewClassification(classificationID, auxiliaryRequest.ImmutableProperties, auxiliaryRequest.MutableProperties))

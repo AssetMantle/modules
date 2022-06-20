@@ -7,8 +7,8 @@ import (
 	"strconv"
 
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -41,7 +41,7 @@ func (booleanData booleanData) String() string {
 	return strconv.FormatBool(booleanData.Value)
 }
 func (booleanData booleanData) GetType() ids.ID {
-	return idsConstants.BooleanDataID
+	return dataConstants.BooleanDataID
 }
 func (booleanData booleanData) ZeroValue() data.Data {
 	return NewBooleanData(false)

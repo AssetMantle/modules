@@ -10,9 +10,9 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 func CustomEncoder(moduleList ...helpers.Module) wasm.CustomEncoder {

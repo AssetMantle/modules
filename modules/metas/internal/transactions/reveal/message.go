@@ -11,8 +11,8 @@ import (
 
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
 	"github.com/AssetMantle/modules/schema/data"
+	xprtErrors "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	xprtErrors "github.com/AssetMantle/modules/schema/helpers/constants"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )

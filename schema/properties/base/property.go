@@ -5,7 +5,7 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -53,12 +53,6 @@ func propertyFromInterface(listable traits.Listable) (property, error) {
 func NewEmptyPropertyFromID(propertyID ids.PropertyID) properties.Property {
 	return property{
 		ID: propertyID,
-	}
-}
-func NewPropertyWithDataID(propertyID ids.PropertyID, dataID ids.DataID) properties.Property {
-	return property{
-		ID:     propertyID,
-		DataID: dataID,
 	}
 }
 func NewProperty(key ids.ID, data data.Data) properties.Property {

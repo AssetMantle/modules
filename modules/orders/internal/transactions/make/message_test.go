@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
-	xprtErrors "github.com/AssetMantle/modules/schema/helpers/constants"
+	xprtErrors "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"

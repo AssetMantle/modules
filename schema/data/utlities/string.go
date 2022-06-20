@@ -7,7 +7,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	constantIDs "github.com/AssetMantle/modules/schema/data/constants"
-	constants2 "github.com/AssetMantle/modules/schema/helpers/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
@@ -38,7 +38,7 @@ func ReadData(dataString string) (data.Data, error) {
 		case constantIDs.StringDataID:
 			Data, err = baseData.ReadStringData(dataString)
 		default:
-			Data, err = nil, constants2.UnsupportedParameter
+			Data, err = nil, errorConstants.UnsupportedParameter
 		}
 
 		if err != nil {
@@ -48,5 +48,5 @@ func ReadData(dataString string) (data.Data, error) {
 		return Data, nil
 	}
 
-	return nil, constants2.IncorrectFormat
+	return nil, errorConstants.IncorrectFormat
 }

@@ -3,6 +3,7 @@
 
 package constants
 
+const ProjectRoute = "/AssetMantle"
 const IDSeparator = "."
 const FirstOrderCompositeIDSeparator = "|"
 const SecondOrderCompositeIDSeparator = "*"

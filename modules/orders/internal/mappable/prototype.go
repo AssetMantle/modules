@@ -3,7 +3,9 @@
 
 package mappable
 
-import "github.com/AssetMantle/modules/schema/helpers"
+import (
+	"github.com/AssetMantle/modules/schema/helpers"
+)
 
 func Prototype() helpers.Mappable {
 	return order{}
