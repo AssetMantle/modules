@@ -8,7 +8,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
@@ -29,8 +28,8 @@ func TestFromID(t *testing.T) {
 	require.Equal(t, FromID(id), testAssetID)
 
 	testString1 := "string1"
-	testString2 := "string2"
-	id2 := baseIDs.NewID(testString1 + constants.FirstOrderCompositeIDSeparator + testString2)
+	testString2 := "stringUtilities"
+	id2 := baseIDs.NewID(testString1 + "" + testString2)
 	testAssetID2 := assetID{ClassificationID: baseIDs.NewID(testString1), HashID: baseIDs.NewID(testString2)}
 	require.Equal(t, FromID(id2), testAssetID2)
 }

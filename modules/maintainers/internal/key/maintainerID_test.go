@@ -9,7 +9,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
@@ -20,7 +19,7 @@ func Test_MaintainerID_Methods(t *testing.T) {
 	testMaintainerID := NewMaintainerID(classificationID, identityID).(maintainerID)
 	require.NotPanics(t, func() {
 		require.Equal(t, maintainerID{ClassificationID: classificationID, IdentityID: identityID}, testMaintainerID)
-		require.Equal(t, strings.Join([]string{classificationID.String(), identityID.String()}, constants.SecondOrderCompositeIDSeparator), testMaintainerID.String())
+		require.Equal(t, strings.Join([]string{classificationID.String(), identityID.String()}, "."), testMaintainerID.String())
 		require.Equal(t, false, testMaintainerID.IsPartial())
 		require.Equal(t, true, maintainerID{ClassificationID: baseIDs.NewID(""), IdentityID: baseIDs.NewID("")}.IsPartial())
 		require.Equal(t, true, testMaintainerID.Equals(testMaintainerID))

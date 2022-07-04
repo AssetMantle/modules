@@ -8,7 +8,6 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
@@ -17,6 +16,7 @@ import (
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/traits"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type listData struct {
@@ -44,7 +44,7 @@ func (listData listData) String() string {
 		dataStringList[i] = datum.String()
 	}
 
-	return strings.Join(dataStringList, constants.ListDataStringSeparator)
+	return strings.Join(dataStringList, stringUtilities.ListDataStringSeparator)
 }
 func (listData listData) GetType() ids.ID {
 	return dataConstants.ListDataID
@@ -63,7 +63,7 @@ func (listData listData) GenerateHash() ids.ID {
 		hashList[i] = datum.GenerateHash().String()
 	}
 
-	hashString := strings.Join(hashList, constants.ListHashStringSeparator)
+	hashString := strings.Join(hashList, stringUtilities.ListHashStringSeparator)
 
 	return baseIDs.NewID(hashString)
 }
@@ -92,7 +92,7 @@ func ReadListData(dataString string) (data.Data, error) {
 		return listData{}.ZeroValue(), nil
 	}
 
-	dataStringList := strings.Split(dataString, constants.ListDataStringSeparator)
+	dataStringList := strings.Split(dataString, stringUtilities.ListDataStringSeparator)
 	dataList := make([]data.Data, len(dataStringList))
 
 	for i, accAddressString := range dataStringList {

@@ -4,17 +4,14 @@
 package key
 
 import (
-	"strings"
-
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-
-	"github.com/AssetMantle/modules/constants"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 func readIdentityID(identityIDString string) ids.ID {
-	idList := strings.Split(identityIDString, constants.FirstOrderCompositeIDSeparator)
+	idList := stringUtilities.SplitCompositeIDString(identityIDString)
 	if len(idList) == 2 {
 		return identityID{
 			ClassificationID: baseIDs.NewID(idList[0]),

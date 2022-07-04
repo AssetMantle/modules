@@ -8,7 +8,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
@@ -18,7 +17,7 @@ func Test_MetaID_Methods(t *testing.T) {
 	testMetaID := NewMetaID(typeID, hashID).(metaID)
 
 	require.NotPanics(t, func() {
-		require.Equal(t, typeID.String()+constants.FirstOrderCompositeIDSeparator+hashID.String(), testMetaID.String())
+		require.Equal(t, typeID.String()+"."+hashID.String(), testMetaID.String())
 		require.Equal(t, true, testMetaID.Equals(testMetaID))
 		require.Equal(t, false, testMetaID.Equals(metaID{TypeID: baseIDs.NewID("tempID"), HashID: baseIDs.NewID("tempHash")}))
 		require.Equal(t, false, testMetaID.IsPartial())

@@ -5,16 +5,15 @@ package key
 
 import (
 	"bytes"
-	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type maintainerID struct {
@@ -31,11 +30,7 @@ func (maintainerID maintainerID) Bytes() []byte {
 		maintainerID.IdentityID.Bytes()...)
 }
 func (maintainerID maintainerID) String() string {
-	var values []string
-	values = append(values, maintainerID.ClassificationID.String())
-	values = append(values, maintainerID.IdentityID.String())
-
-	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
+	return stringUtilities.JoinIDStrings(maintainerID.ClassificationID.String(), maintainerID.IdentityID.String())
 }
 func (maintainerID maintainerID) Compare(listable traits.Listable) int {
 	return bytes.Compare(maintainerID.Bytes(), maintainerIDFromInterface(listable).Bytes())

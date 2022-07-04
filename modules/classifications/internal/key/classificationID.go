@@ -5,11 +5,9 @@ package key
 
 import (
 	"bytes"
-	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -17,7 +15,7 @@ import (
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
-	metaUtilities "github.com/AssetMantle/modules/utilities/string"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type classificationID struct {
@@ -35,11 +33,7 @@ func (classificationID classificationID) Bytes() []byte {
 		classificationID.HashID.Bytes()...)
 }
 func (classificationID classificationID) String() string {
-	var values []string
-	values = append(values, classificationID.ChainID.String())
-	values = append(values, classificationID.HashID.String())
-
-	return strings.Join(values, constants.IDSeparator)
+	return stringUtilities.JoinIDStrings(classificationID.ChainID.String(), classificationID.HashID.String())
 }
 func (classificationID classificationID) Compare(listable traits.Listable) int {
 	if compareClassificationID, err := classificationIDFromInterface(listable); err != nil {
@@ -88,6 +82,6 @@ func NewClassificationID(chainID ids.ID, immutableProperties lists.PropertyList,
 
 	return classificationID{
 		ChainID: chainID,
-		HashID:  baseIDs.NewID(metaUtilities.Hash(metaUtilities.Hash(immutableIDStringList...), metaUtilities.Hash(mutableIDStringList...), metaUtilities.Hash(defaultImmutableStringList...))),
+		HashID:  baseIDs.NewID(stringUtilities.Hash(stringUtilities.Hash(immutableIDStringList...), stringUtilities.Hash(mutableIDStringList...), stringUtilities.Hash(defaultImmutableStringList...))),
 	}
 }

@@ -4,18 +4,15 @@
 package key
 
 import (
-	"strings"
-
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-
-	"github.com/AssetMantle/modules/constants"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 func readAssetID(assetIDString string) ids.ID {
-	idList := strings.Split(assetIDString, constants.FirstOrderCompositeIDSeparator)
+	idList := stringUtilities.SplitCompositeIDString(assetIDString)
 	if len(idList) == 2 {
 		return assetID{
 			ClassificationID: baseIDs.NewID(idList[0]),

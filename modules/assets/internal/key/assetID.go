@@ -5,11 +5,9 @@ package key
 
 import (
 	"bytes"
-	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -17,6 +15,7 @@ import (
 	"github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type assetID struct {
@@ -28,11 +27,7 @@ var _ ids.ID = (*assetID)(nil)
 var _ helpers.Key = (*assetID)(nil)
 
 func (assetID assetID) String() string {
-	var values []string
-	values = append(values, assetID.ClassificationID.String())
-	values = append(values, assetID.HashID.String())
-
-	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
+	return stringUtilities.JoinIDStrings(assetID.ClassificationID.String(), assetID.HashID.String())
 }
 func (assetID assetID) Bytes() []byte {
 	var Bytes []byte

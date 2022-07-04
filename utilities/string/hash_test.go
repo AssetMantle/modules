@@ -11,15 +11,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/constants"
 )
 
 func TestHash(t *testing.T) {
 	var filteredMetaList []string
 	filteredMetaList = append(filteredMetaList, "123")
 	sort.Strings(filteredMetaList)
-	toDigest := strings.Join(filteredMetaList, constants.ToHashSeparator)
+	toDigest := strings.Join(filteredMetaList, ToHashSeparator)
 	hash := sha256.New()
 
 	if _, err := hash.Write([]byte(toDigest)); err != nil {

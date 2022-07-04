@@ -3,18 +3,18 @@ package utlities
 import (
 	"strings"
 
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	constantIDs "github.com/AssetMantle/modules/schema/data/constants"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 // ReadData
 // CHECK-TODO if data type added see if added here
 func ReadData(dataString string) (data.Data, error) {
-	dataTypeAndString := strings.SplitN(dataString, constants.DataTypeAndValueSeparator, 2)
+	dataTypeAndString := strings.SplitN(dataString, stringUtilities.DataTypeAndValueSeparator, 2)
 	if len(dataTypeAndString) == 2 {
 		dataTypeID, dataString := dataTypeAndString[0], dataTypeAndString[1]
 

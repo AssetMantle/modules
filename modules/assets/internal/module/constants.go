@@ -4,8 +4,9 @@
 package module
 
 import (
-	"github.com/AssetMantle/modules/constants/keys"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 const Name = "assets"
-const StoreKeyPrefix = keys.Assets
+
+var StoreKeyPrefix = constants.AssetsStoreKeyPrefix

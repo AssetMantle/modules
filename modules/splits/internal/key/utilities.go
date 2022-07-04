@@ -4,16 +4,14 @@
 package key
 
 import (
-	"strings"
-
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 func readSplitID(splitIDString string) ids.ID {
-	idList := strings.Split(splitIDString, constants.SecondOrderCompositeIDSeparator)
+	idList := stringUtilities.SplitCompositeIDString(splitIDString)
 	if len(idList) == 2 {
 		return splitID{
 			OwnerID:   baseIDs.NewID(idList[0]),

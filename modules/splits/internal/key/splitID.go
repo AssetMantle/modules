@@ -5,16 +5,15 @@ package key
 
 import (
 	"bytes"
-	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type splitID struct {
@@ -31,11 +30,7 @@ func (splitID splitID) Bytes() []byte {
 		splitID.OwnableID.Bytes()...)
 }
 func (splitID splitID) String() string {
-	var values []string
-	values = append(values, splitID.OwnerID.String())
-	values = append(values, splitID.OwnableID.String())
-
-	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
+	return stringUtilities.JoinIDStrings(splitID.OwnerID.String(), splitID.OwnableID.String())
 }
 func (splitID splitID) Compare(listable traits.Listable) int {
 	return bytes.Compare(splitID.Bytes(), splitIDFromInterface(listable).Bytes())

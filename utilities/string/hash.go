@@ -8,8 +8,6 @@ import (
 	"encoding/base64"
 	"sort"
 	"strings"
-
-	"github.com/AssetMantle/modules/constants"
 )
 
 func Hash(meta ...string) string {
@@ -26,7 +24,7 @@ func Hash(meta ...string) string {
 	}
 
 	sort.Strings(filteredMetaList)
-	toDigest := strings.Join(filteredMetaList, constants.ToHashSeparator)
+	toDigest := strings.Join(filteredMetaList, ToHashSeparator)
 	hash := sha256.New()
 
 	if _, err := hash.Write([]byte(toDigest)); err != nil {

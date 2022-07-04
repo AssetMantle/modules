@@ -5,13 +5,12 @@ package base
 
 import (
 	"bytes"
-	"strings"
 
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/data"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type dataID struct {
@@ -22,11 +21,7 @@ type dataID struct {
 var _ ids.DataID = (*dataID)(nil)
 
 func (dataID dataID) String() string {
-	var values []string
-	values = append(values, dataID.Type.String())
-	values = append(values, dataID.Hash.String())
-
-	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
+	return stringUtilities.JoinIDStrings(dataID.Type.String(), dataID.Hash.String())
 }
 func (dataID dataID) Bytes() []byte {
 	var Bytes []byte

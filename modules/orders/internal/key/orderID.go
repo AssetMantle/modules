@@ -11,7 +11,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -19,6 +18,7 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type orderID struct {
@@ -58,16 +58,15 @@ func (orderID orderID) Bytes() []byte {
 	return Bytes
 }
 func (orderID orderID) String() string {
-	var values []string
-	values = append(values, orderID.ClassificationID.String())
-	values = append(values, orderID.MakerOwnableID.String())
-	values = append(values, orderID.TakerOwnableID.String())
-	values = append(values, orderID.RateID.String())
-	values = append(values, orderID.CreationID.String())
-	values = append(values, orderID.MakerID.String())
-	values = append(values, orderID.HashID.String())
-
-	return strings.Join(values, constants.SecondOrderCompositeIDSeparator)
+	return stringUtilities.JoinIDStrings(
+		orderID.ClassificationID.String(),
+		orderID.MakerOwnableID.String(),
+		orderID.TakerOwnableID.String(),
+		orderID.RateID.String(),
+		orderID.CreationID.String(),
+		orderID.MakerID.String(),
+		orderID.HashID.String(),
+	)
 }
 func (orderID orderID) Compare(listable traits.Listable) int {
 	return bytes.Compare(orderID.Bytes(), orderIDFromInterface(listable).Bytes())

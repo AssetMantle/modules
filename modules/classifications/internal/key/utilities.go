@@ -4,18 +4,15 @@
 package key
 
 import (
-	"strings"
-
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-
-	"github.com/AssetMantle/modules/constants"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 func readClassificationID(classificationIDString string) ids.ID {
-	idList := strings.Split(classificationIDString, constants.IDSeparator)
+	idList := stringUtilities.SplitCompositeIDString(classificationIDString)
 	if len(idList) == 2 {
 		return classificationID{
 			ChainID: baseIDs.NewID(idList[0]),
@@ -39,7 +36,7 @@ func classificationIDFromInterface(i interface{}) (classificationID, error) {
 
 func FromID(id ids.ID) helpers.Key {
 	if classificationID, err := classificationIDFromInterface(id); err != nil {
-		// TODO plug all panic scenrios
+		// TODO plug all panic scenarios
 		panic(err)
 	} else {
 		return classificationID

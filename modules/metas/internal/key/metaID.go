@@ -5,16 +5,15 @@ package key
 
 import (
 	"bytes"
-	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type metaID struct {
@@ -33,11 +32,7 @@ func (metaID metaID) Bytes() []byte {
 	return Bytes
 }
 func (metaID metaID) String() string {
-	var values []string
-	values = append(values, metaID.TypeID.String())
-	values = append(values, metaID.HashID.String())
-
-	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
+	return stringUtilities.JoinIDStrings(metaID.TypeID.String(), metaID.HashID.String())
 }
 func (metaID metaID) Compare(listable traits.Listable) int {
 	return bytes.Compare(metaID.Bytes(), metaIDFromInterface(listable).Bytes())

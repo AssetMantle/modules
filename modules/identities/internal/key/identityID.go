@@ -5,11 +5,9 @@ package key
 
 import (
 	"bytes"
-	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -17,6 +15,7 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type identityID struct {
@@ -34,11 +33,7 @@ func (identityID identityID) Bytes() []byte {
 	)
 }
 func (identityID identityID) String() string {
-	var values []string
-	values = append(values, identityID.ClassificationID.String())
-	values = append(values, identityID.HashID.String())
-
-	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
+	return stringUtilities.JoinIDStrings(identityID.ClassificationID.String(), identityID.HashID.String())
 }
 func (identityID identityID) Compare(listable traits.Listable) int {
 	return bytes.Compare(identityID.Bytes(), identityIDFromInterface(listable).Bytes())

@@ -9,7 +9,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
@@ -25,7 +24,7 @@ func Test_AssetID_Methods(t *testing.T) {
 
 	require.NotPanics(t, func() {
 		require.Equal(t, assetID{ClassificationID: classificationID, HashID: baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}, testAssetID)
-		require.Equal(t, strings.Join([]string{classificationID.String(), baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID().String()}, constants.FirstOrderCompositeIDSeparator), testAssetID.String())
+		require.Equal(t, strings.Join([]string{classificationID.String(), baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID().String()}, "."), testAssetID.String())
 		require.Equal(t, false, testAssetID.IsPartial())
 		require.Equal(t, true, assetID{ClassificationID: classificationID, HashID: baseIDs.NewID("")}.IsPartial())
 		require.Equal(t, true, testAssetID.Equals(testAssetID))

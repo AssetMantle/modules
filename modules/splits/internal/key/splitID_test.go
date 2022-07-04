@@ -9,7 +9,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
@@ -20,7 +19,7 @@ func Test_SplitID_Methods(t *testing.T) {
 	testSplitID := NewSplitID(ownerID, ownableID).(splitID)
 	testSplitID2 := NewSplitID(baseIDs.NewID(""), baseIDs.NewID("")).(splitID)
 	require.NotPanics(t, func() {
-		require.Equal(t, strings.Join([]string{ownerID.String(), ownableID.String()}, constants.SecondOrderCompositeIDSeparator), testSplitID.String())
+		require.Equal(t, strings.Join([]string{ownerID.String(), ownableID.String()}, "."), testSplitID.String())
 		require.Equal(t, true, testSplitID.Equals(testSplitID))
 		require.Equal(t, false, testSplitID.Equals(testSplitID2))
 		require.Equal(t, false, testSplitID.IsPartial())

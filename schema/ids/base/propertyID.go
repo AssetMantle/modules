@@ -5,12 +5,11 @@ package base
 
 import (
 	"bytes"
-	"strings"
 
-	"github.com/AssetMantle/modules/constants"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type propertyID struct {
@@ -27,11 +26,7 @@ func (propertyID propertyID) GetType() ids.ID {
 	return propertyID.Type
 }
 func (propertyID propertyID) String() string {
-	var values []string
-	values = append(values, propertyID.Key.String())
-	values = append(values, propertyID.Type.String())
-
-	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
+	return stringUtilities.JoinIDStrings(propertyID.Key.String(), propertyID.Type.String())
 }
 func (propertyID propertyID) Bytes() []byte {
 	var Bytes []byte

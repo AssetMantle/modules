@@ -5,18 +5,17 @@ package key
 
 import (
 	"strconv"
-	"strings"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 func readOrderID(orderIDString string) ids.ID {
-	idList := strings.Split(orderIDString, constants.SecondOrderCompositeIDSeparator)
+	idList := stringUtilities.SplitCompositeIDString(orderIDString)
 
 	if len(idList) == 7 {
 		exchangeRate, err := sdkTypes.NewDecFromStr(idList[3])

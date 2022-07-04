@@ -9,7 +9,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/constants"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
@@ -26,7 +25,7 @@ func Test_ClassificationID_Methods(t *testing.T) {
 	testClassificationID := NewClassificationID(chainID, immutableProperties, mutableProperties).(classificationID)
 	require.NotPanics(t, func() {
 		require.Equal(t, classificationID{ChainID: chainID, HashID: baseIDs.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID().String()))}, testClassificationID)
-		require.Equal(t, strings.Join([]string{chainID.String(), baseIDs.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID().String())).String()}, constants.IDSeparator), testClassificationID.String())
+		require.Equal(t, strings.Join([]string{chainID.String(), baseIDs.NewID(metaUtilities.Hash(metaUtilities.Hash("ID1"), metaUtilities.Hash("ID2"), baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID().String())).String()}, "."), testClassificationID.String())
 		require.Equal(t, false, testClassificationID.Equals(classificationID{ChainID: baseIDs.NewID("chainID"), HashID: baseIDs.NewID("hashID")}))
 		require.Equal(t, false, testClassificationID.Equals(nil))
 		require.Equal(t, false, testClassificationID.Compare(baseIDs.NewID("id")) == 0)
