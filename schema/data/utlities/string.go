@@ -1,8 +1,6 @@
 package utlities
 
 import (
-	"strings"
-
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	constantIDs "github.com/AssetMantle/modules/schema/data/constants"
@@ -14,29 +12,27 @@ import (
 // ReadData
 // CHECK-TODO if data type added see if added here
 func ReadData(dataString string) (data.Data, error) {
-	dataTypeAndString := strings.SplitN(dataString, stringUtilities.DataTypeAndValueSeparator, 2)
-	if len(dataTypeAndString) == 2 {
-		dataTypeID, dataString := dataTypeAndString[0], dataTypeAndString[1]
-
+	dataTypeString, dataValueString := stringUtilities.SplitDataTypeAndValueStrings(dataString)
+	if dataTypeString != "" {
 		var Data data.Data
 
 		var err error
 
-		switch baseIDs.NewID(dataTypeID) {
+		switch baseIDs.NewID(dataTypeString) {
 		case constantIDs.AccAddressDataID:
-			Data, err = baseData.ReadAccAddressData(dataString)
+			Data, err = baseData.ReadAccAddressData(dataValueString)
 		case constantIDs.BooleanDataID:
-			Data, err = baseData.ReadBooleanData(dataString)
+			Data, err = baseData.ReadBooleanData(dataValueString)
 		case constantIDs.DecDataID:
-			Data, err = baseData.ReadDecData(dataString)
+			Data, err = baseData.ReadDecData(dataValueString)
 		case constantIDs.HeightDataID:
-			Data, err = baseData.ReadHeightData(dataString)
+			Data, err = baseData.ReadHeightData(dataValueString)
 		case constantIDs.IDDataID:
-			Data, err = baseData.ReadIDData(dataString)
+			Data, err = baseData.ReadIDData(dataValueString)
 		case constantIDs.ListDataID:
-			Data, err = baseData.ReadListData(dataString)
+			Data, err = baseData.ReadListData(dataValueString)
 		case constantIDs.StringDataID:
-			Data, err = baseData.ReadStringData(dataString)
+			Data, err = baseData.ReadStringData(dataValueString)
 		default:
 			Data, err = nil, errorConstants.UnsupportedParameter
 		}

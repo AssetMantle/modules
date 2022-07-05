@@ -8,14 +8,13 @@ import (
 
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
+	"github.com/AssetMantle/modules/schema/data/utlities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	"github.com/AssetMantle/modules/schema/properties/utilities"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type auxiliaryKeeper struct {
@@ -33,12 +32,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		var meta helpers.Mappable
 
 		if property.GetHash().Compare(baseIDs.NewID("")) == 0 {
-			// TODO remove dependency on ReadMetaProperty method
-			if data, err := utilities.ReadMetaProperty(property.GetType().String() + stringUtilities.DataTypeAndValueSeparator); err == nil {
-				meta = mappable.NewMeta(data.GetData())
-			} else {
-				return newAuxiliaryResponse(nil, err)
-			}
+			meta = mappable.NewMeta(utlities.GetZeroValueDataFromID(property.GetType()))
 		} else {
 			metaID := key.NewMetaID(property.GetType(), property.GetHash())
 			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(metaID))

@@ -24,7 +24,7 @@ func Hash(meta ...string) string {
 	}
 
 	sort.Strings(filteredMetaList)
-	toDigest := strings.Join(filteredMetaList, ToHashSeparator)
+	toDigest := strings.Join(filteredMetaList, toHashSeparator)
 	hash := sha256.New()
 
 	if _, err := hash.Write([]byte(toDigest)); err != nil {

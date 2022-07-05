@@ -1,8 +1,6 @@
 package utilities
 
 import (
-	"strings"
-
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -13,7 +11,7 @@ import (
 func ReadMetaProperties(metaPropertiesString string) (lists.MetaPropertyList, error) {
 	var metaPropertyList []properties.MetaProperty
 
-	metaProperties := strings.Split(metaPropertiesString, stringUtilities.listSeparator)
+	metaProperties := stringUtilities.SplitListString(metaPropertiesString)
 	for _, metaPropertyString := range metaProperties {
 		if metaPropertyString != "" {
 			metaProperty, err := utilities.ReadMetaProperty(metaPropertyString)

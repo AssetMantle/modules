@@ -4,5 +4,6 @@
 package data
 
 type ListData interface {
+	// TODO add get method
 	Data
 }

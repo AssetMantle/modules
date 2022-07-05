@@ -7,6 +7,6 @@ const idSeparator = "."
 
 // TODO reject separator from all inputs
 const listSeparator = ","
-const PropertyIDAndDataSeparator = ":"
-const DataTypeAndValueSeparator = "|"
-const ToHashSeparator = "_"
+const propertyIDAndDataSeparator = ":"
+const dataTypeAndValueSeparator = "|"
+const toHashSeparator = "_"

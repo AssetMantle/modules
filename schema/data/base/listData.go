@@ -44,7 +44,7 @@ func (listData listData) String() string {
 		dataStringList[i] = datum.String()
 	}
 
-	return strings.Join(dataStringList, stringUtilities.ListDataStringSeparator)
+	return stringUtilities.JoinListStrings(dataStringList...)
 }
 func (listData listData) GetType() ids.ID {
 	return dataConstants.ListDataID
@@ -52,6 +52,8 @@ func (listData listData) GetType() ids.ID {
 func (listData listData) ZeroValue() data.Data {
 	return NewListData([]data.Data{}...)
 }
+
+// TODO recheck logic
 func (listData listData) GenerateHash() ids.ID {
 	if listData.Value.Size() == 0 {
 		return baseIDs.NewID("")
@@ -63,9 +65,7 @@ func (listData listData) GenerateHash() ids.ID {
 		hashList[i] = datum.GenerateHash().String()
 	}
 
-	hashString := strings.Join(hashList, stringUtilities.ListHashStringSeparator)
-
-	return baseIDs.NewID(hashString)
+	return baseIDs.NewID(stringUtilities.Hash(hashList...))
 }
 func (listData listData) Get() lists.DataList {
 	return listData.Value
@@ -92,7 +92,7 @@ func ReadListData(dataString string) (data.Data, error) {
 		return listData{}.ZeroValue(), nil
 	}
 
-	dataStringList := strings.Split(dataString, stringUtilities.ListDataStringSeparator)
+	dataStringList := stringUtilities.SplitListString(dataString)
 	dataList := make([]data.Data, len(dataStringList))
 
 	for i, accAddressString := range dataStringList {
