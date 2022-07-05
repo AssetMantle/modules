@@ -4,28 +4,35 @@
 package base
 
 import (
-	"math"
 	"math/rand"
+	"reflect"
 	"testing"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/stretchr/testify/require"
-
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func TestGenerateRandomData(t *testing.T) {
-	r := rand.New(rand.NewSource(7))
-	randomPositiveInt := int(math.Abs(float64(r.Int())))
-
-	switch randomPositiveInt % 4 {
-	case 1:
-		require.Equal(t, GenerateRandomData(r), baseData.NewStringData(simulation.RandStringOfLength(r, r.Intn(99))))
-	case 2:
-		require.Equal(t, GenerateRandomData(r), baseData.NewDecData(simulation.RandomDecAmount(r, sdkTypes.NewDec(99))))
-	case 3:
-		require.Equal(t, GenerateRandomData(r), baseData.NewHeightData(baseTypes.NewHeight(r.Int63())))
+	type args struct {
+		r *rand.Rand
+	}
+	tests := []struct {
+		name      string
+		args      args
+		wantPanic bool
+	}{
+		// TODO: check for nil case
+		{"+ve case", args{rand.New(rand.NewSource(7))}, false},
+		{"nil case", args{nil}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			defer func() {
+				r := recover()
+				if (r != nil) != tt.wantPanic {
+					t.Errorf("GenerateRandomData() recover = %v, wantPanic = %v", r, tt.wantPanic)
+				}
+			}()
+			if got := GenerateRandomData(tt.args.r); reflect.TypeOf(got).String() != "base.idData" {
+				t.Errorf("GenerateRandomData() = %v, want base.idData", got)
+			}
+		})
 	}
 }
