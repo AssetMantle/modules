@@ -94,7 +94,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	immutableMetaProperties, err := utilities.ReadMetaProperties(transactionRequest.ImmutableMetaProperties)
+	immutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.ImmutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	mutableMetaProperties, err := utilities.ReadMetaProperties(transactionRequest.MutableMetaProperties)
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}

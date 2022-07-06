@@ -26,7 +26,7 @@ func Test_Mint_Message(t *testing.T) {
 	require.Nil(t, err)
 
 	var immutableMetaProperties lists.MetaPropertyList
-	immutableMetaProperties, err = utilities.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err = utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 
 	var immutableProperties lists.PropertyList
@@ -34,7 +34,7 @@ func Test_Mint_Message(t *testing.T) {
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties lists.MetaPropertyList
-	mutableMetaProperties, err = utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err = utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 
 	var mutableProperties lists.PropertyList

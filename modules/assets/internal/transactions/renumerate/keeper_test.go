@@ -85,7 +85,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, err)
 	mutableProperties, err := utilities.ReadProperties("")
 	require.Equal(t, nil, err)
-	supplementError, err := utilities.ReadMetaProperties("supplementError:S|mockError")
+	supplementError, err := utilities.ReadMetaPropertyList("supplementError:S|mockError")
 	require.Equal(t, nil, err)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")

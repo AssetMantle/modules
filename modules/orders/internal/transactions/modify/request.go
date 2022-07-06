@@ -86,7 +86,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	mutableMetaProperties, err := utilities.ReadMetaProperties(transactionRequest.MutableMetaProperties)
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}

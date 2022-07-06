@@ -35,7 +35,7 @@ func Test_Make_Message(t *testing.T) {
 	creationId := baseIDs.NewID("100")
 	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 	mutableProperties, err := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)

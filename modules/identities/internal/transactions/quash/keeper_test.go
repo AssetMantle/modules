@@ -92,7 +92,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, err)
 
 	var supplementError lists.MetaPropertyList
-	supplementError, err = utilities.ReadMetaProperties("supplementError:S|mockError")
+	supplementError, err = utilities.ReadMetaPropertyList("supplementError:S|mockError")
 	require.Equal(t, nil, err)
 
 	defaultAddr := sdkTypes.AccAddress("addr")

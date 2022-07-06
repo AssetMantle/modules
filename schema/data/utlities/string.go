@@ -1,37 +1,38 @@
 package utlities
 
 import (
+	"strings"
+
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	constantIDs "github.com/AssetMantle/modules/schema/data/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 // ReadData
 // CHECK-TODO if data type added see if added here
 func ReadData(dataString string) (data.Data, error) {
-	dataTypeString, dataValueString := stringUtilities.SplitDataTypeAndValueStrings(dataString)
+	dataTypeString, dataValueString := SplitDataTypeAndValueStrings(dataString)
 	if dataTypeString != "" {
 		var Data data.Data
 
 		var err error
 
 		switch baseIDs.NewID(dataTypeString) {
-		case constantIDs.AccAddressDataID:
+		case dataConstants.AccAddressDataID:
 			Data, err = baseData.ReadAccAddressData(dataValueString)
-		case constantIDs.BooleanDataID:
+		case dataConstants.BooleanDataID:
 			Data, err = baseData.ReadBooleanData(dataValueString)
-		case constantIDs.DecDataID:
+		case dataConstants.DecDataID:
 			Data, err = baseData.ReadDecData(dataValueString)
-		case constantIDs.HeightDataID:
+		case dataConstants.HeightDataID:
 			Data, err = baseData.ReadHeightData(dataValueString)
-		case constantIDs.IDDataID:
+		case dataConstants.IDDataID:
 			Data, err = baseData.ReadIDData(dataValueString)
-		case constantIDs.ListDataID:
+		case dataConstants.ListDataID:
 			Data, err = baseData.ReadListData(dataValueString)
-		case constantIDs.StringDataID:
+		case dataConstants.StringDataID:
 			Data, err = baseData.ReadStringData(dataValueString)
 		default:
 			Data, err = nil, errorConstants.UnsupportedParameter
@@ -45,4 +46,16 @@ func ReadData(dataString string) (data.Data, error) {
 	}
 
 	return nil, errorConstants.IncorrectFormat
+}
+
+func JoinDataTypeAndValueStrings(dataType, dataValue string) string {
+	return strings.Join([]string{dataType, dataValue}, dataConstants.DataTypeAndValueSeparator)
+}
+
+func SplitDataTypeAndValueStrings(dataTypeAndValueString string) (dataType, dataValue string) {
+	if dataTypeAndValue := strings.SplitN(dataTypeAndValueString, dataConstants.DataTypeAndValueSeparator, 2); len(dataTypeAndValue) < 2 {
+		return "", ""
+	} else {
+		return dataTypeAndValue[0], dataTypeAndValue[1]
+	}
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/qualified"
-	metaUtilities "github.com/AssetMantle/modules/utilities/string"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type Immutables struct {
@@ -33,5 +33,5 @@ func (immutables Immutables) GenerateHashID() ids.ID {
 		metaList[i] = immutableProperty.GetHash().String()
 	}
 
-	return baseIDs.NewID(metaUtilities.Hash(metaList...))
+	return baseIDs.NewID(stringUtilities.Hash(metaList...))
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
+	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 )
 
 func readSplitID(splitIDString string) ids.ID {

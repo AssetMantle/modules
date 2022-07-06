@@ -5,7 +5,7 @@ import (
 )
 
 func ReadProperties(propertiesString string) (lists.PropertyList, error) {
-	Properties, err := ReadMetaProperties(propertiesString)
+	Properties, err := ReadMetaPropertyList(propertiesString)
 	if err != nil {
 		return nil, err
 	}

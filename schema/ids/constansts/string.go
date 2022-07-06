@@ -1,0 +1,3 @@
+package constansts
+
+const IDSeparator = "."

@@ -6,9 +6,9 @@ import (
 
 // TODO write testcase for empty and singular input
 func JoinListStrings(listStrings ...string) string {
-	return strings.Join(listStrings, idSeparator)
+	return strings.Join(listStrings, listStringSeparator)
 }
 
 func SplitListString(listString string) []string {
-	return strings.Split(listString, idSeparator)
+	return strings.Split(listString, listStringSeparator)
 }

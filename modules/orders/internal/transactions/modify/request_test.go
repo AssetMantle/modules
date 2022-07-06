@@ -38,7 +38,7 @@ func Test_Define_Request(t *testing.T) {
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 
-	mutableMetaProperties, err := utilities.ReadMetaProperties(mutableMetaPropertiesString)
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 	mutableProperties, err := utilities.ReadProperties(mutablePropertiesString)
 	require.Equal(t, nil, err)

@@ -17,7 +17,7 @@ func TestHash(t *testing.T) {
 	var filteredMetaList []string
 	filteredMetaList = append(filteredMetaList, "123")
 	sort.Strings(filteredMetaList)
-	toDigest := strings.Join(filteredMetaList, toHashSeparator)
+	toDigest := strings.Join(filteredMetaList, "")
 	hash := sha256.New()
 
 	if _, err := hash.Write([]byte(toDigest)); err != nil {

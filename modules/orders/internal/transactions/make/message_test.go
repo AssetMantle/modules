@@ -33,11 +33,11 @@ func Test_Make_Message(t *testing.T) {
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaProperties, err := utilities.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 	mutableProperties, err := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)

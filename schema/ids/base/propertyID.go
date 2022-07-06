@@ -8,8 +8,8 @@ import (
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type propertyID struct {

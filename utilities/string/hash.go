@@ -10,21 +10,21 @@ import (
 	"strings"
 )
 
-func Hash(meta ...string) string {
-	var filteredMetaList []string
+func Hash(toHashStrings ...string) string {
+	var nonEmptyStrings []string
 
-	for _, value := range meta {
+	for _, value := range toHashStrings {
 		if value != "" {
-			filteredMetaList = append(filteredMetaList, value)
+			nonEmptyStrings = append(nonEmptyStrings, value)
 		}
 	}
 
-	if len(filteredMetaList) == 0 {
+	if len(nonEmptyStrings) == 0 {
 		return ""
 	}
 
-	sort.Strings(filteredMetaList)
-	toDigest := strings.Join(filteredMetaList, toHashSeparator)
+	sort.Strings(nonEmptyStrings)
+	toDigest := strings.Join(nonEmptyStrings, "")
 	hash := sha256.New()
 
 	if _, err := hash.Write([]byte(toDigest)); err != nil {

@@ -14,11 +14,11 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type orderID struct {

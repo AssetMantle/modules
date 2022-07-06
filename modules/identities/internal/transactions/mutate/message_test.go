@@ -23,7 +23,7 @@ func Test_Mutate_Message(t *testing.T) {
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	mutableMetaProperties, err := utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 	mutableProperties, err := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)

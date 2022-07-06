@@ -11,9 +11,9 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type maintainerID struct {

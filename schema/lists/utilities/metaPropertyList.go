@@ -8,7 +8,7 @@ import (
 	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
-func ReadMetaProperties(metaPropertiesString string) (lists.MetaPropertyList, error) {
+func ReadMetaPropertyList(metaPropertiesString string) (lists.MetaPropertyList, error) {
 	var metaPropertyList []properties.MetaProperty
 
 	metaProperties := stringUtilities.SplitListString(metaPropertiesString)

@@ -13,7 +13,7 @@ import (
 	"github.com/AssetMantle/modules/schema/lists/base"
 	base2 "github.com/AssetMantle/modules/schema/properties/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	metaUtilities "github.com/AssetMantle/modules/utilities/string"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 func Test_Immutables(t *testing.T) {
@@ -22,6 +22,6 @@ func Test_Immutables(t *testing.T) {
 
 	require.Equal(t, Immutables{PropertyList: base.NewPropertyList(testProperty)}, testImmutables)
 	require.Equal(t, base.NewPropertyList(testProperty), testImmutables.GetImmutablePropertyList())
-	require.Equal(t, baseIDs.NewID(metaUtilities.Hash([]string{testProperty.GetHash().String()}...)), testImmutables.GenerateHashID())
+	require.Equal(t, baseIDs.NewID(stringUtilities.Hash([]string{testProperty.GetHash().String()}...)), testImmutables.GenerateHashID())
 	require.Equal(t, baseIDs.NewID(""), Immutables{base.NewPropertyList()}.GenerateHashID())
 }

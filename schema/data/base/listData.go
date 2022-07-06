@@ -38,13 +38,13 @@ func (listData listData) Compare(listable traits.Listable) int {
 	return strings.Compare(listData.GenerateHash().String(), compareListData.GenerateHash().String())
 }
 func (listData listData) String() string {
-	dataStringList := make([]string, listData.Value.Size())
+	dataStrings := make([]string, listData.Value.Size())
 
 	for i, datum := range listData.Value.GetList() {
-		dataStringList[i] = datum.String()
+		dataStrings[i] = datum.String()
 	}
 
-	return stringUtilities.JoinListStrings(dataStringList...)
+	return stringUtilities.JoinListStrings(dataStrings...)
 }
 func (listData listData) GetType() ids.ID {
 	return dataConstants.ListDataID

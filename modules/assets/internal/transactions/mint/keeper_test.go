@@ -88,11 +88,11 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	immutableMetaProperties, err := utilities.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 
 	var immutableMetaProperties2 lists.MetaPropertyList
-	immutableMetaProperties2, err = utilities.ReadMetaProperties("defaultImmutableMeta2:S|defaultImmutableMeta2")
+	immutableMetaProperties2, err = utilities.ReadMetaPropertyList("defaultImmutableMeta2:S|defaultImmutableMeta2")
 	require.Equal(t, nil, err)
 
 	var immutableProperties lists.PropertyList
@@ -100,7 +100,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties lists.MetaPropertyList
-	mutableMetaProperties, err = utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err = utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 
 	var mutableProperties lists.PropertyList
@@ -108,11 +108,11 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, err)
 
 	var scrubMockErrorProperties lists.MetaPropertyList
-	scrubMockErrorProperties, err = utilities.ReadMetaProperties("scrubError:S|mockError")
+	scrubMockErrorProperties, err = utilities.ReadMetaPropertyList("scrubError:S|mockError")
 	require.Equal(t, nil, err)
 
 	var conformMockErrorProperties lists.MetaPropertyList
-	conformMockErrorProperties, err = utilities.ReadMetaProperties("conformError:S|mockError")
+	conformMockErrorProperties, err = utilities.ReadMetaPropertyList("conformError:S|mockError")
 	require.Equal(t, nil, err)
 
 	defaultAddr := sdkTypes.AccAddress("addr")

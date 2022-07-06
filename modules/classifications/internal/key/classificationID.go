@@ -12,6 +12,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -33,7 +34,7 @@ func (classificationID classificationID) Bytes() []byte {
 		classificationID.HashID.Bytes()...)
 }
 func (classificationID classificationID) String() string {
-	return stringUtilities.JoinIDStrings(classificationID.ChainID.String(), classificationID.HashID.String())
+	return utilities.JoinIDStrings(classificationID.ChainID.String(), classificationID.HashID.String())
 }
 func (classificationID classificationID) Compare(listable traits.Listable) int {
 	if compareClassificationID, err := classificationIDFromInterface(listable); err != nil {

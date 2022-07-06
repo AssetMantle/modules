@@ -98,14 +98,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	creationID := baseIDs.NewID("100")
 	orderID := key.NewOrderID(classificationID, makerOwnableID,
 		takerOwnableID, rateID, creationID, defaultIdentityID, base.NewPropertyList())
-	metaProperties, err := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+	metaProperties, err := utilities.ReadMetaPropertyList(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 		"," + constants.TakerIDProperty.String() + ":I|fromID")
 	require.Equal(t, nil, err)
 
 	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewPropertyList(), metaProperties.ToPropertyList()))
 
 	t.Run("PositiveCase", func(t *testing.T) {
-		metaProperties, err := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+		metaProperties, err := utilities.ReadMetaPropertyList(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 			"," + constants.TakerIDProperty.String() + ":I|fromID")
 		require.Equal(t, nil, err)
 		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewPropertyList(), metaProperties.ToPropertyList()))
@@ -139,7 +139,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		transferErrorID := key.NewOrderID(classificationID, makerOwnableID,
 			baseIDs.NewID("transferError"), rateID, creationID, defaultIdentityID, base.NewPropertyList())
-		metaProperties, err := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+		metaProperties, err := utilities.ReadMetaPropertyList(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 			"," + constants.TakerIDProperty.String() + ":I|fromID")
 		require.Equal(t, nil, err)
 
@@ -156,7 +156,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		transferErrorID := key.NewOrderID(classificationID, baseIDs.NewID("transferError"),
 			takerOwnableID, rateID, creationID, defaultIdentityID, base.NewPropertyList())
-		metaProperties, err := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+		metaProperties, err := utilities.ReadMetaPropertyList(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 			"," + constants.TakerIDProperty.String() + ":I|fromID" + "," +
 			constants.ExchangeRateProperty.String() + ":D|1")
 		require.Equal(t, nil, err)
@@ -182,7 +182,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		orderID := key.NewOrderID(classificationID, makerOwnableID,
 			takerOwnableID, rateID, creationID, defaultIdentityID, base.NewPropertyList())
-		metaProperties, err := utilities.ReadMetaProperties(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
+		metaProperties, err := utilities.ReadMetaPropertyList(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 			"," + constants.TakerIDProperty.String() + ":I|fromID" + "," +
 			constants.ExchangeRateProperty.String() + ":D|1")
 		require.Equal(t, nil, err)
