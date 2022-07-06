@@ -28,6 +28,8 @@ import (
 )
 
 func RegisterCodec(codec *codec.Codec) {
+	codec.RegisterInterface((*error)(nil), nil)
+
 	data.RegisterCodec(codec)
 	baseData.RegisterCodec(codec)
 
