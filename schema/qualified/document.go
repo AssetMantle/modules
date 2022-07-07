@@ -9,7 +9,6 @@ import (
 	"github.com/AssetMantle/modules/schema/properties"
 )
 
-// TODO retire or send to base
 type Document interface {
 	GetID() ids.ID
 	GetClassificationID() ids.ID

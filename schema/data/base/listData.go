@@ -6,10 +6,9 @@ package base
 import (
 	"strings"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/data/utlities"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -29,7 +28,6 @@ func (listData listData) GetID() ids.DataID {
 	return baseIDs.NewDataID(listData)
 }
 func (listData listData) Compare(listable traits.Listable) int {
-	// TODO write test
 	compareListData, err := listDataFromInterface(listable)
 	if err != nil {
 		panic(err)
@@ -52,8 +50,6 @@ func (listData listData) GetType() ids.ID {
 func (listData listData) ZeroValue() data.Data {
 	return NewListData([]data.Data{}...)
 }
-
-// TODO recheck logic
 func (listData listData) GenerateHash() ids.ID {
 	if listData.Value.Size() == 0 {
 		return baseIDs.NewID("")
@@ -87,7 +83,6 @@ func NewListData(value ...data.Data) data.Data {
 }
 
 func ReadListData(dataString string) (data.Data, error) {
-	// TODO revise
 	if dataString == "" {
 		return listData{}.ZeroValue(), nil
 	}
@@ -95,13 +90,13 @@ func ReadListData(dataString string) (data.Data, error) {
 	dataStringList := stringUtilities.SplitListString(dataString)
 	dataList := make([]data.Data, len(dataStringList))
 
-	for i, accAddressString := range dataStringList {
-		accAddress, err := sdkTypes.AccAddressFromBech32(accAddressString)
+	for i, datumString := range dataStringList {
+		data, err := utlities.ReadData(datumString)
 		if err != nil {
 			return listData{}.ZeroValue(), err
 		}
 
-		dataList[i] = NewAccAddressData(accAddress)
+		dataList[i] = data
 	}
 
 	return NewListData(dataList...), nil

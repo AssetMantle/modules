@@ -16,7 +16,6 @@ type idList struct {
 var _ lists.IDList = (*idList)(nil)
 
 func (idList idList) GetList() []ids.ID {
-	// TODO write test case
 	returnIDList := make([]ids.ID, idList.List.Size())
 
 	for i, listable := range idList.GetList() {

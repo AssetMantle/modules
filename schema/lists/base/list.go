@@ -18,7 +18,7 @@ var _ lists.List = (*list)(nil)
 func (list list) Get() []traits.Listable {
 	return list
 }
-func (list list) Size() int { // TODO write test
+func (list list) Size() int {
 	return len(list)
 }
 func (list list) Search(listable traits.Listable) (int, bool) {

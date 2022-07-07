@@ -99,7 +99,6 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 						leftOrder = executableMappableOrder.(mappables.Order)
 						rightOrder = orderMappable.(mappables.Order)
 					default:
-						// TODO
 						leftOrder = orderMappable.(mappables.Order)
 						rightOrder = executableMappableOrder.(mappables.Order)
 					}
