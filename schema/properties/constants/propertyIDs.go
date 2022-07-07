@@ -10,6 +10,7 @@ import (
 
 // Note: Arranged alphabetically
 var (
+	// TODO append propertyID
 	AuthenticationProperty = baseIDs.NewPropertyID(baseIDs.NewID("authentication"), constants.ListDataID)
 	BurnProperty           = baseIDs.NewPropertyID(baseIDs.NewID("burn"), constants.HeightDataID)
 	CreationProperty       = baseIDs.NewPropertyID(baseIDs.NewID("creation"), constants.HeightDataID)

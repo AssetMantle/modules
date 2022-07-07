@@ -35,6 +35,7 @@ func (document Document) GetProperty(propertyID ids.PropertyID) properties.Prope
 }
 
 // TODO write test case
+// TODO check is not metaProperty
 func (document Document) Mutate(propertyList ...properties.Property) qualified.Document {
 	document.Mutables = document.Mutables.Mutate(propertyList...).(Mutables)
 	return document

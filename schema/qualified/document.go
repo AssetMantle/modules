@@ -19,5 +19,5 @@ type Document interface {
 	GetMutablePropertyList() lists.PropertyList
 
 	GenerateHashID() ids.ID
-	Mutate(propertyList ...properties.Property) Document
+	Mutate(...properties.Property) Document
 }
