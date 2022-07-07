@@ -3,7 +3,11 @@
 
 package data
 
+import (
+	"github.com/AssetMantle/modules/schema/lists"
+)
+
 type ListData interface {
-	// TODO add get method
+	Get() lists.DataList
 	Data
 }
