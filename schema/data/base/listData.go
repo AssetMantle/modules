@@ -13,7 +13,7 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
@@ -48,7 +48,7 @@ func (listData listData) GetType() ids.ID {
 	return dataConstants.ListDataID
 }
 func (listData listData) ZeroValue() data.Data {
-	return NewListData([]data.Data{}...)
+	return NewListData(base.NewDataList([]data.Data{}...))
 }
 func (listData listData) GenerateHash() ids.ID {
 	if listData.Value.Size() == 0 {
@@ -78,8 +78,8 @@ func listDataFromInterface(listable traits.Listable) (listData, error) {
 
 // NewListData
 // * onus of ensuring all Data are of the same type is on DataList
-func NewListData(value ...data.Data) data.Data {
-	return listData{Value: baseLists.NewDataList(value...)}
+func NewListData(value lists.DataList) data.Data {
+	return listData{Value: value}
 }
 
 func ReadListData(dataString string) (data.Data, error) {
@@ -91,13 +91,13 @@ func ReadListData(dataString string) (data.Data, error) {
 	dataList := make([]data.Data, len(dataStringList))
 
 	for i, datumString := range dataStringList {
-		data, err := utlities.ReadData(datumString)
+		Data, err := utlities.ReadData(datumString)
 		if err != nil {
 			return listData{}.ZeroValue(), err
 		}
 
-		dataList[i] = data
+		dataList[i] = Data
 	}
 
-	return NewListData(dataList...), nil
+	return NewListData(base.NewDataList(dataList...)), nil
 }
