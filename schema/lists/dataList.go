@@ -12,5 +12,5 @@ type DataList interface {
 	GetList() []data.Data
 	Search(data.Data) (int, bool)
 	Add(...data.Data) DataList
-	Delete(...data.Data) DataList
+	Remove(...data.Data) DataList
 }
