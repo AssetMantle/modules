@@ -34,7 +34,7 @@ func UnprovisionAddress(context sdkTypes.Context, supplementAuxiliary helpers.Au
 	if metaPropertyList, err := supplement.GetMetaPropertiesFromResponse(supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.GetAuthentication()))); err != nil {
 		return identity, err
 	} else {
-		identity.Mutate(base.NewProperty(constants.AuthenticationProperty, baseData.NewListData(metaPropertyList.GetMetaProperty(constants.AuthenticationProperty).GetData().(data.ListData).Get().Delete(baseData.NewAccAddressData(accAddress)))))
+		identity.Mutate(base.NewProperty(constants.AuthenticationProperty, baseData.NewListData(metaPropertyList.GetMetaProperty(constants.AuthenticationProperty).GetData().(data.ListData).Get().Remove(baseData.NewAccAddressData(accAddress)))))
 		return identity, nil
 	}
 }
