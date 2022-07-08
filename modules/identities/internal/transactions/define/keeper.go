@@ -12,6 +12,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/utilities"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
@@ -19,11 +20,12 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper          helpers.Mapper
-	defineAuxiliary helpers.Auxiliary
-	scrubAuxiliary  helpers.Auxiliary
-	superAuxiliary  helpers.Auxiliary
-	verifyAuxiliary helpers.Auxiliary
+	mapper              helpers.Mapper
+	defineAuxiliary     helpers.Auxiliary
+	scrubAuxiliary      helpers.Auxiliary
+	superAuxiliary      helpers.Auxiliary
+	supplementAuxiliary helpers.Auxiliary
+	verifyAuxiliary     helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -39,7 +41,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(constants.EntityNotFound)
 	}
 
-	if !utilities.IsProvisioned(identity, message.From) {
+	if provisioned, err := utilities.IsProvisioned(context, transactionKeeper.supplementAuxiliary, identity, message.From); err != nil || !provisioned {
 		return newTransactionResponse(constants.NotAuthorized)
 	}
 
@@ -82,6 +84,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.scrubAuxiliary = value
 			case super.Auxiliary.GetName():
 				transactionKeeper.superAuxiliary = value
+			case supplement.Auxiliary.GetName():
+				transactionKeeper.supplementAuxiliary = value
 			case verify.Auxiliary.GetName():
 				transactionKeeper.verifyAuxiliary = value
 			}

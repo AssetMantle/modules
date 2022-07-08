@@ -6,15 +6,17 @@ package provision
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/utilities"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
 )
 
 type transactionKeeper struct {
-	mapper helpers.Mapper
+	mapper              helpers.Mapper
+	supplementAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -26,24 +28,43 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	identity := identities.Get(key.FromID(identityID)).(mappables.Identity)
 	if identity == nil {
-		return newTransactionResponse(constants.EntityNotFound)
+		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 
-	if !utilities.IsProvisioned(identity, message.From) {
-		return newTransactionResponse(constants.NotAuthorized)
+	if provisioned, err := utilities.IsProvisioned(context, transactionKeeper.supplementAuxiliary, identity, message.From); err != nil || !provisioned {
+		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
-	if utilities.IsProvisioned(identity, message.To) {
-		return newTransactionResponse(constants.EntityAlreadyExists)
+	if provisioned, err := utilities.IsProvisioned(context, transactionKeeper.supplementAuxiliary, identity, message.To); err != nil {
+		return newTransactionResponse(err)
+	} else if provisioned {
+		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
-	identities.Mutate(utilities.ProvisionAddress(identity, message.To))
+	if updatedIdentity, err := utilities.ProvisionAddress(context, transactionKeeper.supplementAuxiliary, identity, message.To); err != nil {
+		return newTransactionResponse(err)
+	} else {
+		identities.Mutate(updatedIdentity)
+	}
 
 	return newTransactionResponse(nil)
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
+
+	for _, auxiliary := range auxiliaries {
+		switch value := auxiliary.(type) {
+		case helpers.Auxiliary:
+			switch value.GetName() {
+			case define.Auxiliary.GetName():
+				transactionKeeper.supplementAuxiliary = value
+			}
+		default:
+			panic(errorConstants.UninitializedUsage)
+		}
+	}
+
 	return transactionKeeper
 }
 
