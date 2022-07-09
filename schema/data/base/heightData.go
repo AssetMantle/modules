@@ -68,16 +68,3 @@ func NewHeightData(value types.Height) data.Data {
 		Value: value,
 	}
 }
-
-func ReadHeightData(dataString string) (data.Data, error) {
-	if dataString == "" {
-		return heightData{}.ZeroValue(), nil
-	}
-
-	height, err := strconv.ParseInt(dataString, 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewHeightData(baseTypes.NewHeight(height)), nil
-}

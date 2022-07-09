@@ -68,16 +68,3 @@ func NewAccAddressData(value sdkTypes.AccAddress) data.Data {
 		Value: value,
 	}
 }
-
-func ReadAccAddressData(dataString string) (data.Data, error) {
-	if dataString == "" {
-		return accAddressData{}.ZeroValue(), nil
-	}
-
-	accAddress, err := sdkTypes.AccAddressFromBech32(dataString)
-	if err != nil {
-		return accAddressData{}.ZeroValue(), err
-	}
-
-	return NewAccAddressData(accAddress), nil
-}

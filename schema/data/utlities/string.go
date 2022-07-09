@@ -1,19 +1,109 @@
 package utlities
 
 import (
+	"strconv"
 	"strings"
 
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/schema/data"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/data/base"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
+
+func readAccAddressData(dataString string) (data.Data, error) {
+	if dataString == "" {
+		return GetZeroValueDataFromID(dataConstants.AccAddressDataID), nil
+	}
+
+	accAddress, err := sdkTypes.AccAddressFromBech32(dataString)
+	if err != nil {
+		return GetZeroValueDataFromID(dataConstants.AccAddressDataID), err
+	}
+
+	return base.NewAccAddressData(accAddress), nil
+}
+func readBooleanData(dataString string) (data.Data, error) {
+	if dataString == "" {
+		return GetZeroValueDataFromID(dataConstants.BooleanDataID), nil
+	}
+
+	Bool, err := strconv.ParseBool(dataString)
+	if err != nil {
+		return GetZeroValueDataFromID(dataConstants.BooleanDataID), err
+	}
+
+	return base.NewBooleanData(Bool), nil
+}
+func readDecData(dataString string) (data.Data, error) {
+	if dataString == "" {
+		return GetZeroValueDataFromID(dataConstants.DecDataID), nil
+	}
+
+	dec, err := sdkTypes.NewDecFromStr(dataString)
+	if err != nil {
+		return GetZeroValueDataFromID(dataConstants.DecDataID), err
+	}
+
+	return base.NewDecData(dec), nil
+}
+func readHeightData(dataString string) (data.Data, error) {
+	if dataString == "" {
+		return GetZeroValueDataFromID(dataConstants.HeightDataID), nil
+	}
+
+	height, err := strconv.ParseInt(dataString, 10, 64)
+	if err != nil {
+		return GetZeroValueDataFromID(dataConstants.HeightDataID), err
+	}
+
+	return base.NewHeightData(baseTypes.NewHeight(height)), nil
+}
+func readIDData(idData string) (data.Data, error) {
+	return base.NewIDData(baseIDs.NewID(idData)), nil
+}
+func readListData(dataString string) (data.Data, error) {
+	if dataString == "" {
+		return GetZeroValueDataFromID(dataConstants.ListDataID), nil
+	}
+
+	dataStringList := stringUtilities.SplitListString(dataString)
+	dataList := make([]data.Data, len(dataStringList))
+
+	for i, datumString := range dataStringList {
+		Data, err := ReadData(datumString)
+		if err != nil {
+			return GetZeroValueDataFromID(dataConstants.ListDataID), err
+		}
+
+		dataList[i] = Data
+	}
+
+	return base.NewListData(baseLists.NewDataList(dataList...)), nil
+}
+func readStringData(stringData string) (data.Data, error) {
+	return base.NewStringData(stringData), nil
+}
+func joinDataTypeAndValueStrings(dataType, dataValue string) string {
+	return strings.Join([]string{dataType, dataValue}, dataConstants.DataTypeAndValueSeparator)
+}
+func splitDataTypeAndValueStrings(dataTypeAndValueString string) (dataType, dataValue string) {
+	if dataTypeAndValue := strings.SplitN(dataTypeAndValueString, dataConstants.DataTypeAndValueSeparator, 2); len(dataTypeAndValue) < 2 {
+		return "", ""
+	} else {
+		return dataTypeAndValue[0], dataTypeAndValue[1]
+	}
+}
 
 // ReadData
 // CHECK-TODO if data type added see if added here
 func ReadData(dataString string) (data.Data, error) {
-	dataTypeString, dataValueString := SplitDataTypeAndValueStrings(dataString)
+	dataTypeString, dataValueString := splitDataTypeAndValueStrings(dataString)
 	if dataTypeString != "" {
 		var Data data.Data
 
@@ -21,19 +111,19 @@ func ReadData(dataString string) (data.Data, error) {
 
 		switch baseIDs.NewID(dataTypeString) {
 		case dataConstants.AccAddressDataID:
-			Data, err = baseData.ReadAccAddressData(dataValueString)
+			Data, err = readAccAddressData(dataValueString)
 		case dataConstants.BooleanDataID:
-			Data, err = baseData.ReadBooleanData(dataValueString)
+			Data, err = readBooleanData(dataValueString)
 		case dataConstants.DecDataID:
-			Data, err = baseData.ReadDecData(dataValueString)
+			Data, err = readDecData(dataValueString)
 		case dataConstants.HeightDataID:
-			Data, err = baseData.ReadHeightData(dataValueString)
+			Data, err = readHeightData(dataValueString)
 		case dataConstants.IDDataID:
-			Data, err = baseData.ReadIDData(dataValueString)
+			Data, err = readIDData(dataValueString)
 		case dataConstants.ListDataID:
-			Data, err = baseData.ReadListData(dataValueString)
+			Data, err = readListData(dataValueString)
 		case dataConstants.StringDataID:
-			Data, err = baseData.ReadStringData(dataValueString)
+			Data, err = readStringData(dataValueString)
 		default:
 			Data, err = nil, errorConstants.UnsupportedParameter
 		}
@@ -46,16 +136,4 @@ func ReadData(dataString string) (data.Data, error) {
 	}
 
 	return nil, errorConstants.IncorrectFormat
-}
-
-func JoinDataTypeAndValueStrings(dataType, dataValue string) string {
-	return strings.Join([]string{dataType, dataValue}, dataConstants.DataTypeAndValueSeparator)
-}
-
-func SplitDataTypeAndValueStrings(dataTypeAndValueString string) (dataType, dataValue string) {
-	if dataTypeAndValue := strings.SplitN(dataTypeAndValueString, dataConstants.DataTypeAndValueSeparator, 2); len(dataTypeAndValue) < 2 {
-		return "", ""
-	} else {
-		return dataTypeAndValue[0], dataTypeAndValue[1]
-	}
 }

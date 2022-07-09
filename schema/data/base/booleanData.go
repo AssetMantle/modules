@@ -71,16 +71,3 @@ func NewBooleanData(value bool) data.Data {
 		Value: value,
 	}
 }
-
-func ReadBooleanData(dataString string) (data.Data, error) {
-	if dataString == "" {
-		return booleanData{}.ZeroValue(), nil
-	}
-
-	Bool, err := strconv.ParseBool(dataString)
-	if err != nil {
-		return booleanData{}.ZeroValue(), err
-	}
-
-	return NewBooleanData(Bool), nil
-}

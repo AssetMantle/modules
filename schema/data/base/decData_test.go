@@ -24,18 +24,6 @@ func Test_DecData(t *testing.T) {
 	require.Equal(t, baseIDs.NewID(string.Hash(decValue.String())), testDecData.GenerateHash())
 	require.Equal(t, baseIDs.NewID(""), testDecData2.GenerateHash())
 	require.Equal(t, constants.DecDataID, testDecData.GetType())
-
-	data, err := ReadDecData("")
-	require.Equal(t, decData{Value: sdkTypes.ZeroDec()}, data)
-	require.Nil(t, err)
-
-	_, err = ReadDecData("testString")
-	require.NotNil(t, err)
-
-	data, err = ReadDecData("123")
-	require.Equal(t, decData{Value: sdkTypes.NewDec(123)}, data)
-	require.Nil(t, err)
-
 	require.Equal(t, false, testDecData.Compare(NewStringData("")) == 0)
 	require.Equal(t, true, testDecData.Compare(NewDecData(sdkTypes.NewDec(12))) == 0)
 }

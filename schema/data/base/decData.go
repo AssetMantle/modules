@@ -72,16 +72,3 @@ func NewDecData(value sdkTypes.Dec) data.Data {
 		Value: value,
 	}
 }
-
-func ReadDecData(dataString string) (data.Data, error) {
-	if dataString == "" {
-		return decData{}.ZeroValue(), nil
-	}
-
-	dec, err := sdkTypes.NewDecFromStr(dataString)
-	if err != nil {
-		return decData{}.ZeroValue(), err
-	}
-
-	return NewDecData(dec), nil
-}

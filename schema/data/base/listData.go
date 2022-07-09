@@ -8,7 +8,6 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
-	"github.com/AssetMantle/modules/schema/data/utlities"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -24,6 +23,17 @@ type listData struct {
 
 var _ data.ListData = (*listData)(nil)
 
+func (listData listData) Search(data data.Data) (int, bool) {
+	return listData.Search(data)
+}
+func (listData listData) Add(data ...data.Data) data.ListData {
+	listData.Value = listData.Value.Add(data...)
+	return listData
+}
+func (listData listData) Remove(data ...data.Data) data.ListData {
+	listData.Value = listData.Value.Remove(data...)
+	return listData
+}
 func (listData listData) GetID() ids.DataID {
 	return baseIDs.NewDataID(listData)
 }
@@ -63,10 +73,6 @@ func (listData listData) GenerateHash() ids.ID {
 
 	return baseIDs.NewID(stringUtilities.Hash(hashList...))
 }
-func (listData listData) Get() lists.DataList {
-	return listData.Value
-}
-
 func listDataFromInterface(listable traits.Listable) (listData, error) {
 	switch value := listable.(type) {
 	case listData:
@@ -80,24 +86,4 @@ func listDataFromInterface(listable traits.Listable) (listData, error) {
 // * onus of ensuring all Data are of the same type is on DataList
 func NewListData(value lists.DataList) data.Data {
 	return listData{Value: value}
-}
-
-func ReadListData(dataString string) (data.Data, error) {
-	if dataString == "" {
-		return listData{}.ZeroValue(), nil
-	}
-
-	dataStringList := stringUtilities.SplitListString(dataString)
-	dataList := make([]data.Data, len(dataStringList))
-
-	for i, datumString := range dataStringList {
-		Data, err := utlities.ReadData(datumString)
-		if err != nil {
-			return listData{}.ZeroValue(), err
-		}
-
-		dataList[i] = Data
-	}
-
-	return NewListData(base.NewDataList(dataList...)), nil
 }

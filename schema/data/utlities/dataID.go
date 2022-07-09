@@ -6,7 +6,7 @@ import (
 )
 
 func GetZeroValueDataFromID(typeID ids.ID) data.Data {
-	if zeroDataValue, err := ReadData(JoinDataTypeAndValueStrings(typeID.String(), "")); err != nil {
+	if zeroDataValue, err := ReadData(joinDataTypeAndValueStrings(typeID.String(), "")); err != nil {
 		panic(err)
 	} else {
 		return zeroDataValue

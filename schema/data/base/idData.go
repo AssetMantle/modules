@@ -62,7 +62,3 @@ func NewIDData(value ids.ID) data.Data {
 		Value: value,
 	}
 }
-
-func ReadIDData(idData string) (data.Data, error) {
-	return NewIDData(baseIDs.NewID(idData)), nil
-}

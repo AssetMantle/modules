@@ -45,17 +45,6 @@ func Test_Order_Methods(t *testing.T) {
 	testOrderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, makerID, immutableProperties)
 	testOrder := NewOrder(testOrderID, immutableProperties, base.NewPropertyList()).(order)
 	testOrder2 := NewOrder(testOrderID, base.NewPropertyList(), mutableProperties).(order)
-	testOrder3 := NewOrder(testOrderID, base.NewPropertyList(), base.NewPropertyList()).(order)
-
-	data, _ := baseData.ReadIDData("")
-	defaultTakerProperty := base2.NewProperty(constants.TakerIDProperty, data)
-	defaultExchangeRateProperty := base2.NewProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec()))
-	data, _ = baseData.ReadHeightData("100")
-	defaultCreationProperty := base2.NewProperty(constants.CreationProperty, data)
-	data, _ = baseData.ReadHeightData("-1")
-	defaultExpiryProperty := base2.NewProperty(constants.ExpiryProperty, data)
-	data, _ = baseData.ReadDecData("")
-	defaultMakerOwnableSplitProperty := base2.NewProperty(constants.MakerOwnableSplitProperty, data)
 
 	require.Equal(t, order{Document: baseQualified.Document{ID: testOrderID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: base.NewPropertyList()}}}, testOrder)
 	require.Equal(t, testOrderID, testOrder.GetID())
@@ -68,26 +57,21 @@ func Test_Order_Methods(t *testing.T) {
 	// GetTakerID
 	require.Equal(t, takerIDImmutableProperty, testOrder.GetTakerID())
 	require.Equal(t, takerIDMutableProperty, testOrder2.GetTakerID())
-	require.Equal(t, defaultTakerProperty, testOrder3.GetTakerID())
 	// GetExchangeRate
 	require.Equal(t, exchangeRateImmutableProperty, testOrder.GetExchangeRate())
 	require.Equal(t, exchangeRateMutableProperty, testOrder2.GetExchangeRate().RemoveData())
-	require.Equal(t, defaultExchangeRateProperty, testOrder3.GetExchangeRate().RemoveData())
 
 	// GetCreation
 	require.Equal(t, creationImmutableProperty, testOrder.GetCreation())
 	require.Equal(t, creationMutableProperty, testOrder2.GetCreation().RemoveData())
-	require.Equal(t, defaultCreationProperty, testOrder3.GetCreation().RemoveData())
 
 	// GetExpiry
 	require.Equal(t, expiryImmutableProperty, testOrder.GetExpiry())
 	require.Equal(t, expiryMutableProperty, testOrder2.GetExpiry())
-	require.Equal(t, defaultExpiryProperty, testOrder3.GetExpiry())
 
 	// GetMakerOwnableSplit
 	require.Equal(t, makerOwnableSplitImmutableProperty, testOrder.GetMakerOwnableSplit())
 	require.Equal(t, makerOwnableSplitMutableProperty, testOrder2.GetMakerOwnableSplit())
-	require.Equal(t, defaultMakerOwnableSplitProperty, testOrder3.GetMakerOwnableSplit())
 
 	require.Equal(t, immutableProperties, testOrder.GetImmutablePropertyList())
 	require.Equal(t, mutableProperties, testOrder2.GetMutablePropertyList())

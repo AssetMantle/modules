@@ -62,7 +62,3 @@ func NewStringData(value string) data.Data {
 		Value: value,
 	}
 }
-
-func ReadStringData(stringData string) (data.Data, error) {
-	return NewStringData(stringData), nil
-}
