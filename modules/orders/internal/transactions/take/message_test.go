@@ -16,8 +16,8 @@ import (
 
 func Test_Take_Message(t *testing.T) {
 
-	testFromID := baseIDs.NewID("fromID")
-	testOrderID := baseIDs.NewID("orderID")
+	testFromID := baseIDs.NewStringID("fromID")
+	testOrderID := baseIDs.NewStringID("orderID")
 	testTakerOwnableSplit := sdkTypes.NewDec(2)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

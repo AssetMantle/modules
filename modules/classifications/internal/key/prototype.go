@@ -9,7 +9,7 @@ import (
 )
 
 func Prototype() helpers.Key {
-	if classificationID, err := classificationIDFromInterface(baseIDs.NewID("")); err != nil {
+	if classificationID, err := classificationIDFromInterface(baseIDs.NewStringID("")); err != nil {
 		panic(classificationID)
 	} else {
 		return classificationID

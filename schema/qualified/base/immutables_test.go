@@ -17,11 +17,11 @@ import (
 )
 
 func Test_Immutables(t *testing.T) {
-	testProperty := base2.NewProperty(baseIDs.NewID("ID"), baseData.NewHeightData(baseTypes.NewHeight(123)))
+	testProperty := base2.NewProperty(baseIDs.NewStringID("ID"), baseData.NewHeightData(baseTypes.NewHeight(123)))
 	testImmutables := Immutables{base.NewPropertyList(testProperty)}
 
 	require.Equal(t, Immutables{PropertyList: base.NewPropertyList(testProperty)}, testImmutables)
 	require.Equal(t, base.NewPropertyList(testProperty), testImmutables.GetImmutablePropertyList())
-	require.Equal(t, baseIDs.NewID(stringUtilities.Hash([]string{testProperty.GetHash().String()}...)), testImmutables.GenerateHashID())
-	require.Equal(t, baseIDs.NewID(""), Immutables{base.NewPropertyList()}.GenerateHashID())
+	require.Equal(t, baseIDs.NewStringID(stringUtilities.Hash([]string{testProperty.GetHash().String()}...)), testImmutables.GenerateHashID())
+	require.Equal(t, baseIDs.NewStringID(""), Immutables{base.NewPropertyList()}.GenerateHashID())
 }

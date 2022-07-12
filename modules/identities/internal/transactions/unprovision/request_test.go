@@ -62,7 +62,7 @@ func Test_Unprovision_Request(t *testing.T) {
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
 	msg, err := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, toAccAddress, baseIDs.NewID("identityID")), msg)
+	require.Equal(t, newMessage(fromAccAddress, toAccAddress, baseIDs.NewStringID("identityID")), msg)
 	require.Nil(t, err)
 
 	msg, err = newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, toAddress, "identityID").MakeMsg()

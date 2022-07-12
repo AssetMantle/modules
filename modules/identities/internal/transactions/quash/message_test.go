@@ -15,8 +15,8 @@ import (
 )
 
 func Test_Quash_Message(t *testing.T) {
-	testIdentityID := baseIDs.NewID("identityID")
-	testFromID := baseIDs.NewID("fromID")
+	testIdentityID := baseIDs.NewStringID("identityID")
+	testFromID := baseIDs.NewStringID("fromID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

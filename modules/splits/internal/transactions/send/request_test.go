@@ -58,7 +58,7 @@ func Test_Send_Request(t *testing.T) {
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
 	msg, err := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, baseIDs.NewID("fromID"), baseIDs.NewID("toID"), baseIDs.NewID("ownableID"), sdkTypes.NewDec(2)), msg)
+	require.Equal(t, newMessage(fromAccAddress, baseIDs.NewStringID("fromID"), baseIDs.NewStringID("toID"), baseIDs.NewStringID("ownableID"), sdkTypes.NewDec(2)), msg)
 	require.Nil(t, err)
 
 	msg2, err := newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, "fromID", "toID", "ownableID", "2").MakeMsg()

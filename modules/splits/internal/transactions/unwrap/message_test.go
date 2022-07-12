@@ -15,8 +15,8 @@ import (
 )
 
 func Test_Unwrap_Message(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
-	testOwnableID := baseIDs.NewID("ownableID")
+	testFromID := baseIDs.NewStringID("fromID")
+	testOwnableID := baseIDs.NewStringID("ownableID")
 	testSplit := sdkTypes.NewInt(2)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

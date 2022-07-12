@@ -74,15 +74,15 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	classificationID := baseIDs.NewID("classificationID")
-	identityID := baseIDs.NewID("identityID")
+	classificationID := baseIDs.NewStringID("classificationID")
+	identityID := baseIDs.NewStringID("identityID")
 
 	maintainerID := key.NewMaintainerID(classificationID, identityID)
 	keepers.MaintainersKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, baseLists.NewPropertyList(), baseLists.NewPropertyList()))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
-		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewID("classificationID1"), baseIDs.NewID("identityID1"), baseLists.NewPropertyList())); !reflect.DeepEqual(got, want) {
+		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewStringID("classificationID1"), baseIDs.NewStringID("identityID1"), baseLists.NewPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

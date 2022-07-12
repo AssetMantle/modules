@@ -45,10 +45,10 @@ func (accAddressData accAddressData) ZeroValue() data.Data {
 }
 func (accAddressData accAddressData) GenerateHash() ids.ID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
-		return baseIDs.NewID("")
+		return baseIDs.NewStringID("")
 	}
 
-	return baseIDs.NewID(stringUtilities.Hash(accAddressData.Value.String()))
+	return baseIDs.NewStringID(stringUtilities.Hash(accAddressData.Value.String()))
 }
 func (accAddressData accAddressData) Get() sdkTypes.AccAddress {
 	return accAddressData.Value

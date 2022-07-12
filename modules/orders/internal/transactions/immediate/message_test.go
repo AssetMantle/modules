@@ -21,10 +21,10 @@ import (
 )
 
 func Test_Make_Message(t *testing.T) {
-	fromID := baseIDs.NewID("fromID")
-	classificationID := baseIDs.NewID("classificationID")
-	makerOwnableID := baseIDs.NewID("makerOwnableID")
-	takerOwnableID := baseIDs.NewID("takerOwnableID")
+	fromID := baseIDs.NewStringID("fromID")
+	classificationID := baseIDs.NewStringID("classificationID")
+	makerOwnableID := baseIDs.NewStringID("makerOwnableID")
+	takerOwnableID := baseIDs.NewStringID("takerOwnableID")
 	expiresIn := baseTypes.NewHeight(12)
 	makerOwnableSplit := sdkTypes.NewDec(2)
 	takerOwnableSplit, _ := sdkTypes.NewDecFromStr("2000000000000000000")

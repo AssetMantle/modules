@@ -14,16 +14,16 @@ import (
 )
 
 func Test_IDData(t *testing.T) {
-	idValue := baseIDs.NewID("ID")
+	idValue := baseIDs.NewStringID("ID")
 	testIDData := NewIDData(idValue)
-	testIDData2 := NewIDData(baseIDs.NewID(""))
+	testIDData2 := NewIDData(baseIDs.NewStringID(""))
 
 	require.Equal(t, "ID", testIDData.String())
-	require.Equal(t, baseIDs.NewID(string.Hash("ID")), testIDData.GenerateHash())
-	require.Equal(t, baseIDs.NewID(""), testIDData2.GenerateHash())
+	require.Equal(t, baseIDs.NewStringID(string.Hash("ID")), testIDData.GenerateHash())
+	require.Equal(t, baseIDs.NewStringID(""), testIDData2.GenerateHash())
 	require.Equal(t, constants.IDDataID, testIDData.GetType())
 
-	require.Equal(t, true, NewIDData(baseIDs.NewID("identity2")).Compare(NewIDData(baseIDs.NewID("identity2"))) == 0)
+	require.Equal(t, true, NewIDData(baseIDs.NewStringID("identity2")).Compare(NewIDData(baseIDs.NewStringID("identity2"))) == 0)
 
 	require.Panics(t, func() {
 		require.Equal(t, false, testIDData.Compare(NewStringData("")) == 0)

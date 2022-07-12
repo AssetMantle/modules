@@ -13,7 +13,7 @@ import (
 )
 
 func Test_Define_Response(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
+	classificationID := baseIDs.NewStringID("classificationID")
 
 	testAuxiliaryResponse := newAuxiliaryResponse(classificationID, nil)
 	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, ClassificationID: classificationID}, testAuxiliaryResponse)

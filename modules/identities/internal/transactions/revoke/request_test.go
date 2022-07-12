@@ -60,7 +60,7 @@ func Test_Revoke_Request(t *testing.T) {
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
 	msg, err := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, baseIDs.NewID("fromID"), baseIDs.NewID("toID"), baseIDs.NewID("classificationID")), msg)
+	require.Equal(t, newMessage(fromAccAddress, baseIDs.NewStringID("fromID"), baseIDs.NewStringID("toID"), baseIDs.NewStringID("classificationID")), msg)
 	require.Nil(t, err)
 
 	msg2, err := newTransactionRequest(rest.BaseReq{From: "randomString", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "toID", "classificationID").MakeMsg()

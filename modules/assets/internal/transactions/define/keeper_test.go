@@ -105,7 +105,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, err)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
-	defaultIdentityID := baseIDs.NewID("fromIdentityID")
+	defaultIdentityID := baseIDs.NewStringID("fromIdentityID")
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		t.Parallel()

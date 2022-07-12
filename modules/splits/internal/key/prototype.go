@@ -9,5 +9,5 @@ import (
 )
 
 func Prototype() helpers.Key {
-	return splitIDFromInterface(baseIDs.NewID(""))
+	return splitIDFromInterface(baseIDs.NewStringID(""))
 }

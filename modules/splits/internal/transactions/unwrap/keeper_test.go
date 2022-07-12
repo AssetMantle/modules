@@ -98,8 +98,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
-	ownableID := baseIDs.NewID("stake")
-	fromID := baseIDs.NewID("fromID")
+	ownableID := baseIDs.NewStringID("stake")
+	fromID := baseIDs.NewStringID("fromID")
 	coins := func(amount int64) sdkTypes.Coins {
 		return sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(amount)))
 	}
@@ -154,7 +154,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase-Value Not found", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(constants.EntityNotFound)
-		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, baseIDs.NewID("id"), ownableID, sdkTypes.NewInt(10))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Transact(context, newMessage(defaultAddr, baseIDs.NewStringID("id"), ownableID, sdkTypes.NewInt(10))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

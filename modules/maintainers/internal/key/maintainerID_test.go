@@ -13,22 +13,22 @@ import (
 )
 
 func Test_MaintainerID_Methods(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
-	identityID := baseIDs.NewID("identityID")
+	classificationID := baseIDs.NewStringID("classificationID")
+	identityID := baseIDs.NewStringID("identityID")
 
 	testMaintainerID := NewMaintainerID(classificationID, identityID).(maintainerID)
 	require.NotPanics(t, func() {
 		require.Equal(t, maintainerID{ClassificationID: classificationID, IdentityID: identityID}, testMaintainerID)
 		require.Equal(t, strings.Join([]string{classificationID.String(), identityID.String()}, "."), testMaintainerID.String())
 		require.Equal(t, false, testMaintainerID.IsPartial())
-		require.Equal(t, true, maintainerID{ClassificationID: baseIDs.NewID(""), IdentityID: baseIDs.NewID("")}.IsPartial())
+		require.Equal(t, true, maintainerID{ClassificationID: baseIDs.NewStringID(""), IdentityID: baseIDs.NewStringID("")}.IsPartial())
 		require.Equal(t, true, testMaintainerID.Equals(testMaintainerID))
-		require.Equal(t, false, testMaintainerID.Equals(maintainerID{ClassificationID: baseIDs.NewID(""), IdentityID: baseIDs.NewID("")}))
+		require.Equal(t, false, testMaintainerID.Equals(maintainerID{ClassificationID: baseIDs.NewStringID(""), IdentityID: baseIDs.NewStringID("")}))
 		require.Equal(t, true, testMaintainerID.Equals(testMaintainerID))
-		require.Equal(t, false, testMaintainerID.Equals(maintainerID{ClassificationID: baseIDs.NewID(""), IdentityID: baseIDs.NewID("")}))
+		require.Equal(t, false, testMaintainerID.Equals(maintainerID{ClassificationID: baseIDs.NewStringID(""), IdentityID: baseIDs.NewStringID("")}))
 		require.Equal(t, false, testMaintainerID.Equals(nil))
 		require.Equal(t, testMaintainerID, FromID(testMaintainerID))
-		require.Equal(t, maintainerID{ClassificationID: baseIDs.NewID(""), IdentityID: baseIDs.NewID("")}, FromID(baseIDs.NewID("")))
+		require.Equal(t, maintainerID{ClassificationID: baseIDs.NewStringID(""), IdentityID: baseIDs.NewStringID("")}, FromID(baseIDs.NewStringID("")))
 		require.Equal(t, testMaintainerID, readMaintainerID(testMaintainerID.String()))
 	})
 

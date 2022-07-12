@@ -100,14 +100,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, err)
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultAddr := sdkTypes.AccAddress("addr")
-	defaultIdentityID := baseIDs.NewID("fromID")
-	classificationID := baseIDs.NewID("classificationID")
-	makerOwnableID := baseIDs.NewID("makerOwnableID")
-	rateID := baseIDs.NewID(sdkTypes.OneDec().String())
+	defaultIdentityID := baseIDs.NewStringID("fromID")
+	classificationID := baseIDs.NewStringID("classificationID")
+	makerOwnableID := baseIDs.NewStringID("makerOwnableID")
+	rateID := baseIDs.NewStringID(sdkTypes.OneDec().String())
 	updatedRate := sdkTypes.MustNewDecFromStr("0.002")
-	creationID := baseIDs.NewID("100")
-	// makerID := baseIDs.NewID("makerID")
-	takerOwnableID := baseIDs.NewID("takerOwnableID")
+	creationID := baseIDs.NewStringID("100")
+	// makerID := baseIDs.NewStringID("makerID")
+	takerOwnableID := baseIDs.NewStringID("takerOwnableID")
 	makerOwnableSplit := sdkTypes.SmallestDec().MulInt64(2)
 	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, defaultIdentityID, immutableProperties)
 	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, immutableProperties, mutableProperties))
@@ -133,7 +133,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase Modifying Order - Order not found", func(t *testing.T) {
 		want := newTransactionResponse(constants.EntityNotFound)
-		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewID("orderID"),
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewStringID("orderID"),
 			updatedRate, makerOwnableSplit, baseTypes.NewHeight(100),
 			base.NewMetaProperties(), mutablePropertiesUpdated.ToPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
@@ -150,7 +150,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		}
 	})
 
-	orderID = key.NewOrderID(classificationID, baseIDs.NewID("transferError"), takerOwnableID, rateID, creationID, defaultIdentityID, immutableProperties)
+	orderID = key.NewOrderID(classificationID, baseIDs.NewStringID("transferError"), takerOwnableID, rateID, creationID, defaultIdentityID, immutableProperties)
 	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, immutableProperties, mutableProperties))
 	t.Run("NegativeCase Modifying Order - transferError", func(t *testing.T) {
 		want := newTransactionResponse(constants.MockError)

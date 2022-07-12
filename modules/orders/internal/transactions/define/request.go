@@ -92,7 +92,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 
 	return newMessage(
 		from,
-		baseIDs.NewID(transactionRequest.FromID),
+		baseIDs.NewStringID(transactionRequest.FromID),
 		immutableMetaProperties,
 		immutableProperties,
 		mutableMetaProperties,

@@ -30,7 +30,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(constants.EntityAlreadyExists)
 	}
 
-	if message.Data.GenerateHash().Compare(baseIDs.NewID("")) != 0 {
+	if message.Data.GenerateHash().Compare(baseIDs.NewStringID("")) != 0 {
 		metas.Add(mappable.NewMeta(message.Data))
 	}
 

@@ -49,10 +49,10 @@ func (decData decData) ZeroValue() data.Data {
 }
 func (decData decData) GenerateHash() ids.ID {
 	if decData.Compare(decData.ZeroValue()) == 0 {
-		return baseIDs.NewID("")
+		return baseIDs.NewStringID("")
 	}
 
-	return baseIDs.NewID(stringUtilities.Hash(decData.Value.String()))
+	return baseIDs.NewStringID(stringUtilities.Hash(decData.Value.String()))
 }
 func (decData decData) Get() sdkTypes.Dec {
 	return decData.Value

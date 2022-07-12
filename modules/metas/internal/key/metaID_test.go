@@ -12,19 +12,19 @@ import (
 )
 
 func Test_MetaID_Methods(t *testing.T) {
-	typeID := baseIDs.NewID("I")
-	hashID := baseIDs.NewID("hashID")
+	typeID := baseIDs.NewStringID("I")
+	hashID := baseIDs.NewStringID("hashID")
 	testMetaID := NewMetaID(typeID, hashID).(metaID)
 
 	require.NotPanics(t, func() {
 		require.Equal(t, typeID.String()+"."+hashID.String(), testMetaID.String())
 		require.Equal(t, true, testMetaID.Equals(testMetaID))
-		require.Equal(t, false, testMetaID.Equals(metaID{TypeID: baseIDs.NewID("tempID"), HashID: baseIDs.NewID("tempHash")}))
+		require.Equal(t, false, testMetaID.Equals(metaID{TypeID: baseIDs.NewStringID("tempID"), HashID: baseIDs.NewStringID("tempHash")}))
 		require.Equal(t, false, testMetaID.IsPartial())
-		require.Equal(t, true, metaID{HashID: baseIDs.NewID("")}.IsPartial())
+		require.Equal(t, true, metaID{HashID: baseIDs.NewStringID("")}.IsPartial())
 		require.Equal(t, true, testMetaID.Equals(testMetaID))
 		require.Equal(t, false, testMetaID.Equals(nil))
 		require.Equal(t, testMetaID, FromID(testMetaID))
-		require.Equal(t, NewMetaID(baseIDs.NewID(""), baseIDs.NewID("")), FromID(baseIDs.NewID("")))
+		require.Equal(t, NewMetaID(baseIDs.NewStringID(""), baseIDs.NewStringID("")), FromID(baseIDs.NewStringID("")))
 	})
 }

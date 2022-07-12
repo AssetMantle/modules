@@ -22,7 +22,6 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
 )
 
@@ -69,10 +68,9 @@ func Test_Query_Keeper_Classification(t *testing.T) {
 	require.Equal(t, nil, err)
 	mutableProperties, Error2 := utilities.ReadProperties("burn:S|100")
 	require.Equal(t, nil, Error2)
-	chainID := baseIDs.NewID("ChainID")
 
-	classificationID := key.NewClassificationID(chainID, immutableProperties, mutableProperties)
-	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewClassification(classificationID, immutableProperties, mutableProperties))
+	classificationID := key.NewClassificationID(immutableProperties, mutableProperties)
+	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewClassification(immutableProperties, mutableProperties))
 
 	testQueryRequest := newQueryRequest(classificationID)
 	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.FromID(classificationID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))

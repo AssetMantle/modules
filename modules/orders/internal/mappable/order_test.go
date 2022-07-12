@@ -13,7 +13,7 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	base2 "github.com/AssetMantle/modules/schema/properties/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
@@ -21,24 +21,24 @@ import (
 
 func Test_Order_Methods(t *testing.T) {
 
-	classificationID := baseIDs.NewID("classificationID")
-	makerOwnableID := baseIDs.NewID("makerOwnableID")
-	takerOwnableID := baseIDs.NewID("takerOwnableID")
-	makerID := baseIDs.NewID("makerID")
-	rateID := baseIDs.NewID(sdkTypes.OneDec().String())
-	creationID := baseIDs.NewID("100")
+	classificationID := baseIDs.NewStringID("classificationID")
+	makerOwnableID := baseIDs.NewStringID("makerOwnableID")
+	takerOwnableID := baseIDs.NewStringID("takerOwnableID")
+	makerID := baseIDs.NewStringID("makerID")
+	rateID := baseIDs.NewStringID(sdkTypes.OneDec().String())
+	creationID := baseIDs.NewStringID("100")
 
-	takerIDImmutableProperty := base2.NewProperty(constants.TakerIDProperty, baseData.NewStringData("takerIDImmutableProperty"))
-	exchangeRateImmutableProperty := base2.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec()))
-	creationImmutableProperty := base2.NewMetaProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(100)))
-	expiryImmutableProperty := base2.NewProperty(constants.ExpiryProperty, baseData.NewStringData("expiryImmutableProperty"))
-	makerOwnableSplitImmutableProperty := base2.NewProperty(constants.MakerOwnableSplitProperty, baseData.NewStringData("makerOwnableSplitImmutableProperty"))
+	takerIDImmutableProperty := baseProperties.NewProperty(constants.TakerIDProperty, baseData.NewStringData("takerIDImmutableProperty"))
+	exchangeRateImmutableProperty := baseProperties.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(sdkTypes.OneDec()))
+	creationImmutableProperty := baseProperties.NewMetaProperty(constants.CreationProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(100)))
+	expiryImmutableProperty := baseProperties.NewProperty(constants.ExpiryProperty, baseData.NewStringData("expiryImmutableProperty"))
+	makerOwnableSplitImmutableProperty := baseProperties.NewProperty(constants.MakerOwnableSplitProperty, baseData.NewStringData("makerOwnableSplitImmutableProperty"))
 
-	takerIDMutableProperty := base2.NewProperty(constants.TakerIDProperty, baseData.NewStringData("takerIDMutableProperty"))
-	exchangeRateMutableProperty := base2.NewProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec()))
-	creationMutableProperty := base2.NewProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(100)))
-	expiryMutableProperty := base2.NewProperty(constants.ExpiryProperty, baseData.NewStringData("expiryMutableProperty"))
-	makerOwnableSplitMutableProperty := base2.NewProperty(constants.MakerOwnableSplitProperty, baseData.NewStringData("makerOwnableSplitMutableProperty"))
+	takerIDMutableProperty := baseProperties.NewProperty(constants.TakerIDProperty, baseData.NewStringData("takerIDMutableProperty"))
+	exchangeRateMutableProperty := baseProperties.NewProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec()))
+	creationMutableProperty := baseProperties.NewProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(100)))
+	expiryMutableProperty := baseProperties.NewProperty(constants.ExpiryProperty, baseData.NewStringData("expiryMutableProperty"))
+	makerOwnableSplitMutableProperty := baseProperties.NewProperty(constants.MakerOwnableSplitProperty, baseData.NewStringData("makerOwnableSplitMutableProperty"))
 
 	immutableProperties := base.NewPropertyList(takerIDImmutableProperty, exchangeRateImmutableProperty.RemoveData(), creationImmutableProperty.RemoveData(), expiryImmutableProperty, makerOwnableSplitImmutableProperty)
 	mutableProperties := base.NewPropertyList(takerIDMutableProperty, exchangeRateMutableProperty, creationMutableProperty, expiryMutableProperty, makerOwnableSplitMutableProperty)

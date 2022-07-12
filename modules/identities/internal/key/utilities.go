@@ -14,12 +14,12 @@ func readIdentityID(identityIDString string) ids.ID {
 	idList := stringUtilities.SplitCompositeIDString(identityIDString)
 	if len(idList) == 2 {
 		return identityID{
-			ClassificationID: baseIDs.NewID(idList[0]),
-			HashID:           baseIDs.NewID(idList[1]),
+			ClassificationID: baseIDs.NewStringID(idList[0]),
+			HashID:           baseIDs.NewStringID(idList[1]),
 		}
 	}
 
-	return identityID{ClassificationID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}
+	return identityID{ClassificationID: baseIDs.NewStringID(""), HashID: baseIDs.NewStringID("")}
 }
 
 func identityIDFromInterface(i interface{}) identityID {

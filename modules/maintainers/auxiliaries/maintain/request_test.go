@@ -15,9 +15,9 @@ import (
 )
 
 func Test_Maintain_Request(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
-	identityID := baseIDs.NewID("identityID")
-	mutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("Data1")))
+	classificationID := baseIDs.NewStringID("classificationID")
+	identityID := baseIDs.NewStringID("identityID")
+	mutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1")))
 
 	testAuxiliaryRequest := NewAuxiliaryRequest(classificationID, identityID, mutableProperties)
 

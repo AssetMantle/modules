@@ -89,11 +89,11 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, err)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
-	defaultIdentityID := baseIDs.NewID("fromIdentityID")
-	classificationID := baseIDs.NewID("ClassificationID")
+	defaultIdentityID := baseIDs.NewStringID("fromIdentityID")
+	classificationID := baseIDs.NewStringID("ClassificationID")
 	assetID := key.NewAssetID(classificationID, immutableProperties)
-	assetID2 := key.NewAssetID(baseIDs.NewID("ClassificationID2"), immutableProperties)
-	assetID3 := key.NewAssetID(baseIDs.NewID("ClassificationID3"), immutableProperties)
+	assetID2 := key.NewAssetID(baseIDs.NewStringID("ClassificationID2"), immutableProperties)
+	assetID3 := key.NewAssetID(baseIDs.NewStringID("ClassificationID3"), immutableProperties)
 	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID, immutableProperties, mutableProperties))
 	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID2, immutableProperties, supplementError.ToPropertyList()))
 	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID3, immutableProperties, mutableProperties))
@@ -121,7 +121,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(constants.EntityNotFound)
 		require.NotPanics(t, func() {
-			if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewID(""))); !reflect.DeepEqual(got, want) {
+			if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewStringID(""))); !reflect.DeepEqual(got, want) {
 				t.Errorf("Transact() = %v, want %v", got, want)
 			}
 		})

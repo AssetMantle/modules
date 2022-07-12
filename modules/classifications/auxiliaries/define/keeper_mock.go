@@ -19,16 +19,16 @@ type auxiliaryKeeperMock struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeperMock) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
 	if len(auxiliaryRequest.ImmutableProperties.GetList())+len(auxiliaryRequest.MutableProperties.GetList()) > module.MaxPropertyCount {
 		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 	}
 
-	classificationID := key.NewClassificationID(baseIDs.NewID(context.ChainID()), auxiliaryRequest.ImmutableProperties, auxiliaryRequest.MutableProperties)
+	classificationID := key.NewClassificationID(auxiliaryRequest.ImmutableProperties, auxiliaryRequest.MutableProperties)
 
-	return newAuxiliaryResponse(baseIDs.NewID(classificationID.String()), nil)
+	return newAuxiliaryResponse(baseIDs.NewStringID(classificationID.String()), nil)
 }
 
 func (auxiliaryKeeperMock) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

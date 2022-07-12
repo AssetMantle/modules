@@ -55,7 +55,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
-	authenticationProperty := baseProperties.NewMetaProperty(constants.AuthenticationProperty, baseData.NewListData(base.NewDataList(baseData.NewAccAddressData(message.To))))
+	authenticationProperty := baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(base.NewDataList(baseData.NewAccAddressData(message.To))))
 	updatedMutableMetaProperties := append(message.MutableMetaProperties.GetList(), authenticationProperty)
 
 	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(updatedMutableMetaProperties...)))

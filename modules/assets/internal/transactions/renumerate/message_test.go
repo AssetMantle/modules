@@ -15,8 +15,8 @@ import (
 )
 
 func Test_Renumerate_Message(t *testing.T) {
-	testAssetID := baseIDs.NewID("assetID")
-	testFromID := baseIDs.NewID("fromID")
+	testAssetID := baseIDs.NewStringID("assetID")
+	testFromID := baseIDs.NewStringID("fromID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

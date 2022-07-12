@@ -31,13 +31,13 @@ var auxiliariesPrototype = func() helpers.Auxiliaries {
 var genesisPrototype = func() helpers.Genesis {
 	return NewGenesis(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype,
 		[]helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")},
-		[]parameters2.Parameter{baseTypes.NewParameter(baseIDs.NewID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })})
+		[]parameters2.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })})
 }
 var mapperPrototype = func() helpers.Mapper {
 	return NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype)
 }
 var parametersPrototype = func() helpers.Parameters {
-	return NewParameters(baseTypes.NewParameter(baseIDs.NewID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil }))
+	return NewParameters(baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil }))
 }
 var queriesPrototype = func() helpers.Queries {
 	return queries{[]helpers.Query{NewQuery("testQuery", "q", "testQuery", "test", baseTestUtilities.TestQueryRequestPrototype,

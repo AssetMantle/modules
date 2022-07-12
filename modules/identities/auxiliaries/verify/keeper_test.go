@@ -77,7 +77,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	defaultAddr := sdkTypes.AccAddress("addr")
 	unprovisionedAddr := sdkTypes.AccAddress("unProvisionedAddr")
 	immutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
-	defaultClassificationID := baseIDs.NewID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
+	defaultClassificationID := baseIDs.NewStringID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
 	defaultIdentityID := key.NewIdentityID(defaultClassificationID, immutableProperties)
 	keepers.IdentitiesKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(defaultIdentityID, baseLists.NewPropertyList(), baseLists.NewPropertyList()))
 
@@ -93,7 +93,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Nil Identity", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(constants.EntityNotFound)
-		if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(defaultAddr, baseIDs.NewID("id"))); !reflect.DeepEqual(got, want) {
+		if got := keepers.IdentitiesKeeper.Help(context, NewAuxiliaryRequest(defaultAddr, baseIDs.NewStringID("id"))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

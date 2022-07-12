@@ -70,8 +70,8 @@ func Test_Query_Keeper_Maintainer(t *testing.T) {
 	mutableProperties, err := utilities.ReadProperties("burn:S|100")
 	require.Equal(t, nil, err)
 
-	identityID := baseIDs.NewID("identityID")
-	classificationID := baseIDs.NewID("classificationID")
+	identityID := baseIDs.NewStringID("identityID")
+	classificationID := baseIDs.NewStringID("classificationID")
 	maintainerID := key.NewMaintainerID(classificationID, identityID)
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, immutableProperties, mutableProperties))
 

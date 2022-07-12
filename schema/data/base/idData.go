@@ -39,10 +39,10 @@ func (idData idData) GetType() ids.ID {
 	return dataConstants.IDDataID
 }
 func (idData idData) ZeroValue() data.Data {
-	return NewIDData(baseIDs.NewID(""))
+	return NewIDData(baseIDs.NewStringID(""))
 }
 func (idData idData) GenerateHash() ids.ID {
-	return baseIDs.NewID(stringUtilities.Hash(idData.Value.String()))
+	return baseIDs.NewStringID(stringUtilities.Hash(idData.Value.String()))
 }
 func (idData idData) Get() ids.ID {
 	return idData.Value

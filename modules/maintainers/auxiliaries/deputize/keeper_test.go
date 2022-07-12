@@ -73,9 +73,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	classificationID := baseIDs.NewID("classificationID")
-	identityID := baseIDs.NewID("identityID")
-	toID := baseIDs.NewID("toID")
+	classificationID := baseIDs.NewStringID("classificationID")
+	identityID := baseIDs.NewStringID("identityID")
+	toID := baseIDs.NewStringID("toID")
 	immutableProperties := baseLists.NewPropertyList()
 	mutableProperties := baseLists.NewPropertyList()
 	maintainerID := key.NewMaintainerID(classificationID, identityID)

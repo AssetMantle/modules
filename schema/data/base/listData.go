@@ -62,7 +62,7 @@ func (listData listData) ZeroValue() data.Data {
 }
 func (listData listData) GenerateHash() ids.ID {
 	if listData.Value.Size() == 0 {
-		return baseIDs.NewID("")
+		return baseIDs.NewStringID("")
 	}
 
 	hashList := make([]string, listData.Value.Size())
@@ -71,7 +71,7 @@ func (listData listData) GenerateHash() ids.ID {
 		hashList[i] = datum.GenerateHash().String()
 	}
 
-	return baseIDs.NewID(stringUtilities.Hash(hashList...))
+	return baseIDs.NewStringID(stringUtilities.Hash(hashList...))
 }
 func listDataFromInterface(listable traits.Listable) (listData, error) {
 	switch value := listable.(type) {

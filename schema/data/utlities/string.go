@@ -65,7 +65,7 @@ func readHeightData(dataString string) (data.Data, error) {
 	return base.NewHeightData(baseTypes.NewHeight(height)), nil
 }
 func readIDData(idData string) (data.Data, error) {
-	return base.NewIDData(baseIDs.NewID(idData)), nil
+	return base.NewIDData(baseIDs.NewStringID(idData)), nil
 }
 func readListData(dataString string) (data.Data, error) {
 	if dataString == "" {
@@ -109,7 +109,7 @@ func ReadData(dataString string) (data.Data, error) {
 
 		var err error
 
-		switch baseIDs.NewID(dataTypeString) {
+		switch baseIDs.NewStringID(dataTypeString) {
 		case dataConstants.AccAddressDataID:
 			Data, err = readAccAddressData(dataValueString)
 		case dataConstants.BooleanDataID:

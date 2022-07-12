@@ -15,28 +15,28 @@ import (
 )
 
 func TestFromID(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
-	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	classificationID := baseIDs.NewStringID("classificationID")
+	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 	newAssetID := NewAssetID(classificationID, immutableProperties)
 
 	assetID1, err := assetIDFromInterface(newAssetID)
 	require.Equal(t, assetID1, FromID(newAssetID))
 	require.Equal(t, nil, err)
 
-	id := baseIDs.NewID("")
-	testAssetID := assetID{ClassificationID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}
+	id := baseIDs.NewStringID("")
+	testAssetID := assetID{ClassificationID: baseIDs.NewStringID(""), Hash: baseIDs.NewStringID("")}
 	require.Equal(t, FromID(id), testAssetID)
 
 	testString1 := "string1"
 	testString2 := "stringUtilities"
-	id2 := baseIDs.NewID(testString1 + "" + testString2)
-	testAssetID2 := assetID{ClassificationID: baseIDs.NewID(testString1), HashID: baseIDs.NewID(testString2)}
+	id2 := baseIDs.NewStringID(testString1 + "" + testString2)
+	testAssetID2 := assetID{ClassificationID: baseIDs.NewStringID(testString1), Hash: baseIDs.NewStringID(testString2)}
 	require.Equal(t, FromID(id2), testAssetID2)
 }
 
 func TestReadClassificationID(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
-	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	classificationID := baseIDs.NewStringID("classificationID")
+	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 	assetID1 := NewAssetID(classificationID, immutableProperties)
 
 	assetID2, err := assetIDFromInterface(assetID1)

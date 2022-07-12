@@ -97,13 +97,13 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
-	defaultIdentityID := baseIDs.NewID("fromIdentityID")
-	quashMockErrorIdentity := baseIDs.NewID("quashError")
-	classificationID := baseIDs.NewID("ClassificationID")
+	defaultIdentityID := baseIDs.NewStringID("fromIdentityID")
+	quashMockErrorIdentity := baseIDs.NewStringID("quashError")
+	classificationID := baseIDs.NewStringID("ClassificationID")
 
 	identityID := key.NewIdentityID(classificationID, immutableProperties)
-	identityID2 := key.NewIdentityID(baseIDs.NewID("ClassificationID2"), immutableProperties)
-	identityID3 := key.NewIdentityID(baseIDs.NewID("ClassificationID3"), immutableProperties)
+	identityID2 := key.NewIdentityID(baseIDs.NewStringID("ClassificationID2"), immutableProperties)
+	identityID3 := key.NewIdentityID(baseIDs.NewStringID("ClassificationID3"), immutableProperties)
 
 	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewIdentity(identityID, immutableProperties, mutableProperties))
 	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewIdentity(identityID2, immutableProperties, supplementError.ToPropertyList()))
@@ -127,7 +127,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - unMinted identity", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(constants.EntityNotFound)
-		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewID(""))); !reflect.DeepEqual(got, want) {
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewStringID(""))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

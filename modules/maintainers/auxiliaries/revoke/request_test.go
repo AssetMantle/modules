@@ -12,8 +12,8 @@ import (
 )
 
 func Test_Revoke_Request(t *testing.T) {
-	identityID := baseIDs.NewID("identityID")
-	classificationID := baseIDs.NewID("classificationID")
+	identityID := baseIDs.NewStringID("identityID")
+	classificationID := baseIDs.NewStringID("classificationID")
 	testAuxiliaryRequest := NewAuxiliaryRequest(identityID, identityID, classificationID)
 
 	require.Equal(t, auxiliaryRequest{

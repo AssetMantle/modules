@@ -15,7 +15,7 @@ import (
 
 func Test_IdentityID_Methods(t *testing.T) {
 
-	classificationID := baseIDs.NewID("classificationID")
+	classificationID := baseIDs.NewStringID("classificationID")
 	immutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	emptyImmutableProperties, _ := utilities.ReadProperties("")
 	testIdentityID := NewIdentityID(classificationID, immutableProperties)
@@ -29,11 +29,11 @@ func Test_IdentityID_Methods(t *testing.T) {
 		require.Equal(t, true, testIdentityID2.(identityID).IsPartial())
 		require.Equal(t, false, testIdentityID2.(identityID).Compare(testIdentityID) == 0)
 		require.Equal(t, true, testIdentityID.(identityID).Equals(key))
-		require.Equal(t, false, testIdentityID.(identityID).Equals(FromID(baseIDs.NewID("id"))))
+		require.Equal(t, false, testIdentityID.(identityID).Equals(FromID(baseIDs.NewStringID("id"))))
 		require.Equal(t, false, testIdentityID.(identityID).Equals(nil))
 		require.Equal(t, testIdentityID.(identityID).Bytes(), append(classificationID.Bytes(), baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID().Bytes()...))
 		require.Equal(t, readIdentityID(testIdentityID.(identityID).String()), testIdentityID)
 		require.Equal(t, identityIDFromInterface(testIdentityID.(identityID)), testIdentityID.(identityID))
-		require.Equal(t, identityIDFromInterface(baseIDs.NewID("id")), identityID{ClassificationID: baseIDs.NewID(""), HashID: baseIDs.NewID("")})
+		require.Equal(t, identityIDFromInterface(baseIDs.NewStringID("id")), identityID{ClassificationID: baseIDs.NewStringID(""), HashID: baseIDs.NewStringID("")})
 	})
 }

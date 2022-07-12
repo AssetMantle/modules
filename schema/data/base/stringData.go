@@ -42,7 +42,7 @@ func (stringData stringData) ZeroValue() data.Data {
 	return NewStringData("")
 }
 func (stringData stringData) GenerateHash() ids.ID {
-	return baseIDs.NewID(stringUtilities.Hash(stringData.Value))
+	return baseIDs.NewStringID(stringUtilities.Hash(stringData.Value))
 }
 func (stringData stringData) Get() string {
 	return stringData.Value

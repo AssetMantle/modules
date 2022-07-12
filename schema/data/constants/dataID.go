@@ -9,11 +9,11 @@ import (
 
 // TODO use enum
 var (
-	AccAddressDataID = baseIDs.NewID("A")
-	BooleanDataID    = baseIDs.NewID("B")
-	DecDataID        = baseIDs.NewID("D")
-	HeightDataID     = baseIDs.NewID("H")
-	IDDataID         = baseIDs.NewID("I")
-	ListDataID       = baseIDs.NewID("L")
-	StringDataID     = baseIDs.NewID("S")
+	AccAddressDataID = baseIDs.NewStringID("A")
+	BooleanDataID    = baseIDs.NewStringID("B")
+	DecDataID        = baseIDs.NewStringID("D")
+	HeightDataID     = baseIDs.NewStringID("H")
+	IDDataID         = baseIDs.NewStringID("I")
+	ListDataID       = baseIDs.NewStringID("L")
+	StringDataID     = baseIDs.NewStringID("S")
 )

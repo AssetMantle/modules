@@ -94,7 +94,7 @@ func Test_Mint_Request(t *testing.T) {
 
 	var msg sdkTypes.Msg
 	msg, err = testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, toAccAddress, baseIDs.NewID("fromID"), baseIDs.NewID("classificationID"), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
+	require.Equal(t, newMessage(fromAccAddress, toAccAddress, baseIDs.NewStringID("fromID"), baseIDs.NewStringID("classificationID"), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
 	require.Nil(t, err)
 
 	msg, err = newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()

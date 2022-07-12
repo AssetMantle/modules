@@ -90,12 +90,12 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultAddr := sdkTypes.AccAddress("addr")
-	defaultIdentityID := baseIDs.NewID("fromID")
-	classificationID := baseIDs.NewID("classificationID")
-	makerOwnableID := baseIDs.NewID("makerOwnableID")
-	takerOwnableID := baseIDs.NewID("takerOwnableID")
-	rateID := baseIDs.NewID(sdkTypes.OneDec().MulInt64(2).Quo(sdkTypes.SmallestDec()).Quo(sdkTypes.SmallestDec()).String())
-	creationID := baseIDs.NewID("100")
+	defaultIdentityID := baseIDs.NewStringID("fromID")
+	classificationID := baseIDs.NewStringID("classificationID")
+	makerOwnableID := baseIDs.NewStringID("makerOwnableID")
+	takerOwnableID := baseIDs.NewStringID("takerOwnableID")
+	rateID := baseIDs.NewStringID(sdkTypes.OneDec().MulInt64(2).Quo(sdkTypes.SmallestDec()).Quo(sdkTypes.SmallestDec()).String())
+	creationID := baseIDs.NewStringID("100")
 	orderID := key.NewOrderID(classificationID, makerOwnableID,
 		takerOwnableID, rateID, creationID, defaultIdentityID, base.NewPropertyList())
 	metaProperties, err := utilities.ReadMetaPropertyList(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
@@ -130,7 +130,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 		want := newTransactionResponse(errorConstants.EntityNotFound)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, sdkTypes.SmallestDec(),
-			baseIDs.NewID("orderID"))); !reflect.DeepEqual(got, want) {
+			baseIDs.NewStringID("orderID"))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -138,7 +138,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - transfer mock fail", func(t *testing.T) {
 		t.Parallel()
 		transferErrorID := key.NewOrderID(classificationID, makerOwnableID,
-			baseIDs.NewID("transferError"), rateID, creationID, defaultIdentityID, base.NewPropertyList())
+			baseIDs.NewStringID("transferError"), rateID, creationID, defaultIdentityID, base.NewPropertyList())
 		metaProperties, err := utilities.ReadMetaPropertyList(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 			"," + constants.TakerIDProperty.String() + ":I|fromID")
 		require.Equal(t, nil, err)
@@ -154,7 +154,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - transfer mock fail", func(t *testing.T) {
 		t.Parallel()
-		transferErrorID := key.NewOrderID(classificationID, baseIDs.NewID("transferError"),
+		transferErrorID := key.NewOrderID(classificationID, baseIDs.NewStringID("transferError"),
 			takerOwnableID, rateID, creationID, defaultIdentityID, base.NewPropertyList())
 		metaProperties, err := utilities.ReadMetaPropertyList(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 			"," + constants.TakerIDProperty.String() + ":I|fromID" + "," +
@@ -173,7 +173,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - transfer mock fail", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(errorConstants.NotAuthorized)
-		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, baseIDs.NewID("id"), sdkTypes.SmallestDec(), orderID)); !reflect.DeepEqual(got, want) {
+		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, baseIDs.NewStringID("id"), sdkTypes.SmallestDec(), orderID)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

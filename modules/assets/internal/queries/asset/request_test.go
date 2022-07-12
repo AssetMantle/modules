@@ -34,8 +34,8 @@ func Test_Asset_Request(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
 
-	classificationID := baseIDs.NewID("classificationID")
-	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
+	classificationID := baseIDs.NewStringID("classificationID")
+	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 
 	testAssetID := key.NewAssetID(classificationID, immutableProperties)
 	testQueryRequest := newQueryRequest(testAssetID)
@@ -44,11 +44,11 @@ func Test_Asset_Request(t *testing.T) {
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
-	require.Equal(t, newQueryRequest(baseIDs.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
+	require.Equal(t, newQueryRequest(baseIDs.NewStringID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
 
 	vars := make(map[string]string)
 	vars["assets"] = "randomString"
-	require.Equal(t, newQueryRequest(baseIDs.NewID("randomString")), queryRequest{}.FromMap(vars))
+	require.Equal(t, newQueryRequest(baseIDs.NewStringID("randomString")), queryRequest{}.FromMap(vars))
 
 	encodedRequest, err := testQueryRequest.Encode()
 	require.Nil(t, err)
@@ -65,7 +65,7 @@ func Test_Asset_Request(t *testing.T) {
 
 	var randomDecode helpers.QueryRequest
 	// we expect to get an error here, so ignore it
-	randomDecode, _ = queryRequest{}.Decode(baseIDs.NewID("").Bytes())
+	randomDecode, _ = queryRequest{}.Decode(baseIDs.NewStringID("").Bytes())
 	require.Equal(t, nil, randomDecode)
 	require.Equal(t, testQueryRequest, queryRequestFromInterface(testQueryRequest))
 	require.Equal(t, queryRequest{}, queryRequestFromInterface(nil))

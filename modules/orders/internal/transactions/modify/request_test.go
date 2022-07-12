@@ -69,7 +69,7 @@ func Test_Define_Request(t *testing.T) {
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
 	msg, err := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, baseIDs.NewID("fromID"), baseIDs.NewID("orderID"), sdkTypes.OneDec(), sdkTypes.NewDec(1), baseTypes.NewHeight(123), mutableMetaProperties, mutableProperties), msg)
+	require.Equal(t, newMessage(fromAccAddress, baseIDs.NewStringID("fromID"), baseIDs.NewStringID("orderID"), sdkTypes.OneDec(), sdkTypes.NewDec(1), baseTypes.NewHeight(123), mutableMetaProperties, mutableProperties), msg)
 	require.Nil(t, err)
 
 	msg, err = newTransactionRequest(rest.BaseReq{From: "fromAddress", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "orderID", sdkTypes.OneDec().String(), "aa", 123, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()

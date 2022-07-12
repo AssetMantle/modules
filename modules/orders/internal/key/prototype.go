@@ -9,5 +9,5 @@ import (
 )
 
 func Prototype() helpers.Key {
-	return orderIDFromInterface(baseIDs.NewID(""))
+	return orderIDFromInterface(baseIDs.NewStringID(""))
 }

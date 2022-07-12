@@ -15,9 +15,9 @@ import (
 )
 
 func Test_Revoke_Message(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
-	testToID := baseIDs.NewID("toID")
-	testClassificationID := baseIDs.NewID("classificationID")
+	testFromID := baseIDs.NewStringID("fromID")
+	testToID := baseIDs.NewStringID("toID")
+	testClassificationID := baseIDs.NewStringID("classificationID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

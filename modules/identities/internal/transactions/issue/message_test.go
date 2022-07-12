@@ -17,8 +17,8 @@ import (
 )
 
 func Test_Issue_Message(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
-	testClassificationID := baseIDs.NewID("classificationID")
+	testFromID := baseIDs.NewStringID("fromID")
+	testClassificationID := baseIDs.NewStringID("classificationID")
 
 	const fromAddress = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

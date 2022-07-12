@@ -76,8 +76,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	classificationID := baseIDs.NewID("classificationID")
-	identityID := baseIDs.NewID("identityID")
+	classificationID := baseIDs.NewStringID("classificationID")
+	identityID := baseIDs.NewStringID("identityID")
 
 	maintainedProperties := base.NewPropertyList()
 	maintainerID := key.NewMaintainerID(classificationID, identityID)
@@ -93,7 +93,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Maintainer not present", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(constants.EntityNotFound)
-		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewID("classificationID1"), baseIDs.NewID("identityID1"), base.NewPropertyList())); !reflect.DeepEqual(got, want) {
+		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewStringID("classificationID1"), baseIDs.NewStringID("identityID1"), base.NewPropertyList())); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -101,7 +101,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Maintainer Unauthorized", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(constants.NotAuthorized)
-		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(classificationID, identityID, base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID"), baseData.NewStringData("Data"))))); !reflect.DeepEqual(got, want) {
+		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(classificationID, identityID, base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID"), baseData.NewStringData("Data"))))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

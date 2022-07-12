@@ -19,7 +19,7 @@ func ReadMetaProperty(metaPropertyString string) (properties.MetaProperty, error
 			return nil, err
 		}
 
-		return baseProperties.NewMetaProperty(baseIDs.NewID(propertyIDString), data), nil
+		return baseProperties.NewMetaProperty(baseIDs.NewStringID(propertyIDString), data), nil
 	}
 
 	return nil, errorConstants.IncorrectFormat

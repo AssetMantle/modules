@@ -13,7 +13,7 @@ import (
 )
 
 func Test_Verify_Request(t *testing.T) {
-	identityID := baseIDs.NewID("identityID")
+	identityID := baseIDs.NewStringID("identityID")
 	testAddress := sdkTypes.AccAddress("addr")
 	testAuxiliaryRequest := NewAuxiliaryRequest(testAddress, identityID)
 

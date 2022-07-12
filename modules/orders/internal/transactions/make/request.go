@@ -116,10 +116,10 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 
 	return newMessage(
 		from,
-		baseIDs.NewID(transactionRequest.FromID),
-		baseIDs.NewID(transactionRequest.ClassificationID),
-		baseIDs.NewID(transactionRequest.MakerOwnableID),
-		baseIDs.NewID(transactionRequest.TakerOwnableID),
+		baseIDs.NewStringID(transactionRequest.FromID),
+		baseIDs.NewStringID(transactionRequest.ClassificationID),
+		baseIDs.NewStringID(transactionRequest.MakerOwnableID),
+		baseIDs.NewStringID(transactionRequest.TakerOwnableID),
 		baseTypes.NewHeight(transactionRequest.ExpiresIn),
 		makerOwnableSplit,
 		takerOwnableSplit,

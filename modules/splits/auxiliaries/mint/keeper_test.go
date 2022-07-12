@@ -73,8 +73,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_Burn_Aux_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	ownerID := baseIDs.NewID("ownerID")
-	ownableID := baseIDs.NewID("ownableID")
+	ownerID := baseIDs.NewStringID("ownerID")
+	ownableID := baseIDs.NewStringID("ownableID")
 
 	defaultSplitID := key.NewSplitID(ownerID, ownableID)
 	splits := sdkTypes.NewDec(123)
@@ -90,7 +90,7 @@ func Test_Burn_Aux_Keeper_Help(t *testing.T) {
 
 	t.Run("PositiveCase - Mint 2nd Time", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewID("ownerID1"), baseIDs.NewID("ownableID1"), sdkTypes.NewDec(12))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewStringID("ownerID1"), baseIDs.NewStringID("ownableID1"), sdkTypes.NewDec(12))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

@@ -19,7 +19,7 @@ func validator(interface{}) error {
 
 func Test_Parameter(t *testing.T) {
 
-	id := baseIDs.NewID("ID")
+	id := baseIDs.NewStringID("ID")
 	data := base.NewStringData("Data")
 
 	testParameter := NewParameter(id, data, validator)

@@ -14,8 +14,8 @@ import (
 )
 
 type dataID struct {
-	Type ids.ID
-	Hash ids.ID
+	Type ids.StringID
+	Hash ids.StringID
 }
 
 var _ ids.DataID = (*dataID)(nil)
@@ -48,6 +48,7 @@ func dataIDFromInterface(i interface{}) (dataID, error) {
 		return dataID{}, errorConstants.MetaDataError
 	}
 }
+
 func NewDataID(data data.Data) ids.DataID {
 	return dataID{
 		Type: data.GetType(),

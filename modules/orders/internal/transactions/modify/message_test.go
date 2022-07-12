@@ -24,22 +24,22 @@ import (
 
 func Test_Make_Message(t *testing.T) {
 
-	fromID := baseIDs.NewID("fromID")
-	classificationID := baseIDs.NewID("classificationID")
-	makerOwnableID := baseIDs.NewID("makerOwnableID")
-	takerOwnableID := baseIDs.NewID("takerOwnableID")
+	fromID := baseIDs.NewStringID("fromID")
+	classificationID := baseIDs.NewStringID("classificationID")
+	makerOwnableID := baseIDs.NewStringID("makerOwnableID")
+	takerOwnableID := baseIDs.NewStringID("takerOwnableID")
 	expiresIn := baseTypes.NewHeight(12)
 	makerOwnableSplit := sdkTypes.NewDec(2)
-	makerID := baseIDs.NewID("makerID")
-	rateID := baseIDs.NewID("0.11")
-	creationId := baseIDs.NewID("100")
+	makerID := baseIDs.NewStringID("makerID")
+	rateID := baseIDs.NewStringID("0.11")
+	creationId := baseIDs.NewStringID("100")
 	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 	mutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 	mutableProperties, err := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
-	orderID := baseIDs.NewID(key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationId, makerID, immutableProperties).String())
+	orderID := baseIDs.NewStringID(key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationId, makerID, immutableProperties).String())
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

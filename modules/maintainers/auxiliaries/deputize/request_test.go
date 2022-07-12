@@ -15,9 +15,9 @@ import (
 )
 
 func Test_Deputize_Request(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
-	identityID := baseIDs.NewID("identityID")
-	maintainedProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("Data1")))
+	classificationID := baseIDs.NewStringID("classificationID")
+	identityID := baseIDs.NewStringID("identityID")
+	maintainedProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1")))
 
 	testAuxiliaryRequest := NewAuxiliaryRequest(identityID, identityID, classificationID, maintainedProperties, false, false, false)
 

@@ -13,9 +13,9 @@ import (
 )
 
 func Test_Transfer_Request(t *testing.T) {
-	fromID := baseIDs.NewID("fromID")
-	toID := baseIDs.NewID("toID")
-	ownableID := baseIDs.NewID("ownableID")
+	fromID := baseIDs.NewStringID("fromID")
+	toID := baseIDs.NewStringID("toID")
+	ownableID := baseIDs.NewStringID("ownableID")
 	splits := sdkTypes.NewDec(10)
 	testAuxiliaryRequest := NewAuxiliaryRequest(fromID, toID, ownableID, splits)
 

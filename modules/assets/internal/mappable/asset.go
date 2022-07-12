@@ -8,7 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
-	ids2 "github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
 	properties2 "github.com/AssetMantle/modules/schema/properties"
@@ -51,7 +51,8 @@ func (asset) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, asset{})
 }
 
-func NewAsset(id ids2.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Asset {
+// TODO remove assetID requirement
+func NewAsset(id ids.AssetID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Asset {
 	return asset{
 		Document: base.Document{
 			ID:               id,

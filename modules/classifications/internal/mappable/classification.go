@@ -8,7 +8,6 @@ import (
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
@@ -28,10 +27,11 @@ func (classification) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, classification{})
 }
 
-func NewClassification(id ids.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Classification {
+func NewClassification(immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Classification {
 	return classification{
 		Document: baseQualified.Document{
-			ID:         id,
+			ID: key.NewClassificationID(immutableProperties, mutableProperties),
+			// TODO Add classificationID
 			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
 			Mutables:   baseQualified.Mutables{Properties: mutableProperties},
 		},

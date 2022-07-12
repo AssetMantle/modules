@@ -74,11 +74,11 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_Burn_Aux_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	ownerID := baseIDs.NewID("ownerID")
-	ownableID := baseIDs.NewID("ownableID")
+	ownerID := baseIDs.NewStringID("ownerID")
+	ownableID := baseIDs.NewStringID("ownableID")
 
-	ownerID2 := baseIDs.NewID("ownerID2")
-	ownableID2 := baseIDs.NewID("ownableID2")
+	ownerID2 := baseIDs.NewStringID("ownerID2")
+	ownableID2 := baseIDs.NewStringID("ownableID2")
 
 	splitID := key.NewSplitID(ownerID, ownableID)
 	splitID2 := key.NewSplitID(ownerID2, ownableID2)
@@ -103,7 +103,7 @@ func Test_Burn_Aux_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Nil Value", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(constants.EntityNotFound)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewID("negativeTestOwner"), baseIDs.NewID("negativeTestOwnable"), sdkTypes.NewDec(-1))); !reflect.DeepEqual(got, want) {
+		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewStringID("negativeTestOwner"), baseIDs.NewStringID("negativeTestOwnable"), sdkTypes.NewDec(-1))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

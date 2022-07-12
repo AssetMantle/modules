@@ -76,7 +76,7 @@ func Test_Deputize_Request(t *testing.T) {
 
 	var msg sdkTypes.Msg
 	msg, err = testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, baseIDs.NewID("fromID"), baseIDs.NewID("toID"), baseIDs.NewID("classificationID"), maintainedProperties, false, false, false), msg)
+	require.Equal(t, newMessage(fromAccAddress, baseIDs.NewStringID("fromID"), baseIDs.NewStringID("toID"), baseIDs.NewStringID("classificationID"), maintainedProperties, false, false, false), msg)
 	require.Nil(t, err)
 
 	var msg2 sdkTypes.Msg

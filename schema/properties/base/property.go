@@ -55,7 +55,7 @@ func NewEmptyPropertyFromID(propertyID ids.PropertyID) properties.Property {
 		ID: propertyID,
 	}
 }
-func NewProperty(key ids.ID, data data.Data) properties.Property {
+func NewProperty(key ids.StringID, data data.Data) properties.Property {
 	return property{
 		ID:     baseIDs.NewPropertyID(key, data.GetType()),
 		DataID: data.GetID(),

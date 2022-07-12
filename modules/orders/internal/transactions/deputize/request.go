@@ -81,9 +81,9 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 
 	return newMessage(
 		from,
-		baseIDs.NewID(transactionRequest.FromID),
-		baseIDs.NewID(transactionRequest.ToID),
-		baseIDs.NewID(transactionRequest.ClassificationID),
+		baseIDs.NewStringID(transactionRequest.FromID),
+		baseIDs.NewStringID(transactionRequest.ToID),
+		baseIDs.NewStringID(transactionRequest.ClassificationID),
 		maintainedProperties,
 		transactionRequest.AddMaintainer,
 		transactionRequest.RemoveMaintainer,

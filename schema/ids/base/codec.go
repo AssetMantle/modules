@@ -11,6 +11,6 @@ import (
 
 func RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, dataID{})
-	codecUtilities.RegisterModuleConcrete(codec, id{})
+	codecUtilities.RegisterModuleConcrete(codec, stringID{})
 	codecUtilities.RegisterModuleConcrete(codec, propertyID{})
 }

@@ -20,10 +20,10 @@ import (
 
 func Test_Make_Message(t *testing.T) {
 
-	FromID := baseIDs.NewID("fromID")
-	classificationID := baseIDs.NewID("classificationID")
-	makerOwnableID := baseIDs.NewID("makerOwnableID")
-	takerOwnableID := baseIDs.NewID("takerOwnableID")
+	FromID := baseIDs.NewStringID("fromID")
+	classificationID := baseIDs.NewStringID("classificationID")
+	makerOwnableID := baseIDs.NewStringID("makerOwnableID")
+	takerOwnableID := baseIDs.NewStringID("takerOwnableID")
 	expiresIn := baseTypes.NewHeight(12)
 	makerOwnableSplit := sdkTypes.NewDec(2)
 	takerOwnableSplit := sdkTypes.NewDec(1)

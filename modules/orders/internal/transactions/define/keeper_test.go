@@ -101,10 +101,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, err)
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultAddr := sdkTypes.AccAddress("addr")
-	defaultIdentityID := baseIDs.NewID("fromID")
-	rateID := baseIDs.NewID(sdkTypes.OneDec().String())
-	creationID := baseIDs.NewID("0")
-	orderID := key.NewOrderID(baseIDs.NewID("classificationID"), baseIDs.NewID("makerOwnableID"), baseIDs.NewID("takerOwnableID"), rateID, creationID, defaultIdentityID, base.NewPropertyList())
+	defaultIdentityID := baseIDs.NewStringID("fromID")
+	rateID := baseIDs.NewStringID(sdkTypes.OneDec().String())
+	creationID := baseIDs.NewStringID("0")
+	orderID := key.NewOrderID(baseIDs.NewStringID("classificationID"), baseIDs.NewStringID("makerOwnableID"), baseIDs.NewStringID("takerOwnableID"), rateID, creationID, defaultIdentityID, base.NewPropertyList())
 	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewPropertyList(), base.NewPropertyList()))
 
 	t.Run("PositiveCase", func(t *testing.T) {

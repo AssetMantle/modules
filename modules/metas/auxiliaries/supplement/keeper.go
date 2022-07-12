@@ -31,7 +31,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	for _, property := range auxiliaryRequest.PropertyList {
 		var meta helpers.Mappable
 
-		if property.GetHash().Compare(baseIDs.NewID("")) == 0 {
+		if property.GetHash().Compare(baseIDs.NewStringID("")) == 0 {
 			meta = mappable.NewMeta(utlities.GetZeroValueDataFromID(property.GetType()))
 		} else {
 			metaID := key.NewMetaID(property.GetType(), property.GetHash())
@@ -40,7 +40,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		}
 
 		if meta != nil {
-			metaPropertyList = append(metaPropertyList, baseProperties.NewMetaProperty(property.GetID(), meta.(mappables.Meta).GetData()))
+			metaPropertyList = append(metaPropertyList, baseProperties.NewMetaProperty(property.GetKey(), meta.(mappables.Meta).GetData()))
 		}
 	}
 

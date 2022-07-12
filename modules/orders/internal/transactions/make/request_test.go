@@ -75,7 +75,7 @@ func Test_Define_Request(t *testing.T) {
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
 	msg, err := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, baseIDs.NewID("fromID"), baseIDs.NewID("classificationID"), baseIDs.NewID("makerOwnableID"), baseIDs.NewID("takerOwnableID"), baseTypes.NewHeight(123), sdkTypes.NewDec(2), sdkTypes.OneDec(), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
+	require.Equal(t, newMessage(fromAccAddress, baseIDs.NewStringID("fromID"), baseIDs.NewStringID("classificationID"), baseIDs.NewStringID("makerOwnableID"), baseIDs.NewStringID("takerOwnableID"), baseTypes.NewHeight(123), sdkTypes.NewDec(2), sdkTypes.OneDec(), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
 	require.Nil(t, err)
 
 	msg, err = newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", sdkTypes.OneDec().String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()

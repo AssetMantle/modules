@@ -13,11 +13,11 @@ import (
 )
 
 func Test_SplitID_Methods(t *testing.T) {
-	ownerID := baseIDs.NewID("ownerID")
-	ownableID := baseIDs.NewID("ownableID")
+	ownerID := baseIDs.NewStringID("ownerID")
+	ownableID := baseIDs.NewStringID("ownableID")
 
 	testSplitID := NewSplitID(ownerID, ownableID).(splitID)
-	testSplitID2 := NewSplitID(baseIDs.NewID(""), baseIDs.NewID("")).(splitID)
+	testSplitID2 := NewSplitID(baseIDs.NewStringID(""), baseIDs.NewStringID("")).(splitID)
 	require.NotPanics(t, func() {
 		require.Equal(t, strings.Join([]string{ownerID.String(), ownableID.String()}, "."), testSplitID.String())
 		require.Equal(t, true, testSplitID.Equals(testSplitID))
@@ -29,7 +29,7 @@ func Test_SplitID_Methods(t *testing.T) {
 		require.Equal(t, false, testSplitID.Equals(testSplitID2))
 		require.Equal(t, false, testSplitID.Equals(nil))
 		require.Equal(t, testSplitID, FromID(testSplitID))
-		require.Equal(t, testSplitID2, FromID(baseIDs.NewID("")))
-		require.Equal(t, splitID{OwnerID: baseIDs.NewID("ID1"), OwnableID: baseIDs.NewID("ID2")}, readSplitID("ID1*ID2"))
+		require.Equal(t, testSplitID2, FromID(baseIDs.NewStringID("")))
+		require.Equal(t, splitID{OwnerID: baseIDs.NewStringID("ID1"), OwnableID: baseIDs.NewStringID("ID2")}, readSplitID("ID1*ID2"))
 	})
 }

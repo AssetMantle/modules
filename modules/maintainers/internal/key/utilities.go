@@ -14,12 +14,12 @@ func readMaintainerID(maintainerIDString string) ids.ID {
 	idList := stringUtilities.SplitCompositeIDString(maintainerIDString)
 	if len(idList) == 2 {
 		return maintainerID{
-			ClassificationID: baseIDs.NewID(idList[0]),
-			IdentityID:       baseIDs.NewID(idList[1]),
+			ClassificationID: baseIDs.NewStringID(idList[0]),
+			IdentityID:       baseIDs.NewStringID(idList[1]),
 		}
 	}
 
-	return maintainerID{IdentityID: baseIDs.NewID(""), ClassificationID: baseIDs.NewID("")}
+	return maintainerID{IdentityID: baseIDs.NewStringID(""), ClassificationID: baseIDs.NewStringID("")}
 }
 func maintainerIDFromInterface(i interface{}) maintainerID {
 	switch value := i.(type) {

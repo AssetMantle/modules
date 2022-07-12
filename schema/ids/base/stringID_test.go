@@ -10,11 +10,11 @@ import (
 )
 
 func Test_ID(t *testing.T) {
-	testID := NewID("ID")
+	testID := NewStringID("ID")
 
-	require.Equal(t, id{IDString: "ID"}, testID)
+	require.Equal(t, stringID{IDString: "ID"}, testID)
 	require.Equal(t, "ID", testID.String())
 	require.Equal(t, true, testID.Compare(testID) == 0)
-	require.Equal(t, false, testID.Compare(NewID("ID2")) == 0)
+	require.Equal(t, false, testID.Compare(NewStringID("ID2")) == 0)
 	require.Equal(t, []byte("ID"), testID.Bytes())
 }

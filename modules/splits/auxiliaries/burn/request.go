@@ -38,8 +38,8 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 
 func NewAuxiliaryRequest(ownerID fmt.Stringer, ownableID fmt.Stringer, value sdkTypes.Dec) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		OwnerID:   baseIDs.NewID(ownerID.String()),
-		OwnableID: baseIDs.NewID(ownableID.String()),
+		OwnerID:   baseIDs.NewStringID(ownerID.String()),
+		OwnableID: baseIDs.NewStringID(ownableID.String()),
 		Value:     value,
 	}
 }

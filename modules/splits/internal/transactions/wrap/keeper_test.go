@@ -97,7 +97,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 
-	fromID := baseIDs.NewID("fromID")
+	fromID := baseIDs.NewStringID("fromID")
 	coins := func(amount int64) sdkTypes.Coins {
 		return sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(amount)))
 	}

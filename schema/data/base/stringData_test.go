@@ -19,13 +19,13 @@ func Test_StringData(t *testing.T) {
 	testStringData2 := NewStringData("")
 
 	require.Equal(t, value, testStringData.String())
-	require.Equal(t, baseIDs.NewID(string.Hash(value)), testStringData.GenerateHash())
-	require.Equal(t, baseIDs.NewID(""), testStringData2.GenerateHash())
+	require.Equal(t, baseIDs.NewStringID(string.Hash(value)), testStringData.GenerateHash())
+	require.Equal(t, baseIDs.NewStringID(""), testStringData2.GenerateHash())
 	require.Equal(t, constants.StringDataID, testStringData.GetType())
 	require.Equal(t, testStringData.ZeroValue(), NewStringData(""))
 	require.Equal(t, false, testStringData.Compare(testStringData2) == 0)
 	require.Equal(t, true, testStringData.Compare(testStringData) == 0)
 	require.Panics(t, func() {
-		require.Equal(t, false, testStringData.Compare(NewIDData(baseIDs.NewID("ID"))) == 0)
+		require.Equal(t, false, testStringData.Compare(NewIDData(baseIDs.NewStringID("ID"))) == 0)
 	})
 }

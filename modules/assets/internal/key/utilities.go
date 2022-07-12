@@ -15,12 +15,12 @@ func readAssetID(assetIDString string) ids.ID {
 	idList := stringUtilities.SplitCompositeIDString(assetIDString)
 	if len(idList) == 2 {
 		return assetID{
-			ClassificationID: baseIDs.NewID(idList[0]),
-			HashID:           baseIDs.NewID(idList[1]),
+			ClassificationID: baseIDs.NewStringID(idList[0]),
+			Hash:             baseIDs.NewStringID(idList[1]),
 		}
 	}
 
-	return assetID{ClassificationID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}
+	return assetID{ClassificationID: baseIDs.NewStringID(""), Hash: baseIDs.NewStringID("")}
 }
 func assetIDFromInterface(i interface{}) (assetID, error) {
 	switch value := i.(type) {

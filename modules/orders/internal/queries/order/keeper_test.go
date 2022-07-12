@@ -70,12 +70,12 @@ func Test_Query_Keeper_Order(t *testing.T) {
 	mutableProperties, Error2 := utilities.ReadProperties("burn:S|100")
 	require.Equal(t, nil, Error2)
 
-	classificationID := baseIDs.NewID("classificationID")
-	makerOwnableID := baseIDs.NewID("makerOwnableID")
-	takerOwnableID := baseIDs.NewID("takerOwnableID")
-	exchangeRateID := baseIDs.NewID(sdkTypes.OneDec().String())
-	creationHeightID := baseIDs.NewID("0")
-	makerID := baseIDs.NewID("makerID")
+	classificationID := baseIDs.NewStringID("classificationID")
+	makerOwnableID := baseIDs.NewStringID("makerOwnableID")
+	takerOwnableID := baseIDs.NewStringID("takerOwnableID")
+	exchangeRateID := baseIDs.NewStringID(sdkTypes.OneDec().String())
+	creationHeightID := baseIDs.NewStringID("0")
+	makerID := baseIDs.NewStringID("makerID")
 
 	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, exchangeRateID, creationHeightID, makerID, immutableProperties)
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, immutableProperties, mutableProperties))

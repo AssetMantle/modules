@@ -12,8 +12,8 @@ import (
 )
 
 func Test_Maintain_Request(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
-	identityID := baseIDs.NewID("identityID")
+	classificationID := baseIDs.NewStringID("classificationID")
+	identityID := baseIDs.NewStringID("identityID")
 	testAuxiliaryRequest := NewAuxiliaryRequest(classificationID, identityID)
 
 	require.Equal(t, auxiliaryRequest{ClassificationID: classificationID, IdentityID: identityID}, testAuxiliaryRequest)

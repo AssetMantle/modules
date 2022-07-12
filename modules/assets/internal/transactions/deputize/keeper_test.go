@@ -94,10 +94,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
-	defaultIdentityID := baseIDs.NewID("fromIdentityID")
-	toID := baseIDs.NewID("toID")
-	toID2 := baseIDs.NewID("toID2")
-	classificationID := baseIDs.NewID("ClassificationID")
+	defaultIdentityID := baseIDs.NewStringID("fromIdentityID")
+	toID := baseIDs.NewStringID("toID")
+	toID2 := baseIDs.NewStringID("toID2")
+	classificationID := baseIDs.NewStringID("ClassificationID")
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

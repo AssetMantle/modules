@@ -14,12 +14,12 @@ func readSplitID(splitIDString string) ids.ID {
 	idList := stringUtilities.SplitCompositeIDString(splitIDString)
 	if len(idList) == 2 {
 		return splitID{
-			OwnerID:   baseIDs.NewID(idList[0]),
-			OwnableID: baseIDs.NewID(idList[1]),
+			OwnerID:   baseIDs.NewStringID(idList[0]),
+			OwnableID: baseIDs.NewStringID(idList[1]),
 		}
 	}
 
-	return splitID{OwnerID: baseIDs.NewID(""), OwnableID: baseIDs.NewID("")}
+	return splitID{OwnerID: baseIDs.NewStringID(""), OwnableID: baseIDs.NewStringID("")}
 }
 
 func splitIDFromInterface(i interface{}) splitID {

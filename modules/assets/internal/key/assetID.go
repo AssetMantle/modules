@@ -20,19 +20,19 @@ import (
 
 type assetID struct {
 	ClassificationID ids.ID
-	HashID           ids.ID
+	Hash             ids.ID
 }
 
-var _ ids.ID = (*assetID)(nil)
+var _ ids.AssetID = (*assetID)(nil)
 var _ helpers.Key = (*assetID)(nil)
 
 func (assetID assetID) String() string {
-	return stringUtilities.JoinIDStrings(assetID.ClassificationID.String(), assetID.HashID.String())
+	return stringUtilities.JoinIDStrings(assetID.ClassificationID.String(), assetID.Hash.String())
 }
 func (assetID assetID) Bytes() []byte {
 	var Bytes []byte
 	Bytes = append(Bytes, assetID.ClassificationID.Bytes()...)
-	Bytes = append(Bytes, assetID.HashID.Bytes()...)
+	Bytes = append(Bytes, assetID.Hash.Bytes()...)
 
 	return Bytes
 }
@@ -50,7 +50,7 @@ func (assetID) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, assetID{})
 }
 func (assetID assetID) IsPartial() bool {
-	return len(assetID.HashID.Bytes()) == 0
+	return len(assetID.Hash.Bytes()) == 0
 }
 func (assetID assetID) Equals(key helpers.Key) bool {
 	if compareAssetID, err := assetIDFromInterface(key); err != nil {
@@ -60,9 +60,9 @@ func (assetID assetID) Equals(key helpers.Key) bool {
 	}
 }
 
-func NewAssetID(classificationID ids.ID, immutableProperties lists.PropertyList) ids.ID {
+func NewAssetID(classificationID ids.ClassificationID, immutableProperties lists.PropertyList) ids.ID {
 	return assetID{
 		ClassificationID: classificationID,
-		HashID:           base.Immutables{PropertyList: immutableProperties}.GenerateHashID(),
+		Hash:             base.Immutables{PropertyList: immutableProperties}.GenerateHashID(),
 	}
 }

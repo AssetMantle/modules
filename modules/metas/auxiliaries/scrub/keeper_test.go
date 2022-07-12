@@ -77,7 +77,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
-	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewID("id"), baseData.NewStringData("Data"))
+	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
 	metaPropertyList := base.NewMetaProperties([]properties.MetaProperty{metaProperty}...)
 
 	t.Run("PositiveCase - ", func(t *testing.T) {

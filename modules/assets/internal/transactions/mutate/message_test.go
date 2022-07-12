@@ -16,8 +16,8 @@ import (
 )
 
 func Test_Mutate_Message(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
-	testAssetID := baseIDs.NewID("assetID")
+	testFromID := baseIDs.NewStringID("fromID")
+	testAssetID := baseIDs.NewStringID("assetID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

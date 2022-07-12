@@ -14,8 +14,8 @@ import (
 )
 
 func Test_Split_Methods(t *testing.T) {
-	ownerID := baseIDs.NewID("ownerID")
-	ownableID := baseIDs.NewID("ownableID")
+	ownerID := baseIDs.NewStringID("ownerID")
+	ownableID := baseIDs.NewStringID("ownableID")
 
 	testSplitID := key.NewSplitID(ownerID, ownableID)
 	testValue := sdkTypes.NewDec(12)

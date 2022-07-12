@@ -13,8 +13,8 @@ import (
 )
 
 func Test_Burn_Request(t *testing.T) {
-	ownerID := baseIDs.NewID("ownerID")
-	ownableID := baseIDs.NewID("ownableID")
+	ownerID := baseIDs.NewStringID("ownerID")
+	ownableID := baseIDs.NewStringID("ownableID")
 	splits := sdkTypes.NewDec(10)
 	testAuxiliaryRequest := NewAuxiliaryRequest(ownerID, ownableID, splits)
 

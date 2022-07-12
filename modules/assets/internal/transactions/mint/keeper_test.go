@@ -117,9 +117,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
-	defaultIdentityID := baseIDs.NewID("fromIdentityID")
-	toID := baseIDs.NewID("toID")
-	classificationID := baseIDs.NewID("ClassificationID")
+	defaultIdentityID := baseIDs.NewStringID("fromIdentityID")
+	toID := baseIDs.NewStringID("toID")
+	classificationID := baseIDs.NewStringID("ClassificationID")
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
@@ -176,7 +176,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - Mint Auxiliary fail", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(constants.MockError)
-		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewID("mintError"), classificationID,
+		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewStringID("mintError"), classificationID,
 			immutableMetaProperties2, immutableProperties, mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

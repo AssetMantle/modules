@@ -45,10 +45,10 @@ func (heightData heightData) ZeroValue() data.Data {
 }
 func (heightData heightData) GenerateHash() ids.ID {
 	if heightData.Compare(heightData.ZeroValue()) == 0 {
-		return baseIDs.NewID("")
+		return baseIDs.NewStringID("")
 	}
 
-	return baseIDs.NewID(stringUtilities.Hash(strconv.FormatInt(heightData.Value.Get(), 10)))
+	return baseIDs.NewStringID(stringUtilities.Hash(strconv.FormatInt(heightData.Value.Get(), 10)))
 }
 func (heightData heightData) Get() types.Height {
 	return heightData.Value

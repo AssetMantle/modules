@@ -48,10 +48,10 @@ func (booleanData booleanData) ZeroValue() data.Data {
 }
 func (booleanData booleanData) GenerateHash() ids.ID {
 	if booleanData.Compare(booleanData.ZeroValue()) == 0 {
-		return baseIDs.NewID(strconv.FormatBool(false))
+		return baseIDs.NewStringID(strconv.FormatBool(false))
 	}
 
-	return baseIDs.NewID(strconv.FormatBool(true))
+	return baseIDs.NewStringID(strconv.FormatBool(true))
 }
 func (booleanData booleanData) Get() bool {
 	return booleanData.Value

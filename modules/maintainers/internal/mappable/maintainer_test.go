@@ -17,10 +17,10 @@ import (
 )
 
 func Test_Maintainer_Methods(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
-	identityID := baseIDs.NewID("identityID")
-	immutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID"), base.NewStringData("ImmutableData")))
-	mutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID"), base.NewStringData("MutableData")))
+	classificationID := baseIDs.NewStringID("classificationID")
+	identityID := baseIDs.NewStringID("identityID")
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID"), base.NewStringData("ImmutableData")))
+	mutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID"), base.NewStringData("MutableData")))
 
 	testMaintainerID := key.NewMaintainerID(classificationID, identityID)
 
@@ -33,7 +33,7 @@ func Test_Maintainer_Methods(t *testing.T) {
 	require.Equal(t, true, testMaintainer.CanAddMaintainer())
 	require.Equal(t, true, testMaintainer.CanMutateMaintainer())
 	require.Equal(t, true, testMaintainer.CanRemoveMaintainer())
-	require.Equal(t, true, testMaintainer.MaintainsProperty(baseIDs.NewID("ID")))
-	require.Equal(t, false, testMaintainer.MaintainsProperty(baseIDs.NewID("ID2")))
+	require.Equal(t, true, testMaintainer.MaintainsProperty(baseIDs.NewStringID("ID")))
+	require.Equal(t, false, testMaintainer.MaintainsProperty(baseIDs.NewStringID("ID2")))
 	require.Equal(t, testMaintainerID, testMaintainer.GetKey())
 }

@@ -29,14 +29,14 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 
-	nubIDProperty := baseProperties.NewMetaProperty(constants.NubIDProperty, baseData.NewIDData(message.NubID))
+	nubIDProperty := baseProperties.NewMetaProperty(constants.NubIDProperty.GetKey(), baseData.NewIDData(message.NubID))
 
 	immutableProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(nubIDProperty)))
 	if err != nil {
 		return newTransactionResponse(err)
 	}
 
-	authenticationProperty := baseProperties.NewMetaProperty(constants.AuthenticationProperty, baseData.NewListData(baseLists.NewDataList(baseData.NewAccAddressData(message.From))))
+	authenticationProperty := baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseLists.NewDataList(baseData.NewAccAddressData(message.From))))
 
 	mutableProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(authenticationProperty)))
 	if err != nil {

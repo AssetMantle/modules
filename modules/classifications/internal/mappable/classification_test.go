@@ -18,13 +18,12 @@ import (
 
 func Test_Classification_Methods(t *testing.T) {
 
-	immutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
-	mutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID2"), baseData.NewStringData("MutableData")))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
+	mutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData")))
 
-	chainID := baseIDs.NewID("chainID")
-	id := key.NewClassificationID(chainID, immutableProperties, mutableProperties)
+	id := key.NewClassificationID(immutableProperties, mutableProperties)
 
-	testClassification := NewClassification(id, immutableProperties, mutableProperties)
+	testClassification := NewClassification(immutableProperties, mutableProperties)
 	require.Equal(t, classification{Document: baseQualified.Document{ID: id, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}, testClassification)
 	require.Equal(t, immutableProperties, testClassification.GetImmutablePropertyList())
 	require.Equal(t, mutableProperties, testClassification.GetMutablePropertyList())

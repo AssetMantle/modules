@@ -29,7 +29,7 @@ func Test_Split_Request(t *testing.T) {
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
 
-	testSplitID := baseIDs.NewID("OwnableID")
+	testSplitID := baseIDs.NewStringID("OwnableID")
 	testQueryRequest := newQueryRequest(testSplitID)
 	require.Equal(t, nil, testQueryRequest.Validate())
 	require.Equal(t, queryRequest{}, requestPrototype())
@@ -37,12 +37,12 @@ func Test_Split_Request(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.SplitID})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
 	require.Panics(t, func() {
-		require.Equal(t, newQueryRequest(baseIDs.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
+		require.Equal(t, newQueryRequest(baseIDs.NewStringID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
 	})
 
 	vars := make(map[string]string)
 	vars["ownables"] = "randomString"
-	require.Equal(t, newQueryRequest(baseIDs.NewID("randomString")), queryRequest{}.FromMap(vars))
+	require.Equal(t, newQueryRequest(baseIDs.NewStringID("randomString")), queryRequest{}.FromMap(vars))
 
 	encodedRequest, err := testQueryRequest.Encode()
 	encodedResult, _ := common.Codec.MarshalJSON(testQueryRequest)
@@ -53,7 +53,7 @@ func Test_Split_Request(t *testing.T) {
 	require.Equal(t, testQueryRequest, decodedRequest)
 	require.Equal(t, nil, err)
 
-	randomDecode, _ := queryRequest{}.Decode(baseIDs.NewID("").Bytes())
+	randomDecode, _ := queryRequest{}.Decode(baseIDs.NewStringID("").Bytes())
 	require.Equal(t, nil, randomDecode)
 	require.Equal(t, testQueryRequest, queryRequestFromInterface(testQueryRequest))
 	require.Equal(t, queryRequest{}, queryRequestFromInterface(nil))

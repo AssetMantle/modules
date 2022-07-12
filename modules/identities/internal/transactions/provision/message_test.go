@@ -15,7 +15,7 @@ import (
 )
 
 func Test_Provision_Message(t *testing.T) {
-	testIdentityID := baseIDs.NewID("identityID")
+	testIdentityID := baseIDs.NewStringID("identityID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

@@ -13,8 +13,8 @@ import (
 )
 
 type propertyID struct {
-	Key  ids.ID
-	Type ids.ID
+	Key  ids.StringID
+	Type ids.StringID
 }
 
 var _ ids.PropertyID = (*propertyID)(nil)
@@ -52,7 +52,7 @@ func propertyIDFromInterface(listable traits.Listable) (propertyID, error) {
 	}
 }
 
-func NewPropertyID(key, Type ids.ID) ids.PropertyID {
+func NewPropertyID(key, Type ids.StringID) ids.PropertyID {
 	return propertyID{
 		Key:  key,
 		Type: Type,

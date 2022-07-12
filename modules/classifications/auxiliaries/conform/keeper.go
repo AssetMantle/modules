@@ -34,7 +34,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		}
 
 		for _, immutableProperty := range auxiliaryRequest.ImmutableProperties.GetList() {
-			if property := classification.(mappables.Classification).GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || property.GetType().Compare(immutableProperty.GetType()) != 0 || property.GetHash().Compare(baseIDs.NewID("")) != 0 && property.GetHash() != immutableProperty.GetHash() {
+			if property := classification.(mappables.Classification).GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || property.GetType().Compare(immutableProperty.GetType()) != 0 || property.GetHash().Compare(baseIDs.NewStringID("")) != 0 && property.GetHash() != immutableProperty.GetHash() {
 				return newAuxiliaryResponse(constants.NotAuthorized)
 			}
 		}

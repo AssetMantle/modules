@@ -97,9 +97,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, err)
 	defaultAddr := sdkTypes.AccAddress("addr")
 	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
-	defaultIdentityID := baseIDs.NewID("fromIdentityID")
-	maintainIdentityMockError := baseIDs.NewID("maintainError")
-	classificationID := baseIDs.NewID("ClassificationID")
+	defaultIdentityID := baseIDs.NewStringID("fromIdentityID")
+	maintainIdentityMockError := baseIDs.NewStringID("maintainError")
+	classificationID := baseIDs.NewStringID("ClassificationID")
 	assetID := key.NewAssetID(classificationID, immutableProperties)
 	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewAsset(assetID, immutableProperties, mutableProperties))
 
@@ -123,7 +123,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase - UnMinted asset", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(constants.EntityNotFound)
-		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewID("assetID"),
+		if got := keepers.AssetsKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewStringID("assetID"),
 			mutableMetaProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

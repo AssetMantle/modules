@@ -19,11 +19,11 @@ import (
 
 func Test_Identity_Methods(t *testing.T) {
 
-	classificationID := baseIDs.NewID("classificationID")
+	classificationID := baseIDs.NewStringID("classificationID")
 	defaultImmutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	testIdentityID := key.NewIdentityID(classificationID, defaultImmutableProperties)
-	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
-	mutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID2"), baseData.NewStringData("MutableData")))
+	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
+	mutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData")))
 
 	testIdentity := NewIdentity(testIdentityID, immutableProperties, mutableProperties)
 	require.Equal(t, testIdentity, identity{Document: baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}})

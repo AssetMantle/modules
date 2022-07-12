@@ -20,26 +20,26 @@ func readOrderID(orderIDString string) ids.ID {
 	if len(idList) == 7 {
 		exchangeRate, err := sdkTypes.NewDecFromStr(idList[3])
 		if err != nil {
-			return orderID{ClassificationID: baseIDs.NewID(""), MakerOwnableID: baseIDs.NewID(""), TakerOwnableID: baseIDs.NewID(""), RateID: baseIDs.NewID(""), CreationID: baseIDs.NewID(""), MakerID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}
+			return orderID{ClassificationID: baseIDs.NewStringID(""), MakerOwnableID: baseIDs.NewStringID(""), TakerOwnableID: baseIDs.NewStringID(""), RateID: baseIDs.NewStringID(""), CreationID: baseIDs.NewStringID(""), MakerID: baseIDs.NewStringID(""), HashID: baseIDs.NewStringID("")}
 		}
 
 		height, err := strconv.ParseInt(idList[4], 10, 64)
 		if err != nil {
-			return orderID{ClassificationID: baseIDs.NewID(""), MakerOwnableID: baseIDs.NewID(""), TakerOwnableID: baseIDs.NewID(""), RateID: baseIDs.NewID(""), CreationID: baseIDs.NewID(""), MakerID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}
+			return orderID{ClassificationID: baseIDs.NewStringID(""), MakerOwnableID: baseIDs.NewStringID(""), TakerOwnableID: baseIDs.NewStringID(""), RateID: baseIDs.NewStringID(""), CreationID: baseIDs.NewStringID(""), MakerID: baseIDs.NewStringID(""), HashID: baseIDs.NewStringID("")}
 		}
 
 		return orderID{
-			ClassificationID: baseIDs.NewID(idList[0]),
-			MakerOwnableID:   baseIDs.NewID(idList[1]),
-			TakerOwnableID:   baseIDs.NewID(idList[2]),
-			RateID:           baseIDs.NewID(exchangeRate.String()),
-			CreationID:       baseIDs.NewID(strconv.FormatInt(height, 10)),
-			MakerID:          baseIDs.NewID(idList[5]),
-			HashID:           baseIDs.NewID(idList[6]),
+			ClassificationID: baseIDs.NewStringID(idList[0]),
+			MakerOwnableID:   baseIDs.NewStringID(idList[1]),
+			TakerOwnableID:   baseIDs.NewStringID(idList[2]),
+			RateID:           baseIDs.NewStringID(exchangeRate.String()),
+			CreationID:       baseIDs.NewStringID(strconv.FormatInt(height, 10)),
+			MakerID:          baseIDs.NewStringID(idList[5]),
+			HashID:           baseIDs.NewStringID(idList[6]),
 		}
 	}
 
-	return orderID{ClassificationID: baseIDs.NewID(""), MakerOwnableID: baseIDs.NewID(""), TakerOwnableID: baseIDs.NewID(""), RateID: baseIDs.NewID(""), CreationID: baseIDs.NewID(""), MakerID: baseIDs.NewID(""), HashID: baseIDs.NewID("")}
+	return orderID{ClassificationID: baseIDs.NewStringID(""), MakerOwnableID: baseIDs.NewStringID(""), TakerOwnableID: baseIDs.NewStringID(""), RateID: baseIDs.NewStringID(""), CreationID: baseIDs.NewStringID(""), MakerID: baseIDs.NewStringID(""), HashID: baseIDs.NewStringID("")}
 }
 func orderIDFromInterface(i interface{}) orderID {
 	switch value := i.(type) {

@@ -10,5 +10,5 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
-var ID = baseIDs.NewID("dummy")
+var ID = baseIDs.NewStringID("dummy")
 var DefaultData = baseData.NewDecData(sdkTypes.SmallestDec())

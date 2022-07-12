@@ -20,8 +20,8 @@ func Test_HeightData(t *testing.T) {
 	testHeightData2 := NewHeightData(baseTypes.NewHeight(0))
 
 	require.Equal(t, "123", testHeightData.String())
-	require.Equal(t, baseIDs.NewID(string.Hash("123")), testHeightData.GenerateHash())
-	require.Equal(t, baseIDs.NewID(""), testHeightData2.GenerateHash())
+	require.Equal(t, baseIDs.NewStringID(string.Hash("123")), testHeightData.GenerateHash())
+	require.Equal(t, baseIDs.NewStringID(""), testHeightData2.GenerateHash())
 	require.Equal(t, constants.HeightDataID, testHeightData.GetType())
 
 	require.Equal(t, false, testHeightData.Compare(NewStringData("")) == 0)

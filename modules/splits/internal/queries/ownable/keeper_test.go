@@ -65,8 +65,8 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 func Test_Query_Keeper_Split(t *testing.T) {
 	context, keepers := CreateTestInput2(t)
 
-	ownerID := baseIDs.NewID("ownerID")
-	ownableID := baseIDs.NewID("ownableID")
+	ownerID := baseIDs.NewStringID("ownerID")
+	ownableID := baseIDs.NewStringID("ownableID")
 	splitID := key.NewSplitID(ownerID, ownableID)
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(splitID, sdkTypes.NewDec(123)))
 

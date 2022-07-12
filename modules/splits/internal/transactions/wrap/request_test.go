@@ -58,7 +58,7 @@ func Test_Unwrap_Request(t *testing.T) {
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
 	msg, err := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, baseIDs.NewID("fromID"), sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(2)))), msg)
+	require.Equal(t, newMessage(fromAccAddress, baseIDs.NewStringID("fromID"), sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(2)))), msg)
 	require.Nil(t, err)
 
 	msg2, err := newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, "fromID", "2 stake").MakeMsg()
