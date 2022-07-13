@@ -50,7 +50,7 @@ func NewIdentity(id ids.ID, immutableProperties lists.PropertyList, mutablePrope
 			ID: id,
 			// TODO Add classificationID
 			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
-			Mutables:   baseQualified.Mutables{Properties: mutableProperties},
+			Mutables:   baseQualified.Mutables{PropertyList: mutableProperties},
 		},
 	}
 }

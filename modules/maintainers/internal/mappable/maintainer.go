@@ -112,7 +112,7 @@ func NewMaintainer(id ids2.ID, immutableProperties lists.PropertyList, mutablePr
 		Document: baseQualified.Document{
 			ID:         id,
 			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
-			Mutables:   baseQualified.Mutables{Properties: mutableProperties},
+			Mutables:   baseQualified.Mutables{PropertyList: mutableProperties},
 		},
 	}
 }

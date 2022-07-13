@@ -26,7 +26,7 @@ func Test_Identity_Methods(t *testing.T) {
 	mutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData")))
 
 	testIdentity := NewIdentity(testIdentityID, immutableProperties, mutableProperties)
-	require.Equal(t, testIdentity, identity{Document: baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}})
+	require.Equal(t, testIdentity, identity{Document: baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{PropertyList: mutableProperties}}})
 	require.Equal(t, testIdentity.(identity).GetID(), testIdentityID)
 	require.Equal(t, testIdentity.GetImmutablePropertyList(), immutableProperties)
 	require.Equal(t, testIdentity.GetMutablePropertyList(), mutableProperties)

@@ -33,7 +33,7 @@ func NewClassification(immutableProperties lists.PropertyList, mutableProperties
 			ID: key.NewClassificationID(immutableProperties, mutableProperties),
 			// TODO Add classificationID
 			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
-			Mutables:   baseQualified.Mutables{Properties: mutableProperties},
+			Mutables:   baseQualified.Mutables{PropertyList: mutableProperties},
 		},
 	}
 }

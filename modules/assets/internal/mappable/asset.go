@@ -58,7 +58,7 @@ func NewAsset(id ids.AssetID, immutableProperties lists.PropertyList, mutablePro
 			ID:               id,
 			ClassificationID: key.ReadClassificationID(id),
 			Immutables:       base.Immutables{PropertyList: immutableProperties},
-			Mutables:         base.Mutables{Properties: mutableProperties},
+			Mutables:         base.Mutables{PropertyList: mutableProperties},
 		},
 	}
 }
