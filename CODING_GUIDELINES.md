@@ -4,7 +4,7 @@ This document is an extension to [CONTRIBUTING](./CONTRIBUTING.md) and provides 
 
 ## API & Design
 
-* Code must be well structured:
+* Code must be well-structured:
     * packages must have a limited responsibility (different concerns can go to different packages),
     * types must be easy to compose,
     * think about maintainability and testability.
@@ -98,7 +98,7 @@ When testing a function under a variety of different inputs, we prefer to use
 [table driven tests](https://github.com/golang/go/wiki/TableDrivenTests).
 Table driven test error messages should follow the following format
 `<desc>, tc #<index>, i #<index>`.
-`<desc>` is an optional short description of whats failing, `tc` is the
+`<desc>` is an optional short description of what's failing, `tc` is the
 index within the test case table that is failing, and `i` is when there
 is a loop, exactly which iteration of the loop failed.
 The idea is you should be able to see the
@@ -138,7 +138,7 @@ Desired outcomes:
 
 As a developer, you must help the QA team by providing instructions for User Experience (UX) and functional testing.
 
-### QA Team to cross check Acceptance Tests
+### QA Team to cross-check Acceptance Tests
 
 Once the AT are defined, the QA team will have an overview of the behavior a user can expect and:
 
