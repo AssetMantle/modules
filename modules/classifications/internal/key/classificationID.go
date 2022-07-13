@@ -55,7 +55,7 @@ func (classificationID classificationID) Equals(key helpers.Key) bool {
 	}
 }
 
-func NewClassificationID(immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) ids.ID {
+func NewClassificationID(immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) ids.ClassificationID {
 	immutableIDStringList := make([]string, len(immutableProperties.GetList()))
 
 	for i, property := range immutableProperties.GetList() {

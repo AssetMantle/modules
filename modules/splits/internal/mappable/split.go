@@ -16,8 +16,8 @@ import (
 )
 
 type split struct {
-	ID    ids.ID       `json:"id" valid:"required field key missing"`
-	Value sdkTypes.Dec `json:"value" valid:"required~required field value missing, matches(^[0-9]$)~invalid field value"`
+	ID    ids.SplitID
+	Value sdkTypes.Dec
 }
 
 var _ mappables.Split = (*split)(nil)
@@ -50,7 +50,7 @@ func (split) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, split{})
 }
 
-func NewSplit(splitID ids.ID, value sdkTypes.Dec) mappables.Split {
+func NewSplit(splitID ids.SplitID, value sdkTypes.Dec) mappables.Split {
 	return split{
 		ID:    splitID,
 		Value: value,

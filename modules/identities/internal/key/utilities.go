@@ -15,11 +15,11 @@ func readIdentityID(identityIDString string) ids.ID {
 	if len(idList) == 2 {
 		return identityID{
 			ClassificationID: baseIDs.NewStringID(idList[0]),
-			HashID:           baseIDs.NewStringID(idList[1]),
+			Hash:             baseIDs.NewStringID(idList[1]),
 		}
 	}
 
-	return identityID{ClassificationID: baseIDs.NewStringID(""), HashID: baseIDs.NewStringID("")}
+	return identityID{ClassificationID: baseIDs.NewStringID(""), Hash: baseIDs.NewStringID("")}
 }
 
 func identityIDFromInterface(i interface{}) identityID {

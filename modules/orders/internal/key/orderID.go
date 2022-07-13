@@ -22,16 +22,16 @@ import (
 )
 
 type orderID struct {
-	ClassificationID ids.ID `json:"classificationID"`
-	MakerOwnableID   ids.ID `json:"makerOwnableID"`
-	TakerOwnableID   ids.ID `json:"takerOwnableID"`
-	RateID           ids.ID `json:"rateID"`
-	CreationID       ids.ID `json:"creationID"`
-	MakerID          ids.ID `json:"makerID"`
-	HashID           ids.ID `json:"hashID"`
+	ids.ClassificationID
+	MakerOwnableID ids.ID
+	TakerOwnableID ids.ID
+	RateID         ids.ID
+	CreationID     ids.ID
+	MakerID        ids.ID
+	Hash           ids.ID
 }
 
-var _ ids.ID = (*orderID)(nil)
+var _ ids.OrderID = (*orderID)(nil)
 var _ helpers.Key = (*orderID)(nil)
 
 func (orderID orderID) Bytes() []byte {
@@ -53,7 +53,7 @@ func (orderID orderID) Bytes() []byte {
 	Bytes = append(Bytes, rateIDBytes...)
 	Bytes = append(Bytes, creationIDBytes...)
 	Bytes = append(Bytes, orderID.MakerID.Bytes()...)
-	Bytes = append(Bytes, orderID.HashID.Bytes()...)
+	Bytes = append(Bytes, orderID.Hash.Bytes()...)
 
 	return Bytes
 }
@@ -65,7 +65,7 @@ func (orderID orderID) String() string {
 		orderID.RateID.String(),
 		orderID.CreationID.String(),
 		orderID.MakerID.String(),
-		orderID.HashID.String(),
+		orderID.Hash.String(),
 	)
 }
 func (orderID orderID) Compare(listable traits.Listable) int {
@@ -78,7 +78,7 @@ func (orderID) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, orderID{})
 }
 func (orderID orderID) IsPartial() bool {
-	return len(orderID.HashID.Bytes()) == 0
+	return len(orderID.Hash.Bytes()) == 0
 }
 func (orderID orderID) Equals(key helpers.Key) bool {
 	return orderID.Compare(orderIDFromInterface(key)) == 0
@@ -120,7 +120,7 @@ func (orderID orderID) getCreationHeightBytes() ([]byte, error) {
 	return Bytes, err
 }
 
-func NewOrderID(classificationID ids.ID, makerOwnableID ids.ID, takerOwnableID ids.ID, rateID ids.ID, creationID ids.ID, makerID ids.ID, immutableProperties lists.PropertyList) ids.ID {
+func NewOrderID(classificationID ids.ClassificationID, makerOwnableID ids.ID, takerOwnableID ids.ID, rateID ids.ID, creationID ids.ID, makerID ids.ID, immutableProperties lists.PropertyList) ids.OrderID {
 	return orderID{
 		ClassificationID: classificationID,
 		MakerOwnableID:   makerOwnableID,
@@ -128,6 +128,6 @@ func NewOrderID(classificationID ids.ID, makerOwnableID ids.ID, takerOwnableID i
 		RateID:           rateID,
 		CreationID:       creationID,
 		MakerID:          makerID,
-		HashID:           baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID(),
+		Hash:             baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID(),
 	}
 }

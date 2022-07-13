@@ -17,11 +17,11 @@ import (
 )
 
 type splitID struct {
-	OwnerID   ids.ID `json:"ownerID" valid:"required~required field ownerID missing"`
-	OwnableID ids.ID `json:"ownableID" valid:"required~required field ownableID missing"`
+	OwnerID   ids.ID
+	OwnableID ids.ID
 }
 
-var _ ids.ID = (*splitID)(nil)
+var _ ids.SplitID = (*splitID)(nil)
 var _ helpers.Key = (*splitID)(nil)
 
 func (splitID splitID) Bytes() []byte {
@@ -48,7 +48,7 @@ func (splitID splitID) Equals(key helpers.Key) bool {
 	return splitID.Compare(splitIDFromInterface(key)) == 0
 }
 
-func NewSplitID(ownerID ids.ID, ownableID ids.ID) ids.ID {
+func NewSplitID(ownerID ids.ID, ownableID ids.ID) ids.SplitID {
 	return splitID{
 		OwnerID:   ownerID,
 		OwnableID: ownableID,

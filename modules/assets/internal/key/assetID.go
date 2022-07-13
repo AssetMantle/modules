@@ -19,8 +19,8 @@ import (
 )
 
 type assetID struct {
-	ClassificationID ids.ID
-	Hash             ids.ID
+	ids.ClassificationID
+	Hash ids.ID
 }
 
 var _ ids.AssetID = (*assetID)(nil)
@@ -60,7 +60,7 @@ func (assetID assetID) Equals(key helpers.Key) bool {
 	}
 }
 
-func NewAssetID(classificationID ids.ClassificationID, immutableProperties lists.PropertyList) ids.ID {
+func NewAssetID(classificationID ids.ClassificationID, immutableProperties lists.PropertyList) ids.AssetID {
 	return assetID{
 		ClassificationID: classificationID,
 		Hash:             base.Immutables{PropertyList: immutableProperties}.GenerateHashID(),

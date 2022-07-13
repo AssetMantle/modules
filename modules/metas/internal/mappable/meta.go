@@ -15,8 +15,8 @@ import (
 )
 
 type meta struct {
-	ID   ids.ID    `json:"id" valid:"required field id missing"`
-	Data data.Data `json:"data" valid:"required field data missing"`
+	ID   ids.MetaID
+	Data data.Data
 }
 
 var _ mappables.Meta = (*meta)(nil)

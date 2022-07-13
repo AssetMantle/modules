@@ -15,12 +15,12 @@ func readMetaID(metaIDString string) ids.ID {
 	idList := stringUtilities.SplitCompositeIDString(metaIDString)
 	if len(idList) == 2 {
 		return metaID{
-			TypeID: baseIDs.NewStringID(idList[0]),
-			HashID: baseIDs.NewStringID(idList[1]),
+			Type: baseIDs.NewStringID(idList[0]),
+			Hash: baseIDs.NewStringID(idList[1]),
 		}
 	}
 
-	return metaID{TypeID: baseIDs.NewStringID(""), HashID: baseIDs.NewStringID("")}
+	return metaID{Type: baseIDs.NewStringID(""), Hash: baseIDs.NewStringID("")}
 }
 func metaIDFromInterface(i interface{}) metaID {
 	switch value := i.(type) {
@@ -33,10 +33,10 @@ func metaIDFromInterface(i interface{}) metaID {
 	}
 }
 
-func GenerateMetaID(data data.Data) ids.ID {
+func GenerateMetaID(data data.Data) ids.MetaID {
 	return metaID{
-		TypeID: data.GetType(),
-		HashID: data.GenerateHash(),
+		Type: data.GetType(),
+		Hash: data.GenerateHash(),
 	}
 }
 

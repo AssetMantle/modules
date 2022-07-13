@@ -8,10 +8,10 @@ import (
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
-	ids2 "github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
-	properties2 "github.com/AssetMantle/modules/schema/properties"
+	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -24,13 +24,13 @@ type maintainer struct {
 
 var _ mappables.Maintainer = (*maintainer)(nil)
 
-func (maintainer maintainer) GetIdentityID() ids2.ID {
+func (maintainer maintainer) GetIdentityID() ids.ID {
 	return key.ReadIdentityID(maintainer.ID)
 }
-func (maintainer maintainer) GetMaintainedClassificationID() ids2.ID {
+func (maintainer maintainer) GetMaintainedClassificationID() ids.ID {
 	return key.ReadClassificationID(maintainer.ID)
 }
-func (maintainer maintainer) GetMaintainedPropertySet() properties2.Property {
+func (maintainer maintainer) GetMaintainedPropertySet() properties.Property {
 	if property := maintainer.GetProperty(constants.MaintainedPropertiesProperty); property != nil {
 		return property
 	}
@@ -90,7 +90,7 @@ func (maintainer maintainer) CanMutateMaintainer() bool {
 
 	return false
 }
-func (maintainer maintainer) MaintainsProperty(id ids2.ID) bool {
+func (maintainer maintainer) MaintainsProperty(id ids.ID) bool {
 	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
 		if property.GetID().Compare(id) == 0 {
 			return true
@@ -106,8 +106,7 @@ func (maintainer) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, maintainer{})
 }
 
-// TODO
-func NewMaintainer(id ids2.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Maintainer {
+func NewMaintainer(id ids.MaintainerID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Maintainer {
 	return maintainer{
 		Document: baseQualified.Document{
 			ID:         id,

@@ -29,7 +29,7 @@ func Test_OrderID_Methods(t *testing.T) {
 
 	testOrderID := NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, makerID, immutableProperties).(orderID)
 	testOrderID2 := NewOrderID(classificationID, makerOwnableID, takerOwnableID, baseIDs.NewStringID(sdkTypes.MustNewDecFromStr("2.3").String()), baseIDs.NewStringID("creation"), makerID, base.NewPropertyList()).(orderID)
-	require.Equal(t, testOrderID, orderID{ClassificationID: classificationID, MakerOwnableID: makerOwnableID, TakerOwnableID: takerOwnableID, RateID: rateID, CreationID: creationID, MakerID: makerID, HashID: baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()})
+	require.Equal(t, testOrderID, orderID{ClassificationID: classificationID, MakerOwnableID: makerOwnableID, TakerOwnableID: takerOwnableID, RateID: rateID, CreationID: creationID, MakerID: makerID, Hash: baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()})
 	require.Equal(t, true, testOrderID.Equals(testOrderID))
 	require.Equal(t, false, testOrderID.Compare(baseIDs.NewStringID("")) == 0)
 	require.Equal(t, strings.Join([]string{classificationID.String(), makerOwnableID.String(), takerOwnableID.String(), rateID.String(), creationID.String(), makerID.String(), baseQualified.Immutables{PropertyList: defaultImmutableProperties}.GenerateHashID().String()}, "."), testOrderID.String())
@@ -38,7 +38,7 @@ func Test_OrderID_Methods(t *testing.T) {
 	require.Equal(t, false, testOrderID.Equals(testOrderID2))
 	require.Equal(t, false, testOrderID.Equals(FromID(baseIDs.NewStringID(""))))
 	require.Equal(t, testOrderID, FromID(testOrderID))
-	require.Equal(t, orderID{ClassificationID: baseIDs.NewStringID(""), MakerOwnableID: baseIDs.NewStringID(""), TakerOwnableID: baseIDs.NewStringID(""), RateID: baseIDs.NewStringID(""), CreationID: baseIDs.NewStringID(""), MakerID: baseIDs.NewStringID(""), HashID: baseIDs.NewStringID("")}, FromID(baseIDs.NewStringID("")))
+	require.Equal(t, orderID{ClassificationID: baseIDs.NewStringID(""), MakerOwnableID: baseIDs.NewStringID(""), TakerOwnableID: baseIDs.NewStringID(""), RateID: baseIDs.NewStringID(""), CreationID: baseIDs.NewStringID(""), MakerID: baseIDs.NewStringID(""), Hash: baseIDs.NewStringID("")}, FromID(baseIDs.NewStringID("")))
 	require.Equal(t, testOrderID, FromID(baseIDs.NewStringID(classificationID.String()+"."+makerOwnableID.String()+"."+takerOwnableID.String()+"."+rateID.String()+"."+creationID.String()+"."+makerID.String()+"."+baseQualified.Immutables{PropertyList: defaultImmutableProperties}.GenerateHashID().String())))
 	require.Equal(t, classificationID, ReadClassificationID(testOrderID))
 	require.Equal(t, makerOwnableID, ReadMakerOwnableID(testOrderID))

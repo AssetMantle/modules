@@ -19,21 +19,21 @@ import (
 )
 
 type identityID struct {
-	ClassificationID ids.ID `json:"classificationID" valid:"required~required field classificationID missing"`
-	HashID           ids.ID `json:"hashID" valid:"required~required field hashID missing"`
+	ids.ClassificationID
+	Hash ids.ID
 }
 
-var _ ids.ID = (*identityID)(nil)
+var _ ids.IdentityID = (*identityID)(nil)
 var _ helpers.Key = (*identityID)(nil)
 
 func (identityID identityID) Bytes() []byte {
 	return append(
 		identityID.ClassificationID.Bytes(),
-		identityID.HashID.Bytes()...,
+		identityID.Hash.Bytes()...,
 	)
 }
 func (identityID identityID) String() string {
-	return stringUtilities.JoinIDStrings(identityID.ClassificationID.String(), identityID.HashID.String())
+	return stringUtilities.JoinIDStrings(identityID.ClassificationID.String(), identityID.Hash.String())
 }
 func (identityID identityID) Compare(listable traits.Listable) int {
 	return bytes.Compare(identityID.Bytes(), identityIDFromInterface(listable).Bytes())
@@ -45,16 +45,16 @@ func (identityID) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, identityID{})
 }
 func (identityID identityID) IsPartial() bool {
-	return len(identityID.HashID.Bytes()) == 0
+	return len(identityID.Hash.Bytes()) == 0
 }
 func (identityID identityID) Equals(key helpers.Key) bool {
 	return identityID.Compare(identityIDFromInterface(key)) == 0
 }
 
 // TODO Pass Classification & then get Classification ID
-func NewIdentityID(classificationID ids.ID, immutableProperties lists.PropertyList) ids.ID {
+func NewIdentityID(classificationID ids.ClassificationID, immutableProperties lists.PropertyList) ids.IdentityID {
 	return identityID{
 		ClassificationID: classificationID,
-		HashID:           baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID(),
+		Hash:             baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID(),
 	}
 }

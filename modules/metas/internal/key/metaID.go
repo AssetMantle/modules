@@ -17,22 +17,22 @@ import (
 )
 
 type metaID struct {
-	TypeID ids.ID `json:"typeID" valid:"required~required field typeID missing"`
-	HashID ids.ID `json:"hashID" valid:"required~required field hashID missing"`
+	Type ids.ID
+	Hash ids.ID
 }
 
-var _ ids.ID = (*metaID)(nil)
+var _ ids.MetaID = (*metaID)(nil)
 var _ helpers.Key = (*metaID)(nil)
 
 func (metaID metaID) Bytes() []byte {
 	var Bytes []byte
-	Bytes = append(Bytes, metaID.TypeID.Bytes()...)
-	Bytes = append(Bytes, metaID.HashID.Bytes()...)
+	Bytes = append(Bytes, metaID.Type.Bytes()...)
+	Bytes = append(Bytes, metaID.Hash.Bytes()...)
 
 	return Bytes
 }
 func (metaID metaID) String() string {
-	return stringUtilities.JoinIDStrings(metaID.TypeID.String(), metaID.HashID.String())
+	return stringUtilities.JoinIDStrings(metaID.Type.String(), metaID.Hash.String())
 }
 func (metaID metaID) Compare(listable traits.Listable) int {
 	return bytes.Compare(metaID.Bytes(), metaIDFromInterface(listable).Bytes())
@@ -44,15 +44,15 @@ func (metaID) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, metaID{})
 }
 func (metaID metaID) IsPartial() bool {
-	return len(metaID.HashID.Bytes()) == 0
+	return len(metaID.Hash.Bytes()) == 0
 }
 func (metaID metaID) Equals(key helpers.Key) bool {
 	return metaID.Compare(metaIDFromInterface(key)) == 0
 }
 
-func NewMetaID(typeID ids.ID, hashID ids.ID) ids.ID {
+func NewMetaID(Type ids.ID, hash ids.ID) ids.MetaID {
 	return metaID{
-		TypeID: typeID,
-		HashID: hashID,
+		Type: Type,
+		Hash: hash,
 	}
 }

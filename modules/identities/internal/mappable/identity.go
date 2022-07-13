@@ -44,7 +44,7 @@ func (identity) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, identity{})
 }
 
-func NewIdentity(id ids.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Identity {
+func NewIdentity(id ids.IdentityID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Identity {
 	return identity{
 		Document: baseQualified.Document{
 			ID: id,

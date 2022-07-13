@@ -19,9 +19,9 @@ func Test_MetaID_Methods(t *testing.T) {
 	require.NotPanics(t, func() {
 		require.Equal(t, typeID.String()+"."+hashID.String(), testMetaID.String())
 		require.Equal(t, true, testMetaID.Equals(testMetaID))
-		require.Equal(t, false, testMetaID.Equals(metaID{TypeID: baseIDs.NewStringID("tempID"), HashID: baseIDs.NewStringID("tempHash")}))
+		require.Equal(t, false, testMetaID.Equals(metaID{Type: baseIDs.NewStringID("tempID"), Hash: baseIDs.NewStringID("tempHash")}))
 		require.Equal(t, false, testMetaID.IsPartial())
-		require.Equal(t, true, metaID{HashID: baseIDs.NewStringID("")}.IsPartial())
+		require.Equal(t, true, metaID{Hash: baseIDs.NewStringID("")}.IsPartial())
 		require.Equal(t, true, testMetaID.Equals(testMetaID))
 		require.Equal(t, false, testMetaID.Equals(nil))
 		require.Equal(t, testMetaID, FromID(testMetaID))
