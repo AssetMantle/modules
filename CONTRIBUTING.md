@@ -169,7 +169,7 @@ When writing documentation, follow the [Documentation Writing Guidelines](./docs
 
 We use [Go Modules](https://github.com/golang/go/wiki/Modules) to manage dependency versions.
 
-The master branch of every modules repository should just build with `go get`, which means they should be kept up-to-date
+The master branch of every modules' repository should just build with `go get`, which means they should be kept up-to-date
 with their dependencies, so we can get away with telling people they can just `go get` our software.
 
 Since some dependencies are not under our control, a third party may break our build, in which case we can fall back
@@ -234,7 +234,7 @@ and similar).
 In the ethos of open source projects, and out of necessity to keep the code alive, the core contributor team will strive
 to permit special repo privileges to developers who show an aptitude towards developing with this code base.
 
-Several kinds of privileges may be granted however most common privileges to be granted are merge rights to
+Several kinds of privileges may be granted however most common privileges to be granted are merging rights to
 either part of, or the entirety of the code base (through the GitHub `CODEOWNERS` file). The on-boarding process for new
 code owners is as follows: On a bi-monthly basis (or more frequently if agreeable) all the existing code owners will
 privately convene to discuss potential new candidates as well as the potential for existing code-owners to exit or "pass
@@ -296,12 +296,12 @@ should convene to rectify the situation by either:
 
 **Approval Committee & Decision-Making**
 
-In absence of general consensus, decision making requires 1/2 vote from the two members of the **Concept Approval
+In absence of general consensus, decision-making requires 1/2 vote from the two members of the **Concept Approval
 Committee**.
 
 ### Implementation & Release Approval
 
-The following process should be adhered to both for implementation PRs corresponding to ADRs, as well as for PRs made as
+The following process should be adhered to both for implementation PRs corresponding to ADRs, and for PRs made as
 part of a release process:
 
 * Code reviewers should ensure the PR does exactly what the ADR said it should
