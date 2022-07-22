@@ -16,6 +16,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 )
@@ -50,7 +51,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	immutableProperties := base.NewPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
 
-	assetID := key.NewAssetID(message.ClassificationID, immutableProperties)
+	assetID := baseIDs.NewAssetID(message.ClassificationID, immutableProperties)
 
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(assetID))
 	if assets.Get(key.FromID(assetID)) != nil {

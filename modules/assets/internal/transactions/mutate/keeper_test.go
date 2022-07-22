@@ -100,7 +100,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	defaultIdentityID := baseIDs.NewStringID("fromIdentityID")
 	maintainIdentityMockError := baseIDs.NewStringID("maintainError")
 	classificationID := baseIDs.NewStringID("ClassificationID")
-	assetID := key.NewAssetID(classificationID, immutableProperties)
+	assetID := baseIDs.NewAssetID(classificationID, immutableProperties)
 	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewAsset(assetID, immutableProperties, mutableProperties))
 
 	t.Run("PositiveCase", func(t *testing.T) {

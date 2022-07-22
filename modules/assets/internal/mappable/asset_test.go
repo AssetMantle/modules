@@ -8,7 +8,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
@@ -22,7 +21,7 @@ func Test_Asset_Methods(t *testing.T) {
 	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 	mutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData")))
 
-	assetID := key.NewAssetID(classificationID, immutableProperties)
+	assetID := baseIDs.NewAssetID(classificationID, immutableProperties)
 	testAsset := NewAsset(assetID, immutableProperties, mutableProperties).(asset)
 
 	require.Equal(t, asset{Document: baseQualified.Document{ID: assetID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{PropertyList: mutableProperties}}}, testAsset)

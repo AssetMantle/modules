@@ -9,7 +9,7 @@ import (
 )
 
 func Prototype() helpers.Key {
-	if assetID, err := assetIDFromInterface(baseIDs.NewStringID("")); err != nil {
+	if assetID, err := keyFromInterface(baseIDs.NewStringID("")); err != nil {
 		panic(err)
 	} else {
 		return assetID

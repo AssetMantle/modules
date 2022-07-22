@@ -13,7 +13,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/common"
-	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -37,7 +36,7 @@ func Test_Asset_Request(t *testing.T) {
 	classificationID := baseIDs.NewStringID("classificationID")
 	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 
-	testAssetID := key.NewAssetID(classificationID, immutableProperties)
+	testAssetID := baseIDs.NewAssetID(classificationID, immutableProperties)
 	testQueryRequest := newQueryRequest(testAssetID)
 	require.Equal(t, nil, testQueryRequest.Validate())
 	require.Equal(t, queryRequest{}, requestPrototype())

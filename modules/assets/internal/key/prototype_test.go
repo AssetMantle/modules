@@ -12,7 +12,7 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	assetID, err := assetIDFromInterface(baseIDs.NewStringID(""))
+	assetID, err := keyFromInterface(baseIDs.NewStringID(""))
 	require.Equal(t, Prototype(), assetID)
 	require.Equal(t, nil, err)
 }

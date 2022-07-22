@@ -78,7 +78,7 @@ func Test_Query_Keeper_Asset(t *testing.T) {
 	require.Equal(t, nil, err)
 
 	classificationID := baseIDs.NewStringID("ClassificationID")
-	assetID := key.NewAssetID(classificationID, immutableProperties)
+	assetID := baseIDs.NewAssetID(classificationID, immutableProperties)
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewAsset(assetID, immutableProperties, mutableProperties))
 
 	testQueryRequest := newQueryRequest(assetID)
