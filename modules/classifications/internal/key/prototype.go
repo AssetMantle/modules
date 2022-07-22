@@ -5,13 +5,8 @@ package key
 
 import (
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func Prototype() helpers.Key {
-	if classificationID, err := classificationIDFromInterface(baseIDs.NewStringID("")); err != nil {
-		panic(classificationID)
-	} else {
-		return classificationID
-	}
+	return classificationID{}
 }
