@@ -13,18 +13,18 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
+	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type order struct {
-	baseQualified.Document //nolint:govet
+	qualified.Document
 }
 
 var _ mappables.Order = (*order)(nil)
@@ -62,9 +62,9 @@ func (order order) GetExchangeRate() properties.MetaProperty {
 	return base.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(decValue))
 }
 func (order order) GetTakerID() properties.Property {
-	if takerID := order.Immutables.GetImmutablePropertyList().GetProperty(constants.TakerIDProperty); takerID != nil {
+	if takerID := order.Document.GetImmutables().GetImmutablePropertyList().GetProperty(constants.TakerIDProperty); takerID != nil {
 		return takerID
-	} else if takerID := order.Mutables.GetMutablePropertyList().GetProperty(constants.TakerIDProperty); takerID != nil {
+	} else if takerID := order.Document.GetMutables().GetMutablePropertyList().GetProperty(constants.TakerIDProperty); takerID != nil {
 		return takerID
 	} else {
 
@@ -92,13 +92,6 @@ func (order) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, order{})
 }
 
-func NewOrder(orderID ids.OrderID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Order {
-	return order{
-		Document: baseQualified.Document{
-			ID:               orderID,
-			ClassificationID: key.ReadClassificationID(orderID),
-			Immutables:       baseQualified.Immutables{PropertyList: immutableProperties},
-			Mutables:         baseQualified.Mutables{PropertyList: mutableProperties},
-		},
-	}
+func NewOrder(classification mappables.Classification, immutables qualified.Immutables, mutables qualified.Mutables) mappables.Order {
+	return order{Document: baseQualified.NewDocument(classification, immutables, mutables)}
 }

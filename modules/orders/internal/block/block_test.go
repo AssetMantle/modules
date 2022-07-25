@@ -24,8 +24,6 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 )
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Auxiliary, helpers.Auxiliary) {
@@ -72,14 +70,5 @@ func Test_Block_Methods(t *testing.T) {
 	block = block.Initialize(mapper, parameters.Prototype(), transferAuxiliary, supplementAuxiliary)
 	block.Begin(context, abciTypes.RequestBeginBlock{})
 
-	defaultIdentityID := baseIDs.NewStringID("fromID")
-	classificationID := baseIDs.NewStringID("classificationID")
-	makerOwnableID := baseIDs.NewStringID("makerOwnableID")
-	takerOwnableID := baseIDs.NewStringID("takerOwnableID")
-	rateID := baseIDs.NewStringID(sdkTypes.OneDec().String())
-	creationID := baseIDs.NewStringID("100")
-	orderID := key.NewOrderID(classificationID, makerOwnableID, takerOwnableID, rateID, creationID, defaultIdentityID, baseLists.NewPropertyList())
-	orders := mapper.NewCollection(context)
-	orders.Add(mappable.NewOrder(orderID, baseLists.NewPropertyList(), baseLists.NewPropertyList()))
 	block.End(context, abciTypes.RequestEndBlock{})
 }

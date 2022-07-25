@@ -24,10 +24,10 @@ func (stringID stringID) Bytes() []byte {
 	return []byte(stringID.IDString)
 }
 func (stringID stringID) Compare(listable traits.Listable) int {
-	if id, err := stringIDFromInterface(listable); err != nil {
+	if compareStringID, err := stringIDFromInterface(listable); err != nil {
 		panic(err)
 	} else {
-		return strings.Compare(id.String(), id.String())
+		return strings.Compare(stringID.String(), compareStringID.String())
 	}
 }
 func stringIDFromInterface(i interface{}) (stringID, error) {

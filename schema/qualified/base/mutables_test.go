@@ -18,10 +18,10 @@ func Test_Mutables(t *testing.T) {
 
 	testProperty := baseProperties.NewProperty(baseIDs.NewStringID("ID"), baseData.NewStringData("Data"))
 	testProperties := baseLists.NewPropertyList(testProperty)
-	testMutables := Mutables{testProperties}
-	require.Equal(t, Mutables{PropertyList: testProperties}, testMutables)
+	testMutables := mutables{testProperties}
+	require.Equal(t, mutables{PropertyList: testProperties}, testMutables)
 	require.Equal(t, testProperties, testMutables.GetMutablePropertyList())
 	mutatedTestProperty := baseProperties.NewProperty(baseIDs.NewStringID("ID"), baseData.NewStringData("Data2"))
-	require.Equal(t, Mutables{PropertyList: baseLists.NewPropertyList(mutatedTestProperty)}, testMutables.Mutate(mutatedTestProperty))
+	require.Equal(t, mutables{PropertyList: baseLists.NewPropertyList(mutatedTestProperty)}, testMutables.Mutate(mutatedTestProperty))
 
 }

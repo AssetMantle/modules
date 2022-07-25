@@ -56,7 +56,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	assets.Mutate(mappable.NewAsset(asset.(mappables.Asset).GetID(), asset.(mappables.Asset).GetImmutablePropertyList(), asset.(mappables.Asset).GetImmutablePropertyList().Mutate(mutableProperties.GetList()...)))
+	assets.Mutate(mappable.NewAsset(asset.(mappables.Asset).GetHashID(), asset.(mappables.Asset).GetImmutables(), asset.(mappables.Asset).GetImmutables().Mutate(mutableProperties.GetList()...)))
 
 	return newTransactionResponse(nil)
 }

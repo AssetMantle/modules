@@ -4,6 +4,7 @@
 package base
 
 import (
+	"encoding/binary"
 	"strconv"
 
 	"github.com/AssetMantle/modules/schema/data"
@@ -14,7 +15,6 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type heightData struct {
@@ -37,18 +37,24 @@ func (heightData heightData) Compare(listable traits.Listable) int {
 func (heightData heightData) String() string {
 	return strconv.FormatInt(heightData.Value.Get(), 10)
 }
+
+// TODO test
+func (heightData heightData) Bytes() []byte {
+	bytes := make([]byte, 8)
+	binary.LittleEndian.PutUint64(bytes, uint64(heightData.Get().Get()))
+	return bytes
+}
 func (heightData heightData) GetType() ids.ID {
 	return dataConstants.HeightDataID
 }
 func (heightData heightData) ZeroValue() data.Data {
 	return NewHeightData(baseTypes.NewHeight(0))
 }
-func (heightData heightData) GenerateHash() ids.ID {
+func (heightData heightData) GenerateHashID() ids.HashID {
 	if heightData.Compare(heightData.ZeroValue()) == 0 {
-		return baseIDs.NewStringID("")
+		return baseIDs.GenerateHashID()
 	}
-
-	return baseIDs.NewStringID(stringUtilities.Hash(strconv.FormatInt(heightData.Value.Get(), 10)))
+	return baseIDs.GenerateHashID(heightData.Bytes())
 }
 func (heightData heightData) Get() types.Height {
 	return heightData.Value

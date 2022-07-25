@@ -23,7 +23,7 @@ func Test_IdentityID_Methods(t *testing.T) {
 	key := FromID(testIdentityID)
 
 	require.NotPanics(t, func() {
-		require.Equal(t, testIdentityID, identityID{ClassificationID: classificationID, Hash: baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()})
+		require.Equal(t, testIdentityID, identityID{ClassificationID: classificationID, Hash: baseQualified.immutables{PropertyList: immutableProperties}.GenerateHashID()})
 		require.Equal(t, FromID(testIdentityID), identityIDFromInterface(testIdentityID))
 		require.Equal(t, false, testIdentityID.(identityID).IsPartial())
 		require.Equal(t, true, testIdentityID2.(identityID).IsPartial())
@@ -31,7 +31,7 @@ func Test_IdentityID_Methods(t *testing.T) {
 		require.Equal(t, true, testIdentityID.(identityID).Equals(key))
 		require.Equal(t, false, testIdentityID.(identityID).Equals(FromID(baseIDs.NewStringID("id"))))
 		require.Equal(t, false, testIdentityID.(identityID).Equals(nil))
-		require.Equal(t, testIdentityID.(identityID).Bytes(), append(classificationID.Bytes(), baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID().Bytes()...))
+		require.Equal(t, testIdentityID.(identityID).Bytes(), append(classificationID.Bytes(), baseQualified.immutables{PropertyList: immutableProperties}.GenerateHashID().Bytes()...))
 		require.Equal(t, readIdentityID(testIdentityID.(identityID).String()), testIdentityID)
 		require.Equal(t, identityIDFromInterface(testIdentityID.(identityID)), testIdentityID.(identityID))
 		require.Equal(t, identityIDFromInterface(baseIDs.NewStringID("id")), identityID{ClassificationID: baseIDs.NewStringID(""), Hash: baseIDs.NewStringID("")})

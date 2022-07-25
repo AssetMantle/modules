@@ -19,8 +19,9 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 func Test_Asset_Request(t *testing.T) {
@@ -34,9 +35,9 @@ func Test_Asset_Request(t *testing.T) {
 	Codec.Seal()
 
 	classificationID := baseIDs.NewStringID("classificationID")
-	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 
-	testAssetID := baseIDs.NewAssetID(classificationID, immutableProperties)
+	testAssetID := baseIDs.NewAssetID(classificationID, baseQualified.NewImmutables(immutableProperties))
 	testQueryRequest := newQueryRequest(testAssetID)
 	require.Equal(t, nil, testQueryRequest.Validate())
 	require.Equal(t, queryRequest{}, requestPrototype())

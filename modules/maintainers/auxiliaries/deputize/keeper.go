@@ -44,7 +44,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(auxiliaryResponse.GetError())
 	}
 
-	removeMaintainedProperties := fromMaintainer.GetMutablePropertyList()
+	removeMaintainedProperties := fromMaintainer.GetMutables()
 
 	for _, maintainedProperty := range auxiliaryRequest.MaintainedProperties.GetList() {
 		if !fromMaintainer.MaintainsProperty(maintainedProperty.GetID()) {
@@ -67,7 +67,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		if !fromMaintainer.CanMutateMaintainer() {
 			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
-		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMutablePropertyList().Add(auxiliaryRequest.MaintainedProperties.GetList()...).Remove(removeMaintainedProperties.GetList()...)
+		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMutables().Add(auxiliaryRequest.MaintainedProperties.GetList()...).Remove(removeMaintainedProperties.GetList()...)
 		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID, baseLists.NewPropertyList(), maintainedProperties))
 	}
 

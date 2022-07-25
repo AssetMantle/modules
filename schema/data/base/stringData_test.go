@@ -10,7 +10,6 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/utilities/string"
 )
 
 func Test_StringData(t *testing.T) {
@@ -19,8 +18,6 @@ func Test_StringData(t *testing.T) {
 	testStringData2 := NewStringData("")
 
 	require.Equal(t, value, testStringData.String())
-	require.Equal(t, baseIDs.NewStringID(string.Hash(value)), testStringData.GenerateHash())
-	require.Equal(t, baseIDs.NewStringID(""), testStringData2.GenerateHash())
 	require.Equal(t, constants.StringDataID, testStringData.GetType())
 	require.Equal(t, testStringData.ZeroValue(), NewStringData(""))
 	require.Equal(t, false, testStringData.Compare(testStringData2) == 0)

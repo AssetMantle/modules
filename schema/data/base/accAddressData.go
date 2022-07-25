@@ -14,7 +14,6 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type accAddressData struct {
@@ -43,12 +42,13 @@ func (accAddressData accAddressData) GetType() ids.ID {
 func (accAddressData accAddressData) ZeroValue() data.Data {
 	return NewAccAddressData(sdkTypes.AccAddress{})
 }
-func (accAddressData accAddressData) GenerateHash() ids.ID {
+func (accAddressData accAddressData) GenerateHashID() ids.HashID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
-		return baseIDs.NewStringID("")
+		// TODO test
+		return baseIDs.GenerateHashID("")
 	}
 
-	return baseIDs.NewStringID(stringUtilities.Hash(accAddressData.Value.String()))
+	return baseIDs.GenerateHashID(accAddressData.Value.String())
 }
 func (accAddressData accAddressData) Get() sdkTypes.AccAddress {
 	return accAddressData.Value

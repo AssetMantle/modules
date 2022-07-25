@@ -10,12 +10,13 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type classification struct {
-	baseQualified.Document //nolint:govet
+	qualified.Document
 }
 
 var _ mappables.Classification = (*classification)(nil)
@@ -29,11 +30,11 @@ func (classification) RegisterCodec(codec *codec.Codec) {
 
 func NewClassification(immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Classification {
 	return classification{
-		Document: baseQualified.Document{
+		document: baseQualified.New{
 			ID: key.NewClassificationID(immutableProperties, mutableProperties),
 			// TODO Add classificationID
-			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
-			Mutables:   baseQualified.Mutables{PropertyList: mutableProperties},
+			Immutables: baseQualified.immutables{PropertyList: immutableProperties},
+			Mutables:   baseQualified.mutables{PropertyList: mutableProperties},
 		},
 	}
 }

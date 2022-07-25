@@ -7,10 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/errors/constants"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -20,6 +16,9 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/schema/errors/constants"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
@@ -83,66 +82,14 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	ctx, keepers := CreateTestInput(t)
 	ctx = ctx.WithBlockHeight(2)
-	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, err)
-	mutableProperties, err := utilities.ReadProperties("burn:H|100")
-	require.Equal(t, nil, err)
-	supplementError, err := utilities.ReadMetaPropertyList("supplementError:S|mockError")
-	require.Equal(t, nil, err)
+
 	defaultAddr := sdkTypes.AccAddress("addr")
-	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
 	defaultIdentityID := baseIDs.NewStringID("fromIdentityID")
-	burnMockErrorIdentity := baseIDs.NewStringID("burnError")
-	classificationID := baseIDs.NewStringID("ClassificationID")
-	assetID := baseIDs.NewAssetID(classificationID, immutableProperties)
-	assetID2 := baseIDs.NewAssetID(baseIDs.NewStringID("ClassificationID2"), immutableProperties)
-	assetID3 := baseIDs.NewAssetID(baseIDs.NewStringID("ClassificationID3"), immutableProperties)
-	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID, immutableProperties, mutableProperties))
-	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID2, immutableProperties, supplementError.ToPropertyList()))
-	keepers.AssetsKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewAsset(assetID3, immutableProperties, mutableProperties))
-
-	t.Run("PositiveCase", func(t *testing.T) {
-		want := newTransactionResponse(nil)
-		if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, assetID)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase - verify identity mock error", func(t *testing.T) {
-		t.Parallel()
-		want := newTransactionResponse(constants.MockError)
-		if got := keepers.AssetsKeeper.Transact(ctx, newMessage(verifyMockErrorAddress, defaultIdentityID, assetID)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
 
 	t.Run("NegativeCase - unMinted asset", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(constants.EntityNotFound)
 		if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, defaultIdentityID, baseIDs.NewStringID(""))); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase - supplement mock error", func(t *testing.T) {
-		t.Parallel()
-		want := newTransactionResponse(constants.MockError)
-		if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, burnMockErrorIdentity, assetID2)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase - burn mock error", func(t *testing.T) {
-		t.Parallel()
-		want := newTransactionResponse(constants.MockError)
-		if got := keepers.AssetsKeeper.Transact(ctx, newMessage(defaultAddr, burnMockErrorIdentity, assetID3)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-	t.Run("NegativeCase - burn height error", func(t *testing.T) {
-		ctx2 := ctx.WithBlockHeight(-20)
-		want := newTransactionResponse(constants.NotAuthorized)
-		if got := keepers.AssetsKeeper.Transact(ctx2, newMessage(defaultAddr, burnMockErrorIdentity, assetID3)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

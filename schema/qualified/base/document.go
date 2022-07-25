@@ -5,26 +5,23 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/qualified"
 )
 
-type Document struct {
-	ID               ids.ID `json:"id" valid:"required~required field id is missing"`
-	ClassificationID ids.ID `json:"classificationID" valid:"required~required field classificationID is missing"`
-	Immutables
-	Mutables //nolint:govet
+type document struct {
+	ids.ClassificationID
+	qualified.Immutables
+	qualified.Mutables
 }
 
-var _ qualified.Document = (*Document)(nil)
+var _ qualified.Document = (*document)(nil)
 
-func (document Document) GetID() ids.ID {
-	return document.ID
-}
-func (document Document) GetClassificationID() ids.ID {
+func (document document) GetClassificationID() ids.ClassificationID {
 	return document.ClassificationID
 }
-func (document Document) GetProperty(propertyID ids.PropertyID) properties.Property {
+func (document document) GetProperty(propertyID ids.PropertyID) properties.Property {
 	if property := document.Immutables.GetImmutablePropertyList().GetProperty(propertyID); property != nil {
 		return property
 	} else if property := document.Mutables.GetMutablePropertyList().GetProperty(propertyID); property != nil {
@@ -33,10 +30,25 @@ func (document Document) GetProperty(propertyID ids.PropertyID) properties.Prope
 		return nil
 	}
 }
+func (document document) GetImmutables() qualified.Immutables {
+	return document.Immutables
+}
+func (document document) GetMutables() qualified.Mutables {
+	return document.Mutables
+}
 
 // TODO write test case
 // TODO check is not metaProperty
-func (document Document) Mutate(propertyList ...properties.Property) qualified.Document {
-	document.Mutables = document.Mutables.Mutate(propertyList...).(Mutables)
+func (document document) Mutate(propertyList ...properties.Property) qualified.Document {
+	document.Mutables = document.Mutables.Mutate(propertyList...).(mutables)
 	return document
+}
+
+func NewDocument(classification mappables.Classification, immutables qualified.Immutables, mutables qualified.Mutables) qualified.Document {
+	// TODO check if the document conforms to the classification
+	return document{
+		ClassificationID: classification.GetClassificationID(),
+		Immutables:       immutables,
+		Mutables:         mutables,
+	}
 }

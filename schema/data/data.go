@@ -13,12 +13,13 @@ type Data interface {
 	GetID() ids.DataID
 
 	String() string
+	Bytes() []byte
 
 	GetType() ids.ID
 	ZeroValue() Data
 	// GenerateHash returns the hash of the Data as an ID
-	// * Returns ID of empty string when the value of Data is that Data type's zero value
-	GenerateHash() ids.ID
+	// * Returns ID of empty bytes when the value of Data is that Data type's zero value
+	GenerateHashID() ids.HashID
 
 	traits.Listable
 }

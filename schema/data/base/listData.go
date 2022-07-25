@@ -4,7 +4,7 @@
 package base
 
 import (
-	"strings"
+	"bytes"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
@@ -43,7 +43,8 @@ func (listData listData) Compare(listable traits.Listable) int {
 		panic(err)
 	}
 
-	return strings.Compare(listData.GenerateHash().String(), compareListData.GenerateHash().String())
+	// TODO check for optimization
+	return bytes.Compare(listData.Bytes(), compareListData.Bytes())
 }
 func (listData listData) String() string {
 	dataStrings := make([]string, listData.Value.Size())
@@ -54,24 +55,29 @@ func (listData listData) String() string {
 
 	return stringUtilities.JoinListStrings(dataStrings...)
 }
+func (listData listData) Bytes() []byte {
+	hashBytesList := make([][]byte, listData.Value.Size())
+
+	for i, datum := range listData.Value.GetList() {
+		hashBytesList[i] = datum.Bytes()
+	}
+	// TODO see if separator required
+	return bytes.Join(hashBytesList, nil)
+}
 func (listData listData) GetType() ids.ID {
 	return dataConstants.ListDataID
 }
 func (listData listData) ZeroValue() data.Data {
 	return NewListData(base.NewDataList([]data.Data{}...))
 }
-func (listData listData) GenerateHash() ids.ID {
-	if listData.Value.Size() == 0 {
-		return baseIDs.NewStringID("")
+
+// TODO test
+func (listData listData) GenerateHashID() ids.HashID {
+	if listData.Compare(listData.ZeroValue()) == 0 {
+		return baseIDs.GenerateHashID()
 	}
 
-	hashList := make([]string, listData.Value.Size())
-
-	for i, datum := range listData.Value.GetList() {
-		hashList[i] = datum.GenerateHash().String()
-	}
-
-	return baseIDs.NewStringID(stringUtilities.Hash(hashList...))
+	return baseIDs.GenerateHashID(listData.Bytes())
 }
 func listDataFromInterface(listable traits.Listable) (listData, error) {
 	switch value := listable.(type) {

@@ -19,7 +19,7 @@ import (
 
 // TODO check structure
 type maintainer struct {
-	baseQualified.Document
+	baseQualified.document
 }
 
 var _ mappables.Maintainer = (*maintainer)(nil)
@@ -108,10 +108,10 @@ func (maintainer) RegisterCodec(codec *codec.Codec) {
 
 func NewMaintainer(id ids.MaintainerID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Maintainer {
 	return maintainer{
-		Document: baseQualified.Document{
+		document: baseQualified.document{
 			ID:         id,
-			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
-			Mutables:   baseQualified.Mutables{PropertyList: mutableProperties},
+			Immutables: baseQualified.immutables{PropertyList: immutableProperties},
+			Mutables:   baseQualified.mutables{PropertyList: mutableProperties},
 		},
 	}
 }

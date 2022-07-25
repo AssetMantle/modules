@@ -12,7 +12,6 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type idData struct {
@@ -24,6 +23,7 @@ var _ data.IDData = (*idData)(nil)
 func (idData idData) GetID() ids.DataID {
 	return baseIDs.NewDataID(idData)
 }
+
 func (idData idData) Compare(listable traits.Listable) int {
 	compareIDData, err := idDataFromInterface(listable)
 	if err != nil {
@@ -35,14 +35,17 @@ func (idData idData) Compare(listable traits.Listable) int {
 func (idData idData) String() string {
 	return idData.Value.String()
 }
+func (idData idData) Bytes() []byte {
+	return idData.Value.Bytes()
+}
 func (idData idData) GetType() ids.ID {
 	return dataConstants.IDDataID
 }
 func (idData idData) ZeroValue() data.Data {
 	return NewIDData(baseIDs.NewStringID(""))
 }
-func (idData idData) GenerateHash() ids.ID {
-	return baseIDs.NewStringID(stringUtilities.Hash(idData.Value.String()))
+func (idData idData) GenerateHashID() ids.HashID {
+	return baseIDs.GenerateHashID(idData.Bytes())
 }
 func (idData idData) Get() ids.ID {
 	return idData.Value

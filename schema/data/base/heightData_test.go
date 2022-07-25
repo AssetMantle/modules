@@ -9,19 +9,14 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema/data/constants"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	"github.com/AssetMantle/modules/utilities/string"
 )
 
 func Test_HeightData(t *testing.T) {
 	heightValue := baseTypes.NewHeight(123)
 	testHeightData := NewHeightData(heightValue)
-	testHeightData2 := NewHeightData(baseTypes.NewHeight(0))
 
 	require.Equal(t, "123", testHeightData.String())
-	require.Equal(t, baseIDs.NewStringID(string.Hash("123")), testHeightData.GenerateHash())
-	require.Equal(t, baseIDs.NewStringID(""), testHeightData2.GenerateHash())
 	require.Equal(t, constants.HeightDataID, testHeightData.GetType())
 
 	require.Equal(t, false, testHeightData.Compare(NewStringData("")) == 0)

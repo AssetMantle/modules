@@ -29,8 +29,6 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
-	"github.com/AssetMantle/modules/schema/properties/constants"
 )
 
 type TestKeepers struct {
@@ -94,10 +92,6 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	rateID := baseIDs.NewStringID(sdkTypes.MustNewDecFromStr("0.001").String())
 	creationID := baseIDs.NewStringID("100")
 	makerID := baseIDs.NewStringID("makerID")
-	metaProperties, err := utilities.ReadMetaPropertyList(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
-		"," + constants.TakerIDProperty.String() + ":I|fromID" + "," +
-		constants.ExchangeRateProperty.String() + ":D|0.000000000000000001")
-	require.Equal(t, nil, err)
 	orderID := key.NewOrderID(
 		classificationID,
 		makerOwnableID,
@@ -107,8 +101,6 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		makerID,
 		base.NewPropertyList(),
 	)
-
-	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewPropertyList(), metaProperties.ToPropertyList()))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
@@ -133,15 +125,6 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase - Cancel with different makerID", func(t *testing.T) {
-		t.Parallel()
-		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewPropertyList(), metaProperties.ToPropertyList()))
-		want := newTransactionResponse(errorConstants.NotAuthorized)
-		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, baseIDs.NewStringID("id"), orderID)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
 	t.Run("NegativeCase - transferMock err", func(t *testing.T) {
 		t.Parallel()
 		transferErrorID := key.NewOrderID(classificationID,
@@ -151,7 +134,6 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 			makerID,
 			base.NewPropertyList(),
 		)
-		keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(transferErrorID, base.NewPropertyList(), metaProperties.ToPropertyList()))
 
 		want := newTransactionResponse(errorConstants.MockError)
 		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, makerID, transferErrorID)); !reflect.DeepEqual(got, want) {

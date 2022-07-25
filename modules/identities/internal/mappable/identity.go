@@ -18,27 +18,27 @@ import (
 )
 
 type identity struct {
-	baseQualified.Document //nolint:govet
+	baseQualified.document //nolint:govet
 }
 
 var _ mappables.Identity = (*identity)(nil)
 
 func (identity identity) GetExpiry() propertiesSchema.Property {
-	if property := identity.Document.GetProperty(constants.ExpiryProperty); property != nil {
+	if property := identity.document.GetProperty(constants.ExpiryProperty); property != nil {
 		return property
 	}
 
 	return constants.Expiry
 }
 func (identity identity) GetAuthentication() propertiesSchema.Property {
-	if property := identity.Document.GetProperty(constants.AuthenticationProperty); property != nil {
+	if property := identity.document.GetProperty(constants.AuthenticationProperty); property != nil {
 		return property
 	}
 
 	return constants.Authentication
 }
 func (identity identity) GetKey() helpers.Key {
-	return key.FromID(identity.Document.ID)
+	return key.FromID(identity.document.ID)
 }
 func (identity) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, identity{})
@@ -46,11 +46,11 @@ func (identity) RegisterCodec(codec *codec.Codec) {
 
 func NewIdentity(id ids.IdentityID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Identity {
 	return identity{
-		Document: baseQualified.Document{
+		document: baseQualified.document{
 			ID: id,
 			// TODO Add classificationID
-			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
-			Mutables:   baseQualified.Mutables{PropertyList: mutableProperties},
+			Immutables: baseQualified.immutables{PropertyList: immutableProperties},
+			Mutables:   baseQualified.mutables{PropertyList: mutableProperties},
 		},
 	}
 }

@@ -12,7 +12,6 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type decData struct {
@@ -47,12 +46,12 @@ func (decData decData) GetType() ids.ID {
 func (decData decData) ZeroValue() data.Data {
 	return NewDecData(sdkTypes.ZeroDec())
 }
-func (decData decData) GenerateHash() ids.ID {
+func (decData decData) GenerateHashID() ids.HashID {
 	if decData.Compare(decData.ZeroValue()) == 0 {
-		return baseIDs.NewStringID("")
+		return baseIDs.GenerateHashID("")
 	}
 
-	return baseIDs.NewStringID(stringUtilities.Hash(decData.Value.String()))
+	return baseIDs.GenerateHashID(decData.Value.String())
 }
 func (decData decData) Get() sdkTypes.Dec {
 	return decData.Value

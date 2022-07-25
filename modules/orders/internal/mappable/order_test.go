@@ -46,7 +46,7 @@ func Test_Order_Methods(t *testing.T) {
 	testOrder := NewOrder(testOrderID, immutableProperties, base.NewPropertyList()).(order)
 	testOrder2 := NewOrder(testOrderID, base.NewPropertyList(), mutableProperties).(order)
 
-	require.Equal(t, order{Document: baseQualified.Document{ID: testOrderID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{PropertyList: base.NewPropertyList()}}}, testOrder)
+	require.Equal(t, order{document: baseQualified.document{ID: testOrderID, Immutables: baseQualified.immutables{PropertyList: immutableProperties}, Mutables: baseQualified.mutables{PropertyList: base.NewPropertyList()}}}, testOrder)
 	require.Equal(t, testOrderID, testOrder.GetID())
 	require.Equal(t, testOrderID, testOrder.GetKey())
 	require.Equal(t, classificationID, testOrder.GetClassificationID())

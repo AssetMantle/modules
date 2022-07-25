@@ -9,8 +9,7 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
-	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
@@ -46,9 +45,9 @@ func assetIDFromInterface(i interface{}) (assetID, error) {
 		return assetID{}, errorConstants.MetaDataError
 	}
 }
-func NewAssetID(classificationID ids.ClassificationID, immutableProperties lists.PropertyList) ids.AssetID {
+func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
 	return assetID{
 		ClassificationID: classificationID,
-		HashID:           base.Immutables{PropertyList: immutableProperties}.GenerateHashID(),
+		HashID:           immutables.GenerateHashID(),
 	}
 }

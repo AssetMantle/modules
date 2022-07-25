@@ -138,7 +138,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 					panic(err)
 				}
 
-				orders.Mutate(mappable.NewOrder(executableOrder.GetID(), executableOrder.GetImmutablePropertyList(), executableOrder.GetMutablePropertyList().Mutate(mutableProperties.GetList()...)))
+				orders.Mutate(mappable.NewOrder(executableOrder.GetHashID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(mutableProperties.GetList()...)))
 
 				orderLeftOverMakerOwnableSplit = sdkTypes.ZeroDec()
 			default:
@@ -176,7 +176,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return newTransactionResponse(err)
 		}
 
-		orders.Mutate(mappable.NewOrder(orderID, order.GetImmutablePropertyList(), order.GetMutablePropertyList().Mutate(mutableProperties.GetList()...)))
+		orders.Mutate(mappable.NewOrder(orderID, order.GetImmutables(), order.GetMutables().Mutate(mutableProperties.GetList()...)))
 	}
 
 	return newTransactionResponse(nil)

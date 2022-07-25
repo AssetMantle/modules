@@ -138,7 +138,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								panic(err)
 							}
 
-							orders.Mutate(mappable.NewOrder(leftOrder.GetID(), leftOrder.GetImmutablePropertyList(), leftOrder.Mutate(mutableProperties.GetList()...).GetMutablePropertyList()))
+							orders.Mutate(mappable.NewOrder(leftOrder.GenerateHashID(), leftOrder.GetImmutables(), leftOrder.Mutate(mutableProperties.GetList()...).GetMutables()))
 							orders.Remove(rightOrder)
 
 							if executableOrderHeight.Compare(orderHeight) > 0 {
@@ -158,7 +158,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								panic(err)
 							}
 
-							orders.Mutate(mappable.NewOrder(rightOrder.GetID(), rightOrder.GetImmutablePropertyList(), rightOrder.GetMutablePropertyList().Mutate(mutableProperties.GetList()...)))
+							orders.Mutate(mappable.NewOrder(rightOrder.GenerateHashID(), rightOrder.GetImmutables(), rightOrder.GetMutables().Mutate(mutableProperties.GetList()...)))
 							orders.Remove(leftOrder)
 
 							if orderHeight.Compare(executableOrderHeight) >= 0 {

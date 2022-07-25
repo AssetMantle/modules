@@ -26,7 +26,7 @@ func Test_Maintainer_Methods(t *testing.T) {
 
 	testMaintainer := NewMaintainer(testMaintainerID, nil, mutableProperties).(maintainer)
 
-	require.Equal(t, maintainer{Document: baseQualified.Document{ID: testMaintainerID, ClassificationID: classificationID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{PropertyList: mutableProperties}}}, testMaintainer)
+	require.Equal(t, maintainer{document: baseQualified.document{ID: testMaintainerID, ClassificationID: classificationID, Immutables: baseQualified.immutables{PropertyList: immutableProperties}, Mutables: baseQualified.mutables{PropertyList: mutableProperties}}}, testMaintainer)
 	require.Equal(t, testMaintainerID, testMaintainer.GetID())
 	require.Equal(t, classificationID, testMaintainer.GetClassificationID())
 	require.Equal(t, identityID, testMaintainer.GetIdentityID())

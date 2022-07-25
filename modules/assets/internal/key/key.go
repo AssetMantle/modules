@@ -26,13 +26,15 @@ func (key) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, key{})
 }
 func (key key) IsPartial() bool {
+	// TODO test nil AssetID case
 	return len(key.AssetID.Bytes()) == 0
 }
 func (key key) Equals(compareKey helpers.Key) bool {
 	if CompareKey, err := keyFromInterface(compareKey); err != nil {
 		return false
 	} else {
-		return key.Compare(CompareKey) == 0
+		// TODO test nil AssetID case
+		return key.AssetID.Compare(CompareKey.AssetID) == 0
 	}
 }
 func keyFromInterface(i interface{}) (key, error) {
@@ -42,4 +44,14 @@ func keyFromInterface(i interface{}) (key, error) {
 	default:
 		return key{}, errorConstants.MetaDataError
 	}
+}
+
+func NewKey(assetID ids.AssetID) helpers.Key {
+	return key{
+		AssetID: assetID,
+	}
+}
+
+func Prototype() helpers.Key {
+	return key{}
 }
