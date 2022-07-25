@@ -11,7 +11,7 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
-	properties2 "github.com/AssetMantle/modules/schema/properties"
+	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -23,21 +23,21 @@ type asset struct {
 
 var _ mappables.Asset = (*asset)(nil)
 
-func (asset asset) GetBurn() properties2.Property {
+func (asset asset) GetBurn() properties.Property {
 	if burn := asset.GetProperty(constants.BurnProperty); burn != nil {
 		return burn
 	}
 
 	return constants.Burn
 }
-func (asset asset) GetLock() properties2.Property {
+func (asset asset) GetLock() properties.Property {
 	if lock := asset.GetProperty(constants.LockProperty); lock != nil {
 		return lock
 	}
 
 	return constants.Lock
 }
-func (asset asset) GetSupply() properties2.Property {
+func (asset asset) GetSupply() properties.Property {
 	if supply := asset.GetProperty(constants.SupplyProperty); supply != nil {
 		return supply
 	}
