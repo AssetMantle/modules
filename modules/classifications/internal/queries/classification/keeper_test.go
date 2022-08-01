@@ -22,7 +22,9 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
@@ -69,10 +71,10 @@ func Test_Query_Keeper_Classification(t *testing.T) {
 	mutableProperties, Error2 := utilities.ReadProperties("burn:S|100")
 	require.Equal(t, nil, Error2)
 
-	classificationID := key.NewClassificationID(immutableProperties, mutableProperties)
-	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewClassification(immutableProperties, mutableProperties))
+	classificationID := baseIDs.NewClassificationID(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))
+	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewClassification(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties)))
 
 	testQueryRequest := newQueryRequest(classificationID)
-	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.FromID(classificationID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
+	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.NewKey(classificationID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
 
 }

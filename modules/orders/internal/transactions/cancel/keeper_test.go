@@ -29,6 +29,7 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type TestKeepers struct {
@@ -92,14 +93,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	rateID := baseIDs.NewStringID(sdkTypes.MustNewDecFromStr("0.001").String())
 	creationID := baseIDs.NewStringID("100")
 	makerID := baseIDs.NewStringID("makerID")
-	orderID := key.NewOrderID(
+	orderID := baseIDs.NewOrderID(
 		classificationID,
 		makerOwnableID,
 		takerOwnableID,
 		rateID,
 		creationID,
 		makerID,
-		base.NewPropertyList(),
+		baseQualified.NewImmutables(base.NewPropertyList()),
 	)
 
 	t.Run("PositiveCase", func(t *testing.T) {
@@ -127,12 +128,12 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - transferMock err", func(t *testing.T) {
 		t.Parallel()
-		transferErrorID := key.NewOrderID(classificationID,
+		transferErrorID := baseIDs.NewOrderID(classificationID,
 			baseIDs.NewStringID("transferError"),
 			takerOwnableID, baseIDs.NewStringID("1.0"),
 			baseIDs.NewStringID("1"),
 			makerID,
-			base.NewPropertyList(),
+			baseQualified.NewImmutables(base.NewPropertyList()),
 		)
 
 		want := newTransactionResponse(errorConstants.MockError)

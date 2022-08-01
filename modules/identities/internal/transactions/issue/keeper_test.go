@@ -30,6 +30,7 @@ import (
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type TestKeepers struct {
@@ -85,8 +86,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	immutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 
-	var immutableProperties lists.PropertyList
-	immutableProperties, err = utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties lists.MetaPropertyList
@@ -107,8 +107,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	defaultAddr := sdkTypes.AccAddress("addr")
 	defaultClassificationID := baseIDs.NewStringID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
-	defaultIdentityID := key.NewIdentityID(defaultClassificationID, immutableProperties)
-	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(defaultIdentityID, base.NewPropertyList(), base.NewPropertyList()))
+	defaultIdentityID := baseIDs.NewIdentityID(defaultClassificationID, baseQualified.NewImmutables(immutableProperties))
+	keepers.IdentitiesKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(defaultIdentityID, baseQualified.NewImmutables(base.NewPropertyList()), baseQualified.NewMutables(base.NewPropertyList())))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

@@ -21,7 +21,7 @@ func Test_Super_Request(t *testing.T) {
 
 	testAuxiliaryRequest := NewAuxiliaryRequest(classificationID, identityID, mutableProperties)
 
-	require.Equal(t, auxiliaryRequest{ClassificationID: classificationID, IdentityID: identityID, MutableProperties: mutableProperties}, testAuxiliaryRequest)
+	require.Equal(t, auxiliaryRequest{ClassificationID: classificationID, IdentityID: identityID, Mutables: mutableProperties}, testAuxiliaryRequest)
 	require.Equal(t, nil, testAuxiliaryRequest.Validate())
 	require.Equal(t, testAuxiliaryRequest, auxiliaryRequestFromInterface(testAuxiliaryRequest))
 	require.Equal(t, auxiliaryRequest{}, auxiliaryRequestFromInterface(nil))

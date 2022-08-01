@@ -27,7 +27,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	identity := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(auxiliaryRequest.IdentityID)).Get(key.FromID(auxiliaryRequest.IdentityID))
+	identity := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.IdentityID)).Get(key.NewKey(auxiliaryRequest.IdentityID))
 	if identity == nil {
 		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}

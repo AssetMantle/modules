@@ -15,43 +15,39 @@ import (
 
 type dataID struct {
 	Type ids.StringID
-	Hash ids.StringID
+	ids.HashID
 }
 
 var _ ids.DataID = (*dataID)(nil)
 
 func (dataID dataID) String() string {
-	return stringUtilities.JoinIDStrings(dataID.Type.String(), dataID.Hash.String())
+	return stringUtilities.JoinIDStrings(dataID.Type.String(), dataID.HashID.String())
 }
 func (dataID dataID) Bytes() []byte {
 	var Bytes []byte
 	Bytes = append(Bytes, dataID.Type.Bytes()...)
-	Bytes = append(Bytes, dataID.Hash.Bytes()...)
+	Bytes = append(Bytes, dataID.HashID.Bytes()...)
 
 	return Bytes
 }
 func (dataID dataID) Compare(listable traits.Listable) int {
-	if compareDataID, err := dataIDFromInterface(listable); err != nil {
-		panic(errorConstants.MetaDataError)
-	} else {
-		return bytes.Compare(dataID.Bytes(), compareDataID.Bytes())
-	}
+	return bytes.Compare(dataID.Bytes(), dataIDFromInterface(listable).Bytes())
 }
-func (dataID dataID) GetHash() ids.ID {
-	return dataID.Hash
+func (dataID dataID) GetHashID() ids.HashID {
+	return dataID.HashID
 }
-func dataIDFromInterface(i interface{}) (dataID, error) {
+func dataIDFromInterface(i interface{}) dataID {
 	switch value := i.(type) {
 	case dataID:
-		return value, nil
+		return value
 	default:
-		return dataID{}, errorConstants.MetaDataError
+		panic(errorConstants.MetaDataError)
 	}
 }
 
 func NewDataID(data data.Data) ids.DataID {
 	return dataID{
-		Type: data.GetType(),
-		Hash: data.GenerateHash(),
+		Type:   data.GetType(),
+		HashID: data.GenerateHashID(),
 	}
 }

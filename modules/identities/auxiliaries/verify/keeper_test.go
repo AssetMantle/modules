@@ -78,7 +78,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	unprovisionedAddr := sdkTypes.AccAddress("unProvisionedAddr")
 	immutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	defaultClassificationID := baseIDs.NewStringID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
-	defaultIdentityID := key.NewIdentityID(defaultClassificationID, immutableProperties)
+	defaultIdentityID := baseIDs.NewIdentityID(defaultClassificationID, immutableProperties)
 	keepers.IdentitiesKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewIdentity(defaultIdentityID, baseLists.NewPropertyList(), baseLists.NewPropertyList()))
 
 	t.Run("PositiveCase", func(t *testing.T) {

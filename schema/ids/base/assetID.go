@@ -31,18 +31,14 @@ func (assetID assetID) Bytes() []byte {
 	return Bytes
 }
 func (assetID assetID) Compare(listable traits.Listable) int {
-	if compareAssetID, err := assetIDFromInterface(listable); err != nil {
-		panic(err)
-	} else {
-		return bytes.Compare(assetID.Bytes(), compareAssetID.Bytes())
-	}
+	return bytes.Compare(assetID.Bytes(), assetIDFromInterface(listable).Bytes())
 }
-func assetIDFromInterface(i interface{}) (assetID, error) {
+func assetIDFromInterface(i interface{}) assetID {
 	switch value := i.(type) {
 	case assetID:
-		return value, nil
+		return value
 	default:
-		return assetID{}, errorConstants.MetaDataError
+		panic(errorConstants.MetaDataError)
 	}
 }
 func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {

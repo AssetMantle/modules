@@ -67,10 +67,10 @@ func Test_Query_Keeper_Meta(t *testing.T) {
 	context, keepers := CreateTestInput2(t)
 	typeID := baseIDs.NewStringID("I")
 	hashID := baseIDs.NewStringID("Hash")
-	metaID := key.NewMetaID(typeID, hashID)
+	metaID := baseIDs.NewMetaID(typeID, hashID)
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(baseData.NewIDData(hashID)))
 
 	testQueryRequest := newQueryRequest(metaID)
-	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.FromID(metaID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
+	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.NewKey(metaID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
 
 }

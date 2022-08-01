@@ -15,9 +15,11 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type transactionKeeper struct {
@@ -46,12 +48,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	immutableProperties := base.NewPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
+	immutables := baseQualified.NewImmutables(base.NewPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...))
 
-	identityID := key.NewIdentityID(message.ClassificationID, immutableProperties)
+	identityID := baseIDs.NewIdentityID(message.ClassificationID, immutables)
 
-	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
-	if identities.Get(key.FromID(identityID)) != nil {
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
+	if identities.Get(key.NewKey(identityID)) != nil {
 		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
@@ -64,13 +66,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	mutableProperties := base.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
+	mutables := baseQualified.NewMutables(base.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutableProperties, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	identities.Add(mappable.NewIdentity(identityID, immutableProperties, mutableProperties))
+	identities.Add(mappable.NewIdentity(identityID, immutables, mutables))
 
 	return newTransactionResponse(nil)
 }

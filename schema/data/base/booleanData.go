@@ -40,18 +40,26 @@ func (booleanData booleanData) Compare(listable traits.Listable) int {
 func (booleanData booleanData) String() string {
 	return strconv.FormatBool(booleanData.Value)
 }
+
+// TODO test
+func (booleanData booleanData) Bytes() []byte {
+	if booleanData.Get() {
+		return []byte{0x1}
+	}
+	return []byte{0x0}
+}
 func (booleanData booleanData) GetType() ids.ID {
 	return dataConstants.BooleanDataID
 }
 func (booleanData booleanData) ZeroValue() data.Data {
 	return NewBooleanData(false)
 }
-func (booleanData booleanData) GenerateHash() ids.ID {
+func (booleanData booleanData) GenerateHashID() ids.HashID {
 	if booleanData.Compare(booleanData.ZeroValue()) == 0 {
-		return baseIDs.NewStringID(strconv.FormatBool(false))
+		return baseIDs.GenerateHashID()
 	}
 
-	return baseIDs.NewStringID(strconv.FormatBool(true))
+	return baseIDs.GenerateHashID(booleanData.Bytes())
 }
 func (booleanData booleanData) Get() bool {
 	return booleanData.Value

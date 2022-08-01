@@ -32,9 +32,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.IdentityID))
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.IdentityID))
 
-	identity := identities.Get(key.FromID(message.IdentityID))
+	identity := identities.Get(key.NewKey(message.IdentityID))
 	if identity == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}

@@ -26,11 +26,11 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context)
 
-	fromMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
+	fromMaintainerID := baseIDs.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
 
 	var fromMaintainer mappables.Maintainer
 
-	if maintainer := maintainers.Fetch(key.FromID(fromMaintainerID)).Get(key.FromID(fromMaintainerID)); maintainer != nil {
+	if maintainer := maintainers.Fetch(key.NewKey(fromMaintainerID)).Get(key.NewKey(fromMaintainerID)); maintainer != nil {
 		fromMaintainer = maintainer.(mappables.Maintainer)
 	} else {
 		return newAuxiliaryResponse(constants.EntityNotFound)
@@ -44,19 +44,20 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(auxiliaryResponse.GetError())
 	}
 
-	removeMaintainedProperties := fromMaintainer.GetMutables()
+	removeMaintainedPropertyList := fromMaintainer.GetMutables().GetMutablePropertyList()
 
+	// TODO test
 	for _, maintainedProperty := range auxiliaryRequest.MaintainedProperties.GetList() {
 		if !fromMaintainer.MaintainsProperty(maintainedProperty.GetID()) {
 
 			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
-		removeMaintainedProperties.Remove(maintainedProperty)
+		removeMaintainedPropertyList = removeMaintainedPropertyList.Remove(maintainedProperty)
 	}
 
-	toMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.ToID)
+	toMaintainerID := baseIDs.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.ToID)
 
-	toMaintainer := maintainers.Fetch(key.FromID(toMaintainerID)).Get(key.FromID(toMaintainerID))
+	toMaintainer := maintainers.Fetch(key.NewKey(toMaintainerID)).Get(key.NewKey(toMaintainerID))
 	if toMaintainer == nil {
 		if !fromMaintainer.CanAddMaintainer() {
 			return newAuxiliaryResponse(constants.NotAuthorized)
@@ -67,7 +68,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		if !fromMaintainer.CanMutateMaintainer() {
 			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
-		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMutables().Add(auxiliaryRequest.MaintainedProperties.GetList()...).Remove(removeMaintainedProperties.GetList()...)
+		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMutables().GetMutablePropertyList().Add(auxiliaryRequest.MaintainedProperties.GetList()...).Remove(removeMaintainedPropertyList.GetList()...)
 		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID, baseLists.NewPropertyList(), maintainedProperties))
 	}
 

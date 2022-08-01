@@ -20,8 +20,8 @@ import (
 
 type message struct {
 	From                  sdkTypes.AccAddress    `json:"from" valid:"required~required field from missing"`
-	FromID                ids.ID                 `json:"fromID" valid:"required~required field fromID missing"`
-	IdentityID            ids.ID                 `json:"identityID" valid:"required~required field identityID missing"`
+	FromID                ids.IdentityID         `json:"fromID" valid:"required~required field fromID missing"`
+	IdentityID            ids.IdentityID         `json:"identityID" valid:"required~required field identityID missing"`
 	MutableMetaProperties lists.MetaPropertyList `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
 	MutableProperties     lists.PropertyList     `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
 }

@@ -31,12 +31,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	for _, property := range auxiliaryRequest.PropertyList {
 		var meta helpers.Mappable
 
-		if property.GetHash().Compare(baseIDs.NewStringID("")) == 0 {
+		if property.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) == 0 {
 			meta = mappable.NewMeta(utlities.GetZeroValueDataFromID(property.GetType()))
 		} else {
-			metaID := key.NewMetaID(property.GetType(), property.GetHash())
-			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(metaID))
-			meta = metas.Get(key.FromID(metaID))
+			metaID := baseIDs.NewMetaID(property.GetType(), property.GetDataID().GetHashID())
+			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(metaID))
+			meta = metas.Get(key.NewKey(metaID))
 		}
 
 		if meta != nil {

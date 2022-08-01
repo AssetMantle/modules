@@ -24,7 +24,7 @@ var _ mappables.Meta = (*meta)(nil)
 func (meta meta) GetData() data.Data { return meta.Data }
 func (meta meta) GetID() ids.ID      { return meta.ID }
 func (meta meta) GetKey() helpers.Key {
-	return key.FromID(meta.GetID())
+	return key.NewKey(meta.GetID())
 }
 func (meta) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, meta{})

@@ -8,7 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
@@ -22,19 +22,14 @@ type classification struct {
 var _ mappables.Classification = (*classification)(nil)
 
 func (classification classification) GetKey() helpers.Key {
-	return key.FromID(classification.ID)
+	return key.NewKey(classification.GetClassificationID())
 }
 func (classification) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, classification{})
 }
 
-func NewClassification(immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Classification {
+func NewClassification(immutables qualified.Immutables, mutables qualified.Mutables) mappables.Classification {
 	return classification{
-		document: baseQualified.New{
-			ID: key.NewClassificationID(immutableProperties, mutableProperties),
-			// TODO Add classificationID
-			Immutables: baseQualified.immutables{PropertyList: immutableProperties},
-			Mutables:   baseQualified.mutables{PropertyList: mutableProperties},
-		},
+		Document: baseQualified.NewDocument(base.NewClassificationID(immutables, mutables), immutables, mutables),
 	}
 }

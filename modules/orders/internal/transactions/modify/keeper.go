@@ -43,9 +43,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.OrderID))
+	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.OrderID))
 
-	order := orders.Get(key.FromID(message.OrderID))
+	order := orders.Get(key.NewKey(message.OrderID))
 	if order == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
@@ -91,7 +91,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	orders.Remove(order)
 	orders.Add(mappable.NewOrder(
-		key.NewOrderID(
+		baseIDs.NewOrderID(
 			order.(mappables.Order).GetClassificationID(),
 			order.(mappables.Order).GetMakerOwnableID(),
 			order.(mappables.Order).GetTakerOwnableID(),

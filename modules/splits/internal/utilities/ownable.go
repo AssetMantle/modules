@@ -22,7 +22,7 @@ func GetOwnableTotalSplitsValue(collection helpers.Collection, ownableID ids.ID)
 
 		return false
 	}
-	collection.Iterate(key.FromID(baseIDs.NewStringID("")), accumulator)
+	collection.Iterate(key.NewKey(baseIDs.NewStringID("")), accumulator)
 
 	return value
 }

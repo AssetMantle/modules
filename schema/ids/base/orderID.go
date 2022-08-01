@@ -1,24 +1,17 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
-
-package key
+package base
 
 import (
 	"bytes"
 	"strconv"
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/modules/orders/internal/module"
-	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
-	"github.com/AssetMantle/modules/schema/lists"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type orderID struct {
@@ -28,11 +21,10 @@ type orderID struct {
 	RateID         ids.ID
 	CreationID     ids.ID
 	MakerID        ids.ID
-	Hash           ids.ID
+	ids.HashID
 }
 
 var _ ids.OrderID = (*orderID)(nil)
-var _ helpers.Key = (*orderID)(nil)
 
 func (orderID orderID) Bytes() []byte {
 	var Bytes []byte
@@ -53,7 +45,7 @@ func (orderID orderID) Bytes() []byte {
 	Bytes = append(Bytes, rateIDBytes...)
 	Bytes = append(Bytes, creationIDBytes...)
 	Bytes = append(Bytes, orderID.MakerID.Bytes()...)
-	Bytes = append(Bytes, orderID.Hash.Bytes()...)
+	Bytes = append(Bytes, orderID.HashID.Bytes()...)
 
 	return Bytes
 }
@@ -65,25 +57,12 @@ func (orderID orderID) String() string {
 		orderID.RateID.String(),
 		orderID.CreationID.String(),
 		orderID.MakerID.String(),
-		orderID.Hash.String(),
+		orderID.HashID.String(),
 	)
 }
 func (orderID orderID) Compare(listable traits.Listable) int {
 	return bytes.Compare(orderID.Bytes(), orderIDFromInterface(listable).Bytes())
 }
-func (orderID orderID) GenerateStoreKeyBytes() []byte {
-	return module.StoreKeyPrefix.GenerateStoreKey(orderID.Bytes())
-}
-func (orderID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, orderID{})
-}
-func (orderID orderID) IsPartial() bool {
-	return len(orderID.Hash.Bytes()) == 0
-}
-func (orderID orderID) Equals(key helpers.Key) bool {
-	return orderID.Compare(orderIDFromInterface(key)) == 0
-}
-
 func (orderID orderID) getRateIDBytes() ([]byte, error) {
 	var Bytes []byte
 
@@ -119,8 +98,16 @@ func (orderID orderID) getCreationHeightBytes() ([]byte, error) {
 
 	return Bytes, err
 }
+func orderIDFromInterface(i interface{}) orderID {
+	switch value := i.(type) {
+	case orderID:
+		return value
+	default:
+		panic(constants.MetaDataError)
+	}
+}
 
-func NewOrderID(classificationID ids.ClassificationID, makerOwnableID ids.ID, takerOwnableID ids.ID, rateID ids.ID, creationID ids.ID, makerID ids.ID, immutableProperties lists.PropertyList) ids.OrderID {
+func NewOrderID(classificationID ids.ClassificationID, makerOwnableID ids.ID, takerOwnableID ids.ID, rateID ids.ID, creationID ids.ID, makerID ids.ID, immutables qualified.Immutables) ids.OrderID {
 	return orderID{
 		ClassificationID: classificationID,
 		MakerOwnableID:   makerOwnableID,
@@ -128,6 +115,6 @@ func NewOrderID(classificationID ids.ClassificationID, makerOwnableID ids.ID, ta
 		RateID:           rateID,
 		CreationID:       creationID,
 		MakerID:          makerID,
-		Hash:             baseQualified.immutables{PropertyList: immutableProperties}.GenerateHashID(),
+		HashID:           immutables.GenerateHashID(),
 	}
 }

@@ -20,7 +20,7 @@ import (
 type message struct {
 	From       sdkTypes.AccAddress `json:"from" valid:"required~required field from missing, matches(^[a-z0-9]*$)~field from is invalid"`
 	To         sdkTypes.AccAddress `json:"to" valid:"required~required field to missing, matches(^[a-z0-9]*$)~field to is invalid"`
-	IdentityID ids.ID              `json:"identityID" valid:"required~required field identityID missing"`
+	IdentityID ids.IdentityID      `json:"identityID" valid:"required~required field identityID missing"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -54,7 +54,7 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 func messagePrototype() helpers.Message {
 	return message{}
 }
-func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, identityID ids.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, identityID ids.IdentityID) sdkTypes.Msg {
 	return message{
 		From:       from,
 		To:         to,

@@ -21,32 +21,32 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(auxiliaryRequest.ClassificationID))
+	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.ClassificationID))
 
-	classification := classifications.Get(key.FromID(auxiliaryRequest.ClassificationID))
+	classification := classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID))
 	if classification == nil {
 		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
 
-	if auxiliaryRequest.ImmutableProperties != nil {
-		if len(auxiliaryRequest.ImmutableProperties.GetList()) != len(classification.(mappables.Classification).GetImmutables().GetImmutablePropertyList().GetList()) {
+	if auxiliaryRequest.Immutables != nil {
+		if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList()) != len(classification.(mappables.Classification).GetImmutables().GetImmutablePropertyList().GetList()) {
 			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
 
-		for _, immutableProperty := range auxiliaryRequest.ImmutableProperties.GetList() {
-			if property := classification.(mappables.Classification).GetImmutables().GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || property.GetType().Compare(immutableProperty.GetType()) != 0 || property.GetHash().Compare(baseIDs.NewStringID("")) != 0 && property.GetHash() != immutableProperty.GetHash() {
+		for _, immutableProperty := range auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList() {
+			if property := classification.(mappables.Classification).GetImmutables().GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || property.GetType().Compare(immutableProperty.GetType()) != 0 || property.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) != 0 && property.GetDataID().GetHashID() != immutableProperty.GetDataID().GetHashID() {
 				return newAuxiliaryResponse(constants.NotAuthorized)
 			}
 		}
 	}
 
-	if auxiliaryRequest.MutableProperties != nil {
-		if len(auxiliaryRequest.MutableProperties.GetList()) > len(classification.(mappables.Classification).GetMutables().GetMutablePropertyList().GetList()) {
+	if auxiliaryRequest.Mutables != nil {
+		if len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()) > len(classification.(mappables.Classification).GetMutables().GetMutablePropertyList().GetList()) {
 			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
 
-		for _, mutableProperty := range auxiliaryRequest.MutableProperties.GetList() {
-			if property := classification.(mappables.Classification).GetMutables().GetProperty(mutableProperty.GetID()); property == nil || property.GetType().Compare(mutableProperty.GetType()) != 0 {
+		for _, mutableProperty := range auxiliaryRequest.Mutables.GetMutablePropertyList().GetList() {
+			if property := classification.(mappables.Classification).GetMutables().GetMutablePropertyList().GetProperty(mutableProperty.GetID()); property == nil || property.GetType().Compare(mutableProperty.GetType()) != 0 {
 				return newAuxiliaryResponse(constants.NotAuthorized)
 			}
 		}

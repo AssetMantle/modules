@@ -5,7 +5,6 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/qualified"
 )
@@ -44,10 +43,10 @@ func (document document) Mutate(propertyList ...properties.Property) qualified.D
 	return document
 }
 
-func NewDocument(classification mappables.Classification, immutables qualified.Immutables, mutables qualified.Mutables) qualified.Document {
+func NewDocument(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) qualified.Document {
 	// TODO check if the document conforms to the classification
 	return document{
-		ClassificationID: classification.GetClassificationID(),
+		ClassificationID: classificationID,
 		Immutables:       immutables,
 		Mutables:         mutables,
 	}

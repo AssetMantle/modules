@@ -19,10 +19,10 @@ type propertyID struct {
 
 var _ ids.PropertyID = (*propertyID)(nil)
 
-func (propertyID propertyID) GetKey() ids.ID {
+func (propertyID propertyID) GetKey() ids.StringID {
 	return propertyID.Key
 }
-func (propertyID propertyID) GetType() ids.ID {
+func (propertyID propertyID) GetType() ids.StringID {
 	return propertyID.Type
 }
 func (propertyID propertyID) String() string {
@@ -36,19 +36,14 @@ func (propertyID propertyID) Bytes() []byte {
 	return Bytes
 }
 func (propertyID propertyID) Compare(listable traits.Listable) int {
-	if comparePropertyID, err := propertyIDFromInterface(listable); err != nil {
-		panic(err)
-	} else {
-		return bytes.Compare(propertyID.Bytes(), comparePropertyID.Bytes())
-
-	}
+	return bytes.Compare(propertyID.Bytes(), propertyIDFromInterface(listable).Bytes())
 }
-func propertyIDFromInterface(listable traits.Listable) (propertyID, error) {
+func propertyIDFromInterface(listable traits.Listable) propertyID {
 	switch value := listable.(type) {
 	case propertyID:
-		return value, nil
+		return value
 	default:
-		return propertyID{}, errorConstants.MetaDataError
+		panic(errorConstants.MetaDataError)
 	}
 }
 

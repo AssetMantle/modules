@@ -8,7 +8,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
@@ -18,15 +17,13 @@ import (
 
 func Test_Classification_Methods(t *testing.T) {
 
-	immutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
-	mutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData")))
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 
-	id := key.NewClassificationID(immutableProperties, mutableProperties)
+	id := baseIDs.NewClassificationID(immutables, mutables)
 
-	testClassification := NewClassification(immutableProperties, mutableProperties)
-	require.Equal(t, classification{document: baseQualified.document{ID: id, Immutables: baseQualified.immutables{PropertyList: immutableProperties}, Mutables: baseQualified.mutables{PropertyList: mutableProperties}}}, testClassification)
-	require.Equal(t, immutableProperties, testClassification.GetImmutables())
-	require.Equal(t, mutableProperties, testClassification.GetMutables())
-	require.Equal(t, key.FromID(id), testClassification.GetKey())
-	require.Equal(t, id, testClassification.(classification).GetID())
+	testClassification := NewClassification(immutables, mutables)
+	require.Equal(t, classification{Document: baseQualified.NewDocument(id, immutables, mutables)}, testClassification)
+	require.Equal(t, immutables, testClassification.GetImmutables())
+	require.Equal(t, mutables, testClassification.GetMutables())
 }

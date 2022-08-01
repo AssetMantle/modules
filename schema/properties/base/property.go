@@ -13,8 +13,8 @@ import (
 )
 
 type property struct {
-	ID     ids.PropertyID `json:"id"`
-	DataID ids.DataID     `json:"dataID"`
+	ID     ids.PropertyID
+	DataID ids.DataID
 }
 
 var _ properties.Property = (*property)(nil)
@@ -25,14 +25,14 @@ func (property property) GetID() ids.PropertyID {
 func (property property) GetDataID() ids.DataID {
 	return property.DataID
 }
-func (property property) GetKey() ids.ID {
+func (property property) GetKey() ids.StringID {
 	return property.ID.GetKey()
 }
-func (property property) GetType() ids.ID {
+func (property property) GetType() ids.StringID {
 	return property.ID.GetType()
 }
 func (property property) GetHash() ids.ID {
-	return property.DataID.GetHash()
+	return property.DataID.GetHashID()
 }
 func (property property) Compare(listable traits.Listable) int {
 	if compareProperty, err := propertyFromInterface(listable); err != nil {

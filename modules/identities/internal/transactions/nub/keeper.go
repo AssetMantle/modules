@@ -13,9 +13,11 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
+	"github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type transactionKeeper struct {
@@ -43,19 +45,19 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(baseLists.NewPropertyList(constants.NubID), baseLists.NewPropertyList(constants.Authentication))))
+	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(base.NewImmutables(baseLists.NewPropertyList(constants.NubID)), base.NewMutables(baseLists.NewPropertyList(constants.Authentication)))))
 	if classificationID == nil && err != nil {
 		return newTransactionResponse(err)
 	}
 
-	identityID := key.NewIdentityID(classificationID, immutableProperties)
+	identityID := baseIDs.NewIdentityID(classificationID, base.NewImmutables(immutableProperties))
 
-	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
-	if identities.Get(key.FromID(identityID)) != nil {
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
+	if identities.Get(key.NewKey(identityID)) != nil {
 		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
-	identities.Add(mappable.NewIdentity(identityID, immutableProperties, mutableProperties))
+	identities.Add(mappable.NewIdentity(identityID, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 
 	return newTransactionResponse(nil)
 }

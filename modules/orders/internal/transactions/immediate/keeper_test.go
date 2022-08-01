@@ -7,11 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/errors/constants"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -32,8 +27,13 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/mint"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -109,16 +109,16 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	makerOwnableID := baseIDs.NewStringID("makerOwnableID")
 	takerOwnableID := baseIDs.NewStringID("takerOwnableID")
 	makerOwnableSplit := sdkTypes.MustNewDecFromStr("1000")
-	orderID := key.NewOrderID(
+	orderID := baseIDs.NewOrderID(
 		classificationID,
 		makerOwnableID,
 		takerOwnableID,
 		baseIDs.NewStringID(sdkTypes.OneDec().String()),
 		baseIDs.NewStringID("100"),
 		defaultIdentityID,
-		base.NewPropertyList(),
+		baseQualified.NewImmutables(baseLists.NewPropertyList()),
 	)
-	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, base.NewPropertyList(), base.NewPropertyList()))
+	keepers.OrdersKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewOrder(orderID, baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList())))
 
 	t.Run("PositiveCase Adding Order without execution", func(t *testing.T) {
 		want := newTransactionResponse(nil)

@@ -31,18 +31,14 @@ func (hashID hashID) Bytes() []byte {
 	return hashID.HashBytes
 }
 func (hashID hashID) Compare(listable traits.Listable) int {
-	if compareHashID, err := hashIDFromInterface(listable); err != nil {
-		panic(err)
-	} else {
-		return bytes.Compare(hashID.Bytes(), compareHashID.Bytes())
-	}
+	return bytes.Compare(hashID.Bytes(), hashIDFromInterface(listable).Bytes())
 }
-func hashIDFromInterface(i interface{}) (hashID, error) {
+func hashIDFromInterface(i interface{}) hashID {
 	switch value := i.(type) {
 	case hashID:
-		return value, nil
+		return value
 	default:
-		return hashID{}, constants.MetaDataError
+		panic(constants.MetaDataError)
 	}
 }
 

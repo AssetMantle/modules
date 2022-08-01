@@ -28,6 +28,7 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type TestKeepers struct {
@@ -76,14 +77,14 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 	classificationID := baseIDs.NewStringID("classificationID")
-	mutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1")))
-	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2")))
+	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
+	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 
-	keepers.ClassificationsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewClassification(immutableProperties, mutableProperties))
+	keepers.ClassificationsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewClassification(immutables, mutables))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(nil)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, immutableProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, immutables, mutables)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -91,7 +92,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("Negative Case - Immutable Data Type mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(constants.NotAuthorized)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewIDData(baseIDs.NewStringID("Data2")))), mutableProperties)); !reflect.DeepEqual(got, want) {
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewIDData(baseIDs.NewStringID("Data2"))))), mutables)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -99,7 +100,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("Negative Case - Mutable Data Type mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(constants.NotAuthorized)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, immutableProperties, base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewIDData(baseIDs.NewStringID("Data1")))))); !reflect.DeepEqual(got, want) {
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewIDData(baseIDs.NewStringID("Data1"))))))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -107,7 +108,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-PropertyList list length mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(constants.NotAuthorized)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, base.NewPropertyList(), mutableProperties)); !reflect.DeepEqual(got, want) {
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, baseQualified.NewImmutables(base.NewPropertyList()), mutables)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -115,7 +116,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-PropertyList mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(constants.NotAuthorized)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data3"))), mutableProperties)); !reflect.DeepEqual(got, want) {
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data3")))), mutables)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -123,7 +124,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-PropertyList list length mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(constants.NotAuthorized)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, immutableProperties, base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID4"), baseData.NewStringData("Data4")), baseProperties.NewProperty(baseIDs.NewStringID("ID5"), baseData.NewStringData("Data5"))))); !reflect.DeepEqual(got, want) {
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID4"), baseData.NewStringData("Data4")), baseProperties.NewProperty(baseIDs.NewStringID("ID5"), baseData.NewStringData("Data5")))))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -131,7 +132,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-PropertyList mismatch", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(constants.NotAuthorized)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, immutableProperties, base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID6"), baseData.NewStringData("Data3"))))); !reflect.DeepEqual(got, want) {
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID6"), baseData.NewStringData("Data3")))))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -139,7 +140,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase- Classification EntityNotFound", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(constants.EntityNotFound)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewStringID("test.classification"), immutableProperties, base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID6"), baseData.NewStringData("Data3"))))); !reflect.DeepEqual(got, want) {
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewStringID("test.classification"), immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID6"), baseData.NewStringData("Data3")))))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

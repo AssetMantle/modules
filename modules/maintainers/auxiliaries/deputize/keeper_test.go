@@ -78,7 +78,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	toID := baseIDs.NewStringID("toID")
 	immutableProperties := baseLists.NewPropertyList()
 	mutableProperties := baseLists.NewPropertyList()
-	maintainerID := key.NewMaintainerID(classificationID, identityID)
+	maintainerID := baseIDs.NewMaintainerID(classificationID, identityID)
 	keepers.MaintainersKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMaintainer(maintainerID, immutableProperties, mutableProperties))
 
 	t.Run("PositiveCase", func(t *testing.T) {

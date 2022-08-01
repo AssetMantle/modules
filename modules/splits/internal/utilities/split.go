@@ -22,7 +22,7 @@ func AddSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID, valu
 
 	splitID := key.NewSplitID(ownerID, ownableID)
 
-	split := splits.Fetch(key.FromID(splitID)).Get(key.FromID(splitID))
+	split := splits.Fetch(key.NewKey(splitID)).Get(key.NewKey(splitID))
 	if split == nil {
 		splits.Add(mappable.NewSplit(splitID, value))
 	} else {
@@ -37,7 +37,7 @@ func SubtractSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID,
 		return nil, constants.NotAuthorized
 	}
 
-	splitsKey := key.FromID(key.NewSplitID(ownerID, ownableID))
+	splitsKey := key.NewKey(key.NewSplitID(ownerID, ownableID))
 
 	split := splits.Fetch(splitsKey).Get(splitsKey)
 	if split == nil {

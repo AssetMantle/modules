@@ -19,8 +19,8 @@ import (
 
 type message struct {
 	From    sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	FromID  ids.ID              `json:"fromID" valid:"required~required field fromID missing"`
-	AssetID ids.ID              `json:"assetID" valid:"required~required field assetID missing"`
+	FromID  ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
+	AssetID ids.AssetID         `json:"assetID" valid:"required~required field assetID missing"`
 }
 
 var _ helpers.Message = message{}

@@ -8,13 +8,13 @@ import (
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
-	base2 "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
-	"github.com/AssetMantle/modules/schema/qualified/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -46,15 +46,15 @@ func (asset asset) GetSupply() properties.Property {
 	return constants.Supply
 }
 func (asset asset) GetKey() helpers.Key {
-	return key.NewKey(base2.NewAssetID(asset.GetClassificationID(), asset.GetImmutables()))
+	return key.NewKey(baseIDs.NewAssetID(asset.GetClassificationID(), asset.GetImmutables()))
 }
 func (asset) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, asset{})
 }
 
-func NewAsset(classification mappables.Classification, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Asset {
+func NewAsset(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) mappables.Asset {
 	return asset{
-		Document: base.NewDocument(classification, immutableProperties, mutableProperties),
+		Document: baseQualified.NewDocument(classificationID, immutables, mutables),
 	}
 }
 

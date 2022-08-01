@@ -24,9 +24,9 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 	identityID := message.IdentityID
-	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 
-	identity := identities.Get(key.FromID(identityID)).(mappables.Identity)
+	identity := identities.Get(key.NewKey(identityID)).(mappables.Identity)
 	if identity == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}

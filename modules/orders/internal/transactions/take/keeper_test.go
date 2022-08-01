@@ -96,7 +96,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	takerOwnableID := baseIDs.NewStringID("takerOwnableID")
 	rateID := baseIDs.NewStringID(sdkTypes.OneDec().MulInt64(2).Quo(sdkTypes.SmallestDec()).Quo(sdkTypes.SmallestDec()).String())
 	creationID := baseIDs.NewStringID("100")
-	orderID := key.NewOrderID(classificationID, makerOwnableID,
+	orderID := baseIDs.NewOrderID(classificationID, makerOwnableID,
 		takerOwnableID, rateID, creationID, defaultIdentityID, base.NewPropertyList())
 	metaProperties, err := utilities.ReadMetaPropertyList(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 		"," + constants.TakerIDProperty.String() + ":I|fromID")
@@ -137,7 +137,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - transfer mock fail", func(t *testing.T) {
 		t.Parallel()
-		transferErrorID := key.NewOrderID(classificationID, makerOwnableID,
+		transferErrorID := baseIDs.NewOrderID(classificationID, makerOwnableID,
 			baseIDs.NewStringID("transferError"), rateID, creationID, defaultIdentityID, base.NewPropertyList())
 		metaProperties, err := utilities.ReadMetaPropertyList(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 			"," + constants.TakerIDProperty.String() + ":I|fromID")
@@ -154,7 +154,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase - transfer mock fail", func(t *testing.T) {
 		t.Parallel()
-		transferErrorID := key.NewOrderID(classificationID, baseIDs.NewStringID("transferError"),
+		transferErrorID := baseIDs.NewOrderID(classificationID, baseIDs.NewStringID("transferError"),
 			takerOwnableID, rateID, creationID, defaultIdentityID, base.NewPropertyList())
 		metaProperties, err := utilities.ReadMetaPropertyList(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 			"," + constants.TakerIDProperty.String() + ":I|fromID" + "," +
@@ -180,7 +180,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("Positive Case - take more than make order", func(t *testing.T) {
 		t.Parallel()
-		orderID := key.NewOrderID(classificationID, makerOwnableID,
+		orderID := baseIDs.NewOrderID(classificationID, makerOwnableID,
 			takerOwnableID, rateID, creationID, defaultIdentityID, base.NewPropertyList())
 		metaProperties, err := utilities.ReadMetaPropertyList(constants.MakerOwnableSplitProperty.String() + ":D|0.000000000000000001" +
 			"," + constants.TakerIDProperty.String() + ":I|fromID" + "," +

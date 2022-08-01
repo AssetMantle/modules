@@ -16,6 +16,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type transactionKeeper struct {
@@ -34,9 +35,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.AssetID))
+	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.AssetID))
 
-	asset := assets.Get(key.FromID(message.AssetID))
+	asset := assets.Get(key.NewKey(message.AssetID))
 	if asset == nil {
 		return newTransactionResponse(constants.EntityNotFound)
 	}
@@ -46,17 +47,17 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	mutableProperties := baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
+	mutables := base.NewMutables(baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.(mappables.Asset).GetClassificationID(), nil, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.(mappables.Asset).GetClassificationID(), nil, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.(mappables.Asset).GetClassificationID(), message.FromID, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.(mappables.Asset).GetClassificationID(), message.FromID, mutables.GetMutablePropertyList())); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	assets.Mutate(mappable.NewAsset(asset.(mappables.Asset).GetHashID(), asset.(mappables.Asset).GetImmutables(), asset.(mappables.Asset).GetImmutables().Mutate(mutableProperties.GetList()...)))
+	assets.Mutate(mappable.NewAsset(asset.(mappables.Asset).GenerateHashID(), asset.(mappables.Asset).GetImmutables(), base.NewMutables(asset.(mappables.Asset).GetImmutables().GetImmutablePropertyList().Mutate(mutables.GetMutablePropertyList().GetList()...))))
 
 	return newTransactionResponse(nil)
 }

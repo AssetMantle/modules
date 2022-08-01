@@ -17,6 +17,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type transactionKeeper struct {
@@ -32,11 +33,11 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromIdentity)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	identity := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.FromID)).Get(key.FromID(message.FromID)).(mappables.Identity)
+	identity := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.FromIdentity)).Get(key.NewKey(message.FromIdentity)).(mappables.Identity)
 	if identity == nil {
 		return newTransactionResponse(constants.EntityNotFound)
 	}
@@ -50,21 +51,21 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	immutableProperties := baseLists.NewPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
+	immutableProperties := base.NewImmutables(baseLists.NewPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...))
 
 	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetList()...)))
 	if err != nil {
 		return newTransactionResponse(err)
 	}
 
-	mutableProperties := baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
+	mutableProperties := base.NewMutables(baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
 
 	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(immutableProperties, mutableProperties)))
 	if err != nil {
 		return newTransactionResponse(err)
 	}
 
-	if auxiliaryResponse := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.FromID, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.FromIdentity, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 

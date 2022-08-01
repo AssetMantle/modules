@@ -6,7 +6,6 @@ package define
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -22,11 +21,11 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	if len(auxiliaryRequest.ImmutableProperties.GetList())+len(auxiliaryRequest.MutableProperties.GetList()) > module.MaxPropertyCount {
+	if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList())+len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()) > module.MaxPropertyCount {
 		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 	}
 
-	classificationID := key.NewClassificationID(auxiliaryRequest.ImmutableProperties, auxiliaryRequest.MutableProperties)
+	classificationID := baseIDs.NewClassificationID(auxiliaryRequest.Immutables, auxiliaryRequest.Mutables)
 
 	return newAuxiliaryResponse(baseIDs.NewStringID(classificationID.String()), nil)
 }

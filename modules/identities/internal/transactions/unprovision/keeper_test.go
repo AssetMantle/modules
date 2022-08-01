@@ -78,7 +78,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	unprovisionedAddr := sdkTypes.AccAddress("unProvisionedAddr")
 	immutableProperties, _ := listsUtilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	defaultClassificationID := baseIDs.NewStringID("test.cGn3HMW8M3t5gMDv-wXa9sseHnA=")
-	defaultIdentityID := key.NewIdentityID(defaultClassificationID, immutableProperties)
+	defaultIdentityID := baseIDs.NewIdentityID(defaultClassificationID, immutableProperties)
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)

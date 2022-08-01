@@ -31,14 +31,11 @@ func (metaProperty metaProperty) GetID() ids.PropertyID {
 func (metaProperty metaProperty) GetDataID() ids.DataID {
 	return metaProperty.Data.GetID()
 }
-func (metaProperty metaProperty) GetKey() ids.ID {
+func (metaProperty metaProperty) GetKey() ids.StringID {
 	return metaProperty.ID.GetKey()
 }
-func (metaProperty metaProperty) GetType() ids.ID {
+func (metaProperty metaProperty) GetType() ids.StringID {
 	return metaProperty.Data.GetType()
-}
-func (metaProperty metaProperty) GetHash() ids.ID {
-	return metaProperty.Data.GenerateHash()
 }
 func (metaProperty metaProperty) Compare(listable traits.Listable) int {
 	if compareMetaProperty, err := metaPropertyFromInterface(listable); err != nil {

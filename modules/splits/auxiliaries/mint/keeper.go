@@ -21,9 +21,9 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	splitID := key.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
-	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(splitID))
+	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(splitID))
 
-	split := splits.Get(key.FromID(splitID))
+	split := splits.Get(key.NewKey(splitID))
 	if split == nil {
 		splits.Add(mappable.NewSplit(splitID, auxiliaryRequest.Value))
 	} else {

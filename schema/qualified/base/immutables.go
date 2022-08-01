@@ -26,10 +26,10 @@ func (immutables immutables) GetImmutablePropertyList() lists.PropertyList {
 	return immutables.PropertyList
 }
 func (immutables immutables) GenerateHashID() ids.HashID {
-	metaList := make([]string, len(immutables.PropertyList.GetList()))
+	metaList := make([][]byte, len(immutables.PropertyList.GetList()))
 
 	for i, immutableProperty := range immutables.PropertyList.GetList() {
-		metaList[i] = immutableProperty.GetHash().String()
+		metaList[i] = immutableProperty.GetDataID().GetHashID().Bytes()
 	}
 
 	return baseIDs.GenerateHashID(metaList...)

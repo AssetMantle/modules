@@ -86,12 +86,12 @@ func (order order) GetMakerOwnableSplit() properties.Property {
 	return constants.MakerOwnableSplit
 }
 func (order order) GetKey() helpers.Key {
-	return key.FromID(order.ID)
+	return key.NewKey(order.ID)
 }
 func (order) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, order{})
 }
 
-func NewOrder(classification mappables.Classification, immutables qualified.Immutables, mutables qualified.Mutables) mappables.Order {
-	return order{Document: baseQualified.NewDocument(classification, immutables, mutables)}
+func NewOrder(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) mappables.Order {
+	return order{Document: baseQualified.NewDocument(classificationID, immutables, mutables)}
 }

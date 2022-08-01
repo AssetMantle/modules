@@ -9,5 +9,5 @@ import (
 )
 
 func Prototype() helpers.Key {
-	return metaIDFromInterface(baseIDs.NewStringID(""))
+	return keyFromInterface(baseIDs.NewStringID(""))
 }

@@ -36,6 +36,9 @@ func (accAddressData accAddressData) Compare(listable traits.Listable) int {
 func (accAddressData accAddressData) String() string {
 	return accAddressData.Value.String()
 }
+func (accAddressData accAddressData) Bytes() []byte {
+	return accAddressData.Value.Bytes()
+}
 func (accAddressData accAddressData) GetType() ids.ID {
 	return dataConstants.AccAddressDataID
 }
@@ -45,10 +48,10 @@ func (accAddressData accAddressData) ZeroValue() data.Data {
 func (accAddressData accAddressData) GenerateHashID() ids.HashID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
 		// TODO test
-		return baseIDs.GenerateHashID("")
+		return baseIDs.GenerateHashID()
 	}
 
-	return baseIDs.GenerateHashID(accAddressData.Value.String())
+	return baseIDs.GenerateHashID(accAddressData.Bytes())
 }
 func (accAddressData accAddressData) Get() sdkTypes.AccAddress {
 	return accAddressData.Value

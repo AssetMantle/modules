@@ -40,6 +40,9 @@ func (decData decData) Compare(listable traits.Listable) int {
 func (decData decData) String() string {
 	return decData.Value.String()
 }
+func (decData decData) Bytes() []byte {
+	return decData.Value.Bytes()
+}
 func (decData decData) GetType() ids.ID {
 	return dataConstants.DecDataID
 }
@@ -48,10 +51,10 @@ func (decData decData) ZeroValue() data.Data {
 }
 func (decData decData) GenerateHashID() ids.HashID {
 	if decData.Compare(decData.ZeroValue()) == 0 {
-		return baseIDs.GenerateHashID("")
+		return baseIDs.GenerateHashID()
 	}
 
-	return baseIDs.GenerateHashID(decData.Value.String())
+	return baseIDs.GenerateHashID(decData.Bytes())
 }
 func (decData decData) Get() sdkTypes.Dec {
 	return decData.Value

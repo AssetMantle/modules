@@ -24,6 +24,7 @@ import (
 	"github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -59,14 +60,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	immutableProperties := base.NewPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
+	immutables := baseQualified.NewImmutables(base.NewPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...))
 
 	exchangeRate := message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(message.MakerOwnableSplit)
-	orderID := key.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, baseIDs.NewStringID(exchangeRate.String()), baseIDs.NewStringID(strconv.FormatInt(context.BlockHeight(), 10)), message.FromID, immutableProperties)
-	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(orderID))
+	orderID := baseIDs.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, baseIDs.NewStringID(exchangeRate.String()), baseIDs.NewStringID(strconv.FormatInt(context.BlockHeight(), 10)), message.FromID, immutables)
+	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(orderID))
 	makerOwnableSplit := message.MakerOwnableSplit
 
-	order := orders.Get(key.FromID(orderID))
+	order := orders.Get(key.NewKey(orderID))
 	if order != nil {
 		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
@@ -79,13 +80,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	mutableProperties := base.NewPropertyList(append(scrubbedMutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
+	mutables := baseQualified.NewMutables(base.NewPropertyList(append(scrubbedMutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutableProperties, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	orders.Add(mappable.NewOrder(orderID, immutableProperties, mutableProperties))
+	orders.Add(mappable.NewOrder(orderID, immutables, mutables))
 
 	return newTransactionResponse(nil)
 }

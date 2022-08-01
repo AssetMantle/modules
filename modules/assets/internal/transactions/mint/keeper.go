@@ -19,6 +19,7 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type transactionKeeper struct {
@@ -49,12 +50,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	immutableProperties := base.NewPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)
+	immutables := baseQualified.NewImmutables(base.NewPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...))
 
-	assetID := baseIDs.NewAssetID(message.ClassificationID, immutableProperties)
+	assetID := baseIDs.NewAssetID(message.ClassificationID, immutables)
 
-	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(assetID))
-	if assets.Get(key.FromID(assetID)) != nil {
+	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(assetID))
+	if assets.Get(key.NewKey(assetID)) != nil {
 		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
@@ -63,9 +64,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	mutableProperties := base.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
+	mutables := baseQualified.NewMutables(base.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutableProperties, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
@@ -79,7 +80,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	assets.Add(mappable.NewAsset(assetID, immutableProperties, mutableProperties))
+	assets.Add(mappable.NewAsset(assetID, immutables, mutables))
 
 	return newTransactionResponse(nil)
 }
