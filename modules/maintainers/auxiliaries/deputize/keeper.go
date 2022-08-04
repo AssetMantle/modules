@@ -11,8 +11,10 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type auxiliaryKeeper struct {
@@ -40,7 +42,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(constants.NotAuthorized)
 	}
 
-	if auxiliaryResponse := auxiliaryKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(auxiliaryRequest.ClassificationID, nil, auxiliaryRequest.MaintainedProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := auxiliaryKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(auxiliaryRequest.ClassificationID, nil, base.NewMutables(auxiliaryRequest.MaintainedProperties))); !auxiliaryResponse.IsSuccessful() {
 		return newAuxiliaryResponse(auxiliaryResponse.GetError())
 	}
 
@@ -63,13 +65,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
 
-		maintainers.Add(mappable.NewMaintainer(toMaintainerID, baseLists.NewPropertyList(), auxiliaryRequest.MaintainedProperties))
+		maintainers.Add(mappable.NewMaintainer(toMaintainerID, base.NewImmutables(baseLists.NewPropertyList()), base.NewMutables(auxiliaryRequest.MaintainedProperties)))
 	} else {
 		if !fromMaintainer.CanMutateMaintainer() {
 			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
 		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMutables().GetMutablePropertyList().Add(auxiliaryRequest.MaintainedProperties.GetList()...).Remove(removeMaintainedPropertyList.GetList()...)
-		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID, baseLists.NewPropertyList(), maintainedProperties))
+		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID, base.NewImmutables(baseLists.NewPropertyList()), base.NewMutables(maintainedProperties)))
 	}
 
 	return newAuxiliaryResponse(nil)

@@ -21,6 +21,7 @@ import (
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type transactionKeeper struct {
@@ -95,7 +96,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return newTransactionResponse(err)
 		}
 
-		order = mappable.NewOrder(orderID, order.(mappables.Order).GetImmutables(), order.(mappables.Order).GetImmutables().Mutate(mutableProperties.GetList()...))
+		order = mappable.NewOrder(orderID, order.(mappables.Order).GetImmutables(), baseQualified.NewMutables(order.(mappables.Order).GetImmutables().GetImmutablePropertyList().Mutate(mutableProperties.GetList()...)))
 		orders.Mutate(order)
 	}
 
