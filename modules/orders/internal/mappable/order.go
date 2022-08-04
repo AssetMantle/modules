@@ -13,6 +13,7 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/base"
@@ -29,7 +30,6 @@ type order struct {
 
 var _ mappables.Order = (*order)(nil)
 
-// TODO use get property
 func (order order) GetRateID() ids.ID {
 	return key.ReadRateID(order.ID)
 }
@@ -86,7 +86,7 @@ func (order order) GetMakerOwnableSplit() properties.Property {
 	return constants.MakerOwnableSplit
 }
 func (order order) GetKey() helpers.Key {
-	return key.NewKey(order.ID)
+	return key.NewKey(baseIDs.NewOrderID(order.GetClassificationID(), order.GetMakerOwnableID(), order.GetTakerOwnableID(), order.GetRateID(), order.GetCreationID(), order.GetMakerID(), order.GetImmutables()))
 }
 func (order) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, order{})

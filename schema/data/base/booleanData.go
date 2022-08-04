@@ -48,7 +48,7 @@ func (booleanData booleanData) Bytes() []byte {
 	}
 	return []byte{0x0}
 }
-func (booleanData booleanData) GetType() ids.ID {
+func (booleanData booleanData) GetType() ids.StringID {
 	return dataConstants.BooleanDataID
 }
 func (booleanData booleanData) ZeroValue() data.Data {

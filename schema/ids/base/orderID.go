@@ -63,6 +63,9 @@ func (orderID orderID) String() string {
 func (orderID orderID) Compare(listable traits.Listable) int {
 	return bytes.Compare(orderID.Bytes(), orderIDFromInterface(listable).Bytes())
 }
+func (orderID orderID) GetHashID() ids.HashID {
+	return orderID.HashID
+}
 func (orderID orderID) getRateIDBytes() ([]byte, error) {
 	var Bytes []byte
 

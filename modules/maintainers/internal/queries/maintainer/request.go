@@ -15,7 +15,7 @@ import (
 )
 
 type queryRequest struct {
-	MaintainerID ids.ID `json:"maintainerID" valid:"required~required field maintainerID missing"`
+	ids.MaintainerID `json:"maintainerID" valid:"required~required field maintainerID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
@@ -67,6 +67,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 	}
 }
 
-func newQueryRequest(maintainerID ids.ID) helpers.QueryRequest {
+func newQueryRequest(maintainerID ids.MaintainerID) helpers.QueryRequest {
 	return queryRequest{MaintainerID: maintainerID}
 }

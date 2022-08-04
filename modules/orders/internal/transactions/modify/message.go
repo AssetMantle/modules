@@ -21,9 +21,9 @@ import (
 )
 
 type message struct {
-	From                  sdkTypes.AccAddress    `json:"from" valid:"required~required field from missing"`
-	FromID                ids.ID                 `json:"fromID" valid:"required~required field fromID missing"`
-	OrderID               ids.ID                 `json:"orderID" valid:"required~required field orderID missing"`
+	From                  sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
+	FromID                ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
+	ids.OrderID           `json:"orderID" valid:"required~required field orderID missing"`
 	MakerOwnableSplit     sdkTypes.Dec           `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing"`
 	TakerOwnableSplit     sdkTypes.Dec           `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
 	ExpiresIn             types.Height           `json:"expiresIn" valid:"required~required field expiresIn missing"`
@@ -71,7 +71,7 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID ids.ID, orderID ids.ID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn types.Height, mutableMetaProperties lists.MetaPropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, orderID ids.OrderID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn types.Height, mutableMetaProperties lists.MetaPropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return message{
 		From:                  from,
 		FromID:                fromID,

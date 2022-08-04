@@ -67,7 +67,7 @@ func Test_Query_Keeper_Split(t *testing.T) {
 
 	ownerID := baseIDs.NewStringID("ownerID")
 	ownableID := baseIDs.NewStringID("ownableID")
-	splitID := key.NewSplitID(ownerID, ownableID)
+	splitID := baseIDs.NewSplitID(ownerID, ownableID)
 	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(splitID, sdkTypes.NewDec(123)))
 
 	testQueryRequest := newQueryRequest(splitID)

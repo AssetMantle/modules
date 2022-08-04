@@ -42,11 +42,12 @@ func (block block) Begin(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {
 }
 
 func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
-	executeOrders := make(map[ids.ID]bool)
+	executeOrders := make(map[ids.OrderID]bool)
 	orders := block.mapper.NewCollection(context)
 
 	orders.Iterate(
-		key.NewKey(baseIDs.NewStringID("")),
+		// TODO ***** test this case
+		key.NewKey(baseIDs.NewOrderID(nil, nil, nil, nil, nil, nil, nil)),
 		func(order helpers.Mappable) bool {
 			metaProperties, err := supplement.GetMetaPropertiesFromResponse(block.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetExpiry(), order.(mappables.Order).GetMakerOwnableSplit())))
 			if err != nil {

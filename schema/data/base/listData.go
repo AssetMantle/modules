@@ -64,7 +64,7 @@ func (listData listData) Bytes() []byte {
 	// TODO see if separator required
 	return bytes.Join(hashBytesList, nil)
 }
-func (listData listData) GetType() ids.ID {
+func (listData listData) GetType() ids.StringID {
 	return dataConstants.ListDataID
 }
 func (listData listData) ZeroValue() data.Data {

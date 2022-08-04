@@ -29,7 +29,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 	var metaPropertyList []properties.MetaProperty
 
 	for _, property := range auxiliaryRequest.PropertyList {
-		if property.GetID().Compare(constants.BurnProperty) == 0 && property.GetHash().Compare(baseIDs.NewStringID("")) == 0 {
+		if property.GetID().Compare(constants.BurnProperty) == 0 && property.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) == 0 {
 			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), errorConstants.MockError)
 		}
 	}

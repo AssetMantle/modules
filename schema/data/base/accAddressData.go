@@ -39,7 +39,7 @@ func (accAddressData accAddressData) String() string {
 func (accAddressData accAddressData) Bytes() []byte {
 	return accAddressData.Value.Bytes()
 }
-func (accAddressData accAddressData) GetType() ids.ID {
+func (accAddressData accAddressData) GetType() ids.StringID {
 	return dataConstants.AccAddressDataID
 }
 func (accAddressData accAddressData) ZeroValue() data.Data {

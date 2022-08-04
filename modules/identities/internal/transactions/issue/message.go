@@ -19,10 +19,10 @@ import (
 )
 
 type message struct {
-	From                    sdkTypes.AccAddress    `json:"from" valid:"required~required field from missing"`
-	To                      sdkTypes.AccAddress    `json:"to" valid:"required~required field to missing, matches(^[a-z0-9]*$)~invalid field to"`
-	FromID                  ids.ID                 `json:"fromID" valid:"required~required field fromID missing"`
-	ClassificationID        ids.ID                 `json:"classificationID" valid:"required~required field classificationID missing"`
+	From                    sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
+	To                      sdkTypes.AccAddress `json:"to" valid:"required~required field to missing, matches(^[a-z0-9]*$)~invalid field to"`
+	FromID                  ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
+	ids.ClassificationID    `json:"classificationID" valid:"required~required field classificationID missing"`
 	ImmutableMetaProperties lists.MetaPropertyList `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing"`
 	ImmutableProperties     lists.PropertyList     `json:"immutableProperties" valid:"required~required field immutableProperties missing"`
 	MutableMetaProperties   lists.MetaPropertyList `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
@@ -60,7 +60,7 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 func messagePrototype() helpers.Message {
 	return message{}
 }
-func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, fromID ids.ID, classificationID ids.ID, immutableMetaProperties lists.MetaPropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.MetaPropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ID, immutableMetaProperties lists.MetaPropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.MetaPropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return message{
 		From:                    from,
 		To:                      to,

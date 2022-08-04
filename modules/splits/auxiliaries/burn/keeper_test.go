@@ -80,8 +80,8 @@ func Test_Burn_Aux_Keeper_Help(t *testing.T) {
 	ownerID2 := baseIDs.NewStringID("ownerID2")
 	ownableID2 := baseIDs.NewStringID("ownableID2")
 
-	splitID := key.NewSplitID(ownerID, ownableID)
-	splitID2 := key.NewSplitID(ownerID2, ownableID2)
+	splitID := baseIDs.NewSplitID(ownerID, ownableID)
+	splitID2 := baseIDs.NewSplitID(ownerID2, ownableID2)
 	splits := sdkTypes.NewDec(10)
 
 	keepers.SplitsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(splitID, splits)).Add(mappable.NewSplit(splitID2, splits))

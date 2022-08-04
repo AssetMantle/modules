@@ -44,7 +44,7 @@ func (heightData heightData) Bytes() []byte {
 	binary.LittleEndian.PutUint64(bytes, uint64(heightData.Get().Get()))
 	return bytes
 }
-func (heightData heightData) GetType() ids.ID {
+func (heightData heightData) GetType() ids.StringID {
 	return dataConstants.HeightDataID
 }
 func (heightData heightData) ZeroValue() data.Data {

@@ -43,7 +43,7 @@ func (decData decData) String() string {
 func (decData decData) Bytes() []byte {
 	return decData.Value.Bytes()
 }
-func (decData decData) GetType() ids.ID {
+func (decData decData) GetType() ids.StringID {
 	return dataConstants.DecDataID
 }
 func (decData decData) ZeroValue() data.Data {

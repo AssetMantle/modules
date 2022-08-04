@@ -12,7 +12,7 @@ import (
 
 // TODO check implementation
 type Maintainer interface {
-	GetIdentityID() ids.ID
+	GetIdentityID() ids.IdentityID
 	GetMaintainedClassificationID() ids.ID
 	GetMaintainedPropertySet() properties.Property
 

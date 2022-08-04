@@ -9,22 +9,20 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type meta struct {
-	ID   ids.MetaID
-	Data data.Data
+	data.Data
 }
 
 var _ mappables.Meta = (*meta)(nil)
 
 func (meta meta) GetData() data.Data { return meta.Data }
-func (meta meta) GetID() ids.ID      { return meta.ID }
 func (meta meta) GetKey() helpers.Key {
-	return key.NewKey(meta.GetID())
+	return key.NewKey(base.NewMetaID(meta.Data.GetType(), meta.GetData().GenerateHashID()))
 }
 func (meta) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, meta{})
@@ -32,7 +30,6 @@ func (meta) RegisterCodec(codec *codec.Codec) {
 
 func NewMeta(data data.Data) mappables.Meta {
 	return meta{
-		ID:   key.GenerateMetaID(data),
 		Data: data,
 	}
 }

@@ -77,7 +77,7 @@ func Test_Transfer_Aux_Keeper_Help(t *testing.T) {
 	ownableID := baseIDs.NewStringID("ownableID")
 
 	toID := baseIDs.NewStringID("toID")
-	defaultSplitID := key.NewSplitID(ownerID, ownableID)
+	defaultSplitID := baseIDs.NewSplitID(ownerID, ownableID)
 	splits := sdkTypes.NewDec(123)
 	keepers.SplitsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(defaultSplitID, splits))
 

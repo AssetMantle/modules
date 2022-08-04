@@ -19,9 +19,9 @@ import (
 
 type message struct {
 	From              sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	FromID            ids.ID              `json:"fromID" valid:"required~required field fromID missing"`
+	FromID            ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
 	TakerOwnableSplit sdkTypes.Dec        `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
-	OrderID           ids.ID              `json:"orderID" valid:"required~required field orderID missing"`
+	ids.OrderID       `json:"orderID" valid:"required~required field orderID missing"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -56,7 +56,7 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID ids.ID, takerOwnableSplit sdkTypes.Dec, orderID ids.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, takerOwnableSplit sdkTypes.Dec, orderID ids.OrderID) sdkTypes.Msg {
 	return message{
 		From:              from,
 		FromID:            fromID,
