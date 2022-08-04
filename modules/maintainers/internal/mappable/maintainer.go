@@ -28,7 +28,7 @@ var _ mappables.Maintainer = (*maintainer)(nil)
 func (maintainer maintainer) GetIdentityID() ids.IdentityID {
 	return key.ReadIdentityID(maintainer.ID)
 }
-func (maintainer maintainer) GetMaintainedClassificationID() ids.ID {
+func (maintainer maintainer) GetMaintainedClassificationID() ids.ClassificationID {
 	return key.ReadClassificationID(maintainer.ID)
 }
 func (maintainer maintainer) GetMaintainedPropertySet() properties.Property {
@@ -51,6 +51,7 @@ func (maintainer maintainer) CanMintAsset() bool {
 func (maintainer maintainer) CanBurnAsset() bool {
 	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
 		// impl
+		c
 	}
 
 	return false
@@ -60,6 +61,7 @@ func (maintainer maintainer) CanBurnAsset() bool {
 func (maintainer maintainer) CanRenumerateAsset() bool {
 	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
 		// impl
+		c
 	}
 
 	return false
@@ -69,6 +71,7 @@ func (maintainer maintainer) CanRenumerateAsset() bool {
 func (maintainer maintainer) CanAddMaintainer() bool {
 	if property := maintainer.GetProperty(constants.Permissions.GetID()); property != nil {
 		// TODO impl
+		c
 	}
 
 	return false
@@ -78,6 +81,7 @@ func (maintainer maintainer) CanAddMaintainer() bool {
 func (maintainer maintainer) CanRemoveMaintainer() bool {
 	if property := maintainer.GetProperty(constants.Permissions.GetID()); property != nil {
 		// TODO impl
+		c
 	}
 
 	return false
@@ -87,6 +91,7 @@ func (maintainer maintainer) CanRemoveMaintainer() bool {
 func (maintainer maintainer) CanMutateMaintainer() bool {
 	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
 		// impl
+		c
 	}
 
 	return false

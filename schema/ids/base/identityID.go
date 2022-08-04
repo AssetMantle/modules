@@ -48,3 +48,7 @@ func NewIdentityID(classificationID ids.ClassificationID, immutables qualified.I
 		HashID:           immutables.GenerateHashID(),
 	}
 }
+
+func ReadIdentityID(identityIDString string) ids.IdentityID {
+
+}

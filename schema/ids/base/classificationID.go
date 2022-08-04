@@ -35,3 +35,7 @@ func NewClassificationID(immutables qualified.Immutables, mutables qualified.Mut
 
 	return classificationID{HashID: GenerateHashID(GenerateHashID(immutableIDByteList...).Bytes(), GenerateHashID(mutableIDByteList...).Bytes(), GenerateHashID(defaultImmutableByteList...).Bytes())}
 }
+
+func ReadClassificationID(classificationIDString string) ids.ClassificationID {
+
+}

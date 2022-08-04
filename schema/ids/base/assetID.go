@@ -47,3 +47,7 @@ func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immu
 		HashID:           immutables.GenerateHashID(),
 	}
 }
+
+func ReadAssetID(assetIDString string) ids.AssetID {
+
+}

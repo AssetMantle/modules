@@ -44,3 +44,7 @@ func NewMaintainerID(classificationID ids.ClassificationID, identityID ids.Ident
 		IdentityID:       identityID,
 	}
 }
+
+func ReadMaintainerID(maintainerIDString string) ids.MaintainerID {
+
+}

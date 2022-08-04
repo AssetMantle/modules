@@ -35,10 +35,10 @@ func (queryRequest queryRequest) Validate() error {
 	return err
 }
 func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewStringID(cliCommand.ReadString(constants.IdentityID)))
+	return newQueryRequest(baseIDs.ReadIdentityID(cliCommand.ReadString(constants.IdentityID)))
 }
 func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewStringID(vars[Query.GetName()]))
+	return newQueryRequest(baseIDs.ReadIdentityID(vars[Query.GetName()]))
 }
 func (queryRequest queryRequest) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryRequest)

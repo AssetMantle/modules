@@ -26,7 +26,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	split := splits.Get(key.NewKey(splitID))
 	if split == nil {
-		splits.Add(mappable.NewSplit(splitID, auxiliaryRequest.Value))
+		splits.Add(mappable.NewSplit(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value))
 	} else {
 		splits.Mutate(split.(mappables.Split).Receive(auxiliaryRequest.Value).(mappables.Split))
 	}

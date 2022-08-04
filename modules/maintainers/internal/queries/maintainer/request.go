@@ -36,11 +36,11 @@ func (queryRequest queryRequest) Validate() error {
 }
 
 func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewStringID(cliCommand.ReadString(constants.MaintainerID)))
+	return newQueryRequest(baseIDs.ReadMaintainerID(cliCommand.ReadString(constants.MaintainerID)))
 }
 
 func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewStringID(vars[Query.GetName()]))
+	return newQueryRequest(baseIDs.ReadMaintainerID(vars[Query.GetName()]))
 }
 
 func (queryRequest queryRequest) Encode() ([]byte, error) {

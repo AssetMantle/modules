@@ -80,8 +80,8 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 
 	return newMessage(
 		from,
-		baseIDs.NewStringID(transactionRequest.FromID),
-		baseIDs.NewStringID(transactionRequest.AssetID),
+		baseIDs.ReadIdentityID(transactionRequest.FromID),
+		baseIDs.ReadAssetID(transactionRequest.AssetID),
 		mutableMetaProperties,
 		mutableProperties,
 	), nil

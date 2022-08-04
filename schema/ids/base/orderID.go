@@ -121,3 +121,7 @@ func NewOrderID(classificationID ids.ClassificationID, makerOwnableID ids.ID, ta
 		HashID:           immutables.GenerateHashID(),
 	}
 }
+
+func ReadOrderID(orderIDString string) ids.OrderID {
+
+}

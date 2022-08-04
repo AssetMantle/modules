@@ -96,9 +96,9 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 
 	return newMessage(
 		from,
-		baseIDs.NewStringID(transactionRequest.FromID),
-		baseIDs.NewStringID(transactionRequest.ToID),
-		baseIDs.NewStringID(transactionRequest.ClassificationID),
+		baseIDs.ReadIdentityID(transactionRequest.FromID),
+		baseIDs.ReadIdentityID(transactionRequest.ToID),
+		baseIDs.ReadClassificationID(transactionRequest.ClassificationID),
 		immutableMetaProperties,
 		immutableProperties,
 		mutableMetaProperties,

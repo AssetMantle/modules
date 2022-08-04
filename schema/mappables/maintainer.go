@@ -13,7 +13,7 @@ import (
 // TODO check implementation
 type Maintainer interface {
 	GetIdentityID() ids.IdentityID
-	GetMaintainedClassificationID() ids.ID
+	GetMaintainedClassificationID() ids.ClassificationID
 	GetMaintainedPropertySet() properties.Property
 
 	CanMintAsset() bool

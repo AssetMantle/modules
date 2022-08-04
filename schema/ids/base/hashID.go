@@ -67,3 +67,7 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 
 	return hashID{HashBytes: hash.Sum(nil)}
 }
+
+func ReadHashID(hashIDString string) ids.HashID {
+
+}

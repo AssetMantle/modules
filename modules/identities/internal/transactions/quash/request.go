@@ -65,8 +65,8 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 
 	return newMessage(
 		from,
-		baseIDs.NewStringID(transactionRequest.FromID),
-		baseIDs.NewStringID(transactionRequest.IdentityID),
+		baseIDs.ReadIdentityID(transactionRequest.FromID),
+		baseIDs.ReadIdentityID(transactionRequest.IdentityID),
 	), nil
 }
 func (transactionRequest) RegisterCodec(codec *codec.Codec) {
