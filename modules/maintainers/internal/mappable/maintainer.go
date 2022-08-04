@@ -9,6 +9,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
@@ -24,7 +25,7 @@ type maintainer struct {
 
 var _ mappables.Maintainer = (*maintainer)(nil)
 
-func (maintainer maintainer) GetIdentityID() ids.ID {
+func (maintainer maintainer) GetIdentityID() ids.IdentityID {
 	return key.ReadIdentityID(maintainer.ID)
 }
 func (maintainer maintainer) GetMaintainedClassificationID() ids.ID {
@@ -100,7 +101,7 @@ func (maintainer maintainer) MaintainsProperty(id ids.ID) bool {
 	return false
 }
 func (maintainer maintainer) GetKey() helpers.Key {
-	return key.NewKey(maintainer.ID)
+	return key.NewKey(base.NewMaintainerID(maintainer.GetClassificationID(), maintainer.GetIdentityID()))
 }
 func (maintainer) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, maintainer{})

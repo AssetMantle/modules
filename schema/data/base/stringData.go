@@ -37,7 +37,7 @@ func (stringData stringData) String() string {
 func (stringData stringData) Bytes() []byte {
 	return []byte(stringData.Value)
 }
-func (stringData stringData) GetType() ids.ID {
+func (stringData stringData) GetType() ids.StringID {
 	return dataConstants.StringDataID
 }
 func (stringData stringData) ZeroValue() data.Data {
