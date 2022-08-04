@@ -10,6 +10,7 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -20,11 +21,11 @@ func AddSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID, valu
 		return nil, constants.NotAuthorized
 	}
 
-	splitID := key.NewSplitID(ownerID, ownableID)
+	splitID := baseIDs.NewSplitID(ownerID, ownableID)
 
 	split := splits.Fetch(key.NewKey(splitID)).Get(key.NewKey(splitID))
 	if split == nil {
-		splits.Add(mappable.NewSplit(splitID, value))
+		splits.Add(mappable.NewSplit(ownerID, ownableID, value))
 	} else {
 		splits.Mutate(split.(mappables.Split).Receive(value).(mappables.Split))
 	}
@@ -37,7 +38,7 @@ func SubtractSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID,
 		return nil, constants.NotAuthorized
 	}
 
-	splitsKey := key.NewKey(key.NewSplitID(ownerID, ownableID))
+	splitsKey := key.NewKey(baseIDs.NewSplitID(ownerID, ownableID))
 
 	split := splits.Fetch(splitsKey).Get(splitsKey)
 	if split == nil {

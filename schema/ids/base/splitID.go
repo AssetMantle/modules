@@ -1,19 +1,11 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
-
-package key
+package base
 
 import (
 	"bytes"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/modules/splits/internal/module"
-	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type splitID struct {
@@ -22,7 +14,6 @@ type splitID struct {
 }
 
 var _ ids.SplitID = (*splitID)(nil)
-var _ helpers.Key = (*splitID)(nil)
 
 func (splitID splitID) Bytes() []byte {
 	return append(
@@ -35,17 +26,16 @@ func (splitID splitID) String() string {
 func (splitID splitID) Compare(listable traits.Listable) int {
 	return bytes.Compare(splitID.Bytes(), splitIDFromInterface(listable).Bytes())
 }
-func (splitID splitID) GenerateStoreKeyBytes() []byte {
-	return module.StoreKeyPrefix.GenerateStoreKey(splitID.Bytes())
+func (splitID splitID) GetOwnableID() ids.ID {
+	return splitID.OwnableID
 }
-func (splitID) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, splitID{})
-}
-func (splitID splitID) IsPartial() bool {
-	return len(splitID.OwnableID.Bytes()) == 0
-}
-func (splitID splitID) Equals(key helpers.Key) bool {
-	return splitID.Compare(splitIDFromInterface(key)) == 0
+func splitIDFromInterface(i interface{}) splitID {
+	switch value := i.(type) {
+	case splitID:
+		return value
+	default:
+		panic(i)
+	}
 }
 
 func NewSplitID(ownerID ids.ID, ownableID ids.ID) ids.SplitID {
