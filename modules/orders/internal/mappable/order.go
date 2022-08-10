@@ -95,3 +95,7 @@ func (order) RegisterCodec(codec *codec.Codec) {
 func NewOrder(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) mappables.Order {
 	return order{Document: baseQualified.NewDocument(classificationID, immutables, mutables)}
 }
+
+func Prototype() helpers.Mappable {
+	return order{}
+}

@@ -4,6 +4,7 @@ import (
 	"bytes"
 
 	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -12,6 +13,11 @@ import (
 type maintainerID struct {
 	ids.ClassificationID
 	ids.IdentityID
+}
+
+func (maintainerID maintainerID) IsMaintainerID() {
+	// TODO implement me
+	panic("implement me")
 }
 
 var _ ids.MaintainerID = (*maintainerID)(nil)
@@ -45,6 +51,14 @@ func NewMaintainerID(classificationID ids.ClassificationID, identityID ids.Ident
 	}
 }
 
-func ReadMaintainerID(maintainerIDString string) ids.MaintainerID {
-
+func ReadMaintainerID(maintainerIDString string) (ids.MaintainerID, error) {
+	if classificationID, err := ReadClassificationID(stringUtilities.SplitCompositeIDString(maintainerIDString)[0]); err == nil {
+		if identityID, err := ReadIdentityID(stringUtilities.JoinIDStrings(stringUtilities.SplitCompositeIDString(maintainerIDString)[1:]...)); err == nil {
+			return maintainerID{
+				ClassificationID: classificationID,
+				IdentityID:       identityID,
+			}, nil
+		}
+	}
+	return maintainerID{}, errorConstants.MetaDataError
 }

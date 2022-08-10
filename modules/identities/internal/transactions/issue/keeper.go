@@ -72,7 +72,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	identities.Add(mappable.NewIdentity(identityID, immutables, mutables))
+	identities.Add(mappable.NewIdentity(message.ClassificationID, immutables, mutables))
 
 	return newTransactionResponse(nil)
 }

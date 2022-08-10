@@ -17,6 +17,11 @@ type propertyID struct {
 	Type ids.StringID
 }
 
+func (propertyID propertyID) IsPropertyID() {
+	// TODO implement me
+	panic("implement me")
+}
+
 var _ ids.PropertyID = (*propertyID)(nil)
 
 func (propertyID propertyID) GetKey() ids.StringID {

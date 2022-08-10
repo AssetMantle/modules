@@ -15,6 +15,11 @@ type stringID struct {
 	IDString string `json:"idString"`
 }
 
+func (stringID stringID) IsStringID() {
+	// TODO implement me
+	panic("implement me")
+}
+
 var _ ids.StringID = (*stringID)(nil)
 
 func (stringID stringID) String() string {

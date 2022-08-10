@@ -87,7 +87,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	keepers.ClassificationsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewClassification(baseQualified.NewImmutables(base.NewPropertyList()), baseQualified.NewMutables(base.NewPropertyList())))
 
 	t.Run("PositiveCase", func(t *testing.T) {
-		want := newAuxiliaryResponse(baseIDs.NewStringID(classificationID.String()), nil)
+		want := newAuxiliaryResponse(classificationID, nil)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(immutableProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -95,7 +95,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-Classification already present", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(baseIDs.NewStringID(testClassificationID.String()), constants.EntityAlreadyExists)
+		want := newAuxiliaryResponse(testClassificationID, constants.EntityAlreadyExists)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(base.NewPropertyList()), baseQualified.NewMutables(base.NewPropertyList()))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

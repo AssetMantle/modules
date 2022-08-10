@@ -33,3 +33,7 @@ func NewMeta(data data.Data) mappables.Meta {
 		Data: data,
 	}
 }
+
+func Prototype() helpers.Mappable {
+	return meta{}
+}

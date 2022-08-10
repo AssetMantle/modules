@@ -36,12 +36,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(classificationID))
 	if classifications.Get(key.NewKey(classificationID)) != nil {
-		return newAuxiliaryResponse(baseIDs.NewStringID(classificationID.String()), errorConstants.EntityAlreadyExists)
+		return newAuxiliaryResponse(classificationID, errorConstants.EntityAlreadyExists)
 	}
 
 	classifications.Add(mappable.NewClassification(auxiliaryRequest.Immutables, auxiliaryRequest.Mutables))
 
-	return newAuxiliaryResponse(baseIDs.NewStringID(classificationID.String()), nil)
+	return newAuxiliaryResponse(classificationID, nil)
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

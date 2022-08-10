@@ -1,12 +1,18 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
 )
 
 type classificationID struct {
 	ids.HashID
+}
+
+func (c classificationID) IsClassificationID() {
+	// TODO implement me
+	panic("implement me")
 }
 
 var _ ids.ClassificationID = (*classificationID)(nil)
@@ -36,6 +42,9 @@ func NewClassificationID(immutables qualified.Immutables, mutables qualified.Mut
 	return classificationID{HashID: GenerateHashID(GenerateHashID(immutableIDByteList...).Bytes(), GenerateHashID(mutableIDByteList...).Bytes(), GenerateHashID(defaultImmutableByteList...).Bytes())}
 }
 
-func ReadClassificationID(classificationIDString string) ids.ClassificationID {
-
+func ReadClassificationID(classificationIDString string) (ids.ClassificationID, error) {
+	if hashID, err := ReadHashID(classificationIDString); err == nil {
+		return classificationID{HashID: hashID}, nil
+	}
+	return classificationID{}, constants.MetaDataError
 }

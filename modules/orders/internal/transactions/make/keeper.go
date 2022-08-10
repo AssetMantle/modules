@@ -86,7 +86,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	orders.Add(mappable.NewOrder(orderID, immutables, mutables))
+	orders.Add(mappable.NewOrder(message.ClassificationID, immutables, mutables))
 
 	return newTransactionResponse(nil)
 }

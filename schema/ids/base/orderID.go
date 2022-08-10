@@ -16,12 +16,17 @@ import (
 
 type orderID struct {
 	ids.ClassificationID
-	MakerOwnableID ids.ID
-	TakerOwnableID ids.ID
-	RateID         ids.ID
-	CreationID     ids.ID
-	MakerID        ids.ID
+	MakerOwnableID ids.OwnableID
+	TakerOwnableID ids.OwnableID
+	RateID         ids.StringID
+	CreationID     ids.StringID
+	MakerID        ids.IdentityID
 	ids.HashID
+}
+
+func (orderID orderID) IsOrderID() {
+	// TODO implement me
+	panic("implement me")
 }
 
 var _ ids.OrderID = (*orderID)(nil)
@@ -110,7 +115,7 @@ func orderIDFromInterface(i interface{}) orderID {
 	}
 }
 
-func NewOrderID(classificationID ids.ClassificationID, makerOwnableID ids.ID, takerOwnableID ids.ID, rateID ids.ID, creationID ids.ID, makerID ids.ID, immutables qualified.Immutables) ids.OrderID {
+func NewOrderID(classificationID ids.ClassificationID, makerOwnableID ids.OwnableID, takerOwnableID ids.OwnableID, rateID ids.StringID, creationID ids.StringID, makerID ids.IdentityID, immutables qualified.Immutables) ids.OrderID {
 	return orderID{
 		ClassificationID: classificationID,
 		MakerOwnableID:   makerOwnableID,
@@ -122,6 +127,27 @@ func NewOrderID(classificationID ids.ClassificationID, makerOwnableID ids.ID, ta
 	}
 }
 
-func ReadOrderID(orderIDString string) ids.OrderID {
-
+func ReadOrderID(orderIDString string) (ids.OrderID, error) {
+	if classificationID, err := ReadClassificationID(stringUtilities.SplitCompositeIDString(orderIDString)[0]); err == nil {
+		if makerOwnableID, err := ReadOwnableID(stringUtilities.SplitCompositeIDString(orderIDString)[1]); err == nil {
+			if takerOwnableID, err := ReadOwnableID(stringUtilities.SplitCompositeIDString(orderIDString)[2]); err == nil {
+				rateID := NewStringID(stringUtilities.SplitCompositeIDString(orderIDString)[3])
+				creationID := NewStringID(stringUtilities.SplitCompositeIDString(orderIDString)[4])
+				if makerID, err := ReadIdentityID(stringUtilities.SplitCompositeIDString(orderIDString)[5]); err == nil {
+					if hashID, err := ReadHashID(stringUtilities.SplitCompositeIDString(orderIDString)[6]); err == nil {
+						return orderID{
+							ClassificationID: classificationID,
+							MakerOwnableID:   makerOwnableID,
+							TakerOwnableID:   takerOwnableID,
+							RateID:           rateID,
+							CreationID:       creationID,
+							MakerID:          makerID,
+							HashID:           hashID,
+						}, nil
+					}
+				}
+			}
+		}
+	}
+	return orderID{}, nil
 }

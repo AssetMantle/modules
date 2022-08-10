@@ -30,7 +30,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(constants.EntityAlreadyExists)
 	}
 
-	maintainers.Add(mappable.NewMaintainer(maintainerID, base.NewImmutables(baseLists.NewPropertyList()), auxiliaryRequest.Mutables))
+	maintainers.Add(mappable.NewMaintainer(auxiliaryRequest.ClassificationID, base.NewImmutables(baseLists.NewPropertyList()), auxiliaryRequest.Mutables))
 
 	return newAuxiliaryResponse(nil)
 }

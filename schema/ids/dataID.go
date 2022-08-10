@@ -6,4 +6,5 @@ package ids
 type DataID interface {
 	ID
 	GetHashID() HashID
+	IsDataID()
 }

@@ -14,6 +14,11 @@ type metaID struct {
 	ids.HashID
 }
 
+func (metaID metaID) IsMetaID() {
+	// TODO implement me
+	panic("implement me")
+}
+
 var _ ids.MetaID = (*metaID)(nil)
 
 func (metaID metaID) String() string {
@@ -27,7 +32,7 @@ func (metaID metaID) Bytes() []byte {
 	return Bytes
 }
 
-// TODO compare componenets
+// TODO compare components
 func (metaID metaID) Compare(listable traits.Listable) int {
 	return bytes.Compare(metaID.Bytes(), metaIDFromInterface(listable).Bytes())
 }
@@ -47,4 +52,8 @@ func NewMetaID(Type ids.StringID, hashID ids.HashID) ids.MetaID {
 		Type:   Type,
 		HashID: hashID,
 	}
+}
+
+func ReadMetaID(metaIDString string) (ids.MetaID, error) {
+
 }

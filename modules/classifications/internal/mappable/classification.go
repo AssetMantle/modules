@@ -33,3 +33,7 @@ func NewClassification(immutables qualified.Immutables, mutables qualified.Mutab
 		Document: baseQualified.NewDocument(base.NewClassificationID(immutables, mutables), immutables, mutables),
 	}
 }
+
+func Prototype() helpers.Mappable {
+	return classification{}
+}

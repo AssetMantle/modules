@@ -48,3 +48,7 @@ func (identity) RegisterCodec(codec *codec.Codec) {
 func NewIdentity(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) mappables.Identity {
 	return identity{Document: baseQualified.NewDocument(classificationID, immutables, mutables)}
 }
+
+func Prototype() helpers.Mappable {
+	return identity{}
+}

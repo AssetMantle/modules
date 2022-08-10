@@ -19,8 +19,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	parameters2 "github.com/AssetMantle/modules/schema/parameters"
+	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 )
@@ -40,10 +39,10 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	for i := range mappableList {
 		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomProperties(simulationState.Rand))
-		mappableList[i] = mappable.NewOrder(baseIDs.NewOrderID(baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomIDWithDec(simulationState.Rand), baseSimulation.GenerateRandomIDWithInt64(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand), immutables), immutables, baseQualified.NewMutables(baseSimulation.GenerateRandomProperties(simulationState.Rand)))
+		mappableList[i] = mappable.NewOrder(GenerateRandomID(simulationState.Rand), immutables, baseQualified.NewMutables(baseSimulation.GenerateRandomProperties(simulationState.Rand)))
 	}
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []parameters2.Parameter{dummy.Parameter.Mutate(Data)})
+	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []parametersSchema.Parameter{dummy.Parameter.Mutate(Data)})
 
 	simulationState.GenState[ordersModule.Name] = common.Codec.MustMarshalJSON(genesisState)
 }

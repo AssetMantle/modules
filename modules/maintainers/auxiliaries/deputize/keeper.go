@@ -65,13 +65,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
 
-		maintainers.Add(mappable.NewMaintainer(toMaintainerID, base.NewImmutables(baseLists.NewPropertyList()), base.NewMutables(auxiliaryRequest.MaintainedProperties)))
+		maintainers.Add(mappable.NewMaintainer(toMaintainerID.GetClassificationID(), base.NewImmutables(baseLists.NewPropertyList()), base.NewMutables(auxiliaryRequest.MaintainedProperties)))
 	} else {
 		if !fromMaintainer.CanMutateMaintainer() {
 			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
 		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMutables().GetMutablePropertyList().Add(auxiliaryRequest.MaintainedProperties.GetList()...).Remove(removeMaintainedPropertyList.GetList()...)
-		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID, base.NewImmutables(baseLists.NewPropertyList()), base.NewMutables(maintainedProperties)))
+		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID.GetClassificationID(), base.NewImmutables(baseLists.NewPropertyList()), base.NewMutables(maintainedProperties)))
 	}
 
 	return newAuxiliaryResponse(nil)

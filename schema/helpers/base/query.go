@@ -34,9 +34,12 @@ func (query query) Command(codec *codec.Codec) *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
 		cliContext := context.NewCLIContext().WithCodec(codec)
 
-		queryRequest := query.requestPrototype().FromCLI(query.cliCommand, cliContext)
-		responseBytes, _, err := query.query(queryRequest, cliContext)
+		queryRequest, err := query.requestPrototype().FromCLI(query.cliCommand, cliContext)
+		if err != nil {
+			return err
+		}
 
+		responseBytes, _, err := query.query(queryRequest, cliContext)
 		if err != nil {
 			return err
 		}
@@ -69,7 +72,11 @@ func (query query) RESTQueryHandler(outerCliContext context.CLIContext) http.Han
 			return
 		}
 
-		queryRequest := query.requestPrototype().FromMap(mux.Vars(httpRequest))
+		queryRequest, err := query.requestPrototype().FromMap(mux.Vars(httpRequest))
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
+			return
+		}
 
 		response, height, err := query.query(queryRequest, cliContext)
 		if err != nil {

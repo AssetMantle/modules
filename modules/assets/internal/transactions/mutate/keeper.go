@@ -37,7 +37,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.AssetID))
 
-	asset := assets.Get(key.NewKey(message.AssetID))
+	asset := assets.Get(key.NewKey(message.AssetID)).(mappables.Asset)
 	if asset == nil {
 		return newTransactionResponse(constants.EntityNotFound)
 	}
@@ -49,15 +49,15 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	mutables := base.NewMutables(baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.(mappables.Asset).GetClassificationID(), nil, mutables)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.GetClassificationID(), nil, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.(mappables.Asset).GetClassificationID(), message.FromID, mutables.GetMutablePropertyList())); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, mutables.GetMutablePropertyList())); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	assets.Mutate(mappable.NewAsset(asset.(mappables.Asset).GenerateHashID(), asset.(mappables.Asset).GetImmutables(), base.NewMutables(asset.(mappables.Asset).GetImmutables().GetImmutablePropertyList().Mutate(mutables.GetMutablePropertyList().GetList()...))))
+	assets.Mutate(mappable.NewAsset(asset.GetClassificationID(), asset.GetImmutables(), base.NewMutables(asset.GetImmutables().GetImmutablePropertyList().Mutate(mutables.GetMutablePropertyList().GetList()...))))
 
 	return newTransactionResponse(nil)
 }

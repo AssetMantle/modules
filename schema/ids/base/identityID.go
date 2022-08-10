@@ -15,6 +15,11 @@ type identityID struct {
 	ids.HashID
 }
 
+func (identityID identityID) IsIdentityID() {
+	// TODO implement me
+	panic("implement me")
+}
+
 var _ ids.IdentityID = (*identityID)(nil)
 
 func (identityID identityID) String() string {
@@ -49,6 +54,14 @@ func NewIdentityID(classificationID ids.ClassificationID, immutables qualified.I
 	}
 }
 
-func ReadIdentityID(identityIDString string) ids.IdentityID {
-
+func ReadIdentityID(identityIDString string) (ids.IdentityID, error) {
+	if classificationID, err := ReadClassificationID(stringUtilities.SplitCompositeIDString(identityIDString)[0]); err == nil {
+		if hashID, err := ReadHashID(stringUtilities.SplitCompositeIDString(identityIDString)[1]); err == nil {
+			return identityID{
+				ClassificationID: classificationID,
+				HashID:           hashID,
+			}, nil
+		}
+	}
+	return identityID{}, errorConstants.MetaDataError
 }

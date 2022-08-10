@@ -15,6 +15,11 @@ type hashID struct {
 	HashBytes []byte
 }
 
+func (hashID hashID) IsHashID() {
+	// TODO implement me
+	panic("implement me")
+}
+
 var _ ids.HashID = (*hashID)(nil)
 
 // TODO test
@@ -68,6 +73,10 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 	return hashID{HashBytes: hash.Sum(nil)}
 }
 
-func ReadHashID(hashIDString string) ids.HashID {
-
+// TODO test if reversible
+func ReadHashID(hashIDString string) (ids.HashID, error) {
+	if hashBytes, err := base64.URLEncoding.DecodeString(hashIDString); err == nil {
+		return hashID{HashBytes: hashBytes}, nil
+	}
+	return hashID{}, constants.MetaDataError
 }

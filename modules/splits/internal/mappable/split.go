@@ -17,8 +17,8 @@ import (
 )
 
 type split struct {
-	OwnerID   ids.ID
-	OwnableID ids.ID
+	OwnerID   ids.IdentityID
+	OwnableID ids.OwnableID
 	Value     sdkTypes.Dec
 }
 
@@ -57,4 +57,8 @@ func NewSplit(ownerID ids.ID, ownableID ids.ID, value sdkTypes.Dec) mappables.Sp
 		OwnableID: nil,
 		Value:     value,
 	}
+}
+
+func Prototype() helpers.Mappable {
+	return split{}
 }

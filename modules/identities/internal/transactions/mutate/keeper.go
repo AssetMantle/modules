@@ -57,7 +57,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	identities.Mutate(mappable.NewIdentity(identity.GenerateHashID(), identity.GetImmutables(), base.NewMutables(identity.GetImmutables().GetImmutablePropertyList().Mutate(mutables.GetMutablePropertyList().GetList()...))))
+	identities.Mutate(mappable.NewIdentity(identity.GetClassificationID(), identity.GetImmutables(), base.NewMutables(identity.GetImmutables().GetImmutablePropertyList().Mutate(mutables.GetMutablePropertyList().GetList()...))))
 
 	return newTransactionResponse(nil)
 }

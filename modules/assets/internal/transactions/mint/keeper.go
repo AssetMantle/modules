@@ -80,7 +80,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	assets.Add(mappable.NewAsset(assetID, immutables, mutables))
+	assets.Add(mappable.NewAsset(message.ClassificationID, immutables, mutables))
 
 	return newTransactionResponse(nil)
 }

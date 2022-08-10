@@ -79,7 +79,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	order := mappable.NewOrder(orderID, immutables, mutables)
+	order := mappable.NewOrder(message.ClassificationID, immutables, mutables)
 	orders = orders.Add(order)
 
 	// Order execution
@@ -139,7 +139,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 					panic(err)
 				}
 
-				orders.Mutate(mappable.NewOrder(executableOrder.GenerateHashID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(mutableProperties.GetList()...)))
+				orders.Mutate(mappable.NewOrder(executableOrder.GetClassificationID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(mutableProperties.GetList()...)))
 
 				orderLeftOverMakerOwnableSplit = sdkTypes.ZeroDec()
 			default:
@@ -169,7 +169,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return false
 	}
 
-	orders.Iterate(key.NewKey(baseIDs.NewOrderID(order.GetClassificationID(), order.GetTakerOwnableID(), order.GetMakerOwnableID(), baseIDs.NewStringID(""), baseIDs.NewStringID(""), baseIDs.NewStringID(""), baseQualified.NewImmutables(base.NewPropertyList()))), accumulator)
+	orders.Iterate(key.NewKey(baseIDs.NewOrderID(order.GetClassificationID(), order.GetTakerOwnableID(), order.GetMakerOwnableID(), baseIDs.NewStringID(""), baseIDs.NewStringID(""), baseIDs.NewIdentityID(nil, nil), baseQualified.NewImmutables(base.NewPropertyList()))), accumulator)
 
 	if !orderLeftOverMakerOwnableSplit.Equal(sdkTypes.ZeroDec()) && orderMutated {
 		mutableProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(orderLeftOverMakerOwnableSplit)))))
@@ -177,7 +177,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return newTransactionResponse(err)
 		}
 
-		orders.Mutate(mappable.NewOrder(orderID, order.GetImmutables(), order.GetMutables().Mutate(mutableProperties.GetList()...)))
+		orders.Mutate(mappable.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(mutableProperties.GetList()...)))
 	}
 
 	return newTransactionResponse(nil)

@@ -12,12 +12,13 @@ import (
 
 type Order interface {
 	// TODO check if ID return type required
-	GetRateID() ids.ID
-	GetCreationID() ids.ID
-	GetMakerOwnableID() ids.ID
-	GetTakerOwnableID() ids.ID
-	GetMakerID() ids.ID
+	GetRateID() ids.StringID
+	GetCreationID() ids.StringID
+	GetMakerOwnableID() ids.OwnableID
+	GetTakerOwnableID() ids.OwnableID
+	GetMakerID() ids.IdentityID
 
+	// TODO check if rest of the IDs can be converted to meta properties
 	GetCreation() properties.MetaProperty
 	GetExchangeRate() properties.MetaProperty
 

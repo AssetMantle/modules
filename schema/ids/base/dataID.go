@@ -18,6 +18,11 @@ type dataID struct {
 	ids.HashID
 }
 
+func (dataID dataID) IsDataID() {
+	// TODO implement me
+	panic("implement me")
+}
+
 var _ ids.DataID = (*dataID)(nil)
 
 func (dataID dataID) String() string {

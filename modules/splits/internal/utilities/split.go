@@ -16,7 +16,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-func AddSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID, value sdkTypes.Dec) (helpers.Collection, error) {
+func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) (helpers.Collection, error) {
 	if value.LTE(sdkTypes.ZeroDec()) {
 		return nil, constants.NotAuthorized
 	}
@@ -33,7 +33,7 @@ func AddSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID, valu
 	return splits, nil
 }
 
-func SubtractSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID, value sdkTypes.Dec) (helpers.Collection, error) {
+func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) (helpers.Collection, error) {
 	if value.LTE(sdkTypes.ZeroDec()) {
 		return nil, constants.NotAuthorized
 	}

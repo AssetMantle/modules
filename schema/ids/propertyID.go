@@ -7,4 +7,5 @@ type PropertyID interface {
 	GetKey() StringID
 	GetType() StringID
 	ID
+	IsPropertyID()
 }

@@ -118,3 +118,7 @@ func NewMaintainer(classificationID ids.ClassificationID, immutables qualified.I
 		Document: baseQualified.NewDocument(classificationID, immutables, mutables),
 	}
 }
+
+func Prototype() helpers.Mappable {
+	return maintainer{}
+}

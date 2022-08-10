@@ -57,7 +57,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
-	identities.Add(mappable.NewIdentity(identityID, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
+	identities.Add(mappable.NewIdentity(classificationID, base.NewImmutables(immutableProperties), base.NewMutables(mutableProperties)))
 
 	return newTransactionResponse(nil)
 }

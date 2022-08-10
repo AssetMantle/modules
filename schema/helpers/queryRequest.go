@@ -9,8 +9,8 @@ import (
 
 type QueryRequest interface {
 	Request
-	FromCLI(CLICommand, context.CLIContext) QueryRequest
-	FromMap(map[string]string) QueryRequest
+	FromCLI(CLICommand, context.CLIContext) (QueryRequest, error)
+	FromMap(map[string]string) (QueryRequest, error)
 	Encode() ([]byte, error)
 	Decode([]byte) (QueryRequest, error)
 }

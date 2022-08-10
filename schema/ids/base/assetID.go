@@ -18,6 +18,16 @@ type assetID struct {
 	ids.HashID
 }
 
+func (assetID assetID) IsOwnableID() {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (assetID assetID) IsAssetID() {
+	// TODO implement me
+	panic("implement me")
+}
+
 var _ ids.AssetID = (*assetID)(nil)
 
 func (assetID assetID) String() string {
@@ -48,6 +58,14 @@ func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immu
 	}
 }
 
-func ReadAssetID(assetIDString string) ids.AssetID {
-
+func ReadAssetID(assetIDString string) (ids.AssetID, error) {
+	if classificationID, err := ReadClassificationID(stringUtilities.SplitCompositeIDString(assetIDString)[0]); err == nil {
+		if hashID, err := ReadHashID(stringUtilities.SplitCompositeIDString(assetIDString)[1]); err == nil {
+			return assetID{
+				ClassificationID: classificationID,
+				HashID:           hashID,
+			}, nil
+		}
+	}
+	return assetID{}, errorConstants.MetaDataError
 }
