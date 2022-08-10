@@ -1,4 +1,4 @@
-package block
+package mappable
 
 import (
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -9,10 +9,10 @@ import (
 func TestPrototype(t *testing.T) {
 	tests := []struct {
 		name string
-		want helpers.Block
+		want helpers.Mappable
 	}{
 		// TODO: Add test cases.
-		{"+ve", block{}},
+		{"+ve", identity{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

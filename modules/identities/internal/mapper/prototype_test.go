@@ -1,4 +1,4 @@
-package block
+package mapper
 
 import (
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -9,10 +9,11 @@ import (
 func TestPrototype(t *testing.T) {
 	tests := []struct {
 		name string
-		want helpers.Block
+		want helpers.Mapper
 	}{
 		// TODO: Add test cases.
-		{"+ve", block{}},
+		// TODO: Pointer based unit tests required
+		//{"+ve", baseHelpers.NewMapper(key.Prototype, mappable.Prototype)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -1,21 +1,31 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
-
 package dummy
 
 import (
-	"testing"
-
-	"github.com/stretchr/testify/require"
-
 	"github.com/AssetMantle/modules/constants/errors"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	"testing"
 )
 
-func Test_Validator(t *testing.T) {
-	require.Equal(t, errors.IncorrectFormat, validator(baseIDs.NewID("")))
-	require.Equal(t, nil, validator(Parameter))
-	require.Equal(t, errors.InvalidParameter, validator(baseTypes.NewParameter(baseIDs.NewID(""), baseData.NewStringData(""), validator)))
+func Test_validator(t *testing.T) {
+	type args struct {
+		i interface{}
+	}
+	tests := []struct {
+		name      string
+		args      args
+		wantError error
+	}{
+		// TODO: Add test cases.
+		{"-ve incorrectFormat", args{baseIDs.NewID("")}, errors.IncorrectFormat},
+		{"+ve", args{Parameter}, nil},
+		//{"-ve InvalidParameter", args{baseTypes.NewParameter(baseIDs.NewID(""), baseData.NewStringData(""), validator)}, errors.InvalidParameter},
+		{"-ve nil", args{nil}, nil},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := validator(tt.args.i); err != tt.wantError {
+				t.Errorf("validator() error = %v, wantErr %v", err, tt.wantError)
+			}
+		})
+	}
 }

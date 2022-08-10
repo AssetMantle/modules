@@ -2,23 +2,28 @@ package base
 
 import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/properties"
 	base2 "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
+	"github.com/AssetMantle/modules/schema/qualified"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
+	"reflect"
 	"testing"
 )
 
-func Test_Document(t *testing.T) {
-	testProperty := base2.NewProperty(baseIDs.NewID("ID"), baseData.NewHeightData(baseTypes.NewHeight(123)))
-	testImmutables := Immutables{base.NewPropertyList(testProperty)}
-	testProperties := base.NewPropertyList(testProperty)
-	testMutables := Mutables{testProperties}
-
+func TestDocument_GetClassificationID(t *testing.T) {
+	type fields struct {
+		ID               ids.ID
+		ClassificationID ids.ID
+		Immutables       Immutables
+		Mutables         Mutables
+	}
 	creationID := baseIDs.NewID("100")
+	classificationID := baseIDs.NewID("c100")
 
 	takerIDImmutableProperty := base2.NewProperty(constants.TakerIDProperty, baseData.NewStringData("takerIDImmutableProperty"))
 	exchangeRateImmutableProperty := base2.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec()))
@@ -28,12 +33,120 @@ func Test_Document(t *testing.T) {
 
 	immutableProperties := base.NewPropertyList(takerIDImmutableProperty, exchangeRateImmutableProperty.RemoveData(), creationImmutableProperty.RemoveData(), expiryImmutableProperty, makerOwnableSplitImmutableProperty)
 
-	testDocument := Document{ID: creationID, Immutables: Immutables{PropertyList: immutableProperties}, Mutables: Mutables{Properties: base.NewPropertyList()}}
-	testDocument1 := Document{ID: creationID, Immutables: testImmutables, Mutables: testMutables}
+	tests := []struct {
+		name   string
+		fields fields
+		want   ids.ID
+	}{
+		// TODO: Add test cases.
+		{"Test1", fields{ID: creationID, ClassificationID: classificationID, Immutables: Immutables{PropertyList: immutableProperties}, Mutables: Mutables{Properties: base.NewPropertyList()}}, classificationID},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			document := Document{
+				ID:               tt.fields.ID,
+				ClassificationID: tt.fields.ClassificationID,
+				Immutables:       tt.fields.Immutables,
+				Mutables:         tt.fields.Mutables,
+			}
+			if got := document.GetClassificationID(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetClassificationID() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	require.Equal(t, Document{ID: creationID, Immutables: testImmutables, Mutables: testMutables}, testDocument1)
-	require.Equal(t, Document{ID: creationID, Immutables: Immutables{PropertyList: immutableProperties}, Mutables: Mutables{Properties: base.NewPropertyList()}}, testDocument)
-	require.Equal(t, testDocument.ID, creationID)
-	require.Equal(t, testDocument1.ID, creationID)
-	require.Equal(t, testDocument1.Properties, testProperties)
+func TestDocument_GetID(t *testing.T) {
+	type fields struct {
+		ID               ids.ID
+		ClassificationID ids.ID
+		Immutables       Immutables
+		Mutables         Mutables
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   ids.ID
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			document := Document{
+				ID:               tt.fields.ID,
+				ClassificationID: tt.fields.ClassificationID,
+				Immutables:       tt.fields.Immutables,
+				Mutables:         tt.fields.Mutables,
+			}
+			if got := document.GetID(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetID() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestDocument_GetProperty(t *testing.T) {
+	type fields struct {
+		ID               ids.ID
+		ClassificationID ids.ID
+		Immutables       Immutables
+		Mutables         Mutables
+	}
+	type args struct {
+		propertyID ids.PropertyID
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   properties.Property
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			document := Document{
+				ID:               tt.fields.ID,
+				ClassificationID: tt.fields.ClassificationID,
+				Immutables:       tt.fields.Immutables,
+				Mutables:         tt.fields.Mutables,
+			}
+			if got := document.GetProperty(tt.args.propertyID); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetProperty() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestDocument_Mutate(t *testing.T) {
+	type fields struct {
+		ID               ids.ID
+		ClassificationID ids.ID
+		Immutables       Immutables
+		Mutables         Mutables
+	}
+	type args struct {
+		propertyList []properties.Property
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   qualified.Document
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			document := Document{
+				ID:               tt.fields.ID,
+				ClassificationID: tt.fields.ClassificationID,
+				Immutables:       tt.fields.Immutables,
+				Mutables:         tt.fields.Mutables,
+			}
+			if got := document.Mutate(tt.args.propertyList...); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Mutate() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
