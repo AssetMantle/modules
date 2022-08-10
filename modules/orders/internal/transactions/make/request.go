@@ -114,12 +114,32 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	if err != nil {
+		return nil, err
+	}
+
+	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationID)
+	if err != nil {
+		return nil, err
+	}
+
+	makerOwnableID, err := baseIDs.ReadOwnableID(transactionRequest.MakerOwnableID)
+	if err != nil {
+		return nil, err
+	}
+
+	takerOwnableID, err := baseIDs.ReadOwnableID(transactionRequest.TakerOwnableID)
+	if err != nil {
+		return nil, err
+	}
+
 	return newMessage(
 		from,
-		baseIDs.ReadIdentityID(transactionRequest.FromID),
-		baseIDs.ReadClassificationID(transactionRequest.ClassificationID),
-		baseIDs.NewStringID(transactionRequest.MakerOwnableID),
-		baseIDs.NewStringID(transactionRequest.TakerOwnableID),
+		fromID,
+		classificationID,
+		makerOwnableID,
+		takerOwnableID,
 		baseTypes.NewHeight(transactionRequest.ExpiresIn),
 		makerOwnableSplit,
 		takerOwnableSplit,

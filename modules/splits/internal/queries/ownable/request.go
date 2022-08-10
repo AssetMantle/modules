@@ -35,18 +35,23 @@ func (queryRequest queryRequest) Validate() error {
 	return err
 }
 
-func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewStringID(cliCommand.ReadString(constants.OwnableID)))
+func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+	if ownableID, err := baseIDs.ReadOwnableID(cliCommand.ReadString(constants.OwnableID)); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(ownableID), nil
+	}
 }
-
-func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewStringID(vars[Query.GetName()]))
+func (queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
+	if ownableID, err := baseIDs.ReadOwnableID(vars[Query.GetName()]); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(ownableID), nil
+	}
 }
-
 func (queryRequest queryRequest) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryRequest)
 }
-
 func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
 	if err := common.Codec.UnmarshalJSON(bytes, &queryRequest); err != nil {
 		return nil, err
@@ -57,7 +62,6 @@ func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, err
 func requestPrototype() helpers.QueryRequest {
 	return queryRequest{}
 }
-
 func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 	switch value := request.(type) {
 	case queryRequest:
@@ -66,7 +70,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 		return queryRequest{}
 	}
 }
-
 func newQueryRequest(ownableID ids.ID) helpers.QueryRequest {
 	return queryRequest{OwnableID: ownableID}
 }

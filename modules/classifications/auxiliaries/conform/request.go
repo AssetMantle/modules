@@ -33,7 +33,7 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(classificationID ids.ID, immutables qualified.Immutables, mutables qualified.Mutables) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		ClassificationID: classificationID,
 		Immutables:       immutables,

@@ -39,23 +39,23 @@ type testQueryRequest struct {
 
 var _ helpers.QueryRequest = (*testQueryRequest)(nil)
 
-func (t testQueryRequest) Validate() error {
+func (testQueryRequest testQueryRequest) Validate() error {
 	return nil
 }
 
-func (t testQueryRequest) FromCLI(_ helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return t
+func (testQueryRequest testQueryRequest) FromCLI(_ helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+	return testQueryRequest, nil
 }
 
-func (t testQueryRequest) FromMap(_ map[string]string) helpers.QueryRequest {
-	return t
+func (testQueryRequest testQueryRequest) FromMap(_ map[string]string) (helpers.QueryRequest, error) {
+	return testQueryRequest, nil
 }
 
-func (t testQueryRequest) Encode() ([]byte, error) {
-	return json.Marshal(t)
+func (testQueryRequest testQueryRequest) Encode() ([]byte, error) {
+	return json.Marshal(testQueryRequest)
 }
 
-func (t testQueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
+func (testQueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
 	var queryRequest testQueryRequest
 	err := json.Unmarshal(bytes, &queryRequest)
 

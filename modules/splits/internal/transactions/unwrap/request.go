@@ -71,10 +71,20 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, errorConstants.InvalidRequest
 	}
 
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	if err != nil {
+		return nil, err
+	}
+
+	ownableID, err := baseIDs.ReadOwnableID(transactionRequest.OwnableID)
+	if err != nil {
+		return nil, err
+	}
+
 	return newMessage(
 		from,
-		baseIDs.NewStringID(transactionRequest.FromID),
-		baseIDs.NewStringID(transactionRequest.OwnableID),
+		fromID,
+		ownableID,
 		value,
 	), nil
 }

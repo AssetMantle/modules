@@ -99,11 +99,20 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	if err != nil {
+		return nil, err
+	}
+
+	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationID)
+	if err != nil {
+		return nil, err
+	}
 	return newMessage(
 		from,
 		to,
-		baseIDs.ReadIdentityID(transactionRequest.FromID),
-		baseIDs.ReadClassificationID(transactionRequest.ClassificationID),
+		fromID,
+		classificationID,
 		immutableMetaProperties,
 		immutableProperties,
 		mutableMetaProperties,

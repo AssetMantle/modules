@@ -68,9 +68,14 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	if err != nil {
+		return nil, err
+	}
+
 	return newMessage(
 		from,
-		baseIDs.NewStringID(transactionRequest.FromID),
+		fromID,
 		coins,
 	), nil
 }

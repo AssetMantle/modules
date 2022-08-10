@@ -35,11 +35,19 @@ func (queryRequest queryRequest) Validate() error {
 	return err
 }
 
-func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewStringID(cliCommand.ReadString(constants.SplitID)))
+func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+	if splitID, err := baseIDs.ReadSplitID(cliCommand.ReadString(constants.SplitID)); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(splitID), nil
+	}
 }
-func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewStringID(vars[Query.GetName()]))
+func (queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
+	if splitID, err := baseIDs.ReadSplitID(vars[Query.GetName()]); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(splitID), nil
+	}
 }
 func (queryRequest queryRequest) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryRequest)

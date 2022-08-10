@@ -78,10 +78,20 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	if err != nil {
+		return nil, err
+	}
+
+	assetID, err := baseIDs.ReadAssetID(transactionRequest.AssetID)
+	if err != nil {
+		return nil, err
+	}
+
 	return newMessage(
 		from,
-		baseIDs.ReadIdentityID(transactionRequest.FromID),
-		baseIDs.ReadAssetID(transactionRequest.AssetID),
+		fromID,
+		assetID,
 		mutableMetaProperties,
 		mutableProperties,
 	), nil

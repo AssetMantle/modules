@@ -34,11 +34,19 @@ func (queryRequest queryRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(queryRequest)
 	return err
 }
-func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.ReadIdentityID(cliCommand.ReadString(constants.IdentityID)))
+func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+	if identityID, err := baseIDs.ReadIdentityID(cliCommand.ReadString(constants.IdentityID)); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(identityID), nil
+	}
 }
-func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.ReadIdentityID(vars[Query.GetName()]))
+func (queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
+	if identityID, err := baseIDs.ReadIdentityID(vars[Query.GetName()]); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(identityID), nil
+	}
 }
 func (queryRequest queryRequest) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryRequest)
