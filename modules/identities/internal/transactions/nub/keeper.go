@@ -18,6 +18,7 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified/base"
+	qualifiedConstants "github.com/AssetMantle/modules/schema/qualified/constants"
 )
 
 type transactionKeeper struct {
@@ -45,7 +46,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(base.NewImmutables(baseLists.NewPropertyList(constants.NubID)), base.NewMutables(baseLists.NewPropertyList(constants.Authentication)))))
+	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(qualifiedConstants.NubImmutables, qualifiedConstants.NubMutables)))
 	if classificationID == nil && err != nil {
 		return newTransactionResponse(err)
 	}

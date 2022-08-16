@@ -20,8 +20,9 @@ var (
 	Lock                 = base.NewProperty(LockProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(-1)))
 	MaintainedProperties = base.NewProperty(MaintainedPropertiesProperty.GetKey(), baseData.NewListData(baseLists.NewDataList()))
 	MakerOwnableSplit    = base.NewProperty(MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(sdkTypes.ZeroDec()))
-	NubID                = base.NewProperty(NubIDProperty.GetKey(), baseData.NewIDData(baseIDs.NewStringID("")))
-	Permissions          = base.NewProperty(PermissionsProperty.GetKey(), baseData.NewListData(baseLists.NewDataList()))
-	TakerID              = base.NewProperty(TakerIDProperty.GetKey(), baseData.NewIDData(baseIDs.NewStringID("")))
-	Supply               = base.NewProperty(SupplyProperty.GetKey(), baseData.NewDecData(sdkTypes.SmallestDec()))
+	// TODO ***** rename to name
+	NubID       = base.NewProperty(NubIDProperty.GetKey(), baseData.NewIDData(baseIDs.NewStringID("")))
+	Permissions = base.NewProperty(PermissionsProperty.GetKey(), baseData.NewListData(baseLists.NewDataList()))
+	TakerID     = base.NewProperty(TakerIDProperty.GetKey(), baseData.NewIDData(baseIDs.NewStringID("")))
+	Supply      = base.NewProperty(SupplyProperty.GetKey(), baseData.NewDecData(sdkTypes.SmallestDec()))
 )
