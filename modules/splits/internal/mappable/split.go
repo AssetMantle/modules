@@ -51,10 +51,10 @@ func (split) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, split{})
 }
 
-func NewSplit(ownerID ids.ID, ownableID ids.ID, value sdkTypes.Dec) mappables.Split {
+func NewSplit(ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) mappables.Split {
 	return split{
-		OwnerID:   nil,
-		OwnableID: nil,
+		OwnerID:   ownerID,
+		OwnableID: ownableID,
 		Value:     value,
 	}
 }
