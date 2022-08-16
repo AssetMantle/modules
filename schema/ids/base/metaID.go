@@ -55,5 +55,13 @@ func NewMetaID(Type ids.StringID, hashID ids.HashID) ids.MetaID {
 }
 
 func ReadMetaID(metaIDString string) (ids.MetaID, error) {
+	Type := NewStringID(stringUtilities.SplitCompositeIDString(metaIDString)[0])
+	if hashID, err := ReadHashID(stringUtilities.SplitCompositeIDString(metaIDString)[1]); err == nil {
+		return metaID{
+			Type:   Type,
+			HashID: hashID,
+		}, nil
+	}
 
+	return metaID{}, constants.MetaDataError
 }
