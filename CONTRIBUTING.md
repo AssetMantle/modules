@@ -55,8 +55,7 @@ an [issue](https://github.com/AssetMantle/modules/issues/new/choose) or
 a [discussion](https://github.com/AssetMantle/modules/discussions/new) with a summary of the proposal. Once the proposal
 has been discussed and there is rough alignment on a high-level approach to the design,
 are following this process to ensure all involved parties are in agreement before any party begins coding the proposed
-the [ADR creation process](./docs/architecture/PROCESS.md) can begin. We
-implementation. If you would like to see examples of how these are written, please refer to the
+the [ADR creation process](./docs/architecture/PROCESS.md) can begin the implementation. If you would like to see examples of how these are written, please refer to the
 current ADR.
 
 ## Development Procedure
