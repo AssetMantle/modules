@@ -14,5 +14,7 @@ type Property interface {
 	GetKey() ids.StringID
 	GetType() ids.StringID
 
+	IsMeta() bool
+
 	traits.Listable
 }
