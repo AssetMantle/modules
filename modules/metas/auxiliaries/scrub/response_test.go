@@ -20,7 +20,7 @@ func Test_Super_Response(t *testing.T) {
 
 	metaProperty := base2.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
 	metaPropertyList := base.NewMetaProperties([]properties.MetaProperty{metaProperty}...)
-	property := base2.NewProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
+	property := base2.NewMesaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
 	propertyList := base.NewPropertyList([]properties.Property{property}...)
 
 	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList.ToPropertyList(), nil)

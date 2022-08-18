@@ -14,5 +14,5 @@ import (
 )
 
 func GenerateRandomProperty(r *rand.Rand) properties.Property {
-	return baseProperties.NewProperty(base.NewStringID(simulation.RandStringOfLength(r, r.Intn(99))), GenerateRandomData(r))
+	return baseProperties.NewMesaProperty(base.NewStringID(simulation.RandStringOfLength(r, r.Intn(99))), GenerateRandomData(r))
 }

@@ -17,8 +17,8 @@ import (
 
 func Test_Classification_Methods(t *testing.T) {
 
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 
 	id := baseIDs.NewClassificationID(immutables, mutables)
 

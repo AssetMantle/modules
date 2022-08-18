@@ -19,7 +19,7 @@ var _ lists.PropertyList = (*propertyList)(nil)
 
 // TODO write test
 func (propertyList propertyList) GetProperty(propertyID ids.PropertyID) properties.Property {
-	if i, found := propertyList.List.Search(base.NewEmptyPropertyFromID(propertyID)); found {
+	if i, found := propertyList.List.Search(base.NewEmptyMesaPropertyFromID(propertyID)); found {
 		return propertyList.GetList()[i]
 	}
 	return nil

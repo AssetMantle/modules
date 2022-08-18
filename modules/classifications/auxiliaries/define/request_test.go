@@ -17,8 +17,8 @@ import (
 
 func Test_Define_Request(t *testing.T) {
 
-	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
-	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
+	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
+	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 
 	testAuxiliaryRequest := NewAuxiliaryRequest(immutables, mutables)
 

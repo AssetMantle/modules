@@ -16,12 +16,12 @@ import (
 
 func Test_Mutables(t *testing.T) {
 
-	testProperty := baseProperties.NewProperty(baseIDs.NewStringID("ID"), baseData.NewStringData("Data"))
+	testProperty := baseProperties.NewMesaProperty(baseIDs.NewStringID("ID"), baseData.NewStringData("Data"))
 	testProperties := baseLists.NewPropertyList(testProperty)
 	testMutables := mutables{testProperties}
 	require.Equal(t, mutables{PropertyList: testProperties}, testMutables)
 	require.Equal(t, testProperties, testMutables.GetMutablePropertyList())
-	mutatedTestProperty := baseProperties.NewProperty(baseIDs.NewStringID("ID"), baseData.NewStringData("Data2"))
+	mutatedTestProperty := baseProperties.NewMesaProperty(baseIDs.NewStringID("ID"), baseData.NewStringData("Data2"))
 	require.Equal(t, mutables{PropertyList: baseLists.NewPropertyList(mutatedTestProperty)}, testMutables.Mutate(mutatedTestProperty))
 
 }

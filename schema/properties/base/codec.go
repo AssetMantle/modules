@@ -8,5 +8,5 @@ import (
 
 func RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, metaProperty{})
-	codecUtilities.RegisterModuleConcrete(codec, property{})
+	codecUtilities.RegisterModuleConcrete(codec, mesaProperty{})
 }

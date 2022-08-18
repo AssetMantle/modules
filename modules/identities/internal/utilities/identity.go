@@ -25,7 +25,7 @@ func ProvisionAddress(context sdkTypes.Context, supplementAuxiliary helpers.Auxi
 	if metaPropertyList, err := supplement.GetMetaPropertiesFromResponse(supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.GetAuthentication()))); err != nil {
 		return identity, err
 	} else {
-		identity.Mutate(base.NewProperty(constants.AuthenticationProperty.GetKey(), metaPropertyList.GetMetaProperty(constants.AuthenticationProperty).GetData().(data.ListData).Add(baseData.NewAccAddressData(accAddress))))
+		identity.Mutate(base.NewMesaProperty(constants.AuthenticationProperty.GetKey(), metaPropertyList.GetMetaProperty(constants.AuthenticationProperty).GetData().(data.ListData).Add(baseData.NewAccAddressData(accAddress))))
 		return identity, nil
 	}
 }
@@ -34,7 +34,7 @@ func UnprovisionAddress(context sdkTypes.Context, supplementAuxiliary helpers.Au
 	if metaPropertyList, err := supplement.GetMetaPropertiesFromResponse(supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.GetAuthentication()))); err != nil {
 		return identity, err
 	} else {
-		identity.Mutate(base.NewProperty(constants.AuthenticationProperty.GetKey(), metaPropertyList.GetMetaProperty(constants.AuthenticationProperty).GetData().(data.ListData).Remove(baseData.NewAccAddressData(accAddress))))
+		identity.Mutate(base.NewMesaProperty(constants.AuthenticationProperty.GetKey(), metaPropertyList.GetMetaProperty(constants.AuthenticationProperty).GetData().(data.ListData).Remove(baseData.NewAccAddressData(accAddress))))
 		return identity, nil
 	}
 }

@@ -23,7 +23,7 @@ func (metaProperty metaProperty) GetData() data.Data {
 	return metaProperty.Data
 }
 func (metaProperty metaProperty) RemoveData() properties.Property {
-	return NewProperty(metaProperty.GetKey(), metaProperty.GetData())
+	return NewMesaProperty(metaProperty.GetKey(), metaProperty.GetData())
 }
 func (metaProperty metaProperty) GetID() ids.PropertyID {
 	return metaProperty.ID
@@ -36,6 +36,9 @@ func (metaProperty metaProperty) GetKey() ids.StringID {
 }
 func (metaProperty metaProperty) GetType() ids.StringID {
 	return metaProperty.Data.GetType()
+}
+func (metaProperty metaProperty) IsMeta() bool {
+	return true
 }
 func (metaProperty metaProperty) Compare(listable traits.Listable) int {
 	if compareMetaProperty, err := metaPropertyFromInterface(listable); err != nil {

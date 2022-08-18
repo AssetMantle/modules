@@ -16,7 +16,7 @@ import (
 )
 
 func Test_Immutables(t *testing.T) {
-	testProperty := base2.NewProperty(baseIDs.NewStringID("ID"), baseData.NewHeightData(baseTypes.NewHeight(123)))
+	testProperty := base2.NewMesaProperty(baseIDs.NewStringID("ID"), baseData.NewHeightData(baseTypes.NewHeight(123)))
 	testImmutables := immutables{base.NewPropertyList(testProperty)}
 
 	require.Equal(t, immutables{PropertyList: base.NewPropertyList(testProperty)}, testImmutables)
