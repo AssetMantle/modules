@@ -3,8 +3,12 @@
 
 package data
 
+import (
+	"github.com/AssetMantle/modules/schema/lists"
+)
+
 type ListData interface {
-	Get() []Data
+	Get() lists.DataList
 
 	Search(Data) (int, bool)
 	Add(...Data) ListData
