@@ -4,17 +4,17 @@
 package mappables
 
 import (
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/qualified"
 )
 
-// TODO check implementation
 type Maintainer interface {
 	GetIdentityID() ids.IdentityID
 	GetMaintainedClassificationID() ids.ClassificationID
-	GetMaintainedPropertySet() properties.Property
+	GetMaintainedProperties() data.ListData
+	GetPermissions() data.ListData
 
 	CanMintAsset() bool
 	CanBurnAsset() bool
