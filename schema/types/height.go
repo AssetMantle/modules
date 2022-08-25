@@ -4,6 +4,8 @@
 package types
 
 type Height interface {
+	String() string
+	Bytes() []byte
 	Get() int64
 
 	Compare(Height) int
