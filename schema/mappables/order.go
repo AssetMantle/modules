@@ -4,27 +4,23 @@
 package mappables
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/qualified"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type Order interface {
-	// TODO check if ID return type required
-	GetRateID() ids.StringID
-	GetCreationID() ids.StringID
+	GetExchangeRate() sdkTypes.Dec
+	GetCreationHeight() types.Height
 	GetMakerOwnableID() ids.OwnableID
 	GetTakerOwnableID() ids.OwnableID
 	GetMakerID() ids.IdentityID
-
-	// TODO check if rest of the IDs can be converted to meta properties
-	GetCreation() properties.MetaProperty
-	GetExchangeRate() properties.MetaProperty
-
-	GetTakerID() properties.Property
-	GetExpiry() properties.Property
-	GetMakerOwnableSplit() properties.Property
+	GetTakerID() ids.IdentityID
+	GetExpiryHeight() types.Height
+	GetMakerOwnableSplit() sdkTypes.Dec
 
 	qualified.Document
 	helpers.Mappable
