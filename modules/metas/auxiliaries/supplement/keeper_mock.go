@@ -29,16 +29,16 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 	var metaPropertyList []properties.MetaProperty
 
 	for _, property := range auxiliaryRequest.PropertyList {
-		if property.GetID().Compare(constants.BurnHeightPropertyID) == 0 && property.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) == 0 {
+		if property.GetID().Compare(constants.BurnHeightProperty.GetID()) == 0 && property.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) == 0 {
 			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), errorConstants.MockError)
 		}
 	}
 
-	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.BurnHeightPropertyID.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))
-	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.MakerOwnableSplitPropertyID.GetKey(), baseData.NewDecData(sdkTypes.SmallestDec())))
-	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.TakerIDPropertyID.GetKey(), baseData.NewIDData(baseIDs.NewStringID("fromID"))))
-	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.ExchangeRatePropertyID.GetKey(), baseData.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
-	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.ExpiryHeightPropertyID.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(900))))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(sdkTypes.SmallestDec())))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.TakerIDProperty.GetKey(), baseData.NewIDData(baseIDs.NewStringID("fromID"))))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
+	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(900))))
 
 	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
 }

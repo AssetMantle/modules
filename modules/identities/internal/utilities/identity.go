@@ -12,11 +12,12 @@ import (
 	"github.com/AssetMantle/modules/schema/properties/constants"
 )
 
+// TODO move to Identity interface
 func IsProvisioned(context sdkTypes.Context, supplementAuxiliary helpers.Auxiliary, identity mappables.Identity, accAddress sdkTypes.AccAddress) (bool, error) {
 	if metaPropertyList, err := supplement.GetMetaPropertiesFromResponse(supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.GetAuthentication()))); err != nil {
 		return false, err
 	} else {
-		_, found := metaPropertyList.GetMetaProperty(constants.AuthenticationPropertyID).GetData().(data.ListData).Search(baseData.NewAccAddressData(accAddress))
+		_, found := metaPropertyList.GetMetaProperty(constants.AuthenticationProperty.GetID()).GetData().(data.ListData).Search(baseData.NewAccAddressData(accAddress))
 		return found, nil
 	}
 }
@@ -25,7 +26,7 @@ func ProvisionAddress(context sdkTypes.Context, supplementAuxiliary helpers.Auxi
 	if metaPropertyList, err := supplement.GetMetaPropertiesFromResponse(supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.GetAuthentication()))); err != nil {
 		return identity, err
 	} else {
-		identity.Mutate(base.NewMesaProperty(constants.AuthenticationPropertyID.GetKey(), metaPropertyList.GetMetaProperty(constants.AuthenticationPropertyID).GetData().(data.ListData).Add(baseData.NewAccAddressData(accAddress))))
+		identity.Mutate(base.NewMesaProperty(constants.AuthenticationProperty.GetKey(), metaPropertyList.GetMetaProperty(constants.AuthenticationProperty.GetID()).GetData().(data.ListData).Add(baseData.NewAccAddressData(accAddress))))
 		return identity, nil
 	}
 }
@@ -34,7 +35,7 @@ func UnprovisionAddress(context sdkTypes.Context, supplementAuxiliary helpers.Au
 	if metaPropertyList, err := supplement.GetMetaPropertiesFromResponse(supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.GetAuthentication()))); err != nil {
 		return identity, err
 	} else {
-		identity.Mutate(base.NewMesaProperty(constants.AuthenticationPropertyID.GetKey(), metaPropertyList.GetMetaProperty(constants.AuthenticationPropertyID).GetData().(data.ListData).Remove(baseData.NewAccAddressData(accAddress))))
+		identity.Mutate(base.NewMesaProperty(constants.AuthenticationProperty.GetKey(), metaPropertyList.GetMetaProperty(constants.AuthenticationProperty.GetID()).GetData().(data.ListData).Remove(baseData.NewAccAddressData(accAddress))))
 		return identity, nil
 	}
 }

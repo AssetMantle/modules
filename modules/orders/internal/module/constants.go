@@ -17,4 +17,4 @@ import (
 const Name = "orders"
 
 var StoreKeyPrefix = constants.OrdersStoreKeyPrefix
-var ModuleIdentityID = baseIDs.NewIdentityID(constansts.NubClassificationID, baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(constantProperties.NubIDPropertyID.GetKey(), baseData.NewStringData(Name)))))
+var ModuleIdentityID = baseIDs.NewIdentityID(constansts.NubClassificationID, baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(constantProperties.NubIDProperty.GetKey(), baseData.NewStringData(Name)))))

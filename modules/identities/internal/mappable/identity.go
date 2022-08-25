@@ -25,14 +25,14 @@ type identity struct {
 var _ mappables.Identity = (*identity)(nil)
 
 func (identity identity) GetExpiry() propertiesSchema.Property {
-	if property := identity.Document.GetProperty(constants.ExpiryHeightPropertyID); property != nil {
+	if property := identity.Document.GetProperty(constants.ExpiryHeightProperty.GetID()); property != nil {
 		return property
 	}
 
 	return constants.ExpiryHeightProperty
 }
 func (identity identity) GetAuthentication() propertiesSchema.Property {
-	if property := identity.Document.GetProperty(constants.AuthenticationPropertyID); property != nil {
+	if property := identity.Document.GetProperty(constants.AuthenticationProperty.GetID()); property != nil {
 		return property
 	}
 

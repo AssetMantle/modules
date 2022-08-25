@@ -118,7 +118,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 									panic(auxiliaryResponse.GetError())
 								}
 
-								mutableProperties, err := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseProperties.NewMetaProperty(constants.MakerOwnableSplitPropertyID.GetKey(), baseData.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))))
+								mutableProperties, err := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))))
 								if err != nil {
 									panic(err)
 								}
@@ -138,7 +138,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 									panic(auxiliaryResponse.GetError())
 								}
 
-								mutableProperties, err := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseProperties.NewMetaProperty(constants.MakerOwnableSplitPropertyID.GetKey(), baseData.NewDecData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder))))))
+								mutableProperties, err := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder))))))
 								if err != nil {
 									panic(err)
 								}

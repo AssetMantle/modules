@@ -58,8 +58,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		}
 	}
 
-	mutableMetaProperties := message.MutableMetaProperties.Add(base.NewMetaProperty(constants.MakerOwnableSplitPropertyID.GetKey(), baseData.NewDecData(message.MakerOwnableSplit)))
-	mutableMetaProperties = mutableMetaProperties.Add(base.NewMetaProperty(constants.ExpiryHeightPropertyID.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
+	mutableMetaProperties := message.MutableMetaProperties.Add(base.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(message.MakerOwnableSplit)))
+	mutableMetaProperties = mutableMetaProperties.Add(base.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
 
 	scrubbedMutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetList()...)))
 	if err != nil {
