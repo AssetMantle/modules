@@ -25,18 +25,18 @@ type identity struct {
 var _ mappables.Identity = (*identity)(nil)
 
 func (identity identity) GetExpiry() propertiesSchema.Property {
-	if property := identity.Document.GetProperty(constants.ExpiryProperty); property != nil {
+	if property := identity.Document.GetProperty(constants.ExpiryHeightPropertyID); property != nil {
 		return property
 	}
 
-	return constants.Expiry
+	return constants.ExpiryHeightProperty
 }
 func (identity identity) GetAuthentication() propertiesSchema.Property {
-	if property := identity.Document.GetProperty(constants.AuthenticationProperty); property != nil {
+	if property := identity.Document.GetProperty(constants.AuthenticationPropertyID); property != nil {
 		return property
 	}
 
-	return constants.Authentication
+	return constants.AuthenticationProperty
 }
 func (identity identity) GetKey() helpers.Key {
 	return key.NewKey(baseIDs.NewIdentityID(identity.Document.GetClassificationID(), identity.Document.GetImmutables()))

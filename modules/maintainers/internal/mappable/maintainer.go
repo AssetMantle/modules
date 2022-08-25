@@ -29,30 +29,30 @@ type maintainer struct {
 var _ mappables.Maintainer = (*maintainer)(nil)
 
 func (maintainer maintainer) GetIdentityID() ids.IdentityID {
-	if property := maintainer.GetProperty(constants.IdentityIDProperty); property != nil && property.IsMeta() && property.GetType().Compare(dataConstants.IDDataID) == 0 {
+	if property := maintainer.GetProperty(constants.IdentityIDPropertyID); property != nil && property.IsMeta() && property.GetType().Compare(dataConstants.IDDataID) == 0 {
 		return property.(properties.MetaProperty).GetData().(data.IDData).Get().(ids.IdentityID)
 	}
-	return constants.MaintainedClassificationID.GetData().(data.IDData).Get().(ids.IdentityID)
+	return constants.MaintainedClassificationIDProperty.GetData().(data.IDData).Get().(ids.IdentityID)
 }
 func (maintainer maintainer) GetMaintainedClassificationID() ids.ClassificationID {
-	if property := maintainer.GetProperty(constants.MaintainedClassificationIDProperty); property != nil && property.IsMeta() && property.GetType().Compare(dataConstants.IDDataID) == 0 {
+	if property := maintainer.GetProperty(constants.MaintainedClassificationIDPropertyID); property != nil && property.IsMeta() && property.GetType().Compare(dataConstants.IDDataID) == 0 {
 		return property.(properties.MetaProperty).GetData().(data.IDData).Get().(ids.ClassificationID)
 	}
-	return constants.MaintainedClassificationID.GetData().(data.IDData).Get().(ids.ClassificationID)
+	return constants.MaintainedClassificationIDProperty.GetData().(data.IDData).Get().(ids.ClassificationID)
 }
 func (maintainer maintainer) GetMaintainedProperties() data.ListData {
-	if property := maintainer.GetProperty(constants.MaintainedPropertiesProperty); property != nil && property.IsMeta() && property.GetType().Compare(dataConstants.ListDataID) == 0 {
+	if property := maintainer.GetProperty(constants.MaintainedPropertiesPropertyID); property != nil && property.IsMeta() && property.GetType().Compare(dataConstants.ListDataID) == 0 {
 		return property.(properties.MetaProperty).GetData().(data.ListData)
 	}
 
-	return constants.MaintainedProperties.GetData().(data.ListData)
+	return constants.MaintainedPropertiesProperty.GetData().(data.ListData)
 }
 func (maintainer maintainer) GetPermissions() data.ListData {
-	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil && property.IsMeta() && property.GetType().Compare(dataConstants.ListDataID) == 0 {
+	if property := maintainer.GetProperty(constants.PermissionsPropertyID); property != nil && property.IsMeta() && property.GetType().Compare(dataConstants.ListDataID) == 0 {
 		return property.(properties.MetaProperty).GetData().(data.ListData)
 	}
 
-	return constants.Permissions.GetData().(data.ListData)
+	return constants.PermissionsProperty.GetData().(data.ListData)
 }
 func (maintainer maintainer) CanMintAsset() bool {
 	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(constansts.Mint))
@@ -79,7 +79,7 @@ func (maintainer maintainer) CanMutateMaintainer() bool {
 	return can
 }
 func (maintainer maintainer) MaintainsProperty(id ids.ID) bool {
-	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
+	if property := maintainer.GetProperty(constants.PermissionsPropertyID); property != nil {
 		if property.GetID().Compare(id) == 0 {
 			return true
 		}

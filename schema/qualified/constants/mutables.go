@@ -6,4 +6,4 @@ import (
 	"github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-var NubMutables = base.NewMutables(baseLists.NewPropertyList(constants.Authentication))
+var NubMutables = base.NewMutables(baseLists.NewPropertyList(constants.AuthenticationProperty))

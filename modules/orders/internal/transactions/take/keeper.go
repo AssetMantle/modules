@@ -13,7 +13,6 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
-	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -49,31 +48,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 
-	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetTakerID(), order.GetMakerOwnableSplit())))
-	if err != nil {
-		newTransactionResponse(err)
+	if order.GetTakerID().Compare(baseIDs.NewStringID("")) != 0 && order.GetTakerID().Compare(message.FromID) != 0 {
+		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
-	if takerIDProperty := metaProperties.GetMetaProperty(constants.TakerIDProperty); takerIDProperty != nil {
-		takerID := takerIDProperty.GetData().(data.IDData).Get()
-		if takerID.Compare(baseIDs.NewStringID("")) != 0 && takerID.Compare(message.FromID) != 0 {
-			return newTransactionResponse(errorConstants.NotAuthorized)
-		}
-	}
+	makerReceiveTakerOwnableSplit := order.GetMakerOwnableSplit().MulTruncate(order.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec())
+	takerReceiveMakerOwnableSplit := message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(order.GetExchangeRate())
 
-	exchangeRate := order.GetExchangeRate().GetData().(data.DecData).Get()
-
-	makerOwnableSplitProperty := metaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty)
-	if makerOwnableSplitProperty == nil {
-		return newTransactionResponse(errorConstants.MetaDataError)
-	}
-
-	makerOwnableSplit := makerOwnableSplitProperty.GetData().(data.DecData).Get()
-
-	makerReceiveTakerOwnableSplit := makerOwnableSplit.MulTruncate(exchangeRate).MulTruncate(sdkTypes.SmallestDec())
-	takerReceiveMakerOwnableSplit := message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(exchangeRate)
-
-	switch updatedMakerOwnableSplit := makerOwnableSplit.Sub(takerReceiveMakerOwnableSplit); {
+	switch updatedMakerOwnableSplit := order.GetMakerOwnableSplit().Sub(takerReceiveMakerOwnableSplit); {
 	case updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()):
 		if message.TakerOwnableSplit.LT(makerReceiveTakerOwnableSplit) {
 			return newTransactionResponse(errorConstants.InsufficientBalance)
@@ -85,12 +67,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return newTransactionResponse(errorConstants.InsufficientBalance)
 		}
 
-		takerReceiveMakerOwnableSplit = makerOwnableSplit
+		takerReceiveMakerOwnableSplit = order.GetMakerOwnableSplit()
 
 		orders.Remove(order)
 	default:
 		makerReceiveTakerOwnableSplit = message.TakerOwnableSplit
-		mutableProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(updatedMakerOwnableSplit)))))
+		mutableProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(constants.MakerOwnableSplitPropertyID.GetKey(), baseData.NewDecData(updatedMakerOwnableSplit)))))
 
 		if err != nil {
 			return newTransactionResponse(err)

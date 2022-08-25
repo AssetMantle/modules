@@ -15,16 +15,26 @@ import (
 )
 
 var (
-	Authentication             = base.NewMetaProperty(AuthenticationProperty.GetKey(), baseData.NewListData(baseLists.NewDataList()).ZeroValue())
-	Burn                       = base.NewMetaProperty(BurnProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(-1)))
-	Expiry                     = base.NewMetaProperty(ExpiryProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(-1)))
-	Lock                       = base.NewMetaProperty(LockProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(-1)))
-	MaintainedClassificationID = base.NewMetaProperty(MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList()))))
-	MaintainedProperties       = base.NewMetaProperty(MaintainedPropertiesProperty.GetKey(), baseData.NewListData(baseLists.NewDataList()))
-	MakerOwnableSplit          = base.NewMetaProperty(MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(sdkTypes.ZeroDec()))
+	AuthenticationProperty = base.NewMetaProperty(AuthenticationPropertyID.GetKey(), baseData.NewListData(baseLists.NewDataList()).ZeroValue())
+	BurnHeightProperty     = base.NewMetaProperty(BurnHeightPropertyID.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(-1)))
+	// TODO check default value
+	CreationHeightProperty = base.NewMetaProperty(CreationHeightPropertyID.GetType(), baseData.NewHeightData(baseTypes.NewHeight(-1)))
+	// TODO check default value
+	ExchangeRateProperty               = base.NewMetaProperty(ExchangeRatePropertyID.GetKey(), baseData.NewDecData(sdkTypes.NewDec(0)))
+	ExpiryHeightProperty               = base.NewMetaProperty(ExpiryHeightPropertyID.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(-1)))
+	LockProperty                       = base.NewMetaProperty(LockPropertyID.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(-1)))
+	MaintainedClassificationIDProperty = base.NewMetaProperty(MaintainedClassificationIDPropertyID.GetKey(), baseData.NewIDData(baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList()))))
+	MaintainedPropertiesProperty       = base.NewMetaProperty(MaintainedPropertiesPropertyID.GetKey(), baseData.NewListData(baseLists.NewDataList()))
+	// TODO check default value
+	MakerIDProperty = base.NewMetaProperty(MakerIDPropertyID.GetKey(), baseData.NewIDData(baseIDs.NewIdentityID(nil, nil)))
+	// TODO check default value
+	MakerOwnableIDProperty    = base.NewMetaProperty(MakerOwnableIDPropertyID.GetKey(), baseData.NewIDData(baseIDs.NewOwnableID(baseIDs.NewStringID(""))))
+	MakerOwnableSplitProperty = base.NewMetaProperty(MakerOwnableSplitPropertyID.GetKey(), baseData.NewDecData(sdkTypes.ZeroDec()))
 	// TODO ***** rename to name
-	NubID       = base.NewMetaProperty(NubIDProperty.GetKey(), baseData.NewIDData(baseIDs.NewStringID("")))
-	Permissions = base.NewMetaProperty(PermissionsProperty.GetKey(), baseData.NewListData(baseLists.NewDataList()))
-	TakerID     = base.NewMetaProperty(TakerIDProperty.GetKey(), baseData.NewIDData(baseIDs.NewStringID("")))
-	Supply      = base.NewMetaProperty(SupplyProperty.GetKey(), baseData.NewDecData(sdkTypes.SmallestDec()))
+	NubIDProperty       = base.NewMetaProperty(NubIDPropertyID.GetKey(), baseData.NewIDData(baseIDs.NewStringID("")))
+	PermissionsProperty = base.NewMetaProperty(PermissionsPropertyID.GetKey(), baseData.NewListData(baseLists.NewDataList()))
+	TakerIDProperty     = base.NewMetaProperty(TakerIDPropertyID.GetKey(), baseData.NewIDData(baseIDs.NewStringID("")))
+	// TODO check default value
+	TakerOwnableIDProperty = base.NewMetaProperty(TakerOwnableIDPropertyID.GetKey(), baseData.NewIDData(baseIDs.NewOwnableID(baseIDs.NewStringID(""))))
+	SupplyProperty         = base.NewMetaProperty(SupplyPropertyID.GetKey(), baseData.NewDecData(sdkTypes.SmallestDec()))
 )

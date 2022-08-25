@@ -6,4 +6,4 @@ import (
 	"github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-var NubImmutables = base.NewImmutables(baseLists.NewPropertyList(constants.NubID))
+var NubImmutables = base.NewImmutables(baseLists.NewPropertyList(constants.NubIDProperty))
