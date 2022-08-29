@@ -9,7 +9,6 @@ import (
 
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	"github.com/AssetMantle/modules/schema/data"
-	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -29,50 +28,49 @@ type order struct {
 var _ mappables.Order = (*order)(nil)
 
 func (order order) GetExchangeRate() sdkTypes.Dec {
-	if property := order.GetProperty(constants.ExchangeRateProperty.GetID()); property != nil && property.IsMeta() && property.GetType().Compare(dataConstants.DecDataID) == 0 {
+	if property := order.GetProperty(constants.ExchangeRateProperty.GetID()); property != nil && property.IsMeta() {
 		return property.(properties.MetaProperty).GetData().(data.DecData).Get()
 	}
 	return constants.ExchangeRateProperty.GetData().(data.DecData).Get()
 }
 func (order order) GetCreationHeight() types.Height {
-	// TODO compare type with propertyID's type
-	if property := order.GetProperty(constants.CreationHeightProperty.GetID()); property != nil && property.IsMeta() && property.GetType().Compare(dataConstants.HeightDataID) == 0 {
+	if property := order.GetProperty(constants.CreationHeightProperty.GetID()); property != nil && property.IsMeta() {
 		return property.(properties.MetaProperty).GetData().(data.HeightData).Get()
 	}
 	return constants.CreationHeightProperty.GetData().(data.HeightData).Get()
 }
 func (order order) GetMakerOwnableID() ids.OwnableID {
-	if property := order.GetProperty(constants.MakerOwnableIDProperty.GetID()); property != nil && property.IsMeta() && property.GetType().Compare(constants.MakerOwnableIDProperty.GetType()) == 0 {
+	if property := order.GetProperty(constants.MakerOwnableIDProperty.GetID()); property != nil && property.IsMeta() {
 		return property.(properties.MetaProperty).GetData().(data.IDData).Get().(ids.OwnableID)
 	}
 	return constants.MakerOwnableIDProperty.GetData().(data.IDData).Get().(ids.OwnableID)
 }
 func (order order) GetTakerOwnableID() ids.OwnableID {
-	if property := order.GetProperty(constants.TakerOwnableIDProperty.GetID()); property != nil && property.IsMeta() && property.GetType().Compare(constants.TakerOwnableIDProperty.GetType()) == 0 {
+	if property := order.GetProperty(constants.TakerOwnableIDProperty.GetID()); property != nil && property.IsMeta() {
 		return property.(properties.MetaProperty).GetData().(data.IDData).Get().(ids.OwnableID)
 	}
 	return constants.TakerOwnableIDProperty.GetData().(data.IDData).Get().(ids.OwnableID)
 }
 func (order order) GetMakerID() ids.IdentityID {
-	if property := order.GetProperty(constants.MakerIDProperty.GetID()); property != nil && property.IsMeta() && property.GetType().Compare(constants.MakerIDProperty.GetType()) == 0 {
+	if property := order.GetProperty(constants.MakerIDProperty.GetID()); property != nil && property.IsMeta() {
 		return property.(properties.MetaProperty).GetData().(data.IDData).Get().(ids.IdentityID)
 	}
 	return constants.MakerIDProperty.GetData().(data.IDData).Get().(ids.IdentityID)
 }
 func (order order) GetTakerID() ids.IdentityID {
-	if property := order.GetProperty(constants.TakerIDProperty.GetID()); property != nil && property.IsMeta() && property.GetType().Compare(constants.TakerIDProperty.GetType()) == 0 {
+	if property := order.GetProperty(constants.TakerIDProperty.GetID()); property != nil && property.IsMeta() {
 		return property.(properties.MetaProperty).GetData().(data.IDData).Get().(ids.IdentityID)
 	}
 	return constants.TakerIDProperty.GetData().(data.IDData).Get().(ids.IdentityID)
 }
 func (order order) GetExpiryHeight() types.Height {
-	if property := order.GetProperty(constants.ExpiryHeightProperty.GetID()); property != nil && property.IsMeta() && property.GetType().Compare(constants.ExpiryHeightProperty.GetType()) == 0 {
+	if property := order.GetProperty(constants.ExpiryHeightProperty.GetID()); property != nil && property.IsMeta() {
 		return property.(properties.MetaProperty).GetData().(data.HeightData).Get()
 	}
 	return constants.ExpiryHeightProperty.GetData().(data.HeightData).Get()
 }
 func (order order) GetMakerOwnableSplit() sdkTypes.Dec {
-	if property := order.GetProperty(constants.MakerOwnableSplitProperty.GetID()); property != nil && property.IsMeta() && property.GetType().Compare(constants.MakerOwnableSplitProperty.GetType()) == 0 {
+	if property := order.GetProperty(constants.MakerOwnableSplitProperty.GetID()); property != nil && property.IsMeta() {
 		return property.(properties.MetaProperty).GetData().(data.DecData).Get()
 	}
 	return constants.MakerOwnableSplitProperty.GetData().(data.DecData).Get()

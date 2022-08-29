@@ -9,7 +9,6 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
@@ -29,26 +28,26 @@ type maintainer struct {
 var _ mappables.Maintainer = (*maintainer)(nil)
 
 func (maintainer maintainer) GetIdentityID() ids.IdentityID {
-	if property := maintainer.GetProperty(constants.IdentityIDProperty.GetID()); property != nil && property.IsMeta() && property.GetType().Compare(dataConstants.IDDataID) == 0 {
+	if property := maintainer.GetProperty(constants.IdentityIDProperty.GetID()); property != nil && property.IsMeta() {
 		return property.(properties.MetaProperty).GetData().(data.IDData).Get().(ids.IdentityID)
 	}
 	return constants.MaintainedClassificationIDProperty.GetData().(data.IDData).Get().(ids.IdentityID)
 }
 func (maintainer maintainer) GetMaintainedClassificationID() ids.ClassificationID {
-	if property := maintainer.GetProperty(constants.MaintainedClassificationIDProperty.GetID()); property != nil && property.IsMeta() && property.GetType().Compare(dataConstants.IDDataID) == 0 {
+	if property := maintainer.GetProperty(constants.MaintainedClassificationIDProperty.GetID()); property != nil && property.IsMeta() {
 		return property.(properties.MetaProperty).GetData().(data.IDData).Get().(ids.ClassificationID)
 	}
 	return constants.MaintainedClassificationIDProperty.GetData().(data.IDData).Get().(ids.ClassificationID)
 }
 func (maintainer maintainer) GetMaintainedProperties() data.ListData {
-	if property := maintainer.GetProperty(constants.MaintainedPropertiesProperty.GetID()); property != nil && property.IsMeta() && property.GetType().Compare(dataConstants.ListDataID) == 0 {
+	if property := maintainer.GetProperty(constants.MaintainedPropertiesProperty.GetID()); property != nil && property.IsMeta() {
 		return property.(properties.MetaProperty).GetData().(data.ListData)
 	}
 
 	return constants.MaintainedPropertiesProperty.GetData().(data.ListData)
 }
 func (maintainer maintainer) GetPermissions() data.ListData {
-	if property := maintainer.GetProperty(constants.PermissionsProperty.GetID()); property != nil && property.IsMeta() && property.GetType().Compare(dataConstants.ListDataID) == 0 {
+	if property := maintainer.GetProperty(constants.PermissionsProperty.GetID()); property != nil && property.IsMeta() {
 		return property.(properties.MetaProperty).GetData().(data.ListData)
 	}
 
