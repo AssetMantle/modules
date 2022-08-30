@@ -45,8 +45,8 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 	orders := block.mapper.NewCollection(context)
 
 	orders.Iterate(
-		// TODO ***** test this case
-		key.NewKey(baseIDs.NewOrderID(nil, nil, nil, sdkTypes.SmallestDec(), nil, nil, nil)),
+		// TODO ***** define a proper new key
+		key.NewKey(baseIDs.NewOrderID(baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList())), baseIDs.NewOwnableID(baseIDs.NewStringID("")), baseIDs.NewOwnableID(baseIDs.NewStringID("")), sdkTypes.SmallestDec(), baseTypes.NewHeight(-1), baseIDs.NewIdentityID(baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList())), baseQualified.NewImmutables(baseLists.NewPropertyList())), baseQualified.NewImmutables(baseLists.NewPropertyList()))),
 		func(mappable helpers.Mappable) bool {
 			order := mappable.(mappables.Order)
 
