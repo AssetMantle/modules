@@ -84,22 +84,24 @@ func NewOrderID(classificationID ids.ClassificationID, makerOwnableID ids.Ownabl
 }
 
 func ReadOrderID(orderIDString string) (ids.OrderID, error) {
-	if classificationID, err := ReadClassificationID(stringUtilities.SplitCompositeIDString(orderIDString)[0]); err == nil {
-		if makerOwnableID, err := ReadOwnableID(stringUtilities.SplitCompositeIDString(orderIDString)[1]); err == nil {
-			if takerOwnableID, err := ReadOwnableID(stringUtilities.SplitCompositeIDString(orderIDString)[2]); err == nil {
-				if exchangeRate, err := sdkTypes.NewDecFromStr(stringUtilities.SplitCompositeIDString(orderIDString)[3]); err == nil {
-					if creationHeightDec, err := strconv.ParseInt(stringUtilities.SplitCompositeIDString(orderIDString)[4], 10, 64); err == nil {
-						if makerID, err := ReadIdentityID(stringUtilities.SplitCompositeIDString(orderIDString)[5]); err == nil {
-							if hashID, err := ReadHashID(stringUtilities.SplitCompositeIDString(orderIDString)[6]); err == nil {
-								return orderID{
-									ClassificationID: classificationID,
-									MakerOwnableID:   makerOwnableID,
-									TakerOwnableID:   takerOwnableID,
-									ExchangeRate:     exchangeRate,
-									CreationHeight:   base.NewHeight(creationHeightDec),
-									MakerID:          makerID,
-									HashID:           hashID,
-								}, nil
+	if orderIDStringSplit := stringUtilities.SplitCompositeIDString(orderIDString); len(orderIDStringSplit) == 7 {
+		if classificationID, err := ReadClassificationID(orderIDStringSplit[0]); err == nil {
+			if makerOwnableID, err := ReadOwnableID(orderIDStringSplit[1]); err == nil {
+				if takerOwnableID, err := ReadOwnableID(orderIDStringSplit[2]); err == nil {
+					if exchangeRate, err := sdkTypes.NewDecFromStr(orderIDStringSplit[3]); err == nil {
+						if creationHeightDec, err := strconv.ParseInt(orderIDStringSplit[4], 10, 64); err == nil {
+							if makerID, err := ReadIdentityID(orderIDStringSplit[5]); err == nil {
+								if hashID, err := ReadHashID(orderIDStringSplit[6]); err == nil {
+									return orderID{
+										ClassificationID: classificationID,
+										MakerOwnableID:   makerOwnableID,
+										TakerOwnableID:   takerOwnableID,
+										ExchangeRate:     exchangeRate,
+										CreationHeight:   base.NewHeight(creationHeightDec),
+										MakerID:          makerID,
+										HashID:           hashID,
+									}, nil
+								}
 							}
 						}
 					}

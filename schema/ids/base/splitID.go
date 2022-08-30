@@ -52,12 +52,14 @@ func NewSplitID(ownerID ids.IdentityID, ownableID ids.OwnableID) ids.SplitID {
 }
 
 func ReadSplitID(splitIDString string) (ids.SplitID, error) {
-	if ownerID, err := ReadIdentityID(stringUtilities.JoinIDStrings(stringUtilities.SplitCompositeIDString(splitIDString)[:1]...)); err == nil {
-		if ownableID, err := ReadOwnableID(stringUtilities.SplitCompositeIDString(splitIDString)[2]); err == nil {
-			return splitID{
-				OwnerID:   ownerID,
-				OwnableID: ownableID,
-			}, nil
+	if splitIDStringSplit := stringUtilities.SplitCompositeIDString(splitIDString); len(splitIDStringSplit) == 3 {
+		if ownerID, err := ReadIdentityID(stringUtilities.JoinIDStrings(stringUtilities.SplitCompositeIDString(splitIDString)[:1]...)); err == nil {
+			if ownableID, err := ReadOwnableID(stringUtilities.SplitCompositeIDString(splitIDString)[2]); err == nil {
+				return splitID{
+					OwnerID:   ownerID,
+					OwnableID: ownableID,
+				}, nil
+			}
 		}
 	}
 	return splitID{}, constants.MetaDataError

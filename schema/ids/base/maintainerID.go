@@ -52,12 +52,14 @@ func NewMaintainerID(classificationID ids.ClassificationID, identityID ids.Ident
 }
 
 func ReadMaintainerID(maintainerIDString string) (ids.MaintainerID, error) {
-	if classificationID, err := ReadClassificationID(stringUtilities.SplitCompositeIDString(maintainerIDString)[0]); err == nil {
-		if identityID, err := ReadIdentityID(stringUtilities.JoinIDStrings(stringUtilities.SplitCompositeIDString(maintainerIDString)[1:]...)); err == nil {
-			return maintainerID{
-				ClassificationID: classificationID,
-				IdentityID:       identityID,
-			}, nil
+	if maintainerIDStringSplit := stringUtilities.SplitCompositeIDString(maintainerIDString); len(maintainerIDStringSplit) == 3 {
+		if classificationID, err := ReadClassificationID(maintainerIDStringSplit[0]); err == nil {
+			if identityID, err := ReadIdentityID(stringUtilities.JoinIDStrings(maintainerIDStringSplit[1:]...)); err == nil {
+				return maintainerID{
+					ClassificationID: classificationID,
+					IdentityID:       identityID,
+				}, nil
+			}
 		}
 	}
 	return maintainerID{}, errorConstants.MetaDataError

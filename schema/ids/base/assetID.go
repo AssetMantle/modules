@@ -59,12 +59,14 @@ func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immu
 }
 
 func ReadAssetID(assetIDString string) (ids.AssetID, error) {
-	if classificationID, err := ReadClassificationID(stringUtilities.SplitCompositeIDString(assetIDString)[0]); err == nil {
-		if hashID, err := ReadHashID(stringUtilities.SplitCompositeIDString(assetIDString)[1]); err == nil {
-			return assetID{
-				ClassificationID: classificationID,
-				HashID:           hashID,
-			}, nil
+	if splitAssetIDString := stringUtilities.SplitCompositeIDString(assetIDString); len(splitAssetIDString) == 2 {
+		if classificationID, err := ReadClassificationID(splitAssetIDString[0]); err == nil {
+			if hashID, err := ReadHashID(splitAssetIDString[1]); err == nil {
+				return assetID{
+					ClassificationID: classificationID,
+					HashID:           hashID,
+				}, nil
+			}
 		}
 	}
 	return assetID{}, errorConstants.MetaDataError

@@ -55,12 +55,14 @@ func NewIdentityID(classificationID ids.ClassificationID, immutables qualified.I
 }
 
 func ReadIdentityID(identityIDString string) (ids.IdentityID, error) {
-	if classificationID, err := ReadClassificationID(stringUtilities.SplitCompositeIDString(identityIDString)[0]); err == nil {
-		if hashID, err := ReadHashID(stringUtilities.SplitCompositeIDString(identityIDString)[1]); err == nil {
-			return identityID{
-				ClassificationID: classificationID,
-				HashID:           hashID,
-			}, nil
+	if splitIdentityIDString := stringUtilities.SplitCompositeIDString(identityIDString); len(splitIdentityIDString) == 2 {
+		if classificationID, err := ReadClassificationID(splitIdentityIDString[0]); err == nil {
+			if hashID, err := ReadHashID(splitIdentityIDString[1]); err == nil {
+				return identityID{
+					ClassificationID: classificationID,
+					HashID:           hashID,
+				}, nil
+			}
 		}
 	}
 	return identityID{}, errorConstants.MetaDataError
