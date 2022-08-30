@@ -45,3 +45,5 @@ func NewKey(metaID ids.MetaID) helpers.Key {
 		MetaID: metaID,
 	}
 }
+
+func Prototype() helpers.Key { return key{} }
