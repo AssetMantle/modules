@@ -7,12 +7,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/ids/constansts"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
@@ -54,27 +54,27 @@ func (maintainer maintainer) GetPermissions() data.ListData {
 	return constants.PermissionsProperty.GetData().(data.ListData)
 }
 func (maintainer maintainer) CanMintAsset() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(constansts.Mint))
+	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Mint))
 	return can
 }
 func (maintainer maintainer) CanBurnAsset() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(constansts.Burn))
+	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Burn))
 	return can
 }
 func (maintainer maintainer) CanRenumerateAsset() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(constansts.Renumerate))
+	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Renumerate))
 	return can
 }
 func (maintainer maintainer) CanAddMaintainer() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(constansts.Add))
+	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Add))
 	return can
 }
 func (maintainer maintainer) CanRemoveMaintainer() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(constansts.Remove))
+	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Remove))
 	return can
 }
 func (maintainer maintainer) CanMutateMaintainer() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(constansts.Mutate))
+	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Mutate))
 	return can
 }
 func (maintainer maintainer) MaintainsProperty(id ids.ID) bool {
