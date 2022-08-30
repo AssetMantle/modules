@@ -23,8 +23,8 @@ type listData struct {
 
 var _ data.ListData = (*listData)(nil)
 
-func (listData listData) Get() lists.DataList {
-	return listData.Value
+func (listData listData) Get() []data.Data {
+	return listData.Value.GetList()
 }
 func (listData listData) Search(data data.Data) (int, bool) {
 	return listData.Search(data)
