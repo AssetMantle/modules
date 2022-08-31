@@ -74,5 +74,6 @@ func (list list) Mutate(listables ...traits.Listable) lists.List {
 
 func NewList(listables ...traits.Listable) lists.List {
 	// TODO write test and check type
+	// TODO sort on NewList
 	return list(listables)
 }
