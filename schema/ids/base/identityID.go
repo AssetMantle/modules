@@ -54,6 +54,13 @@ func NewIdentityID(classificationID ids.ClassificationID, immutables qualified.I
 	}
 }
 
+func PrototypeIdentityID() ids.IdentityID {
+	return identityID{
+		ClassificationID: PrototypeClassificationID(),
+		HashID:           PrototypeHashID(),
+	}
+}
+
 func ReadIdentityID(identityIDString string) (ids.IdentityID, error) {
 	if splitIdentityIDString := stringUtilities.SplitCompositeIDString(identityIDString); len(splitIdentityIDString) == 2 {
 		if classificationID, err := ReadClassificationID(splitIdentityIDString[0]); err == nil {
@@ -65,5 +72,10 @@ func ReadIdentityID(identityIDString string) (ids.IdentityID, error) {
 			}
 		}
 	}
+
+	if identityIDString == "" {
+		return PrototypeIdentityID(), nil
+	}
+
 	return identityID{}, errorConstants.MetaDataError
 }

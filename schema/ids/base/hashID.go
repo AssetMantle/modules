@@ -73,6 +73,10 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 	return hashID{HashBytes: hash.Sum(nil)}
 }
 
+func PrototypeHashID() ids.HashID {
+	return GenerateHashID()
+}
+
 // TODO test if reversible
 func ReadHashID(hashIDString string) (ids.HashID, error) {
 	if hashBytes, err := base64.URLEncoding.DecodeString(hashIDString); err == nil {

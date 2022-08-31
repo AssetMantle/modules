@@ -42,6 +42,12 @@ func NewClassificationID(immutables qualified.Immutables, mutables qualified.Mut
 	return classificationID{HashID: GenerateHashID(GenerateHashID(immutableIDByteList...).Bytes(), GenerateHashID(mutableIDByteList...).Bytes(), GenerateHashID(defaultImmutableByteList...).Bytes())}
 }
 
+func PrototypeClassificationID() ids.ClassificationID {
+	return classificationID{
+		HashID: PrototypeHashID(),
+	}
+}
+
 func ReadClassificationID(classificationIDString string) (ids.ClassificationID, error) {
 	if hashID, err := ReadHashID(classificationIDString); err == nil {
 		return classificationID{HashID: hashID}, nil
