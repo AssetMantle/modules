@@ -25,7 +25,7 @@ type Identity interface {
 
 	IsProvisioned(sdkTypes.AccAddress) bool
 	ProvisionAddress(...sdkTypes.AccAddress) Identity
-	UnProvisionAddress(...sdkTypes.AccAddress) Identity
+	UnprovisionAddress(...sdkTypes.AccAddress) Identity
 
 	qualified.Document
 	helpers.Mappable

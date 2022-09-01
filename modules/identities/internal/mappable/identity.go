@@ -53,7 +53,7 @@ func (identity identity) ProvisionAddress(accAddresses ...sdkTypes.AccAddress) m
 	identity.Document = identity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(identity.GetAuthentication().Add(accAddressesToData(accAddresses...)...))))
 	return identity
 }
-func (identity identity) UnProvisionAddress(accAddresses ...sdkTypes.AccAddress) mappables.Identity {
+func (identity identity) UnprovisionAddress(accAddresses ...sdkTypes.AccAddress) mappables.Identity {
 	identity.Document = identity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(identity.GetAuthentication().Remove(accAddressesToData(accAddresses...)...))))
 	return identity
 }

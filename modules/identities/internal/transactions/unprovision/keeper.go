@@ -8,7 +8,6 @@ import (
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
-	"github.com/AssetMantle/modules/modules/identities/internal/utilities"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
@@ -26,26 +25,21 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	identityID := message.IdentityID
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 
-	identity := identities.Get(key.NewKey(identityID)).(mappables.Identity)
-	if identity == nil {
+	mappable := identities.Get(key.NewKey(identityID))
+	if mappable == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
+	identity := mappable.(mappables.Identity)
 
-	if provisioned, err := utilities.IsProvisioned(context, transactionKeeper.supplementAuxiliary, identity, message.From); err != nil || !provisioned {
+	if !identity.IsProvisioned(message.From) {
 		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
-	if provisioned, err := utilities.IsProvisioned(context, transactionKeeper.supplementAuxiliary, identity, message.To); err != nil {
-		return newTransactionResponse(err)
-	} else if provisioned {
+	if identity.IsProvisioned(message.To) {
 		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
-	if updatedIdentity, err := utilities.UnprovisionAddress(context, transactionKeeper.supplementAuxiliary, identity, message.To); err != nil {
-		return newTransactionResponse(err)
-	} else {
-		identities.Mutate(updatedIdentity)
-	}
+	identities.Mutate(identity.UnprovisionAddress().UnprovisionAddress(message.To))
 
 	return newTransactionResponse(nil)
 }

@@ -9,11 +9,9 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/schema/data"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -39,19 +37,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 
-	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.Identity).GetExpiry())))
-	if err != nil {
-		return newTransactionResponse(err)
-	}
-
-	expiryHeightMetaFact := metaProperties.GetMetaProperty(constants.ExpiryHeightProperty.GetID())
-	if expiryHeightMetaFact == nil {
-		return newTransactionResponse(errorConstants.EntityNotFound)
-	}
-
-	expiryHeight := expiryHeightMetaFact.GetData().(data.HeightData).Get()
-
-	if expiryHeight.Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
+	if identity.(mappables.Identity).GetExpiry().Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
 		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
