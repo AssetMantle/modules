@@ -46,7 +46,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 
 	orders.Iterate(
 		// TODO ***** define a proper new key
-		key.NewKey(baseIDs.NewOrderID(baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList())), baseIDs.NewOwnableID(baseIDs.NewStringID("")), baseIDs.NewOwnableID(baseIDs.NewStringID("")), sdkTypes.SmallestDec(), baseTypes.NewHeight(-1), baseIDs.NewIdentityID(baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList())), baseQualified.NewImmutables(baseLists.NewPropertyList())), baseQualified.NewImmutables(baseLists.NewPropertyList()))),
+		key.NewKey(baseIDs.PrototypeOrderID()),
 		func(mappable helpers.Mappable) bool {
 			order := mappable.(mappables.Order)
 
@@ -57,10 +57,10 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 				}
 				orders.Remove(order)
 			} else {
-				// TODO ***** test and check use-case with Abhinav
-				id1 := baseIDs.NewOrderID(order.GetClassificationID(), order.GetMakerOwnableID(), order.GetTakerOwnableID(), sdkTypes.SmallestDec(), baseTypes.NewHeight(-1), baseIDs.NewIdentityID(nil, nil), baseQualified.NewImmutables(baseLists.NewPropertyList()))
-				// TODO ***** test check use-case with Abhinav
-				id2 := baseIDs.NewOrderID(order.GetClassificationID(), order.GetTakerOwnableID(), order.GetMakerOwnableID(), sdkTypes.SmallestDec(), baseTypes.NewHeight(-1), baseIDs.NewIdentityID(nil, nil), baseQualified.NewImmutables(baseLists.NewPropertyList()))
+				// TODO ***** test
+				id1 := baseIDs.NewOrderID(order.GetClassificationID(), order.GetMakerOwnableID(), order.GetTakerOwnableID(), sdkTypes.SmallestDec(), baseTypes.NewHeight(0), baseIDs.PrototypeIdentityID(), baseQualified.NewImmutables(baseLists.NewPropertyList()))
+				// TODO ***** test
+				id2 := baseIDs.NewOrderID(order.GetClassificationID(), order.GetTakerOwnableID(), order.GetMakerOwnableID(), sdkTypes.SmallestDec(), baseTypes.NewHeight(0), baseIDs.PrototypeIdentityID(), baseQualified.NewImmutables(baseLists.NewPropertyList()))
 				if !executeOrders[id1] && !executeOrders[id2] {
 					executeOrders[id1] = true
 				}
@@ -76,7 +76,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 			func(Mappable helpers.Mappable) bool {
 				order := Mappable.(mappables.Order)
 				orders.Iterate(
-					key.NewKey(baseIDs.NewOrderID(order.GetClassificationID(), order.GetTakerOwnableID(), order.GetMakerOwnableID(), sdkTypes.SmallestDec(), baseTypes.NewHeight(-1), baseIDs.NewIdentityID(nil, nil), baseQualified.NewImmutables(baseLists.NewPropertyList()))),
+					key.NewKey(baseIDs.PrototypeOrderID()),
 					func(Mappable helpers.Mappable) bool {
 						executableOrder := Mappable.(mappables.Order)
 						var leftOrder mappables.Order
