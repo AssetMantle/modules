@@ -47,3 +47,9 @@ func stringIDFromInterface(i interface{}) (stringID, error) {
 func NewStringID(idString string) ids.StringID {
 	return stringID{IDString: idString}
 }
+
+func PrototypeStringID() ids.StringID {
+	return stringID{
+		IDString: "",
+	}
+}

@@ -52,5 +52,10 @@ func ReadClassificationID(classificationIDString string) (ids.ClassificationID, 
 	if hashID, err := ReadHashID(classificationIDString); err == nil {
 		return classificationID{HashID: hashID}, nil
 	}
+
+	if classificationIDString == "" {
+		return PrototypeClassificationID(), nil
+	}
+
 	return classificationID{}, constants.MetaDataError
 }

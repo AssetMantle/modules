@@ -82,5 +82,10 @@ func ReadHashID(hashIDString string) (ids.HashID, error) {
 	if hashBytes, err := base64.URLEncoding.DecodeString(hashIDString); err == nil {
 		return hashID{HashBytes: hashBytes}, nil
 	}
+
+	if hashIDString == "" {
+		return PrototypeHashID(), nil
+	}
+
 	return hashID{}, constants.MetaDataError
 }

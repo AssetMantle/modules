@@ -83,6 +83,18 @@ func NewOrderID(classificationID ids.ClassificationID, makerOwnableID ids.Ownabl
 	}
 }
 
+func PrototypeOrderID() ids.OrderID {
+	return orderID{
+		ClassificationID: PrototypeClassificationID(),
+		MakerOwnableID:   PrototypeOwnableID(),
+		TakerOwnableID:   PrototypeOwnableID(),
+		ExchangeRate:     sdkTypes.ZeroDec(),
+		CreationHeight:   base.NewHeight(0),
+		MakerID:          PrototypeIdentityID(),
+		HashID:           PrototypeHashID(),
+	}
+}
+
 func ReadOrderID(orderIDString string) (ids.OrderID, error) {
 	if orderIDStringSplit := stringUtilities.SplitCompositeIDString(orderIDString); len(orderIDStringSplit) == 7 {
 		if classificationID, err := ReadClassificationID(orderIDStringSplit[0]); err == nil {
@@ -109,5 +121,10 @@ func ReadOrderID(orderIDString string) (ids.OrderID, error) {
 			}
 		}
 	}
+
+	if orderIDString == "" {
+		return PrototypeOrderID(), nil
+	}
+
 	return orderID{}, nil
 }

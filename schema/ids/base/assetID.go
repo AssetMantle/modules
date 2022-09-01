@@ -58,6 +58,13 @@ func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immu
 	}
 }
 
+func PrototypeAssetID() ids.AssetID {
+	return assetID{
+		ClassificationID: PrototypeClassificationID(),
+		HashID:           PrototypeHashID(),
+	}
+}
+
 func ReadAssetID(assetIDString string) (ids.AssetID, error) {
 	if splitAssetIDString := stringUtilities.SplitCompositeIDString(assetIDString); len(splitAssetIDString) == 2 {
 		if classificationID, err := ReadClassificationID(splitAssetIDString[0]); err == nil {
@@ -69,5 +76,10 @@ func ReadAssetID(assetIDString string) (ids.AssetID, error) {
 			}
 		}
 	}
+
+	if assetIDString == "" {
+		return PrototypeAssetID(), nil
+	}
+
 	return assetID{}, errorConstants.MetaDataError
 }

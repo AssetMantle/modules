@@ -54,6 +54,13 @@ func NewMetaID(Type ids.StringID, hashID ids.HashID) ids.MetaID {
 	}
 }
 
+func PrototypeMetaID() ids.MetaID {
+	return metaID{
+		Type:   PrototypeStringID(),
+		HashID: PrototypeHashID(),
+	}
+}
+
 func ReadMetaID(metaIDString string) (ids.MetaID, error) {
 	if metaIDString := stringUtilities.SplitCompositeIDString(metaIDString); len(metaIDString) == 2 {
 		Type := NewStringID(metaIDString[0])
@@ -64,5 +71,10 @@ func ReadMetaID(metaIDString string) (ids.MetaID, error) {
 			}, nil
 		}
 	}
+
+	if metaIDString == "" {
+		return PrototypeMetaID(), nil
+	}
+
 	return metaID{}, constants.MetaDataError
 }

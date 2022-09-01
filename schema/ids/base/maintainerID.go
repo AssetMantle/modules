@@ -51,6 +51,13 @@ func NewMaintainerID(classificationID ids.ClassificationID, identityID ids.Ident
 	}
 }
 
+func PrototypeMaintainerID() ids.MaintainerID {
+	return maintainerID{
+		ClassificationID: PrototypeClassificationID(),
+		IdentityID:       PrototypeIdentityID(),
+	}
+}
+
 func ReadMaintainerID(maintainerIDString string) (ids.MaintainerID, error) {
 	if maintainerIDStringSplit := stringUtilities.SplitCompositeIDString(maintainerIDString); len(maintainerIDStringSplit) == 3 {
 		if classificationID, err := ReadClassificationID(maintainerIDStringSplit[0]); err == nil {
@@ -62,5 +69,10 @@ func ReadMaintainerID(maintainerIDString string) (ids.MaintainerID, error) {
 			}
 		}
 	}
+
+	if maintainerIDString == "" {
+		return PrototypeMaintainerID(), nil
+	}
+
 	return maintainerID{}, errorConstants.MetaDataError
 }

@@ -51,6 +51,13 @@ func NewSplitID(ownerID ids.IdentityID, ownableID ids.OwnableID) ids.SplitID {
 	}
 }
 
+func PrototypeSplitID() ids.SplitID {
+	return splitID{
+		OwnerID:   PrototypeIdentityID(),
+		OwnableID: PrototypeOwnableID(),
+	}
+}
+
 func ReadSplitID(splitIDString string) (ids.SplitID, error) {
 	if splitIDStringSplit := stringUtilities.SplitCompositeIDString(splitIDString); len(splitIDStringSplit) == 3 {
 		if ownerID, err := ReadIdentityID(stringUtilities.JoinIDStrings(stringUtilities.SplitCompositeIDString(splitIDString)[:1]...)); err == nil {
@@ -62,5 +69,10 @@ func ReadSplitID(splitIDString string) (ids.SplitID, error) {
 			}
 		}
 	}
+
+	if splitIDString == "" {
+		return PrototypeSplitID(), nil
+	}
+
 	return splitID{}, constants.MetaDataError
 }

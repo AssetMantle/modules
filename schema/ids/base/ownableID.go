@@ -20,6 +20,13 @@ func NewOwnableID(stringID ids.StringID) ids.OwnableID {
 		StringID: stringID,
 	}
 }
+
+func PrototypeOwnableID() ids.OwnableID {
+	return ownableID{
+		StringID: PrototypeStringID(),
+	}
+}
+
 func ReadOwnableID(ownableIDString string) (ids.OwnableID, error) {
 	return ownableID{
 		StringID: NewStringID(ownableIDString),
