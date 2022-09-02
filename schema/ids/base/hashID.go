@@ -22,15 +22,9 @@ func (hashID hashID) IsHashID() {
 
 var _ ids.HashID = (*hashID)(nil)
 
-// TODO test
+// TODO test if nil and empty result in ""
 func (hashID hashID) String() string {
-	hash := sha256.New()
-
-	if _, err := hash.Write(hashID.HashBytes); err != nil {
-		panic(err)
-	}
-
-	return base64.URLEncoding.EncodeToString(hash.Sum(nil))
+	return base64.URLEncoding.EncodeToString(hashID.HashBytes)
 }
 func (hashID hashID) Bytes() []byte {
 	return hashID.HashBytes
@@ -77,7 +71,6 @@ func PrototypeHashID() ids.HashID {
 	return GenerateHashID()
 }
 
-// TODO test if reversible
 func ReadHashID(hashIDString string) (ids.HashID, error) {
 	if hashBytes, err := base64.URLEncoding.DecodeString(hashIDString); err == nil {
 		return hashID{HashBytes: hashBytes}, nil
