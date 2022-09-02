@@ -37,14 +37,12 @@ func (document document) GetMutables() qualified.Mutables {
 }
 
 // TODO write test case
-// TODO check is not metaProperty
 func (document document) Mutate(propertyList ...properties.Property) qualified.Document {
-	document.Mutables = document.Mutables.Mutate(propertyList...).(mutables)
+	document.Mutables = document.Mutables.Mutate(propertyList...)
 	return document
 }
 
 func NewDocument(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) qualified.Document {
-	// TODO check if the document conforms to the classification
 	return document{
 		ClassificationID: classificationID,
 		Immutables:       immutables,
