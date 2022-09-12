@@ -5,14 +5,12 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/schema/types"
+	"math"
 	"reflect"
 	"testing"
 )
 
 func TestNewHeight(t *testing.T) {
-
-	h := height{Value: 10}
-
 	type args struct {
 		value int64
 	}
@@ -21,7 +19,22 @@ func TestNewHeight(t *testing.T) {
 		args args
 		want types.Height
 	}{
-		{"Test for New Height", args{10}, h},
+		// Fails in case of overflow conditions
+		{"Testing with value 10", args{
+			10,
+		}, height{Value: 10}},
+		{"Testing with value -10", args{
+			-10,
+		}, height{Value: -10}},
+		{"Testing with value math.MaxInt64", args{
+			math.MaxInt64,
+		}, height{Value: math.MaxInt64}},
+		{"Testing with value math.MaxInt64", args{
+			math.MinInt64,
+		}, height{Value: math.MinInt64}},
+		{"Testing with value math.MaxInt64", args{
+			math.MinInt64,
+		}, height{Value: math.MinInt64}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -33,7 +46,6 @@ func TestNewHeight(t *testing.T) {
 }
 
 func Test_height_Compare(t *testing.T) {
-
 	type fields struct {
 		Value int64
 	}
@@ -46,9 +58,21 @@ func Test_height_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		{"Test for Greater case", fields{10}, args{height{Value: 12}}, -1},
-		{"Test for Lower case", fields{10}, args{height{Value: 8}}, 1},
-		{"Test for Equal case", fields{10}, args{height{Value: 10}}, 0},
+		{
+			"compareHeight > height", fields{
+				10,
+			}, args{height{11}}, -1,
+		},
+		{
+			"compareHeight < height", fields{
+				10,
+			}, args{height{9}}, 1,
+		},
+		{
+			"compareHeight === height", fields{
+				10,
+			}, args{height{10}}, 0,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -71,7 +95,11 @@ func Test_height_Get(t *testing.T) {
 		fields fields
 		want   int64
 	}{
-		{"Test for Get Height", fields{10}, 10},
+		{
+			"Testing with 100", fields{
+				100,
+			}, 100,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

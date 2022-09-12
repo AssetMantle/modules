@@ -98,12 +98,4 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		}
 	})
 
-	t.Run("NegativeCase-Maintainer Unauthorized", func(t *testing.T) {
-		t.Parallel()
-		want := newAuxiliaryResponse(errors.NotAuthorized)
-		if got := keepers.MaintainersKeeper.Help(context, NewAuxiliaryRequest(classificationID, identityID)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
 }

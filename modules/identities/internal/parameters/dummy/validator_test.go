@@ -4,18 +4,32 @@
 package dummy
 
 import (
-	"testing"
-
-	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/constants/errors"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"testing"
 )
 
-func Test_Validator(t *testing.T) {
-	require.Equal(t, errors.IncorrectFormat, validator(baseIDs.NewID("")))
-	require.Equal(t, nil, validator(Parameter))
-	require.Equal(t, errors.InvalidParameter, validator(baseTypes.NewParameter(baseIDs.NewID(""), baseData.NewStringData(""), validator)))
+func Test_validator(t *testing.T) {
+	type args struct {
+		i interface{}
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+
+		{"+ve with nil", args{Parameter}, false},
+		{"-ve wrong parameter Type", args{baseTypes.NewParameter(baseIDs.NewID("newID"), baseData.NewDecData(sdkTypes.NewDec(-1)), validator)}, true},
+		{"+ve empty string", args{baseIDs.NewID("")}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := validator(tt.args.i); (err != nil) != tt.wantErr {
+				t.Errorf("validator() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
 }
