@@ -25,6 +25,7 @@ func TestDocument_GetClassificationID(t *testing.T) {
 		Immutables       Immutables
 		Mutables         Mutables
 	}
+
 	creationID := baseIDs.NewID("100")
 	classificationID := baseIDs.NewID("c100")
 
@@ -36,6 +37,7 @@ func TestDocument_GetClassificationID(t *testing.T) {
 
 	immutableProperties := base.NewPropertyList(takerIDImmutableProperty, exchangeRateImmutableProperty.RemoveData(), creationImmutableProperty.RemoveData(), expiryImmutableProperty, makerOwnableSplitImmutableProperty)
 
+
 	tests := []struct {
 		name   string
 		fields fields
@@ -43,6 +45,7 @@ func TestDocument_GetClassificationID(t *testing.T) {
 	}{
 
 		{"Test1", fields{ID: creationID, ClassificationID: classificationID, Immutables: Immutables{PropertyList: immutableProperties}, Mutables: Mutables{Properties: base.NewPropertyList()}}, classificationID},
+
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -60,6 +63,7 @@ func TestDocument_GetClassificationID(t *testing.T) {
 }
 
 func TestDocument_GetID(t *testing.T) {
+
 	type fields struct {
 		ID               ids.ID
 		ClassificationID ids.ID
@@ -71,7 +75,7 @@ func TestDocument_GetID(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
+		{"Test for GetID", fields{id, classificationId, testImmutables, testMutables}, id},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -89,6 +93,7 @@ func TestDocument_GetID(t *testing.T) {
 }
 
 func TestDocument_GetProperty(t *testing.T) {
+
 	type fields struct {
 		ID               ids.ID
 		ClassificationID ids.ID
@@ -105,6 +110,7 @@ func TestDocument_GetProperty(t *testing.T) {
 		want   properties.Property
 	}{
 		// TODO: Add test cases.
+
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -122,6 +128,7 @@ func TestDocument_GetProperty(t *testing.T) {
 }
 
 func TestDocument_Mutate(t *testing.T) {
+
 	type fields struct {
 		ID               ids.ID
 		ClassificationID ids.ID
