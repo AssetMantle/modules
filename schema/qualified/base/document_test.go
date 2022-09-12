@@ -41,7 +41,7 @@ func TestDocument_GetClassificationID(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
+
 		{"Test1", fields{ID: creationID, ClassificationID: classificationID, Immutables: Immutables{PropertyList: immutableProperties}, Mutables: Mutables{Properties: base.NewPropertyList()}}, classificationID},
 	}
 	for _, tt := range tests {

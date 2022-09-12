@@ -28,7 +28,7 @@ func TestNewPropertyID(t *testing.T) {
 		args args
 		want ids.PropertyID
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", args{NewID("ID"), NewID("ID2")}, propertyID{NewID("ID"), NewID("ID2")}},
 	}
 	for _, tt := range tests {
@@ -51,7 +51,7 @@ func Test_propertyIDFromInterface(t *testing.T) {
 		want    propertyID
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", args{testPropertyID}, propertyID{testKey, testType}, false},
 	}
 	for _, tt := range tests {
@@ -79,7 +79,7 @@ func Test_propertyID_Bytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{testKey, testType}, append([]byte(testKey.String()), []byte(testType.String())...)},
 	}
 	for _, tt := range tests {
@@ -110,7 +110,7 @@ func Test_propertyID_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{testKey, testType}, args{testPropertyID}, 0},
 		{"-ve", fields{testType, testType}, args{testPropertyID}, -1},
 	}
@@ -138,7 +138,7 @@ func Test_propertyID_GetKey(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{testKey, testType}, testKey},
 	}
 	for _, tt := range tests {
@@ -165,7 +165,7 @@ func Test_propertyID_GetType(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{testKey, testType}, testType},
 	}
 	for _, tt := range tests {
@@ -192,7 +192,7 @@ func Test_propertyID_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{testKey, testType}, strings.Join([]string{testKey.String(), testType.String()}, "|")},
 	}
 	for _, tt := range tests {

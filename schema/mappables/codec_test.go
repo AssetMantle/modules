@@ -16,7 +16,7 @@ func TestRegisterCodec(t *testing.T) {
 		name string
 		args args
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", args{codec.New()}},
 	}
 	for _, tt := range tests {

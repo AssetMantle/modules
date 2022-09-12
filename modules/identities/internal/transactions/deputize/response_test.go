@@ -19,7 +19,7 @@ func Test_newTransactionResponse(t *testing.T) {
 		args args
 		want helpers.TransactionResponse
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", args{error: nil}, transactionResponse{Success: true, Error: nil}},
 		{"-ve", args{error: errors.IncorrectFormat}, transactionResponse{Success: false, Error: errors.IncorrectFormat}},
 	}
@@ -42,7 +42,7 @@ func Test_transactionResponse_GetError(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{Success: true, Error: nil}, false},
 		{"-ve", fields{Success: false, Error: errors.IncorrectFormat}, true},
 	}
@@ -69,7 +69,7 @@ func Test_transactionResponse_IsSuccessful(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{Success: true, Error: nil}, true},
 		{"-ve", fields{Success: false, Error: errors.IncorrectFormat}, false},
 	}

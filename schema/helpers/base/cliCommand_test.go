@@ -51,7 +51,7 @@ func TestNewCLICommand(t *testing.T) {
 		args args
 		want helpers.CLICommand
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", args{"", "", "", testCliFlagList}, cliCommand{"", "", "", testCliFlagList}},
 		{"nil", args{"", "", "", nil}, cliCommand{"", "", "", nil}},
 	}
@@ -116,7 +116,7 @@ func Test_cliCommand_ReadBaseReq(t *testing.T) {
 		args   args
 		want   rest.BaseReq
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{"", "", "", testCliFlagList}, args{context.CLIContext{ChainID: "chainID"}}, rest.BaseReq{ChainID: "chainID"}},
 		{"-ve for nil", fields{"", "", "", nil}, args{context.CLIContext{ChainID: ""}}, rest.BaseReq{ChainID: ""}},
 	}
@@ -153,7 +153,7 @@ func Test_cliCommand_ReadBool(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name4", false, ",usage")}, false},
 	}
 	for _, tt := range tests {
@@ -192,7 +192,7 @@ func Test_cliCommand_ReadInt(t *testing.T) {
 		want        int
 		shouldPanic bool
 	}{
-		// TODO: Add test cases.
+
 		{"-ve flag name not an int flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", "value", ",usage")}, 0, true},
 		{"-ve unregistered flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", 1, ",usage")}, 1, true},
 		{"+ve", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name3", 123, ",usage")}, 0, false},
@@ -236,7 +236,7 @@ func Test_cliCommand_ReadInt64(t *testing.T) {
 		want        int64
 		shouldPanic bool
 	}{
-		// TODO: Add test cases.
+
 		{"-ve flag name not an int64 flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", "value", ",usage")}, 1, true},
 		{"-ve unregistered flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name2", int64(1), ",usage")}, 1, true},
 		{"+ve", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name2", int64(-1), ",usage")}, 0, false},
@@ -281,7 +281,7 @@ func Test_cliCommand_ReadString(t *testing.T) {
 		want        string
 		shouldPanic bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", "value", ",usage")}, "", false},
 		{"-ve unregistered flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", "value1", ",usage")}, "", true},
 		{"-ve should panic", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name3", 1, ",usage")}, "0", true},

@@ -18,7 +18,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Genesis
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{}, parameters.Prototype().GetList())},
 	}
 	for _, tt := range tests {

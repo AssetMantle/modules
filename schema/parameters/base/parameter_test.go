@@ -30,7 +30,7 @@ func TestNewParameter(t *testing.T) {
 		args args
 		want parameters.Parameter
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", args{id, testData, validator}, parameter{id, testData, validator}},
 		{"-ve", args{}, parameter{}},
 	}
@@ -59,7 +59,7 @@ func Test_parameter_Equal(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{id, testData, validator}, args{testParameter}, true},
 	}
 	for _, tt := range tests {
@@ -88,7 +88,7 @@ func Test_parameter_GetData(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{id, testData, validator}, testData},
 	}
 	for _, tt := range tests {
@@ -117,7 +117,7 @@ func Test_parameter_GetID(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{id, testData, validator}, id},
 	}
 	for _, tt := range tests {
@@ -146,7 +146,7 @@ func Test_parameter_GetValidator(t *testing.T) {
 		fields fields
 		want   func(interface{}) error
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{id, testData, validator}, validator},
 	}
 	for _, tt := range tests {
@@ -180,7 +180,7 @@ func Test_parameter_Mutate(t *testing.T) {
 		args   args
 		want   parameters.Parameter
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{id, testData, validator}, args{newData}, parameter{id, newData, validator}},
 	}
 	for _, tt := range tests {
@@ -209,7 +209,7 @@ func Test_parameter_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{id, testData, validator}, testParameter.String()},
 	}
 	for _, tt := range tests {

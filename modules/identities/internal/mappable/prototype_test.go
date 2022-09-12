@@ -14,7 +14,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", identity{}},
 	}
 	for _, tt := range tests {

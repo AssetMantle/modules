@@ -32,7 +32,7 @@ func TestNewHeightData(t *testing.T) {
 		args args
 		want data.Data
 	}{
-		// TODO: Add test cases.
+
 		{"Test for +ve int", args{baseTypes.NewHeight(100)}, heightData{baseTypes.NewHeight(100)}},
 		{"Test for +ve int", args{baseTypes.NewHeight(-100)}, heightData{baseTypes.NewHeight(-100)}},
 	}
@@ -56,7 +56,7 @@ func TestReadHeightData(t *testing.T) {
 		wantErr     bool
 		errorString string
 	}{
-		// TODO: Add test cases.
+
 		{"Test for empty String", args{""}, heightData{}.ZeroValue(), false, "nil"},
 		{"Test for some +ve integer", args{"100"}, heightData{baseTypes.NewHeight(100)}, false, ""},
 		{"Test for some -ve integer", args{"-100"}, heightData{baseTypes.NewHeight(-100)}, false, ""},
@@ -91,7 +91,7 @@ func Test_heightDataFromInterface(t *testing.T) {
 		wantErr     bool
 		errorString string
 	}{
-		// TODO: Add test cases.
+
 		{"Test for empty height data", args{heightData{}}, heightData{}, false, ""},
 		{"Test for +ve int height data", args{heightData{baseTypes.NewHeight(100)}}, heightData{baseTypes.NewHeight(100)}, false, ""},
 		{"Test for -ve int height data", args{heightData{baseTypes.NewHeight(-100)}}, heightData{baseTypes.NewHeight(-100)}, false, ""},
@@ -128,7 +128,7 @@ func Test_heightData_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		// TODO: Add test cases.
+
 		{"Test for Equal case", fields{baseTypes.NewHeight(100)}, args{heightData{baseTypes.NewHeight(100)}}, 0},
 		{"Test for LT case", fields{baseTypes.NewHeight(0)}, args{heightData{baseTypes.NewHeight(100)}}, -1},
 		{"Test for GT case", fields{baseTypes.NewHeight(100)}, args{heightData{baseTypes.NewHeight(0)}}, 1},
@@ -154,7 +154,7 @@ func Test_heightData_GenerateHash(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
+
 		{"Test for zero value", fields{baseTypes.NewHeight(0)}, baseIDs.NewID("")},
 		{"Test for -ve value", fields{baseTypes.NewHeight(-100)}, baseIDs.NewID(stringUtilities.Hash(strconv.FormatInt(heightData{baseTypes.NewHeight(-100)}.Value.Get(), 10)))},
 		{"Test for +ve value", fields{baseTypes.NewHeight(100)}, baseIDs.NewID(stringUtilities.Hash(strconv.FormatInt(heightData{baseTypes.NewHeight(100)}.Value.Get(), 10)))},
@@ -180,7 +180,7 @@ func Test_heightData_Get(t *testing.T) {
 		fields fields
 		want   types.Height
 	}{
-		// TODO: Add test cases.
+
 		{"Test for zero value", fields{baseTypes.NewHeight(0)}, heightData{baseTypes.NewHeight(0)}.Value},
 		{"Test for +ve value", fields{baseTypes.NewHeight(100)}, heightData{baseTypes.NewHeight(100)}.Value},
 		{"Test for -ve value", fields{baseTypes.NewHeight(-100)}, heightData{baseTypes.NewHeight(-100)}.Value},
@@ -206,7 +206,7 @@ func Test_heightData_GetID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		// TODO: Add test cases.
+
 		{"Test for zero value", fields{baseTypes.NewHeight(0)}, baseIDs.NewDataID(heightData{baseTypes.NewHeight(0)})},
 		{"Test for +ve value", fields{baseTypes.NewHeight(100)}, baseIDs.NewDataID(heightData{baseTypes.NewHeight(100)})},
 		{"Test for -ve value", fields{baseTypes.NewHeight(-100)}, baseIDs.NewDataID(heightData{baseTypes.NewHeight(-100)})},
@@ -232,7 +232,7 @@ func Test_heightData_GetType(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
+
 		{"Test for an integer value", fields{baseTypes.NewHeight(100)}, idsConstants.HeightDataID},
 	}
 	for _, tt := range tests {
@@ -256,7 +256,7 @@ func Test_heightData_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
+
 		{"Test for zero value", fields{baseTypes.NewHeight(0)}, strconv.FormatInt(heightData{baseTypes.NewHeight(0)}.Value.Get(), 10)},
 		{"Test for +ve value", fields{baseTypes.NewHeight(100)}, strconv.FormatInt(heightData{baseTypes.NewHeight(100)}.Value.Get(), 10)},
 		{"Test for -ve value", fields{baseTypes.NewHeight(-100)}, strconv.FormatInt(heightData{baseTypes.NewHeight(-100)}.Value.Get(), 10)},
@@ -282,7 +282,7 @@ func Test_heightData_ZeroValue(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-		// TODO: Add test cases.
+
 		{"Test for zero value", fields{baseTypes.NewHeight(0)}, heightData{baseTypes.NewHeight(0)}},
 		{"Test for +ve Int value", fields{baseTypes.NewHeight(100)}, heightData{baseTypes.NewHeight(0)}},
 		{"Test for -ve Int value", fields{baseTypes.NewHeight(-100)}, heightData{baseTypes.NewHeight(0)}},

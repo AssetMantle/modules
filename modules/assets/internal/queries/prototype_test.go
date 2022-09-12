@@ -15,7 +15,7 @@ func TestPrototype(t *testing.T) {
 		want      string
 		getString string
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", asset.Query.GetName(), "assets"},
 	}
 	for _, tt := range tests {

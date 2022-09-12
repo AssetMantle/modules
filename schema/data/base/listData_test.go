@@ -29,7 +29,7 @@ func TestNewListData(t *testing.T) {
 		args args
 		want data.Data
 	}{
-		// TODO: Add test cases.
+
 		{"Test for some id", args{[]data.Data{NewStringData("Data")}}, listData{baseLists.NewDataList(NewStringData("Data"))}},
 	}
 	for _, tt := range tests {
@@ -51,7 +51,7 @@ func TestReadListData(t *testing.T) {
 		want    data.Data
 		wantErr assert.ErrorAssertionFunc
 	}{
-		// TODO: Add test cases.
+
 		{"Test for empty string", args{""}, listData{}.ZeroValue(), assert.NoError},
 		{"Test for wrong address string", args{"cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, NewListData(accAddressData{accAddress}), assert.NoError},
 		//{"Test for correct address string", args{"mantle1x53dugvr4xvew442l9v2r5x7j8gfvged5xd3xr"}, NewListData(accAddressData{accAddress1}), assert.Error},
@@ -79,7 +79,7 @@ func Test_listDataFromInterface(t *testing.T) {
 		want    listData
 		wantErr assert.ErrorAssertionFunc
 	}{
-		// TODO: Add test cases.
+
 		{"Test for some id", args{NewListData(accAddressData{accAddress})}, listData{baseLists.NewDataList(accAddressData{accAddress})}, assert.NoError},
 	}
 	for _, tt := range tests {
@@ -168,7 +168,7 @@ func Test_listData_Get(t *testing.T) {
 		fields fields
 		want   lists.DataList
 	}{
-		// TODO: Add test cases.
+
 		{"zero value", fields{baseLists.NewDataList()}, baseLists.NewDataList()},
 		{"random data", fields{baseLists.NewDataList(accAddressData{accAddress})}, listData{baseLists.NewDataList(accAddressData{accAddress})}.Value},
 		{"nil value", fields{baseLists.NewDataList(nil)}, baseLists.NewDataList(nil)},
@@ -217,7 +217,7 @@ func Test_listData_GetType(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
+
 		{"some +ve case", fields{baseLists.NewDataList(accAddressData{accAddress})}, idsConstants.ListDataID},
 	}
 	for _, tt := range tests {
@@ -240,7 +240,7 @@ func Test_listData_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
+
 		{"some +ve case", fields{baseLists.NewDataList(accAddressData{accAddress})}, "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"},
 	}
 	for _, tt := range tests {
@@ -263,7 +263,7 @@ func Test_listData_ZeroValue(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-		// TODO: Add test cases.
+
 		{"empty data", fields{baseLists.NewDataList([]data.Data{}...)}, NewListData([]data.Data{}...)},
 		{"some +ve case", fields{baseLists.NewDataList(accAddressData{accAddress})}, NewListData([]data.Data{}...)},
 	}

@@ -25,7 +25,7 @@ func TestNewIDData(t *testing.T) {
 		args args
 		want data.Data
 	}{
-		// TODO: Add test cases.
+
 		{"Test for some id", args{baseIDs.NewID("100")}, idData{baseIDs.NewID("100")}},
 	}
 	for _, tt := range tests {
@@ -45,7 +45,7 @@ func TestReadIDData(t *testing.T) {
 		want    data.Data
 		wantErr assert.ErrorAssertionFunc
 	}{
-		// TODO: Add test cases.
+
 		{"Test for some +ve int id", args{"100"}, NewIDData(baseIDs.NewID("100")), assert.NoError},
 		{"Test for some -ve int id", args{"-100"}, NewIDData(baseIDs.NewID("-100")), assert.NoError},
 		{"Test for zero id", args{"0"}, NewIDData(baseIDs.NewID("0")), assert.NoError},
@@ -74,7 +74,7 @@ func Test_idDataFromInterface(t *testing.T) {
 		want    idData
 		wantErr assert.ErrorAssertionFunc
 	}{
-		// TODO: Add test cases.
+
 		{"+ve Unit test", args{idData{baseIDs.NewID("100")}}, idData{baseIDs.NewID("100")}, assert.NoError},
 		{"-ve Unit test", args{heightData{baseTypes.NewHeight(100)}}, idData{}, assert.Error},
 	}
@@ -102,7 +102,7 @@ func Test_idData_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		// TODO: Add test cases.
+
 		{"Test for Equal case", fields{baseIDs.NewID("100")}, args{idData{baseIDs.NewID("100")}}, 0},
 		{"Test for LT case", fields{baseIDs.NewID("100")}, args{idData{baseIDs.NewID("0")}}, 1},
 		{"Test for GT case", fields{baseIDs.NewID("0")}, args{idData{baseIDs.NewID("100")}}, -1},
@@ -126,7 +126,7 @@ func Test_idData_GenerateHash(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
+
 		{"ZeroValue Test", fields{baseIDs.NewID("")}, baseIDs.NewID("")},
 		{"+ve Value Test", fields{baseIDs.NewID("100")}, baseIDs.NewID(stringUtilities.Hash(idData{baseIDs.NewID("100")}.Value.String()))},
 		{"-ve Value Test", fields{baseIDs.NewID("-100")}, baseIDs.NewID(stringUtilities.Hash(idData{baseIDs.NewID("-100")}.Value.String()))},
@@ -150,7 +150,7 @@ func Test_idData_Get(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
+
 		{"Test for zero value", fields{baseIDs.NewID("0")}, idData{baseIDs.NewID("0")}.Value},
 		{"Test for +ve value", fields{baseIDs.NewID("100")}, idData{baseIDs.NewID("100")}.Value},
 		{"Test for -ve value", fields{baseIDs.NewID("-100")}, idData{baseIDs.NewID("-100")}.Value},
@@ -174,7 +174,7 @@ func Test_idData_GetID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		// TODO: Add test cases.
+
 		{"Test for zero value", fields{baseIDs.NewID("0")}, baseIDs.NewDataID(idData{baseIDs.NewID("0")})},
 		{"Test for +ve value", fields{baseIDs.NewID("100")}, baseIDs.NewDataID(idData{baseIDs.NewID("100")})},
 		{"Test for -ve value", fields{baseIDs.NewID("-100")}, baseIDs.NewDataID(idData{baseIDs.NewID("-100")})},
@@ -199,7 +199,7 @@ func Test_idData_GetType(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
+
 		{"Test for zero value", fields{baseIDs.NewID("0")}, idsConstants.IDDataID},
 		{"Test for +ve value", fields{baseIDs.NewID("100")}, idsConstants.IDDataID},
 		{"Test for -ve value", fields{baseIDs.NewID("-100")}, idsConstants.IDDataID},
@@ -223,7 +223,7 @@ func Test_idData_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
+
 		{"Test for zero value", fields{baseIDs.NewID("0")}, "0"},
 		{"Test for +ve value", fields{baseIDs.NewID("100")}, "100"},
 		{"Test for -ve value", fields{baseIDs.NewID("-100")}, "-100"},
@@ -248,7 +248,7 @@ func Test_idData_ZeroValue(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-		// TODO: Add test cases.
+
 		{"Test for zero value", fields{baseIDs.NewID("0")}, NewIDData(baseIDs.NewID(""))},
 		{"Test for +ve value", fields{baseIDs.NewID("100")}, NewIDData(baseIDs.NewID(""))},
 		{"Test for -ve value", fields{baseIDs.NewID("-100")}, NewIDData(baseIDs.NewID(""))},

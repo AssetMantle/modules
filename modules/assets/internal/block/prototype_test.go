@@ -14,7 +14,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Block
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", block{}},
 	}
 	for _, tt := range tests {

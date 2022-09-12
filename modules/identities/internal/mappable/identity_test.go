@@ -34,7 +34,7 @@ func TestNewIdentity(t *testing.T) {
 		args args
 		want mappables.Identity
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", args{testIdentityID, immutableProperties, mutableProperties}, identity{Document: baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}},
 		{"-ve", args{testIdentityID, immutableProperties, mutableProperties}, identity{Document: baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}},
 	}
@@ -57,7 +57,7 @@ func Test_identity_GetAuthentication(t *testing.T) {
 		fields fields
 		want   properties.Property
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{NewIdentity(testIdentityID, immutableProperties, mutableProperties)}, constants.Authentication},
 		//{"-ve", fields{NewIdentity(testIdentityID, immutableProperties, mutableProperties)}, constants.Expiry},
 	}
@@ -108,7 +108,7 @@ func Test_identity_GetKey(t *testing.T) {
 		fields fields
 		want   helpers.Key
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}, key.FromID(testIdentityID)},
 	}
 	for _, tt := range tests {
@@ -137,7 +137,7 @@ func Test_identity_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
+
 		{"+ve register codec", fields{baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}, args{codec.New()}},
 	}
 	for _, tt := range tests {

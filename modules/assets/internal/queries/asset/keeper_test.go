@@ -15,7 +15,7 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.QueryKeeper
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", queryKeeper{}},
 	}
 	for _, tt := range tests {

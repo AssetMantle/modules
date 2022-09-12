@@ -41,7 +41,7 @@ func Test_newQueryRequest(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", args{baseIDs.NewID("randomString")}, queryRequest{}.FromMap(vars)},
 		{"+ve with empty String", args{baseIDs.NewID("")}, queryRequest{}.FromCLI(cliCommand, cliContext)},
 	}
@@ -63,7 +63,7 @@ func Test_queryRequestFromInterface(t *testing.T) {
 		args args
 		want queryRequest
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", args{newQueryRequest(baseIDs.NewID("IdentityID"))}, queryRequest{baseIDs.NewID("IdentityID")}},
 		{"+ve with empty string", args{newQueryRequest(baseIDs.NewID(""))}, queryRequest{baseIDs.NewID("")}},
 	}
@@ -94,7 +94,7 @@ func Test_queryRequest_Decode(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{baseIDs.NewID("IdentityID")}, args{encodedRequest}, testQueryRequest, false},
 		{"+ve", fields{baseIDs.NewID("")}, args{randomDecode}, queryRequest{baseIDs.NewID("")}, false},
 	}
@@ -128,7 +128,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{baseIDs.NewID("IdentityID")}, byteArr, false},
 		{"+ve with empty String ID", fields{baseIDs.NewID("")}, byteArr2, false},
 	}
@@ -165,7 +165,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		args   args
 		want   helpers.QueryRequest
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{baseIDs.NewID("IdentityID")}, args{cliCommand, cliContext}, queryRequest{}.FromCLI(cliCommand, cliContext)},
 	}
 	for _, tt := range tests {
@@ -195,7 +195,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 		args   args
 		want   helpers.QueryRequest
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{baseIDs.NewID("IdentityID")}, args{vars: vars}, newQueryRequest(baseIDs.NewID(vars[Query.GetName()]))},
 	}
 	for _, tt := range tests {
@@ -219,7 +219,7 @@ func Test_queryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{baseIDs.NewID("IdentityID")}, false},
 		{"-ve with empty String", fields{baseIDs.NewID("")}, true},
 	}
@@ -240,7 +240,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", queryRequest{}},
 	}
 	for _, tt := range tests {

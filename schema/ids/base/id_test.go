@@ -19,7 +19,7 @@ func TestNewID(t *testing.T) {
 		args args
 		want ids.ID
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", args{"ID"}, NewID("ID")},
 	}
 	for _, tt := range tests {
@@ -41,7 +41,7 @@ func Test_idFromInterface(t *testing.T) {
 		want    id
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", args{NewID("ID")}, id{IDString: "ID"}, false},
 	}
 	for _, tt := range tests {
@@ -67,7 +67,7 @@ func Test_id_Bytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{"ID"}, []byte("ID")},
 	}
 	for _, tt := range tests {
@@ -95,7 +95,7 @@ func Test_id_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{"ID"}, args{NewID("ID")}, 0},
 		// TODO: It Should fail
 		{"-ve", fields{"ID"}, args{NewID("ID2")}, -1},
@@ -121,7 +121,7 @@ func Test_id_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{"ID"}, "ID"},
 	}
 	for _, tt := range tests {

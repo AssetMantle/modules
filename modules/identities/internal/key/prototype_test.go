@@ -15,7 +15,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", identityIDFromInterface(baseIDs.NewID(""))},
 	}
 	for _, tt := range tests {

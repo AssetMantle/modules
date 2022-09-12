@@ -30,7 +30,7 @@ func TestReadData(t *testing.T) {
 		want    data.Data
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+
 		{"String Data", args{"S|newFact"}, base.NewStringData("newFact"), false},
 		{"Unknown Data", args{"SomeRandomData"}, nil, true},
 		{"List Data", args{"L|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(dataList...), false},

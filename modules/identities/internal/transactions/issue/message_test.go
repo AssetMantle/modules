@@ -60,7 +60,7 @@ func Test_messageFromInterface(t *testing.T) {
 		args args
 		want message
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", args{newMessage(fromAccAddress, toAccAddress, testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)}, message{fromAccAddress, toAccAddress, testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}},
 		{"+ve with nil", args{}, message{}},
 	}
@@ -78,7 +78,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", message{}},
 	}
 	for _, tt := range tests {
@@ -107,7 +107,7 @@ func Test_message_GetSignBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{fromAccAddress, toAccAddress, testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, toAccAddress, testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}))},
 	}
 	for _, tt := range tests {

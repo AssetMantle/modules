@@ -15,7 +15,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want string
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", baseHelpers.NewAuxiliaries(verify.Auxiliary).Get("verify").GetName()},
 	}
 	for _, tt := range tests {

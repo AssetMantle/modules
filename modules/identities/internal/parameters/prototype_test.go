@@ -15,7 +15,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want string
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", baseHelpers.NewParameters(dummy.Parameter).String()},
 	}
 	for _, tt := range tests {

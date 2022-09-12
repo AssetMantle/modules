@@ -31,7 +31,7 @@ func TestNewIdentityID(t *testing.T) {
 		args args
 		want ids.ID
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", args{classificationID: classificationID, immutableProperties: immutableProperties}, identityID{ClassificationID: classificationID, HashID: baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}},
 		{"empty immutables properties", args{classificationID: classificationID, immutableProperties: emptyImmutableProperties}, identityID{ClassificationID: classificationID, HashID: baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}},
 	}
@@ -57,7 +57,7 @@ func Test_identityID_Bytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{classificationID, baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}, append(classificationID.Bytes(), baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID().Bytes()...)},
 		{"+ve empty immutable Properties", fields{classificationID, baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}, append(classificationID.Bytes(), baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID().Bytes()...)},
 		//{"+ve nil", fields{classificationID, baseQualified.Immutables{PropertyList: nil}.GenerateHashID()}, append(classificationID.Bytes(), baseQualified.Immutables{PropertyList: nil}.GenerateHashID().Bytes()...)},
@@ -92,7 +92,7 @@ func Test_identityID_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		// TODO: Add test cases.
+
 		{"+ve Equal", fields{classificationID, baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}, args{identityID{classificationID, baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}}, 0},
 		{"+ve Not Equal", fields{classificationID, baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}, args{identityID{classificationID, baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}}, -1},
 		//{"+ve", fields{classificationID, baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}, args{nil}, -1},
@@ -127,7 +127,7 @@ func Test_identityID_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve Equal", fields{classificationID, baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}, args{FromID(NewIdentityID(classificationID, immutableProperties))}, true},
 		{"-ve Not Equal", fields{classificationID, baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}, args{FromID(NewIdentityID(classificationID, immutableProperties))}, false},
 	}
@@ -157,7 +157,7 @@ func Test_identityID_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{classificationID, baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}, module.StoreKeyPrefix.GenerateStoreKey(identityID{classificationID, baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}.Bytes())},
 		{"+ve for empty ImmutableProperties", fields{classificationID, baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}, module.StoreKeyPrefix.GenerateStoreKey(identityID{classificationID, baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}.Bytes())},
 		//{"-ve", fields{classificationID, baseQualified.Immutables{PropertyList: nil}.GenerateHashID()}, module.StoreKeyPrefix.GenerateStoreKey(identityID{classificationID, baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}.Bytes())},
@@ -188,7 +188,7 @@ func Test_identityID_IsPartial(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve for non empty HashID", fields{classificationID, baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}, false},
 		{"+ve for empty HashID", fields{classificationID, baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}, true},
 	}
@@ -221,7 +221,7 @@ func Test_identityID_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{classificationID, baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}, args{Codec}},
 	}
 	for _, tt := range tests {
@@ -248,7 +248,7 @@ func Test_identityID_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{classificationID, baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}, "classificationID|xex68KrzcI4UhOXIC4G1OhgcVpaYBUMh_I0UMDrxARI="},
 		{"+ve empty immutableProperties", fields{classificationID, baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}, "classificationID|"},
 	}

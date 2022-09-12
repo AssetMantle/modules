@@ -61,7 +61,7 @@ func Test_block_Begin(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{mapper: mapper.Prototype(), parameters: parameters.Prototype()}, args{in0: context, in1: abciTypes.RequestBeginBlock{}}},
 	}
 	for _, tt := range tests {
@@ -89,7 +89,7 @@ func Test_block_End(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{CreateTestInput(t), abciTypes.RequestEndBlock{}}},
 	}
 	for _, tt := range tests {

@@ -22,7 +22,7 @@ func TestFromID(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		// TODO: Add test cases.
+
 		{"+ve empty idString", args{baseIDs.NewID("")}, identityIDFromInterface(baseIDs.NewID(""))},
 	}
 	for _, tt := range tests {
@@ -47,7 +47,7 @@ func Test_identityIDFromInterface(t *testing.T) {
 		want      identityID
 		wantPanic bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve for id.Ids", args{NewIdentityID(classificationID, immutableProperties)}, identityID{classificationID, baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}, false},
 		{"-ve for panic", args{immutableProperties}, identityID{baseIDs.NewID(""), baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}, true},
 		{"+ve for identity{}", args{baseIDs.NewID("|")}, identityID{baseIDs.NewID(""), baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}, false},
@@ -81,7 +81,7 @@ func Test_readIdentityID(t *testing.T) {
 		args args
 		want ids.ID
 	}{
-		// TODO: Add test cases.
+
 		{"-ve for identity{} with empty string", args{""}, identityID{baseIDs.NewID(""), baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}},
 		{"+ve for identity{}", args{"|"}, identityID{baseIDs.NewID(""), baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}},
 		{"+ve for identity{}", args{"classificationID|" + baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID().String()}, identityID{classificationID, baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}},

@@ -20,7 +20,7 @@ func TestNewAuxiliary(t *testing.T) {
 		args args
 		want helpers.Auxiliary
 	}{
-		// TODO: Add test cases.
+
 		// TODO get it verified as it's failing
 		{"+ve", args{"testAuxiliary", base.TestAuxiliaryKeeperPrototype}, auxiliary{name: "testAuxiliary", keeperPrototype: base.TestAuxiliaryKeeperPrototype}},
 		{"nil", args{"nil", nil}, auxiliary{"nil", nil, nil}},
@@ -46,7 +46,7 @@ func Test_auxiliary_GetKeeper(t *testing.T) {
 		fields fields
 		want   helpers.AuxiliaryKeeper
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, auxiliary{name: "testAuxiliary", keeperPrototype: base.TestAuxiliaryKeeperPrototype}.auxiliaryKeeper},
 	}
 	for _, tt := range tests {
@@ -74,7 +74,7 @@ func Test_auxiliary_GetName(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, auxiliary{name: "testAuxiliary", keeperPrototype: base.TestAuxiliaryKeeperPrototype}.name},
 		{"nil", fields{"", nil, nil}, ""},
 	}
@@ -114,7 +114,7 @@ func Test_auxiliary_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Auxiliary
 	}{
-		// TODO: Add test cases.
+
 		//{"+ve", fields{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, args{mapper: Mapper, parameters: nil}, Auxiliary},
 		//{"nil", fields{"", nil, nil}, args{mapper: Mapper, parameters: nil, auxiliaryKeepers: nil}, auxiliary{"", nil, nil}},
 	}

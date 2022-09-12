@@ -18,7 +18,7 @@ func Test_validator(t *testing.T) {
 		args      args
 		wantError error
 	}{
-		// TODO: Add test cases.
+
 		{"-ve incorrectFormat", args{baseIDs.NewID("")}, errors.IncorrectFormat},
 		{"+ve", args{Parameter}, nil},
 		//{"-ve InvalidParameter", args{baseTypes.NewParameter(baseIDs.NewID(""), baseData.NewStringData(""), validator)}, errors.InvalidParameter},

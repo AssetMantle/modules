@@ -20,7 +20,7 @@ func Test_validator(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve with nil", args{Parameter}, false},
 		{"-ve wrong parameter Type", args{baseTypes.NewParameter(baseIDs.NewID("newID"), baseData.NewDecData(sdkTypes.NewDec(-1)), validator)}, true},
 		{"+ve empty string", args{baseIDs.NewID("")}, true},

@@ -61,7 +61,7 @@ func Test_newQueryResponse(t *testing.T) {
 		args args
 		want helpers.QueryResponse
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", args{collection: collection, error: nil}, queryResponse{Success: true, Error: nil}},
 		{"-ve with error", args{collection: collection, error: errors.IncorrectFormat}, queryResponse{Success: false, Error: errors.IncorrectFormat}},
 	}
@@ -94,7 +94,7 @@ func Test_queryResponse_Decode(t *testing.T) {
 		want    helpers.QueryResponse
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{Success: true, Error: nil}, args{bytes: encodedResponse}, testQueryResponse, false},
 	}
 	for _, tt := range tests {
@@ -133,7 +133,7 @@ func Test_queryResponse_Encode(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{Success: true, Error: nil, List: collection.GetList()}, encodedByte, false},
 		{"-ve with error", fields{Success: false, Error: _err, List: collection.GetList()}, encodedByteWithError, true},
 	}
@@ -167,7 +167,7 @@ func Test_queryResponse_GetError(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{Success: true, Error: nil}, false},
 		{"-ve", fields{Success: true, Error: errors.IncorrectFormat}, true},
 	}
@@ -196,7 +196,7 @@ func Test_queryResponse_IsSuccessful(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", fields{Success: true, Error: nil}, true},
 		{"+ve", fields{Success: false, Error: nil}, false},
 	}
@@ -219,7 +219,7 @@ func Test_responsePrototype(t *testing.T) {
 		name string
 		want helpers.QueryResponse
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", queryResponse{}},
 	}
 	for _, tt := range tests {

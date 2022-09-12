@@ -15,7 +15,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Auxiliaries
 	}{
-		// TODO: Add test cases.
+
 		{"+ve", baseHelpers.NewAuxiliaries()},
 	}
 	for _, tt := range tests {
