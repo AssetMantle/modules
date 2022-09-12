@@ -1,3 +1,6 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package base
 
 import (
@@ -95,7 +98,7 @@ func Test_id_Compare(t *testing.T) {
 		// TODO: Add test cases.
 		{"+ve", fields{"ID"}, args{NewID("ID")}, 0},
 		// TODO: It Should fail
-		{"-ve", fields{"ID"}, args{NewID("ID2")}, 0},
+		{"-ve", fields{"ID"}, args{NewID("ID2")}, -1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

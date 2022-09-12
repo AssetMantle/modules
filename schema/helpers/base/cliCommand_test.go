@@ -1,3 +1,6 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package base
 
 import (
@@ -79,7 +82,6 @@ func Test_cliCommand_CreateCommand(t *testing.T) {
 		want   *cobra.Command
 	}{
 		// TODO: Add test cases.
-		{},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -43,7 +43,7 @@ func TestTransaction(t *testing.T) {
 
 	// Command : No Panics
 	command := Transaction.Command(codec)
-	require.Equal(t, `ABCIQuery: Post failed: Post "http://localhost:26657": dial tcp [::1]:26657: connect: connection refused`,
+	require.Equal(t, `ABCIQuery: Post failed: Post "http://localhost:26657": dial tcp 127.0.0.1:26657: connect: connection refused`,
 		command.ExecuteContext(context.Context()).Error())
 	// HandleMessage
 	_, err = Transaction.HandleMessage(context, message)
@@ -61,7 +61,7 @@ func TestTransaction(t *testing.T) {
 	require.Nil(t, err)
 	responseRecorder := httptest.NewRecorder()
 	Transaction.RESTRequestHandler(cliContext).ServeHTTP(responseRecorder, testRequest1)
-	require.Equal(t, `{"error":"ABCIQuery: Post failed: Post \"http://localhost:26657\": dial tcp [::1]:26657: connect: connection refused"}`, responseRecorder.Body.String())
+	require.Equal(t, `{"error":"ABCIQuery: Post failed: Post \"http://localhost:26657\": dial tcp 127.0.0.1:26657: connect: connection refused"}`, responseRecorder.Body.String())
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 
 	// invalid request
@@ -94,7 +94,7 @@ func TestTransaction(t *testing.T) {
 	require.Nil(t, err)
 	responseRecorder = httptest.NewRecorder()
 	Transaction.RESTRequestHandler(cliContext).ServeHTTP(responseRecorder, testRequest4)
-	require.Equal(t, `{"error":"ABCIQuery: Post failed: Post \"http://localhost:26657\": dial tcp [::1]:26657: connect: connection refused"}`, responseRecorder.Body.String())
+	require.Equal(t, `{"error":"ABCIQuery: Post failed: Post \"http://localhost:26657\": dial tcp 127.0.0.1:26657: connect: connection refused"}`, responseRecorder.Body.String())
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 
 	viper.Set(flags.FlagGenerateOnly, true)

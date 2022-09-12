@@ -1,3 +1,6 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package queries
 
 import (
@@ -13,8 +16,10 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Queries
 	}{
-		// TODO: Add test cases.
-		{"+ve", baseHelpers.NewQueries(identity.Query)},
+		// TODO: Getting same data, but i.e not equal
+		{"+ve", baseHelpers.NewQueries(
+			identity.Query,
+		)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

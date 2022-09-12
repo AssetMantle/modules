@@ -1,3 +1,6 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package cancel
 
 import (
@@ -231,7 +234,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve", fields{fromAccAddress, testFromID, testOrderID}, false},
-		{"-ve", fields{}, false},
+		{"-ve", fields{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
