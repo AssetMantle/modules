@@ -4,21 +4,84 @@
 package define
 
 import (
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"reflect"
 	"testing"
-
-	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/schema/errors/constants"
 )
 
-func Test_Define_Response(t *testing.T) {
-	testTransactionResponse := newTransactionResponse(constants.IncorrectFormat)
-	testTransactionResponse2 := newTransactionResponse(nil)
+func Test_newTransactionResponse(t *testing.T) {
+	type args struct {
+		error error
+	}
+	tests := []struct {
+		name string
+		args args
+		want helpers.TransactionResponse
+	}{
 
-	require.Equal(t, transactionResponse{Success: false, Error: constants.IncorrectFormat}, testTransactionResponse)
-	require.Equal(t, false, testTransactionResponse.IsSuccessful())
-	require.Equal(t, true, testTransactionResponse2.IsSuccessful())
+		{"-ve", args{errors.IncorrectMessage}, transactionResponse{false, errors.IncorrectMessage}},
+		{"+ve", args{nil}, transactionResponse{true, nil}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := newTransactionResponse(tt.args.error); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("newTransactionResponse() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	require.Equal(t, constants.IncorrectFormat, testTransactionResponse.GetError())
-	require.Equal(t, nil, testTransactionResponse2.GetError())
+func Test_transactionResponse_GetError(t *testing.T) {
+	type fields struct {
+		Success bool
+		Error   error
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		wantErr bool
+	}{
+
+		{"+ve", fields{false, errors.IncorrectFormat}, true},
+		{"-ve", fields{true, nil}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionResponse := transactionResponse{
+				Success: tt.fields.Success,
+				Error:   tt.fields.Error,
+			}
+			if err := transactionResponse.GetError(); (err != nil) != tt.wantErr {
+				t.Errorf("GetError() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_transactionResponse_IsSuccessful(t *testing.T) {
+	type fields struct {
+		Success bool
+		Error   error
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   bool
+	}{
+
+		{"+ve", fields{true, nil}, true},
+		{"-ve", fields{false, errors.IncorrectFormat}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionResponse := transactionResponse{
+				Success: tt.fields.Success,
+				Error:   tt.fields.Error,
+			}
+			if got := transactionResponse.IsSuccessful(); got != tt.want {
+				t.Errorf("IsSuccessful() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

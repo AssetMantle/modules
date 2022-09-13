@@ -61,7 +61,7 @@ func TestTransaction(t *testing.T) {
 	require.Nil(t, err)
 	responseRecorder := httptest.NewRecorder()
 	Transaction.RESTRequestHandler(cliContext).ServeHTTP(responseRecorder, testRequest1)
-	require.Equal(t, `{"error":"The specified item could not be found in the keyring"}`, responseRecorder.Body.String())
+	require.Equal(t, `{"error":"ABCIQuery: Post failed: Post \"http://localhost:26657\": dial tcp 127.0.0.1:26657: connect: connection refused"}`, responseRecorder.Body.String())
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 
 	// invalid request

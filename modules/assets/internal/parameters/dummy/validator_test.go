@@ -4,18 +4,31 @@
 package dummy
 
 import (
-	"testing"
-
-	"github.com/stretchr/testify/require"
-
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/constants/errors"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	"testing"
 )
 
-func Test_Validator(t *testing.T) {
-	require.Equal(t, constants.IncorrectFormat, validator(baseIDs.NewStringID("")))
-	require.Equal(t, nil, validator(Parameter))
-	require.Equal(t, constants.InvalidParameter, validator(baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)))
+func Test_validator(t *testing.T) {
+	type args struct {
+		i interface{}
+	}
+	tests := []struct {
+		name      string
+		args      args
+		wantError error
+	}{
+
+		{"-ve incorrectFormat", args{baseIDs.NewID("")}, errors.IncorrectFormat},
+		{"+ve", args{Parameter}, nil},
+		//{"-ve InvalidParameter", args{baseTypes.NewParameter(baseIDs.NewID(""), baseData.NewStringData(""), validator)}, errors.InvalidParameter},
+		{"-ve nil", args{}, errors.IncorrectFormat},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := validator(tt.args.i); err != tt.wantError {
+				t.Errorf("validator() error = %v, wantErr %v", err, tt.wantError)
+			}
+		})
+	}
 }
