@@ -6,21 +6,17 @@ package modify
 import (
 	"testing"
 
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
-	"github.com/AssetMantle/modules/utilities/transaction"
-
-	"github.com/AssetMantle/modules/modules/orders/internal/key"
-
-	"github.com/cosmos/cosmos-sdk/types/errors"
-
-	xprtErrors "github.com/AssetMantle/modules/constants/errors"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func Test_Make_Message(t *testing.T) {
@@ -57,7 +53,7 @@ func Test_Make_Message(t *testing.T) {
 	require.Equal(t, testMessage, messageFromInterface(testMessage))
 	require.Equal(t, message{}, messageFromInterface(nil))
 	require.Equal(t, message{}, messagePrototype())
-	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, fromID, orderID, sdkTypes.OneDec().Neg(), makerOwnableSplit, expiresIn, mutableMetaProperties, mutableProperties).ValidateBasic())
-	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, fromID, orderID, sdkTypes.OneDec(), makerOwnableSplit, baseTypes.NewHeight(-12), mutableMetaProperties, mutableProperties).ValidateBasic())
+	require.Error(t, sdkErrors.Wrap(errors.IncorrectMessage, ""), newMessage(fromAccAddress, fromID, orderID, sdkTypes.OneDec().Neg(), makerOwnableSplit, expiresIn, mutableMetaProperties, mutableProperties).ValidateBasic())
+	require.Error(t, sdkErrors.Wrap(errors.IncorrectMessage, ""), newMessage(fromAccAddress, fromID, orderID, sdkTypes.OneDec(), makerOwnableSplit, baseTypes.NewHeight(-12), mutableMetaProperties, mutableProperties).ValidateBasic())
 
 }
