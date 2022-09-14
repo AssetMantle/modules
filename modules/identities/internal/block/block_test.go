@@ -47,7 +47,7 @@ func CreateTestInput(t *testing.T) sdkTypes.Context {
 }
 
 func Test_block_Begin(t *testing.T) {
-	context := CreateTestInput1(t)
+	context := CreateTestInput(t)
 	type fields struct {
 		mapper     helpers.Mapper
 		parameters helpers.Parameters

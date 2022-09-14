@@ -6,11 +6,16 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/parameters"
+	"golang.org/x/crypto/openpgp/errors"
 	"reflect"
 	"testing"
 )
 
-func createTestInput(t *testing.T) (ids.ID, data.Data, parameters.Parameter) {
+func validator(interface{}) error {
+	return errors.ErrKeyIncorrect
+}
+
+func createTestInput() (ids.ID, data.Data, parameters.Parameter) {
 	id := baseIDs.NewID("ID")
 	data := baseData.NewStringData("Data")
 
@@ -19,7 +24,7 @@ func createTestInput(t *testing.T) (ids.ID, data.Data, parameters.Parameter) {
 }
 
 func TestNewParameter(t *testing.T) {
-	id, testData, _ := createTestInput(t)
+	id, testData, _ := createTestInput()
 	type args struct {
 		id        ids.ID
 		data      data.Data
@@ -44,7 +49,7 @@ func TestNewParameter(t *testing.T) {
 }
 
 func Test_parameter_Equal(t *testing.T) {
-	id, testData, testParameter := createTestInput(t)
+	id, testData, testParameter := createTestInput()
 	type fields struct {
 		ID        ids.ID
 		Data      data.Data
@@ -77,7 +82,7 @@ func Test_parameter_Equal(t *testing.T) {
 }
 
 func Test_parameter_GetData(t *testing.T) {
-	id, testData, _ := createTestInput(t)
+	id, testData, _ := createTestInput()
 	type fields struct {
 		ID        ids.ID
 		Data      data.Data
@@ -106,7 +111,7 @@ func Test_parameter_GetData(t *testing.T) {
 }
 
 func Test_parameter_GetID(t *testing.T) {
-	id, testData, _ := createTestInput(t)
+	id, testData, _ := createTestInput()
 	type fields struct {
 		ID        ids.ID
 		Data      data.Data
@@ -135,7 +140,7 @@ func Test_parameter_GetID(t *testing.T) {
 }
 
 func Test_parameter_GetValidator(t *testing.T) {
-	id, testData, _ := createTestInput(t)
+	id, testData, _ := createTestInput()
 	type fields struct {
 		ID        ids.ID
 		Data      data.Data
@@ -164,7 +169,7 @@ func Test_parameter_GetValidator(t *testing.T) {
 }
 
 func Test_parameter_Mutate(t *testing.T) {
-	id, testData, _ := createTestInput(t)
+	id, testData, _ := createTestInput()
 	newData := baseData.NewStringData("Data")
 	type fields struct {
 		ID        ids.ID
@@ -198,7 +203,7 @@ func Test_parameter_Mutate(t *testing.T) {
 }
 
 func Test_parameter_String(t *testing.T) {
-	id, testData, testParameter := createTestInput(t)
+	id, testData, testParameter := createTestInput()
 	type fields struct {
 		ID        ids.ID
 		Data      data.Data
@@ -227,7 +232,7 @@ func Test_parameter_String(t *testing.T) {
 }
 
 func Test_parameter_Validate(t *testing.T) {
-	//id, testData, _ := createTestInput(t)
+	//id, testData, _ := createTestInput()
 	type fields struct {
 		ID        ids.ID
 		Data      data.Data
