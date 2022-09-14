@@ -3,6 +3,9 @@
 
 package types
 
+// Height type to represent blockchain's block height
+// 0 height === chain genesis block height
+// -1 height === infinite block height
 type Height interface {
 	Get() int64
 
