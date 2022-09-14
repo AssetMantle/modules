@@ -125,9 +125,9 @@ func Test_stringData_GenerateHash(t *testing.T) {
 		want   ids.ID
 	}{
 
-		{"+ve data", fields{"data"}, baseIDs.NewID(string2.Hash("data"))},
-		{"data with special char", fields{"data_!@#$%^&*("}, baseIDs.NewID(string2.Hash("data_!@#$%^&*("))},
-		{"empty string", fields{""}, baseIDs.NewID(string2.Hash(""))},
+		{"+ve data", fields{"data"}, baseIDs.NewStringID(string2.Hash("data"))},
+		{"data with special char", fields{"data_!@#$%^&*("}, baseIDs.NewStringID(string2.Hash("data_!@#$%^&*("))},
+		{"empty string", fields{""}, baseIDs.NewStringID(string2.Hash(""))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -35,7 +35,7 @@ func TestReadData(t *testing.T) {
 		{"Unknown Data", args{"SomeRandomData"}, nil, true},
 		{"List Data", args{"L|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(dataList...), false},
 		{"List Data", args{"L|"}, base.NewListData(), false},
-		{"Id Data", args{"I|data"}, base.NewIDData(baseIDs.NewID("data")), false},
+		{"Id Data", args{"I|data"}, base.NewIDData(baseIDs.NewStringID("data")), false},
 		{"Height Data", args{"H|100"}, base.NewHeightData(baseTypes.NewHeight(100)), false},
 		{"Dec Data", args{"D|100"}, base.NewDecData(types.NewDec(100)), false},
 		{"Bool Data", args{"B|true"}, base.NewBooleanData(true), false},

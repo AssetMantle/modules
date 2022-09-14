@@ -42,8 +42,8 @@ func Test_newQueryRequest(t *testing.T) {
 		want helpers.QueryRequest
 	}{
 
-		{"+ve", args{baseIDs.NewID("randomString")}, queryRequest{}.FromMap(vars)},
-		{"+ve with empty String", args{baseIDs.NewID("")}, queryRequest{}.FromCLI(cliCommand, cliContext)},
+		{"+ve", args{baseIDs.NewStringID("randomString")}, queryRequest{}.FromMap(vars)},
+		{"+ve with empty String", args{baseIDs.NewStringID("")}, queryRequest{}.FromCLI(cliCommand, cliContext)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -64,8 +64,8 @@ func Test_queryRequestFromInterface(t *testing.T) {
 		want queryRequest
 	}{
 
-		{"+ve", args{newQueryRequest(baseIDs.NewID("IdentityID"))}, queryRequest{baseIDs.NewID("IdentityID")}},
-		{"+ve with empty string", args{newQueryRequest(baseIDs.NewID(""))}, queryRequest{baseIDs.NewID("")}},
+		{"+ve", args{newQueryRequest(baseIDs.NewStringID("IdentityID"))}, queryRequest{baseIDs.NewStringID("IdentityID")}},
+		{"+ve with empty string", args{newQueryRequest(baseIDs.NewStringID(""))}, queryRequest{baseIDs.NewStringID("")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -77,10 +77,10 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	testQueryRequest := newQueryRequest(baseIDs.NewID("IdentityID"))
+	testQueryRequest := newQueryRequest(baseIDs.NewStringID("IdentityID"))
 	encodedRequest, err := testQueryRequest.Encode()
 	require.Nil(t, err)
-	randomDecode, _ := queryRequest{baseIDs.NewID("")}.Encode()
+	randomDecode, _ := queryRequest{baseIDs.NewStringID("")}.Encode()
 	type fields struct {
 		IdentityID ids.ID
 	}
@@ -95,8 +95,8 @@ func Test_queryRequest_Decode(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", fields{baseIDs.NewID("IdentityID")}, args{encodedRequest}, testQueryRequest, false},
-		{"+ve", fields{baseIDs.NewID("")}, args{randomDecode}, queryRequest{baseIDs.NewID("")}, false},
+		{"+ve", fields{baseIDs.NewStringID("IdentityID")}, args{encodedRequest}, testQueryRequest, false},
+		{"+ve", fields{baseIDs.NewStringID("")}, args{randomDecode}, queryRequest{baseIDs.NewStringID("")}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -116,8 +116,8 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	byteArr, _ := common.Codec.MarshalJSON(newQueryRequest(baseIDs.NewID("IdentityID")))
-	byteArr2, _ := common.Codec.MarshalJSON(newQueryRequest(baseIDs.NewID("")))
+	byteArr, _ := common.Codec.MarshalJSON(newQueryRequest(baseIDs.NewStringID("IdentityID")))
+	byteArr2, _ := common.Codec.MarshalJSON(newQueryRequest(baseIDs.NewStringID("")))
 
 	type fields struct {
 		IdentityID ids.ID
@@ -129,8 +129,8 @@ func Test_queryRequest_Encode(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", fields{baseIDs.NewID("IdentityID")}, byteArr, false},
-		{"+ve with empty String ID", fields{baseIDs.NewID("")}, byteArr2, false},
+		{"+ve", fields{baseIDs.NewStringID("IdentityID")}, byteArr, false},
+		{"+ve with empty String ID", fields{baseIDs.NewStringID("")}, byteArr2, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -166,7 +166,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want   helpers.QueryRequest
 	}{
 
-		{"+ve", fields{baseIDs.NewID("IdentityID")}, args{cliCommand, cliContext}, queryRequest{}.FromCLI(cliCommand, cliContext)},
+		{"+ve", fields{baseIDs.NewStringID("IdentityID")}, args{cliCommand, cliContext}, queryRequest{}.FromCLI(cliCommand, cliContext)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -196,7 +196,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 		want   helpers.QueryRequest
 	}{
 
-		{"+ve", fields{baseIDs.NewID("IdentityID")}, args{vars: vars}, newQueryRequest(baseIDs.NewID(vars[Query.GetName()]))},
+		{"+ve", fields{baseIDs.NewStringID("IdentityID")}, args{vars: vars}, newQueryRequest(baseIDs.NewStringID(vars[Query.GetName()]))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -220,8 +220,8 @@ func Test_queryRequest_Validate(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", fields{baseIDs.NewID("IdentityID")}, false},
-		{"-ve with empty String", fields{baseIDs.NewID("")}, true},
+		{"+ve", fields{baseIDs.NewStringID("IdentityID")}, false},
+		{"-ve with empty String", fields{baseIDs.NewStringID("")}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

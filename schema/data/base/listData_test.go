@@ -19,7 +19,7 @@ import (
 )
 
 func TestNewListData(t *testing.T) {
-	//metaProperty := baseProperties.NewMetaProperty(baseIDs.NewID("id"), NewStringData("Data"))
+	//metaProperty := baseProperties.NewMetaProperty(baseIDs.NewStringID("id"), NewStringData("Data"))
 	//metaPropertyList := base.NewMetaProperties([]properties.MetaProperty{metaProperty}...)
 	type args struct {
 		value []data.Data
@@ -142,11 +142,11 @@ func Test_listData_GenerateHash(t *testing.T) {
 		want   ids.ID
 	}{
 		//TODO: Update test cases after fixes.
-		{"empty string", fields{baseLists.NewDataList()}, baseIDs.NewID("")},
-		{"+ve case", fields{baseLists.NewDataList(accAddressData{accAddress})}, baseIDs.NewID("GVpq_tf8khitXl2MmMQfY-Ufu5DdATYNz3ZS9-wIl_U=")},
-		{"-ve case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, baseIDs.NewID("")},
-		{"-ve case with empty datalist", fields{baseLists.NewDataList([]data.Data{}...)}, baseIDs.NewID("")},
-		//{"-ve case with nil data", fields{nil}, baseIDs.NewID("")},
+		{"empty string", fields{baseLists.NewDataList()}, baseIDs.NewStringID("")},
+		{"+ve case", fields{baseLists.NewDataList(accAddressData{accAddress})}, baseIDs.NewStringID("GVpq_tf8khitXl2MmMQfY-Ufu5DdATYNz3ZS9-wIl_U=")},
+		{"-ve case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, baseIDs.NewStringID("")},
+		{"-ve case with empty datalist", fields{baseLists.NewDataList([]data.Data{}...)}, baseIDs.NewStringID("")},
+		//{"-ve case with nil data", fields{nil}, baseIDs.NewStringID("")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

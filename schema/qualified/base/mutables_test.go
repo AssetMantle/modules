@@ -32,7 +32,7 @@ func Test_Mutables(t *testing.T) {
 
 func TestMutables_GetMutablePropertyList(t *testing.T) {
 
-	testProperty := baseProperties.NewProperty(baseIDs.NewID("ID"), baseData.NewStringData("Data"))
+	testProperty := baseProperties.NewProperty(baseIDs.NewStringID("ID"), baseData.NewStringData("Data"))
 	testProperties := baseLists.NewPropertyList(testProperty)
 
 	type fields struct {
@@ -60,9 +60,9 @@ func TestMutables_GetMutablePropertyList(t *testing.T) {
 
 func TestMutables_Mutate(t *testing.T) {
 
-	testProperty := baseProperties.NewProperty(baseIDs.NewID("ID"), baseData.NewStringData("Data"))
+	testProperty := baseProperties.NewProperty(baseIDs.NewStringID("ID"), baseData.NewStringData("Data"))
 	testProperties := baseLists.NewPropertyList(testProperty)
-	mutatedTestProperty := baseProperties.NewProperty(baseIDs.NewID("ID"), baseData.NewStringData("Data2"))
+	mutatedTestProperty := baseProperties.NewProperty(baseIDs.NewStringID("ID"), baseData.NewStringData("Data2"))
 	mutatedTestProperties := baseLists.NewPropertyList(mutatedTestProperty)
 
 	type fields struct {

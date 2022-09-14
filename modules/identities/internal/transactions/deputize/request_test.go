@@ -306,7 +306,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false}, newMessage(fromAccAddress, baseIDs.NewID("fromID"), baseIDs.NewID("toID"), baseIDs.NewID("classificationID"), maintainedProperties, false, false, false), false},
+		{"+ve", fields{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false}, newMessage(fromAccAddress, baseIDs.NewStringID("fromID"), baseIDs.NewStringID("toID"), baseIDs.NewStringID("classificationID"), maintainedProperties, false, false, false), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

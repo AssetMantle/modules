@@ -26,8 +26,8 @@ func TestDocument_GetClassificationID(t *testing.T) {
 		Mutables         Mutables
 	}
 
-	creationID := baseIDs.NewID("100")
-	classificationID := baseIDs.NewID("c100")
+	creationID := baseIDs.NewStringID("100")
+	classificationID := baseIDs.NewStringID("c100")
 
 	takerIDImmutableProperty := base2.NewProperty(constants.TakerIDProperty, baseData.NewStringData("takerIDImmutableProperty"))
 	exchangeRateImmutableProperty := base2.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec()))

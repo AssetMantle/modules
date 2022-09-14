@@ -26,7 +26,7 @@ func TestNewIDData(t *testing.T) {
 		want data.Data
 	}{
 
-		{"Test for some id", args{baseIDs.NewID("100")}, idData{baseIDs.NewID("100")}},
+		{"Test for some id", args{baseIDs.NewStringID("100")}, idData{baseIDs.NewStringID("100")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -46,12 +46,12 @@ func TestReadIDData(t *testing.T) {
 		wantErr assert.ErrorAssertionFunc
 	}{
 
-		{"Test for some +ve int id", args{"100"}, NewIDData(baseIDs.NewID("100")), assert.NoError},
-		{"Test for some -ve int id", args{"-100"}, NewIDData(baseIDs.NewID("-100")), assert.NoError},
-		{"Test for zero id", args{"0"}, NewIDData(baseIDs.NewID("0")), assert.NoError},
-		{"Test for string with special char id", args{"10-10"}, NewIDData(baseIDs.NewID("10-10")), assert.NoError},   // wrong
-		{"Test for string with special char id", args{"10%10"}, NewIDData(baseIDs.NewID("10%10")), assert.NoError},   // wrong
-		{"Test for string with special char id", args{"10%`10"}, NewIDData(baseIDs.NewID("10%`10")), assert.NoError}, // wrong
+		{"Test for some +ve int id", args{"100"}, NewIDData(baseIDs.NewStringID("100")), assert.NoError},
+		{"Test for some -ve int id", args{"-100"}, NewIDData(baseIDs.NewStringID("-100")), assert.NoError},
+		{"Test for zero id", args{"0"}, NewIDData(baseIDs.NewStringID("0")), assert.NoError},
+		{"Test for string with special char id", args{"10-10"}, NewIDData(baseIDs.NewStringID("10-10")), assert.NoError},   // wrong
+		{"Test for string with special char id", args{"10%10"}, NewIDData(baseIDs.NewStringID("10%10")), assert.NoError},   // wrong
+		{"Test for string with special char id", args{"10%`10"}, NewIDData(baseIDs.NewStringID("10%`10")), assert.NoError}, // wrong
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -75,7 +75,7 @@ func Test_idDataFromInterface(t *testing.T) {
 		wantErr assert.ErrorAssertionFunc
 	}{
 
-		{"+ve Unit test", args{idData{baseIDs.NewID("100")}}, idData{baseIDs.NewID("100")}, assert.NoError},
+		{"+ve Unit test", args{idData{baseIDs.NewStringID("100")}}, idData{baseIDs.NewStringID("100")}, assert.NoError},
 		{"-ve Unit test", args{heightData{baseTypes.NewHeight(100)}}, idData{}, assert.Error},
 	}
 	for _, tt := range tests {
@@ -103,9 +103,9 @@ func Test_idData_Compare(t *testing.T) {
 		want   int
 	}{
 
-		{"Test for Equal case", fields{baseIDs.NewID("100")}, args{idData{baseIDs.NewID("100")}}, 0},
-		{"Test for LT case", fields{baseIDs.NewID("100")}, args{idData{baseIDs.NewID("0")}}, 1},
-		{"Test for GT case", fields{baseIDs.NewID("0")}, args{idData{baseIDs.NewID("100")}}, -1},
+		{"Test for Equal case", fields{baseIDs.NewStringID("100")}, args{idData{baseIDs.NewStringID("100")}}, 0},
+		{"Test for LT case", fields{baseIDs.NewStringID("100")}, args{idData{baseIDs.NewStringID("0")}}, 1},
+		{"Test for GT case", fields{baseIDs.NewStringID("0")}, args{idData{baseIDs.NewStringID("100")}}, -1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -127,9 +127,9 @@ func Test_idData_GenerateHash(t *testing.T) {
 		want   ids.ID
 	}{
 
-		{"ZeroValue Test", fields{baseIDs.NewID("")}, baseIDs.NewID("")},
-		{"+ve Value Test", fields{baseIDs.NewID("100")}, baseIDs.NewID(stringUtilities.Hash(idData{baseIDs.NewID("100")}.Value.String()))},
-		{"-ve Value Test", fields{baseIDs.NewID("-100")}, baseIDs.NewID(stringUtilities.Hash(idData{baseIDs.NewID("-100")}.Value.String()))},
+		{"ZeroValue Test", fields{baseIDs.NewStringID("")}, baseIDs.NewStringID("")},
+		{"+ve Value Test", fields{baseIDs.NewStringID("100")}, baseIDs.NewStringID(stringUtilities.Hash(idData{baseIDs.NewStringID("100")}.Value.String()))},
+		{"-ve Value Test", fields{baseIDs.NewStringID("-100")}, baseIDs.NewStringID(stringUtilities.Hash(idData{baseIDs.NewStringID("-100")}.Value.String()))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -151,9 +151,9 @@ func Test_idData_Get(t *testing.T) {
 		want   ids.ID
 	}{
 
-		{"Test for zero value", fields{baseIDs.NewID("0")}, idData{baseIDs.NewID("0")}.Value},
-		{"Test for +ve value", fields{baseIDs.NewID("100")}, idData{baseIDs.NewID("100")}.Value},
-		{"Test for -ve value", fields{baseIDs.NewID("-100")}, idData{baseIDs.NewID("-100")}.Value},
+		{"Test for zero value", fields{baseIDs.NewStringID("0")}, idData{baseIDs.NewStringID("0")}.Value},
+		{"Test for +ve value", fields{baseIDs.NewStringID("100")}, idData{baseIDs.NewStringID("100")}.Value},
+		{"Test for -ve value", fields{baseIDs.NewStringID("-100")}, idData{baseIDs.NewStringID("-100")}.Value},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -175,10 +175,10 @@ func Test_idData_GetID(t *testing.T) {
 		want   ids.DataID
 	}{
 
-		{"Test for zero value", fields{baseIDs.NewID("0")}, baseIDs.NewDataID(idData{baseIDs.NewID("0")})},
-		{"Test for +ve value", fields{baseIDs.NewID("100")}, baseIDs.NewDataID(idData{baseIDs.NewID("100")})},
-		{"Test for -ve value", fields{baseIDs.NewID("-100")}, baseIDs.NewDataID(idData{baseIDs.NewID("-100")})},
-		{"Test for special char value", fields{baseIDs.NewID("%#100")}, baseIDs.NewDataID(idData{baseIDs.NewID("%#100")})},
+		{"Test for zero value", fields{baseIDs.NewStringID("0")}, baseIDs.NewDataID(idData{baseIDs.NewStringID("0")})},
+		{"Test for +ve value", fields{baseIDs.NewStringID("100")}, baseIDs.NewDataID(idData{baseIDs.NewStringID("100")})},
+		{"Test for -ve value", fields{baseIDs.NewStringID("-100")}, baseIDs.NewDataID(idData{baseIDs.NewStringID("-100")})},
+		{"Test for special char value", fields{baseIDs.NewStringID("%#100")}, baseIDs.NewDataID(idData{baseIDs.NewStringID("%#100")})},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -200,9 +200,9 @@ func Test_idData_GetType(t *testing.T) {
 		want   ids.ID
 	}{
 
-		{"Test for zero value", fields{baseIDs.NewID("0")}, idsConstants.IDDataID},
-		{"Test for +ve value", fields{baseIDs.NewID("100")}, idsConstants.IDDataID},
-		{"Test for -ve value", fields{baseIDs.NewID("-100")}, idsConstants.IDDataID},
+		{"Test for zero value", fields{baseIDs.NewStringID("0")}, idsConstants.IDDataID},
+		{"Test for +ve value", fields{baseIDs.NewStringID("100")}, idsConstants.IDDataID},
+		{"Test for -ve value", fields{baseIDs.NewStringID("-100")}, idsConstants.IDDataID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -224,10 +224,10 @@ func Test_idData_String(t *testing.T) {
 		want   string
 	}{
 
-		{"Test for zero value", fields{baseIDs.NewID("0")}, "0"},
-		{"Test for +ve value", fields{baseIDs.NewID("100")}, "100"},
-		{"Test for -ve value", fields{baseIDs.NewID("-100")}, "-100"},
-		{"Test for special char value", fields{baseIDs.NewID("%#100")}, "%#100"},
+		{"Test for zero value", fields{baseIDs.NewStringID("0")}, "0"},
+		{"Test for +ve value", fields{baseIDs.NewStringID("100")}, "100"},
+		{"Test for -ve value", fields{baseIDs.NewStringID("-100")}, "-100"},
+		{"Test for special char value", fields{baseIDs.NewStringID("%#100")}, "%#100"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -249,10 +249,10 @@ func Test_idData_ZeroValue(t *testing.T) {
 		want   data.Data
 	}{
 
-		{"Test for zero value", fields{baseIDs.NewID("0")}, NewIDData(baseIDs.NewID(""))},
-		{"Test for +ve value", fields{baseIDs.NewID("100")}, NewIDData(baseIDs.NewID(""))},
-		{"Test for -ve value", fields{baseIDs.NewID("-100")}, NewIDData(baseIDs.NewID(""))},
-		{"Test for special char value", fields{baseIDs.NewID("%#100")}, NewIDData(baseIDs.NewID(""))},
+		{"Test for zero value", fields{baseIDs.NewStringID("0")}, NewIDData(baseIDs.NewStringID(""))},
+		{"Test for +ve value", fields{baseIDs.NewStringID("100")}, NewIDData(baseIDs.NewStringID(""))},
+		{"Test for -ve value", fields{baseIDs.NewStringID("-100")}, NewIDData(baseIDs.NewStringID(""))},
+		{"Test for special char value", fields{baseIDs.NewStringID("%#100")}, NewIDData(baseIDs.NewStringID(""))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -12,8 +12,8 @@ import (
 )
 
 func createTestInputForPropertyID() (ids.ID, ids.ID, ids.PropertyID) {
-	testKey := NewID("ID")
-	testType := NewID("ID2")
+	testKey := NewStringID("ID")
+	testType := NewStringID("ID2")
 	testPropertyID := NewPropertyID(testKey, testType)
 	return testKey, testType, testPropertyID
 }
@@ -29,7 +29,7 @@ func TestNewPropertyID(t *testing.T) {
 		want ids.PropertyID
 	}{
 
-		{"+ve", args{NewID("ID"), NewID("ID2")}, propertyID{NewID("ID"), NewID("ID2")}},
+		{"+ve", args{NewStringID("ID"), NewStringID("ID2")}, propertyID{NewStringID("ID"), NewStringID("ID2")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

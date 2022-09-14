@@ -5,9 +5,9 @@ package base
 
 import (
 	"fmt"
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
 	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -95,7 +95,7 @@ func Test_heightDataFromInterface(t *testing.T) {
 		{"Test for empty height data", args{heightData{}}, heightData{}, false, ""},
 		{"Test for +ve int height data", args{heightData{baseTypes.NewHeight(100)}}, heightData{baseTypes.NewHeight(100)}, false, ""},
 		{"Test for -ve int height data", args{heightData{baseTypes.NewHeight(-100)}}, heightData{baseTypes.NewHeight(-100)}, false, ""},
-		{"Test for Other listable Type", args{decData{types2.ZeroDec()}.ZeroValue()}, heightData{}, true, errors.MetaDataError.Error()},
+		{"Test for Other listable Type", args{decData{types2.ZeroDec()}.ZeroValue()}, heightData{}, true, constants.MetaDataError.Error()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -155,9 +155,9 @@ func Test_heightData_GenerateHash(t *testing.T) {
 		want   ids.ID
 	}{
 
-		{"Test for zero value", fields{baseTypes.NewHeight(0)}, baseIDs.NewID("")},
-		{"Test for -ve value", fields{baseTypes.NewHeight(-100)}, baseIDs.NewID(stringUtilities.Hash(strconv.FormatInt(heightData{baseTypes.NewHeight(-100)}.Value.Get(), 10)))},
-		{"Test for +ve value", fields{baseTypes.NewHeight(100)}, baseIDs.NewID(stringUtilities.Hash(strconv.FormatInt(heightData{baseTypes.NewHeight(100)}.Value.Get(), 10)))},
+		{"Test for zero value", fields{baseTypes.NewHeight(0)}, baseIDs.NewStringID("")},
+		{"Test for -ve value", fields{baseTypes.NewHeight(-100)}, baseIDs.NewStringID(stringUtilities.Hash(strconv.FormatInt(heightData{baseTypes.NewHeight(-100)}.Value.Get(), 10)))},
+		{"Test for +ve value", fields{baseTypes.NewHeight(100)}, baseIDs.NewStringID(stringUtilities.Hash(strconv.FormatInt(heightData{baseTypes.NewHeight(100)}.Value.Get(), 10)))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

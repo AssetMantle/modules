@@ -19,9 +19,9 @@ import (
 )
 
 func Test_messageFromInterface(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
-	testToID := baseIDs.NewID("toID")
-	testClassificationID := baseIDs.NewID("classificationID")
+	testFromID := baseIDs.NewStringID("fromID")
+	testToID := baseIDs.NewStringID("toID")
+	testClassificationID := baseIDs.NewStringID("classificationID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -68,9 +68,9 @@ func Test_messagePrototype(t *testing.T) {
 }
 
 func Test_message_GetSignBytes(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
-	testToID := baseIDs.NewID("toID")
-	testClassificationID := baseIDs.NewID("classificationID")
+	testFromID := baseIDs.NewStringID("fromID")
+	testToID := baseIDs.NewStringID("toID")
+	testClassificationID := baseIDs.NewStringID("classificationID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -117,9 +117,9 @@ func Test_message_GetSignBytes(t *testing.T) {
 }
 
 func Test_message_GetSigners(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
-	testToID := baseIDs.NewID("toID")
-	testClassificationID := baseIDs.NewID("classificationID")
+	testFromID := baseIDs.NewStringID("fromID")
+	testToID := baseIDs.NewStringID("toID")
+	testClassificationID := baseIDs.NewStringID("classificationID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -166,9 +166,9 @@ func Test_message_GetSigners(t *testing.T) {
 }
 
 func Test_message_RegisterCodec(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
-	testToID := baseIDs.NewID("toID")
-	testClassificationID := baseIDs.NewID("classificationID")
+	testFromID := baseIDs.NewStringID("fromID")
+	testToID := baseIDs.NewStringID("toID")
+	testClassificationID := baseIDs.NewStringID("classificationID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -216,9 +216,9 @@ func Test_message_RegisterCodec(t *testing.T) {
 }
 
 func Test_message_Route(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
-	testToID := baseIDs.NewID("toID")
-	testClassificationID := baseIDs.NewID("classificationID")
+	testFromID := baseIDs.NewStringID("fromID")
+	testToID := baseIDs.NewStringID("toID")
+	testClassificationID := baseIDs.NewStringID("classificationID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -265,9 +265,9 @@ func Test_message_Route(t *testing.T) {
 }
 
 func Test_message_Type(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
-	testToID := baseIDs.NewID("toID")
-	testClassificationID := baseIDs.NewID("classificationID")
+	testFromID := baseIDs.NewStringID("fromID")
+	testToID := baseIDs.NewStringID("toID")
+	testClassificationID := baseIDs.NewStringID("classificationID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -314,9 +314,9 @@ func Test_message_Type(t *testing.T) {
 }
 
 func Test_message_ValidateBasic(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
-	testToID := baseIDs.NewID("toID")
-	testClassificationID := baseIDs.NewID("classificationID")
+	testFromID := baseIDs.NewStringID("fromID")
+	testToID := baseIDs.NewStringID("toID")
+	testClassificationID := baseIDs.NewStringID("classificationID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -363,9 +363,9 @@ func Test_message_ValidateBasic(t *testing.T) {
 }
 
 func Test_newMessage(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
-	testToID := baseIDs.NewID("toID")
-	testClassificationID := baseIDs.NewID("classificationID")
+	testFromID := baseIDs.NewStringID("fromID")
+	testToID := baseIDs.NewStringID("toID")
+	testClassificationID := baseIDs.NewStringID("classificationID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

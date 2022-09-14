@@ -113,7 +113,7 @@ func Test_decDataFromInterface(t *testing.T) {
 		}}, decData{
 			types.NewDec(-100),
 		}, false},
-		{"-ve case", args{baseIDs.NewID("ID")}, decData{}, true},
+		{"-ve case", args{baseIDs.NewStringID("ID")}, decData{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -179,9 +179,9 @@ func Test_decData_GenerateHash(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		{"ZeroValue Test", fields{types.ZeroDec()}, baseIDs.NewID("")},
-		{"+ve Value Test", fields{types.NewDec(100)}, baseIDs.NewID(stringUtilities.Hash(decData{types.NewDec(100)}.Value.String()))},
-		{"-ve Value Test", fields{types.NewDec(-100)}, baseIDs.NewID(stringUtilities.Hash(decData{types.NewDec(-100)}.Value.String()))},
+		{"ZeroValue Test", fields{types.ZeroDec()}, baseIDs.NewStringID("")},
+		{"+ve Value Test", fields{types.NewDec(100)}, baseIDs.NewStringID(stringUtilities.Hash(decData{types.NewDec(100)}.Value.String()))},
+		{"-ve Value Test", fields{types.NewDec(-100)}, baseIDs.NewStringID(stringUtilities.Hash(decData{types.NewDec(-100)}.Value.String()))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

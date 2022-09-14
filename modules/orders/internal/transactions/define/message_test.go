@@ -18,7 +18,7 @@ import (
 )
 
 func CreateTestInputForMessage(t *testing.T) (ids.ID, sdkTypes.AccAddress, lists.MetaPropertyList, lists.PropertyList, lists.MetaPropertyList, lists.PropertyList, sdkTypes.Msg) {
-	testFromID := baseIDs.NewID("fromID")
+	testFromID := baseIDs.NewStringID("fromID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

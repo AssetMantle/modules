@@ -18,7 +18,7 @@ import (
 )
 
 func TestNewIdentityID(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
+	classificationID := baseIDs.NewStringID("classificationID")
 	immutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	emptyImmutableProperties, _ := utilities.ReadProperties("")
 
@@ -45,7 +45,7 @@ func TestNewIdentityID(t *testing.T) {
 }
 
 func Test_identityID_Bytes(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
+	classificationID := baseIDs.NewStringID("classificationID")
 	immutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	emptyImmutableProperties, _ := utilities.ReadProperties("")
 	type fields struct {
@@ -76,7 +76,7 @@ func Test_identityID_Bytes(t *testing.T) {
 }
 
 func Test_identityID_Compare(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
+	classificationID := baseIDs.NewStringID("classificationID")
 	immutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	emptyImmutableProperties, _ := utilities.ReadProperties("")
 	type fields struct {
@@ -111,7 +111,7 @@ func Test_identityID_Compare(t *testing.T) {
 }
 
 func Test_identityID_Equals(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
+	classificationID := baseIDs.NewStringID("classificationID")
 	immutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	emptyImmutableProperties, _ := utilities.ReadProperties("")
 	type fields struct {
@@ -145,7 +145,7 @@ func Test_identityID_Equals(t *testing.T) {
 }
 
 func Test_identityID_GenerateStoreKeyBytes(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
+	classificationID := baseIDs.NewStringID("classificationID")
 	immutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	emptyImmutableProperties, _ := utilities.ReadProperties("")
 	type fields struct {
@@ -176,7 +176,7 @@ func Test_identityID_GenerateStoreKeyBytes(t *testing.T) {
 }
 
 func Test_identityID_IsPartial(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
+	classificationID := baseIDs.NewStringID("classificationID")
 	immutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	emptyImmutableProperties, _ := utilities.ReadProperties("")
 	type fields struct {
@@ -207,7 +207,7 @@ func Test_identityID_IsPartial(t *testing.T) {
 
 func Test_identityID_RegisterCodec(t *testing.T) {
 	Codec := codec.New()
-	classificationID := baseIDs.NewID("classificationID")
+	classificationID := baseIDs.NewStringID("classificationID")
 	immutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	type fields struct {
 		ClassificationID ids.ID
@@ -236,7 +236,7 @@ func Test_identityID_RegisterCodec(t *testing.T) {
 }
 
 func Test_identityID_String(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
+	classificationID := baseIDs.NewStringID("classificationID")
 	immutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	emptyImmutableProperties, _ := utilities.ReadProperties("")
 	type fields struct {

@@ -17,7 +17,7 @@ import (
 )
 
 func createInputForMessage(t *testing.T) (ids.ID, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, sdkTypes.Msg) {
-	testIdentityID := baseIDs.NewID("identityID")
+	testIdentityID := baseIDs.NewStringID("identityID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

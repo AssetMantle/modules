@@ -4,7 +4,6 @@
 package define
 
 import (
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"reflect"
 	"testing"
@@ -20,7 +19,7 @@ func Test_newTransactionResponse(t *testing.T) {
 		want helpers.TransactionResponse
 	}{
 
-		{"-ve", args{errors.IncorrectMessage}, transactionResponse{false, errors.IncorrectMessage}},
+		{"-ve", args{constants.IncorrectMessage}, transactionResponse{false, constants.IncorrectMessage}},
 		{"+ve", args{nil}, transactionResponse{true, nil}},
 	}
 	for _, tt := range tests {
@@ -43,7 +42,7 @@ func Test_transactionResponse_GetError(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", fields{false, errors.IncorrectFormat}, true},
+		{"+ve", fields{false, constants.IncorrectFormat}, true},
 		{"-ve", fields{true, nil}, false},
 	}
 	for _, tt := range tests {
@@ -71,7 +70,7 @@ func Test_transactionResponse_IsSuccessful(t *testing.T) {
 	}{
 
 		{"+ve", fields{true, nil}, true},
-		{"-ve", fields{false, errors.IncorrectFormat}, false},
+		{"-ve", fields{false, constants.IncorrectFormat}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

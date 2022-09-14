@@ -17,8 +17,8 @@ import (
 )
 
 func CreateTestInputForMessages(t *testing.T) (ids.ID, ids.ID, sdkTypes.AccAddress, sdkTypes.Msg) {
-	testOrderID := baseIDs.NewID("orderID")
-	testFromID := baseIDs.NewID("fromID")
+	testOrderID := baseIDs.NewStringID("orderID")
+	testFromID := baseIDs.NewStringID("fromID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

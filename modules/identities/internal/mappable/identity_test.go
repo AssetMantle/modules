@@ -151,10 +151,10 @@ func Test_identity_RegisterCodec(t *testing.T) {
 }
 
 func initalizeVariables() (ids.ID, lists.PropertyList, ids.ID, lists.PropertyList, lists.PropertyList) {
-	classificationID := baseIDs.NewID("classificationID")
+	classificationID := baseIDs.NewStringID("classificationID")
 	defaultImmutableProperties, _ := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	testIdentityID := key.NewIdentityID(classificationID, defaultImmutableProperties)
-	immutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
-	mutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID2"), baseData.NewStringData("MutableData")))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
+	mutableProperties := baseLists.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData")))
 	return classificationID, defaultImmutableProperties, testIdentityID, immutableProperties, mutableProperties
 }

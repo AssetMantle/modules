@@ -235,7 +235,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, newMessage(fromAccAddress, baseIDs.NewID("fromID"), baseIDs.NewID("identityID"), mutableMetaProperties, mutableProperties), false},
+		{"+ve", fields{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, newMessage(fromAccAddress, baseIDs.NewStringID("fromID"), baseIDs.NewStringID("identityID"), mutableMetaProperties, mutableProperties), false},
 		//{"-ve with nil", fields{}, message{}, true},
 	}
 	for _, tt := range tests {

@@ -18,9 +18,9 @@ import (
 )
 
 func Test_Asset_Methods(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
-	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("ImmutableData")))
-	mutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID2"), baseData.NewStringData("MutableData")))
+	classificationID := baseIDs.NewStringID("classificationID")
+	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
+	mutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData")))
 
 	assetID := key.NewAssetID(classificationID, immutableProperties)
 	testAsset := NewAsset(assetID, immutableProperties, mutableProperties)

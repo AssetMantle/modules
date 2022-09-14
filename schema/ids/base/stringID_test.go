@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestNewID(t *testing.T) {
+func TestNewStringID(t *testing.T) {
 	type args struct {
 		idString string
 	}
@@ -20,12 +20,12 @@ func TestNewID(t *testing.T) {
 		want ids.ID
 	}{
 
-		{"+ve", args{"ID"}, NewID("ID")},
+		{"+ve", args{"ID"}, NewStringID("ID")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewID(tt.args.idString); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewID() = %v, want %v", got, tt.want)
+			if got := NewStringID(tt.args.idString); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewStringID() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -42,7 +42,7 @@ func Test_idFromInterface(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", args{NewID("ID")}, id{IDString: "ID"}, false},
+		{"+ve", args{NewStringID("ID")}, id{IDString: "ID"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -96,9 +96,9 @@ func Test_id_Compare(t *testing.T) {
 		want   int
 	}{
 
-		{"+ve", fields{"ID"}, args{NewID("ID")}, 0},
+		{"+ve", fields{"ID"}, args{NewStringID("ID")}, 0},
 		// TODO: It Should fail
-		{"-ve", fields{"ID"}, args{NewID("ID2")}, -1},
+		{"-ve", fields{"ID"}, args{NewStringID("ID2")}, -1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
