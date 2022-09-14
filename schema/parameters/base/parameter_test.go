@@ -1,14 +1,16 @@
 package base
 
 import (
+	"reflect"
+	"testing"
+
+	"golang.org/x/crypto/openpgp/errors"
+
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/parameters"
-	"golang.org/x/crypto/openpgp/errors"
-	"reflect"
-	"testing"
 )
 
 func validator(interface{}) error {
@@ -162,7 +164,7 @@ func Test_parameter_GetValidator(t *testing.T) {
 				validator: tt.fields.validator,
 			}
 			if got := parameter.GetValidator(); !reflect.DeepEqual(got, tt.want) {
-				//t.Errorf("GetValidator() = %p, want %p", got, tt.want)
+				// t.Errorf("GetValidator() = %p, want %p", got, tt.want)
 			}
 		})
 	}
@@ -232,7 +234,7 @@ func Test_parameter_String(t *testing.T) {
 }
 
 func Test_parameter_Validate(t *testing.T) {
-	//id, testData, _ := createTestInput()
+	// id, testData, _ := createTestInput()
 	type fields struct {
 		ID        ids.ID
 		Data      data.Data
@@ -244,9 +246,9 @@ func Test_parameter_Validate(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		//{"+ve", fields{id, testData, validator}, false},
+		// {"+ve", fields{id, testData, validator}, false},
 		// TODO: Should not panic
-		//{"-ve", fields{}, true},
+		// {"-ve", fields{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
