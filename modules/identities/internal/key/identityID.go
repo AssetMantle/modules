@@ -58,6 +58,7 @@ func (identityID identityID) Equals(key helpers.Key) bool {
 }
 
 // TODO Pass Classification & then get Classification ID
+// TODO impl nil replacement throuhg prototype
 func NewIdentityID(classificationID ids.ID, immutableProperties lists.PropertyList) ids.ID {
 	if immutableProperties == nil {
 		immutableProperties = base.NewPropertyList()
