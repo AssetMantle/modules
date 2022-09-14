@@ -44,6 +44,8 @@ distclean:
 .PHONY: distclean
 
 ### Testing
+TEST_TARGET ?= ./...
+TEST_ARGS ?= -timeout 12m -race -coverprofile=./coverage.out -covermode=atomic -v
 
 test: test-unit
 test-all: test-unit test-ledger-mock test-race test-cover
@@ -55,7 +57,7 @@ test-ledger: test-ledger-mock
 	@go test -mod=readonly -v `go list github.com/cosmos/cosmos-sdk/crypto` -tags='cgo ledger'
 
 test-unit:
-	@VERSION=$(VERSION) go test -mod=readonly $(PACKAGES_NOSIMULATION) -tags='ledger test_ledger_mock'
+	@VERSION=$(VERSION) go test -mod=readonly -tags='ledger test_ledger_mock' $(PACKAGES_NOSIMULATION) $(TEST_TARGET) $(TEST_ARGS)
 
 test-race:
 	@VERSION=$(VERSION) go test -mod=readonly -race $(PACKAGES_NOSIMULATION)

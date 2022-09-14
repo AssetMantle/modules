@@ -15,11 +15,16 @@ jobs:
 
       - uses: actions/setup-go@v3
         with:
-          go-version: 1.16
+          go-version: 1.17
 
       - uses: actions/checkout@v3
 
       - run: make test
+        id: test_status
+        continue-on-error: ${{ github.evnte_name == 'pull_request' }}
+        env:
+          TEST_TARGET: "./..."
+          TEST_ARGS: "-timeout 12m -race -coverprofile=./coverage.out -covermode=atomic -v"
 
       - name: filter out DONTCOVER
         if: github.event_name == 'pull_request'
@@ -43,3 +48,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: coverage.lcov
+
+      - name: fail CI if test was failed
+        if: ${{ steps.test_status.outputs.status == 'failure' }}
+        run: |
+          false
