@@ -12,29 +12,31 @@ jobs:
   test-coverage-upload:
     runs-on: ubuntu-latest
     steps:
-
       - uses: actions/setup-go@v3
         with:
-          go-version: 1.16
+          go-version: 1.17
 
       - uses: actions/checkout@v3
 
-      - run: make test
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.mod') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
 
-      - name: filter out DONTCOVER
-        if: github.event_name == 'pull_request'
+      - name: Test
         run: |
-          excludelist="$(find ./ -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
-          excludelist+=" $(find ./ -type f -name '*.pb.go')"
-          excludelist+=" $(find ./ -type f -path './tests/mocks/*.go')"
-          for filename in ${excludelist}; do
-            filename=$(echo $filename | sed 's/^./github.com\/cosmos\/cosmos-sdk/g')
-            echo "Excluding ${filename} from coverage report..."
-            sed -i "/$(echo $filename | sed 's/\//\\\//g')/d" ./coverage.out
-          done
+          set +e -x
+          make test
+          TEST_FAILED=false
+          [[ $? == 0 ]] && echo "TEST_FAILED=true" >> $GITHUB_ENV
+        id: test_status
 
       - name: Convert coverage to lcov
-        if: github.evnte_name == 'pull_request'
+        if: github.event_name == 'pull_request'
         uses: jandelgado/gcov2lcov-action@v1
 
       - name: Code Coverage Report
@@ -43,3 +45,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: coverage.lcov
+
+      - name: Fail CI if test was failed
+        if: ${{ env.TEST_FAILED }}
+        run: |
+          false
