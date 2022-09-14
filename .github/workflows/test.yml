@@ -27,15 +27,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - run: make test
+      - name: test
+        run: |
+          set +e -x
+          make test
+          TEST_FAILED=false
+          [[ $? == 0 ]] && echo "TEST_FAILED=true" >> $GITHUB_ENV
         id: test_status
-        continue-on-error: true
         env:
           TEST_TARGET: "./..."
           TEST_ARGS: "-timeout 12m -race -coverprofile=./coverage.out -covermode=atomic -v"
 
       - name: Convert coverage to lcov
-        if: github.evnte_name == 'pull_request'
+        if: github.event_name == 'pull_request'
         uses: jandelgado/gcov2lcov-action@v1
 
       - name: Code Coverage Report
@@ -46,6 +50,6 @@ jobs:
           lcov-file: coverage.lcov
 
       - name: fail CI if test was failed
-        if: steps.test_status.outputs.status == 'failure'
+        if: ${{ env.TEST_FAILED }}
         run: |
           false
