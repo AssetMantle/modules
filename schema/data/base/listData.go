@@ -60,7 +60,9 @@ func (listData listData) GenerateHash() ids.ID {
 	hashList := make([]string, listData.Value.Size())
 
 	for i, datum := range listData.Value.GetList() {
-		hashList[i] = datum.GenerateHash().String()
+		if datum != nil {
+			hashList[i] = datum.GenerateHash().String()
+		}
 	}
 
 	hashString := strings.Join(hashList, constants.ListHashStringSeparator)
