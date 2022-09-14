@@ -6,11 +6,16 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/parameters"
+	"golang.org/x/crypto/openpgp/errors"
 	"reflect"
 	"testing"
 )
 
-func createTestInput(t *testing.T) (ids.ID, data.Data, parameters.Parameter) {
+func validator(interface{}) error {
+	return errors.ErrKeyIncorrect
+}
+
+func createTestInput() (ids.ID, data.Data, parameters.Parameter) {
 	id := baseIDs.NewID("ID")
 	data := baseData.NewStringData("Data")
 
