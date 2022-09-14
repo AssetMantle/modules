@@ -23,7 +23,7 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.mod') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
@@ -33,18 +33,6 @@ jobs:
         env:
           TEST_TARGET: "./..."
           TEST_ARGS: "-timeout 12m -race -coverprofile=./coverage.out -covermode=atomic -v"
-
-      - name: filter out DONTCOVER
-        if: github.event_name == 'pull_request'
-        run: |
-          excludelist="$(find ./ -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
-          excludelist+=" $(find ./ -type f -name '*.pb.go')"
-          excludelist+=" $(find ./ -type f -path './tests/mocks/*.go')"
-          for filename in ${excludelist}; do
-            filename=$(echo $filename | sed 's/^./github.com\/cosmos\/cosmos-sdk/g')
-            echo "Excluding ${filename} from coverage report..."
-            sed -i "/$(echo $filename | sed 's/\//\\\//g')/d" ./coverage.out
-          done
 
       - name: Convert coverage to lcov
         if: github.evnte_name == 'pull_request'
