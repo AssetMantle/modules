@@ -27,16 +27,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: test
+      - name: Test
         run: |
           set +e -x
           make test
           TEST_FAILED=false
           [[ $? == 0 ]] && echo "TEST_FAILED=true" >> $GITHUB_ENV
         id: test_status
-        env:
-          TEST_TARGET: "./..."
-          TEST_ARGS: "-timeout 12m -race -coverprofile=./coverage.out -covermode=atomic -v"
 
       - name: Convert coverage to lcov
         if: github.event_name == 'pull_request'
@@ -49,7 +46,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: coverage.lcov
 
-      - name: fail CI if test was failed
+      - name: Fail CI if test was failed
         if: ${{ env.TEST_FAILED }}
         run: |
           false
