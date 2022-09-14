@@ -8,7 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
-	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -16,19 +16,19 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper          helpers.Mapper
-	parameters      helpers.Parameters
-	defineAuxiliary helpers.Auxiliary
-	scrubAuxiliary  helpers.Auxiliary
-	superAuxiliary  helpers.Auxiliary
-	verifyAuxiliary helpers.Auxiliary
+	mapper                helpers.Mapper
+	parameters            helpers.Parameters
+	defineAuxiliary       helpers.Auxiliary
+	scrubAuxiliary        helpers.Auxiliary
+	superAuxiliary        helpers.Auxiliary
+	authenticateAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
@@ -71,8 +71,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.scrubAuxiliary = value
 			case super.Auxiliary.GetName():
 				transactionKeeper.superAuxiliary = value
-			case verify.Auxiliary.GetName():
-				transactionKeeper.verifyAuxiliary = value
+			case authenticate.Auxiliary.GetName():
+				transactionKeeper.authenticateAuxiliary = value
 			}
 		default:
 			panic(errors.UninitializedUsage)
