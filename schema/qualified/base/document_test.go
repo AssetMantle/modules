@@ -37,7 +37,6 @@ func TestDocument_GetClassificationID(t *testing.T) {
 
 	immutableProperties := base.NewPropertyList(takerIDImmutableProperty, exchangeRateImmutableProperty.RemoveData(), creationImmutableProperty.RemoveData(), expiryImmutableProperty, makerOwnableSplitImmutableProperty)
 
-
 	tests := []struct {
 		name   string
 		fields fields
@@ -45,7 +44,6 @@ func TestDocument_GetClassificationID(t *testing.T) {
 	}{
 
 		{"Test1", fields{ID: creationID, ClassificationID: classificationID, Immutables: Immutables{PropertyList: immutableProperties}, Mutables: Mutables{Properties: base.NewPropertyList()}}, classificationID},
-
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -63,7 +61,16 @@ func TestDocument_GetClassificationID(t *testing.T) {
 }
 
 func TestDocument_GetID(t *testing.T) {
+	creationID := baseIDs.NewID("100")
+	classificationID := baseIDs.NewID("c100")
 
+	takerIDImmutableProperty := base2.NewProperty(constants.TakerIDProperty, baseData.NewStringData("takerIDImmutableProperty"))
+	exchangeRateImmutableProperty := base2.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec()))
+	creationImmutableProperty := base2.NewMetaProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(100)))
+	expiryImmutableProperty := base2.NewProperty(constants.ExpiryProperty, baseData.NewStringData("expiryImmutableProperty"))
+	makerOwnableSplitImmutableProperty := base2.NewProperty(constants.MakerOwnableSplitProperty, baseData.NewStringData("makerOwnableSplitImmutableProperty"))
+
+	immutableProperties := base.NewPropertyList(takerIDImmutableProperty, exchangeRateImmutableProperty.RemoveData(), creationImmutableProperty.RemoveData(), expiryImmutableProperty, makerOwnableSplitImmutableProperty)
 	type fields struct {
 		ID               ids.ID
 		ClassificationID ids.ID
@@ -75,7 +82,7 @@ func TestDocument_GetID(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		{"Test for GetID", fields{id, classificationId, testImmutables, testMutables}, id},
+		{"Test for GetID", fields{ID: creationID, ClassificationID: classificationID, Immutables: Immutables{PropertyList: immutableProperties}, Mutables: Mutables{Properties: base.NewPropertyList()}}, creationID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
