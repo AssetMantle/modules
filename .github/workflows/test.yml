@@ -29,7 +29,7 @@ jobs:
 
       - run: make test
         id: test_status
-        continue-on-error: ${{ github.evnte_name == 'pull_request' }}
+        continue-on-error: true
         env:
           TEST_TARGET: "./..."
           TEST_ARGS: "-timeout 12m -race -coverprofile=./coverage.out -covermode=atomic -v"
@@ -58,6 +58,6 @@ jobs:
           lcov-file: coverage.lcov
 
       - name: fail CI if test was failed
-        if: ${{ steps.test_status.outputs.status == 'failure' }}
+        if: steps.test_status.outputs.status == 'failure'
         run: |
           false
