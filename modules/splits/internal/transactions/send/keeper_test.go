@@ -18,7 +18,7 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	"github.com/AssetMantle/modules/modules/splits/internal/parameters"
@@ -64,9 +64,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	verifyAuxiliary := verify.AuxiliaryMock.Initialize(Mapper, Parameters)
+	authenticateAuxiliary := authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
 	keepers := TestKeepers{
-		SplitsKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{verifyAuxiliary}).(helpers.TransactionKeeper),
+		SplitsKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{authenticateAuxiliary}).(helpers.TransactionKeeper),
 	}
 
 	return context, keepers
