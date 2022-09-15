@@ -38,9 +38,9 @@ func classificationIDFromInterface(i interface{}) (classificationID, error) {
 }
 
 func FromID(id ids.ID) helpers.Key {
-	if classificationID, err := classificationIDFromInterface(id); err == nil {
-		return classificationID
+	if classificationID, err := classificationIDFromInterface(id); err != nil {
+		panic(err)
 	} else {
-		panic(classificationID)
+		return classificationID
 	}
 }
