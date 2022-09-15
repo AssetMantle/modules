@@ -41,7 +41,6 @@ func TestNewListData(t *testing.T) {
 
 func TestReadListData(t *testing.T) {
 	accAddress, _ := sdkTypes.AccAddressFromBech32("cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")
-	//accAddress1, _ := sdkTypes.AccAddressFromBech32("mantle1x53dugvr4xvew442l9v2r5x7j8gfvged5xd3xr")
 	type args struct {
 		dataString string
 	}
@@ -52,10 +51,9 @@ func TestReadListData(t *testing.T) {
 		wantErr assert.ErrorAssertionFunc
 	}{
 
-		{"Test for empty string", args{""}, listData{}.ZeroValue(), assert.NoError},
-		{"Test for wrong address string", args{"cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, NewListData(accAddressData{accAddress}), assert.NoError},
-		//{"Test for correct address string", args{"mantle1x53dugvr4xvew442l9v2r5x7j8gfvged5xd3xr"}, NewListData(accAddressData{accAddress1}), assert.Error},
-		{"Test for wrong address string format", args{"cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk51f"}, listData{}.ZeroValue(), assert.Error},
+		{"+ve empty string", args{""}, listData{}.ZeroValue(), assert.NoError},
+		{"+ve address string", args{"cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, NewListData(accAddressData{accAddress}), assert.NoError},
+		{"-ve wrong address string format", args{"cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk51f"}, listData{}.ZeroValue(), assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
