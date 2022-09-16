@@ -115,8 +115,8 @@ func Test_auxiliary_Initialize(t *testing.T) {
 		want   helpers.Auxiliary
 	}{
 
-		//{"+ve", fields{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, args{mapper: Mapper, parameters: nil}, Auxiliary},
-		//{"nil", fields{"", nil, nil}, args{mapper: Mapper, parameters: nil, auxiliaryKeepers: nil}, auxiliary{"", nil, nil}},
+		{"+ve", fields{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, args{mapper: Mapper, parameters: nil}, Auxiliary},
+		{"-ve with nil", fields{"", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, args{mapper: Mapper, parameters: nil, auxiliaryKeepers: nil}, auxiliary{"", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
