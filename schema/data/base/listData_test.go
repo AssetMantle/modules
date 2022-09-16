@@ -5,6 +5,11 @@ package base
 
 import (
 	"fmt"
+	"testing"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/AssetMantle/modules/schema/data"
 	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -13,14 +18,9 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestNewListData(t *testing.T) {
-	//metaProperty := baseProperties.NewMetaProperty(baseIDs.NewID("id"), NewStringData("Data"))
-	//metaPropertyList := base.NewMetaProperties([]properties.MetaProperty{metaProperty}...)
 	type args struct {
 		value []data.Data
 	}
@@ -107,7 +107,6 @@ func Test_listData_Compare(t *testing.T) {
 		want      int
 		wantPanic bool
 	}{
-		// TODO: Update test cases after fixes.
 		{"Test for Equal case", fields{listData{baseLists.NewDataList(accAddressData{accAddress})}.Get()}, args{NewListData(accAddressData{accAddress})}, 0, false},
 		{"Test for Not Equal case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, args{NewListData(accAddressData{accAddress})}, 1, false},
 		{"Test for Not Equal case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, args{heightData{baseTypes.NewHeight(100)}}, 1, true},
@@ -139,12 +138,11 @@ func Test_listData_GenerateHash(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		//TODO: Update test cases after fixes.
 		{"empty string", fields{baseLists.NewDataList()}, baseIDs.NewID("")},
 		{"+ve case", fields{baseLists.NewDataList(accAddressData{accAddress})}, baseIDs.NewID("GVpq_tf8khitXl2MmMQfY-Ufu5DdATYNz3ZS9-wIl_U=")},
 		{"-ve case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, baseIDs.NewID("")},
 		{"-ve case with empty datalist", fields{baseLists.NewDataList([]data.Data{}...)}, baseIDs.NewID("")},
-		//{"-ve case with nil data", fields{nil}, baseIDs.NewID("")},
+		// {"-ve case with nil data", fields{nil}, baseIDs.NewID("")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -192,7 +190,7 @@ func Test_listData_GetID(t *testing.T) {
 		want   ids.DataID
 	}{
 		// TODO: Add test cases.
-		//{"nil value", fields{nil}, baseIDs.NewDataID(listData{nil})},
+		// {"nil value", fields{nil}, baseIDs.NewDataID(listData{nil})},
 		{"some +ve case", fields{baseLists.NewDataList(accAddressData{accAddress})}, baseIDs.NewDataID(listData{baseLists.NewDataList(accAddressData{accAddress})})},
 	}
 	for _, tt := range tests {
