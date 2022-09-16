@@ -63,6 +63,6 @@ func NewIDData(value ids.ID) data.Data {
 	}
 }
 
-func ReadIDData(idData string) (data.Data, error) {
-	return NewIDData(baseIDs.NewID(idData)), nil
+func ReadIDData(idDataString string) (data.Data, error) {
+	return NewIDData(baseIDs.NewID(idDataString)), nil
 }
