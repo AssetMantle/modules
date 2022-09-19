@@ -107,7 +107,7 @@ func Test_listData_Compare(t *testing.T) {
 		want      int
 		wantPanic bool
 	}{
-		{"Test for Equal case", fields{listData{baseLists.NewDataList(accAddressData{accAddress})}.Get()}, args{NewListData(accAddressData{accAddress})}, 0, false},
+		{"Test for Equal case", fields{baseLists.NewDataList(accAddressData{accAddress})}, args{NewListData(accAddressData{accAddress})}, 0, false},
 		{"Test for Not Equal case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, args{NewListData(accAddressData{accAddress})}, 1, false},
 		{"Test for Not Equal case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, args{heightData{baseTypes.NewHeight(100)}}, 1, true},
 	}
