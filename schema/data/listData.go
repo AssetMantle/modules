@@ -5,4 +5,5 @@ package data
 
 type ListData interface {
 	Data
+	Get() []Data
 }

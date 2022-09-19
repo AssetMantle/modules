@@ -69,8 +69,8 @@ func (listData listData) GenerateHash() ids.ID {
 
 	return baseIDs.NewID(hashString)
 }
-func (listData listData) Get() lists.DataList {
-	return listData.Value
+func (listData listData) Get() []data.Data {
+	return listData.Value.GetList()
 }
 
 func listDataFromInterface(listable traits.Listable) (listData, error) {
