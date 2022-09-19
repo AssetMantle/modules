@@ -27,6 +27,15 @@ func (dataList dataList) GetList() []data.Data {
 func (dataList dataList) Search(data data.Data) (int, bool) {
 	return dataList.List.Search(data)
 }
+func (dataList dataList) Add(data ...data.Data) lists.DataList {
+	dataList.List = dataList.List.Add(dataToListables(data...)...)
+	return dataList
+}
+
+func (dataList dataList) Remove(data ...data.Data) lists.DataList {
+	dataList.List = dataList.List.Remove(dataToListables(data...)...)
+	return dataList
+}
 func dataToListables(data ...data.Data) []traits.Listable {
 	listables := make([]traits.Listable, len(data))
 

@@ -13,6 +13,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/utilities"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
@@ -20,10 +21,11 @@ import (
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
+	authenticateAuxiliary helpers.Auxiliary
 	defineAuxiliary       helpers.Auxiliary
 	scrubAuxiliary        helpers.Auxiliary
 	superAuxiliary        helpers.Auxiliary
-	authenticateAuxiliary helpers.Auxiliary
+	supplementAuxiliary   helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -39,7 +41,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	if !utilities.IsProvisioned(identity, message.From) {
+	if found, err := utilities.IsProvisioned(context, transactionKeeper.supplementAuxiliary, identity, message.From); err != nil {
+		return newTransactionResponse(err)
+	} else if !found {
 		return newTransactionResponse(errors.NotAuthorized)
 	}
 
@@ -76,14 +80,16 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
+			case authenticate.Auxiliary.GetName():
+				transactionKeeper.authenticateAuxiliary = value
 			case define.Auxiliary.GetName():
 				transactionKeeper.defineAuxiliary = value
 			case scrub.Auxiliary.GetName():
 				transactionKeeper.scrubAuxiliary = value
 			case super.Auxiliary.GetName():
 				transactionKeeper.superAuxiliary = value
-			case authenticate.Auxiliary.GetName():
-				transactionKeeper.authenticateAuxiliary = value
+			case supplement.Auxiliary.GetName():
+				transactionKeeper.supplementAuxiliary = value
 			}
 		default:
 			panic(errors.UninitializedUsage)
