@@ -10,8 +10,8 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
-	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
-	maintainersVerify "github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/mint"
 	"github.com/AssetMantle/modules/schema/data"
@@ -26,7 +26,7 @@ type transactionKeeper struct {
 	conformAuxiliary           helpers.Auxiliary
 	mintAuxiliary              helpers.Auxiliary
 	scrubAuxiliary             helpers.Auxiliary
-	verifyAuxiliary            helpers.Auxiliary
+	authenticateAuxiliary      helpers.Auxiliary
 	maintainersVerifyAuxiliary helpers.Auxiliary
 }
 
@@ -35,11 +35,11 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 
-	if auxiliaryResponse := transactionKeeper.maintainersVerifyAuxiliary.GetKeeper().Help(context, maintainersVerify.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.maintainersVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
@@ -96,9 +96,9 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.mintAuxiliary = value
 			case scrub.Auxiliary.GetName():
 				transactionKeeper.scrubAuxiliary = value
+			case authenticate.Auxiliary.GetName():
+				transactionKeeper.authenticateAuxiliary = value
 			case verify.Auxiliary.GetName():
-				transactionKeeper.verifyAuxiliary = value
-			case maintainersVerify.Auxiliary.GetName():
 				transactionKeeper.maintainersVerifyAuxiliary = value
 			}
 		default:

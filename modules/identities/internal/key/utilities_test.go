@@ -84,6 +84,7 @@ func Test_readIdentityID(t *testing.T) {
 
 		{"-ve for identity{} with empty string", args{""}, identityID{baseIDs.NewID(""), baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}},
 		{"+ve for identity{}", args{"|"}, identityID{baseIDs.NewID(""), baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}},
+		{"+ve for identity{}", args{""}, identityID{baseIDs.NewID(""), baseQualified.Immutables{PropertyList: emptyImmutableProperties}.GenerateHashID()}},
 		{"+ve for identity{}", args{"classificationID|" + baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID().String()}, identityID{classificationID, baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID()}},
 	}
 	for _, tt := range tests {

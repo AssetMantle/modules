@@ -7,9 +7,9 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/errors"
+	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	xprtErrors "github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -36,7 +36,7 @@ func (message message) Type() string  { return Transaction.GetName() }
 func (message message) ValidateBasic() error {
 	var _, Error = govalidator.ValidateStruct(message)
 	if Error != nil {
-		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
+		return sdkErrors.Wrap(errors.IncorrectMessage, Error.Error())
 	}
 
 	return nil

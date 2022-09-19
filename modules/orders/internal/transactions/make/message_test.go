@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/errors"
+	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 
-	xprtErrors "github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
@@ -53,7 +53,7 @@ func Test_Make_Message(t *testing.T) {
 	require.Equal(t, testMessage, messageFromInterface(testMessage))
 	require.Equal(t, message{}, messageFromInterface(nil))
 	require.Equal(t, message{}, messagePrototype())
-	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, FromID, classificationID, makerOwnableID, takerOwnableID, expiresIn, makerOwnableSplit, zeroTakerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).ValidateBasic())
-	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, FromID, classificationID, makerOwnableID, makerOwnableID, expiresIn, makerOwnableSplit, takerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).ValidateBasic())
+	require.Error(t, sdkErrors.Wrap(errors.IncorrectMessage, ""), newMessage(fromAccAddress, FromID, classificationID, makerOwnableID, takerOwnableID, expiresIn, makerOwnableSplit, zeroTakerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).ValidateBasic())
+	require.Error(t, sdkErrors.Wrap(errors.IncorrectMessage, ""), newMessage(fromAccAddress, FromID, classificationID, makerOwnableID, makerOwnableID, expiresIn, makerOwnableSplit, takerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).ValidateBasic())
 
 }

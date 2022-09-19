@@ -14,6 +14,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -57,7 +58,12 @@ func (identityID identityID) Equals(key helpers.Key) bool {
 }
 
 // TODO Pass Classification & then get Classification ID
+// TODO impl nil replacement throuhg prototype
 func NewIdentityID(classificationID ids.ID, immutableProperties lists.PropertyList) ids.ID {
+	if immutableProperties == nil {
+		immutableProperties = base.NewPropertyList()
+	}
+
 	return identityID{
 		ClassificationID: classificationID,
 		HashID:           baseQualified.Immutables{PropertyList: immutableProperties}.GenerateHashID(),

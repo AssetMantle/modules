@@ -6,16 +6,14 @@ package immediate
 import (
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/types/errors"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 
-	xprtErrors "github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
-
-	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
@@ -54,7 +52,7 @@ func Test_Make_Message(t *testing.T) {
 	require.Equal(t, testMessage, messageFromInterface(testMessage))
 	require.Equal(t, message{}, messageFromInterface(nil))
 	require.Equal(t, message{}, messagePrototype())
-	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, fromID, classificationID, makerOwnableID, takerOwnableID, expiresIn, makerOwnableSplit, zeroTakerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).ValidateBasic())
-	require.Error(t, errors.Wrap(xprtErrors.IncorrectMessage, ""), newMessage(fromAccAddress, fromID, classificationID, makerOwnableID, makerOwnableID, expiresIn, makerOwnableSplit, takerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).ValidateBasic())
+	require.Error(t, sdkErrors.Wrap(errors.IncorrectMessage, ""), newMessage(fromAccAddress, fromID, classificationID, makerOwnableID, takerOwnableID, expiresIn, makerOwnableSplit, zeroTakerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).ValidateBasic())
+	require.Error(t, sdkErrors.Wrap(errors.IncorrectMessage, ""), newMessage(fromAccAddress, fromID, classificationID, makerOwnableID, makerOwnableID, expiresIn, makerOwnableSplit, takerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).ValidateBasic())
 
 }
