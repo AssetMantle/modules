@@ -28,11 +28,11 @@ func (parameter parameter) String() string {
 	return string(bytes)
 }
 func (parameter parameter) Equal(compareParameter parameters.Parameter) bool {
-	if compareParameter == nil {
-		return false
+	if compareParameter != nil && parameter.ID.Compare(compareParameter.GetID()) == 0 && parameter.Data.GetType().Compare(compareParameter.GetData().GetType()) == 0 && parameter.Data.Compare(compareParameter.GetData()) == 0 {
+		return true
 	}
 
-	return parameter.Data.Compare(compareParameter.GetData()) == 0
+	return false
 }
 func (parameter parameter) Validate() error {
 	return parameter.validator(parameter)

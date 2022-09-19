@@ -36,6 +36,7 @@ func (height height) Compare(compareHeight types.Height) int {
 
 	return 0
 }
+
 func NewHeight(value int64) types.Height {
 	if value < 0 {
 		value = -1

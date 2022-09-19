@@ -23,7 +23,6 @@ var _ data.IDData = (*idData)(nil)
 func (idData idData) GetID() ids.DataID {
 	return baseIDs.NewDataID(idData)
 }
-
 func (idData idData) Compare(listable traits.Listable) int {
 	compareIDData, err := idDataFromInterface(listable)
 	if err != nil {

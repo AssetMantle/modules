@@ -7,10 +7,10 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/errors"
+	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
+	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
-	xprtErrors "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
@@ -40,15 +40,15 @@ func (message message) Route() string { return module.Name }
 func (message message) Type() string  { return Transaction.GetName() }
 func (message message) ValidateBasic() error {
 	if _, err := govalidator.ValidateStruct(message); err != nil {
-		return errors.Wrap(xprtErrors.IncorrectMessage, err.Error())
+		return sdkErrors.Wrap(errors.IncorrectMessage, err.Error())
 	}
 
 	if message.MakerOwnableID.Compare(message.TakerOwnableID) == 0 {
-		return errors.Wrap(xprtErrors.IncorrectMessage, "")
+		return sdkErrors.Wrap(errors.IncorrectMessage, "")
 	}
 
 	if message.TakerOwnableSplit.LTE(sdkTypes.ZeroDec()) || message.MakerOwnableSplit.LTE(sdkTypes.ZeroDec()) {
-		return errors.Wrap(xprtErrors.IncorrectMessage, "")
+		return sdkErrors.Wrap(errors.IncorrectMessage, "")
 	}
 
 	return nil

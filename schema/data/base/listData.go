@@ -62,7 +62,9 @@ func (listData listData) Bytes() []byte {
 	hashBytesList := make([][]byte, listData.Value.Size())
 
 	for i, datum := range listData.Value.GetList() {
-		hashBytesList[i] = datum.Bytes()
+		if datum != nil {
+			hashList[i] = datum.GenerateHash().String()
+		}
 	}
 	// TODO see if separator required
 	return bytes.Join(hashBytesList, nil)
@@ -72,6 +74,9 @@ func (listData listData) GetType() ids.StringID {
 }
 func (listData listData) ZeroValue() data.Data {
 	return NewListData(base.NewDataList([]data.Data{}...))
+}
+func (listData listData) Get() []data.Data {
+	return listData.Value.GetList()
 }
 
 // TODO test

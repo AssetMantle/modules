@@ -4,7 +4,7 @@
 package auxiliaries
 
 import (
-	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"reflect"
 	"testing"
@@ -16,11 +16,11 @@ func TestPrototype(t *testing.T) {
 		want string
 	}{
 
-		{"+ve", baseHelpers.NewAuxiliaries(verify.Auxiliary).Get("verify").GetName()},
+		{"+ve", baseHelpers.NewAuxiliaries(authenticate.Auxiliary).Get("authenticate").GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype().Get("verify").GetName(); !reflect.DeepEqual(got, tt.want) {
+			if got := Prototype().Get("authenticate").GetName(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Prototype() = %v, want %v", got, tt.want)
 			}
 		})
