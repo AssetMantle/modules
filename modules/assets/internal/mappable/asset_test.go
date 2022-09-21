@@ -26,7 +26,7 @@ func Test_Asset_Methods(t *testing.T) {
 	assetID := key.NewAssetID(classificationID, immutableProperties)
 	testAsset := NewAsset(assetID, immutableProperties, mutableProperties)
 
-	require.Equal(t, asset{Document: baseQualified.Document{ID: assetID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}, testAsset)
+	require.Equal(t, asset{Document: baseQualified.Document{ID: assetID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{PropertyList: mutableProperties}}}, testAsset)
 	require.Equal(t, assetID, testAsset.GetID())
 	require.Equal(t, classificationID, testAsset.GetClassificationID())
 	require.Equal(t, immutableProperties, testAsset.GetImmutablePropertyList())

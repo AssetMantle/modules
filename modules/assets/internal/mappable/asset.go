@@ -59,7 +59,7 @@ func NewAsset(id ids2.ID, immutableProperties lists.PropertyList, mutablePropert
 		Document: base.Document{
 			ID:         id,
 			Immutables: base.Immutables{PropertyList: immutableProperties},
-			Mutables:   base.Mutables{Properties: mutableProperties},
+			Mutables:   base.Mutables{PropertyList: mutableProperties},
 		},
 	}
 }
