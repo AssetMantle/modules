@@ -8,12 +8,10 @@ import (
 
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/modules/identities/internal/utilities"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/properties/constants"
 )
 
 type auxiliaryKeeper struct {
@@ -27,18 +25,15 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	identity := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(auxiliaryRequest.IdentityID)).Get(key.FromID(auxiliaryRequest.IdentityID)).(mappables.Identity)
-	if identity == nil {
+	mappable := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(auxiliaryRequest.IdentityID)).Get(key.FromID(auxiliaryRequest.IdentityID))
+	if mappable == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
+	identity := mappable.(mappables.Identity)
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(auxiliaryKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.GetAuthentication())))
-	if Error != nil {
-		return newAuxiliaryResponse(Error)
-	}
-
-	// TODO add test
-	if _, found := metaProperties.GetMetaProperty(constants.AuthenticationProperty).(lists.DataList).Search(base.NewAccAddressData(auxiliaryRequest.Address)); !found {
+	if found, err := utilities.IsProvisioned(context, auxiliaryKeeper.supplementAuxiliary, identity, auxiliaryRequest.Address); err != nil {
+		return newAuxiliaryResponse(err)
+	} else if !found {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
 
