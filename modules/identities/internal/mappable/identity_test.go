@@ -4,6 +4,11 @@
 package mappable
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -17,9 +22,6 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"reflect"
-	"testing"
 )
 
 func TestNewIdentity(t *testing.T) {
@@ -35,8 +37,8 @@ func TestNewIdentity(t *testing.T) {
 		want mappables.Identity
 	}{
 
-		{"+ve", args{testIdentityID, immutableProperties, mutableProperties}, identity{Document: baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}},
-		{"-ve", args{testIdentityID, immutableProperties, mutableProperties}, identity{Document: baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}},
+		{"+ve", args{testIdentityID, immutableProperties, mutableProperties}, identity{Document: baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{PropertyList: mutableProperties}}}},
+		{"-ve", args{testIdentityID, immutableProperties, mutableProperties}, identity{Document: baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{PropertyList: mutableProperties}}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -59,7 +61,7 @@ func Test_identity_GetAuthentication(t *testing.T) {
 	}{
 
 		{"+ve", fields{NewIdentity(testIdentityID, immutableProperties, mutableProperties)}, constants.Authentication},
-		//{"-ve", fields{NewIdentity(testIdentityID, immutableProperties, mutableProperties)}, constants.Expiry},
+		// {"-ve", fields{NewIdentity(testIdentityID, immutableProperties, mutableProperties)}, constants.Expiry},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -83,8 +85,8 @@ func Test_identity_GetExpiry(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		// TODO:
-		//{"+ve", fields{baseQualified.Document{ID: testIdentityID, ClassificationID: classificationID, Immutables: baseQualified.Immutables{PropertyList: defaultImmutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}, baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}.GetProperty(constants.ExpiryProperty)},
-		{"+ve for nil property", fields{baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}, constants.Expiry},
+		// {"+ve", fields{baseQualified.Document{ID: testIdentityID, ClassificationID: classificationID, Immutables: baseQualified.Immutables{PropertyList: defaultImmutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}, baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}.GetProperty(constants.ExpiryProperty)},
+		{"+ve for nil property", fields{baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{PropertyList: mutableProperties}}}, constants.Expiry},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -109,7 +111,7 @@ func Test_identity_GetKey(t *testing.T) {
 		want   helpers.Key
 	}{
 
-		{"+ve", fields{baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}, key.FromID(testIdentityID)},
+		{"+ve", fields{baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{PropertyList: mutableProperties}}}, key.FromID(testIdentityID)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -138,7 +140,7 @@ func Test_identity_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve register codec", fields{baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{Properties: mutableProperties}}}, args{codec.New()}},
+		{"+ve register codec", fields{baseQualified.Document{ID: testIdentityID, Immutables: baseQualified.Immutables{PropertyList: immutableProperties}, Mutables: baseQualified.Mutables{PropertyList: mutableProperties}}}, args{codec.New()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

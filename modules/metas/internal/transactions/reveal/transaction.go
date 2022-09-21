@@ -16,5 +16,5 @@ var Transaction = baseHelpers.NewTransaction(
 	requestPrototype,
 	messagePrototype,
 	keeperPrototype,
-	constants.MetaFact,
+	constants.Data,
 )
