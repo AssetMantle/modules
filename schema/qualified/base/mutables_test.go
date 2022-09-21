@@ -4,11 +4,12 @@
 package base
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/qualified"
-	"reflect"
-	"testing"
 
 	"github.com/stretchr/testify/require"
 
@@ -23,10 +24,10 @@ func Test_Mutables(t *testing.T) {
 	testProperty := baseProperties.NewProperty(baseIDs.NewID("ID"), baseData.NewStringData("Data"))
 	testProperties := baseLists.NewPropertyList(testProperty)
 	testMutables := Mutables{testProperties}
-	require.Equal(t, Mutables{Properties: testProperties}, testMutables)
+	require.Equal(t, Mutables{PropertyList: testProperties}, testMutables)
 	require.Equal(t, testProperties, testMutables.GetMutablePropertyList())
 	mutatedTestProperty := baseProperties.NewProperty(baseIDs.NewID("ID"), baseData.NewStringData("Data2"))
-	require.Equal(t, Mutables{Properties: baseLists.NewPropertyList(mutatedTestProperty)}, testMutables.Mutate(mutatedTestProperty))
+	require.Equal(t, Mutables{PropertyList: baseLists.NewPropertyList(mutatedTestProperty)}, testMutables.Mutate(mutatedTestProperty))
 
 }
 
@@ -49,7 +50,7 @@ func TestMutables_GetMutablePropertyList(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mutables := Mutables{
-				Properties: tt.fields.Properties,
+				PropertyList: tt.fields.Properties,
 			}
 			if got := mutables.GetMutablePropertyList(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetMutablePropertyList() = %v, want %v", got, tt.want)
@@ -82,7 +83,7 @@ func TestMutables_Mutate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mutables := Mutables{
-				Properties: tt.fields.Properties,
+				PropertyList: tt.fields.Properties,
 			}
 			if got := mutables.Mutate(tt.args.propertyList...); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Mutate() = %v, want %v", got, tt.want)

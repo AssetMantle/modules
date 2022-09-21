@@ -45,7 +45,7 @@ func TestDocument_GetClassificationID(t *testing.T) {
 		want   ids.ID
 	}{
 
-		{"Test1", fields{ID: creationID, ClassificationID: classificationID, Immutables: Immutables{PropertyList: immutableProperties}, Mutables: Mutables{Properties: base.NewPropertyList()}}, classificationID},
+		{"Test1", fields{ID: creationID, ClassificationID: classificationID, Immutables: Immutables{PropertyList: immutableProperties}, Mutables: Mutables{PropertyList: base.NewPropertyList()}}, classificationID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -83,7 +83,7 @@ func TestDocument_GetID(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		{"Test for GetID", fields{ID: creationID, ClassificationID: classificationID, Immutables: Immutables{PropertyList: immutableProperties}, Mutables: Mutables{Properties: base.NewPropertyList()}}, creationID},
+		{"Test for GetID", fields{ID: creationID, ClassificationID: classificationID, Immutables: Immutables{PropertyList: immutableProperties}, Mutables: Mutables{PropertyList: base.NewPropertyList()}}, creationID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
