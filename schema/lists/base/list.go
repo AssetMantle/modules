@@ -25,11 +25,11 @@ func (list list) Search(listable traits.Listable) (int, bool) {
 	index := sort.Search(
 		len(list),
 		func(i int) bool {
-			return list[i].Compare(listable) <= 0
+			return list[i].Compare(listable) >= 0
 		},
 	)
 
-	if list[index].Compare(listable) == 0 {
+	if index < len(list) && list[index].Compare(listable) == 0 {
 		return index, true
 	}
 
@@ -40,7 +40,7 @@ func (list list) Add(listables ...traits.Listable) lists.List {
 
 	for _, listable := range listables {
 		if index, found := updatedList.Search(listable); !found {
-			updatedList := append(updatedList, listable)
+			updatedList = append(updatedList, listable)
 			copy(updatedList[index+1:], updatedList[index:])
 			updatedList[index] = listable
 		}
@@ -73,6 +73,10 @@ func (list list) Mutate(listables ...traits.Listable) lists.List {
 }
 
 func NewList(listables ...traits.Listable) lists.List {
-	// TODO write test and check type
-	return list(listables)
+	list := list(listables)
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].Compare(list[j]) <= 0
+	})
+
+	return list
 }
