@@ -45,7 +45,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		}
 
 		if meta != nil {
-			metaPropertyList = append(metaPropertyList, baseProperties.NewMetaProperty(property.GetID(), meta.(mappables.Meta).GetData()))
+			metaPropertyList = append(metaPropertyList, baseProperties.NewMetaProperty(property.GetID().GetKey(), meta.(mappables.Meta).GetData()))
 		}
 	}
 

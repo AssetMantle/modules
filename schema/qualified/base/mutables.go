@@ -11,21 +11,21 @@ import (
 )
 
 type Mutables struct {
-	Properties lists.PropertyList `json:"properties"`
+	lists.PropertyList
 }
 
 var _ qualified.Mutables = (*Mutables)(nil)
 
 func (mutables Mutables) GetMutablePropertyList() lists.PropertyList {
-	if mutables.Properties == nil {
+	if mutables.PropertyList == nil {
 		return baseLists.NewPropertyList()
 	}
 
-	return mutables.Properties
+	return mutables.PropertyList
 }
 func (mutables Mutables) Mutate(propertyList ...properties.Property) qualified.Mutables {
 	for _, property := range propertyList {
-		mutables.Properties = mutables.Properties.Mutate(property)
+		mutables.PropertyList = mutables.PropertyList.Mutate(property)
 	}
 
 	return mutables

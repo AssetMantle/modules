@@ -71,8 +71,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	mutableMetaProperties := message.MutableMetaProperties.Add(base2.NewMetaProperty(constants.ExpiryProperty, baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
-	mutableMetaProperties = mutableMetaProperties.Add(base2.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(makerOwnableSplit)))
+	mutableMetaProperties := message.MutableMetaProperties.Add(base2.NewMetaProperty(constants.ExpiryProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
+	mutableMetaProperties = mutableMetaProperties.Add(base2.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(makerOwnableSplit)))
 
 	scrubbedMutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetList()...)))
 	if Error != nil {

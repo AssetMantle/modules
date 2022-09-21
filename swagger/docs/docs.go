@@ -2117,7 +2117,7 @@ var doc = `{
                 "baseReq": {
                     "$ref": "#/definitions/rest.BaseReq"
                 },
-                "metaFact": {
+                "data": {
                     "type": "string"
                 }
             }

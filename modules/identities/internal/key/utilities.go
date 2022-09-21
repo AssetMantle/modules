@@ -36,6 +36,10 @@ func identityIDFromInterface(i interface{}) identityID {
 	}
 }
 
+func ReadClassificationID(id ids.ID) ids.ID {
+	return identityIDFromInterface(id).ClassificationID
+}
+
 func FromID(id ids.ID) helpers.Key {
 	return identityIDFromInterface(id)
 }

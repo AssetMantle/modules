@@ -17,6 +17,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 )
 
 type transactionKeeper struct {
@@ -36,10 +37,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	identity := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.FromID)).Get(key.FromID(message.FromID)).(mappables.Identity)
-	if identity == nil {
+	mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.FromID)).Get(key.FromID(message.FromID))
+	if mappable == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
+	identity := mappable.(mappables.Identity)
 
 	if found, err := utilities.IsProvisioned(context, transactionKeeper.supplementAuxiliary, identity, message.From); err != nil {
 		return newTransactionResponse(err)
@@ -59,7 +61,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	mutableProperties := baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
+	mutableProperties := baseLists.NewPropertyList(append(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...), constants.Authentication)...)
 
 	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(immutableProperties, mutableProperties)))
 	if err != nil {

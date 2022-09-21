@@ -89,7 +89,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		orders.Remove(order)
 	default:
 		makerReceiveTakerOwnableSplit = message.TakerOwnableSplit
-		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(constants.MakerOwnableSplitProperty, baseData.NewDecData(updatedMakerOwnableSplit)))))
+		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(updatedMakerOwnableSplit)))))
 
 		if Error != nil {
 			return newTransactionResponse(Error)

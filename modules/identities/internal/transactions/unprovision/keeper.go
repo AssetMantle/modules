@@ -26,10 +26,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	identityID := message.IdentityID
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
 
-	identity := identities.Get(key.FromID(identityID)).(mappables.Identity)
-	if identity == nil {
+	mappable := identities.Get(key.FromID(identityID))
+	if mappable == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
+	identity := mappable.(mappables.Identity)
 
 	if found, err := utilities.IsProvisioned(context, transactionKeeper.supplementAuxiliary, identity, message.From); err != nil {
 		return newTransactionResponse(err)

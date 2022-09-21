@@ -427,7 +427,7 @@ definitions:
     properties:
       baseReq:
         $ref: '#/definitions/rest.BaseReq'
-      metaFact:
+      data:
         type: string
     type: object
   reveal.transactionResponse:

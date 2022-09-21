@@ -47,12 +47,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	burnHeightMetaFact := metaProperties.GetMetaProperty(constants.BurnProperty)
-	if burnHeightMetaFact == nil {
+	burnHeightMetaProperty := metaProperties.GetMetaProperty(constants.BurnProperty)
+	if burnHeightMetaProperty == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	burnHeight := burnHeightMetaFact.GetData().(data.HeightData).Get()
+	burnHeight := burnHeightMetaProperty.GetData().(data.HeightData).Get()
 
 	if burnHeight.Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
 		return newTransactionResponse(errors.NotAuthorized)

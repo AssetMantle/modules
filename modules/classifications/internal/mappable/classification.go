@@ -21,6 +21,9 @@ type classification struct {
 
 var _ mappables.Classification = (*classification)(nil)
 
+func (classification classification) GetClassificationID() ids.ID {
+	return classification.GetID()
+}
 func (classification classification) GetKey() helpers.Key {
 	return key.FromID(classification.ID)
 }
@@ -33,7 +36,7 @@ func NewClassification(id ids.ID, immutableProperties lists.PropertyList, mutabl
 		Document: baseQualified.Document{
 			ID:         id,
 			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
-			Mutables:   baseQualified.Mutables{Properties: mutableProperties},
+			Mutables:   baseQualified.Mutables{PropertyList: mutableProperties},
 		},
 	}
 }

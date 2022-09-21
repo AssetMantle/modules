@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema"
-	string2 "github.com/AssetMantle/modules/schema/data/utlities"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
@@ -29,7 +29,7 @@ func Test_Reveal_Request(t *testing.T) {
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.MetaFact})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.Data})
 	cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
@@ -37,7 +37,7 @@ func Test_Reveal_Request(t *testing.T) {
 	require.Nil(t, err)
 
 	data := "S|newData"
-	newData, err := string2.ReadData(data)
+	newData, err := utilities.ReadData(data)
 	require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
