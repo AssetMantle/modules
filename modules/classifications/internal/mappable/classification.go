@@ -36,7 +36,7 @@ func NewClassification(id ids.ID, immutableProperties lists.PropertyList, mutabl
 		Document: baseQualified.Document{
 			ID:         id,
 			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
-			Mutables:   baseQualified.Mutables{Properties: mutableProperties},
+			Mutables:   baseQualified.Mutables{PropertyList: mutableProperties},
 		},
 	}
 }

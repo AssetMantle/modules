@@ -52,7 +52,7 @@ func NewIdentity(id ids.ID, immutableProperties lists.PropertyList, mutablePrope
 		Document: baseQualified.Document{
 			ID:         id,
 			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
-			Mutables:   baseQualified.Mutables{Properties: mutableProperties},
+			Mutables:   baseQualified.Mutables{PropertyList: mutableProperties},
 		},
 	}
 }

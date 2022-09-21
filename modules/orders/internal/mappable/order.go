@@ -101,7 +101,7 @@ func NewOrder(orderID ids2.ID, immutableProperties lists.PropertyList, mutablePr
 		Document: baseQualified.Document{
 			ID:         orderID,
 			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
-			Mutables:   baseQualified.Mutables{Properties: mutableProperties},
+			Mutables:   baseQualified.Mutables{PropertyList: mutableProperties},
 		},
 	}
 }
