@@ -4,6 +4,11 @@
 package base
 
 import (
+	"reflect"
+	"testing"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -13,9 +18,6 @@ import (
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"reflect"
-	"testing"
 )
 
 func TestDocument_GetClassificationID(t *testing.T) {
@@ -29,11 +31,11 @@ func TestDocument_GetClassificationID(t *testing.T) {
 	creationID := baseIDs.NewID("100")
 	classificationID := baseIDs.NewID("c100")
 
-	takerIDImmutableProperty := base2.NewProperty(constants.TakerIDProperty, baseData.NewStringData("takerIDImmutableProperty"))
-	exchangeRateImmutableProperty := base2.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec()))
-	creationImmutableProperty := base2.NewMetaProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(100)))
-	expiryImmutableProperty := base2.NewProperty(constants.ExpiryProperty, baseData.NewStringData("expiryImmutableProperty"))
-	makerOwnableSplitImmutableProperty := base2.NewProperty(constants.MakerOwnableSplitProperty, baseData.NewStringData("makerOwnableSplitImmutableProperty"))
+	takerIDImmutableProperty := base2.NewProperty(constants.TakerIDProperty.GetKey(), baseData.NewStringData("takerIDImmutableProperty"))
+	exchangeRateImmutableProperty := base2.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(sdkTypes.OneDec()))
+	creationImmutableProperty := base2.NewMetaProperty(constants.CreationProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(100)))
+	expiryImmutableProperty := base2.NewProperty(constants.ExpiryProperty.GetKey(), baseData.NewStringData("expiryImmutableProperty"))
+	makerOwnableSplitImmutableProperty := base2.NewProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewStringData("makerOwnableSplitImmutableProperty"))
 
 	immutableProperties := base.NewPropertyList(takerIDImmutableProperty, exchangeRateImmutableProperty.RemoveData(), creationImmutableProperty.RemoveData(), expiryImmutableProperty, makerOwnableSplitImmutableProperty)
 
@@ -48,10 +50,9 @@ func TestDocument_GetClassificationID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			document := Document{
-				ID:               tt.fields.ID,
-				ClassificationID: tt.fields.ClassificationID,
-				Immutables:       tt.fields.Immutables,
-				Mutables:         tt.fields.Mutables,
+				ID:         tt.fields.ID,
+				Immutables: tt.fields.Immutables,
+				Mutables:   tt.fields.Mutables,
 			}
 			if got := document.GetClassificationID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetClassificationID() = %v, want %v", got, tt.want)
@@ -64,11 +65,11 @@ func TestDocument_GetID(t *testing.T) {
 	creationID := baseIDs.NewID("100")
 	classificationID := baseIDs.NewID("c100")
 
-	takerIDImmutableProperty := base2.NewProperty(constants.TakerIDProperty, baseData.NewStringData("takerIDImmutableProperty"))
-	exchangeRateImmutableProperty := base2.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec()))
-	creationImmutableProperty := base2.NewMetaProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(100)))
-	expiryImmutableProperty := base2.NewProperty(constants.ExpiryProperty, baseData.NewStringData("expiryImmutableProperty"))
-	makerOwnableSplitImmutableProperty := base2.NewProperty(constants.MakerOwnableSplitProperty, baseData.NewStringData("makerOwnableSplitImmutableProperty"))
+	takerIDImmutableProperty := base2.NewProperty(constants.TakerIDProperty.GetKey(), baseData.NewStringData("takerIDImmutableProperty"))
+	exchangeRateImmutableProperty := base2.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(sdkTypes.OneDec()))
+	creationImmutableProperty := base2.NewMetaProperty(constants.CreationProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(100)))
+	expiryImmutableProperty := base2.NewProperty(constants.ExpiryProperty.GetKey(), baseData.NewStringData("expiryImmutableProperty"))
+	makerOwnableSplitImmutableProperty := base2.NewProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewStringData("makerOwnableSplitImmutableProperty"))
 
 	immutableProperties := base.NewPropertyList(takerIDImmutableProperty, exchangeRateImmutableProperty.RemoveData(), creationImmutableProperty.RemoveData(), expiryImmutableProperty, makerOwnableSplitImmutableProperty)
 	type fields struct {
@@ -87,10 +88,9 @@ func TestDocument_GetID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			document := Document{
-				ID:               tt.fields.ID,
-				ClassificationID: tt.fields.ClassificationID,
-				Immutables:       tt.fields.Immutables,
-				Mutables:         tt.fields.Mutables,
+				ID:         tt.fields.ID,
+				Immutables: tt.fields.Immutables,
+				Mutables:   tt.fields.Mutables,
 			}
 			if got := document.GetID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetID() = %v, want %v", got, tt.want)
@@ -122,10 +122,9 @@ func TestDocument_GetProperty(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			document := Document{
-				ID:               tt.fields.ID,
-				ClassificationID: tt.fields.ClassificationID,
-				Immutables:       tt.fields.Immutables,
-				Mutables:         tt.fields.Mutables,
+				ID:         tt.fields.ID,
+				Immutables: tt.fields.Immutables,
+				Mutables:   tt.fields.Mutables,
 			}
 			if got := document.GetProperty(tt.args.propertyID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetProperty() = %v, want %v", got, tt.want)
@@ -156,10 +155,9 @@ func TestDocument_Mutate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			document := Document{
-				ID:               tt.fields.ID,
-				ClassificationID: tt.fields.ClassificationID,
-				Immutables:       tt.fields.Immutables,
-				Mutables:         tt.fields.Mutables,
+				ID:         tt.fields.ID,
+				Immutables: tt.fields.Immutables,
+				Mutables:   tt.fields.Mutables,
 			}
 			if got := document.Mutate(tt.args.propertyList...); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Mutate() = %v, want %v", got, tt.want)

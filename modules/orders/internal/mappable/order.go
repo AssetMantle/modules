@@ -29,6 +29,10 @@ type order struct {
 
 var _ mappables.Order = (*order)(nil)
 
+func (order order) GetClassificationID() ids2.ID {
+	return key.ReadClassificationID(order.ID)
+}
+
 // TODO use get property
 func (order order) GetRateID() ids2.ID {
 	return key.ReadRateID(order.ID)
@@ -48,18 +52,18 @@ func (order order) GetMakerID() ids2.ID {
 func (order order) GetCreation() properties2.MetaProperty {
 	heightValue, Error := strconv.ParseInt(key.ReadCreationID(order.ID).String(), 10, 64)
 	if Error != nil {
-		return base.NewMetaProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(0)))
+		return base.NewMetaProperty(constants.CreationProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(0)))
 	}
 
-	return base.NewMetaProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(heightValue)))
+	return base.NewMetaProperty(constants.CreationProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(heightValue)))
 }
 func (order order) GetExchangeRate() properties2.MetaProperty {
 	decValue, Error := sdkTypes.NewDecFromStr(key.ReadRateID(order.ID).String())
 	if Error != nil {
-		return base.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.ZeroDec()))
+		return base.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(sdkTypes.ZeroDec()))
 	}
 
-	return base.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(decValue))
+	return base.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(decValue))
 }
 func (order order) GetTakerID() properties2.Property {
 	if takerID := order.Immutables.GetImmutablePropertyList().GetProperty(constants.TakerIDProperty); takerID != nil {
@@ -95,10 +99,9 @@ func (order) RegisterCodec(codec *codec.Codec) {
 func NewOrder(orderID ids2.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Order {
 	return order{
 		Document: baseQualified.Document{
-			ID:               orderID,
-			ClassificationID: key.ReadClassificationID(orderID),
-			Immutables:       baseQualified.Immutables{PropertyList: immutableProperties},
-			Mutables:         baseQualified.Mutables{Properties: mutableProperties},
+			ID:         orderID,
+			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
+			Mutables:   baseQualified.Mutables{Properties: mutableProperties},
 		},
 	}
 }

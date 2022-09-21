@@ -21,6 +21,9 @@ type classification struct {
 
 var _ mappables.Classification = (*classification)(nil)
 
+func (classification classification) GetClassificationID() ids.ID {
+	return classification.GetID()
+}
 func (classification classification) GetKey() helpers.Key {
 	return key.FromID(classification.ID)
 }

@@ -23,6 +23,9 @@ type asset struct {
 
 var _ mappables.Asset = (*asset)(nil)
 
+func (asset asset) GetClassificationID() ids2.ID {
+	return key.ReadClassificationID(asset.ID)
+}
 func (asset asset) GetBurn() properties2.Property {
 	if burn := asset.GetProperty(constants.BurnProperty); burn != nil {
 		return burn
@@ -54,10 +57,9 @@ func (asset) RegisterCodec(codec *codec.Codec) {
 func NewAsset(id ids2.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Asset {
 	return asset{
 		Document: base.Document{
-			ID:               id,
-			ClassificationID: key.ReadClassificationID(id),
-			Immutables:       base.Immutables{PropertyList: immutableProperties},
-			Mutables:         base.Mutables{Properties: mutableProperties},
+			ID:         id,
+			Immutables: base.Immutables{PropertyList: immutableProperties},
+			Mutables:   base.Mutables{Properties: mutableProperties},
 		},
 	}
 }

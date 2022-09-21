@@ -23,6 +23,9 @@ type identity struct {
 
 var _ mappables.Identity = (*identity)(nil)
 
+func (identity identity) GetClassificationID() ids.ID {
+	return key.ReadClassificationID(identity.GetID())
+}
 func (identity identity) GetExpiry() propertiesSchema.Property {
 	if property := identity.Document.GetProperty(constants.ExpiryProperty); property != nil {
 		return property
@@ -47,8 +50,7 @@ func (identity) RegisterCodec(codec *codec.Codec) {
 func NewIdentity(id ids.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Identity {
 	return identity{
 		Document: baseQualified.Document{
-			ID: id,
-			// TODO Add classificationID
+			ID:         id,
 			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
 			Mutables:   baseQualified.Mutables{Properties: mutableProperties},
 		},

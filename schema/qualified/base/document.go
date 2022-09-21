@@ -10,8 +10,7 @@ import (
 )
 
 type Document struct {
-	ID               ids.ID `json:"id" valid:"required~required field id is missing"`
-	ClassificationID ids.ID `json:"classificationID" valid:"required~required field classificationID is missing"`
+	ID ids.ID `json:"id" valid:"required~required field id is missing"`
 	Immutables
 	Mutables //nolint:govet
 }
@@ -22,7 +21,7 @@ func (document Document) GetID() ids.ID {
 	return document.ID
 }
 func (document Document) GetClassificationID() ids.ID {
-	return document.ClassificationID
+	panic("no implemented ")
 }
 func (document Document) GetProperty(propertyID ids.PropertyID) properties.Property {
 	if property := document.Immutables.GetImmutablePropertyList().GetProperty(propertyID); property != nil {
