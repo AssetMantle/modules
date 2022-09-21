@@ -9,6 +9,7 @@ import (
 	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/utilities"
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
@@ -16,6 +17,7 @@ import (
 
 type transactionKeeper struct {
 	mapper              helpers.Mapper
+	scrubAuxiliary      helpers.Auxiliary
 	supplementAuxiliary helpers.Auxiliary
 }
 
@@ -26,10 +28,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	identityID := message.IdentityID
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
 
-	identity := identities.Get(key.FromID(identityID)).(mappables.Identity)
-	if identity == nil {
+	mappable := identities.Get(key.FromID(identityID))
+	if mappable == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
+	identity := mappable.(mappables.Identity)
 
 	if found, err := utilities.IsProvisioned(context, transactionKeeper.supplementAuxiliary, identity, message.From); err != nil {
 		return newTransactionResponse(err)
@@ -43,7 +46,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityAlreadyExists)
 	}
 
-	if identity, err := utilities.ProvisionAddress(context, transactionKeeper.supplementAuxiliary, identity, message.To); err != nil {
+	if identity, err := utilities.ProvisionAddress(context, transactionKeeper.supplementAuxiliary, transactionKeeper.scrubAuxiliary, identity, message.To); err != nil {
 		return newTransactionResponse(err)
 	} else {
 		identities.Mutate(identity)
@@ -59,6 +62,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
+			case scrub.Auxiliary.GetName():
+				transactionKeeper.scrubAuxiliary = value
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
 			}
