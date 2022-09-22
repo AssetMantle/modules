@@ -27,7 +27,7 @@ func (listData listData) Get() []data.Data {
 	return listData.Value.GetList()
 }
 func (listData listData) Search(data data.Data) (int, bool) {
-	return listData.Search(data)
+	return listData.Value.Search(data)
 }
 func (listData listData) Add(data ...data.Data) data.ListData {
 	listData.Value = listData.Value.Add(data...)
