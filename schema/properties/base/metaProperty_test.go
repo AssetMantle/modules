@@ -57,7 +57,6 @@ func TestNewMetaProperty(t *testing.T) {
 		want properties.MetaProperty
 	}{
 		// TODO: Add test cases.
-		{"+ve for nil", args{}, metaProperty{}}, // TODO: panics for nil
 		{"+ve", args{testKey, testData}, metaProperty{testPropertyID, testData}},
 	}
 	for _, tt := range tests {
@@ -170,8 +169,7 @@ func Test_metaProperty_GetDataID(t *testing.T) {
 		want   ids.DataID
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testPropertyID, testData}, testMetaProperty.GetData().GetID()}, // TODO: panics
-		{"+ve", fields{}, metaProperty{}.Data.GetID()},                                // TODO: panics for nil
+		{"+ve", fields{testPropertyID, testData}, testMetaProperty.GetData().GetID()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -198,8 +196,7 @@ func Test_metaProperty_GetHash(t *testing.T) {
 		want   ids.ID
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testPropertyID, testData}, testData.GenerateHash()}, // TODO: panics
-		{"+ve", fields{}, metaProperty{}.Data.GenerateHash()},              // TODO: panics for nil
+		{"+ve", fields{testPropertyID, testData}, testData.GenerateHash()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -254,8 +251,7 @@ func Test_metaProperty_GetKey(t *testing.T) {
 		want   ids.ID
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testPropertyID, testData}, testKey}, // TODO: panics
-		{"+ve", fields{}, metaProperty{}.ID.GetKey()},      // TODO: panics
+		{"+ve", fields{testPropertyID, testData}, testKey},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -282,8 +278,7 @@ func Test_metaProperty_GetType(t *testing.T) {
 		want   ids.ID
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testPropertyID, testData}, testData.GetType()}, // TODO: panics
-		{"+ve", fields{}, metaProperty{}.Data.GetType()},              // TODO: panics
+		{"+ve", fields{testPropertyID, testData}, testData.GetType()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
