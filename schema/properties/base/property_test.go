@@ -4,13 +4,14 @@
 package base
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/traits"
-	"reflect"
-	"testing"
 )
 
 func createTestInputForProperty() (ids.ID, ids.PropertyID, data.Data, properties.Property) {
@@ -51,16 +52,23 @@ func TestNewProperty(t *testing.T) {
 		data data.Data
 	}
 	tests := []struct {
-		name string
-		args args
-		want properties.Property
+		name      string
+		args      args
+		want      properties.Property
+		wantPanic bool
 	}{
 		// TODO: Add test cases.
-		{"+ve with nil", args{}, property{}}, //TODO: panics for nil
-		{"+ve", args{testKey, testData}, property{testPropertyID, testData.GetID()}},
+		{"nil", args{}, property{}, true},
+		{"+ve", args{testKey, testData}, property{testPropertyID, testData.GetID()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			defer func() {
+				r := recover()
+				if (r != nil) != tt.wantPanic {
+					t.Errorf("NewProperty() recover = %v, wantPanic = %v", r, tt.wantPanic)
+				}
+			}()
 			if got := NewProperty(tt.args.key, tt.args.data); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewProperty() = %v, want %v", got, tt.want)
 			}
@@ -137,10 +145,8 @@ func Test_property_Compare(t *testing.T) {
 		want   int
 	}{
 		// TODO: Add test cases.
-		{"+ve with nil", fields{}, args{property{}}, 0},
-		{"+ve", fields{testPropertyID, testData.GetID()}, args{property{}}, 1}, //TODO: panics for nil
-		{"+ve compare with property with no Data", fields{testPropertyID, testData.GetID()}, args{property{ID: base.NewPropertyID(base.NewID("ID"), base.NewID("S"))}}, 1},      //TODO: wong compare result
-		{"+ve", fields{testPropertyID, testData.GetID()}, args{property{ID: base.NewPropertyID(base.NewID("ID"), base.NewID("S")), DataID: NewStringData("Data2").GetID()}}, 1}, //TODO: wong compare result
+		{"+ve compare with property with no Data", fields{testPropertyID, testData.GetID()}, args{property{ID: base.NewPropertyID(base.NewID("ID"), base.NewID("S"))}}, 1},      // TODO: wong compare result
+		{"+ve", fields{testPropertyID, testData.GetID()}, args{property{ID: base.NewPropertyID(base.NewID("ID"), base.NewID("S")), DataID: NewStringData("Data2").GetID()}}, 1}, // TODO: wong compare result
 		{"+ve", fields{testPropertyID, testData.GetID()}, args{testProperty}, 0},
 	}
 	for _, tt := range tests {
@@ -196,7 +202,6 @@ func Test_property_GetHash(t *testing.T) {
 		want   ids.ID
 	}{
 		// TODO: Add test cases.
-		{"+ve with nil", fields{}, nil}, //TODO: panics for nil
 		{"+ve", fields{testPropertyID, testData.GetID()}, testData.GetID().GetHash()},
 	}
 	for _, tt := range tests {
@@ -252,7 +257,6 @@ func Test_property_GetKey(t *testing.T) {
 		want   ids.ID
 	}{
 		// TODO: Add test cases.
-		{"+ve with nil", fields{}, nil}, //TODO: panics for nil
 		{"+ve", fields{testPropertyID, testData.GetID()}, testKey},
 	}
 	for _, tt := range tests {
@@ -280,7 +284,6 @@ func Test_property_GetType(t *testing.T) {
 		want   ids.ID
 	}{
 		// TODO: Add test cases.
-		{"+ve with nil", fields{}, nil}, //TODO: panics for nil
 		{"+ve", fields{testPropertyID, testData.GetID()}, base.NewID("S")},
 	}
 	for _, tt := range tests {

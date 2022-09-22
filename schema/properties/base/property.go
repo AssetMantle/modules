@@ -62,6 +62,10 @@ func NewPropertyWithDataID(propertyID ids.PropertyID, dataID ids.DataID) propert
 	}
 }
 func NewProperty(key ids.ID, data data.Data) properties.Property {
+	if data == nil || key == nil {
+		panic(errors.MetaDataError)
+	}
+
 	return property{
 		ID:     baseIDs.NewPropertyID(key, data.GetType()),
 		DataID: data.GetID(),
