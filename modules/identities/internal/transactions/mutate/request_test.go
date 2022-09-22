@@ -6,12 +6,16 @@ package mutate
 import (
 	"encoding/json"
 	"github.com/AssetMantle/modules/schema"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -36,7 +40,7 @@ func createTestInput(t *testing.T) (*codec.Codec, helpers.CLICommand, context.CL
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 
-	mutableMetaProperties, err := utilities.ReadMetaProperties(mutableMetaPropertiesString)
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 	mutableProperties, err := utilities.ReadProperties(mutablePropertiesString)
 	require.Equal(t, nil, err)
@@ -220,7 +224,10 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, mutableMetaProperties, mutableProperties, _, fromAccAddress, testBaseReq := createTestInput(t)
-
+	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
+	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
+	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
+	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	type fields struct {
 		BaseReq               rest.BaseReq
 		FromID                string
@@ -235,7 +242,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, newMessage(fromAccAddress, baseIDs.NewStringID("fromID"), baseIDs.NewStringID("identityID"), mutableMetaProperties, mutableProperties), false},
+		{"+ve", fields{testBaseReq, testFromID.String(), testFromID.String(), mutableMetaPropertiesString, mutablePropertiesString}, newMessage(fromAccAddress, testFromID, testFromID, mutableMetaProperties, mutableProperties), false},
 		//{"-ve with nil", fields{}, message{}, true},
 	}
 	for _, tt := range tests {
