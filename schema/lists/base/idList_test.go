@@ -4,13 +4,13 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/data"
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
-	"reflect"
-	"testing"
 )
 
 func Test_idList_Add(t *testing.T) {
@@ -27,8 +27,8 @@ func Test_idList_Add(t *testing.T) {
 		want   lists.IDList
 	}{
 		// TODO: Add test cases.
-		{"+ve for nil", fields{NewList()}, args{[]ids.ID{base.NewID("ID")}}, idList{NewList(idsToListables([]ids.ID{base.NewID("ID")}...)...)}},                                                             //TODO: panic for nil
-		{"+ve", fields{NewList(idsToListables([]ids.ID{base.NewID("ID")}...)...)}, args{[]ids.ID{base.NewID("ID1")}}, idList{NewList(idsToListables([]ids.ID{base.NewID("ID"), base.NewID("ID1")}...)...)}}, //TODO: report
+		{"+ve for nil", fields{NewList()}, args{[]ids.ID{base.NewID("ID")}}, idList{NewList(idsToListables([]ids.ID{base.NewID("ID")}...)...)}},                                                             // TODO: panic for nil
+		{"+ve", fields{NewList(idsToListables([]ids.ID{base.NewID("ID")}...)...)}, args{[]ids.ID{base.NewID("ID1")}}, idList{NewList(idsToListables([]ids.ID{base.NewID("ID"), base.NewID("ID1")}...)...)}}, // TODO: report
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -52,8 +52,7 @@ func Test_idList_GetList(t *testing.T) {
 		want   []ids.ID
 	}{
 		// TODO: Add test cases.
-		{"+ve with nil", fields{NewList()}, []ids.ID{}}, //TODO: stackoverflow issue
-		{"+ve", fields{NewList(dataToListables([]data.Data{NewStringData("Data")}...)...)}, []ids.ID{base.NewID("Data")}},
+		{"+ve with nil", fields{NewList()}, []ids.ID{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -81,8 +80,8 @@ func Test_idList_Remove(t *testing.T) {
 		want   lists.IDList
 	}{
 		// TODO: Add test cases.
-		{"+ve with no removal", fields{NewList(dataToListables([]data.Data{NewStringData("Data")}...)...)}, args{}, idList{NewList(dataToListables([]data.Data{NewStringData("Data")}...)...)}},
-		{"+ve with no removal", fields{NewList(dataToListables([]data.Data{NewStringData("Data")}...)...)}, args{[]ids.ID{base.NewID("Data")}}, idList{}},
+		{"+ve with no removal", fields{NewList(idsToListables(base.NewID("ID1"), base.NewID("ID2"), base.NewID("ID3"))...)}, args{}, idList{NewList(idsToListables(base.NewID("ID1"), base.NewID("ID2"), base.NewID("ID3"))...)}},
+		{"+ve with removal", fields{NewList(idsToListables(base.NewID("ID1"), base.NewID("ID2"), base.NewID("ID3"))...)}, args{[]ids.ID{base.NewID("ID3")}}, idList{NewList(idsToListables(base.NewID("ID1"), base.NewID("ID2"))...)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -111,9 +110,9 @@ func Test_idList_Search(t *testing.T) {
 		wantFound bool
 	}{
 		// TODO: Add test cases.
-		{"+ve with nil", fields{NewList(idsToListables([]ids.ID{}...)...)}, args{base.NewID("ID")}, 0, false}, //TODO report issue
+		{"+ve with nil", fields{NewList(idsToListables([]ids.ID{}...)...)}, args{base.NewID("ID")}, 0, false}, // TODO report issue
 		{"+ve", fields{NewList(idsToListables([]ids.ID{base.NewID("ID")}...)...)}, args{base.NewID("ID")}, 0, true},
-		{"+ve with no entry", fields{NewList(idsToListables([]ids.ID{base.NewID("ID")}...)...)}, args{base.NewID("ID1")}, 0, false},
+		{"+ve with no entry", fields{NewList(idsToListables([]ids.ID{base.NewID("ID")}...)...)}, args{base.NewID("ID1")}, 1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
