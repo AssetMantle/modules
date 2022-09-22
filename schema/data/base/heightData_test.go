@@ -4,7 +4,6 @@
 package base
 
 import (
-	"fmt"
 	"github.com/AssetMantle/modules/schema/data"
 	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -13,7 +12,6 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 	types2 "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -40,41 +38,6 @@ func TestNewHeightData(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := NewHeightData(tt.args.value); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewHeightData() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestReadHeightData(t *testing.T) {
-	type args struct {
-		dataString string
-	}
-	tests := []struct {
-		name        string
-		args        args
-		want        data.Data
-		wantErr     bool
-		errorString string
-	}{
-
-		{"Test for empty String", args{""}, heightData{}.ZeroValue(), false, "nil"},
-		{"Test for some +ve integer", args{"100"}, heightData{baseTypes.NewHeight(100)}, false, ""},
-		{"Test for some -ve integer", args{"-100"}, heightData{baseTypes.NewHeight(-100)}, false, ""},
-		{"Test for some float", args{"100.5"}, nil, true, fmt.Sprintf("strconv.ParseInt: parsing \"%v\": invalid syntax", 100.5)},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := ReadHeightData(tt.args.dataString)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ReadHeightData() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if tt.wantErr {
-				require.Error(t, err)
-				assert.Equal(t, tt.errorString, err.Error())
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ReadHeightData() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -145,27 +108,27 @@ func Test_heightData_Compare(t *testing.T) {
 	}
 }
 
-func Test_heightData_GenerateHash(t *testing.T) {
+func Test_heightData_GenerateHashID(t *testing.T) {
 	type fields struct {
 		Value types.Height
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   ids.ID
+		want   ids.HashID
 	}{
 
-		{"Test for zero value", fields{baseTypes.NewHeight(0)}, baseIDs.NewStringID("")},
-		{"Test for -ve value", fields{baseTypes.NewHeight(-100)}, baseIDs.NewStringID(stringUtilities.Hash(strconv.FormatInt(heightData{baseTypes.NewHeight(-100)}.Value.Get(), 10)))},
-		{"Test for +ve value", fields{baseTypes.NewHeight(100)}, baseIDs.NewStringID(stringUtilities.Hash(strconv.FormatInt(heightData{baseTypes.NewHeight(100)}.Value.Get(), 10)))},
+		{"Test for zero value", fields{baseTypes.NewHeight(0)}, baseIDs.GenerateHashID()},
+		{"Test for -ve value", fields{baseTypes.NewHeight(-100)}, baseIDs.GenerateHashID(heightData{baseTypes.NewHeight(-100)}.Bytes())},
+		{"Test for +ve value", fields{baseTypes.NewHeight(100)}, baseIDs.GenerateHashID(heightData{baseTypes.NewHeight(100)}.Bytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			heightData := heightData{
 				Value: tt.fields.Value,
 			}
-			if got := heightData.GenerateHash(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GenerateHash() = %v, want %v", got, tt.want)
+			if got := heightData.GenerateHashID(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GenerateHashID() = %v, want %v", got, tt.want)
 			}
 		})
 	}

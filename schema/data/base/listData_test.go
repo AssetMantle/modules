@@ -6,70 +6,37 @@ package base
 import (
 	"fmt"
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestNewListData(t *testing.T) {
-	//metaProperty := baseProperties.NewMetaProperty(baseIDs.NewStringID("id"), NewStringData("Data"))
-	//metaPropertyList := base.NewMetaProperties([]properties.MetaProperty{metaProperty}...)
 	type args struct {
-		value []data.Data
+		value lists.DataList
 	}
 	tests := []struct {
 		name string
 		args args
 		want data.Data
 	}{
-
-		{"Test for some id", args{[]data.Data{NewStringData("Data")}}, listData{baseLists.NewDataList(NewStringData("Data"))}},
+		// TODO: Add test cases.
+		{"+ve for some id", args{baseLists.NewDataList(NewStringData("Data"))}, listData{baseLists.NewDataList(NewStringData("Data"))}},
+		{"+ve for empty String", args{baseLists.NewDataList(NewStringData(""))}, listData{baseLists.NewDataList(NewStringData(""))}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equalf(t, tt.want, NewListData(tt.args.value...), "NewListData(%v)", tt.args.value)
-		})
-	}
-}
-
-func TestReadListData(t *testing.T) {
-	accAddress, _ := sdkTypes.AccAddressFromBech32("cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")
-	//accAddress1, _ := sdkTypes.AccAddressFromBech32("mantle1x53dugvr4xvew442l9v2r5x7j8gfvged5xd3xr")
-	type args struct {
-		dataString string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    data.Data
-		wantErr assert.ErrorAssertionFunc
-	}{
-
-		{"Test for empty string", args{""}, listData{}.ZeroValue(), assert.NoError},
-		{"Test for wrong address string", args{"cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, NewListData(accAddressData{accAddress}), assert.NoError},
-		//{"Test for correct address string", args{"mantle1x53dugvr4xvew442l9v2r5x7j8gfvged5xd3xr"}, NewListData(accAddressData{accAddress1}), assert.Error},
-		{"Test for wrong address string format", args{"cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk51f"}, listData{}.ZeroValue(), assert.Error},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := ReadListData(tt.args.dataString)
-			if !tt.wantErr(t, err, fmt.Sprintf("ReadListData(%v)", tt.args.dataString)) {
-				return
-			}
-			assert.Equalf(t, tt.want, got, "ReadListData(%v)", tt.args.dataString)
+			assert.Equalf(t, tt.want, NewListData(tt.args.value), "NewListData(%v)", tt.args.value)
 		})
 	}
 }
 
 func Test_listDataFromInterface(t *testing.T) {
-	accAddress, _ := sdkTypes.AccAddressFromBech32("cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")
 	type args struct {
 		listable traits.Listable
 	}
@@ -79,8 +46,10 @@ func Test_listDataFromInterface(t *testing.T) {
 		want    listData
 		wantErr assert.ErrorAssertionFunc
 	}{
-
-		{"Test for some id", args{NewListData(accAddressData{accAddress})}, listData{baseLists.NewDataList(accAddressData{accAddress})}, assert.NoError},
+		// TODO: Add test cases.
+		{"+ve for some id", args{listData{baseLists.NewDataList(NewStringData("Data"))}}, listData{baseLists.NewDataList(NewStringData("Data"))}, assert.NoError},
+		{"+ve for empty String", args{listData{baseLists.NewDataList(NewStringData(""))}}, listData{baseLists.NewDataList(NewStringData(""))}, assert.NoError},
+		{"+ve for empty String", args{heightData{}}, listData{}, assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -93,9 +62,57 @@ func Test_listDataFromInterface(t *testing.T) {
 	}
 }
 
+func Test_listData_Add(t *testing.T) {
+	type fields struct {
+		Value lists.DataList
+	}
+	type args struct {
+		data []data.Data
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   data.ListData
+	}{
+		// TODO: Add test cases.
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"))}},
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{}, listData{baseLists.NewDataList(NewStringData(""))}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			listData := listData{
+				Value: tt.fields.Value,
+			}
+			assert.Equalf(t, tt.want, listData.Add(tt.args.data...), "Add(%v)", tt.args.data)
+		})
+	}
+}
+
+func Test_listData_Bytes(t *testing.T) {
+	type fields struct {
+		Value lists.DataList
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   []byte
+	}{
+		// TODO: Add test cases.
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, NewStringData("Data").Bytes()}, //for a single data no loop iteration is required so directly it's byte should match
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, []byte(nil)},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			listData := listData{
+				Value: tt.fields.Value,
+			}
+			assert.Equalf(t, tt.want, listData.Bytes(), "Bytes()")
+		})
+	}
+}
+
 func Test_listData_Compare(t *testing.T) {
-	accAddress, _ := sdkTypes.AccAddressFromBech32("cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")
-	accAddress1, _ := sdkTypes.AccAddressFromBech32("cosmos1s9wtd9qw4y6udlck73m7g8ut3nnnpjnnwl7vmw")
 	type fields struct {
 		Value lists.DataList
 	}
@@ -103,25 +120,17 @@ func Test_listData_Compare(t *testing.T) {
 		listable traits.Listable
 	}
 	tests := []struct {
-		name      string
-		fields    fields
-		args      args
-		want      int
-		wantPanic bool
+		name   string
+		fields fields
+		args   args
+		want   int
 	}{
-		// TODO: Update test cases after fixes.
-		{"Test for Equal case", fields{listData{baseLists.NewDataList(accAddressData{accAddress})}.Get()}, args{NewListData(accAddressData{accAddress})}, 0, false},
-		{"Test for Not Equal case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, args{NewListData(accAddressData{accAddress})}, 1, false},
-		{"Test for Not Equal case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, args{heightData{baseTypes.NewHeight(100)}}, 1, true},
+		// TODO: Add test cases.
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{listData{baseLists.NewDataList(NewStringData("Data"))}}, 0},
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{listData{baseLists.NewDataList(NewStringData("Data"))}}, -1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			defer func() {
-				r := recover()
-				if (r != nil) != tt.wantPanic {
-					t.Errorf("Compare() recover = %v, wantPanic = %v", r, tt.wantPanic)
-				}
-			}()
 			listData := listData{
 				Value: tt.fields.Value,
 			}
@@ -130,48 +139,41 @@ func Test_listData_Compare(t *testing.T) {
 	}
 }
 
-func Test_listData_GenerateHash(t *testing.T) {
-	accAddress, _ := sdkTypes.AccAddressFromBech32("cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")
-	accAddress1, _ := sdkTypes.AccAddressFromBech32("invalidAddress")
+func Test_listData_GenerateHashID(t *testing.T) {
 	type fields struct {
 		Value lists.DataList
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   ids.ID
+		want   ids.HashID
 	}{
-		//TODO: Update test cases after fixes.
-		{"empty string", fields{baseLists.NewDataList()}, baseIDs.NewStringID("")},
-		{"+ve case", fields{baseLists.NewDataList(accAddressData{accAddress})}, baseIDs.NewStringID("GVpq_tf8khitXl2MmMQfY-Ufu5DdATYNz3ZS9-wIl_U=")},
-		{"-ve case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, baseIDs.NewStringID("")},
-		{"-ve case with empty datalist", fields{baseLists.NewDataList([]data.Data{}...)}, baseIDs.NewStringID("")},
-		//{"-ve case with nil data", fields{nil}, baseIDs.NewStringID("")},
+		// TODO: Add test cases.
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, baseIDs.GenerateHashID(listData{baseLists.NewDataList(NewStringData("Data"))}.Bytes())},
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, baseIDs.GenerateHashID(listData{baseLists.NewDataList(NewStringData(""))}.Bytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			listData := listData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, listData.GenerateHash(), "GenerateHash()")
+			assert.Equalf(t, tt.want, listData.GenerateHashID(), "GenerateHashID()")
 		})
 	}
 }
 
 func Test_listData_Get(t *testing.T) {
-	accAddress, _ := sdkTypes.AccAddressFromBech32("cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")
 	type fields struct {
 		Value lists.DataList
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   lists.DataList
+		want   []data.Data
 	}{
-
-		{"zero value", fields{baseLists.NewDataList()}, baseLists.NewDataList()},
-		{"random data", fields{baseLists.NewDataList(accAddressData{accAddress})}, listData{baseLists.NewDataList(accAddressData{accAddress})}.Value},
-		{"nil value", fields{baseLists.NewDataList(nil)}, baseLists.NewDataList(nil)},
+		// TODO: Add test cases.
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, listData{baseLists.NewDataList(NewStringData("Data"))}.Value.GetList()},
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, listData{baseLists.NewDataList(NewStringData(""))}.Value.GetList()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -184,7 +186,6 @@ func Test_listData_Get(t *testing.T) {
 }
 
 func Test_listData_GetID(t *testing.T) {
-	accAddress, _ := sdkTypes.AccAddressFromBech32("cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")
 	type fields struct {
 		Value lists.DataList
 	}
@@ -194,8 +195,8 @@ func Test_listData_GetID(t *testing.T) {
 		want   ids.DataID
 	}{
 		// TODO: Add test cases.
-		//{"nil value", fields{nil}, baseIDs.NewDataID(listData{nil})},
-		{"some +ve case", fields{baseLists.NewDataList(accAddressData{accAddress})}, baseIDs.NewDataID(listData{baseLists.NewDataList(accAddressData{accAddress})})},
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, baseIDs.NewDataID(listData{baseLists.NewDataList(NewStringData("Data"))})},
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, baseIDs.NewDataID(listData{baseLists.NewDataList(NewStringData(""))})},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -208,17 +209,17 @@ func Test_listData_GetID(t *testing.T) {
 }
 
 func Test_listData_GetType(t *testing.T) {
-	accAddress, _ := sdkTypes.AccAddressFromBech32("cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")
 	type fields struct {
 		Value lists.DataList
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   ids.ID
+		want   ids.StringID
 	}{
-
-		{"some +ve case", fields{baseLists.NewDataList(accAddressData{accAddress})}, idsConstants.ListDataID},
+		// TODO: Add test cases.
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, dataConstants.ListDataID},
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, dataConstants.ListDataID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -230,8 +231,66 @@ func Test_listData_GetType(t *testing.T) {
 	}
 }
 
+func Test_listData_Remove(t *testing.T) {
+	type fields struct {
+		Value lists.DataList
+	}
+	type args struct {
+		data []data.Data
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   data.ListData
+	}{
+		// TODO: Add test cases.
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{[]data.Data{}}, listData{baseLists.NewDataList(NewStringData(""))}},
+		{"+ve for empty String & removing it", fields{baseLists.NewDataList(NewStringData(""))}, args{[]data.Data{NewStringData("")}}, listData{baseLists.NewDataList()}},
+		{"+ve ", fields{baseLists.NewDataList(NewStringData("data"))}, args{[]data.Data{NewStringData("data")}}, listData{baseLists.NewDataList()}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			listData := listData{
+				Value: tt.fields.Value,
+			}
+			assert.Equalf(t, tt.want, listData.Remove(tt.args.data...), "Remove(%v)", tt.args.data)
+		})
+	}
+}
+
+func Test_listData_Search(t *testing.T) {
+	type fields struct {
+		Value lists.DataList
+	}
+	type args struct {
+		data data.Data
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   int
+		want1  bool
+	}{
+		// TODO: Add test cases.
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{NewStringData("Data")}, 0, true},
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{NewStringData("")}, 0, true},
+		{"-ve", fields{baseLists.NewDataList(NewStringData("Data"))}, args{NewStringData("")}, 1, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			listData := listData{
+				Value: tt.fields.Value,
+			}
+			got, got1 := listData.Search(tt.args.data)
+			assert.Equalf(t, tt.want, got, "Search(%v)", tt.args.data)
+			assert.Equalf(t, tt.want1, got1, "Search(%v)", tt.args.data)
+		})
+	}
+}
+
 func Test_listData_String(t *testing.T) {
-	accAddress, _ := sdkTypes.AccAddressFromBech32("cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")
 	type fields struct {
 		Value lists.DataList
 	}
@@ -240,8 +299,9 @@ func Test_listData_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-
-		{"some +ve case", fields{baseLists.NewDataList(accAddressData{accAddress})}, "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"},
+		// TODO: Add test cases.
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, "Data"},
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -254,7 +314,6 @@ func Test_listData_String(t *testing.T) {
 }
 
 func Test_listData_ZeroValue(t *testing.T) {
-	accAddress, _ := sdkTypes.AccAddressFromBech32("cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")
 	type fields struct {
 		Value lists.DataList
 	}
@@ -263,9 +322,9 @@ func Test_listData_ZeroValue(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-
-		{"empty data", fields{baseLists.NewDataList([]data.Data{}...)}, NewListData([]data.Data{}...)},
-		{"some +ve case", fields{baseLists.NewDataList(accAddressData{accAddress})}, NewListData([]data.Data{}...)},
+		// TODO: Add test cases.
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, NewListData(baseLists.NewDataList([]data.Data{}...))},
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, NewListData(baseLists.NewDataList([]data.Data{}...))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
