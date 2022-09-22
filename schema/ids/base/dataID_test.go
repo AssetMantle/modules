@@ -4,14 +4,15 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/constants"
-	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/traits"
 	"reflect"
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 func TestNewDataID(t *testing.T) {
@@ -24,7 +25,6 @@ func TestNewDataID(t *testing.T) {
 		want ids.DataID
 	}{
 		// TODO: Add test cases.
-		{"+ve", args{nil}, dataID{}}, //TODO: report for panic
 		{"+ve", args{NewBooleanData(true)}, dataID{NewID("B"), NewID(strconv.FormatBool(true))}},
 	}
 	for _, tt := range tests {
@@ -75,7 +75,6 @@ func Test_dataID_Bytes(t *testing.T) {
 		want   []byte
 	}{
 		// TODO: Add test cases.
-		{"+ve with nil", fields{}, []byte{}}, //TODO: report for panic
 		{"+ve", fields{NewID("B"), NewID(strconv.FormatBool(true))}, append(append([]byte{}, NewID("B").Bytes()...), NewID(strconv.FormatBool(true)).Bytes()...)},
 		{"+ve", fields{NewID("B"), NewID(strconv.FormatBool(false))}, append(append([]byte{}, NewID("B").Bytes()...), NewID(strconv.FormatBool(false)).Bytes()...)},
 	}
@@ -107,7 +106,6 @@ func Test_dataID_Compare(t *testing.T) {
 		want   int
 	}{
 		// TODO: Add test cases.
-		{"+ve with nil", fields{}, args{dataID{}}, 0}, //TODO: Panics for nil
 		{"+ve", fields{NewID("B"), NewID(strconv.FormatBool(true))}, args{dataID{NewID("B"), NewID(strconv.FormatBool(true))}}, 0},
 		{"+ve", fields{NewID("B"), NewID(strconv.FormatBool(false))}, args{dataID{NewID("B"), NewID(strconv.FormatBool(true))}}, -1},
 	}

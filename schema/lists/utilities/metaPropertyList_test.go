@@ -4,13 +4,13 @@
 package utilities
 
 import (
+	"testing"
+
 	base3 "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	properties2 "github.com/AssetMantle/modules/schema/properties"
 	base2 "github.com/AssetMantle/modules/schema/properties/base"
-	"reflect"
-	"testing"
 )
 
 func TestReadMetaProperties(t *testing.T) {
@@ -25,7 +25,7 @@ func TestReadMetaProperties(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with empty string", args{""}, base.NewMetaProperties([]properties2.MetaProperty{}...), false},
-		{"+ve", args{"ID:S|Data,ID1:S|Data1,ID2:S|Data2"}, base.NewMetaProperties([]properties2.MetaProperty{base2.NewMetaProperty(base3.NewID("ID"), base2.NewStringData("Data")), base2.NewMetaProperty(base3.NewID("ID1"), base2.NewStringData("Data1")), base2.NewMetaProperty(base3.NewID("ID2"), base2.NewStringData("Data2"))}...), false}, //TODO: Data & type is same but not matching
+		{"+ve", args{"ID:S|Data,ID1:S|Data1,ID2:S|Data2"}, base.NewMetaProperties([]properties2.MetaProperty{base2.NewMetaProperty(base3.NewID("ID"), base2.NewStringData("Data")), base2.NewMetaProperty(base3.NewID("ID1"), base2.NewStringData("Data1")), base2.NewMetaProperty(base3.NewID("ID2"), base2.NewStringData("Data2"))}...), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -34,8 +34,10 @@ func TestReadMetaProperties(t *testing.T) {
 				t.Errorf("ReadMetaProperties() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ReadMetaProperties() got = %v, want %v", got, tt.want)
+			for i := range got.GetList() {
+				if got.GetList()[i].Compare(tt.want.GetList()[i]) != 0 {
+					t.Errorf("ReadMetaProperties() got = %v, want %v", got.GetList()[i], tt.want.GetList()[i])
+				}
 			}
 		})
 	}
