@@ -4,12 +4,17 @@
 package deputize
 
 import (
+	"fmt"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -18,18 +23,26 @@ import (
 	"testing"
 )
 
-func Test_messageFromInterface(t *testing.T) {
-	testFromID := baseIDs.NewStringID("fromID")
-	testToID := baseIDs.NewStringID("toID")
-	testClassificationID := baseIDs.NewStringID("classificationID")
-
+func createTestInput(t *testing.T) (ids.IdentityID, ids.IdentityID, ids.ClassificationID, sdkTypes.AccAddress, lists.PropertyList) {
+	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
+	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
+	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
+	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
+	testToID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperty:S|maintainedProperty"
 	maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
-	require.Equal(t, nil, err)
+	return testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties
+}
+
+func Test_messageFromInterface(t *testing.T) {
+	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
+	fmt.Println(testToID.String())
+	fmt.Println(testFromID.String())
+	fmt.Println(testClassificationID.String())
 	type args struct {
 		msg sdkTypes.Msg
 	}
@@ -68,22 +81,12 @@ func Test_messagePrototype(t *testing.T) {
 }
 
 func Test_message_GetSignBytes(t *testing.T) {
-	testFromID := baseIDs.NewStringID("fromID")
-	testToID := baseIDs.NewStringID("toID")
-	testClassificationID := baseIDs.NewStringID("classificationID")
-
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-
-	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
-	require.Equal(t, nil, err)
+	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
 	type fields struct {
 		From                 sdkTypes.AccAddress
-		FromID               ids.ID
-		ToID                 ids.ID
-		ClassificationID     ids.ID
+		FromID               ids.IdentityID
+		ToID                 ids.IdentityID
+		ClassificationID     ids.ClassificationID
 		MaintainedProperties lists.PropertyList
 		AddMaintainer        bool
 		RemoveMaintainer     bool
@@ -117,22 +120,12 @@ func Test_message_GetSignBytes(t *testing.T) {
 }
 
 func Test_message_GetSigners(t *testing.T) {
-	testFromID := baseIDs.NewStringID("fromID")
-	testToID := baseIDs.NewStringID("toID")
-	testClassificationID := baseIDs.NewStringID("classificationID")
-
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-
-	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
-	require.Equal(t, nil, err)
+	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
 	type fields struct {
 		From                 sdkTypes.AccAddress
-		FromID               ids.ID
-		ToID                 ids.ID
-		ClassificationID     ids.ID
+		FromID               ids.IdentityID
+		ToID                 ids.IdentityID
+		ClassificationID     ids.ClassificationID
 		MaintainedProperties lists.PropertyList
 		AddMaintainer        bool
 		RemoveMaintainer     bool
@@ -166,22 +159,12 @@ func Test_message_GetSigners(t *testing.T) {
 }
 
 func Test_message_RegisterCodec(t *testing.T) {
-	testFromID := baseIDs.NewStringID("fromID")
-	testToID := baseIDs.NewStringID("toID")
-	testClassificationID := baseIDs.NewStringID("classificationID")
-
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-
-	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
-	require.Equal(t, nil, err)
+	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
 	type fields struct {
 		From                 sdkTypes.AccAddress
-		FromID               ids.ID
-		ToID                 ids.ID
-		ClassificationID     ids.ID
+		FromID               ids.IdentityID
+		ToID                 ids.IdentityID
+		ClassificationID     ids.ClassificationID
 		MaintainedProperties lists.PropertyList
 		AddMaintainer        bool
 		RemoveMaintainer     bool
@@ -216,22 +199,12 @@ func Test_message_RegisterCodec(t *testing.T) {
 }
 
 func Test_message_Route(t *testing.T) {
-	testFromID := baseIDs.NewStringID("fromID")
-	testToID := baseIDs.NewStringID("toID")
-	testClassificationID := baseIDs.NewStringID("classificationID")
-
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-
-	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
-	require.Equal(t, nil, err)
+	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
 	type fields struct {
 		From                 sdkTypes.AccAddress
-		FromID               ids.ID
-		ToID                 ids.ID
-		ClassificationID     ids.ID
+		FromID               ids.IdentityID
+		ToID                 ids.IdentityID
+		ClassificationID     ids.ClassificationID
 		MaintainedProperties lists.PropertyList
 		AddMaintainer        bool
 		RemoveMaintainer     bool
@@ -265,22 +238,12 @@ func Test_message_Route(t *testing.T) {
 }
 
 func Test_message_Type(t *testing.T) {
-	testFromID := baseIDs.NewStringID("fromID")
-	testToID := baseIDs.NewStringID("toID")
-	testClassificationID := baseIDs.NewStringID("classificationID")
-
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-
-	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
-	require.Equal(t, nil, err)
+	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
 	type fields struct {
 		From                 sdkTypes.AccAddress
-		FromID               ids.ID
-		ToID                 ids.ID
-		ClassificationID     ids.ID
+		FromID               ids.IdentityID
+		ToID                 ids.IdentityID
+		ClassificationID     ids.ClassificationID
 		MaintainedProperties lists.PropertyList
 		AddMaintainer        bool
 		RemoveMaintainer     bool
@@ -314,22 +277,12 @@ func Test_message_Type(t *testing.T) {
 }
 
 func Test_message_ValidateBasic(t *testing.T) {
-	testFromID := baseIDs.NewStringID("fromID")
-	testToID := baseIDs.NewStringID("toID")
-	testClassificationID := baseIDs.NewStringID("classificationID")
-
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-
-	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
-	require.Equal(t, nil, err)
+	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
 	type fields struct {
 		From                 sdkTypes.AccAddress
-		FromID               ids.ID
-		ToID                 ids.ID
-		ClassificationID     ids.ID
+		FromID               ids.IdentityID
+		ToID                 ids.IdentityID
+		ClassificationID     ids.ClassificationID
 		MaintainedProperties lists.PropertyList
 		AddMaintainer        bool
 		RemoveMaintainer     bool
@@ -363,22 +316,12 @@ func Test_message_ValidateBasic(t *testing.T) {
 }
 
 func Test_newMessage(t *testing.T) {
-	testFromID := baseIDs.NewStringID("fromID")
-	testToID := baseIDs.NewStringID("toID")
-	testClassificationID := baseIDs.NewStringID("classificationID")
-
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-
-	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
-	require.Equal(t, nil, err)
+	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
 	type args struct {
 		from                 sdkTypes.AccAddress
-		fromID               ids.ID
-		toID                 ids.ID
-		classificationID     ids.ID
+		fromID               ids.IdentityID
+		toID                 ids.IdentityID
+		classificationID     ids.ClassificationID
 		maintainedProperties lists.PropertyList
 		addMaintainer        bool
 		removeMaintainer     bool
