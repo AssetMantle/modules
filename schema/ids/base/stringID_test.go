@@ -12,53 +12,53 @@ import (
 
 func TestNewStringID(t *testing.T) {
 	type args struct {
-		idString string
+		stringIDString string
 	}
 	tests := []struct {
 		name string
 		args args
-		want ids.ID
+		want ids.StringID
 	}{
 
 		{"+ve", args{"ID"}, NewStringID("ID")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewStringID(tt.args.idString); !reflect.DeepEqual(got, tt.want) {
+			if got := NewStringID(tt.args.stringIDString); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewStringID() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_idFromInterface(t *testing.T) {
+func Test_stringIDFromInterface(t *testing.T) {
 	type args struct {
 		i interface{}
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    id
+		want    stringID
 		wantErr bool
 	}{
 
-		{"+ve", args{NewStringID("ID")}, id{IDString: "ID"}, false},
+		{"+ve", args{NewStringID("ID")}, stringID{IDString: "ID"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := idFromInterface(tt.args.i)
+			got, err := stringIDFromInterface(tt.args.i)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("idFromInterface() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("stringID}FromInterface() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("idFromInterface() got = %v, want %v", got, tt.want)
+				t.Errorf("stringID}FromInterface() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_id_Bytes(t *testing.T) {
+func Test_stringID_Bytes(t *testing.T) {
 	type fields struct {
 		IDString string
 	}
@@ -72,17 +72,17 @@ func Test_id_Bytes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			id := id{
+			stringID := stringID{
 				IDString: tt.fields.IDString,
 			}
-			if got := id.Bytes(); !reflect.DeepEqual(got, tt.want) {
+			if got := stringID.Bytes(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Bytes() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_id_Compare(t *testing.T) {
+func Test_stringID_Compare(t *testing.T) {
 	type fields struct {
 		IDString string
 	}
@@ -102,17 +102,17 @@ func Test_id_Compare(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			id := id{
+			stringID := stringID{
 				IDString: tt.fields.IDString,
 			}
-			if got := id.Compare(tt.args.listable); got != tt.want {
+			if got := stringID.Compare(tt.args.listable); got != tt.want {
 				t.Errorf("Compare() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_id_String(t *testing.T) {
+func Test_stringID_String(t *testing.T) {
 	type fields struct {
 		IDString string
 	}
@@ -126,10 +126,10 @@ func Test_id_String(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			id := id{
+			stringID := stringID{
 				IDString: tt.fields.IDString,
 			}
-			if got := id.String(); got != tt.want {
+			if got := stringID.String(); got != tt.want {
 				t.Errorf("String() = %v, want %v", got, tt.want)
 			}
 		})

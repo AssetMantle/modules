@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func createTestInputForPropertyID() (ids.ID, ids.ID, ids.PropertyID) {
+func createTestInputForPropertyID() (ids.StringID, ids.StringID, ids.PropertyID) {
 	testKey := NewStringID("ID")
 	testType := NewStringID("ID2")
 	testPropertyID := NewPropertyID(testKey, testType)
@@ -20,8 +20,8 @@ func createTestInputForPropertyID() (ids.ID, ids.ID, ids.PropertyID) {
 
 func TestNewPropertyID(t *testing.T) {
 	type args struct {
-		key  ids.ID
-		Type ids.ID
+		key  ids.StringID
+		Type ids.StringID
 	}
 	tests := []struct {
 		name string
@@ -56,11 +56,7 @@ func Test_propertyIDFromInterface(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := propertyIDFromInterface(tt.args.listable)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("propertyIDFromInterface() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got := propertyIDFromInterface(tt.args.listable)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("propertyIDFromInterface() got = %v, want %v", got, tt.want)
 			}
@@ -71,8 +67,8 @@ func Test_propertyIDFromInterface(t *testing.T) {
 func Test_propertyID_Bytes(t *testing.T) {
 	testKey, testType, _ := createTestInputForPropertyID()
 	type fields struct {
-		Key  ids.ID
-		Type ids.ID
+		Key  ids.StringID
+		Type ids.StringID
 	}
 	tests := []struct {
 		name   string
@@ -98,8 +94,8 @@ func Test_propertyID_Bytes(t *testing.T) {
 func Test_propertyID_Compare(t *testing.T) {
 	testKey, testType, testPropertyID := createTestInputForPropertyID()
 	type fields struct {
-		Key  ids.ID
-		Type ids.ID
+		Key  ids.StringID
+		Type ids.StringID
 	}
 	type args struct {
 		listable traits.Listable
@@ -130,13 +126,13 @@ func Test_propertyID_Compare(t *testing.T) {
 func Test_propertyID_GetKey(t *testing.T) {
 	testKey, testType, _ := createTestInputForPropertyID()
 	type fields struct {
-		Key  ids.ID
-		Type ids.ID
+		Key  ids.StringID
+		Type ids.StringID
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   ids.ID
+		want   ids.StringID
 	}{
 
 		{"+ve", fields{testKey, testType}, testKey},
@@ -157,13 +153,13 @@ func Test_propertyID_GetKey(t *testing.T) {
 func Test_propertyID_GetType(t *testing.T) {
 	testKey, testType, _ := createTestInputForPropertyID()
 	type fields struct {
-		Key  ids.ID
-		Type ids.ID
+		Key  ids.StringID
+		Type ids.StringID
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   ids.ID
+		want   ids.StringID
 	}{
 
 		{"+ve", fields{testKey, testType}, testType},
@@ -184,8 +180,8 @@ func Test_propertyID_GetType(t *testing.T) {
 func Test_propertyID_String(t *testing.T) {
 	testKey, testType, _ := createTestInputForPropertyID()
 	type fields struct {
-		Key  ids.ID
-		Type ids.ID
+		Key  ids.StringID
+		Type ids.StringID
 	}
 	tests := []struct {
 		name   string
@@ -193,7 +189,7 @@ func Test_propertyID_String(t *testing.T) {
 		want   string
 	}{
 
-		{"+ve", fields{testKey, testType}, strings.Join([]string{testKey.String(), testType.String()}, "|")},
+		{"+ve", fields{testKey, testType}, strings.Join([]string{testKey.String(), testType.String()}, ".")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
