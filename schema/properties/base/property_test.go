@@ -145,8 +145,8 @@ func Test_property_Compare(t *testing.T) {
 		want   int
 	}{
 		// TODO: Add test cases.
-		{"+ve compare with property with no Data", fields{testPropertyID, testData.GetID()}, args{property{ID: base.NewPropertyID(base.NewID("ID"), base.NewID("S"))}}, 1},      // TODO: wong compare result
-		{"+ve", fields{testPropertyID, testData.GetID()}, args{property{ID: base.NewPropertyID(base.NewID("ID"), base.NewID("S")), DataID: NewStringData("Data2").GetID()}}, 1}, // TODO: wong compare result
+		{"+ve compare with property with no Data", fields{testPropertyID, testData.GetID()}, args{property{ID: base.NewPropertyID(base.NewID("ID"), base.NewID("S"))}}, 0},
+		{"+ve", fields{testPropertyID, testData.GetID()}, args{property{ID: base.NewPropertyID(base.NewID("ID"), base.NewID("S")), DataID: NewStringData("Data2").GetID()}}, 0},
 		{"+ve", fields{testPropertyID, testData.GetID()}, args{testProperty}, 0},
 	}
 	for _, tt := range tests {
