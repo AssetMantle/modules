@@ -310,8 +310,7 @@ func Test_metaProperty_RemoveData(t *testing.T) {
 		want   properties.Property
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testPropertyID, testData}, metaProperty{ID: testPropertyID}}, // TODO: RemoveData Logic is not okay
-		{"+ve with nil", fields{}, metaProperty{}},
+		{"+ve", fields{testPropertyID, testData}, property{ID: testPropertyID, DataID: testData.GetID()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
