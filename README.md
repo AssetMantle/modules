@@ -30,5 +30,5 @@ If you want to contribute to AssetMantle Modules, please read the instructions i
         <h3 style="margin:-5px 10px 5px;">Contributors</h3>
         <hr align="left" width="20%">
     </div>
-    <img src="https://contrib.rocks/image?repo=assetmantle/modules&columns=80" style="width:1500px;"/>
+    <img src="https://contrib.rocks/image?repo=assetmantle/modules&columns=80" style="width:1000;"/>
 </div>
