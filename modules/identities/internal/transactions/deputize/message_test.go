@@ -4,7 +4,6 @@
 package deputize
 
 import (
-	"fmt"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -40,9 +39,6 @@ func createTestInput(t *testing.T) (ids.IdentityID, ids.IdentityID, ids.Classifi
 
 func Test_messageFromInterface(t *testing.T) {
 	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
-	fmt.Println(testToID.String())
-	fmt.Println(testFromID.String())
-	fmt.Println(testClassificationID.String())
 	type args struct {
 		msg sdkTypes.Msg
 	}
