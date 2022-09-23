@@ -4,11 +4,13 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/traits"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists"
+	base2 "github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 func TestNewList(t *testing.T) {
@@ -87,7 +89,7 @@ func Test_list_Mutate(t *testing.T) {
 		want lists.List
 	}{
 		// TODO: Add test cases.
-		{"+ve", []traits.Listable{base.NewPropertyID(base.NewID("ID"), base.NewID("Data1"))}, args{[]traits.Listable{base.NewPropertyID(base.NewID("ID"), base.NewID("Data2"))}}, list{base.NewPropertyID(base.NewID("ID"), base.NewID("Data2"))}}, // TODO: fix mutate issue
+		{"+ve", []traits.Listable{base2.NewMetaProperty(base.NewID("ID1"), NewStringData("Data1"))}, args{[]traits.Listable{base2.NewMetaProperty(base.NewID("ID1"), NewStringData("Data2"))}}, list{base2.NewMetaProperty(base.NewID("ID1"), NewStringData("Data2"))}},
 		{"+ve with nil", list{}, args{}, list{}},
 	}
 	for _, tt := range tests {
@@ -134,7 +136,7 @@ func Test_list_Search(t *testing.T) {
 		want1 bool
 	}{
 		// TODO: Add test cases.
-		{"+ve for nil", []traits.Listable{}, args{}, 0, false}, //TODO: panics if list is nil
+		{"+ve for nil", []traits.Listable{}, args{}, 0, false}, // TODO: panics if list is nil
 		{"+ve", []traits.Listable{base.NewID("ID")}, args{base.NewID("ID")}, 0, true},
 	}
 	for _, tt := range tests {
