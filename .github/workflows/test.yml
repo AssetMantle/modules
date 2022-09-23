@@ -4,9 +4,17 @@ on:
   push:
     branches:
       - master
+    paths:
+      - "**.go"
+      - "**.mod"
+      - "**.sum"
   pull_request:
     branches:
       - master
+    paths:
+      - "**.go"
+      - "**.mod"
+      - "**.sum"
 
 jobs:
   test-coverage-upload:
