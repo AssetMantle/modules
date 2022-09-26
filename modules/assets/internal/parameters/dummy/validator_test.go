@@ -4,7 +4,10 @@
 package dummy
 
 import (
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 	"testing"
 )
 
@@ -20,7 +23,7 @@ func Test_validator(t *testing.T) {
 
 		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, constants.IncorrectFormat},
 		{"+ve", args{Parameter}, nil},
-		//{"-ve InvalidParameter", args{baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)}, constants.InvalidParameter},
+		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)}, constants.InvalidParameter},
 		{"-ve nil", args{}, constants.IncorrectFormat},
 	}
 	for _, tt := range tests {
