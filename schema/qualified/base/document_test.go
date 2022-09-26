@@ -9,46 +9,70 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
-	base2 "github.com/AssetMantle/modules/schema/properties/base"
-	"github.com/AssetMantle/modules/schema/properties/constants"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
 )
 
-func TestDocument_GetClassificationID(t *testing.T) {
-	type fields struct {
-		ID               ids.ID
-		ClassificationID ids.ID
-		Immutables       Immutables
-		Mutables         Mutables
+func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, qualified.Document) {
+	testImmutables := NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	testMutables := NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	classificationID := baseIDs.NewClassificationID(testImmutables, testMutables)
+	testDocument := NewDocument(classificationID, testImmutables, testMutables)
+	return classificationID, testImmutables, testMutables, testDocument
+}
+
+func TestNewDocument(t *testing.T) {
+	classificationID, testImmutables, testMutables, _ := createTestInput()
+	type args struct {
+		classificationID ids.ClassificationID
+		immutables       qualified.Immutables
+		mutables         qualified.Mutables
 	}
-
-	creationID := baseIDs.NewStringID("100")
-	classificationID := baseIDs.NewStringID("c100")
-
-	takerIDImmutableProperty := base2.NewProperty(constants.TakerIDProperty, baseData.NewStringData("takerIDImmutableProperty"))
-	exchangeRateImmutableProperty := base2.NewMetaProperty(constants.ExchangeRateProperty, baseData.NewDecData(sdkTypes.OneDec()))
-	creationImmutableProperty := base2.NewMetaProperty(constants.CreationProperty, baseData.NewHeightData(baseTypes.NewHeight(100)))
-	expiryImmutableProperty := base2.NewProperty(constants.ExpiryProperty, baseData.NewStringData("expiryImmutableProperty"))
-	makerOwnableSplitImmutableProperty := base2.NewProperty(constants.MakerOwnableSplitProperty, baseData.NewStringData("makerOwnableSplitImmutableProperty"))
-
-	immutableProperties := base.NewPropertyList(takerIDImmutableProperty, exchangeRateImmutableProperty.RemoveData(), creationImmutableProperty.RemoveData(), expiryImmutableProperty, makerOwnableSplitImmutableProperty)
-
 	tests := []struct {
-		name   string
-		fields fields
-		want   ids.ID
+		name string
+		args args
+		want qualified.Document
 	}{
-
-		{"Test1", fields{ID: creationID, ClassificationID: classificationID, Immutables: Immutables{PropertyList: immutableProperties}, Mutables: Mutables{Properties: base.NewPropertyList()}}, classificationID},
+		// TODO: Add test cases.
+		{"+ve", args{classificationID: classificationID, immutables: testImmutables, mutables: testMutables}, document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}},
+		{"+ve with nil classificationID", args{classificationID: nil, immutables: testImmutables, mutables: testMutables}, document{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}},
+		{"+ve with nil immutables", args{classificationID: classificationID, immutables: nil, mutables: testMutables}, document{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}},
+		{"+ve with nil mutables", args{classificationID: classificationID, immutables: testImmutables, mutables: nil}, document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: nil}},
+		{"+ve with all nil", args{}, document{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			document := Document{
-				ID:               tt.fields.ID,
+			if got := NewDocument(tt.args.classificationID, tt.args.immutables, tt.args.mutables); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewDocument() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_document_GetClassificationID(t *testing.T) {
+	classificationID, testImmutables, testMutables, _ := createTestInput()
+	type fields struct {
+		ClassificationID ids.ClassificationID
+		Immutables       qualified.Immutables
+		Mutables         qualified.Mutables
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   ids.ClassificationID
+	}{
+		// TODO: Add test cases.
+		{"+ve", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, classificationID},
+		{"+ve with nil classificationID", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, nil},
+		{"+ve with nil immutables", fields{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}, classificationID},
+		{"+ve with nil mutables", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: nil}, classificationID},
+		{"+ve with all nil", fields{}, nil},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			document := document{
 				ClassificationID: tt.fields.ClassificationID,
 				Immutables:       tt.fields.Immutables,
 				Mutables:         tt.fields.Mutables,
@@ -60,43 +84,81 @@ func TestDocument_GetClassificationID(t *testing.T) {
 	}
 }
 
-func TestDocument_GetID(t *testing.T) {
-
+func Test_document_GetImmutables(t *testing.T) {
+	classificationID, testImmutables, testMutables, _ := createTestInput()
 	type fields struct {
-		ID               ids.ID
-		ClassificationID ids.ID
-		Immutables       Immutables
-		Mutables         Mutables
+		ClassificationID ids.ClassificationID
+		Immutables       qualified.Immutables
+		Mutables         qualified.Mutables
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   ids.ID
+		want   qualified.Immutables
 	}{
-		{"Test for GetID", fields{id, classificationId, testImmutables, testMutables}, id},
+		// TODO: Add test cases.
+		{"+ve", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, testImmutables},
+		{"+ve with nil classificationID", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, testImmutables},
+		{"+ve with nil immutables", fields{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}, nil},
+		{"+ve with nil mutables", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: nil}, testImmutables},
+		{"+ve with all nil", fields{}, nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			document := Document{
-				ID:               tt.fields.ID,
+			document := document{
 				ClassificationID: tt.fields.ClassificationID,
 				Immutables:       tt.fields.Immutables,
 				Mutables:         tt.fields.Mutables,
 			}
-			if got := document.GetID(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetID() = %v, want %v", got, tt.want)
+			if got := document.GetImmutables(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetImmutables() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestDocument_GetProperty(t *testing.T) {
+func Test_document_GetMutables(t *testing.T) {
+	classificationID, testImmutables, testMutables, _ := createTestInput()
+	type fields struct {
+		ClassificationID ids.ClassificationID
+		Immutables       qualified.Immutables
+		Mutables         qualified.Mutables
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   qualified.Mutables
+	}{
+		// TODO: Add test cases.
+		{"+ve", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, testMutables},
+		{"+ve with nil classificationID", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, testMutables},
+		{"+ve with nil immutables", fields{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}, testMutables},
+		{"+ve with nil mutables", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: nil}, nil},
+		{"+ve with all nil", fields{}, nil},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			document := document{
+				ClassificationID: tt.fields.ClassificationID,
+				Immutables:       tt.fields.Immutables,
+				Mutables:         tt.fields.Mutables,
+			}
+			if got := document.GetMutables(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetMutables() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_document_GetProperty(t *testing.T) {
+	classificationID, testImmutables, testMutables, _ := createTestInput()
+	testImmutablePropertyID := baseIDs.NewPropertyID(baseIDs.NewStringID("ID1"), baseIDs.NewStringID("ImmutableData"))
+	testMutablePropertyID := baseIDs.NewPropertyID(baseIDs.NewStringID("ID2"), baseIDs.NewStringID("MutableData"))
 
 	type fields struct {
-		ID               ids.ID
-		ClassificationID ids.ID
-		Immutables       Immutables
-		Mutables         Mutables
+		ClassificationID ids.ClassificationID
+		Immutables       qualified.Immutables
+		Mutables         qualified.Mutables
 	}
 	type args struct {
 		propertyID ids.PropertyID
@@ -107,13 +169,20 @@ func TestDocument_GetProperty(t *testing.T) {
 		args   args
 		want   properties.Property
 	}{
-		// TODO: Add test cases.
-
+		// TODO: Update unit test after issue # fix
+		{"+ve for Immutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, args{testImmutablePropertyID}, testImmutables.GetImmutablePropertyList().GetProperty(testImmutablePropertyID)},
+		{"+ve with nil classificationID for Immutable Property", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, args{testImmutablePropertyID}, testImmutables.GetImmutablePropertyList().GetProperty(testImmutablePropertyID)},
+		{"+ve with nil immutables for Immutable Property", fields{ClassificationID: classificationID, Immutables: immutables{}, Mutables: testMutables}, args{testImmutablePropertyID}, nil}, //TODO: panics for empty immutable struct
+		{"+ve with nil mutables for Immutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: mutables{}}, args{testImmutablePropertyID}, testImmutables.GetImmutablePropertyList().GetProperty(testImmutablePropertyID)},
+		{"+ve with all nil", fields{nil, immutables{}, mutables{}}, args{testImmutablePropertyID}, nil}, //TODO: panics for empty immutable struct
+		{"+ve for Mutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID)},
+		{"+ve with nil classificationID for Mutable Property", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID)},
+		{"+ve with nil immutables for Mutable Property", fields{ClassificationID: classificationID, Immutables: immutables{}, Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID)}, //TODO: panics for empty immutable struct
+		{"+ve with nil mutables for Mutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: mutables{}}, args{testMutablePropertyID}, nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			document := Document{
-				ID:               tt.fields.ID,
+			document := document{
 				ClassificationID: tt.fields.ClassificationID,
 				Immutables:       tt.fields.Immutables,
 				Mutables:         tt.fields.Mutables,
@@ -125,13 +194,13 @@ func TestDocument_GetProperty(t *testing.T) {
 	}
 }
 
-func TestDocument_Mutate(t *testing.T) {
-
+func Test_document_Mutate(t *testing.T) {
+	classificationID, testImmutables, testMutables, _ := createTestInput()
+	testMutateProperty := baseProperties.NewMesaProperty(baseIDs.NewStringID("ID3"), baseData.NewStringData("MutableData1"))
 	type fields struct {
-		ID               ids.ID
-		ClassificationID ids.ID
-		Immutables       Immutables
-		Mutables         Mutables
+		ClassificationID ids.ClassificationID
+		Immutables       qualified.Immutables
+		Mutables         qualified.Mutables
 	}
 	type args struct {
 		propertyList []properties.Property
@@ -142,12 +211,16 @@ func TestDocument_Mutate(t *testing.T) {
 		args   args
 		want   qualified.Document
 	}{
-		// TODO: Add test cases.
+		//TODO: Update after #59 fix https://github.com/AssetMantle/modules/issues/59
+		{"+ve with no mutation", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, args{}, document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}},
+		{"+ve with nil classificationID", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, args{[]properties.Property{testMutateProperty}}, document{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}.Mutate(testMutateProperty)},
+		{"+ve with nil immutables", fields{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}, args{[]properties.Property{testMutateProperty}}, document{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}.Mutate(testMutateProperty)},
+		{"+ve with nil mutables", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: mutables{}}, args{[]properties.Property{testMutateProperty}}, document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: mutables{}}.Mutate(testMutateProperty)}, // TODO: fix this
+		{"+ve with all nil", fields{nil, immutables{}, mutables{}}, args{[]properties.Property{testMutateProperty}}, document{nil, immutables{}, mutables{}}.Mutate(testMutateProperty)},                                                                                                                    // TODO: fix this
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			document := Document{
-				ID:               tt.fields.ID,
+			document := document{
 				ClassificationID: tt.fields.ClassificationID,
 				Immutables:       tt.fields.Immutables,
 				Mutables:         tt.fields.Mutables,
