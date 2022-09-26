@@ -10,6 +10,9 @@ on:
       - "**.mod"
       - "**.sum"
 
+permissions:
+  contents: read
+
 jobs:
   golangci:
     name: golangci-lint
