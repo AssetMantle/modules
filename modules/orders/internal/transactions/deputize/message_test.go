@@ -5,11 +5,15 @@ package deputize
 
 import (
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -18,10 +22,16 @@ import (
 	"testing"
 )
 
-func CreateTestInputForMessage(t *testing.T) (ids.ID, ids.ID, ids.ID, sdkTypes.AccAddress, lists.PropertyList, sdkTypes.Msg) {
-	testFromID := baseIDs.NewStringID("fromID")
-	testToID := baseIDs.NewStringID("toID")
-	testClassificationID := baseIDs.NewStringID("classificationID")
+func CreateTestInputForMessage(t *testing.T) (ids.IdentityID, ids.IdentityID, ids.ClassificationID, sdkTypes.AccAddress, lists.PropertyList, sdkTypes.Msg) {
+	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
+	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
+	mutables2 := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID"), baseData.NewStringData("Data3"))))
+
+	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
+	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
+
+	testClassificationID2 := baseIDs.NewClassificationID(immutables, mutables2)
+	testToID := baseIDs.NewIdentityID(testClassificationID2, immutables)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -80,9 +90,9 @@ func Test_message_GetSignBytes(t *testing.T) {
 
 	type fields struct {
 		From                 sdkTypes.AccAddress
-		FromID               ids.ID
-		ToID                 ids.ID
-		ClassificationID     ids.ID
+		FromID               ids.IdentityID
+		ToID                 ids.IdentityID
+		ClassificationID     ids.ClassificationID
 		MaintainedProperties lists.PropertyList
 		AddMaintainer        bool
 		RemoveMaintainer     bool
@@ -120,9 +130,9 @@ func Test_message_GetSigners(t *testing.T) {
 
 	type fields struct {
 		From                 sdkTypes.AccAddress
-		FromID               ids.ID
-		ToID                 ids.ID
-		ClassificationID     ids.ID
+		FromID               ids.IdentityID
+		ToID                 ids.IdentityID
+		ClassificationID     ids.ClassificationID
 		MaintainedProperties lists.PropertyList
 		AddMaintainer        bool
 		RemoveMaintainer     bool
@@ -160,9 +170,9 @@ func Test_message_RegisterCodec(t *testing.T) {
 
 	type fields struct {
 		From                 sdkTypes.AccAddress
-		FromID               ids.ID
-		ToID                 ids.ID
-		ClassificationID     ids.ID
+		FromID               ids.IdentityID
+		ToID                 ids.IdentityID
+		ClassificationID     ids.ClassificationID
 		MaintainedProperties lists.PropertyList
 		AddMaintainer        bool
 		RemoveMaintainer     bool
@@ -201,9 +211,9 @@ func Test_message_Route(t *testing.T) {
 
 	type fields struct {
 		From                 sdkTypes.AccAddress
-		FromID               ids.ID
-		ToID                 ids.ID
-		ClassificationID     ids.ID
+		FromID               ids.IdentityID
+		ToID                 ids.IdentityID
+		ClassificationID     ids.ClassificationID
 		MaintainedProperties lists.PropertyList
 		AddMaintainer        bool
 		RemoveMaintainer     bool
@@ -241,9 +251,9 @@ func Test_message_Type(t *testing.T) {
 
 	type fields struct {
 		From                 sdkTypes.AccAddress
-		FromID               ids.ID
-		ToID                 ids.ID
-		ClassificationID     ids.ID
+		FromID               ids.IdentityID
+		ToID                 ids.IdentityID
+		ClassificationID     ids.ClassificationID
 		MaintainedProperties lists.PropertyList
 		AddMaintainer        bool
 		RemoveMaintainer     bool
@@ -281,9 +291,9 @@ func Test_message_ValidateBasic(t *testing.T) {
 
 	type fields struct {
 		From                 sdkTypes.AccAddress
-		FromID               ids.ID
-		ToID                 ids.ID
-		ClassificationID     ids.ID
+		FromID               ids.IdentityID
+		ToID                 ids.IdentityID
+		ClassificationID     ids.ClassificationID
 		MaintainedProperties lists.PropertyList
 		AddMaintainer        bool
 		RemoveMaintainer     bool
@@ -322,9 +332,9 @@ func Test_newMessage(t *testing.T) {
 
 	type args struct {
 		from                 sdkTypes.AccAddress
-		fromID               ids.ID
-		toID                 ids.ID
-		classificationID     ids.ID
+		FromID               ids.IdentityID
+		ToID                 ids.IdentityID
+		ClassificationID     ids.ClassificationID
 		maintainedProperties lists.PropertyList
 		addMaintainer        bool
 		removeMaintainer     bool
@@ -340,7 +350,7 @@ func Test_newMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newMessage(tt.args.from, tt.args.fromID, tt.args.toID, tt.args.classificationID, tt.args.maintainedProperties, tt.args.addMaintainer, tt.args.removeMaintainer, tt.args.mutateMaintainer); !reflect.DeepEqual(got, tt.want) {
+			if got := newMessage(tt.args.from, tt.args.FromID, tt.args.ToID, tt.args.ClassificationID, tt.args.maintainedProperties, tt.args.addMaintainer, tt.args.removeMaintainer, tt.args.mutateMaintainer); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newMessage() = %v, want %v", got, tt.want)
 			}
 		})
