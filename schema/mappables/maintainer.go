@@ -6,7 +6,6 @@ package mappables
 import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/qualified"
 )
 
@@ -14,7 +13,6 @@ import (
 type Maintainer interface {
 	GetIdentityID() ids.ID
 	GetMaintainedClassificationID() ids.ID
-	GetMaintainedPropertySet() properties.Property
 
 	CanMintAsset() bool
 	CanBurnAsset() bool
@@ -22,7 +20,7 @@ type Maintainer interface {
 	CanAddMaintainer() bool
 	CanRemoveMaintainer() bool
 	CanMutateMaintainer() bool
-	MaintainsProperty(ids.ID) bool
+	MaintainsProperty(ids.PropertyID) bool
 
 	qualified.Document
 	helpers.Mappable
