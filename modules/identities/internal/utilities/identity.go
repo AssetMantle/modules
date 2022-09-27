@@ -27,6 +27,7 @@ func IsProvisioned(context sdkTypes.Context, supplementAuxiliary helpers.Auxilia
 }
 
 func ProvisionAddress(context sdkTypes.Context, supplementAuxiliary helpers.Auxiliary, scrubAuxiliary helpers.Auxiliary, identity mappables.Identity, accAddress sdkTypes.AccAddress) (mappables.Identity, error) {
+
 	if metaPropertyList, err := supplement.GetMetaPropertiesFromResponse(supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.GetAuthentication()))); err != nil {
 		return identity, err
 	} else if authenticationProperty := metaPropertyList.GetMetaProperty(constants.AuthenticationProperty); authenticationProperty == nil {

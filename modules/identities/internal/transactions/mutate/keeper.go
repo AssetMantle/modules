@@ -36,10 +36,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.IdentityID))
 
-	identity := identities.Get(key.FromID(message.IdentityID)).(mappables.Identity)
-	if identity == nil {
+	Mappable := identities.Get(key.FromID(message.IdentityID))
+	if Mappable == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
+	identity := Mappable.(mappables.Identity)
 
 	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetList()...)))
 	if err != nil {
@@ -48,15 +49,15 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	mutableProperties := baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(identity.GetClassificationID(), baseLists.NewPropertyList(), mutableProperties)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
-
 	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(identity.GetClassificationID(), message.FromID, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	identities.Mutate(mappable.NewIdentity(identity.GetID(), identity.GetImmutablePropertyList(), identity.GetImmutablePropertyList().Mutate(mutableProperties.GetList()...)))
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(identity.GetClassificationID(), nil, identity.GetMutablePropertyList().Mutate(mutableProperties.GetList()...))); !auxiliaryResponse.IsSuccessful() {
+		return newTransactionResponse(auxiliaryResponse.GetError())
+	}
+
+	identities.Mutate(mappable.NewIdentity(identity.GetID(), identity.GetImmutablePropertyList(), identity.GetMutablePropertyList().Mutate(mutableProperties.GetList()...)))
 
 	return newTransactionResponse(nil)
 }

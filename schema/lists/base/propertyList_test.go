@@ -75,7 +75,7 @@ func Test_propertyList_Add(t *testing.T) {
 		// TODO: Add test cases.
 		{"+ve with no property addition", fields{NewList()}, args{nil}, propertyList{List: NewList()}},
 		{"+ve nil with property addition", fields{NewList(propertiesToListables([]properties.Property{}...)...)}, args{[]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}},
-		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, args{[]properties.Property{base.NewProperty(baseIDs.NewID("b"), NewStringData("factB"))}}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA")), base.NewProperty(baseIDs.NewID("b"), NewStringData("factB"))}...)...)}}, // TODO: Not being added
+		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, args{[]properties.Property{base.NewProperty(baseIDs.NewID("b"), NewStringData("factB"))}}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA")), base.NewProperty(baseIDs.NewID("b"), NewStringData("factB"))}...)...)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -99,7 +99,7 @@ func Test_propertyList_GetList(t *testing.T) {
 		want   []properties.Property
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{NewList()}, []properties.Property{}}, // TODO: Type & value same but not matching
+		{"+ve", fields{NewList()}, []properties.Property{}},
 		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, []properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}},
 	}
 	for _, tt := range tests {

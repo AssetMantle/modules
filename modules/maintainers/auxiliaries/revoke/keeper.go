@@ -20,19 +20,25 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	maintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
-	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(maintainerID))
+	fromMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
+	maintainers := auxiliaryKeeper.mapper.NewCollection(context)
 
-	maintainer := maintainers.Get(key.FromID(maintainerID))
-	if maintainer == nil {
+	fromMaintainer := maintainers.Fetch(key.FromID(fromMaintainerID)).Get(key.FromID(fromMaintainerID))
+	if fromMaintainer == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
 
-	if !maintainer.(mappables.Maintainer).CanRemoveMaintainer() {
+	if !fromMaintainer.(mappables.Maintainer).CanRemoveMaintainer() {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
 
-	maintainers.Remove(maintainer)
+	toMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.ToID)
+	toMaintainer := maintainers.Fetch(key.FromID(toMaintainerID)).Get(key.FromID(toMaintainerID))
+	if toMaintainer == nil {
+		return newAuxiliaryResponse(errors.EntityNotFound)
+	}
+
+	maintainers.Remove(toMaintainer)
 
 	return newAuxiliaryResponse(nil)
 }
