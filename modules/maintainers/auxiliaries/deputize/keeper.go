@@ -28,13 +28,11 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	fromMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
 
-	var fromMaintainer mappables.Maintainer
-
-	if maintainer := maintainers.Fetch(key.FromID(fromMaintainerID)).Get(key.FromID(fromMaintainerID)); maintainer != nil {
-		fromMaintainer = maintainer.(mappables.Maintainer)
-	} else {
+	Mappable := maintainers.Fetch(key.FromID(fromMaintainerID)).Get(key.FromID(fromMaintainerID))
+	if Mappable == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
+	fromMaintainer := Mappable.(mappables.Maintainer)
 
 	if !(fromMaintainer.CanAddMaintainer() || !auxiliaryRequest.AddMaintainer && fromMaintainer.CanMutateMaintainer() || !auxiliaryRequest.MutateMaintainer && fromMaintainer.CanRemoveMaintainer() || !auxiliaryRequest.RemoveMaintainer) {
 		return newAuxiliaryResponse(errors.NotAuthorized)

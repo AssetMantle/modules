@@ -44,15 +44,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(Error)
 	}
 
-	expiryHeightMetaProperty := metaProperties.GetMetaProperty(constants.ExpiryProperty)
-	if expiryHeightMetaProperty == nil {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
+	if expiryHeightMetaProperty := metaProperties.GetMetaProperty(constants.ExpiryProperty); expiryHeightMetaProperty != nil {
+		expiryHeight := expiryHeightMetaProperty.GetData().(data.HeightData).Get()
 
-	expiryHeight := expiryHeightMetaProperty.GetData().(data.HeightData).Get()
-
-	if expiryHeight.Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
-		return newTransactionResponse(errors.NotAuthorized)
+		if expiryHeight.Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
+			return newTransactionResponse(errors.NotAuthorized)
+		}
 	}
 
 	identities.Remove(identity)
