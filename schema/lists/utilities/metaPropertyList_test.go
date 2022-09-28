@@ -24,8 +24,8 @@ func TestReadMetaProperties(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		{"+ve with empty string", args{""}, base.NewMetaProperties([]properties2.MetaProperty{}...), false},
-		{"+ve", args{"ID:S|Data,ID1:S|Data1,ID2:S|Data2"}, base.NewMetaProperties([]properties2.MetaProperty{base2.NewMetaProperty(base3.NewID("ID"), base2.NewStringData("Data")), base2.NewMetaProperty(base3.NewID("ID1"), base2.NewStringData("Data1")), base2.NewMetaProperty(base3.NewID("ID2"), base2.NewStringData("Data2"))}...), false},
+		{"+ve with empty string", args{""}, base.NewMetaPropertyList([]properties2.MetaProperty{}...), false},
+		{"+ve", args{"ID:S|Data,ID1:S|Data1,ID2:S|Data2"}, base.NewMetaPropertyList([]properties2.MetaProperty{base2.NewMetaProperty(base3.NewID("ID"), base2.NewStringData("Data")), base2.NewMetaProperty(base3.NewID("ID1"), base2.NewStringData("Data1")), base2.NewMetaProperty(base3.NewID("ID2"), base2.NewStringData("Data2"))}...), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

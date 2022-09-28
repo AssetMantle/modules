@@ -4,17 +4,18 @@
 package base
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	"reflect"
-	"testing"
 )
 
-func TestNewMetaProperties(t *testing.T) {
+func TestNewMetaPropertyList(t *testing.T) {
 	type args struct {
 		metaProperties []properties.MetaProperty
 	}
@@ -29,8 +30,8 @@ func TestNewMetaProperties(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMetaProperties(tt.args.metaProperties...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewMetaProperties() = %v, want %v", got, tt.want)
+			if got := NewMetaPropertyList(tt.args.metaProperties...); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewMetaPropertyList() = %v, want %v", got, tt.want)
 			}
 		})
 	}

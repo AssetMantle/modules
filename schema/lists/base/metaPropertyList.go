@@ -49,6 +49,6 @@ func metaPropertiesToListables(metaProperties ...properties.MetaProperty) []trai
 	}
 	return listables
 }
-func NewMetaProperties(metaProperties ...properties.MetaProperty) lists.MetaPropertyList {
+func NewMetaPropertyList(metaProperties ...properties.MetaProperty) lists.MetaPropertyList {
 	return metaPropertyList{List: NewList(metaPropertiesToListables(metaProperties...)...)}
 }
