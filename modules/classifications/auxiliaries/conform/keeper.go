@@ -42,12 +42,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	}
 
 	if auxiliaryRequest.MutableProperties != nil {
-		if len(auxiliaryRequest.MutableProperties.GetList()) > len(classification.GetMutablePropertyList().GetList()) {
+		if len(auxiliaryRequest.MutableProperties.GetList()) != len(classification.GetMutablePropertyList().GetList()) {
 			return newAuxiliaryResponse(errors.IncorrectFormat)
 		}
 
 		for _, mutableProperty := range classification.GetMutablePropertyList().GetList() {
-			if property := auxiliaryRequest.MutableProperties.GetProperty(mutableProperty.GetID()); property == nil && mutableProperty.GetHash().Compare(baseIDs.NewID("")) == 0 {
+			if property := auxiliaryRequest.MutableProperties.GetProperty(mutableProperty.GetID()); property == nil {
 				return newAuxiliaryResponse(errors.IncorrectFormat)
 			}
 		}
