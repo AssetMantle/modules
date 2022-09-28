@@ -48,20 +48,16 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	burnHeightMetaProperty := metaProperties.GetMetaProperty(constants.BurnProperty)
-	if burnHeightMetaProperty == nil {
-		return newTransactionResponse(errors.EntityNotFound)
-	}
-
-	burnHeight := burnHeightMetaProperty.GetData().(data.HeightData).Get()
-
-	if burnHeight.Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
-		return newTransactionResponse(errors.NotAuthorized)
+	if burnHeightMetaProperty != nil {
+		burnHeight := burnHeightMetaProperty.GetData().(data.HeightData).Get()
+		if burnHeight.Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
+			return newTransactionResponse(errors.NotAuthorized)
+		}
 	}
 
 	if auxiliaryResponse := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.SmallestDec())); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
-
 	assets.Remove(asset)
 
 	return newTransactionResponse(nil)
