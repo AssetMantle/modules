@@ -35,9 +35,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		}
 
 		for _, immutableProperty := range classification.GetImmutablePropertyList().GetList() {
-			if property := auxiliaryRequest.ImmutableProperties.GetProperty(immutableProperty.GetID()); property == nil && immutableProperty.GetHash().Compare(baseIDs.NewID("")) == 0 {
-				return newAuxiliaryResponse(errors.IncorrectFormat)
-			} else if property != nil && immutableProperty.GetHash().Compare(baseIDs.NewID("")) != 0 && property.GetHash().Compare(immutableProperty.GetHash()) != 0 {
+			if property := auxiliaryRequest.ImmutableProperties.GetProperty(immutableProperty.GetID()); property == nil || immutableProperty.GetHash().Compare(baseIDs.NewID("")) != 0 && property.GetHash().Compare(immutableProperty.GetHash()) != 0 {
 				return newAuxiliaryResponse(errors.IncorrectFormat)
 			}
 		}
