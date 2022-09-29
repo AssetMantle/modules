@@ -8,6 +8,13 @@ LEDGER_ENABLED ?= true
 BINDIR ?= $(HOME)/go/bin
 SIMAPP = ./simulation/make
 
+DOCKER := $(shell which docker)
+E2E_DIR = ./tests/e2e/
+DOCKER_IMAGE_NAME = assetmantle/node
+DOCKER_TAG_NAME = edge
+DOCKER_CONTAINER_NAME = assetmantle-container
+DOCKER_CMD ?= "/bin/sh"
+NODE_BRANCH = $(BRANCH)
 export GO111MODULE = on
 
 all: build test lintci
@@ -101,6 +108,26 @@ test-sim-benchmark-invariants:
 	@go test -mod=readonly $(SIMAPP) -benchmem -bench=BenchmarkInvariants -run=^$ \
 	-Enabled=true -NumBlocks=1000 -BlockSize=200 \
 	-Period=1 -Commit=true -Seed=57 -v -timeout 24h
+
+enable-docker-buildx:
+	@${DOCKER} buildx install
+	@${DOCKER} buildx use default
+
+docker-build:
+	${DOCKER} build --build-arg BRANCH=${NODE_BRANCH} -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG_NAME} ${E2E_DIR}
+
+docker-compose:
+	${DOCKER} compose -f ${E2E_DIR}/docker-compose.yaml up -d
+
+docker-compose-clean:
+	-${DOCKER} compose -f ${E2E_DIR}/docker-compose.yaml down -t0 -v
+
+docker-clean: docker-compose-clean docker-clean-container docker-clean-image
+
+test-e2e:
+	cd ${E2E_DIR}; \
+	go test -count=1 -v ./...; \
+	cd ../../
 
 .PHONY: \
 test-sim-nondeterminism \

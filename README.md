@@ -12,6 +12,26 @@
 
 Node modules and client utilities to build AssetMantle platform node applications.
 
+## Testing
+
+### e2e
+
+> Make sure you have latest docker version, Docker for mac can be [slow](https://twitter.com/pratikbin/status/1570722135571861504). Recommend using linux
+
+```shell
+# enable docker
+make enable-docker-buildx
+# build node image from "master" branch
+export BRANCH="master"
+make docker-build
+# Start node
+make docker-compose
+# Start e2e test
+make test-e2e
+# Clean
+make docker-clean
+```
+
 ## Contributing
 
 If you want to contribute to AssetMantle Modules, please read the instructions in [CODING_GUIDELINES.md](CODING_GUIDELINES.md).
