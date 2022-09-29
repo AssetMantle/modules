@@ -19,10 +19,10 @@ Node modules and client utilities to build AssetMantle platform node application
 > Make sure you have latest docker version, Docker for mac can be [slow](https://twitter.com/pratikbin/status/1570722135571861504). Recommend using linux
 
 ```shell
-# enable docker
+# Enable docker builder
 make enable-docker-buildx
-# build node image from "master" branch
-export BRANCH="master"
+# Build node image from "master" branch
+export NODE_BRANCH="master"
 make docker-build
 # Start node
 make docker-compose

@@ -14,7 +14,6 @@ DOCKER_IMAGE_NAME = assetmantle/node
 DOCKER_TAG_NAME = edge
 DOCKER_CONTAINER_NAME = assetmantle-container
 DOCKER_CMD ?= "/bin/sh"
-NODE_BRANCH = $(BRANCH)
 export GO111MODULE = on
 
 all: build test lintci
@@ -114,7 +113,7 @@ enable-docker-buildx:
 	@${DOCKER} buildx use default
 
 docker-build:
-	${DOCKER} build --build-arg BRANCH=${NODE_BRANCH} -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG_NAME} ${E2E_DIR}
+	${DOCKER} build --build-arg NODE_BRANCH=${NODE_BRANCH} -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG_NAME} ${E2E_DIR}
 
 docker-compose:
 	${DOCKER} compose -f ${E2E_DIR}/docker-compose.yaml up -d

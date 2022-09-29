@@ -13,11 +13,11 @@ RUN apt update && apt install -y $PACKAGES
 
 # Install Rust and wasm32 dependencies
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ARG BRANCH pratikbin/ci
-ENV BRANCH ${BRANCH}
+ARG NODE_BRANCH master
+ENV NODE_BRANCH ${NODE_BRANCH}
 # Build
 RUN --mount=type=cache,target=/root/.cache; \
-  git clone -b ${BRANCH:-"master"} --depth 1 https://github.com/AssetMantle/node.git; \
+  git clone -b ${NODE_BRANCH:-"master"} --depth 1 https://github.com/AssetMantle/node.git; \
   cd node; \
   make install
 
