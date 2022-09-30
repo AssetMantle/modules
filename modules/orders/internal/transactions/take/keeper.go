@@ -42,13 +42,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	orderID := message.OrderID
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(orderID))
-	order := orders.Get(key.FromID(orderID))
 
-	if order == nil {
+	Mutable := orders.Get(key.FromID(orderID))
+	if Mutable == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
+	order := Mutable.(mappables.Order)
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.(mappables.Order).GetTakerID(), order.(mappables.Order).GetMakerOwnableSplit())))
+	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetTakerID(), order.GetMakerOwnableSplit())))
 	if Error != nil {
 		newTransactionResponse(Error)
 	}
@@ -60,7 +61,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		}
 	}
 
-	exchangeRate := order.(mappables.Order).GetExchangeRate().GetData().(data.DecData).Get()
+	exchangeRate := order.GetExchangeRate().GetData().(data.DecData).Get()
 
 	makerOwnableSplitProperty := metaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty)
 	if makerOwnableSplitProperty == nil {
@@ -95,15 +96,15 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return newTransactionResponse(Error)
 		}
 
-		order = mappable.NewOrder(orderID, order.(mappables.Order).GetImmutablePropertyList(), order.(mappables.Order).GetImmutablePropertyList().Mutate(mutableProperties.GetList()...))
+		order = mappable.NewOrder(orderID, order.GetImmutablePropertyList(), order.GetMutablePropertyList().Mutate(mutableProperties.GetList()...))
 		orders.Mutate(order)
 	}
 
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.(mappables.Order).GetMakerID(), order.(mappables.Order).GetTakerOwnableID(), makerReceiveTakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), makerReceiveTakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(baseIDs.NewID(module.Name), message.FromID, order.(mappables.Order).GetMakerOwnableID(), takerReceiveMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(baseIDs.NewID(module.Name), message.FromID, order.GetMakerOwnableID(), takerReceiveMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 

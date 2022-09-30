@@ -11,13 +11,10 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/properties"
-	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-// TODO check structure
 type maintainer struct {
 	baseQualified.Document
 }
@@ -33,73 +30,28 @@ func (maintainer maintainer) GetIdentityID() ids.ID {
 func (maintainer maintainer) GetMaintainedClassificationID() ids.ID {
 	return key.ReadClassificationID(maintainer.ID)
 }
-func (maintainer maintainer) GetMaintainedPropertySet() properties.Property {
-	if property := maintainer.GetProperty(constants.MaintainedPropertiesProperty); property != nil {
-		return property
-	}
-	return constants.MaintainedProperties
-}
-
 func (maintainer maintainer) CanMintAsset() bool {
-	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
-		if property.GetID().Compare(constants.Permissions.GetID()) == 0 {
-			return true
-		}
-	}
-	return false
+	return true
 }
-
-// TODO
 func (maintainer maintainer) CanBurnAsset() bool {
-	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
-		// impl
-	}
-
-	return false
+	return true
 }
-
-// TODO
 func (maintainer maintainer) CanRenumerateAsset() bool {
-	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
-		// impl
-	}
-
-	return false
+	return true
 }
-
-// TODO
 func (maintainer maintainer) CanAddMaintainer() bool {
-	if property := maintainer.GetProperty(constants.Permissions.GetID()); property != nil {
-		// TODO impl
-	}
-
-	return false
+	return true
 }
-
-// TODO
 func (maintainer maintainer) CanRemoveMaintainer() bool {
-	if property := maintainer.GetProperty(constants.Permissions.GetID()); property != nil {
-		// TODO impl
-	}
-
-	return false
+	return true
 }
-
-// TODO
 func (maintainer maintainer) CanMutateMaintainer() bool {
-	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
-		// impl
-	}
-
-	return false
+	return true
 }
-func (maintainer maintainer) MaintainsProperty(id ids.ID) bool {
-	if property := maintainer.GetProperty(constants.PermissionsProperty); property != nil {
-		if property.GetID().Compare(id) == 0 {
-			return true
-		}
+func (maintainer maintainer) MaintainsProperty(propertyID ids.PropertyID) bool {
+	if property := maintainer.GetProperty(propertyID); property != nil {
+		return true
 	}
-
 	return false
 }
 func (maintainer maintainer) GetKey() helpers.Key {
@@ -109,7 +61,6 @@ func (maintainer) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, maintainer{})
 }
 
-// TODO
 func NewMaintainer(id ids.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Maintainer {
 	return maintainer{
 		Document: baseQualified.Document{

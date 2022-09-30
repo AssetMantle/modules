@@ -78,7 +78,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
 	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewID("id"), baseData.NewStringData("Data"))
-	metaPropertyList := base.NewMetaProperties([]properties.MetaProperty{metaProperty}...)
+	metaPropertyList := base.NewMetaPropertyList([]properties.MetaProperty{metaProperty}...)
 
 	t.Run("PositiveCase - ", func(t *testing.T) {
 		want := newAuxiliaryResponse(metaPropertyList.ToPropertyList(), nil)

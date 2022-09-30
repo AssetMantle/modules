@@ -25,5 +25,5 @@ func ReadMetaProperties(metaPropertiesString string) (lists.MetaPropertyList, er
 		}
 	}
 
-	return base.NewMetaProperties(metaPropertyList...), nil
+	return base.NewMetaPropertyList(metaPropertyList...), nil
 }

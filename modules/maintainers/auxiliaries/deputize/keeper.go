@@ -7,7 +7,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -16,8 +16,8 @@ import (
 )
 
 type auxiliaryKeeper struct {
-	mapper           helpers.Mapper
-	conformAuxiliary helpers.Auxiliary
+	mapper          helpers.Mapper
+	memberAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
@@ -28,19 +28,17 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	fromMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
 
-	var fromMaintainer mappables.Maintainer
-
-	if maintainer := maintainers.Fetch(key.FromID(fromMaintainerID)).Get(key.FromID(fromMaintainerID)); maintainer != nil {
-		fromMaintainer = maintainer.(mappables.Maintainer)
-	} else {
+	Mappable := maintainers.Fetch(key.FromID(fromMaintainerID)).Get(key.FromID(fromMaintainerID))
+	if Mappable == nil {
 		return newAuxiliaryResponse(errors.EntityNotFound)
 	}
+	fromMaintainer := Mappable.(mappables.Maintainer)
 
 	if !(fromMaintainer.CanAddMaintainer() || !auxiliaryRequest.AddMaintainer && fromMaintainer.CanMutateMaintainer() || !auxiliaryRequest.MutateMaintainer && fromMaintainer.CanRemoveMaintainer() || !auxiliaryRequest.RemoveMaintainer) {
 		return newAuxiliaryResponse(errors.NotAuthorized)
 	}
 
-	if auxiliaryResponse := auxiliaryKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(auxiliaryRequest.ClassificationID, nil, auxiliaryRequest.MaintainedProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := auxiliaryKeeper.memberAuxiliary.GetKeeper().Help(context, member.NewAuxiliaryRequest(auxiliaryRequest.ClassificationID, nil, auxiliaryRequest.MaintainedProperties)); !auxiliaryResponse.IsSuccessful() {
 		return newAuxiliaryResponse(auxiliaryResponse.GetError())
 	}
 
@@ -81,8 +79,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpe
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
-			case conform.Auxiliary.GetName():
-				auxiliaryKeeper.conformAuxiliary = value
+			case member.Auxiliary.GetName():
+				auxiliaryKeeper.memberAuxiliary = value
 			default:
 				break
 			}
