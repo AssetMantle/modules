@@ -21,12 +21,12 @@ func TestNewSignature(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
 	//pubKey := privateKey.PubKey()
-	signatureBytes := baseIDs.NewID("Temp").Bytes()
+	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := baseIDs.NewID("ID")
+	id := baseIDs.NewStringID("ID")
 	validityHeight := NewHeight(123)
 	testSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -55,12 +55,12 @@ func Test_signature_Bytes(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
 	//pubKey := privateKey.PubKey()
-	signatureBytes := baseIDs.NewID("Temp").Bytes()
+	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := baseIDs.NewID("ID")
+	id := baseIDs.NewStringID("ID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -84,12 +84,12 @@ func Test_signature_GetID(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
 	//pubKey := privateKey.PubKey()
-	signatureBytes := baseIDs.NewID("Temp").Bytes()
+	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := baseIDs.NewID("ID")
+	id := baseIDs.NewStringID("ID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -113,12 +113,12 @@ func Test_signature_GetValidityHeight(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
 	//pubKey := privateKey.PubKey()
-	signatureBytes := baseIDs.NewID("Temp").Bytes()
+	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := baseIDs.NewID("ID")
+	id := baseIDs.NewStringID("ID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -142,12 +142,12 @@ func Test_signature_HasExpired(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
 	//pubKey := privateKey.PubKey()
-	signatureBytes := baseIDs.NewID("Temp").Bytes()
+	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := baseIDs.NewID("ID")
+	id := baseIDs.NewStringID("ID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -177,12 +177,12 @@ func Test_signature_String(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
 	//pubKey := privateKey.PubKey()
-	signatureBytes := baseIDs.NewID("Temp").Bytes()
+	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := baseIDs.NewID("ID")
+	id := baseIDs.NewStringID("ID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -206,12 +206,12 @@ func Test_signature_Verify(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
 	pubKey := privateKey.PubKey()
-	signatureBytes := baseIDs.NewID("Temp").Bytes()
+	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := baseIDs.NewID("ID")
+	id := baseIDs.NewStringID("ID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 

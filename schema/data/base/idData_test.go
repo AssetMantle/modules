@@ -6,12 +6,10 @@ package base
 import (
 	"fmt"
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -25,41 +23,12 @@ func TestNewIDData(t *testing.T) {
 		args args
 		want data.Data
 	}{
-
-		{"Test for some id", args{baseIDs.NewID("100")}, idData{baseIDs.NewID("100")}},
+		// TODO: Add test cases.
+		{"+ve", args{NewStringData("Data")}, idData{NewStringData("Data")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equalf(t, tt.want, NewIDData(tt.args.value), "NewIDData(%v)", tt.args.value)
-		})
-	}
-}
-
-func TestReadIDData(t *testing.T) {
-	type args struct {
-		idData string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    data.Data
-		wantErr assert.ErrorAssertionFunc
-	}{
-
-		{"Test for some +ve int id", args{"100"}, NewIDData(baseIDs.NewID("100")), assert.NoError},
-		{"Test for some -ve int id", args{"-100"}, NewIDData(baseIDs.NewID("-100")), assert.NoError},
-		{"Test for zero id", args{"0"}, NewIDData(baseIDs.NewID("0")), assert.NoError},
-		{"Test for string with special char id", args{"10-10"}, NewIDData(baseIDs.NewID("10-10")), assert.NoError},   // wrong
-		{"Test for string with special char id", args{"10%10"}, NewIDData(baseIDs.NewID("10%10")), assert.NoError},   // wrong
-		{"Test for string with special char id", args{"10%`10"}, NewIDData(baseIDs.NewID("10%`10")), assert.NoError}, // wrong
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := ReadIDData(tt.args.idData)
-			if !tt.wantErr(t, err, fmt.Sprintf("ReadIDData(%v)", tt.args.idData)) {
-				return
-			}
-			assert.Equalf(t, tt.want, got, "ReadIDData(%v)", tt.args.idData)
 		})
 	}
 }
@@ -74,9 +43,9 @@ func Test_idDataFromInterface(t *testing.T) {
 		want    idData
 		wantErr assert.ErrorAssertionFunc
 	}{
-
-		{"+ve Unit test", args{idData{baseIDs.NewID("100")}}, idData{baseIDs.NewID("100")}, assert.NoError},
-		{"-ve Unit test", args{heightData{baseTypes.NewHeight(100)}}, idData{}, assert.Error},
+		// TODO: Add test cases.
+		{"+ve", args{NewIDData(NewStringData("Data"))}, idData{NewStringData("Data")}, assert.NoError},
+		{"+ve", args{NewIDData(NewStringData(""))}, idData{NewStringData("")}, assert.NoError},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -85,6 +54,29 @@ func Test_idDataFromInterface(t *testing.T) {
 				return
 			}
 			assert.Equalf(t, tt.want, got, "idDataFromInterface(%v)", tt.args.listable)
+		})
+	}
+}
+
+func Test_idData_Bytes(t *testing.T) {
+	type fields struct {
+		Value ids.ID
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   []byte
+	}{
+		// TODO: Add test cases.
+		{"+ve", fields{NewStringData("")}, []byte{}},
+		{"+ve", fields{NewStringData("Data")}, NewStringData("Data").Bytes()},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			idData := idData{
+				Value: tt.fields.Value,
+			}
+			assert.Equalf(t, tt.want, idData.Bytes(), "Bytes()")
 		})
 	}
 }
@@ -102,10 +94,9 @@ func Test_idData_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-
-		{"Test for Equal case", fields{baseIDs.NewID("100")}, args{idData{baseIDs.NewID("100")}}, 0},
-		{"Test for LT case", fields{baseIDs.NewID("100")}, args{idData{baseIDs.NewID("0")}}, 1},
-		{"Test for GT case", fields{baseIDs.NewID("0")}, args{idData{baseIDs.NewID("100")}}, -1},
+		// TODO: Add test cases.
+		{"+ve", fields{NewStringData("Data")}, args{idData{NewStringData("Data")}}, 0},
+		{"+ve", fields{NewStringData("Data")}, args{idData{NewStringData("0")}}, 1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -117,26 +108,25 @@ func Test_idData_Compare(t *testing.T) {
 	}
 }
 
-func Test_idData_GenerateHash(t *testing.T) {
+func Test_idData_GenerateHashID(t *testing.T) {
 	type fields struct {
 		Value ids.ID
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   ids.ID
+		want   ids.HashID
 	}{
-
-		{"ZeroValue Test", fields{baseIDs.NewID("")}, baseIDs.NewID("")},
-		{"+ve Value Test", fields{baseIDs.NewID("100")}, baseIDs.NewID(stringUtilities.Hash(idData{baseIDs.NewID("100")}.Value.String()))},
-		{"-ve Value Test", fields{baseIDs.NewID("-100")}, baseIDs.NewID(stringUtilities.Hash(idData{baseIDs.NewID("-100")}.Value.String()))},
+		// TODO: Add test cases.
+		{"+ve", fields{NewStringData("Data")}, baseIDs.GenerateHashID(idData{NewStringData("Data")}.Bytes())},
+		{"+ve with empty String", fields{NewStringData("")}, baseIDs.GenerateHashID(idData{NewStringData("")}.Bytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			idData := idData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, idData.GenerateHash(), "GenerateHash()")
+			assert.Equalf(t, tt.want, idData.GenerateHashID(), "GenerateHashID()")
 		})
 	}
 }
@@ -150,10 +140,9 @@ func Test_idData_Get(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-
-		{"Test for zero value", fields{baseIDs.NewID("0")}, idData{baseIDs.NewID("0")}.Value},
-		{"Test for +ve value", fields{baseIDs.NewID("100")}, idData{baseIDs.NewID("100")}.Value},
-		{"Test for -ve value", fields{baseIDs.NewID("-100")}, idData{baseIDs.NewID("-100")}.Value},
+		// TODO: Add test cases.
+		{"+ve", fields{NewStringData("Data")}, NewStringData("Data")},
+		{"+ve", fields{NewStringData("")}, NewStringData("")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -174,11 +163,8 @@ func Test_idData_GetID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-
-		{"Test for zero value", fields{baseIDs.NewID("0")}, baseIDs.NewDataID(idData{baseIDs.NewID("0")})},
-		{"Test for +ve value", fields{baseIDs.NewID("100")}, baseIDs.NewDataID(idData{baseIDs.NewID("100")})},
-		{"Test for -ve value", fields{baseIDs.NewID("-100")}, baseIDs.NewDataID(idData{baseIDs.NewID("-100")})},
-		{"Test for special char value", fields{baseIDs.NewID("%#100")}, baseIDs.NewDataID(idData{baseIDs.NewID("%#100")})},
+		// TODO: Add test cases.
+		{"+ve", fields{NewStringData("Data")}, baseIDs.NewDataID(idData{NewStringData("Data")})},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -197,12 +183,10 @@ func Test_idData_GetType(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   ids.ID
+		want   ids.StringID
 	}{
-
-		{"Test for zero value", fields{baseIDs.NewID("0")}, idsConstants.IDDataID},
-		{"Test for +ve value", fields{baseIDs.NewID("100")}, idsConstants.IDDataID},
-		{"Test for -ve value", fields{baseIDs.NewID("-100")}, idsConstants.IDDataID},
+		// TODO: Add test cases.
+		{"+ve", fields{NewStringData("Data")}, dataConstants.IDDataID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -223,11 +207,8 @@ func Test_idData_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-
-		{"Test for zero value", fields{baseIDs.NewID("0")}, "0"},
-		{"Test for +ve value", fields{baseIDs.NewID("100")}, "100"},
-		{"Test for -ve value", fields{baseIDs.NewID("-100")}, "-100"},
-		{"Test for special char value", fields{baseIDs.NewID("%#100")}, "%#100"},
+		// TODO: Add test cases.
+		{"+ve", fields{NewStringData("Data")}, "Data"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -248,11 +229,8 @@ func Test_idData_ZeroValue(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-
-		{"Test for zero value", fields{baseIDs.NewID("0")}, NewIDData(baseIDs.NewID(""))},
-		{"Test for +ve value", fields{baseIDs.NewID("100")}, NewIDData(baseIDs.NewID(""))},
-		{"Test for -ve value", fields{baseIDs.NewID("-100")}, NewIDData(baseIDs.NewID(""))},
-		{"Test for special char value", fields{baseIDs.NewID("%#100")}, NewIDData(baseIDs.NewID(""))},
+		// TODO: Add test cases.
+		{"+ve", fields{NewStringData("Data")}, NewIDData(baseIDs.NewStringID(""))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

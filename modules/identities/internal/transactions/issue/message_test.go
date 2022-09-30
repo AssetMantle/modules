@@ -5,11 +5,15 @@ package issue
 
 import (
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -18,9 +22,11 @@ import (
 	"testing"
 )
 
-func createTestInput(t *testing.T) (ids.ID, ids.ID, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, lists.MetaPropertyList, lists.PropertyList, lists.MetaPropertyList, lists.PropertyList) {
-	testFromID := baseIDs.NewID("fromID")
-	testClassificationID := baseIDs.NewID("classificationID")
+func createTestInput(t *testing.T) (ids.IdentityID, ids.ClassificationID, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, lists.MetaPropertyList, lists.PropertyList, lists.MetaPropertyList, lists.PropertyList) {
+	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
+	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
+	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
+	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
 
 	const fromAddress = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -32,7 +38,7 @@ func createTestInput(t *testing.T) (ids.ID, ids.ID, string, sdkTypes.AccAddress,
 	require.Nil(t, err)
 
 	var immutableMetaProperties lists.MetaPropertyList
-	immutableMetaProperties, err = utilities.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err = utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 
 	var immutableProperties lists.PropertyList
@@ -40,7 +46,7 @@ func createTestInput(t *testing.T) (ids.ID, ids.ID, string, sdkTypes.AccAddress,
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties lists.MetaPropertyList
-	mutableMetaProperties, err = utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err = utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 
 	var mutableProperties lists.PropertyList
@@ -95,8 +101,8 @@ func Test_message_GetSignBytes(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		To                      sdkTypes.AccAddress
-		FromID                  ids.ID
-		ClassificationID        ids.ID
+		FromID                  ids.IdentityID
+		ClassificationID        ids.ClassificationID
 		ImmutableMetaProperties lists.MetaPropertyList
 		ImmutableProperties     lists.PropertyList
 		MutableMetaProperties   lists.MetaPropertyList
@@ -134,8 +140,8 @@ func Test_message_GetSigners(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		To                      sdkTypes.AccAddress
-		FromID                  ids.ID
-		ClassificationID        ids.ID
+		FromID                  ids.IdentityID
+		ClassificationID        ids.ClassificationID
 		ImmutableMetaProperties lists.MetaPropertyList
 		ImmutableProperties     lists.PropertyList
 		MutableMetaProperties   lists.MetaPropertyList
@@ -173,8 +179,8 @@ func Test_message_RegisterCodec(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		To                      sdkTypes.AccAddress
-		FromID                  ids.ID
-		ClassificationID        ids.ID
+		FromID                  ids.IdentityID
+		ClassificationID        ids.ClassificationID
 		ImmutableMetaProperties lists.MetaPropertyList
 		ImmutableProperties     lists.PropertyList
 		MutableMetaProperties   lists.MetaPropertyList
@@ -213,8 +219,8 @@ func Test_message_Route(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		To                      sdkTypes.AccAddress
-		FromID                  ids.ID
-		ClassificationID        ids.ID
+		FromID                  ids.IdentityID
+		ClassificationID        ids.ClassificationID
 		ImmutableMetaProperties lists.MetaPropertyList
 		ImmutableProperties     lists.PropertyList
 		MutableMetaProperties   lists.MetaPropertyList
@@ -252,8 +258,8 @@ func Test_message_Type(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		To                      sdkTypes.AccAddress
-		FromID                  ids.ID
-		ClassificationID        ids.ID
+		FromID                  ids.IdentityID
+		ClassificationID        ids.ClassificationID
 		ImmutableMetaProperties lists.MetaPropertyList
 		ImmutableProperties     lists.PropertyList
 		MutableMetaProperties   lists.MetaPropertyList
@@ -291,8 +297,8 @@ func Test_message_ValidateBasic(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		To                      sdkTypes.AccAddress
-		FromID                  ids.ID
-		ClassificationID        ids.ID
+		FromID                  ids.IdentityID
+		ClassificationID        ids.ClassificationID
 		ImmutableMetaProperties lists.MetaPropertyList
 		ImmutableProperties     lists.PropertyList
 		MutableMetaProperties   lists.MetaPropertyList
@@ -331,8 +337,8 @@ func Test_newMessage(t *testing.T) {
 	type args struct {
 		from                    sdkTypes.AccAddress
 		to                      sdkTypes.AccAddress
-		fromID                  ids.ID
-		classificationID        ids.ID
+		fromID                  ids.IdentityID
+		classificationID        ids.ClassificationID
 		immutableMetaProperties lists.MetaPropertyList
 		immutableProperties     lists.PropertyList
 		mutableMetaProperties   lists.MetaPropertyList

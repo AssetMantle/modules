@@ -22,8 +22,8 @@ func Test_validator(t *testing.T) {
 	}{
 
 		{"+ve with nil", args{Parameter}, false},
-		{"-ve wrong parameter Type", args{baseTypes.NewParameter(baseIDs.NewID("newID"), baseData.NewDecData(sdkTypes.NewDec(-1)), validator)}, true},
-		{"+ve empty string", args{baseIDs.NewID("")}, true},
+		{"-ve wrong parameter Type", args{baseTypes.NewParameter(baseIDs.NewStringID("newID"), baseData.NewDecData(sdkTypes.NewDec(-1)), validator)}, true},
+		{"+ve empty string", args{baseIDs.NewStringID("")}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

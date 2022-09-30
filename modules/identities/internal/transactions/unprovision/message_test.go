@@ -5,9 +5,13 @@ package unprovision
 
 import (
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -16,9 +20,11 @@ import (
 	"testing"
 )
 
-func CreateTestInputForMessage(t *testing.T) (ids.ID, sdkTypes.AccAddress, sdkTypes.AccAddress, sdkTypes.Msg) {
-	testIdentityID := baseIDs.NewID("identityID")
-
+func CreateTestInputForMessage(t *testing.T) (ids.IdentityID, sdkTypes.AccAddress, sdkTypes.AccAddress, sdkTypes.Msg) {
+	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
+	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
+	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
+	testIdentityID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
@@ -75,9 +81,9 @@ func Test_message_GetSignBytes(t *testing.T) {
 	testIdentityID, fromAccAddress, toAccAddress, testMessage := CreateTestInputForMessage(t)
 
 	type fields struct {
-		From       sdkTypes.AccAddress
-		To         sdkTypes.AccAddress
-		IdentityID ids.ID
+		From sdkTypes.AccAddress
+		To   sdkTypes.AccAddress
+		ids.IdentityID
 	}
 	tests := []struct {
 		name   string
@@ -105,9 +111,9 @@ func Test_message_GetSigners(t *testing.T) {
 	testIdentityID, fromAccAddress, toAccAddress, _ := CreateTestInputForMessage(t)
 
 	type fields struct {
-		From       sdkTypes.AccAddress
-		To         sdkTypes.AccAddress
-		IdentityID ids.ID
+		From sdkTypes.AccAddress
+		To   sdkTypes.AccAddress
+		ids.IdentityID
 	}
 	tests := []struct {
 		name   string
@@ -135,9 +141,9 @@ func Test_message_RegisterCodec(t *testing.T) {
 	testIdentityID, fromAccAddress, toAccAddress, _ := CreateTestInputForMessage(t)
 
 	type fields struct {
-		From       sdkTypes.AccAddress
-		To         sdkTypes.AccAddress
-		IdentityID ids.ID
+		From sdkTypes.AccAddress
+		To   sdkTypes.AccAddress
+		ids.IdentityID
 	}
 	type args struct {
 		codec *codec.Codec
@@ -166,9 +172,9 @@ func Test_message_Route(t *testing.T) {
 	testIdentityID, fromAccAddress, toAccAddress, _ := CreateTestInputForMessage(t)
 
 	type fields struct {
-		From       sdkTypes.AccAddress
-		To         sdkTypes.AccAddress
-		IdentityID ids.ID
+		From sdkTypes.AccAddress
+		To   sdkTypes.AccAddress
+		ids.IdentityID
 	}
 	tests := []struct {
 		name   string
@@ -196,9 +202,9 @@ func Test_message_Type(t *testing.T) {
 	testIdentityID, fromAccAddress, toAccAddress, _ := CreateTestInputForMessage(t)
 
 	type fields struct {
-		From       sdkTypes.AccAddress
-		To         sdkTypes.AccAddress
-		IdentityID ids.ID
+		From sdkTypes.AccAddress
+		To   sdkTypes.AccAddress
+		ids.IdentityID
 	}
 	tests := []struct {
 		name   string
@@ -226,9 +232,9 @@ func Test_message_ValidateBasic(t *testing.T) {
 	testIdentityID, fromAccAddress, toAccAddress, _ := CreateTestInputForMessage(t)
 
 	type fields struct {
-		From       sdkTypes.AccAddress
-		To         sdkTypes.AccAddress
-		IdentityID ids.ID
+		From sdkTypes.AccAddress
+		To   sdkTypes.AccAddress
+		ids.IdentityID
 	}
 	tests := []struct {
 		name    string
@@ -257,9 +263,9 @@ func Test_newMessage(t *testing.T) {
 	testIdentityID, fromAccAddress, toAccAddress, _ := CreateTestInputForMessage(t)
 
 	type args struct {
-		from       sdkTypes.AccAddress
-		to         sdkTypes.AccAddress
-		identityID ids.ID
+		from sdkTypes.AccAddress
+		to   sdkTypes.AccAddress
+		ids.IdentityID
 	}
 	tests := []struct {
 		name string
@@ -272,7 +278,7 @@ func Test_newMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newMessage(tt.args.from, tt.args.to, tt.args.identityID); !reflect.DeepEqual(got, tt.want) {
+			if got := newMessage(tt.args.from, tt.args.to, tt.args.IdentityID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newMessage() = %v, want %v", got, tt.want)
 			}
 		})

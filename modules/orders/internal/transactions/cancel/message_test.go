@@ -5,9 +5,14 @@ package cancel
 
 import (
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -16,9 +21,21 @@ import (
 	"testing"
 )
 
-func CreateTestInputForMessages(t *testing.T) (ids.ID, ids.ID, sdkTypes.AccAddress, sdkTypes.Msg) {
-	testOrderID := baseIDs.NewID("orderID")
-	testFromID := baseIDs.NewID("fromID")
+func CreateTestInputForMessages(t *testing.T) (ids.OrderID, ids.IdentityID, sdkTypes.AccAddress, sdkTypes.Msg) {
+	//testOrderID := baseIDs.NewStringID("orderID")
+	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
+	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
+	//mutables2 := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID"), baseData.NewStringData(""))))
+
+	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
+	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
+	testMakerOwnableID := baseIDs.NewOwnableID(baseIDs.NewStringID("makerOwnableID"))
+	testTakerOwnableID := baseIDs.NewOwnableID(baseIDs.NewStringID("takerOwnableID"))
+	rate := sdkTypes.SmallestDec()
+	creationHeight := baseTypes.NewHeight(0)
+	//takerOwnableID ids.OwnableID, rate types.Dec, creationHeight types.Height, makerID ids.IdentityID, imutables qualified.Immutables
+
+	testOrderID := baseIDs.NewOrderID(testClassificationID, testMakerOwnableID, testTakerOwnableID, rate, creationHeight, testFromID, immutables)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -73,8 +90,8 @@ func Test_message_GetSignBytes(t *testing.T) {
 
 	type fields struct {
 		From    sdkTypes.AccAddress
-		FromID  ids.ID
-		OrderID ids.ID
+		FromID  ids.IdentityID
+		OrderID ids.OrderID
 	}
 	tests := []struct {
 		name   string
@@ -103,8 +120,8 @@ func Test_message_GetSigners(t *testing.T) {
 
 	type fields struct {
 		From    sdkTypes.AccAddress
-		FromID  ids.ID
-		OrderID ids.ID
+		FromID  ids.IdentityID
+		OrderID ids.OrderID
 	}
 	tests := []struct {
 		name   string
@@ -133,8 +150,8 @@ func Test_message_RegisterCodec(t *testing.T) {
 
 	type fields struct {
 		From    sdkTypes.AccAddress
-		FromID  ids.ID
-		OrderID ids.ID
+		FromID  ids.IdentityID
+		OrderID ids.OrderID
 	}
 	type args struct {
 		codec *codec.Codec
@@ -164,8 +181,8 @@ func Test_message_Route(t *testing.T) {
 
 	type fields struct {
 		From    sdkTypes.AccAddress
-		FromID  ids.ID
-		OrderID ids.ID
+		FromID  ids.IdentityID
+		OrderID ids.OrderID
 	}
 	tests := []struct {
 		name   string
@@ -194,8 +211,8 @@ func Test_message_Type(t *testing.T) {
 
 	type fields struct {
 		From    sdkTypes.AccAddress
-		FromID  ids.ID
-		OrderID ids.ID
+		FromID  ids.IdentityID
+		OrderID ids.OrderID
 	}
 	tests := []struct {
 		name   string
@@ -224,8 +241,8 @@ func Test_message_ValidateBasic(t *testing.T) {
 
 	type fields struct {
 		From    sdkTypes.AccAddress
-		FromID  ids.ID
-		OrderID ids.ID
+		FromID  ids.IdentityID
+		OrderID ids.OrderID
 	}
 	tests := []struct {
 		name    string
@@ -255,8 +272,8 @@ func Test_newMessage(t *testing.T) {
 
 	type args struct {
 		from    sdkTypes.AccAddress
-		fromID  ids.ID
-		orderID ids.ID
+		fromID  ids.IdentityID
+		orderID ids.OrderID
 	}
 	tests := []struct {
 		name string
