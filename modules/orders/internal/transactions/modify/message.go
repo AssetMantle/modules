@@ -14,6 +14,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -52,6 +53,12 @@ func (message message) ValidateBasic() error {
 	return nil
 }
 func (message message) GetSignBytes() []byte {
+	if len(message.MutableMetaProperties.GetList()) == 0 {
+		message.MutableMetaProperties = base.NewMetaPropertyList(nil)
+	}
+	if len(message.MutableProperties.GetList()) == 0 {
+		message.MutableProperties = base.NewPropertyList(nil)
+	}
 	return sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message))
 }
 func (message message) GetSigners() []sdkTypes.AccAddress {

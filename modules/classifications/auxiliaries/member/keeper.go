@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package conform
+package member
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -30,24 +30,24 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	classification := Mappable.(mappables.Classification)
 
 	if auxiliaryRequest.ImmutableProperties != nil {
-		if len(auxiliaryRequest.ImmutableProperties.GetList()) != len(classification.GetImmutablePropertyList().GetList()) {
+		if len(auxiliaryRequest.ImmutableProperties.GetList()) > len(classification.GetImmutablePropertyList().GetList()) {
 			return newAuxiliaryResponse(errors.IncorrectFormat)
 		}
 
-		for _, immutableProperty := range classification.GetImmutablePropertyList().GetList() {
-			if property := auxiliaryRequest.ImmutableProperties.GetProperty(immutableProperty.GetID()); property == nil || immutableProperty.GetHash().Compare(baseIDs.NewID("")) != 0 && property.GetHash().Compare(immutableProperty.GetHash()) != 0 {
+		for _, immutableProperty := range auxiliaryRequest.ImmutableProperties.GetList() {
+			if property := classification.GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || immutableProperty.GetHash().Compare(baseIDs.NewID("")) != 0 && property.GetHash().Compare(immutableProperty.GetHash()) != 0 {
 				return newAuxiliaryResponse(errors.IncorrectFormat)
 			}
 		}
 	}
 
 	if auxiliaryRequest.MutableProperties != nil {
-		if len(auxiliaryRequest.MutableProperties.GetList()) != len(classification.GetMutablePropertyList().GetList()) {
+		if len(auxiliaryRequest.MutableProperties.GetList()) > len(classification.GetMutablePropertyList().GetList()) {
 			return newAuxiliaryResponse(errors.IncorrectFormat)
 		}
 
-		for _, mutableProperty := range classification.GetMutablePropertyList().GetList() {
-			if property := auxiliaryRequest.MutableProperties.GetProperty(mutableProperty.GetID()); property == nil {
+		for _, mutableProperty := range auxiliaryRequest.MutableProperties.GetList() {
+			if property := classification.GetMutablePropertyList().GetProperty(mutableProperty.GetID()); property == nil {
 				return newAuxiliaryResponse(errors.IncorrectFormat)
 			}
 		}
