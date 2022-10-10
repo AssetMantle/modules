@@ -13,6 +13,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 )
 
 type transactionKeeper struct {
@@ -44,7 +45,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	mutableProperties := baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)
+	mutableProperties := baseLists.NewPropertyList(append(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...), constants.Expiry, constants.MakerOwnableSplit)...)
 
 	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(immutableProperties, mutableProperties)))
 	if err != nil {
