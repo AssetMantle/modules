@@ -49,7 +49,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		}
 	}
 
-	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
+	return newAuxiliaryResponse(base.NewMetaPropertyList(metaPropertyList...), nil)
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

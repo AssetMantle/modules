@@ -41,6 +41,7 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
 	"github.com/AssetMantle/modules/modules/identities"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers"
@@ -362,7 +363,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 	maintainersModule := maintainers.Prototype().Initialize(
 		application.keys[metas.Prototype().Name()],
 		paramsKeeper.Subspace(maintainers.Prototype().Name()),
-		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(member.Auxiliary.GetName()),
 	)
 	identitiesModule := identities.Prototype().Initialize(
 		application.keys[identities.Prototype().Name()],

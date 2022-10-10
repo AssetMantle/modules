@@ -30,7 +30,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 
 	for _, property := range auxiliaryRequest.PropertyList {
 		if property.GetID().Compare(constants.BurnProperty) == 0 && property.GetHash().Compare(baseIDs.NewID("")) == 0 {
-			return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), errors.MockError)
+			return newAuxiliaryResponse(base.NewMetaPropertyList(metaPropertyList...), errors.MockError)
 		}
 	}
 
@@ -40,7 +40,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
 	metaPropertyList = append(metaPropertyList, base2.NewMetaProperty(constants.ExpiryProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(900))))
 
-	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
+	return newAuxiliaryResponse(base.NewMetaPropertyList(metaPropertyList...), nil)
 }
 
 func (auxiliaryKeeperMock) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
