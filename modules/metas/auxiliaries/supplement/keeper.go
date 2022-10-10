@@ -9,13 +9,13 @@ import (
 	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	"github.com/AssetMantle/modules/schema/properties/utilities"
 )
 
 type auxiliaryKeeper struct {
@@ -33,8 +33,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		var meta helpers.Mappable
 
 		if property.GetHash().Compare(baseIDs.NewID("")) == 0 {
-			if data, Error := utilities.ReadMetaProperty(property.GetType().String() + constants.DataTypeAndValueSeparator); Error == nil {
-				meta = mappable.NewMeta(data.GetData())
+			if data, Error := utilities.ReadData(property.GetType().String() + constants.DataTypeAndValueSeparator); Error == nil {
+				meta = mappable.NewMeta(data)
 			} else {
 				return newAuxiliaryResponse(nil, Error)
 			}
