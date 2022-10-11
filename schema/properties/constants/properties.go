@@ -20,7 +20,6 @@ var (
 	MaintainedProperties = base.NewProperty(MaintainedPropertiesProperty.GetKey(), baseData.NewListData())
 	MakerOwnableSplit    = base.NewProperty(MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(sdkTypes.ZeroDec()))
 	NubID                = base.NewProperty(NubIDProperty.GetKey(), baseData.NewIDData(baseIDs.NewID("")))
-	Permissions          = base.NewProperty(PermissionsProperty.GetKey(), baseData.NewListData())
 	TakerID              = base.NewProperty(TakerIDProperty.GetKey(), baseData.NewIDData(baseIDs.NewID("")))
 	Supply               = base.NewProperty(SupplyProperty.GetKey(), baseData.NewDecData(sdkTypes.SmallestDec()))
 )

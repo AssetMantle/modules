@@ -40,10 +40,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errors.EntityNotFound)
 	}
 
-	orderID := message.OrderID
-	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(orderID))
+	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.OrderID))
 
-	Mutable := orders.Get(key.FromID(orderID))
+	Mutable := orders.Get(key.FromID(message.OrderID))
 	if Mutable == nil {
 		return newTransactionResponse(errors.EntityNotFound)
 	}
@@ -96,7 +95,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return newTransactionResponse(Error)
 		}
 
-		order = mappable.NewOrder(orderID, order.GetImmutablePropertyList(), order.GetMutablePropertyList().Mutate(mutableProperties.GetList()...))
+		order = mappable.NewOrder(order.GetID(), order.GetImmutablePropertyList(), order.GetMutablePropertyList().Mutate(mutableProperties.GetList()...))
 		orders.Mutate(order)
 	}
 
