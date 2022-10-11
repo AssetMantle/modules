@@ -68,7 +68,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.supplementAuxiliary = value
 			}
 		default:
-			panic(errors.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

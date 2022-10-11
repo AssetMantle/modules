@@ -72,8 +72,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	split := sdkTypes.SmallestDec()
 
-	if metaProperties := base.NewMetaProperties(append(message.ImmutableMetaProperties.GetList(), message.MutableMetaProperties.GetList()...)...); metaProperties.GetMetaProperty(constants.LockProperty.GetID()) != nil {
-		split = metaProperties.GetMetaProperty(constants.LockProperty.GetID()).GetData().(data.DecData).Get()
+	if metaPropertyList := base.NewMetaPropertyList(append(message.ImmutableMetaProperties.GetList(), message.MutableMetaProperties.GetList()...)...); metaPropertyList.GetMetaProperty(constants.SupplyProperty.GetID()) != nil {
+		split = metaPropertyList.GetMetaProperty(constants.SupplyProperty.GetID()).GetData().(data.DecData).Get()
 	}
 
 	if auxiliaryResponse := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.ToID, assetID, split)); !auxiliaryResponse.IsSuccessful() {

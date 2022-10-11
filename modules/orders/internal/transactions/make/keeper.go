@@ -53,31 +53,26 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	immutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetList()...)))
-	if err != nil {
-		return newTransactionResponse(err)
+	immutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetList()...)))
+	if Error != nil {
+		return newTransactionResponse(Error)
 	}
 
 	immutables := baseQualified.NewImmutables(base.NewPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...))
-
 	exchangeRate := message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(message.MakerOwnableSplit)
 	orderID := baseIDs.NewOrderID(message.ClassificationID, message.MakerOwnableID, message.TakerOwnableID, exchangeRate, baseTypes.NewHeight(context.BlockHeight()), message.FromID, immutables)
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(orderID))
-	makerOwnableSplit := message.MakerOwnableSplit
 
-	order := orders.Get(key.NewKey(orderID))
-	if order != nil {
+	if Mappable := orders.Get(key.NewKey(orderID)); Mappable != nil {
 		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
 	mutableMetaProperties := message.MutableMetaProperties.Add(baseProperties.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
 	mutableMetaProperties = mutableMetaProperties.Add(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(makerOwnableSplit)))
-	mutableMetaProperties := message.MutableMetaProperties.Add(base2.NewMetaProperty(constants.ExpiryProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
-	mutableMetaProperties = mutableMetaProperties.Add(base2.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(makerOwnableSplit)))
 
-	scrubbedMutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetList()...)))
-	if err != nil {
-		return newTransactionResponse(err)
+	scrubbedMutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetList()...)))
+	if Error != nil {
+		return newTransactionResponse(Error)
 	}
 
 	mutables := baseQualified.NewMutables(base.NewPropertyList(append(scrubbedMutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
@@ -86,7 +81,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	orders.Add(mappable.NewOrder(message.ClassificationID, immutables, mutables))
+	orders.Add(mappable.NewOrder(orderID, immutables, mutables))
 
 	return newTransactionResponse(nil)
 }

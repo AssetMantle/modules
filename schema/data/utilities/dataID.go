@@ -1,4 +1,4 @@
-package utlities
+package utilities
 
 import (
 	"github.com/AssetMantle/modules/schema/data"

@@ -18,13 +18,10 @@ type dataID struct {
 	ids.HashID
 }
 
-func (dataID dataID) IsDataID() {
-	// TODO implement me
-	panic("implement me")
-}
-
 var _ ids.DataID = (*dataID)(nil)
 
+func (dataID dataID) IsDataID() {
+}
 func (dataID dataID) String() string {
 	return stringUtilities.JoinIDStrings(dataID.Type.String(), dataID.HashID.String())
 }
@@ -52,7 +49,7 @@ func dataIDFromInterface(i interface{}) dataID {
 
 func NewDataID(data data.Data) ids.DataID {
 	if data == nil {
-		panic(errors.MetaDataError)
+		panic(errorConstants.MetaDataError)
 	}
 
 	return dataID{

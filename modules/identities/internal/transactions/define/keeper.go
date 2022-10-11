@@ -12,7 +12,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
@@ -39,12 +39,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.FromIdentity)).Get(key.NewKey(message.FromIdentity))
 	if mappable == nil {
-		return newTransactionResponse(constants.EntityNotFound)
+		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 	identity := mappable.(mappables.Identity)
 
 	if !identity.(mappables.Identity).IsProvisioned(message.From) {
-		return newTransactionResponse(constants.NotAuthorized)
+		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
 	immutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetList()...)))
@@ -59,7 +59,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	mutableProperties := base.NewMutables(baseLists.NewPropertyList(append(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...), constants.Authentication)...))
+	mutableProperties := base.NewMutables(baseLists.NewPropertyList(append(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...), constants.AuthenticationProperty)...))
 
 	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(immutableProperties, mutableProperties)))
 	if err != nil {
@@ -94,7 +94,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.supplementAuxiliary = value
 			}
 		default:
-			panic(constants.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

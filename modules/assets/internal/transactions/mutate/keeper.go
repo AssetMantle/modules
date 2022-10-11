@@ -51,16 +51,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	mutables := base.NewMutables(baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
 
 	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, mutables)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
+		if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.GetClassificationID(), nil, asset.GetMutables().Mutate(mutables.GetMutablePropertyList().GetList()...))); !auxiliaryResponse.IsSuccessful() {
+			return newTransactionResponse(auxiliaryResponse.GetError())
+		}
 	}
 
-	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, mutables.GetMutablePropertyList())); !auxiliaryResponse.IsSuccessful() {
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.GetClassificationID(), nil, asset.GetMutablePropertyList().Mutate(mutableProperties.GetList()...))); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(auxiliaryResponse.GetError())
-	}
-
-	assets.Mutate(mappable.NewAsset(asset.GetClassificationID(), asset.GetImmutables(), base.NewMutables(asset.GetImmutables().GetImmutablePropertyList().Mutate(mutables.GetMutablePropertyList().GetList()...))))
-	assets.Mutate(mappable.NewAsset(asset.GetID(), asset.GetImmutablePropertyList(), asset.GetMutablePropertyList().Mutate(mutableProperties.GetList()...)))
+	assets.Mutate(mappable.NewAsset(asset.GetClassificationID(), asset.GetImmutables(), asset.GetMutables().Mutate(mutables.GetMutablePropertyList().GetList()...)))
 
 	return newTransactionResponse(nil)
 }

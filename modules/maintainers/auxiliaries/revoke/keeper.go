@@ -23,7 +23,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	maintainerID := baseIDs.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(maintainerID))
-	fromMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
+	fromMaintainerID := baseIDs.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context)
 
 	fromMaintainer := maintainers.Fetch(key.FromID(fromMaintainerID)).Get(key.NewKey(fromMaintainerID))

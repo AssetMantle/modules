@@ -51,7 +51,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if burnHeightMetaProperty != nil {
 		burnHeight := burnHeightMetaProperty.GetData().(data.HeightData).Get()
 		if burnHeight.Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
-			return newTransactionResponse(errors.NotAuthorized)
+			return newTransactionResponse(errorConstants.NotAuthorized)
 		}
 	}
 

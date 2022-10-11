@@ -20,7 +20,6 @@ import (
 	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type transactionKeeper struct {
@@ -40,31 +39,20 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 
-	orderID := message.OrderID
-	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(orderID))
-	order := orders.Get(key.NewKey(orderID)).(mappables.Order)
-	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.OrderID))
+	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.OrderID))
 
-	Mutable := orders.Get(key.FromID(message.OrderID))
+	Mutable := orders.Get(key.NewKey(message.OrderID))
 	if Mutable == nil {
-		return newTransactionResponse(errors.EntityNotFound)
+		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 	order := Mutable.(mappables.Order)
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetTakerID(), order.GetMakerOwnableSplit())))
-	if Error != nil {
-		newTransactionResponse(Error)
-	if order == nil {
-		return newTransactionResponse(errorConstants.EntityNotFound)
-	}
-
-	if order.GetTakerID().Compare(baseIDs.NewStringID("")) != 0 && order.GetTakerID().Compare(message.FromID) != 0 {
+	if order.GetTakerID().Compare(baseIDs.PrototypeIdentityID()) != 0 && order.GetTakerID().Compare(message.FromID) != 0 {
 		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
 	makerReceiveTakerOwnableSplit := order.GetMakerOwnableSplit().MulTruncate(order.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec())
 	takerReceiveMakerOwnableSplit := message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(order.GetExchangeRate())
-	exchangeRate := order.GetExchangeRate().GetData().(data.DecData).Get()
 
 	switch updatedMakerOwnableSplit := order.GetMakerOwnableSplit().Sub(takerReceiveMakerOwnableSplit); {
 	case updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()):
@@ -83,23 +71,20 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		orders.Remove(order)
 	default:
 		makerReceiveTakerOwnableSplit = message.TakerOwnableSplit
-		mutableProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(updatedMakerOwnableSplit)))))
+		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(base.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(updatedMakerOwnableSplit)))))
 
-		if err != nil {
-			return newTransactionResponse(err)
+		if Error != nil {
+			return newTransactionResponse(Error)
 		}
 
-		// TODO call order.mutate
-		order = mappable.NewOrder(order.GetClassificationID(), order.GetImmutables(), baseQualified.NewMutables(order.GetImmutables().GetImmutablePropertyList().Mutate(mutableProperties.GetList()...)))
-		order = mappable.NewOrder(order.GetID(), order.GetImmutablePropertyList(), order.GetMutablePropertyList().Mutate(mutableProperties.GetList()...))
-		orders.Mutate(order)
+		orders.Mutate(mappable.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(mutableProperties.GetList()...)))
 	}
 
 	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), makerReceiveTakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), takerReceiveMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(baseIDs.NewID(module.Name), message.FromID, order.GetMakerOwnableID(), takerReceiveMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 

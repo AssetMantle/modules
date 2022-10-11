@@ -8,13 +8,13 @@ import (
 
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/qualified"
 )
 
 type auxiliaryRequest struct {
 	ids.ClassificationID `json:"classificationID" valid:"required~required field classificationID missing"`
 	ids.IdentityID       `json:"identityID" valid:"required~required field identityID missing"`
-	MaintainedProperties lists.PropertyList `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
+	qualified.Mutables   `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -33,10 +33,10 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(classificationID ids.ClassificationID, identityID ids.IdentityID, maintainedProperties lists.PropertyList) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(classificationID ids.ClassificationID, identityID ids.IdentityID, mutables qualified.Mutables) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		ClassificationID:     classificationID,
-		IdentityID:           identityID,
-		MaintainedProperties: maintainedProperties,
+		ClassificationID: classificationID,
+		IdentityID:       identityID,
+		Mutables:         mutables,
 	}
 }

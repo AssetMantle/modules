@@ -10,7 +10,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
@@ -46,7 +46,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	mutableProperties := base.NewMutables(baseLists.NewPropertyList(append(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...), constants.Expiry, constants.MakerOwnableSplit)...))
+	mutableProperties := base.NewMutables(baseLists.NewPropertyList(append(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...), constants.ExpiryHeightProperty, constants.MakerOwnableSplitProperty)...))
 
 	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(immutables, mutableProperties)))
 	if err != nil {
@@ -77,7 +77,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.authenticateAuxiliary = value
 			}
 		default:
-			panic(constants.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

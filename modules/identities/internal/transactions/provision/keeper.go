@@ -28,13 +28,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	identityID := message.IdentityID
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 
-	mappable := identities.Get(key.NewKey(identityID))
-	if mappable == nil {
+	Mappable := identities.Get(key.NewKey(identityID))
+	if Mappable == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
-	identity := mappable.(mappables.Identity)
-
-	identity := mappable.(mappables.Identity)
+	identity := Mappable.(mappables.Identity)
 
 	if identity.IsProvisioned(message.From) {
 		return newTransactionResponse(errorConstants.NotAuthorized)
@@ -74,7 +72,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.supplementAuxiliary = value
 			}
 		default:
-			panic(errors.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

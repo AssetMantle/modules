@@ -4,7 +4,6 @@
 package schema
 
 import (
-	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/schema/data"
