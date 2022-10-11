@@ -51,6 +51,10 @@ func dataIDFromInterface(i interface{}) dataID {
 }
 
 func NewDataID(data data.Data) ids.DataID {
+	if data == nil {
+		panic(errors.MetaDataError)
+	}
+
 	return dataID{
 		Type:   data.GetType(),
 		HashID: data.GenerateHashID(),

@@ -4,25 +4,35 @@
 package base
 
 import (
+	"reflect"
+	"testing"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/parameters"
-	"reflect"
-	"testing"
 )
 
+func dummyValidator(interface{}) error {
+	return nil
+}
+
+func createTestInput() (ids.ID, data.Data, parameters.Parameter) {
+	id := baseIDs.NewID("ID")
+	stringData := baseData.NewStringData("Data")
 func createTestInput(t *testing.T) (ids.ID, data.Data, parameters.Parameter) {
 	id := baseIDs.NewStringID("ID")
 	data := baseData.NewStringData("Data")
 
-	testParameter := NewParameter(id, data, validator)
-	return id, data, testParameter
+	testParameter := NewParameter(id, stringData, dummyValidator)
+	return id, stringData, testParameter
 }
 
 func TestNewParameter(t *testing.T) {
-	id, testData, _ := createTestInput(t)
+	id, testData, _ := createTestInput()
 	type args struct {
 		id        ids.ID
 		data      data.Data
@@ -34,8 +44,9 @@ func TestNewParameter(t *testing.T) {
 		want parameters.Parameter
 	}{
 
-		{"+ve", args{id, testData, validator}, parameter{id, testData, validator}},
-		{"-ve", args{}, parameter{}},
+		{"+ve", args{id, testData, dummyValidator}, parameter{id, testData, dummyValidator}},
+		{"empty", args{}, parameter{}},
+		{"nil", args{nil, nil, nil}, parameter{nil, nil, nil}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -47,7 +58,7 @@ func TestNewParameter(t *testing.T) {
 }
 
 func Test_parameter_Equal(t *testing.T) {
-	id, testData, testParameter := createTestInput(t)
+	id, testData, testParameter := createTestInput()
 	type fields struct {
 		ID        ids.ID
 		Data      data.Data
@@ -63,7 +74,11 @@ func Test_parameter_Equal(t *testing.T) {
 		want   bool
 	}{
 
-		{"+ve", fields{id, testData, validator}, args{testParameter}, true},
+		{"+ve", fields{id, testData, dummyValidator}, args{testParameter}, true},
+		{"+ve different validator", fields{id, testData, func(interface{}) error { return nil }}, args{testParameter}, true},
+		{"-ve different id", fields{baseIDs.NewID("different"), testData, dummyValidator}, args{testParameter}, false},
+		{"-ve different data", fields{id, baseData.NewStringData("different"), dummyValidator}, args{testParameter}, false},
+		{"-ve different data type", fields{id, baseData.NewBooleanData(false), dummyValidator}, args{testParameter}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -80,7 +95,7 @@ func Test_parameter_Equal(t *testing.T) {
 }
 
 func Test_parameter_GetData(t *testing.T) {
-	id, testData, _ := createTestInput(t)
+	id, testData, _ := createTestInput()
 	type fields struct {
 		ID        ids.ID
 		Data      data.Data
@@ -92,7 +107,7 @@ func Test_parameter_GetData(t *testing.T) {
 		want   data.Data
 	}{
 
-		{"+ve", fields{id, testData, validator}, testData},
+		{"+ve", fields{id, testData, dummyValidator}, testData},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -109,7 +124,7 @@ func Test_parameter_GetData(t *testing.T) {
 }
 
 func Test_parameter_GetID(t *testing.T) {
-	id, testData, _ := createTestInput(t)
+	id, testData, _ := createTestInput()
 	type fields struct {
 		ID        ids.ID
 		Data      data.Data
@@ -121,7 +136,7 @@ func Test_parameter_GetID(t *testing.T) {
 		want   ids.ID
 	}{
 
-		{"+ve", fields{id, testData, validator}, id},
+		{"+ve", fields{id, testData, dummyValidator}, id},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -138,7 +153,7 @@ func Test_parameter_GetID(t *testing.T) {
 }
 
 func Test_parameter_GetValidator(t *testing.T) {
-	id, testData, _ := createTestInput(t)
+	id, testData, _ := createTestInput()
 	type fields struct {
 		ID        ids.ID
 		Data      data.Data
@@ -150,7 +165,7 @@ func Test_parameter_GetValidator(t *testing.T) {
 		want   func(interface{}) error
 	}{
 
-		{"+ve", fields{id, testData, validator}, validator},
+		{"+ve", fields{id, testData, dummyValidator}, dummyValidator},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -160,14 +175,14 @@ func Test_parameter_GetValidator(t *testing.T) {
 				validator: tt.fields.validator,
 			}
 			if got := parameter.GetValidator(); !reflect.DeepEqual(got, tt.want) {
-				//t.Errorf("GetValidator() = %p, want %p", got, tt.want)
+				// t.Errorf("GetValidator() = %p, want %p", got, tt.want)
 			}
 		})
 	}
 }
 
 func Test_parameter_Mutate(t *testing.T) {
-	id, testData, _ := createTestInput(t)
+	id, testData, _ := createTestInput()
 	newData := baseData.NewStringData("Data")
 	type fields struct {
 		ID        ids.ID
@@ -184,7 +199,7 @@ func Test_parameter_Mutate(t *testing.T) {
 		want   parameters.Parameter
 	}{
 
-		{"+ve", fields{id, testData, validator}, args{newData}, parameter{id, newData, validator}},
+		{"+ve", fields{id, testData, dummyValidator}, args{newData}, parameter{id, newData, dummyValidator}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -201,7 +216,7 @@ func Test_parameter_Mutate(t *testing.T) {
 }
 
 func Test_parameter_String(t *testing.T) {
-	id, testData, testParameter := createTestInput(t)
+	id, testData, testParameter := createTestInput()
 	type fields struct {
 		ID        ids.ID
 		Data      data.Data
@@ -213,7 +228,7 @@ func Test_parameter_String(t *testing.T) {
 		want   string
 	}{
 
-		{"+ve", fields{id, testData, validator}, testParameter.String()},
+		{"+ve", fields{id, testData, dummyValidator}, testParameter.String()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -230,7 +245,7 @@ func Test_parameter_String(t *testing.T) {
 }
 
 func Test_parameter_Validate(t *testing.T) {
-	//id, testData, _ := createTestInput(t)
+	id, testData, _ := createTestInput()
 	type fields struct {
 		ID        ids.ID
 		Data      data.Data
@@ -242,9 +257,8 @@ func Test_parameter_Validate(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		//{"+ve", fields{id, testData, validator}, false},
-		// TODO: Should not panic
-		//{"-ve", fields{}, true},
+		{"+ve with stringData", fields{id, testData, dummyValidator}, false},
+		{"+ve with decData", fields{baseIDs.NewID("ID"), baseData.NewDecData(sdkTypes.SmallestDec()), dummyValidator}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

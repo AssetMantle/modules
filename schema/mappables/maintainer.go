@@ -22,7 +22,7 @@ type Maintainer interface {
 	CanAddMaintainer() bool
 	CanRemoveMaintainer() bool
 	CanMutateMaintainer() bool
-	MaintainsProperty(ids.ID) bool
+	MaintainsProperty(ids.PropertyID) bool
 
 	qualified.Document
 	helpers.Mappable

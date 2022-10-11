@@ -57,22 +57,32 @@ func (maintainer maintainer) CanMintAsset() bool {
 	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Mint))
 	return can
 }
+
+// TODO
 func (maintainer maintainer) CanBurnAsset() bool {
 	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Burn))
 	return can
 }
+
+// TODO
 func (maintainer maintainer) CanRenumerateAsset() bool {
 	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Renumerate))
 	return can
 }
+
+// TODO
 func (maintainer maintainer) CanAddMaintainer() bool {
 	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Add))
 	return can
 }
+
+// TODO
 func (maintainer maintainer) CanRemoveMaintainer() bool {
 	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Remove))
 	return can
 }
+
+// TODO
 func (maintainer maintainer) CanMutateMaintainer() bool {
 	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Mutate))
 	return can

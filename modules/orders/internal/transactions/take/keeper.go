@@ -6,7 +6,7 @@ package take
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
@@ -24,26 +24,36 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper              helpers.Mapper
-	parameters          helpers.Parameters
-	scrubAuxiliary      helpers.Auxiliary
-	supplementAuxiliary helpers.Auxiliary
-	transferAuxiliary   helpers.Auxiliary
-	verifyAuxiliary     helpers.Auxiliary
+	mapper                helpers.Mapper
+	parameters            helpers.Parameters
+	scrubAuxiliary        helpers.Auxiliary
+	supplementAuxiliary   helpers.Auxiliary
+	transferAuxiliary     helpers.Auxiliary
+	authenticateAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 
 	orderID := message.OrderID
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(orderID))
 	order := orders.Get(key.NewKey(orderID)).(mappables.Order)
+	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.OrderID))
 
+	Mutable := orders.Get(key.FromID(message.OrderID))
+	if Mutable == nil {
+		return newTransactionResponse(errors.EntityNotFound)
+	}
+	order := Mutable.(mappables.Order)
+
+	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetTakerID(), order.GetMakerOwnableSplit())))
+	if Error != nil {
+		newTransactionResponse(Error)
 	if order == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
@@ -54,6 +64,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	makerReceiveTakerOwnableSplit := order.GetMakerOwnableSplit().MulTruncate(order.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec())
 	takerReceiveMakerOwnableSplit := message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(order.GetExchangeRate())
+	exchangeRate := order.GetExchangeRate().GetData().(data.DecData).Get()
 
 	switch updatedMakerOwnableSplit := order.GetMakerOwnableSplit().Sub(takerReceiveMakerOwnableSplit); {
 	case updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()):
@@ -80,6 +91,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 		// TODO call order.mutate
 		order = mappable.NewOrder(order.GetClassificationID(), order.GetImmutables(), baseQualified.NewMutables(order.GetImmutables().GetImmutablePropertyList().Mutate(mutableProperties.GetList()...)))
+		order = mappable.NewOrder(order.GetID(), order.GetImmutablePropertyList(), order.GetMutablePropertyList().Mutate(mutableProperties.GetList()...))
 		orders.Mutate(order)
 	}
 
@@ -107,8 +119,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.supplementAuxiliary = value
 			case transfer.Auxiliary.GetName():
 				transactionKeeper.transferAuxiliary = value
-			case verify.Auxiliary.GetName():
-				transactionKeeper.verifyAuxiliary = value
+			case authenticate.Auxiliary.GetName():
+				transactionKeeper.authenticateAuxiliary = value
 			}
 		default:
 			panic(errorConstants.UninitializedUsage)

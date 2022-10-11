@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	stringUtilities "github.com/AssetMantle/modules/schema/data/utlities"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )

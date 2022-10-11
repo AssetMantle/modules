@@ -6,7 +6,7 @@ package quash
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
@@ -16,9 +16,9 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper              helpers.Mapper
-	supplementAuxiliary helpers.Auxiliary
-	verifyAuxiliary     helpers.Auxiliary
+	mapper                helpers.Mapper
+	supplementAuxiliary   helpers.Auxiliary
+	authenticateAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -26,7 +26,7 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
@@ -55,8 +55,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			switch value.GetName() {
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
-			case verify.Auxiliary.GetName():
-				transactionKeeper.verifyAuxiliary = value
+			case authenticate.Auxiliary.GetName():
+				transactionKeeper.authenticateAuxiliary = value
 			}
 		default:
 			panic(errorConstants.UninitializedUsage)

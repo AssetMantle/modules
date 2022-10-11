@@ -3,6 +3,9 @@ package utilities
 import (
 	"strings"
 
+	"github.com/AssetMantle/modules/constants"
+	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	"github.com/AssetMantle/modules/schema/data/utlities"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -14,7 +17,7 @@ import (
 func ReadMetaProperty(metaPropertyString string) (properties.MetaProperty, error) {
 	propertyIDString, dataString := SplitMetaProperty(metaPropertyString)
 	if propertyIDString != "" {
-		data, err := utlities.ReadData(dataString)
+		data, err := utilities.ReadData(dataString)
 		if err != nil {
 			return nil, err
 		}

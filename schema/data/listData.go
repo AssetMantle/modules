@@ -11,4 +11,5 @@ type ListData interface {
 	Remove(...Data) ListData
 
 	Data
+	Get() []Data
 }

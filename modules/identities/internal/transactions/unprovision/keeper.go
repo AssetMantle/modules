@@ -8,6 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
@@ -56,6 +57,18 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			}
 		default:
 			panic(errorConstants.UninitializedUsage)
+		}
+	}
+
+	for _, auxiliary := range auxiliaries {
+		switch value := auxiliary.(type) {
+		case helpers.Auxiliary:
+			switch value.GetName() {
+			case supplement.Auxiliary.GetName():
+				transactionKeeper.supplementAuxiliary = value
+			}
+		default:
+			panic(errors.UninitializedUsage)
 		}
 	}
 

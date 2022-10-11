@@ -1,19 +1,21 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package verify
+package member
 
 import (
 	"github.com/asaskevich/govalidator"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/lists"
 )
 
 type auxiliaryRequest struct {
-	Address        sdkTypes.AccAddress `json:"address" valid:"required~required field address missing, matches(^[a-z0-9]*$)~field address is invalid"`
-	ids.IdentityID `json:"identityID" valid:"required~required field identityID missing"`
+	ClassificationID    ids.ID             `json:"classificationID" valid:"required~required field classificationID missing"`
+	ImmutableProperties lists.PropertyList `json:"immutableProperties"`
+	MutableProperties   lists.PropertyList `json:"mutableProperties"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -28,13 +30,14 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	case auxiliaryRequest:
 		return value
 	default:
-		return auxiliaryRequest{}
+		panic(errors.InvalidRequest)
 	}
 }
 
-func NewAuxiliaryRequest(address sdkTypes.AccAddress, identityID ids.IdentityID) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(classificationID ids.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		Address:    address,
-		IdentityID: identityID,
+		ClassificationID:    classificationID,
+		ImmutableProperties: immutableProperties,
+		MutableProperties:   mutableProperties,
 	}
 }

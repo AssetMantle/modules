@@ -18,7 +18,7 @@ var _ lists.IDList = (*idList)(nil)
 func (idList idList) GetList() []ids.ID {
 	returnIDList := make([]ids.ID, idList.List.Size())
 
-	for i, listable := range idList.GetList() {
+	for i, listable := range idList.List.Get() {
 		returnIDList[i] = listable.(ids.ID)
 	}
 

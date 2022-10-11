@@ -5,6 +5,11 @@ package base
 
 import (
 	"fmt"
+	"testing"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -12,6 +17,7 @@ import (
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/traits"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -28,6 +34,10 @@ func TestNewListData(t *testing.T) {
 		// TODO: Add test cases.
 		{"+ve for some id", args{baseLists.NewDataList(NewStringData("Data"))}, listData{baseLists.NewDataList(NewStringData("Data"))}},
 		{"+ve for empty String", args{baseLists.NewDataList(NewStringData(""))}, listData{baseLists.NewDataList(NewStringData(""))}},
+
+		{"+ve empty string", args{""}, listData{}.ZeroValue(), assert.NoError},
+		{"+ve address string", args{"cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, NewListData(accAddressData{accAddress}), assert.NoError},
+		{"-ve wrong address string format", args{"cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk51f"}, listData{}.ZeroValue(), assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -128,6 +138,9 @@ func Test_listData_Compare(t *testing.T) {
 		// TODO: Add test cases.
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{listData{baseLists.NewDataList(NewStringData("Data"))}}, 0},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{listData{baseLists.NewDataList(NewStringData("Data"))}}, -1},
+		{"Test for Equal case", fields{baseLists.NewDataList(accAddressData{accAddress})}, args{NewListData(accAddressData{accAddress})}, 0, false},
+		{"Test for Not Equal case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, args{NewListData(accAddressData{accAddress})}, 1, false},
+		{"Test for Not Equal case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, args{heightData{baseTypes.NewHeight(100)}}, 1, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -151,6 +164,11 @@ func Test_listData_GenerateHashID(t *testing.T) {
 		// TODO: Add test cases.
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, baseIDs.GenerateHashID(listData{baseLists.NewDataList(NewStringData("Data"))}.Bytes())},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, baseIDs.GenerateHashID(listData{baseLists.NewDataList(NewStringData(""))}.Bytes())},
+		{"empty string", fields{baseLists.NewDataList()}, baseIDs.NewID("")},
+		{"+ve case", fields{baseLists.NewDataList(accAddressData{accAddress})}, baseIDs.NewID("GVpq_tf8khitXl2MmMQfY-Ufu5DdATYNz3ZS9-wIl_U=")},
+		{"-ve case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, baseIDs.NewID("")},
+		{"-ve case with empty datalist", fields{baseLists.NewDataList([]data.Data{}...)}, baseIDs.NewID("")},
+		// {"-ve case with nil data", fields{nil}, baseIDs.NewID("")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

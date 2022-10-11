@@ -1,24 +1,24 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package verify
+package member
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/constants/errors"
 )
 
-func Test_Verify_Response(t *testing.T) {
+func Test_Conform_Response(t *testing.T) {
 	testAuxiliaryResponse := newAuxiliaryResponse(nil)
 	require.Equal(t, auxiliaryResponse{Success: true, Error: nil}, testAuxiliaryResponse)
 	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())
 	require.Equal(t, nil, testAuxiliaryResponse.GetError())
 
-	testAuxiliaryResponse2 := newAuxiliaryResponse(constants.IncorrectFormat)
-	require.Equal(t, auxiliaryResponse{Success: false, Error: constants.IncorrectFormat}, testAuxiliaryResponse2)
+	testAuxiliaryResponse2 := newAuxiliaryResponse(errors.IncorrectFormat)
+	require.Equal(t, auxiliaryResponse{Success: false, Error: errors.IncorrectFormat}, testAuxiliaryResponse2)
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
-	require.Equal(t, constants.IncorrectFormat, testAuxiliaryResponse2.GetError())
+	require.Equal(t, errors.IncorrectFormat, testAuxiliaryResponse2.GetError())
 }

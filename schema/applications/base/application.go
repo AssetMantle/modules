@@ -41,14 +41,15 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
 	"github.com/AssetMantle/modules/modules/identities"
-	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/deputize"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/revoke"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
-	maintainersVerify "github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/metas"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
@@ -362,7 +363,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 	maintainersModule := maintainers.Prototype().Initialize(
 		application.keys[metas.Prototype().Name()],
 		paramsKeeper.Subspace(maintainers.Prototype().Name()),
-		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(member.Auxiliary.GetName()),
 	)
 	identitiesModule := identities.Prototype().Initialize(
 		application.keys[identities.Prototype().Name()],
@@ -371,49 +372,49 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(maintainersVerify.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
 	)
 	splitsModule := splits.Prototype().Initialize(
 		application.keys[splits.Prototype().Name()],
 		paramsKeeper.Subspace(splits.Prototype().Name()),
 		supplyKeeper,
-		identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
+		identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
 	)
 	assetsModule := assets.Prototype().Initialize(
 		application.keys[assets.Prototype().Name()],
 		paramsKeeper.Subspace(assets.Prototype().Name()),
+		identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
+		splitsModule.GetAuxiliary(burn.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-		identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
+		splitsModule.GetAuxiliary(renumerate.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(maintainersVerify.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
 		splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
-		splitsModule.GetAuxiliary(burn.Auxiliary.GetName()),
-		splitsModule.GetAuxiliary(renumerate.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
 	)
 	ordersModule := orders.Prototype().Initialize(
 		application.keys[orders.Prototype().Name()],
 		paramsKeeper.Subspace(orders.Prototype().Name()),
+		identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-		identitiesModule.GetAuxiliary(verify.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(maintainersVerify.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
 		splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
 	)
 
 	var wasmRouter = application.BaseApp.Router()

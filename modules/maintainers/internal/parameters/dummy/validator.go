@@ -17,8 +17,8 @@ func validator(i interface{}) error {
 		}
 
 		return nil
-	case data.Data:
-		if value.(data.DecData).Get().IsNegative() {
+	case data.DecData:
+		if value.Get().IsNegative() {
 			return constants.InvalidParameter
 		}
 

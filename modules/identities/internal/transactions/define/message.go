@@ -7,13 +7,14 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/errors"
+	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
+	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
-	xprtErrors "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
@@ -33,12 +34,24 @@ func (message message) Route() string { return module.Name }
 func (message message) Type() string  { return Transaction.GetName() }
 func (message message) ValidateBasic() error {
 	if _, err := govalidator.ValidateStruct(message); err != nil {
-		return errors.Wrap(xprtErrors.IncorrectMessage, err.Error())
+		return sdkErrors.Wrap(errors.IncorrectMessage, err.Error())
 	}
 
 	return nil
 }
 func (message message) GetSignBytes() []byte {
+	if len(message.ImmutableMetaProperties.GetList()) == 0 {
+		message.ImmutableMetaProperties = base.NewMetaPropertyList(nil)
+	}
+	if len(message.ImmutableProperties.GetList()) == 0 {
+		message.ImmutableProperties = base.NewPropertyList(nil)
+	}
+	if len(message.MutableMetaProperties.GetList()) == 0 {
+		message.MutableMetaProperties = base.NewMetaPropertyList(nil)
+	}
+	if len(message.MutableProperties.GetList()) == 0 {
+		message.MutableProperties = base.NewPropertyList(nil)
+	}
 	return sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message))
 }
 func (message message) GetSigners() []sdkTypes.AccAddress {

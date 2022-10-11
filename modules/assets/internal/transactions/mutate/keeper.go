@@ -9,7 +9,7 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
-	"github.com/AssetMantle/modules/modules/identities/auxiliaries/verify"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -20,27 +20,28 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper            helpers.Mapper
-	verifyAuxiliary   helpers.Auxiliary
-	maintainAuxiliary helpers.Auxiliary
-	scrubAuxiliary    helpers.Auxiliary
-	conformAuxiliary  helpers.Auxiliary
+	mapper                helpers.Mapper
+	authenticateAuxiliary helpers.Auxiliary
+	maintainAuxiliary     helpers.Auxiliary
+	scrubAuxiliary        helpers.Auxiliary
+	conformAuxiliary      helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.verifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.AssetID))
 
-	asset := assets.Get(key.NewKey(message.AssetID)).(mappables.Asset)
-	if asset == nil {
+	Mappable := assets.Get(key.NewKey(message.AssetID)).(mappables.Asset)
+	if Mappable == nil {
 		return newTransactionResponse(constants.EntityNotFound)
 	}
+	asset := Mappable.(mappables.Asset)
 
 	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetList()...)))
 	if err != nil {
@@ -49,15 +50,17 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	mutables := base.NewMutables(baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.GetClassificationID(), nil, mutables)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
 	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, mutables.GetMutablePropertyList())); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.GetClassificationID(), nil, asset.GetMutablePropertyList().Mutate(mutableProperties.GetList()...))); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
 	assets.Mutate(mappable.NewAsset(asset.GetClassificationID(), asset.GetImmutables(), base.NewMutables(asset.GetImmutables().GetImmutablePropertyList().Mutate(mutables.GetMutablePropertyList().GetList()...))))
+	assets.Mutate(mappable.NewAsset(asset.GetID(), asset.GetImmutablePropertyList(), asset.GetMutablePropertyList().Mutate(mutableProperties.GetList()...)))
 
 	return newTransactionResponse(nil)
 }
@@ -75,8 +78,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.maintainAuxiliary = value
 			case scrub.Auxiliary.GetName():
 				transactionKeeper.scrubAuxiliary = value
-			case verify.Auxiliary.GetName():
-				transactionKeeper.verifyAuxiliary = value
+			case authenticate.Auxiliary.GetName():
+				transactionKeeper.authenticateAuxiliary = value
 			}
 		default:
 			panic(constants.UninitializedUsage)

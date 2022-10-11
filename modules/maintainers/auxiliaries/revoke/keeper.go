@@ -23,17 +23,25 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	maintainerID := baseIDs.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(maintainerID))
+	fromMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
+	maintainers := auxiliaryKeeper.mapper.NewCollection(context)
 
-	maintainer := maintainers.Get(key.NewKey(maintainerID))
-	if maintainer == nil {
+	fromMaintainer := maintainers.Fetch(key.FromID(fromMaintainerID)).Get(key.NewKey(fromMaintainerID))
+	if fromMaintainer == nil {
 		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
 
-	if !maintainer.(mappables.Maintainer).CanRemoveMaintainer() {
+	if !fromMaintainer.(mappables.Maintainer).CanRemoveMaintainer() {
 		return newAuxiliaryResponse(constants.NotAuthorized)
 	}
 
-	maintainers.Remove(maintainer)
+	toMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.ToID)
+	toMaintainer := maintainers.Fetch(key.FromID(toMaintainerID)).Get(key.FromID(toMaintainerID))
+	if toMaintainer == nil {
+		return newAuxiliaryResponse(errors.EntityNotFound)
+	}
+
+	maintainers.Remove(toMaintainer)
 
 	return newAuxiliaryResponse(nil)
 }

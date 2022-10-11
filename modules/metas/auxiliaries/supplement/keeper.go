@@ -8,6 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	"github.com/AssetMantle/modules/schema/data/utlities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -40,11 +41,11 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		}
 
 		if meta != nil {
-			metaPropertyList = append(metaPropertyList, baseProperties.NewMetaProperty(property.GetKey(), meta.(mappables.Meta).GetData()))
+			metaPropertyList = append(metaPropertyList, baseProperties.NewMetaProperty(property.GetKey().GetKey(), meta.(mappables.Meta).GetData()))
 		}
 	}
 
-	return newAuxiliaryResponse(base.NewMetaProperties(metaPropertyList...), nil)
+	return newAuxiliaryResponse(base.NewMetaPropertyList(metaPropertyList...), nil)
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

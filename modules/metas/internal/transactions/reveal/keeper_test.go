@@ -21,6 +21,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	stringUtilities "github.com/AssetMantle/modules/schema/data/utlities"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
