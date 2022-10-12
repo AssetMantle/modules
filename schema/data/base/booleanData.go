@@ -6,9 +6,9 @@ package base
 import (
 	"strconv"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -24,9 +24,9 @@ func (booleanData booleanData) GetID() ids.DataID {
 	return baseIDs.NewDataID(booleanData)
 }
 func (booleanData booleanData) Compare(listable traits.Listable) int {
-	compareBooleanData, Error := booleanDataFromInterface(listable)
-	if Error != nil {
-		panic(Error)
+	compareBooleanData, err := booleanDataFromInterface(listable)
+	if err != nil {
+		panic(err)
 	}
 
 	if booleanData.Value == compareBooleanData.Value {
@@ -40,18 +40,26 @@ func (booleanData booleanData) Compare(listable traits.Listable) int {
 func (booleanData booleanData) String() string {
 	return strconv.FormatBool(booleanData.Value)
 }
-func (booleanData booleanData) GetType() ids.ID {
-	return idsConstants.BooleanDataID
+
+// TODO test
+func (booleanData booleanData) Bytes() []byte {
+	if booleanData.Get() {
+		return []byte{0x1}
+	}
+	return []byte{0x0}
+}
+func (booleanData booleanData) GetType() ids.StringID {
+	return dataConstants.BooleanDataID
 }
 func (booleanData booleanData) ZeroValue() data.Data {
 	return NewBooleanData(false)
 }
-func (booleanData booleanData) GenerateHash() ids.ID {
+func (booleanData booleanData) GenerateHashID() ids.HashID {
 	if booleanData.Compare(booleanData.ZeroValue()) == 0 {
-		return baseIDs.NewID(strconv.FormatBool(false))
+		return baseIDs.GenerateHashID()
 	}
 
-	return baseIDs.NewID(strconv.FormatBool(true))
+	return baseIDs.GenerateHashID(booleanData.Bytes())
 }
 func (booleanData booleanData) Get() bool {
 	return booleanData.Value
@@ -62,7 +70,7 @@ func booleanDataFromInterface(listable traits.Listable) (booleanData, error) {
 	case booleanData:
 		return value, nil
 	default:
-		return booleanData{}, errors.MetaDataError
+		return booleanData{}, constants.MetaDataError
 	}
 }
 
@@ -70,17 +78,4 @@ func NewBooleanData(value bool) data.Data {
 	return booleanData{
 		Value: value,
 	}
-}
-
-func ReadBooleanData(dataString string) (data.Data, error) {
-	if dataString == "" {
-		return booleanData{}.ZeroValue(), nil
-	}
-
-	Bool, Error := strconv.ParseBool(dataString)
-	if Error != nil {
-		return booleanData{}.ZeroValue(), Error
-	}
-
-	return NewBooleanData(Bool), nil
 }

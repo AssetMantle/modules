@@ -6,7 +6,6 @@ package take
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
@@ -14,8 +13,8 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
-	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
@@ -37,54 +36,37 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return newTransactionResponse(errors.EntityNotFound)
+		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 
-	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.OrderID))
+	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.OrderID))
 
-	Mutable := orders.Get(key.FromID(message.OrderID))
+	Mutable := orders.Get(key.NewKey(message.OrderID))
 	if Mutable == nil {
-		return newTransactionResponse(errors.EntityNotFound)
+		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 	order := Mutable.(mappables.Order)
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(order.GetTakerID(), order.GetMakerOwnableSplit())))
-	if Error != nil {
-		newTransactionResponse(Error)
+	if order.GetTakerID().Compare(baseIDs.PrototypeIdentityID()) != 0 && order.GetTakerID().Compare(message.FromID) != 0 {
+		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
-	if takerIDProperty := metaProperties.GetMetaProperty(constants.TakerIDProperty); takerIDProperty != nil {
-		takerID := takerIDProperty.GetData().(data.IDData).Get()
-		if takerID.Compare(baseIDs.NewID("")) != 0 && takerID.Compare(message.FromID) != 0 {
-			return newTransactionResponse(errors.NotAuthorized)
-		}
-	}
+	makerReceiveTakerOwnableSplit := order.GetMakerOwnableSplit().MulTruncate(order.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec())
+	takerReceiveMakerOwnableSplit := message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(order.GetExchangeRate())
 
-	exchangeRate := order.GetExchangeRate().GetData().(data.DecData).Get()
-
-	makerOwnableSplitProperty := metaProperties.GetMetaProperty(constants.MakerOwnableSplitProperty)
-	if makerOwnableSplitProperty == nil {
-		return newTransactionResponse(errors.MetaDataError)
-	}
-
-	makerOwnableSplit := makerOwnableSplitProperty.GetData().(data.DecData).Get()
-
-	makerReceiveTakerOwnableSplit := makerOwnableSplit.MulTruncate(exchangeRate).MulTruncate(sdkTypes.SmallestDec())
-	takerReceiveMakerOwnableSplit := message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(exchangeRate)
-
-	switch updatedMakerOwnableSplit := makerOwnableSplit.Sub(takerReceiveMakerOwnableSplit); {
+	switch updatedMakerOwnableSplit := order.GetMakerOwnableSplit().Sub(takerReceiveMakerOwnableSplit); {
 	case updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()):
 		if message.TakerOwnableSplit.LT(makerReceiveTakerOwnableSplit) {
-			return newTransactionResponse(errors.InsufficientBalance)
+			return newTransactionResponse(errorConstants.InsufficientBalance)
 		}
 
 		orders.Remove(order)
 	case updatedMakerOwnableSplit.LT(sdkTypes.ZeroDec()):
 		if message.TakerOwnableSplit.LT(makerReceiveTakerOwnableSplit) {
-			return newTransactionResponse(errors.InsufficientBalance)
+			return newTransactionResponse(errorConstants.InsufficientBalance)
 		}
 
-		takerReceiveMakerOwnableSplit = makerOwnableSplit
+		takerReceiveMakerOwnableSplit = order.GetMakerOwnableSplit()
 
 		orders.Remove(order)
 	default:
@@ -95,15 +77,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return newTransactionResponse(Error)
 		}
 
-		order = mappable.NewOrder(order.GetID(), order.GetImmutablePropertyList(), order.GetMutablePropertyList().Mutate(mutableProperties.GetList()...))
-		orders.Mutate(order)
+		orders.Mutate(mappable.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(mutableProperties.GetList()...)))
 	}
 
 	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), makerReceiveTakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(baseIDs.NewID(module.Name), message.FromID, order.GetMakerOwnableID(), takerReceiveMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), takerReceiveMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
@@ -127,7 +108,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.authenticateAuxiliary = value
 			}
 		default:
-			panic(errors.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

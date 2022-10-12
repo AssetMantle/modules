@@ -1,3 +1,6 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package base
 
 import (
@@ -20,6 +23,9 @@ func dummyValidator(interface{}) error {
 func createTestInput() (ids.ID, data.Data, parameters.Parameter) {
 	id := baseIDs.NewID("ID")
 	stringData := baseData.NewStringData("Data")
+func createTestInput(t *testing.T) (ids.ID, data.Data, parameters.Parameter) {
+	id := baseIDs.NewStringID("ID")
+	data := baseData.NewStringData("Data")
 
 	testParameter := NewParameter(id, stringData, dummyValidator)
 	return id, stringData, testParameter

@@ -6,7 +6,7 @@ package revoke
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
@@ -19,8 +19,8 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	if auxiliaryRequest.ClassificationID.Compare(baseIDs.NewID("revokeError")) == 0 {
-		return newAuxiliaryResponse(errors.MockError)
+	if auxiliaryRequest.ClassificationID.Compare(baseIDs.NewStringID("revokeError")) == 0 {
+		return newAuxiliaryResponse(constants.MockError)
 	}
 
 	return newAuxiliaryResponse(nil)

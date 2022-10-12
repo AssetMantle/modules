@@ -6,13 +6,12 @@ package base
 import (
 	"bytes"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type idData struct {
@@ -35,14 +34,17 @@ func (idData idData) Compare(listable traits.Listable) int {
 func (idData idData) String() string {
 	return idData.Value.String()
 }
-func (idData idData) GetType() ids.ID {
-	return idsConstants.IDDataID
+func (idData idData) Bytes() []byte {
+	return idData.Value.Bytes()
+}
+func (idData idData) GetType() ids.StringID {
+	return dataConstants.IDDataID
 }
 func (idData idData) ZeroValue() data.Data {
-	return NewIDData(baseIDs.NewID(""))
+	return NewIDData(baseIDs.NewStringID(""))
 }
-func (idData idData) GenerateHash() ids.ID {
-	return baseIDs.NewID(stringUtilities.Hash(idData.Value.String()))
+func (idData idData) GenerateHashID() ids.HashID {
+	return baseIDs.GenerateHashID(idData.Bytes())
 }
 func (idData idData) Get() ids.ID {
 	return idData.Value
@@ -53,7 +55,7 @@ func idDataFromInterface(listable traits.Listable) (idData, error) {
 	case idData:
 		return value, nil
 	default:
-		return idData{}, errors.MetaDataError
+		return idData{}, constants.MetaDataError
 	}
 }
 
@@ -61,8 +63,4 @@ func NewIDData(value ids.ID) data.Data {
 	return idData{
 		Value: value,
 	}
-}
-
-func ReadIDData(idDataString string) (data.Data, error) {
-	return NewIDData(baseIDs.NewID(idDataString)), nil
 }

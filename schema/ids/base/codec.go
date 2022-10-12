@@ -10,7 +10,16 @@ import (
 )
 
 func RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterModuleConcrete(codec, assetID{})
+	codecUtilities.RegisterModuleConcrete(codec, classificationID{})
 	codecUtilities.RegisterModuleConcrete(codec, dataID{})
-	codecUtilities.RegisterModuleConcrete(codec, id{})
+	codecUtilities.RegisterModuleConcrete(codec, hashID{})
+	codecUtilities.RegisterModuleConcrete(codec, identityID{})
+	codecUtilities.RegisterModuleConcrete(codec, maintainerID{})
+	codecUtilities.RegisterModuleConcrete(codec, metaID{})
+	codecUtilities.RegisterModuleConcrete(codec, orderID{})
+	codecUtilities.RegisterModuleConcrete(codec, ownableID{})
 	codecUtilities.RegisterModuleConcrete(codec, propertyID{})
+	codecUtilities.RegisterModuleConcrete(codec, splitID{})
+	codecUtilities.RegisterModuleConcrete(codec, stringID{})
 }

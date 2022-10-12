@@ -8,8 +8,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	parameters2 "github.com/AssetMantle/modules/schema/parameters"
 )
@@ -34,7 +34,7 @@ func (genesis genesis) Default() helpers.Genesis {
 }
 func (genesis genesis) Validate() error {
 	if len(genesis.ParameterList) != len(genesis.defaultParameterList) {
-		return errors.InvalidParameter
+		return constants.InvalidParameter
 	}
 
 	for _, parameter := range genesis.ParameterList {
@@ -48,7 +48,7 @@ func (genesis genesis) Validate() error {
 		}
 
 		if !isPresent {
-			return errors.InvalidParameter
+			return constants.InvalidParameter
 		}
 
 		if err := parameter.Validate(); err != nil {

@@ -3,10 +3,25 @@
 
 package base
 
-import "github.com/AssetMantle/modules/schema/types"
+import (
+	"encoding/binary"
+	"strconv"
+
+	"github.com/AssetMantle/modules/schema/types"
+)
 
 type height struct {
 	Value int64 `json:"height"`
+}
+
+func (height height) String() string {
+	return strconv.FormatInt(height.Get(), 10)
+}
+
+func (height height) Bytes() []byte {
+	Bytes := make([]byte, 8)
+	binary.LittleEndian.PutUint64(Bytes, uint64(height.Get()))
+	return Bytes
 }
 
 var _ types.Height = (*height)(nil)

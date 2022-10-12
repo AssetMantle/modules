@@ -59,6 +59,10 @@ type testKey struct {
 
 var _ helpers.Key = (*testKey)(nil)
 
+func (t testKey) String() string {
+	return t.ID
+}
+
 func (t testKey) GenerateStoreKeyBytes() []byte {
 	return append([]byte{0x11}, []byte(t.ID)...)
 }

@@ -6,9 +6,9 @@ package reveal
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
@@ -22,15 +22,15 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	metaID := key.GenerateMetaID(message.Data)
-	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(metaID))
+	metaID := baseIDs.NewMetaID(message.Data.GetType(), message.Data.GenerateHashID())
+	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(metaID))
 
-	meta := metas.Get(key.FromID(metaID))
+	meta := metas.Get(key.NewKey(metaID))
 	if meta != nil {
-		return newTransactionResponse(errors.EntityAlreadyExists)
+		return newTransactionResponse(constants.EntityAlreadyExists)
 	}
 
-	if message.Data.GenerateHash().Compare(baseIDs.NewID("")) != 0 {
+	if message.Data.GenerateHashID().Compare(baseIDs.GenerateHashID()) != 0 {
 		metas.Add(mappable.NewMeta(message.Data))
 	}
 

@@ -8,13 +8,13 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-// TODO add update method
 type Property interface {
 	GetID() ids.PropertyID
 	GetDataID() ids.DataID
-	GetKey() ids.ID
-	GetType() ids.ID
-	GetHash() ids.ID
+	GetKey() ids.StringID
+	GetType() ids.StringID
+
+	IsMeta() bool
 
 	traits.Listable
 }

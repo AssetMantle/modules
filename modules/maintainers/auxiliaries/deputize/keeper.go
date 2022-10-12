@@ -6,13 +6,15 @@ package deputize
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type auxiliaryKeeper struct {
@@ -26,47 +28,48 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context)
 
-	fromMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
+	fromMaintainerID := baseIDs.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
 
-	Mappable := maintainers.Fetch(key.FromID(fromMaintainerID)).Get(key.FromID(fromMaintainerID))
+	Mappable := maintainers.Fetch(key.NewKey(fromMaintainerID)).Get(key.NewKey(fromMaintainerID))
 	if Mappable == nil {
-		return newAuxiliaryResponse(errors.EntityNotFound)
+		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
 	fromMaintainer := Mappable.(mappables.Maintainer)
 
 	if !(fromMaintainer.CanAddMaintainer() || !auxiliaryRequest.AddMaintainer && fromMaintainer.CanMutateMaintainer() || !auxiliaryRequest.MutateMaintainer && fromMaintainer.CanRemoveMaintainer() || !auxiliaryRequest.RemoveMaintainer) {
-		return newAuxiliaryResponse(errors.NotAuthorized)
+		return newAuxiliaryResponse(constants.NotAuthorized)
 	}
 
-	if auxiliaryResponse := auxiliaryKeeper.memberAuxiliary.GetKeeper().Help(context, member.NewAuxiliaryRequest(auxiliaryRequest.ClassificationID, nil, auxiliaryRequest.MaintainedProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := auxiliaryKeeper.memberAuxiliary.GetKeeper().Help(context, member.NewAuxiliaryRequest(auxiliaryRequest.ClassificationID, nil, base.NewMutables(auxiliaryRequest.MaintainedProperties))); !auxiliaryResponse.IsSuccessful() {
 		return newAuxiliaryResponse(auxiliaryResponse.GetError())
 	}
 
-	removeMaintainedProperties := fromMaintainer.GetMutablePropertyList()
+	removeMaintainedPropertyList := fromMaintainer.GetMutables().GetMutablePropertyList()
 
+	// TODO test
 	for _, maintainedProperty := range auxiliaryRequest.MaintainedProperties.GetList() {
 		if !fromMaintainer.MaintainsProperty(maintainedProperty.GetID()) {
 
-			return newAuxiliaryResponse(errors.NotAuthorized)
+			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
-		removeMaintainedProperties.Remove(maintainedProperty)
+		removeMaintainedPropertyList = removeMaintainedPropertyList.Remove(maintainedProperty)
 	}
 
-	toMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.ToID)
+	toMaintainerID := baseIDs.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.ToID)
 
-	toMaintainer := maintainers.Fetch(key.FromID(toMaintainerID)).Get(key.FromID(toMaintainerID))
+	toMaintainer := maintainers.Fetch(key.NewKey(toMaintainerID)).Get(key.NewKey(toMaintainerID))
 	if toMaintainer == nil {
 		if !fromMaintainer.CanAddMaintainer() {
-			return newAuxiliaryResponse(errors.NotAuthorized)
+			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
 
-		maintainers.Add(mappable.NewMaintainer(toMaintainerID, baseLists.NewPropertyList(), auxiliaryRequest.MaintainedProperties))
+		maintainers.Add(mappable.NewMaintainer(toMaintainerID.GetClassificationID(), base.NewImmutables(baseLists.NewPropertyList()), base.NewMutables(auxiliaryRequest.MaintainedProperties)))
 	} else {
 		if !fromMaintainer.CanMutateMaintainer() {
-			return newAuxiliaryResponse(errors.NotAuthorized)
+			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
-		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMutablePropertyList().Add(auxiliaryRequest.MaintainedProperties.GetList()...).Remove(removeMaintainedProperties.GetList()...)
-		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID, baseLists.NewPropertyList(), maintainedProperties))
+		maintainedProperties := toMaintainer.(mappables.Maintainer).GetMutables().GetMutablePropertyList().Add(auxiliaryRequest.MaintainedProperties.GetList()...).Remove(removeMaintainedPropertyList.GetList()...)
+		maintainers.Mutate(mappable.NewMaintainer(toMaintainerID.GetClassificationID(), base.NewImmutables(baseLists.NewPropertyList()), base.NewMutables(maintainedProperties)))
 	}
 
 	return newAuxiliaryResponse(nil)
@@ -85,7 +88,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpe
 				break
 			}
 		default:
-			panic(errors.UninitializedUsage)
+			panic(constants.UninitializedUsage)
 		}
 	}
 

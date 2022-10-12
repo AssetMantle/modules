@@ -5,9 +5,13 @@ package provision
 
 import (
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -16,8 +20,11 @@ import (
 	"testing"
 )
 
-func createInputForMessage(t *testing.T) (ids.ID, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, sdkTypes.Msg) {
-	testIdentityID := baseIDs.NewID("identityID")
+func createInputForMessage(t *testing.T) (ids.IdentityID, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, sdkTypes.Msg) {
+	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
+	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
+	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
+	testIdentityID := baseIDs.NewIdentityID(testClassificationID, immutables)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -76,7 +83,7 @@ func Test_message_GetSignBytes(t *testing.T) {
 	type fields struct {
 		From       sdkTypes.AccAddress
 		To         sdkTypes.AccAddress
-		IdentityID ids.ID
+		IdentityID ids.IdentityID
 	}
 	tests := []struct {
 		name   string
@@ -106,7 +113,7 @@ func Test_message_GetSigners(t *testing.T) {
 	type fields struct {
 		From       sdkTypes.AccAddress
 		To         sdkTypes.AccAddress
-		IdentityID ids.ID
+		IdentityID ids.IdentityID
 	}
 	tests := []struct {
 		name   string
@@ -136,7 +143,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 	type fields struct {
 		From       sdkTypes.AccAddress
 		To         sdkTypes.AccAddress
-		IdentityID ids.ID
+		IdentityID ids.IdentityID
 	}
 	type args struct {
 		codec *codec.Codec
@@ -167,7 +174,7 @@ func Test_message_Route(t *testing.T) {
 	type fields struct {
 		From       sdkTypes.AccAddress
 		To         sdkTypes.AccAddress
-		IdentityID ids.ID
+		IdentityID ids.IdentityID
 	}
 	tests := []struct {
 		name   string
@@ -197,7 +204,7 @@ func Test_message_Type(t *testing.T) {
 	type fields struct {
 		From       sdkTypes.AccAddress
 		To         sdkTypes.AccAddress
-		IdentityID ids.ID
+		IdentityID ids.IdentityID
 	}
 	tests := []struct {
 		name   string
@@ -227,7 +234,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 	type fields struct {
 		From       sdkTypes.AccAddress
 		To         sdkTypes.AccAddress
-		IdentityID ids.ID
+		IdentityID ids.IdentityID
 	}
 	tests := []struct {
 		name    string
@@ -258,7 +265,7 @@ func Test_newMessage(t *testing.T) {
 	type args struct {
 		from       sdkTypes.AccAddress
 		to         sdkTypes.AccAddress
-		identityID ids.ID
+		identityID ids.IdentityID
 	}
 	tests := []struct {
 		name string

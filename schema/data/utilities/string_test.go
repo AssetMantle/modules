@@ -12,6 +12,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -32,12 +33,12 @@ func TestReadData(t *testing.T) {
 		want    data.Data
 		wantErr bool
 	}{
-
+		// TODO:  fix after issue #50 fix, https://github.com/AssetMantle/modules/issues/50
 		{"String Data", args{"S|newFact"}, base.NewStringData("newFact"), false},
 		{"Unknown Data", args{"SomeRandomData"}, nil, true},
-		{"List Data", args{"L|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(dataList...), false},
-		{"List Data", args{"L|"}, base.NewListData(), false},
-		{"Id Data", args{"I|data"}, base.NewIDData(baseIDs.NewID("data")), false},
+		{"List Data", args{"L|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(baseLists.NewDataList(dataList...)), false}, //TODO: stack overflow
+		{"List Data", args{"L|"}, base.NewListData(nil), false}, //TODO: stack overflow
+		{"Id Data", args{"I|data"}, base.NewIDData(baseIDs.NewStringID("data")), false},
 		{"Height Data", args{"H|100"}, base.NewHeightData(baseTypes.NewHeight(100)), false},
 		{"Dec Data", args{"D|100"}, base.NewDecData(types.NewDec(100)), false},
 		{"Bool Data", args{"B|true"}, base.NewBooleanData(true), false},

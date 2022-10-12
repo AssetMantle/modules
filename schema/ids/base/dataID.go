@@ -5,61 +5,55 @@ package base
 
 import (
 	"bytes"
-	"strings"
 
-	"github.com/AssetMantle/modules/constants"
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
 type dataID struct {
-	Type ids.ID
-	Hash ids.ID
+	Type ids.StringID
+	ids.HashID
 }
 
 var _ ids.DataID = (*dataID)(nil)
 
+func (dataID dataID) IsDataID() {
+}
 func (dataID dataID) String() string {
-	var values []string
-	values = append(values, dataID.Type.String())
-	values = append(values, dataID.Hash.String())
-
-	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
+	return stringUtilities.JoinIDStrings(dataID.Type.String(), dataID.HashID.String())
 }
 func (dataID dataID) Bytes() []byte {
 	var Bytes []byte
 	Bytes = append(Bytes, dataID.Type.Bytes()...)
-	Bytes = append(Bytes, dataID.Hash.Bytes()...)
+	Bytes = append(Bytes, dataID.HashID.Bytes()...)
 
 	return Bytes
 }
 func (dataID dataID) Compare(listable traits.Listable) int {
-	if compareDataID, err := dataIDFromInterface(listable); err != nil {
-		panic(errors.MetaDataError)
-	} else {
-		return bytes.Compare(dataID.Bytes(), compareDataID.Bytes())
-	}
+	return bytes.Compare(dataID.Bytes(), dataIDFromInterface(listable).Bytes())
 }
-func (dataID dataID) GetHash() ids.ID {
-	return dataID.Hash
+func (dataID dataID) GetHashID() ids.HashID {
+	return dataID.HashID
 }
-func dataIDFromInterface(i interface{}) (dataID, error) {
+func dataIDFromInterface(i interface{}) dataID {
 	switch value := i.(type) {
 	case dataID:
-		return value, nil
+		return value
 	default:
-		return dataID{}, errors.MetaDataError
+		panic(errorConstants.MetaDataError)
 	}
 }
+
 func NewDataID(data data.Data) ids.DataID {
 	if data == nil {
-		panic(errors.MetaDataError)
+		panic(errorConstants.MetaDataError)
 	}
 
 	return dataID{
-		Type: data.GetType(),
-		Hash: data.GenerateHash(),
+		Type:   data.GetType(),
+		HashID: data.GenerateHashID(),
 	}
 }

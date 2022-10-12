@@ -31,7 +31,6 @@ func (dataList dataList) Add(data ...data.Data) lists.DataList {
 	dataList.List = dataList.List.Add(dataToListables(data...)...)
 	return dataList
 }
-
 func (dataList dataList) Remove(data ...data.Data) lists.DataList {
 	dataList.List = dataList.List.Remove(dataToListables(data...)...)
 	return dataList

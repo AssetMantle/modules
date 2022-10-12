@@ -12,7 +12,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
-	"github.com/AssetMantle/modules/constants/errors"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -68,13 +68,23 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 
 	value, ok := sdkTypes.NewIntFromString(transactionRequest.Value)
 	if !ok {
-		return nil, errors.InvalidRequest
+		return nil, errorConstants.InvalidRequest
+	}
+
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	if err != nil {
+		return nil, err
+	}
+
+	ownableID, err := baseIDs.ReadOwnableID(transactionRequest.OwnableID)
+	if err != nil {
+		return nil, err
 	}
 
 	return newMessage(
 		from,
-		baseIDs.NewID(transactionRequest.FromID),
-		baseIDs.NewID(transactionRequest.OwnableID),
+		fromID,
+		ownableID,
 		value,
 	), nil
 }

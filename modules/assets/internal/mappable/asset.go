@@ -8,58 +8,56 @@ import (
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
-	ids2 "github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
-	properties2 "github.com/AssetMantle/modules/schema/properties"
+	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
-	"github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/qualified"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type asset struct {
-	base.Document //nolint:govet
+	qualified.Document
 }
 
 var _ mappables.Asset = (*asset)(nil)
 
-func (asset asset) GetClassificationID() ids2.ID {
-	return key.ReadClassificationID(asset.ID)
-}
-func (asset asset) GetBurn() properties2.Property {
-	if burn := asset.GetProperty(constants.BurnProperty); burn != nil {
+func (asset asset) GetBurn() properties.Property {
+	if burn := asset.GetProperty(constants.BurnHeightProperty.GetID()); burn != nil {
 		return burn
 	}
 
-	return constants.Burn
+	return constants.BurnHeightProperty
 }
-func (asset asset) GetLock() properties2.Property {
-	if lock := asset.GetProperty(constants.LockProperty); lock != nil {
+func (asset asset) GetLock() properties.Property {
+	if lock := asset.GetProperty(constants.LockProperty.GetID()); lock != nil {
 		return lock
 	}
 
-	return constants.Lock
+	return constants.LockProperty
 }
-func (asset asset) GetSupply() properties2.Property {
-	if supply := asset.GetProperty(constants.SupplyProperty); supply != nil {
+func (asset asset) GetSupply() properties.Property {
+	if supply := asset.GetProperty(constants.SupplyProperty.GetID()); supply != nil {
 		return supply
 	}
 
-	return constants.Supply
+	return constants.SupplyProperty
 }
 func (asset asset) GetKey() helpers.Key {
-	return key.FromID(asset.ID)
+	return key.NewKey(baseIDs.NewAssetID(asset.GetClassificationID(), asset.GetImmutables()))
 }
 func (asset) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, asset{})
 }
 
-func NewAsset(id ids2.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Asset {
+func NewAsset(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) mappables.Asset {
 	return asset{
-		Document: base.Document{
-			ID:         id,
-			Immutables: base.Immutables{PropertyList: immutableProperties},
-			Mutables:   base.Mutables{PropertyList: mutableProperties},
-		},
+		Document: baseQualified.NewDocument(classificationID, immutables, mutables),
 	}
+}
+
+func Prototype() helpers.Mappable {
+	return asset{}
 }

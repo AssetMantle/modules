@@ -6,25 +6,26 @@ package utilities
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-func AddSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID, value sdkTypes.Dec) (helpers.Collection, error) {
+func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) (helpers.Collection, error) {
 	if value.LTE(sdkTypes.ZeroDec()) {
-		return nil, errors.NotAuthorized
+		return nil, constants.NotAuthorized
 	}
 
-	splitID := key.NewSplitID(ownerID, ownableID)
+	splitID := baseIDs.NewSplitID(ownerID, ownableID)
 
-	split := splits.Fetch(key.FromID(splitID)).Get(key.FromID(splitID))
+	split := splits.Fetch(key.NewKey(splitID)).Get(key.NewKey(splitID))
 	if split == nil {
-		splits.Add(mappable.NewSplit(splitID, value))
+		splits.Add(mappable.NewSplit(ownerID, ownableID, value))
 	} else {
 		splits.Mutate(split.(mappables.Split).Receive(value).(mappables.Split))
 	}
@@ -32,21 +33,21 @@ func AddSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID, valu
 	return splits, nil
 }
 
-func SubtractSplits(splits helpers.Collection, ownerID ids.ID, ownableID ids.ID, value sdkTypes.Dec) (helpers.Collection, error) {
+func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) (helpers.Collection, error) {
 	if value.LTE(sdkTypes.ZeroDec()) {
-		return nil, errors.NotAuthorized
+		return nil, constants.NotAuthorized
 	}
 
-	splitsKey := key.FromID(key.NewSplitID(ownerID, ownableID))
+	splitsKey := key.NewKey(baseIDs.NewSplitID(ownerID, ownableID))
 
 	split := splits.Fetch(splitsKey).Get(splitsKey)
 	if split == nil {
-		return nil, errors.EntityNotFound
+		return nil, constants.EntityNotFound
 	}
 
 	switch split = split.(mappables.Split).Send(value).(mappables.Split); {
 	case split.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
-		return nil, errors.NotAuthorized
+		return nil, constants.NotAuthorized
 	case split.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):
 		splits.Remove(split)
 	default:

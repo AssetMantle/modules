@@ -8,6 +8,7 @@ import (
 	"github.com/AssetMantle/modules/schema/properties"
 )
 
+// PropertyList TODO check if not repeat and of the same type
 type PropertyList interface {
 	GetProperty(ids.PropertyID) properties.Property
 	GetList() []properties.Property

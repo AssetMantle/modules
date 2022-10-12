@@ -16,7 +16,7 @@ import (
 
 func Test_Scrub_Request(t *testing.T) {
 
-	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewID("id"), baseData.NewStringData("Data"))
+	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
 	testAuxiliaryRequest := NewAuxiliaryRequest(metaProperty)
 
 	require.Equal(t, auxiliaryRequest{MetaPropertyList: []properties.MetaProperty{metaProperty}}, testAuxiliaryRequest)

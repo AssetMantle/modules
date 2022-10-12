@@ -68,7 +68,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	mutableMetaProperties, err := utilities.ReadMetaProperties(transactionRequest.MutableMetaProperties)
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
@@ -78,10 +78,20 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	if err != nil {
+		return nil, err
+	}
+
+	assetID, err := baseIDs.ReadAssetID(transactionRequest.AssetID)
+	if err != nil {
+		return nil, err
+	}
+
 	return newMessage(
 		from,
-		baseIDs.NewID(transactionRequest.FromID),
-		baseIDs.NewID(transactionRequest.AssetID),
+		fromID,
+		assetID,
 		mutableMetaProperties,
 		mutableProperties,
 	), nil

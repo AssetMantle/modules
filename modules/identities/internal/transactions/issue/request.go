@@ -79,7 +79,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	immutableMetaProperties, err := utilities.ReadMetaProperties(transactionRequest.ImmutableMetaProperties)
+	immutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.ImmutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +89,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	mutableMetaProperties, err := utilities.ReadMetaProperties(transactionRequest.MutableMetaProperties)
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
@@ -99,11 +99,20 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	if err != nil {
+		return nil, err
+	}
+
+	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationID)
+	if err != nil {
+		return nil, err
+	}
 	return newMessage(
 		from,
 		to,
-		baseIDs.NewID(transactionRequest.FromID),
-		baseIDs.NewID(transactionRequest.ClassificationID),
+		fromID,
+		classificationID,
 		immutableMetaProperties,
 		immutableProperties,
 		mutableMetaProperties,

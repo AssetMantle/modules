@@ -7,6 +7,8 @@ package types
 // 0 height === chain genesis block height
 // -1 height === infinite block height
 type Height interface {
+	String() string
+	Bytes() []byte
 	Get() int64
 
 	Compare(Height) int

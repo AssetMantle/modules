@@ -104,7 +104,6 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 
 		var msg sdkTypes.Msg
 		msg, err = transactionRequest.MakeMsg()
-		// TODO write one method
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 			return

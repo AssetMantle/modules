@@ -9,21 +9,18 @@ import (
 	"github.com/AssetMantle/modules/schema/qualified"
 )
 
-type Document struct {
-	ID ids.ID `json:"id" valid:"required~required field id is missing"`
-	Immutables
-	Mutables //nolint:govet
+type document struct {
+	ids.ClassificationID
+	qualified.Immutables
+	qualified.Mutables
 }
 
-var _ qualified.Document = (*Document)(nil)
+var _ qualified.Document = (*document)(nil)
 
-func (document Document) GetID() ids.ID {
-	return document.ID
+func (document document) GetClassificationID() ids.ClassificationID {
+	return document.ClassificationID
 }
-func (document Document) GetClassificationID() ids.ID {
-	panic("no implemented ")
-}
-func (document Document) GetProperty(propertyID ids.PropertyID) properties.Property {
+func (document document) GetProperty(propertyID ids.PropertyID) properties.Property {
 	if property := document.Immutables.GetImmutablePropertyList().GetProperty(propertyID); property != nil {
 		return property
 	} else if property := document.Mutables.GetMutablePropertyList().GetProperty(propertyID); property != nil {
@@ -32,9 +29,23 @@ func (document Document) GetProperty(propertyID ids.PropertyID) properties.Prope
 		return nil
 	}
 }
+func (document document) GetImmutables() qualified.Immutables {
+	return document.Immutables
+}
+func (document document) GetMutables() qualified.Mutables {
+	return document.Mutables
+}
 
 // TODO write test case
-func (document Document) Mutate(propertyList ...properties.Property) qualified.Document {
-	document.Mutables = document.Mutables.Mutate(propertyList...).(Mutables)
+func (document document) Mutate(propertyList ...properties.Property) qualified.Document {
+	document.Mutables = document.Mutables.Mutate(propertyList...)
 	return document
+}
+
+func NewDocument(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) qualified.Document {
+	return document{
+		ClassificationID: classificationID,
+		Immutables:       immutables,
+		Mutables:         mutables,
+	}
 }

@@ -54,10 +54,9 @@ When proposing an architecture decision for the AssetMantle modules, please star
 an [issue](https://github.com/AssetMantle/modules/issues/new/choose) or
 a [discussion](https://github.com/AssetMantle/modules/discussions/new) with a summary of the proposal. Once the proposal
 has been discussed and there is rough alignment on a high-level approach to the design,
-the [ADR creation process](./docs/architecture/PROCESS.md) can begin. We
 are following this process to ensure all involved parties are in agreement before any party begins coding the proposed
-implementation. If you would like to see examples of how these are written, please refer to the
-current [ADRs](./docs/architecture/).
+the [ADR creation process](./docs/architecture/PROCESS.md) can begin the implementation. If you would like to see examples of how these are written, please refer to the
+current ADR.
 
 ## Development Procedure
 
@@ -70,7 +69,7 @@ current [ADRs](./docs/architecture/).
     - For core developers working within the `modules` repo, follow branch name conventions to ensure a clear
       ownership of branches: `{moniker}/{issue#}-branch-name`.
     - See [Branching Model](#branching-model-and-release) for more details.
-- Be sure to run `make format` before every commit. The easiest way to do this is have your editor run it for you upon
+- Be sure to run `make format` before every commit. The easiest way to do this is to have your editor run it for you upon
   saving a file (most of the editors will do it anyway using a pre-configured setup of the programming language mode).
   Additionally, be sure that your code is lint compliant by running `make lint-fix`. A convenience git `pre-commit` hook
   that runs the formatters automatically before each commit is available in the `contrib/githooks/` directory.
@@ -113,8 +112,8 @@ NOTE: when merging, GitHub will squash commits and rebase on top of the master.
 ### Pull Request Templates
 
 There are three PR templates. The [default template](./.github/PULL_REQUEST_TEMPLATE.md) is for types `fix`, `feat`,
-and `refactor`. We also have a [docs template](./.github/PULL_REQUEST_TEMPLATE/docs.md) for documentation changes and
-an [other template](./.github/PULL_REQUEST_TEMPLATE/other.md) for changes that do not affect production code. When
+and `refactor`. We also have a [doc template](./.github/PULL_REQUEST_TEMPLATE/docs.md) for documentation changes and
+[other template](./.github/PULL_REQUEST_TEMPLATE/other.md) for changes that do not affect production code. When
 previewing a PR before it has been opened, you can change the template by adding one of the following parameters to the
 url:
 
@@ -133,7 +132,7 @@ Code-owners are marked automatically as the reviewers.
 
 All PRs require at least two review approvals before they can be merged (one review might be acceptable in the case of
 minor changes to [docs](./.github/PULL_REQUEST_TEMPLATE/docs.md) or [other](./.github/PULL_REQUEST_TEMPLATE/other.md)
-changes that do not affect production code). Each PR template has a reviewers checklist that must be completed before
+changes that do not affect production code). Each PR template has a reviewers' checklist that must be completed before
 the PR can be merged. Each reviewer is responsible for all checked items unless they have indicated otherwise by leaving
 their handle next to specific items. In addition, use the following review explanations:
 
@@ -169,7 +168,7 @@ When writing documentation, follow the [Documentation Writing Guidelines](./docs
 
 We use [Go Modules](https://github.com/golang/go/wiki/Modules) to manage dependency versions.
 
-The master branch of every modules repository should just build with `go get`, which means they should be kept up-to-date
+The master branch of every modules' repository should just build with `go get`, which means they should be kept up-to-date
 with their dependencies, so we can get away with telling people they can just `go get` our software.
 
 Since some dependencies are not under our control, a third party may break our build, in which case we can fall back
@@ -234,7 +233,7 @@ and similar).
 In the ethos of open source projects, and out of necessity to keep the code alive, the core contributor team will strive
 to permit special repo privileges to developers who show an aptitude towards developing with this code base.
 
-Several different kinds of privileges may be granted however most common privileges to be granted are merge rights to
+Several kinds of privileges may be granted however most common privileges to be granted are merging rights to
 either part of, or the entirety of the code base (through the GitHub `CODEOWNERS` file). The on-boarding process for new
 code owners is as follows: On a bi-monthly basis (or more frequently if agreeable) all the existing code owners will
 privately convene to discuss potential new candidates as well as the potential for existing code-owners to exit or "pass
@@ -294,14 +293,14 @@ should convene to rectify the situation by either:
 - making changes to the Concept Approval Process (as outlined here)
 - making changes to the members of the Concept Approval Committee
 
-**Approval Committee & Decision Making**
+**Approval Committee & Decision-Making**
 
-In absence of general consensus, decision making requires 1/2 vote from the two members of the **Concept Approval
+In absence of general consensus, decision-making requires 1/2 vote from the two members of the **Concept Approval
 Committee**.
 
 ### Implementation & Release Approval
 
-The following process should be adhered to both for implementation PRs corresponding to ADRs, as well as for PRs made as
+The following process should be adhered to both for implementation PRs corresponding to ADRs, and for PRs made as
 part of a release process:
 
 * Code reviewers should ensure the PR does exactly what the ADR said it should

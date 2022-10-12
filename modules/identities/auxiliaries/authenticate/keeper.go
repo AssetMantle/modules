@@ -6,10 +6,9 @@ package authenticate
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
-	"github.com/AssetMantle/modules/modules/identities/internal/utilities"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
 )
@@ -25,16 +24,15 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	mappable := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(auxiliaryRequest.IdentityID)).Get(key.FromID(auxiliaryRequest.IdentityID))
+	mappable := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.IdentityID)).Get(key.NewKey(auxiliaryRequest.IdentityID))
 	if mappable == nil {
-		return newAuxiliaryResponse(errors.EntityNotFound)
+		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}
+
 	identity := mappable.(mappables.Identity)
 
-	if found, err := utilities.IsProvisioned(context, auxiliaryKeeper.supplementAuxiliary, identity, auxiliaryRequest.Address); err != nil {
-		return newAuxiliaryResponse(err)
-	} else if !found {
-		return newAuxiliaryResponse(errors.NotAuthorized)
+	if !identity.IsProvisioned(auxiliaryRequest.Address) {
+		return newAuxiliaryResponse(errorConstants.NotAuthorized)
 	}
 
 	return newAuxiliaryResponse(nil)
@@ -53,7 +51,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, paramet
 				break
 			}
 		default:
-			panic(errors.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

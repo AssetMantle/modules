@@ -29,7 +29,7 @@ func Test_Kafka_DB(t *testing.T) {
 		ticketID := TicketID(random.GenerateUniqueIdentifier("name"))
 		kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", defaultCLIHome)
 		setTicketIDtoDB(ticketID, kafkaDB, Codec, []byte{})
-		addResponseToDB(ticketID, baseIDs.NewID("").Bytes(), kafkaDB, Codec)
-		require.Equal(t, baseIDs.NewID("").Bytes(), getResponseFromDB(ticketID, kafkaDB, Codec))
+		addResponseToDB(ticketID, baseIDs.NewStringID("").Bytes(), kafkaDB, Codec)
+		require.Equal(t, baseIDs.NewStringID("").Bytes(), getResponseFromDB(ticketID, kafkaDB, Codec))
 	})
 }

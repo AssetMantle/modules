@@ -8,35 +8,32 @@ import (
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type classification struct {
-	baseQualified.Document //nolint:govet
+	qualified.Document
 }
 
 var _ mappables.Classification = (*classification)(nil)
 
-func (classification classification) GetClassificationID() ids.ID {
-	return classification.GetID()
-}
 func (classification classification) GetKey() helpers.Key {
-	return key.FromID(classification.ID)
+	return key.NewKey(classification.GetClassificationID())
 }
 func (classification) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, classification{})
 }
 
-func NewClassification(id ids.ID, immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) mappables.Classification {
+func NewClassification(immutables qualified.Immutables, mutables qualified.Mutables) mappables.Classification {
 	return classification{
-		Document: baseQualified.Document{
-			ID:         id,
-			Immutables: baseQualified.Immutables{PropertyList: immutableProperties},
-			Mutables:   baseQualified.Mutables{PropertyList: mutableProperties},
-		},
+		Document: baseQualified.NewDocument(base.NewClassificationID(immutables, mutables), immutables, mutables),
 	}
+}
+
+func Prototype() helpers.Mappable {
+	return classification{}
 }

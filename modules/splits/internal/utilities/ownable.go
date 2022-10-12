@@ -16,13 +16,14 @@ import (
 func GetOwnableTotalSplitsValue(collection helpers.Collection, ownableID ids.ID) sdkTypes.Dec {
 	value := sdkTypes.ZeroDec()
 	accumulator := func(mappable helpers.Mappable) bool {
-		if key.ReadOwnableID(key.ToID(mappable.GetKey())).Compare(ownableID) == 0 {
+		if mappable.(mappables.Split).GetOwnableID().Compare(ownableID) == 0 {
 			value = value.Add(mappable.(mappables.Split).GetValue())
 		}
 
 		return false
 	}
-	collection.Iterate(key.FromID(baseIDs.NewID("")), accumulator)
+	// TODO test nil ID components
+	collection.Iterate(key.NewKey(baseIDs.NewSplitID(nil, nil)), accumulator)
 
 	return value
 }

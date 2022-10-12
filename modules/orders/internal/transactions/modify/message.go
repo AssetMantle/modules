@@ -9,8 +9,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
@@ -22,9 +22,9 @@ import (
 )
 
 type message struct {
-	From                  sdkTypes.AccAddress    `json:"from" valid:"required~required field from missing"`
-	FromID                ids.ID                 `json:"fromID" valid:"required~required field fromID missing"`
-	OrderID               ids.ID                 `json:"orderID" valid:"required~required field orderID missing"`
+	From                  sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
+	FromID                ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
+	ids.OrderID           `json:"orderID" valid:"required~required field orderID missing"`
 	MakerOwnableSplit     sdkTypes.Dec           `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing"`
 	TakerOwnableSplit     sdkTypes.Dec           `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
 	ExpiresIn             types.Height           `json:"expiresIn" valid:"required~required field expiresIn missing"`
@@ -37,17 +37,16 @@ var _ sdkTypes.Msg = message{}
 func (message message) Route() string { return module.Name }
 func (message message) Type() string  { return Transaction.GetName() }
 func (message message) ValidateBasic() error {
-	var _, Error = govalidator.ValidateStruct(message)
-	if Error != nil {
-		return sdkErrors.Wrap(errors.IncorrectMessage, Error.Error())
+	if _, err := govalidator.ValidateStruct(message); err != nil {
+		return sdkErrors.Wrap(errorConstants.IncorrectMessage, err.Error())
 	}
 
 	if message.TakerOwnableSplit.LTE(sdkTypes.ZeroDec()) || message.MakerOwnableSplit.LTE(sdkTypes.ZeroDec()) {
-		return sdkErrors.Wrap(errors.IncorrectMessage, "")
+		return sdkErrors.Wrap(errorConstants.IncorrectMessage, "")
 	}
 
 	if message.ExpiresIn.Compare(baseTypes.NewHeight(0)) <= 0 {
-		return sdkErrors.Wrap(errors.IncorrectMessage, "")
+		return sdkErrors.Wrap(errorConstants.IncorrectMessage, "")
 	}
 
 	return nil
@@ -79,7 +78,7 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID ids.ID, orderID ids.ID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn types.Height, mutableMetaProperties lists.MetaPropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, orderID ids.OrderID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn types.Height, mutableMetaProperties lists.MetaPropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return message{
 		From:                  from,
 		FromID:                fromID,

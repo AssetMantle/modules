@@ -6,11 +6,11 @@ package provision
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
-	"github.com/AssetMantle/modules/modules/identities/internal/utilities"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
 )
@@ -26,31 +26,23 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 	identityID := message.IdentityID
-	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(identityID))
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 
-	mappable := identities.Get(key.FromID(identityID))
-	if mappable == nil {
-		return newTransactionResponse(errors.EntityNotFound)
+	Mappable := identities.Get(key.NewKey(identityID))
+	if Mappable == nil {
+		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
-	identity := mappable.(mappables.Identity)
+	identity := Mappable.(mappables.Identity)
 
-	if found, err := utilities.IsProvisioned(context, transactionKeeper.supplementAuxiliary, identity, message.From); err != nil {
-		return newTransactionResponse(err)
-	} else if !found {
-		return newTransactionResponse(errors.NotAuthorized)
+	if identity.IsProvisioned(message.From) {
+		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
-	if found, err := utilities.IsProvisioned(context, transactionKeeper.supplementAuxiliary, identity, message.To); err != nil {
-		return newTransactionResponse(err)
-	} else if found {
-		return newTransactionResponse(errors.EntityAlreadyExists)
+	if identity.IsProvisioned(message.To) {
+		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
-	if identity, err := utilities.ProvisionAddress(context, transactionKeeper.supplementAuxiliary, transactionKeeper.scrubAuxiliary, identity, message.To); err != nil {
-		return newTransactionResponse(err)
-	} else {
-		identities.Mutate(identity)
-	}
+	identities.Mutate(identity.ProvisionAddress(message.To))
 
 	return newTransactionResponse(nil)
 }
@@ -62,13 +54,25 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
+			case define.Auxiliary.GetName():
+				transactionKeeper.supplementAuxiliary = value
+			}
+		default:
+			panic(errorConstants.UninitializedUsage)
+		}
+	}
+
+	for _, auxiliary := range auxiliaries {
+		switch value := auxiliary.(type) {
+		case helpers.Auxiliary:
+			switch value.GetName() {
 			case scrub.Auxiliary.GetName():
 				transactionKeeper.scrubAuxiliary = value
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
 			}
 		default:
-			panic(errors.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

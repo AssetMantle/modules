@@ -9,8 +9,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -19,8 +19,8 @@ import (
 
 type message struct {
 	From    sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	FromID  ids.ID              `json:"fromID" valid:"required~required field fromID missing"`
-	AssetID ids.ID              `json:"assetID" valid:"required~required field assetID missing"`
+	FromID  ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
+	AssetID ids.AssetID         `json:"assetID" valid:"required~required field assetID missing"`
 }
 
 var _ helpers.Message = message{}
@@ -28,9 +28,8 @@ var _ helpers.Message = message{}
 func (message message) Route() string { return module.Name }
 func (message message) Type() string  { return Transaction.GetName() }
 func (message message) ValidateBasic() error {
-	var _, Error = govalidator.ValidateStruct(message)
-	if Error != nil {
-		return sdkErrors.Wrap(errors.IncorrectMessage, Error.Error())
+	if _, err := govalidator.ValidateStruct(message); err != nil {
+		return sdkErrors.Wrap(errorConstants.IncorrectMessage, err.Error())
 	}
 
 	return nil
@@ -55,7 +54,7 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 func messagePrototype() helpers.Message {
 	return message{}
 }
-func newMessage(from sdkTypes.AccAddress, fromID ids.ID, assetID ids.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, assetID ids.AssetID) sdkTypes.Msg {
 	return message{
 		From:    from,
 		FromID:  fromID,

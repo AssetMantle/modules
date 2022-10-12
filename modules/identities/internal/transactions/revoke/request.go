@@ -65,11 +65,25 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	if err != nil {
+		return nil, err
+	}
+
+	toID, err := baseIDs.ReadIdentityID(transactionRequest.ToID)
+	if err != nil {
+		return nil, err
+	}
+	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationID)
+	if err != nil {
+		return nil, err
+	}
+
 	return newMessage(
 		from,
-		baseIDs.NewID(transactionRequest.FromID),
-		baseIDs.NewID(transactionRequest.ToID),
-		baseIDs.NewID(transactionRequest.ClassificationID),
+		fromID,
+		toID,
+		classificationID,
 	), nil
 }
 func (transactionRequest) RegisterCodec(codec *codec.Codec) {

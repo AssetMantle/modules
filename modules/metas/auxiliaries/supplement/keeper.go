@@ -6,7 +6,6 @@ package supplement
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/schema/data/utilities"
@@ -32,20 +31,16 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	for _, property := range auxiliaryRequest.PropertyList {
 		var meta helpers.Mappable
 
-		if property.GetHash().Compare(baseIDs.NewID("")) == 0 {
-			if data, Error := utilities.ReadData(property.GetType().String() + constants.DataTypeAndValueSeparator); Error == nil {
-				meta = mappable.NewMeta(data)
-			} else {
-				return newAuxiliaryResponse(nil, Error)
-			}
+		if property.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) == 0 {
+			meta = mappable.NewMeta(utilities.GetZeroValueDataFromID(property.GetType()))
 		} else {
-			metaID := key.NewMetaID(property.GetType(), property.GetHash())
-			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(metaID))
-			meta = metas.Get(key.FromID(metaID))
+			metaID := baseIDs.NewMetaID(property.GetType(), property.GetDataID().GetHashID())
+			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(metaID))
+			meta = metas.Get(key.NewKey(metaID))
 		}
 
 		if meta != nil {
-			metaPropertyList = append(metaPropertyList, baseProperties.NewMetaProperty(property.GetID().GetKey(), meta.(mappables.Meta).GetData()))
+			metaPropertyList = append(metaPropertyList, baseProperties.NewMetaProperty(property.GetKey(), meta.(mappables.Meta).GetData()))
 		}
 	}
 

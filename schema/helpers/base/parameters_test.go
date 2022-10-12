@@ -19,7 +19,7 @@ import (
 func TestParameters(t *testing.T) {
 	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
 	codec := baseTestUtilities.MakeCodec()
-	Parameter := baseTypes.NewParameter(baseIDs.NewID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
+	Parameter := baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
 	ParameterList := []parameters2.Parameter{Parameter}
 	Parameters := NewParameters(ParameterList...)
 	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
@@ -39,9 +39,9 @@ func TestParameters(t *testing.T) {
 	require.Nil(t, err)
 
 	require.NotPanics(t, func() {
-		Parameters.Fetch(context, baseIDs.NewID("testParameter"))
+		Parameters.Fetch(context, baseIDs.NewStringID("testParameter"))
 	})
 
 	require.Equal(t, "testData123", Parameters.Mutate(context,
-		baseTypes.NewParameter(baseIDs.NewID("testParameter"), baseData.NewStringData("testData123"), func(interface{}) error { return nil })).Get(baseIDs.NewID("testParameter")).GetData().String())
+		baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData123"), func(interface{}) error { return nil })).Get(baseIDs.NewStringID("testParameter")).GetData().String())
 }

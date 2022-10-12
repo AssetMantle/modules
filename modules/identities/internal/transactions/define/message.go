@@ -9,8 +9,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
@@ -21,7 +21,7 @@ import (
 
 type message struct {
 	From                    sdkTypes.AccAddress    `json:"from" valid:"required~required field from missing"`
-	FromID                  ids.ID                 `json:"fromID" valid:"required~required field fromID missing"`
+	FromIdentity            ids.IdentityID         `json:"fromIdentity" valid:"required~required field fromID missing"`
 	ImmutableMetaProperties lists.MetaPropertyList `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing"`
 	ImmutableProperties     lists.PropertyList     `json:"immutableProperties" valid:"required~required field immutableProperties missing"`
 	MutableMetaProperties   lists.MetaPropertyList `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
@@ -33,9 +33,8 @@ var _ sdkTypes.Msg = message{}
 func (message message) Route() string { return module.Name }
 func (message message) Type() string  { return Transaction.GetName() }
 func (message message) ValidateBasic() error {
-	var _, Error = govalidator.ValidateStruct(message)
-	if Error != nil {
-		return sdkErrors.Wrap(errors.IncorrectMessage, Error.Error())
+	if _, err := govalidator.ValidateStruct(message); err != nil {
+		return sdkErrors.Wrap(errorConstants.IncorrectMessage, err.Error())
 	}
 
 	return nil
@@ -72,10 +71,10 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 func messagePrototype() helpers.Message {
 	return message{}
 }
-func newMessage(from sdkTypes.AccAddress, fromID ids.ID, immutableMetaProperties lists.MetaPropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.MetaPropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, immutableMetaProperties lists.MetaPropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.MetaPropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return message{
 		From:                    from,
-		FromID:                  fromID,
+		FromIdentity:            fromID,
 		ImmutableMetaProperties: immutableMetaProperties,
 		ImmutableProperties:     immutableProperties,
 		MutableMetaProperties:   mutableMetaProperties,

@@ -10,23 +10,29 @@ import (
 	"github.com/AssetMantle/modules/schema/qualified"
 )
 
-type Mutables struct {
+type mutables struct {
 	lists.PropertyList
 }
 
-var _ qualified.Mutables = (*Mutables)(nil)
+var _ qualified.Mutables = (*mutables)(nil)
 
-func (mutables Mutables) GetMutablePropertyList() lists.PropertyList {
+func (mutables mutables) GetMutablePropertyList() lists.PropertyList {
 	if mutables.PropertyList == nil {
 		return baseLists.NewPropertyList()
 	}
 
 	return mutables.PropertyList
 }
-func (mutables Mutables) Mutate(propertyList ...properties.Property) qualified.Mutables {
+func (mutables mutables) Mutate(propertyList ...properties.Property) qualified.Mutables {
 	for _, property := range propertyList {
 		mutables.PropertyList = mutables.PropertyList.Mutate(property)
 	}
 
 	return mutables
+}
+
+func NewMutables(propertyList lists.PropertyList) qualified.Mutables {
+	return mutables{
+		PropertyList: propertyList,
+	}
 }

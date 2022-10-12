@@ -23,7 +23,7 @@ func TestGenesis(t *testing.T) {
 	Mapper := NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype).Initialize(storeKey)
 
 	mappableList := []helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")}
-	ParameterList := []parameters2.Parameter{baseTypes.NewParameter(baseIDs.NewID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })}
+	ParameterList := []parameters2.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })}
 	Parameters := NewParameters(ParameterList...)
 	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
 	Parameters = Parameters.Initialize(subspace)

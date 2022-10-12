@@ -8,13 +8,12 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type accAddressData struct {
@@ -37,18 +36,22 @@ func (accAddressData accAddressData) Compare(listable traits.Listable) int {
 func (accAddressData accAddressData) String() string {
 	return accAddressData.Value.String()
 }
-func (accAddressData accAddressData) GetType() ids.ID {
-	return idsConstants.AccAddressDataID
+func (accAddressData accAddressData) Bytes() []byte {
+	return accAddressData.Value.Bytes()
+}
+func (accAddressData accAddressData) GetType() ids.StringID {
+	return dataConstants.AccAddressDataID
 }
 func (accAddressData accAddressData) ZeroValue() data.Data {
 	return NewAccAddressData(sdkTypes.AccAddress{})
 }
-func (accAddressData accAddressData) GenerateHash() ids.ID {
+func (accAddressData accAddressData) GenerateHashID() ids.HashID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
-		return baseIDs.NewID("")
+		// TODO test
+		return baseIDs.GenerateHashID()
 	}
 
-	return baseIDs.NewID(stringUtilities.Hash(accAddressData.Value.String()))
+	return baseIDs.GenerateHashID(accAddressData.Bytes())
 }
 func (accAddressData accAddressData) Get() sdkTypes.AccAddress {
 	return accAddressData.Value
@@ -59,25 +62,12 @@ func accAddressDataFromInterface(listable traits.Listable) (accAddressData, erro
 	case accAddressData:
 		return value, nil
 	default:
-		return accAddressData{}, errors.MetaDataError
+		return accAddressData{}, errorConstants.MetaDataError
 	}
 }
 
-func NewAccAddressData(value sdkTypes.AccAddress) data.Data {
+func NewAccAddressData(value sdkTypes.AccAddress) data.AccAddressData {
 	return accAddressData{
 		Value: value,
 	}
-}
-
-func ReadAccAddressData(dataString string) (data.Data, error) {
-	if dataString == "" {
-		return accAddressData{}.ZeroValue(), nil
-	}
-
-	accAddress, err := sdkTypes.AccAddressFromBech32(dataString)
-	if err != nil {
-		return accAddressData{}.ZeroValue(), err
-	}
-
-	return NewAccAddressData(accAddress), nil
 }

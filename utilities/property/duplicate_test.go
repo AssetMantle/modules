@@ -21,14 +21,14 @@ func TestDuplicate(t *testing.T) {
 		args args
 		want bool
 	}{
-		{"Positive Case, Unique PropertyList", args{propertyList: []properties.Property{baseProperties.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factA")),
-			baseProperties.NewProperty(baseIDs.NewID("b"), baseData.NewStringData("factB")),
-			baseProperties.NewProperty(baseIDs.NewID("c"), baseData.NewStringData("factC")),
-			baseProperties.NewProperty(baseIDs.NewID("d"), baseData.NewStringData("factD"))}}, false},
-		{"Negative Case, DuplicateExists", args{propertyList: []properties.Property{baseProperties.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factA")),
-			baseProperties.NewProperty(baseIDs.NewID("b"), baseData.NewStringData("factB")),
-			baseProperties.NewProperty(baseIDs.NewID("c"), baseData.NewStringData("factC")),
-			baseProperties.NewProperty(baseIDs.NewID("a"), baseData.NewStringData("factD"))}}, true},
+		{"Positive Case, Unique PropertyList", args{propertyList: []properties.Property{baseProperties.NewMesaProperty(baseIDs.NewStringID("a"), baseData.NewStringData("factA")),
+			baseProperties.NewMesaProperty(baseIDs.NewStringID("b"), baseData.NewStringData("factB")),
+			baseProperties.NewMesaProperty(baseIDs.NewStringID("c"), baseData.NewStringData("factC")),
+			baseProperties.NewMesaProperty(baseIDs.NewStringID("d"), baseData.NewStringData("factD"))}}, false},
+		{"Negative Case, DuplicateExists", args{propertyList: []properties.Property{baseProperties.NewMesaProperty(baseIDs.NewStringID("a"), baseData.NewStringData("factA")),
+			baseProperties.NewMesaProperty(baseIDs.NewStringID("b"), baseData.NewStringData("factB")),
+			baseProperties.NewMesaProperty(baseIDs.NewStringID("c"), baseData.NewStringData("factC")),
+			baseProperties.NewMesaProperty(baseIDs.NewStringID("a"), baseData.NewStringData("factD"))}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

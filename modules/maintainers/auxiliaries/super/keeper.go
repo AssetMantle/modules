@@ -6,11 +6,13 @@ package super
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type auxiliaryKeeper struct {
@@ -21,14 +23,14 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	maintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.IdentityID)
+	maintainerID := baseIDs.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.IdentityID)
 
-	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(maintainerID))
-	if maintainers.Get(key.FromID(maintainerID)) != nil {
-		return newAuxiliaryResponse(errors.EntityAlreadyExists)
+	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(maintainerID))
+	if maintainers.Get(key.NewKey(maintainerID)) != nil {
+		return newAuxiliaryResponse(constants.EntityAlreadyExists)
 	}
 
-	maintainers.Add(mappable.NewMaintainer(maintainerID, baseLists.NewPropertyList(), auxiliaryRequest.MutableProperties))
+	maintainers.Add(mappable.NewMaintainer(auxiliaryRequest.ClassificationID, base.NewImmutables(baseLists.NewPropertyList()), auxiliaryRequest.Mutables))
 
 	return newAuxiliaryResponse(nil)
 }

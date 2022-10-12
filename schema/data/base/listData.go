@@ -4,19 +4,17 @@
 package base
 
 import (
-	"strings"
+	"bytes"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/constants"
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/traits"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type listData struct {
@@ -25,86 +23,78 @@ type listData struct {
 
 var _ data.ListData = (*listData)(nil)
 
+func (listData listData) Get() []data.Data {
+	return listData.Value.GetList()
+}
+func (listData listData) Search(data data.Data) (int, bool) {
+	return listData.Value.Search(data)
+}
+func (listData listData) Add(data ...data.Data) data.ListData {
+	listData.Value = listData.Value.Add(data...)
+	return listData
+}
+func (listData listData) Remove(data ...data.Data) data.ListData {
+	listData.Value = listData.Value.Remove(data...)
+	return listData
+}
 func (listData listData) GetID() ids.DataID {
 	return baseIDs.NewDataID(listData)
 }
 func (listData listData) Compare(listable traits.Listable) int {
-	// TODO write test
-	compareListData, Error := listDataFromInterface(listable)
-	if Error != nil {
-		panic(Error)
+	compareListData, err := listDataFromInterface(listable)
+	if err != nil {
+		panic(err)
 	}
 
-	return strings.Compare(listData.GenerateHash().String(), compareListData.GenerateHash().String())
+	// TODO check for optimization
+	return bytes.Compare(listData.Bytes(), compareListData.Bytes())
 }
 func (listData listData) String() string {
-	dataStringList := make([]string, listData.Value.Size())
+	dataStrings := make([]string, listData.Value.Size())
 
 	for i, datum := range listData.Value.GetList() {
-		dataStringList[i] = datum.String()
+		dataStrings[i] = datum.String()
 	}
 
-	return strings.Join(dataStringList, constants.ListDataStringSeparator)
+	return stringUtilities.JoinListStrings(dataStrings...)
 }
-func (listData listData) GetType() ids.ID {
-	return idsConstants.ListDataID
-}
-func (listData listData) ZeroValue() data.Data {
-	return NewListData([]data.Data{}...)
-}
-func (listData listData) GenerateHash() ids.ID {
-	if listData.Value.Size() == 0 {
-		return baseIDs.NewID("")
-	}
-
-	hashList := make([]string, listData.Value.Size())
+func (listData listData) Bytes() []byte {
+	bytesList := make([][]byte, listData.Value.Size())
 
 	for i, datum := range listData.Value.GetList() {
 		if datum != nil {
-			hashList[i] = datum.GenerateHash().String()
+			bytesList[i] = datum.Bytes()
 		}
 	}
-
-	hashString := strings.Join(hashList, constants.ListHashStringSeparator)
-
-	return baseIDs.NewID(hashString)
+	// TODO see if separator required
+	return bytes.Join(bytesList, nil)
 }
-func (listData listData) Get() []data.Data {
-	return listData.Value.GetList()
+func (listData listData) GetType() ids.StringID {
+	return dataConstants.ListDataID
+}
+func (listData listData) ZeroValue() data.Data {
+	return NewListData(base.NewDataList([]data.Data{}...))
 }
 
+// TODO test
+func (listData listData) GenerateHashID() ids.HashID {
+	if listData.Compare(listData.ZeroValue()) == 0 {
+		return baseIDs.GenerateHashID()
+	}
+
+	return baseIDs.GenerateHashID(listData.Bytes())
+}
 func listDataFromInterface(listable traits.Listable) (listData, error) {
 	switch value := listable.(type) {
 	case listData:
 		return value, nil
 	default:
-		return listData{}, errors.MetaDataError
+		return listData{}, errorConstants.MetaDataError
 	}
 }
 
 // NewListData
 // * onus of ensuring all Data are of the same type is on DataList
-func NewListData(value ...data.Data) data.Data {
-	return listData{Value: baseLists.NewDataList(value...)}
-}
-
-func ReadListData(dataString string) (data.Data, error) {
-	// TODO revise
-	if dataString == "" {
-		return listData{}.ZeroValue(), nil
-	}
-
-	dataStringList := strings.Split(dataString, constants.ListDataStringSeparator)
-	dataList := make([]data.Data, len(dataStringList))
-
-	for i, accAddressString := range dataStringList {
-		accAddress, Error := sdkTypes.AccAddressFromBech32(accAddressString)
-		if Error != nil {
-			return listData{}.ZeroValue(), Error
-		}
-
-		dataList[i] = NewAccAddressData(accAddress)
-	}
-
-	return NewListData(dataList...), nil
+func NewListData(value lists.DataList) data.Data {
+	return listData{Value: value}
 }

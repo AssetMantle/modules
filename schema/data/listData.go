@@ -4,6 +4,11 @@
 package data
 
 type ListData interface {
-	Data
 	Get() []Data
+
+	Search(Data) (int, bool)
+	Add(...Data) ListData
+	Remove(...Data) ListData
+
+	Data
 }

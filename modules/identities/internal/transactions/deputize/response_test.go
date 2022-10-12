@@ -4,7 +4,7 @@
 package deputize
 
 import (
-	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"reflect"
 	"testing"
@@ -21,7 +21,7 @@ func Test_newTransactionResponse(t *testing.T) {
 	}{
 
 		{"+ve", args{error: nil}, transactionResponse{Success: true, Error: nil}},
-		{"-ve", args{error: errors.IncorrectFormat}, transactionResponse{Success: false, Error: errors.IncorrectFormat}},
+		{"-ve", args{error: constants.IncorrectFormat}, transactionResponse{Success: false, Error: constants.IncorrectFormat}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -44,7 +44,7 @@ func Test_transactionResponse_GetError(t *testing.T) {
 	}{
 
 		{"+ve", fields{Success: true, Error: nil}, false},
-		{"-ve", fields{Success: false, Error: errors.IncorrectFormat}, true},
+		{"-ve", fields{Success: false, Error: constants.IncorrectFormat}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -71,7 +71,7 @@ func Test_transactionResponse_IsSuccessful(t *testing.T) {
 	}{
 
 		{"+ve", fields{Success: true, Error: nil}, true},
-		{"-ve", fields{Success: false, Error: errors.IncorrectFormat}, false},
+		{"-ve", fields{Success: false, Error: constants.IncorrectFormat}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

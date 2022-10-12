@@ -6,14 +6,12 @@ package quash
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/schema/data"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -32,24 +30,15 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.FromID(message.IdentityID))
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.IdentityID))
 
-	identity := identities.Get(key.FromID(message.IdentityID))
+	identity := identities.Get(key.NewKey(message.IdentityID))
 	if identity == nil {
-		return newTransactionResponse(errors.EntityNotFound)
+		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 
-	metaProperties, Error := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(identity.(mappables.Identity).GetExpiry())))
-	if Error != nil {
-		return newTransactionResponse(Error)
-	}
-
-	if expiryHeightMetaProperty := metaProperties.GetMetaProperty(constants.ExpiryProperty); expiryHeightMetaProperty != nil {
-		expiryHeight := expiryHeightMetaProperty.GetData().(data.HeightData).Get()
-
-		if expiryHeight.Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
-			return newTransactionResponse(errors.NotAuthorized)
-		}
+	if identity.(mappables.Identity).GetExpiry().Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
+		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
 	identities.Remove(identity)
@@ -70,7 +59,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.authenticateAuxiliary = value
 			}
 		default:
-			panic(errors.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

@@ -5,20 +5,17 @@ package qualified
 
 import (
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/properties"
 )
 
-// TODO retire or send to base
 type Document interface {
-	GetID() ids.ID
-	GetClassificationID() ids.ID
+	GenerateHashID() ids.HashID
+	GetClassificationID() ids.ClassificationID
 	// GetProperty returns property from a document searching in both Mutables and Immutables
 	// * Returns nil if property is not found
 	GetProperty(ids.PropertyID) properties.Property
-	GetImmutablePropertyList() lists.PropertyList
-	GetMutablePropertyList() lists.PropertyList
+	GetImmutables() Immutables
+	GetMutables() Mutables
 
-	GenerateHashID() ids.ID
-	Mutate(propertyList ...properties.Property) Document
+	Mutate(...properties.Property) Document
 }

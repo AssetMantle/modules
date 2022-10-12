@@ -9,29 +9,34 @@ import (
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/qualified"
-	metaUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
-type Immutables struct {
+type immutables struct {
 	lists.PropertyList
 }
 
-var _ qualified.Immutables = (*Immutables)(nil)
+var _ qualified.Immutables = (*immutables)(nil)
 
 // TODO write test case
-func (immutables Immutables) GetImmutablePropertyList() lists.PropertyList {
+func (immutables immutables) GetImmutablePropertyList() lists.PropertyList {
 	if immutables.PropertyList.GetList() == nil {
 		return base.NewPropertyList()
 	}
 
 	return immutables.PropertyList
 }
-func (immutables Immutables) GenerateHashID() ids.ID {
-	metaList := make([]string, len(immutables.PropertyList.GetList()))
+func (immutables immutables) GenerateHashID() ids.HashID {
+	metaList := make([][]byte, len(immutables.PropertyList.GetList()))
 
 	for i, immutableProperty := range immutables.PropertyList.GetList() {
-		metaList[i] = immutableProperty.GetHash().String()
+		metaList[i] = immutableProperty.GetDataID().GetHashID().Bytes()
 	}
 
-	return baseIDs.NewID(metaUtilities.Hash(metaList...))
+	return baseIDs.GenerateHashID(metaList...)
+}
+
+func NewImmutables(propertyList lists.PropertyList) qualified.Immutables {
+	return immutables{
+		PropertyList: propertyList,
+	}
 }

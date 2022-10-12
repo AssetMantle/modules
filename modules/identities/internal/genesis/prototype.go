@@ -11,6 +11,7 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
+// TODO ***** add module nub IDs
 func Prototype() helpers.Genesis {
 	return baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{}, parameters.Prototype().GetList())
 }

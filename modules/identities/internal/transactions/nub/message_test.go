@@ -17,7 +17,7 @@ import (
 )
 
 func createTestInput(t *testing.T) (ids.ID, string, sdkTypes.AccAddress) {
-	testNubID := baseIDs.NewID("nubID")
+	testNubID := baseIDs.NewStringID("nubID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

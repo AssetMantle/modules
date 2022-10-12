@@ -4,59 +4,71 @@
 package base
 
 import (
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/qualified"
 	"reflect"
 	"testing"
-
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
-	base2 "github.com/AssetMantle/modules/schema/properties/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	metaUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
-//func Test_Immutables(t *testing.T) {
-//	testProperty := base2.NewProperty(baseIDs.NewID("ID"), baseData.NewHeightData(baseTypes.NewHeight(123)))
-//	testImmutables := Immutables{base.NewPropertyList(testProperty)}
-//
-//	require.Equal(t, Immutables{PropertyList: base.NewPropertyList(testProperty)}, testImmutables)
-//	require.Equal(t, base.NewPropertyList(testProperty), testImmutables.GetImmutablePropertyList())
-//	require.Equal(t, baseIDs.NewID(metaUtilities.Hash([]string{testProperty.GetHash().String()}...)), testImmutables.GenerateHashID())
-//	require.Equal(t, baseIDs.NewID(""), Immutables{base.NewPropertyList()}.GenerateHashID())
-//}
+func TestNewImmutables(t *testing.T) {
+	testImmutablePropertyList := base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID3"), baseData.NewStringData("MutableData1")))
+	type args struct {
+		propertyList lists.PropertyList
+	}
+	tests := []struct {
+		name string
+		args args
+		want qualified.Immutables
+	}{
+		// TODO: Add test cases.
+		{"+ve", args{}, immutables{}},
+		{"+ve", args{testImmutablePropertyList}, immutables{testImmutablePropertyList}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewImmutables(tt.args.propertyList); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewImmutables() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-func TestImmutables_GenerateHashID(t *testing.T) {
-
-	testProperty := base2.NewProperty(baseIDs.NewID("ID"), baseData.NewHeightData(baseTypes.NewHeight(123)))
-
+func Test_immutables_GenerateHashID(t *testing.T) {
+	testMesaProperty := baseProperties.NewMesaProperty(baseIDs.NewStringID("ID3"), baseData.NewStringData("ImmutableData"))
+	testImmutablePropertyList := base.NewPropertyList(testMesaProperty)
+	metaList2 := make([][]byte, len(testImmutablePropertyList.GetList()))
+	metaList2[0] = testMesaProperty.GetDataID().GetHashID().Bytes()
 	type fields struct {
 		PropertyList lists.PropertyList
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   ids.ID
+		want   ids.HashID
 	}{
-		{"Test for Generate Hash", fields{base.NewPropertyList(testProperty)}, baseIDs.NewID(metaUtilities.Hash([]string{testProperty.GetHash().String()}...))},
+		// TODO: Add test cases.
+		{"+ve", fields{base.NewPropertyList()}, baseIDs.GenerateHashID([][]byte{}...)},
+		{"+ve", fields{testImmutablePropertyList}, baseIDs.GenerateHashID(metaList2...)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			immutables := Immutables{
+			testImmutables := immutables{
 				PropertyList: tt.fields.PropertyList,
 			}
-			if got := immutables.GenerateHashID(); !reflect.DeepEqual(got, tt.want) {
+			if got := testImmutables.GenerateHashID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GenerateHashID() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestImmutables_GetImmutablePropertyList(t *testing.T) {
-
-	testProperty := base2.NewProperty(baseIDs.NewID("ID"), baseData.NewHeightData(baseTypes.NewHeight(123)))
-
+func Test_immutables_GetImmutablePropertyList(t *testing.T) {
+	testImmutablePropertyList := base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID3"), baseData.NewStringData("MutableData1")))
 	type fields struct {
 		PropertyList lists.PropertyList
 	}
@@ -65,15 +77,16 @@ func TestImmutables_GetImmutablePropertyList(t *testing.T) {
 		fields fields
 		want   lists.PropertyList
 	}{
-		{"Test for GetImmutablePropertyList", fields{base.NewPropertyList(testProperty)}, base.NewPropertyList(testProperty)},
-		{"Test for nil case", fields{base.NewPropertyList()}, base.NewPropertyList()},
+		// TODO: Add test cases.
+		{"+ve with nil", fields{base.NewPropertyList()}, base.NewPropertyList()},
+		{"+ve", fields{testImmutablePropertyList}, immutables{testImmutablePropertyList}.PropertyList},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			immutables := Immutables{
+			testImmutables := immutables{
 				PropertyList: tt.fields.PropertyList,
 			}
-			if got := immutables.GetImmutablePropertyList(); !reflect.DeepEqual(got, tt.want) {
+			if got := testImmutables.GetImmutablePropertyList(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetImmutablePropertyList() = %v, want %v", got, tt.want)
 			}
 		})

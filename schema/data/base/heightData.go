@@ -4,17 +4,17 @@
 package base
 
 import (
+	"encoding/binary"
 	"strconv"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 type heightData struct {
@@ -37,18 +37,24 @@ func (heightData heightData) Compare(listable traits.Listable) int {
 func (heightData heightData) String() string {
 	return strconv.FormatInt(heightData.Value.Get(), 10)
 }
-func (heightData heightData) GetType() ids.ID {
-	return idsConstants.HeightDataID
+
+// TODO test
+func (heightData heightData) Bytes() []byte {
+	bytes := make([]byte, 8)
+	binary.LittleEndian.PutUint64(bytes, uint64(heightData.Get().Get()))
+	return bytes
+}
+func (heightData heightData) GetType() ids.StringID {
+	return dataConstants.HeightDataID
 }
 func (heightData heightData) ZeroValue() data.Data {
 	return NewHeightData(baseTypes.NewHeight(-1))
 }
-func (heightData heightData) GenerateHash() ids.ID {
+func (heightData heightData) GenerateHashID() ids.HashID {
 	if heightData.Compare(heightData.ZeroValue()) == 0 {
-		return baseIDs.NewID("")
+		return baseIDs.GenerateHashID()
 	}
-
-	return baseIDs.NewID(stringUtilities.Hash(strconv.FormatInt(heightData.Value.Get(), 10)))
+	return baseIDs.GenerateHashID(heightData.Bytes())
 }
 func (heightData heightData) Get() types.Height {
 	return heightData.Value
@@ -59,7 +65,7 @@ func heightDataFromInterface(listable traits.Listable) (heightData, error) {
 	case heightData:
 		return value, nil
 	default:
-		return heightData{}, errors.MetaDataError
+		return heightData{}, constants.MetaDataError
 	}
 }
 
@@ -67,17 +73,4 @@ func NewHeightData(value types.Height) data.Data {
 	return heightData{
 		Value: value,
 	}
-}
-
-func ReadHeightData(dataString string) (data.Data, error) {
-	if dataString == "" {
-		return heightData{}.ZeroValue(), nil
-	}
-
-	height, err := strconv.ParseInt(dataString, 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewHeightData(baseTypes.NewHeight(height)), nil
 }

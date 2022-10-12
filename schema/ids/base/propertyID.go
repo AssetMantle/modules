@@ -5,33 +5,33 @@ package base
 
 import (
 	"bytes"
-	"strings"
 
-	"github.com/AssetMantle/modules/constants"
-	"github.com/AssetMantle/modules/constants/errors"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
 type propertyID struct {
-	Key  ids.ID
-	Type ids.ID
+	Key  ids.StringID
+	Type ids.StringID
+}
+
+func (propertyID propertyID) IsPropertyID() {
+	// TODO implement me
+	panic("implement me")
 }
 
 var _ ids.PropertyID = (*propertyID)(nil)
 
-func (propertyID propertyID) GetKey() ids.ID {
+func (propertyID propertyID) GetKey() ids.StringID {
 	return propertyID.Key
 }
-func (propertyID propertyID) GetType() ids.ID {
+func (propertyID propertyID) GetType() ids.StringID {
 	return propertyID.Type
 }
 func (propertyID propertyID) String() string {
-	var values []string
-	values = append(values, propertyID.Key.String())
-	values = append(values, propertyID.Type.String())
-
-	return strings.Join(values, constants.FirstOrderCompositeIDSeparator)
+	return stringUtilities.JoinIDStrings(propertyID.Key.String(), propertyID.Type.String())
 }
 func (propertyID propertyID) Bytes() []byte {
 	var Bytes []byte
@@ -41,23 +41,18 @@ func (propertyID propertyID) Bytes() []byte {
 	return Bytes
 }
 func (propertyID propertyID) Compare(listable traits.Listable) int {
-	if comparePropertyID, err := propertyIDFromInterface(listable); err != nil {
-		panic(err)
-	} else {
-		return bytes.Compare(propertyID.Bytes(), comparePropertyID.Bytes())
-
-	}
+	return bytes.Compare(propertyID.Bytes(), propertyIDFromInterface(listable).Bytes())
 }
-func propertyIDFromInterface(listable traits.Listable) (propertyID, error) {
+func propertyIDFromInterface(listable traits.Listable) propertyID {
 	switch value := listable.(type) {
 	case propertyID:
-		return value, nil
+		return value
 	default:
-		return propertyID{}, errors.MetaDataError
+		panic(errorConstants.MetaDataError)
 	}
 }
 
-func NewPropertyID(key, Type ids.ID) ids.PropertyID {
+func NewPropertyID(key, Type ids.StringID) ids.PropertyID {
 	return propertyID{
 		Key:  key,
 		Type: Type,

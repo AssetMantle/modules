@@ -9,8 +9,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -18,10 +18,10 @@ import (
 )
 
 type message struct {
-	From             sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	FromID           ids.ID              `json:"fromID" valid:"required~required field fromID missing"`
-	ToID             ids.ID              `json:"toID" valid:"required~required field toID missing"`
-	ClassificationID ids.ID              `json:"classificationID" valid:"required~required field classificationID missing"`
+	From                 sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
+	FromID               ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
+	ToID                 ids.IdentityID      `json:"toID" valid:"required~required field toID missing"`
+	ids.ClassificationID `json:"classificationID" valid:"required~required field classificationID missing"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -29,11 +29,9 @@ var _ sdkTypes.Msg = message{}
 func (message message) Route() string { return module.Name }
 func (message message) Type() string  { return Transaction.GetName() }
 func (message message) ValidateBasic() error {
-	var _, Error = govalidator.ValidateStruct(message)
-	if Error != nil {
-		return sdkErrors.Wrap(errors.IncorrectMessage, Error.Error())
+	if _, err := govalidator.ValidateStruct(message); err != nil {
+		return sdkErrors.Wrap(errorConstants.IncorrectMessage, err.Error())
 	}
-
 	return nil
 }
 func (message message) GetSignBytes() []byte {
@@ -57,7 +55,7 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID ids.ID, toID ids.ID, classificationID ids.ID) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, classificationID ids.ClassificationID) sdkTypes.Msg {
 	return message{
 		From:             from,
 		FromID:           fromID,

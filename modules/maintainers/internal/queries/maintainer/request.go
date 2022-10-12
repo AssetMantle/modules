@@ -15,7 +15,7 @@ import (
 )
 
 type queryRequest struct {
-	MaintainerID ids.ID `json:"maintainerID" valid:"required~required field maintainerID missing"`
+	ids.MaintainerID `json:"maintainerID" valid:"required~required field maintainerID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
@@ -35,12 +35,20 @@ func (queryRequest queryRequest) Validate() error {
 	return err
 }
 
-func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewID(cliCommand.ReadString(constants.MaintainerID)))
+func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+	if maintainerID, err := baseIDs.ReadMaintainerID(cliCommand.ReadString(constants.MaintainerID)); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(maintainerID), nil
+	}
 }
 
-func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewID(vars[Query.GetName()]))
+func (queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
+	if maintainerID, err := baseIDs.ReadMaintainerID(vars[Query.GetName()]); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(maintainerID), nil
+	}
 }
 
 func (queryRequest queryRequest) Encode() ([]byte, error) {
@@ -67,6 +75,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 	}
 }
 
-func newQueryRequest(maintainerID ids.ID) helpers.QueryRequest {
+func newQueryRequest(maintainerID ids.MaintainerID) helpers.QueryRequest {
 	return queryRequest{MaintainerID: maintainerID}
 }

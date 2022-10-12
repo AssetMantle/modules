@@ -12,9 +12,9 @@ import (
 )
 
 type auxiliaryRequest struct {
-	FromID               ids.ID             `json:"fromID" valid:"required~required field fromID missing"`
-	ToID                 ids.ID             `json:"toID" valid:"required~required field toID missing"`
-	ClassificationID     ids.ID             `json:"classificationID" valid:"required~required field classificationID missing"`
+	FromID               ids.IdentityID `json:"fromID" valid:"required~required field fromID missing"`
+	ToID                 ids.IdentityID `json:"toID" valid:"required~required field toID missing"`
+	ids.ClassificationID `json:"classificationID" valid:"required~required field classificationID missing"`
 	MaintainedProperties lists.PropertyList `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
 	AddMaintainer        bool               `json:"addMaintainer"`
 	RemoveMaintainer     bool               `json:"removeMaintainer"`
@@ -37,7 +37,7 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(fromID ids.ID, toID ids.ID, classificationID ids.ID, maintainedProperties lists.PropertyList, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(fromID ids.IdentityID, toID ids.IdentityID, classificationID ids.ClassificationID, maintainedProperties lists.PropertyList, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		FromID:               fromID,
 		ToID:                 toID,

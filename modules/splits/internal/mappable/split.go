@@ -11,26 +11,25 @@ import (
 	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type split struct {
-	ID    ids.ID       `json:"id" valid:"required field key missing"`
-	Value sdkTypes.Dec `json:"value" valid:"required~required field value missing, matches(^[0-9]$)~invalid field value"`
+	OwnerID   ids.IdentityID
+	OwnableID ids.OwnableID
+	Value     sdkTypes.Dec
 }
 
 var _ mappables.Split = (*split)(nil)
 
-func (split split) GetID() ids.ID { return split.ID }
 func (split split) GetOwnerID() ids.ID {
-	return key.ReadOwnerID(split.ID)
+	return split.OwnerID
 }
 func (split split) GetOwnableID() ids.ID {
-	return key.ReadOwnableID(split.ID)
+	return split.OwnableID
 }
-
-// TODO rename to GetSupply
 func (split split) GetValue() sdkTypes.Dec {
 	return split.Value
 }
@@ -46,15 +45,20 @@ func (split split) CanSend(outValue sdkTypes.Dec) bool {
 	return split.Value.GTE(outValue)
 }
 func (split split) GetKey() helpers.Key {
-	return key.FromID(split.ID)
+	return key.NewKey(base.NewSplitID(split.OwnerID, split.OwnableID))
 }
 func (split) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, split{})
 }
 
-func NewSplit(splitID ids.ID, value sdkTypes.Dec) mappables.Split {
+func NewSplit(ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) mappables.Split {
 	return split{
-		ID:    splitID,
-		Value: value,
+		OwnerID:   ownerID,
+		OwnableID: ownableID,
+		Value:     value,
 	}
+}
+
+func Prototype() helpers.Mappable {
+	return split{}
 }

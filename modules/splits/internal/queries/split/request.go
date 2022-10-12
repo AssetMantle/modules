@@ -15,7 +15,7 @@ import (
 )
 
 type queryRequest struct {
-	SplitID ids.ID `json:"splitID" valid:"required~required field splitID missing"`
+	ids.SplitID `json:"splitID" valid:"required~required field splitID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
@@ -35,11 +35,19 @@ func (queryRequest queryRequest) Validate() error {
 	return err
 }
 
-func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewID(cliCommand.ReadString(constants.SplitID)))
+func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+	if splitID, err := baseIDs.ReadSplitID(cliCommand.ReadString(constants.SplitID)); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(splitID), nil
+	}
 }
-func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewID(vars[Query.GetName()]))
+func (queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
+	if splitID, err := baseIDs.ReadSplitID(vars[Query.GetName()]); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(splitID), nil
+	}
 }
 func (queryRequest queryRequest) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryRequest)
@@ -62,6 +70,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 		return queryRequest{}
 	}
 }
-func newQueryRequest(splitID ids.ID) helpers.QueryRequest {
+func newQueryRequest(splitID ids.SplitID) helpers.QueryRequest {
 	return queryRequest{SplitID: splitID}
 }

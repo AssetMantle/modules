@@ -6,9 +6,10 @@ package revoke
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 )
 
@@ -20,23 +21,25 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	fromMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context)
 
-	fromMaintainer := maintainers.Fetch(key.FromID(fromMaintainerID)).Get(key.FromID(fromMaintainerID))
-	if fromMaintainer == nil {
-		return newAuxiliaryResponse(errors.EntityNotFound)
+	fromMaintainerID := baseIDs.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
+	Mappable := maintainers.Fetch(key.NewKey(fromMaintainerID)).Get(key.NewKey(fromMaintainerID))
+	if Mappable == nil {
+		return newAuxiliaryResponse(errorConstants.EntityNotFound)
+	}
+	fromMaintainer := Mappable.(mappables.Maintainer)
+
+	if !fromMaintainer.CanRemoveMaintainer() {
+		return newAuxiliaryResponse(errorConstants.NotAuthorized)
 	}
 
-	if !fromMaintainer.(mappables.Maintainer).CanRemoveMaintainer() {
-		return newAuxiliaryResponse(errors.NotAuthorized)
+	toMaintainerID := baseIDs.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.ToID)
+	Mappable = maintainers.Fetch(key.NewKey(toMaintainerID)).Get(key.NewKey(toMaintainerID))
+	if Mappable == nil {
+		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}
-
-	toMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.ToID)
-	toMaintainer := maintainers.Fetch(key.FromID(toMaintainerID)).Get(key.FromID(toMaintainerID))
-	if toMaintainer == nil {
-		return newAuxiliaryResponse(errors.EntityNotFound)
-	}
+	toMaintainer := Mappable.(mappables.Maintainer)
 
 	maintainers.Remove(toMaintainer)
 

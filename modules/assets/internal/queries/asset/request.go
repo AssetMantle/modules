@@ -15,7 +15,7 @@ import (
 )
 
 type queryRequest struct {
-	AssetID ids.ID `json:"assetID" valid:"required~required field assetID missing"`
+	ids.AssetID `json:"assetID" valid:"required~required field assetID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
@@ -34,11 +34,19 @@ func (queryRequest queryRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(queryRequest)
 	return err
 }
-func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewID(cliCommand.ReadString(constants.AssetID)))
+func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+	if assetID, err := baseIDs.ReadAssetID(cliCommand.ReadString(constants.AssetID)); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(assetID), nil
+	}
 }
-func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewID(vars[Query.GetName()]))
+func (queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
+	if assetID, err := baseIDs.ReadAssetID(vars[Query.GetName()]); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(assetID), nil
+	}
 }
 func (queryRequest queryRequest) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryRequest)
@@ -62,6 +70,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 		return queryRequest{}
 	}
 }
-func newQueryRequest(assetID ids.ID) helpers.QueryRequest {
+func newQueryRequest(assetID ids.AssetID) helpers.QueryRequest {
 	return queryRequest{AssetID: assetID}
 }

@@ -4,10 +4,10 @@
 package identity
 
 import (
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/identities/internal/common"
 	"github.com/AssetMantle/modules/modules/identities/internal/mapper"
 	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -63,7 +63,7 @@ func Test_newQueryResponse(t *testing.T) {
 	}{
 
 		{"+ve", args{collection: collection, error: nil}, queryResponse{Success: true, Error: nil}},
-		{"-ve with error", args{collection: collection, error: errors.IncorrectFormat}, queryResponse{Success: false, Error: errors.IncorrectFormat}},
+		{"-ve with error", args{collection: collection, error: constants.IncorrectFormat}, queryResponse{Success: false, Error: constants.IncorrectFormat}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -120,7 +120,7 @@ func Test_queryResponse_Encode(t *testing.T) {
 	context := CreateTestInputContext(t)
 	collection := mapper.Prototype().NewCollection(context)
 	encodedByte, err := common.Codec.MarshalJSON(queryResponse{Success: true, Error: nil, List: collection.GetList()})
-	encodedByteWithError, _err := common.Codec.MarshalJSON(queryResponse{Success: false, Error: errors.IncorrectFormat, List: collection.GetList()})
+	encodedByteWithError, _err := common.Codec.MarshalJSON(queryResponse{Success: false, Error: constants.IncorrectFormat, List: collection.GetList()})
 	require.Nil(t, err)
 	type fields struct {
 		Success bool
@@ -169,7 +169,7 @@ func Test_queryResponse_GetError(t *testing.T) {
 	}{
 
 		{"+ve", fields{Success: true, Error: nil}, false},
-		{"-ve", fields{Success: true, Error: errors.IncorrectFormat}, true},
+		{"-ve", fields{Success: true, Error: constants.IncorrectFormat}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

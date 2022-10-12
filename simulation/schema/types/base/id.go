@@ -16,13 +16,13 @@ import (
 )
 
 func GenerateRandomID(r *rand.Rand) ids.ID {
-	return baseIDs.NewID(simulation.RandStringOfLength(r, r.Intn(99)))
+	return baseIDs.NewStringID(simulation.RandStringOfLength(r, r.Intn(99)))
 }
 
 func GenerateRandomIDWithDec(r *rand.Rand) ids.ID {
-	return baseIDs.NewID(sdkTypes.MustNewDecFromStr(strconv.FormatInt(r.Int63(), 10)).String())
+	return baseIDs.NewStringID(sdkTypes.MustNewDecFromStr(strconv.FormatInt(r.Int63(), 10)).String())
 }
 
 func GenerateRandomIDWithInt64(r *rand.Rand) ids.ID {
-	return baseIDs.NewID(strconv.FormatInt(r.Int63(), 10))
+	return baseIDs.NewStringID(strconv.FormatInt(r.Int63(), 10))
 }

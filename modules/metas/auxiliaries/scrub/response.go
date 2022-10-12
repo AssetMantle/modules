@@ -4,7 +4,7 @@
 package scrub
 
 import (
-	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/lists"
 )
@@ -46,6 +46,6 @@ func GetPropertiesFromResponse(response helpers.AuxiliaryResponse) (lists.Proper
 
 		return nil, value.GetError()
 	default:
-		return nil, errors.NotAuthorized
+		return nil, constants.NotAuthorized
 	}
 }

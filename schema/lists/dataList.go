@@ -10,8 +10,7 @@ import (
 type DataList interface {
 	Size() int
 	GetList() []data.Data
-	Search(data data.Data) (int, bool)
-
+	Search(data.Data) (int, bool)
 	Add(...data.Data) DataList
 	Remove(...data.Data) DataList
 }
