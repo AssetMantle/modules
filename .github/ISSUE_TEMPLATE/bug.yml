@@ -2,6 +2,7 @@ name: bugReport🐛
 description: Create a report to help us improve
 title: "Bug🐛: "
 labels: [bug]
+
 body:
   - type: markdown
     attributes:
