@@ -5,7 +5,7 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -52,7 +52,7 @@ func metaPropertyFromInterface(listable traits.Listable) (metaProperty, error) {
 	case metaProperty:
 		return value, nil
 	default:
-		return metaProperty{}, constants.MetaDataError
+		return metaProperty{}, errorConstants.MetaDataError
 	}
 }
 
@@ -63,7 +63,7 @@ func NewEmptyMetaPropertyFromID(propertyID ids.PropertyID) properties.MetaProper
 }
 func NewMetaProperty(key ids.StringID, data data.Data) properties.MetaProperty {
 	if data == nil || key == nil {
-		panic(errors.MetaDataError)
+		panic(errorConstants.MetaDataError)
 	}
 	return metaProperty{
 		ID:   baseIDs.NewPropertyID(key, data.GetType()),

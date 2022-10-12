@@ -14,7 +14,7 @@ import (
 type auxiliaryRequest struct {
 	ids.ClassificationID `json:"classificationID" valid:"required~required field classificationID missing"`
 	ids.IdentityID       `json:"identityID" valid:"required~required field identityID missing"`
-	qualified.Mutables   `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
+	MaintainedMutables   qualified.Mutables `json:"maintainedMutables" valid:"required~required field maintainedProperties missing"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -33,10 +33,10 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(classificationID ids.ClassificationID, identityID ids.IdentityID, mutables qualified.Mutables) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(classificationID ids.ClassificationID, identityID ids.IdentityID, maintainedMutables qualified.Mutables) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		ClassificationID: classificationID,
-		IdentityID:       identityID,
-		Mutables:         mutables,
+		ClassificationID:   classificationID,
+		IdentityID:         identityID,
+		MaintainedMutables: maintainedMutables,
 	}
 }

@@ -57,44 +57,29 @@ func (maintainer maintainer) CanMintAsset() bool {
 	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Mint))
 	return can
 }
-
-// TODO
 func (maintainer maintainer) CanBurnAsset() bool {
 	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Burn))
 	return can
 }
-
-// TODO
 func (maintainer maintainer) CanRenumerateAsset() bool {
 	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Renumerate))
 	return can
 }
-
-// TODO
 func (maintainer maintainer) CanAddMaintainer() bool {
 	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Add))
 	return can
 }
-
-// TODO
 func (maintainer maintainer) CanRemoveMaintainer() bool {
 	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Remove))
 	return can
 }
-
-// TODO
 func (maintainer maintainer) CanMutateMaintainer() bool {
 	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Mutate))
 	return can
 }
-func (maintainer maintainer) MaintainsProperty(id ids.ID) bool {
-	if property := maintainer.GetProperty(constants.PermissionsProperty.GetID()); property != nil {
-		if property.GetID().Compare(id) == 0 {
-			return true
-		}
-	}
-
-	return false
+func (maintainer maintainer) MaintainsProperty(propertyID ids.PropertyID) bool {
+	_, found := maintainer.GetMaintainedProperties().Search(baseData.NewIDData(propertyID))
+	return found
 }
 func (maintainer maintainer) GetKey() helpers.Key {
 	return key.NewKey(base.NewMaintainerID(maintainer.GetMaintainedClassificationID(), maintainer.GetIdentityID()))

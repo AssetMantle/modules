@@ -9,8 +9,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
@@ -41,15 +41,15 @@ func (message message) Route() string { return module.Name }
 func (message message) Type() string  { return Transaction.GetName() }
 func (message message) ValidateBasic() error {
 	if _, err := govalidator.ValidateStruct(message); err != nil {
-		return sdkErrors.Wrap(errors.IncorrectMessage, err.Error())
+		return sdkErrors.Wrap(errorConstants.IncorrectMessage, err.Error())
 	}
 
 	if message.MakerOwnableID.Compare(message.TakerOwnableID) == 0 {
-		return sdkErrors.Wrap(errors.IncorrectMessage, "")
+		return sdkErrors.Wrap(errorConstants.IncorrectMessage, "")
 	}
 
 	if message.TakerOwnableSplit.LTE(sdkTypes.ZeroDec()) || message.MakerOwnableSplit.LTE(sdkTypes.ZeroDec()) {
-		return sdkErrors.Wrap(errors.IncorrectMessage, "")
+		return sdkErrors.Wrap(errorConstants.IncorrectMessage, "")
 	}
 
 	return nil

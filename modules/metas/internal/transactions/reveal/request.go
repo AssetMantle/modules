@@ -12,7 +12,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
-	stringUtilities "github.com/AssetMantle/modules/schema/data/utlities"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -61,7 +61,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	data, err := stringUtilities.ReadData(transactionRequest.Data)
+	data, err := utilities.ReadData(transactionRequest.Data)
 	if err != nil {
 		return nil, err
 	}
