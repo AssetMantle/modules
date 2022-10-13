@@ -11,8 +11,9 @@ import (
 	"github.com/AssetMantle/modules/schema/data/utilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/mappables/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 )
@@ -32,7 +33,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		var meta helpers.Mappable
 
 		if property.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) == 0 {
-			meta = mappable.NewMeta(utilities.GetZeroValueDataFromID(property.GetType()))
+			meta = mappable.NewMappable(base.NewMeta(utilities.GetZeroValueDataFromID(property.GetType())))
 		} else {
 			metaID := baseIDs.NewMetaID(property.GetType(), property.GetDataID().GetHashID())
 			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(metaID))
@@ -44,7 +45,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		}
 	}
 
-	return newAuxiliaryResponse(base.NewMetaPropertyList(metaPropertyList...), nil)
+	return newAuxiliaryResponse(baseLists.NewMetaPropertyList(metaPropertyList...), nil)
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

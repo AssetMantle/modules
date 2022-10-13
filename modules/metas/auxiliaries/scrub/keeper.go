@@ -10,6 +10,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/mappables/base"
 	"github.com/AssetMantle/modules/schema/properties"
 )
 
@@ -27,7 +28,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	for i, metaProperty := range auxiliaryRequest.MetaPropertyList {
 		if metaProperty.GetData().GenerateHashID().Compare(baseIDs.GenerateHashID()) != 0 {
-			metas.Add(mappable.NewMeta(metaProperty.GetData()))
+			metas.Add(mappable.NewMappable(base.NewMeta(metaProperty.GetData())))
 		}
 
 		scrubbedPropertyList[i] = metaProperty.RemoveData()

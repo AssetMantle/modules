@@ -5,11 +5,8 @@ package mappables
 
 import (
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type Meta interface {
 	GetData() data.Data
-
-	helpers.Mappable
 }

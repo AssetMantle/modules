@@ -7,33 +7,29 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
-	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-type meta struct {
-	data.Data
+type mappable struct {
+	mappables.Meta
 }
 
-var _ mappables.Meta = (*meta)(nil)
+var _ helpers.Mappable = (*mappable)(nil)
 
-func (meta meta) GetData() data.Data { return meta.Data }
-func (meta meta) GetKey() helpers.Key {
-	return key.NewKey(base.NewMetaID(meta.Data.GetType(), meta.GetData().GenerateHashID()))
+func (mappable mappable) GetKey() helpers.Key {
+	return key.NewKey(base.NewMetaID(mappable.Meta.GetData().GetType(), mappable.GetData().GenerateHashID()))
 }
-func (meta) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, meta{})
+func (mappable) RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterModuleConcrete(codec, mappable{})
 }
 
-func NewMeta(data data.Data) mappables.Meta {
-	return meta{
-		Data: data,
-	}
+func NewMappable(meta mappables.Meta) helpers.Mappable {
+	return mappable{Meta: meta}
 }
 
 func Prototype() helpers.Mappable {
-	return meta{}
+	return mappable{}
 }
