@@ -4,11 +4,6 @@
 package base
 
 import (
-	"reflect"
-	"testing"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -16,7 +11,6 @@ import (
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"reflect"
 	"testing"
 )
