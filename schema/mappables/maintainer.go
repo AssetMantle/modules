@@ -5,7 +5,6 @@ package mappables
 
 import (
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
 )
@@ -25,5 +24,4 @@ type Maintainer interface {
 	MaintainsProperty(ids.PropertyID) bool
 
 	qualified.Document
-	helpers.Mappable
 }

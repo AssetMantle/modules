@@ -7,93 +7,29 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
-	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
-	"github.com/AssetMantle/modules/schema/data"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/properties"
-	"github.com/AssetMantle/modules/schema/properties/constants"
-	"github.com/AssetMantle/modules/schema/qualified"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-type maintainer struct {
-	qualified.Document
+type mappable struct {
+	mappables.Maintainer
 }
 
-var _ mappables.Maintainer = (*maintainer)(nil)
+var _ helpers.Mappable = (*mappable)(nil)
 
-func (maintainer maintainer) GetIdentityID() ids.IdentityID {
-	if property := maintainer.GetProperty(constants.IdentityIDProperty.GetID()); property != nil && property.IsMeta() {
-		return property.(properties.MetaProperty).GetData().(data.IDData).Get().(ids.IdentityID)
-	}
-	return constants.MaintainedClassificationIDProperty.GetData().(data.IDData).Get().(ids.IdentityID)
-}
-func (maintainer maintainer) GetMaintainedClassificationID() ids.ClassificationID {
-	if property := maintainer.GetProperty(constants.MaintainedClassificationIDProperty.GetID()); property != nil && property.IsMeta() {
-		return property.(properties.MetaProperty).GetData().(data.IDData).Get().(ids.ClassificationID)
-	}
-	return constants.MaintainedClassificationIDProperty.GetData().(data.IDData).Get().(ids.ClassificationID)
-}
-func (maintainer maintainer) GetMaintainedProperties() data.ListData {
-	if property := maintainer.GetProperty(constants.MaintainedPropertiesProperty.GetID()); property != nil && property.IsMeta() {
-		return property.(properties.MetaProperty).GetData().(data.ListData)
-	}
-
-	return constants.MaintainedPropertiesProperty.GetData().(data.ListData)
-}
-func (maintainer maintainer) GetPermissions() data.ListData {
-	if property := maintainer.GetProperty(constants.PermissionsProperty.GetID()); property != nil && property.IsMeta() {
-		return property.(properties.MetaProperty).GetData().(data.ListData)
-	}
-
-	return constants.PermissionsProperty.GetData().(data.ListData)
-}
-func (maintainer maintainer) CanMintAsset() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Mint))
-	return can
-}
-func (maintainer maintainer) CanBurnAsset() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Burn))
-	return can
-}
-func (maintainer maintainer) CanRenumerateAsset() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Renumerate))
-	return can
-}
-func (maintainer maintainer) CanAddMaintainer() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Add))
-	return can
-}
-func (maintainer maintainer) CanRemoveMaintainer() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Remove))
-	return can
-}
-func (maintainer maintainer) CanMutateMaintainer() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(module.Mutate))
-	return can
-}
-func (maintainer maintainer) MaintainsProperty(propertyID ids.PropertyID) bool {
-	_, found := maintainer.GetMaintainedProperties().Search(baseData.NewIDData(propertyID))
-	return found
-}
-func (maintainer maintainer) GetKey() helpers.Key {
+func (maintainer mappable) GetKey() helpers.Key {
 	return key.NewKey(base.NewMaintainerID(maintainer.GetMaintainedClassificationID(), maintainer.GetIdentityID()))
 }
-func (maintainer) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, maintainer{})
+func (mappable) RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterModuleConcrete(codec, mappable{})
 }
 
-func NewMaintainer(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) mappables.Maintainer {
-	return maintainer{
-		Document: baseQualified.NewDocument(classificationID, immutables, mutables),
-	}
+func NewMappable(maintainer mappables.Maintainer) helpers.Mappable {
+	return mappable{Maintainer: maintainer}
 }
 
 func Prototype() helpers.Mappable {
-	return maintainer{}
+	return mappable{}
 }

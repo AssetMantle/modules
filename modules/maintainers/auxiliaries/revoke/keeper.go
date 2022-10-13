@@ -7,6 +7,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -41,7 +42,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	}
 	toMaintainer := Mappable.(mappables.Maintainer)
 
-	maintainers.Remove(toMaintainer)
+	maintainers.Remove(mappable.NewMappable(toMaintainer))
 
 	return newAuxiliaryResponse(nil)
 }
