@@ -66,7 +66,7 @@ func TestNewMesaProperty(t *testing.T) {
 			defer func() {
 				r := recover()
 				if (r != nil) != tt.wantPanic {
-					t.Errorf("NewProperty() recover = %v, wantPanic = %v", r, tt.wantPanic)
+					t.Errorf("NewMesaProperty() recover = %v, wantPanic = %v", r, tt.wantPanic)
 				}
 			}()
 			if got := NewMesaProperty(tt.args.key, tt.args.data); !reflect.DeepEqual(got, tt.want) {
