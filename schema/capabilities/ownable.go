@@ -8,6 +8,6 @@ import (
 )
 
 type Ownable interface {
-	GetOwnerID() ids.ID
-	GetOwnableID() ids.ID
+	GetOwnerID() ids.IdentityID
+	GetOwnableID() ids.OwnableID
 }

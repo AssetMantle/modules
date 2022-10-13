@@ -17,10 +17,11 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/internal/parameters"
 	"github.com/AssetMantle/modules/modules/splits/internal/parameters/dummy"
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/data/base"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/mappables/base"
 	parameters2 "github.com/AssetMantle/modules/schema/parameters"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
@@ -34,7 +35,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		dummy.ID.String(),
 		&Data,
 		simulationState.Rand,
-		func(rand *rand.Rand) { Data = base.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
+		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
 	mappableList := make([]helpers.Mappable, simulationState.Rand.Intn(99))
@@ -42,7 +43,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	for i := range mappableList {
 		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomProperties(simulationState.Rand))
 		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomProperties(simulationState.Rand))
-		mappableList[i] = mappable.NewSplit(baseIDs.NewIdentityID(baseIDs.NewClassificationID(immutables, mutables), immutables), baseIDs.NewOwnableID(baseIDs.NewStringID(simulation.RandStringOfLength(simulationState.Rand, simulationState.Rand.Intn(99)))), simulation.RandomDecAmount(simulationState.Rand, sdkTypes.NewDec(9999999999)))
+		mappableList[i] = mappable.NewMappable(base.NewSplit(baseIDs.NewIdentityID(baseIDs.NewClassificationID(immutables, mutables), immutables), baseIDs.NewOwnableID(baseIDs.NewStringID(simulation.RandStringOfLength(simulationState.Rand, simulationState.Rand.Intn(99)))), simulation.RandomDecAmount(simulationState.Rand, sdkTypes.NewDec(9999999999))))
 	}
 
 	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []parameters2.Parameter{dummy.Parameter.Mutate(Data)})
