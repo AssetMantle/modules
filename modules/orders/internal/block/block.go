@@ -178,6 +178,10 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 	}
 }
 
+func Prototype() helpers.Block {
+	return block{}
+}
+
 func (block block) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Block {
 	block.mapper, block.parameters = mapper, parameters
 

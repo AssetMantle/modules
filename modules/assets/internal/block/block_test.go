@@ -4,10 +4,9 @@
 package block
 
 import (
-	"github.com/AssetMantle/modules/modules/assets/internal/mapper"
-	"github.com/AssetMantle/modules/modules/assets/internal/parameters"
-	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/helpers"
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -16,8 +15,11 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
+
+	"github.com/AssetMantle/modules/modules/assets/internal/mapper"
+	"github.com/AssetMantle/modules/modules/assets/internal/parameters"
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func CreateAssetsTestInput(t *testing.T) sdkTypes.Context {
@@ -107,7 +109,7 @@ func Test_block_End(t *testing.T) {
 }
 
 func Test_block_Initialize(t *testing.T) {
-	//testBlock := block{mapper.Prototype(), parameters.Prototype()}
+	// testBlock := block{mapper.Prototype(), parameters.Prototype()}
 	type fields struct {
 		mapper     helpers.Mapper
 		parameters helpers.Parameters
@@ -124,7 +126,7 @@ func Test_block_Initialize(t *testing.T) {
 		want   helpers.Block
 	}{
 		// TODO: Add test cases.
-		//{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{mapper.Prototype(), parameters.Prototype(), []helpers.Auxiliary{}}, Prototype()},
+		// {"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{mapper.Prototype(), parameters.Prototype(), []helpers.Auxiliary{}}, Prototype()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -134,6 +136,23 @@ func Test_block_Initialize(t *testing.T) {
 			}
 			if got := block.Initialize(tt.args.mapper, tt.args.parameters, tt.args.in2...); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestPrototype(t *testing.T) {
+	tests := []struct {
+		name string
+		want helpers.Block
+	}{
+
+		{"+ve", block{}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Prototype() = %v, want %v", got, tt.want)
 			}
 		})
 	}
