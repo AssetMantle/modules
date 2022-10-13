@@ -4,12 +4,12 @@
 package member
 
 import (
+	"github.com/AssetMantle/modules/modules/classifications/internal/key"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/mappables"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
-	"github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type auxiliaryKeeperMock struct {
@@ -18,10 +18,24 @@ type auxiliaryKeeperMock struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeperMock) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	if auxiliaryRequest.MutableProperties.GetProperty(baseIDs.NewPropertyID(baseIDs.NewID("memberError"), constants.IDDataID)) != nil {
-		return newAuxiliaryResponse(errors.MockError)
+	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.ClassificationID))
+	Mappable := classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID))
+	if Mappable == nil {
+		return newAuxiliaryResponse(errorConstants.EntityNotFound)
+	}
+	classification := Mappable.(mappables.Classification)
+	if auxiliaryRequest.Mutables != nil {
+		if len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()) > len(classification.GetMutables().GetMutablePropertyList().GetList()) {
+			return newAuxiliaryResponse(errorConstants.IncorrectFormat)
+		}
+
+		for _, mutableProperty := range auxiliaryRequest.Mutables.GetMutablePropertyList().GetList() {
+			if property := classification.GetMutables().GetMutablePropertyList().GetProperty(mutableProperty.GetID()); property == nil {
+				return newAuxiliaryResponse(errorConstants.IncorrectFormat)
+			}
+		}
 	}
 
 	return newAuxiliaryResponse(nil)
