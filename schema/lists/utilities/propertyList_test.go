@@ -25,7 +25,7 @@ func TestReadProperties(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with empty string", args{""}, base.NewPropertyList([]properties2.Property{}...), false},
-		{"+ve", args{"ID:S|Data,ID1:S|Data1,ID2:S|Data2"}, base.NewPropertyList([]properties2.Property{base2.NewProperty(base3.NewID("ID"), base2.NewStringData("Data")), base2.NewProperty(base3.NewID("ID1"), base2.NewStringData("Data1")), base2.NewProperty(base3.NewID("ID2"), base2.NewStringData("Data2"))}...), false},
+		{"+ve", args{"ID:S|Data,ID1:S|Data1,ID2:S|Data2"}, base.NewPropertyList([]properties2.Property{base2.NewMesaProperty(base3.NewStringID("ID"), base2.NewStringData("Data")), base2.NewMesaProperty(base3.NewStringID("ID1"), base2.NewStringData("Data1")), base2.NewMesaProperty(base3.NewStringID("ID2"), base2.NewStringData("Data2"))}...), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
