@@ -4,6 +4,12 @@
 package mappable
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -17,10 +23,6 @@ import (
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/types"
-	"reflect"
-	"testing"
 )
 
 func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, qualified.Document) {
@@ -44,7 +46,7 @@ func TestNewAsset(t *testing.T) {
 		want mappables.Asset
 	}{
 		// TODO: Add test cases.
-		{"+ve", args{classificationID: classificationID, immutables: immutables, mutables: mutables}, asset{Document: baseQualified.NewDocument(classificationID, immutables, mutables)}},
+		{"+ve", args{classificationID: classificationID, immutables: immutables, mutables: mutables}, mappable{Document: baseQualified.NewDocument(classificationID, immutables, mutables)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -61,7 +63,7 @@ func TestPrototype(t *testing.T) {
 		want helpers.Mappable
 	}{
 		// TODO: Add test cases.
-		{"+ve", asset{}},
+		{"+ve", mappable{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -90,7 +92,7 @@ func Test_asset_GetBurn(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			asset := asset{
+			asset := mappable{
 				Document: tt.fields.Document,
 			}
 			if got := asset.GetBurn(); !reflect.DeepEqual(got, tt.want) {
@@ -111,11 +113,11 @@ func Test_asset_GetKey(t *testing.T) {
 		want   helpers.Key
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testDocument}, key.NewKey(baseIDs.NewAssetID(asset{testDocument}.GetClassificationID(), asset{testDocument}.GetImmutables()))},
+		{"+ve", fields{testDocument}, key.NewKey(baseIDs.NewAssetID(mappable{testDocument}.GetClassificationID(), mappable{testDocument}.GetImmutables()))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			asset := asset{
+			asset := mappable{
 				Document: tt.fields.Document,
 			}
 			if got := asset.GetKey(); !reflect.DeepEqual(got, tt.want) {
@@ -143,7 +145,7 @@ func Test_asset_GetLock(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			asset := asset{
+			asset := mappable{
 				Document: tt.fields.Document,
 			}
 			if got := asset.GetLock(); !reflect.DeepEqual(got, tt.want) {
@@ -170,7 +172,7 @@ func Test_asset_GetSupply(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			asset := asset{
+			asset := mappable{
 				Document: tt.fields.Document,
 			}
 			if got := asset.GetSupply(); !reflect.DeepEqual(got, tt.want) {
@@ -198,7 +200,7 @@ func Test_asset_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			as := asset{
+			as := mappable{
 				Document: tt.fields.Document,
 			}
 			as.RegisterCodec(tt.args.codec)

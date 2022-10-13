@@ -5,7 +5,6 @@ package mappables
 
 import (
 	"github.com/AssetMantle/modules/schema/capabilities"
-	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/qualified"
 )
 
@@ -15,5 +14,4 @@ type Asset interface {
 	capabilities.Splittable
 
 	qualified.Document
-	helpers.Mappable
 }
