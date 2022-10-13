@@ -4,6 +4,13 @@
 package mappable
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
@@ -11,19 +18,12 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
 	"github.com/AssetMantle/modules/schema/mappables"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
 func createTestInput() (mappables.Identity, ids.ClassificationID, qualified.Immutables, qualified.Mutables) {
@@ -47,7 +47,7 @@ func TestNewIdentity(t *testing.T) {
 		args args
 		want mappables.Identity
 	}{
-		{"+ve", args{classificationID, immutables, mutables}, identity{Document: baseQualified.NewDocument(classificationID, immutables, mutables)}},
+		{"+ve", args{classificationID, immutables, mutables}, mappable{Document: baseQualified.NewDocument(classificationID, immutables, mutables)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -63,7 +63,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		{"+ve", identity{}},
+		{"+ve", mappable{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -83,7 +83,7 @@ func Test_accAddressesToData(t *testing.T) {
 		args args
 		want []data.Data
 	}{
-		//{"+ve", args{}, },
+		// {"+ve", args{}, },
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -104,11 +104,11 @@ func Test_identity_GetAuthentication(t *testing.T) {
 		fields fields
 		want   lists.DataList
 	}{
-		{"+ve", fields{testIdentity.(identity).Document}, base2.NewDataList(constants.AuthenticationProperty.GetData().(data.ListData).Get()...)},
+		{"+ve", fields{testIdentity.(mappable).Document}, base2.NewDataList(constants.AuthenticationProperty.GetData().(data.ListData).Get()...)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			identity := identity{
+			identity := mappable{
 				Document: tt.fields.Document,
 			}
 			if got := identity.GetAuthentication(); !reflect.DeepEqual(got, tt.want) {
@@ -128,11 +128,11 @@ func Test_identity_GetExpiry(t *testing.T) {
 		fields fields
 		want   types.Height
 	}{
-		{"+ve", fields{testIdentity.(identity).Document}, constants.ExpiryHeightProperty.GetData().(data.HeightData).Get()},
+		{"+ve", fields{testIdentity.(mappable).Document}, constants.ExpiryHeightProperty.GetData().(data.HeightData).Get()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			identity := identity{
+			identity := mappable{
 				Document: tt.fields.Document,
 			}
 			if got := identity.GetExpiry(); !reflect.DeepEqual(got, tt.want) {
@@ -153,11 +153,11 @@ func Test_identity_GetKey(t *testing.T) {
 		fields fields
 		want   helpers.Key
 	}{
-		{"+ve", fields{testIdentity.(identity).Document}, key.NewKey(base.NewIdentityID(testIdentity.(identity).Document.GetClassificationID(), testIdentity.(identity).Document.GetImmutables()))},
+		{"+ve", fields{testIdentity.(mappable).Document}, key.NewKey(base.NewIdentityID(testIdentity.(mappable).Document.GetClassificationID(), testIdentity.(mappable).Document.GetImmutables()))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			identity := identity{
+			identity := mappable{
 				Document: tt.fields.Document,
 			}
 			if got := identity.GetKey(); !reflect.DeepEqual(got, tt.want) {
@@ -187,14 +187,14 @@ func Test_identity_IsProvisioned(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		//TODO: panic: MetaDataError fix it after
+		// TODO: panic: MetaDataError fix it after
 		// https://github.com/AssetMantle/modules/issues/59
-		{"+ve", fields{testIdentity2.(identity).Document}, args{fromAccAddress}, true},
-		{"-ve", fields{testIdentity.(identity).Document}, args{fromAccAddress}, false},
+		{"+ve", fields{testIdentity2.(mappable).Document}, args{fromAccAddress}, true},
+		{"-ve", fields{testIdentity.(mappable).Document}, args{fromAccAddress}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			identity := identity{
+			identity := mappable{
 				Document: tt.fields.Document,
 			}
 			if got := identity.IsProvisioned(tt.args.accAddress); got != tt.want {
@@ -209,8 +209,8 @@ func Test_identity_ProvisionAddress(t *testing.T) {
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
-	//testIdentity.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(testIdentity.(identity).GetAuthentication().Add(accAddressesToData(fromAccAddress)...))))
-	//testIdentity.(identity).Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(testIdentity.(identity).GetAuthentication().Add(accAddressesToData(fromAccAddress)...))))
+	// testIdentity.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(testIdentity.(identity).GetAuthentication().Add(accAddressesToData(fromAccAddress)...))))
+	// testIdentity.(identity).Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(testIdentity.(identity).GetAuthentication().Add(accAddressesToData(fromAccAddress)...))))
 
 	type fields struct {
 		Document qualified.Document
@@ -224,13 +224,13 @@ func Test_identity_ProvisionAddress(t *testing.T) {
 		args   args
 		want   mappables.Identity
 	}{
-		//TODO: panic: MetaDataError fix it after
+		// TODO: panic: MetaDataError fix it after
 		// https://github.com/AssetMantle/modules/issues/59
-		{"+ve", fields{testIdentity.(identity).Document}, args{[]sdkTypes.AccAddress{fromAccAddress}}, testIdentity},
+		{"+ve", fields{testIdentity.(mappable).Document}, args{[]sdkTypes.AccAddress{fromAccAddress}}, testIdentity},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			identity := identity{
+			identity := mappable{
 				Document: tt.fields.Document,
 			}
 			if got := identity.ProvisionAddress(tt.args.accAddresses...); !reflect.DeepEqual(got, tt.want) {
@@ -254,11 +254,11 @@ func Test_identity_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testIdentity.(identity).Document}, args{codec.New()}},
+		{"+ve", fields{testIdentity.(mappable).Document}, args{codec.New()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			id := identity{
+			id := mappable{
 				Document: tt.fields.Document,
 			}
 			id.RegisterCodec(tt.args.codec)
@@ -283,13 +283,13 @@ func Test_identity_UnprovisionAddress(t *testing.T) {
 		args   args
 		want   mappables.Identity
 	}{
-		//TODO: panic: MetaDataError fix it after
+		// TODO: panic: MetaDataError fix it after
 		// https://github.com/AssetMantle/modules/issues/59
-		{"+ve", fields{testIdentity.(identity).Document}, args{[]sdkTypes.AccAddress{fromAccAddress}}, testIdentity},
+		{"+ve", fields{testIdentity.(mappable).Document}, args{[]sdkTypes.AccAddress{fromAccAddress}}, testIdentity},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			identity := identity{
+			identity := mappable{
 				Document: tt.fields.Document,
 			}
 			if got := identity.UnprovisionAddress(tt.args.accAddresses...); !reflect.DeepEqual(got, tt.want) {
