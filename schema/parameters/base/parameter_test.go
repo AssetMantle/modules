@@ -20,12 +20,9 @@ func dummyValidator(interface{}) error {
 	return nil
 }
 
-func createTestInput() (ids.ID, data.Data, parameters.Parameter) {
-	id := baseIDs.NewID("ID")
-	stringData := baseData.NewStringData("Data")
 func createTestInput(t *testing.T) (ids.ID, data.Data, parameters.Parameter) {
 	id := baseIDs.NewStringID("ID")
-	data := baseData.NewStringData("Data")
+	stringData := baseData.NewStringData("Data")
 
 	testParameter := NewParameter(id, stringData, dummyValidator)
 	return id, stringData, testParameter

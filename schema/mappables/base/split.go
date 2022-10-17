@@ -4,11 +4,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/capabilities"
-	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/mappables"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type split struct {
@@ -19,10 +16,10 @@ type split struct {
 
 var _ mappables.Split = (*split)(nil)
 
-func (split split) GetOwnerID() ids.ID {
+func (split split) GetOwnerID() ids.IdentityID {
 	return split.OwnerID
 }
-func (split split) GetOwnableID() ids.ID {
+func (split split) GetOwnableID() ids.OwnableID {
 	return split.OwnableID
 }
 func (split split) GetValue() sdkTypes.Dec {
@@ -39,12 +36,6 @@ func (split split) Receive(inValue sdkTypes.Dec) capabilities.Transactional {
 func (split split) CanSend(outValue sdkTypes.Dec) bool {
 	return split.Value.GTE(outValue)
 }
-func (split split) GetKey() helpers.Key {
-	return key.NewKey(base.NewSplitID(split.OwnerID, split.OwnableID))
-}
-func (split) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, split{})
-}
 
 func NewSplit(ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) mappables.Split {
 	return split{
@@ -52,8 +43,4 @@ func NewSplit(ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.De
 		OwnableID: ownableID,
 		Value:     value,
 	}
-}
-
-func Prototype() helpers.Mappable {
-	return split{}
 }
