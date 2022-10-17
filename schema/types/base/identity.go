@@ -8,7 +8,6 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
@@ -21,7 +20,7 @@ type identity struct {
 	qualified.Document
 }
 
-var _ mappables.Identity = (*identity)(nil)
+var _ types.Identity = (*identity)(nil)
 
 func (identity identity) GetExpiry() types.Height {
 	if property := identity.Document.GetProperty(constants.ExpiryHeightProperty.GetID()); property != nil && property.IsMeta() {
@@ -41,11 +40,11 @@ func (identity identity) IsProvisioned(accAddress sdkTypes.AccAddress) bool {
 	_, isProvisioned := identity.GetAuthentication().Search(baseData.NewAccAddressData(accAddress))
 	return isProvisioned
 }
-func (identity identity) ProvisionAddress(accAddresses ...sdkTypes.AccAddress) mappables.Identity {
+func (identity identity) ProvisionAddress(accAddresses ...sdkTypes.AccAddress) types.Identity {
 	identity.Document = identity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(identity.GetAuthentication().Add(accAddressesToData(accAddresses...)...))))
 	return identity
 }
-func (identity identity) UnprovisionAddress(accAddresses ...sdkTypes.AccAddress) mappables.Identity {
+func (identity identity) UnprovisionAddress(accAddresses ...sdkTypes.AccAddress) types.Identity {
 	identity.Document = identity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(identity.GetAuthentication().Remove(accAddressesToData(accAddresses...)...))))
 	return identity
 }
@@ -57,6 +56,6 @@ func accAddressesToData(accAddresses ...sdkTypes.AccAddress) []data.Data {
 	return accAddressData
 }
 
-func NewIdentity(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) mappables.Identity {
+func NewIdentity(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) types.Identity {
 	return identity{Document: baseQualified.NewDocument(classificationID, immutables, mutables)}
 }

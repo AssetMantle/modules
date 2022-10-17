@@ -9,12 +9,12 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type mappable struct {
-	mappables.Asset
+	types.Asset
 }
 
 var _ helpers.Mappable = (*mappable)(nil)
@@ -30,7 +30,7 @@ func Prototype() helpers.Mappable {
 	return mappable{}
 }
 
-func NewMappable(asset mappables.Asset) helpers.Mappable {
+func NewMappable(asset types.Asset) helpers.Mappable {
 	return mappable{
 		Asset: asset,
 	}

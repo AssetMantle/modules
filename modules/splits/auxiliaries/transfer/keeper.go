@@ -11,8 +11,8 @@ import (
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/mappables/base"
+	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
@@ -34,12 +34,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	if Mappable == nil {
 		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
-	fromSplit := Mappable.(mappables.Split)
+	fromSplit := Mappable.(types.Split)
 
-	switch fromSplit = fromSplit.(mappables.Split).Send(auxiliaryRequest.Value).(mappables.Split); {
-	case fromSplit.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
+	switch fromSplit = fromSplit.(types.Split).Send(auxiliaryRequest.Value).(types.Split); {
+	case fromSplit.(types.Split).GetValue().LT(sdkTypes.ZeroDec()):
 		return newAuxiliaryResponse(constants.NotAuthorized)
-	case fromSplit.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):
+	case fromSplit.(types.Split).GetValue().Equal(sdkTypes.ZeroDec()):
 		splits.Remove(mappable.NewMappable(fromSplit))
 	default:
 		splits.Mutate(mappable.NewMappable(fromSplit))
@@ -47,10 +47,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	toSplitID := baseIDs.NewSplitID(auxiliaryRequest.ToID, auxiliaryRequest.OwnableID)
 
-	if toSplit, ok := splits.Fetch(key.NewKey(toSplitID)).Get(key.NewKey(toSplitID)).(mappables.Split); !ok {
+	if toSplit, ok := splits.Fetch(key.NewKey(toSplitID)).Get(key.NewKey(toSplitID)).(types.Split); !ok {
 		splits.Add(mappable.NewMappable(base.NewSplit(auxiliaryRequest.ToID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value)))
 	} else {
-		splits.Mutate(mappable.NewMappable(toSplit.Receive(auxiliaryRequest.Value).(mappables.Split)))
+		splits.Mutate(mappable.NewMappable(toSplit.Receive(auxiliaryRequest.Value).(types.Split)))
 	}
 
 	return newAuxiliaryResponse(nil)

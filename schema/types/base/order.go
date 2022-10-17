@@ -5,7 +5,6 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
@@ -17,7 +16,7 @@ type order struct {
 	qualified.Document
 }
 
-var _ mappables.Order = (*order)(nil)
+var _ types.Order = (*order)(nil)
 
 func (order order) GetExchangeRate() sdkTypes.Dec {
 	if property := order.GetProperty(constants.ExchangeRateProperty.GetID()); property != nil && property.IsMeta() {
@@ -68,6 +67,6 @@ func (order order) GetMakerOwnableSplit() sdkTypes.Dec {
 	return constants.MakerOwnableSplitProperty.GetData().(data.DecData).Get()
 }
 
-func NewOrder(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) mappables.Order {
+func NewOrder(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) types.Order {
 	return order{Document: baseQualified.NewDocument(classificationID, immutables, mutables)}
 }

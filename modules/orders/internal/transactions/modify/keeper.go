@@ -17,10 +17,9 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/mappables/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
+	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -48,7 +47,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if Mappable == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
-	order := Mappable.(mappables.Order)
+	order := Mappable.(types.Order)
 
 	transferMakerOwnableSplit := message.MakerOwnableSplit.Sub(order.GetMakerOwnableSplit())
 
@@ -77,7 +76,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	orders.Remove(mappable.NewMappable(order))
-	orders.Add(mappable.NewMappable(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), updatedMutables)))
+	orders.Add(mappable.NewMappable(baseTypes.NewOrder(order.GetClassificationID(), order.GetImmutables(), updatedMutables)))
 
 	return newTransactionResponse(nil)
 }

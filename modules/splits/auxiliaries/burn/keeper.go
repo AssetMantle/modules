@@ -11,7 +11,7 @@ import (
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type auxiliaryKeeper struct {
@@ -29,9 +29,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	if Mappable == nil {
 		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
-	split := Mappable.(mappables.Split)
+	split := Mappable.(types.Split)
 
-	switch split = split.Send(auxiliaryRequest.Value).(mappables.Split); {
+	switch split = split.Send(auxiliaryRequest.Value).(types.Split); {
 	case split.GetValue().LT(sdkTypes.ZeroDec()):
 		return newAuxiliaryResponse(constants.InsufficientBalance)
 	case split.GetValue().Equal(sdkTypes.ZeroDec()):

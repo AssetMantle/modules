@@ -12,7 +12,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -37,7 +37,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if Mappable == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
-	identity := Mappable.(mappables.Identity)
+	identity := Mappable.(types.Identity)
 
 	if identity.GetExpiry().Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
 		return newTransactionResponse(errorConstants.NotAuthorized)

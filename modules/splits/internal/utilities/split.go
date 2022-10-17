@@ -11,8 +11,8 @@ import (
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/mappables/base"
+	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/types/base"
 
 	"github.com/AssetMantle/modules/schema/helpers"
 )
@@ -28,7 +28,7 @@ func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.
 	if split == nil {
 		splits.Add(mappable.NewMappable(base.NewSplit(ownerID, ownableID, value)))
 	} else {
-		splits.Mutate(mappable.NewMappable(split.(mappables.Split).Receive(value).(mappables.Split)))
+		splits.Mutate(mappable.NewMappable(split.(types.Split).Receive(value).(types.Split)))
 	}
 
 	return splits, nil
@@ -45,9 +45,9 @@ func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID
 	if Mappable == nil {
 		return nil, constants.EntityNotFound
 	}
-	split := Mappable.(mappables.Split)
+	split := Mappable.(types.Split)
 
-	switch split = split.Send(value).(mappables.Split); {
+	switch split = split.Send(value).(types.Split); {
 	case split.GetValue().LT(sdkTypes.ZeroDec()):
 		return nil, constants.NotAuthorized
 	case split.GetValue().Equal(sdkTypes.ZeroDec()):

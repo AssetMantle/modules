@@ -9,12 +9,12 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type mappable struct {
-	mappables.Meta
+	types.Meta
 }
 
 var _ helpers.Mappable = (*mappable)(nil)
@@ -26,7 +26,7 @@ func (mappable) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, mappable{})
 }
 
-func NewMappable(meta mappables.Meta) helpers.Mappable {
+func NewMappable(meta types.Meta) helpers.Mappable {
 	return mappable{Meta: meta}
 }
 

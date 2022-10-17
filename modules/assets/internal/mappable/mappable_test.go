@@ -16,12 +16,12 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	types2 "github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -43,7 +43,7 @@ func TestNewAsset(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want mappables.Asset
+		want types2.Asset
 	}{
 		// TODO: Add test cases.
 		{"+ve", args{classificationID: classificationID, immutables: immutables, mutables: mutables}, mappable{Document: baseQualified.NewDocument(classificationID, immutables, mutables)}},

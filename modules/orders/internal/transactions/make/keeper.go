@@ -20,7 +20,6 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/mappables/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
@@ -82,7 +81,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	orders.Add(mappable.NewMappable(base.NewOrder(message.ClassificationID, immutables, mutables)))
+	orders.Add(mappable.NewMappable(baseTypes.NewOrder(message.ClassificationID, immutables, mutables)))
 
 	return newTransactionResponse(nil)
 }

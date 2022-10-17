@@ -1,11 +1,14 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package mappables
+package types
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/AssetMantle/modules/schema/mappables"
 )
 
 func TestRegisterCodec(t *testing.T) {
@@ -21,7 +24,7 @@ func TestRegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			RegisterCodec(tt.args.codec)
+			mappables.RegisterCodec(tt.args.codec)
 		})
 	}
 }

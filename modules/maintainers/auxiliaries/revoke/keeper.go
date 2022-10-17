@@ -11,7 +11,7 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type auxiliaryKeeper struct {
@@ -29,7 +29,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	if Mappable == nil {
 		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}
-	fromMaintainer := Mappable.(mappables.Maintainer)
+	fromMaintainer := Mappable.(types.Maintainer)
 
 	if !fromMaintainer.CanRemoveMaintainer() {
 		return newAuxiliaryResponse(errorConstants.NotAuthorized)
@@ -40,7 +40,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	if Mappable == nil {
 		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}
-	toMaintainer := Mappable.(mappables.Maintainer)
+	toMaintainer := Mappable.(types.Maintainer)
 
 	maintainers.Remove(mappable.NewMappable(toMaintainer))
 

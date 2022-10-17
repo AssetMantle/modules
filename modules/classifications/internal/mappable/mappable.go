@@ -8,12 +8,12 @@ import (
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type mappable struct {
-	mappables.Classification
+	types.Classification
 }
 
 var _ helpers.Mappable = (*mappable)(nil)
@@ -25,7 +25,7 @@ func (mappable) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, mappable{})
 }
 
-func NewMappable(classification mappables.Classification) helpers.Mappable {
+func NewMappable(classification types.Classification) helpers.Mappable {
 	return mappable{
 		Classification: classification,
 	}

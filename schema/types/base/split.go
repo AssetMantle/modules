@@ -5,7 +5,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type split struct {
@@ -14,7 +14,7 @@ type split struct {
 	Value     sdkTypes.Dec
 }
 
-var _ mappables.Split = (*split)(nil)
+var _ types.Split = (*split)(nil)
 
 func (split split) GetOwnerID() ids.IdentityID {
 	return split.OwnerID
@@ -37,7 +37,7 @@ func (split split) CanSend(outValue sdkTypes.Dec) bool {
 	return split.Value.GTE(outValue)
 }
 
-func NewSplit(ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) mappables.Split {
+func NewSplit(ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) types.Split {
 	return split{
 		OwnerID:   ownerID,
 		OwnableID: ownableID,

@@ -18,7 +18,6 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/mappables"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
@@ -26,7 +25,7 @@ import (
 	"github.com/AssetMantle/modules/schema/types"
 )
 
-func createTestInput() (mappables.Identity, ids.ClassificationID, qualified.Immutables, qualified.Mutables) {
+func createTestInput() (types.Identity, ids.ClassificationID, qualified.Immutables, qualified.Mutables) {
 	immutables := baseQualified.NewImmutables(base2.NewPropertyList(baseProperties.NewMesaProperty(base.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(base2.NewPropertyList(baseProperties.NewMesaProperty(base.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := base.NewClassificationID(immutables, mutables)
@@ -45,7 +44,7 @@ func TestNewIdentity(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want mappables.Identity
+		want types.Identity
 	}{
 		{"+ve", args{classificationID, immutables, mutables}, mappable{Document: baseQualified.NewDocument(classificationID, immutables, mutables)}},
 	}
@@ -173,7 +172,7 @@ func Test_identity_IsProvisioned(t *testing.T) {
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 	testIdentity2 := NewIdentity(classificationID, immutables, mutables)
-	m := testIdentity2.(mappables.Identity)
+	m := testIdentity2.(types.Identity)
 	m.ProvisionAddress(fromAccAddress) // failing
 	type fields struct {
 		Document qualified.Document
@@ -222,7 +221,7 @@ func Test_identity_ProvisionAddress(t *testing.T) {
 		name   string
 		fields fields
 		args   args
-		want   mappables.Identity
+		want   types.Identity
 	}{
 		// TODO: panic: MetaDataError fix it after
 		// https://github.com/AssetMantle/modules/issues/59
@@ -281,7 +280,7 @@ func Test_identity_UnprovisionAddress(t *testing.T) {
 		name   string
 		fields fields
 		args   args
-		want   mappables.Identity
+		want   types.Identity
 	}{
 		// TODO: panic: MetaDataError fix it after
 		// https://github.com/AssetMantle/modules/issues/59

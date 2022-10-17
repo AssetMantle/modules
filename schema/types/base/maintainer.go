@@ -4,19 +4,19 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/mappables/constants"
 	"github.com/AssetMantle/modules/schema/properties"
 	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/types/constants"
 )
 
 type maintainer struct {
 	qualified.Document
 }
 
-var _ mappables.Maintainer = (*maintainer)(nil)
+var _ types.Maintainer = (*maintainer)(nil)
 
 func (maintainer maintainer) GetIdentityID() ids.IdentityID {
 	if property := maintainer.GetProperty(constantProperties.IdentityIDProperty.GetID()); property != nil && property.IsMeta() {
@@ -73,7 +73,7 @@ func (maintainer maintainer) MaintainsProperty(propertyID ids.PropertyID) bool {
 	return found
 }
 
-func NewMaintainer(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) mappables.Maintainer {
+func NewMaintainer(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) types.Maintainer {
 	return maintainer{
 		Document: baseQualified.NewDocument(classificationID, immutables, mutables),
 	}

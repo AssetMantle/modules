@@ -9,15 +9,15 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type mappable struct {
-	mappables.Identity
+	types.Identity
 }
 
-var _ mappables.Identity = (*mappable)(nil)
+var _ types.Identity = (*mappable)(nil)
 
 func (identity mappable) GetKey() helpers.Key {
 	return key.NewKey(baseIDs.NewIdentityID(identity.GetClassificationID(), identity.GetImmutables()))
@@ -26,7 +26,7 @@ func (mappable) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, mappable{})
 }
 
-func NewMappable(identity mappables.Identity) helpers.Mappable {
+func NewMappable(identity types.Identity) helpers.Mappable {
 	return mappable{
 		Identity: identity,
 	}

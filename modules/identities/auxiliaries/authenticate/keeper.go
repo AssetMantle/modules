@@ -10,7 +10,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type auxiliaryKeeper struct {
@@ -29,7 +29,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}
 
-	identity := Mappable.(mappables.Identity)
+	identity := Mappable.(types.Identity)
 
 	if !identity.IsProvisioned(auxiliaryRequest.Address) {
 		return newAuxiliaryResponse(errorConstants.NotAuthorized)
