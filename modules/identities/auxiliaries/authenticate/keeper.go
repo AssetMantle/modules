@@ -24,12 +24,12 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	mappable := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.IdentityID)).Get(key.NewKey(auxiliaryRequest.IdentityID))
-	if mappable == nil {
+	Mappable := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.IdentityID)).Get(key.NewKey(auxiliaryRequest.IdentityID))
+	if Mappable == nil {
 		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}
 
-	identity := mappable.(mappables.Identity)
+	identity := Mappable.(mappables.Identity)
 
 	if !identity.IsProvisioned(auxiliaryRequest.Address) {
 		return newAuxiliaryResponse(errorConstants.NotAuthorized)

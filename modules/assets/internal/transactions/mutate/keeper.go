@@ -38,7 +38,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.AssetID))
 
-	Mappable := assets.Get(key.NewKey(message.AssetID)).(mappables.Asset)
+	Mappable := assets.Get(key.NewKey(message.AssetID))
 	if Mappable == nil {
 		return newTransactionResponse(constants.EntityNotFound)
 	}

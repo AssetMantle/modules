@@ -8,6 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -32,16 +33,17 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.IdentityID))
 
-	identity := identities.Get(key.NewKey(message.IdentityID))
-	if identity == nil {
+	Mappable := identities.Get(key.NewKey(message.IdentityID))
+	if Mappable == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
+	identity := Mappable.(mappables.Identity)
 
-	if identity.(mappables.Identity).GetExpiry().Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
+	if identity.GetExpiry().Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
 		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
-	identities.Remove(identity)
+	identities.Remove(mappable.NewMappable(identity))
 
 	return newTransactionResponse(nil)
 }
