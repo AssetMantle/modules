@@ -4,14 +4,13 @@
 package reveal
 
 import (
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
-	"github.com/AssetMantle/modules/schema/data/utilities"
-	stringUtilities "github.com/AssetMantle/modules/schema/data/utlities"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
@@ -21,7 +20,7 @@ func Test_Reveal_Message(t *testing.T) {
 	require.Nil(t, err)
 
 	data := "S|newData"
-	newData, err := stringUtilities.ReadData(data)
+	newData, err := utilities.ReadData(data)
 	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, newData)

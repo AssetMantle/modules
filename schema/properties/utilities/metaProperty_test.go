@@ -24,7 +24,7 @@ func TestReadMetaProperty(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with empty string", args{""}, nil, true},
-		{"+ve", args{"id:S|Data"}, base.NewMetaProperty(baseIDs.NewID("id"), baseData.NewStringData("Data")), false},
+		{"+ve", args{"id:S|Data"}, base.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data")), false},
 		{"-ve incorrectFormat", args{"idS|Data"}, nil, true},
 	}
 	for _, tt := range tests {

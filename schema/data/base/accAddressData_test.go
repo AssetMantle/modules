@@ -10,7 +10,6 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 	"github.com/cosmos/cosmos-sdk/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
@@ -40,34 +39,6 @@ func TestNewAccAddressData(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equalf(t, tt.want, NewAccAddressData(tt.args.value), "NewAccAddressData(%v)", tt.args.value)
-		})
-	}
-}
-
-func TestReadAccAddressData(t *testing.T) {
-	_fromAddress, err := sdkTypes.AccAddressFromBech32("cosmos1u6xn6rv07p2yzzj2rm8st04x54xe5ur0t9nl5j")
-	require.NoError(t, err)
-	type args struct {
-		dataString string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    data.Data
-		wantErr assert.ErrorAssertionFunc
-	}{
-		// TODO: Add test cases.
-		{"-ve empty String", args{""}, accAddressData{}.ZeroValue(), assert.NoError},
-		{"-ve wrong Address", args{"cosmos1u6xn6rv07p2yzzj2rm8st04x54xe5ur0t9nlww"}, accAddressData{}.ZeroValue(), assert.Error},
-		{"+ve", args{"cosmos1u6xn6rv07p2yzzj2rm8st04x54xe5ur0t9nl5j"}, accAddressData{_fromAddress}, assert.NoError},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := ReadAccAddressData(tt.args.dataString)
-			if !tt.wantErr(t, err, fmt.Sprintf("ReadAccAddressData(%v)", tt.args.dataString)) {
-				return
-			}
-			assert.Equalf(t, tt.want, got, "ReadAccAddressData(%v)", tt.args.dataString)
 		})
 	}
 }
@@ -127,7 +98,7 @@ func Test_accAddressData_Compare(t *testing.T) {
 	}
 }
 
-func Test_accAddressData_GenerateHash(t *testing.T) {
+func Test_accAddressData_GenerateHashID(t *testing.T) {
 	fromAccAddress := sdkTypes.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c")
 	type fields struct {
 		Value types.AccAddress
@@ -138,15 +109,15 @@ func Test_accAddressData_GenerateHash(t *testing.T) {
 		want   ids.ID
 	}{
 		// TODO: Add test cases.
-		{"-ve empty String", fields{}, baseIDs.NewID("")},
-		{"+ve", fields{fromAccAddress}, baseIDs.NewID(stringUtilities.Hash(accAddressData{fromAccAddress}.Value.String()))},
+		{"-ve empty String", fields{}, baseIDs.GenerateHashID()},
+		{"+ve", fields{fromAccAddress}, baseIDs.GenerateHashID(accAddressData{fromAccAddress}.Bytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			accAddressData := accAddressData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, accAddressData.GenerateHash(), "GenerateHash()")
+			assert.Equalf(t, tt.want, accAddressData.GenerateHashID(), "GenerateHashID()")
 		})
 	}
 }
@@ -268,6 +239,31 @@ func Test_accAddressData_ZeroValue(t *testing.T) {
 				Value: tt.fields.Value,
 			}
 			assert.Equalf(t, tt.want, accAddressData.ZeroValue(), "ZeroValue()")
+		})
+	}
+}
+
+func Test_accAddressData_Bytes(t *testing.T) {
+	_fromAddress, err := sdkTypes.AccAddressFromBech32("cosmos1u6xn6rv07p2yzzj2rm8st04x54xe5ur0t9nl5j")
+	require.Nil(t, err)
+	type fields struct {
+		Value sdkTypes.AccAddress
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   []byte
+	}{
+		// TODO: Add test cases.
+		{"+ve with nil", fields{}, accAddressData{}.Value.Bytes()},
+		{"+ve", fields{_fromAddress}, accAddressData{_fromAddress}.Value.Bytes()},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			accAddressData := accAddressData{
+				Value: tt.fields.Value,
+			}
+			assert.Equalf(t, tt.want, accAddressData.Bytes(), "Bytes()")
 		})
 	}
 }

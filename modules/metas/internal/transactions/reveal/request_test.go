@@ -5,6 +5,7 @@ package reveal
 
 import (
 	"encoding/json"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -15,7 +16,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema"
-	stringUtilities "github.com/AssetMantle/modules/schema/data/utlities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
@@ -37,7 +37,7 @@ func Test_Reveal_Request(t *testing.T) {
 	require.Nil(t, err)
 
 	data := "S|newData"
-	newData, err := stringUtilities.ReadData(data)
+	newData, err := utilities.ReadData(data)
 	require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}

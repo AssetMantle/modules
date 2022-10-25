@@ -26,7 +26,7 @@ func TestNewMetaPropertyList(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with nil", args{[]properties.MetaProperty{}}, metaPropertyList{NewList(metaPropertiesToListables([]properties.MetaProperty{}...)...)}},
-		{"+ve", args{[]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewID("a"), NewStringData("factA"))}}, metaPropertyList{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}},
+		{"+ve", args{[]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}}, metaPropertyList{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -48,7 +48,7 @@ func Test_metaPropertiesToListables(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with nil", args{}, metaPropertiesToListables(metaPropertyList{NewList()}.GetList()...)},
-		{"+ve", args{[]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewID("a"), NewStringData("factA"))}}, metaPropertiesToListables(metaPropertyList{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}.GetList()...)},
+		{"+ve", args{[]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}}, metaPropertiesToListables(metaPropertyList{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}.GetList()...)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -74,7 +74,7 @@ func Test_metaPropertyList_Add(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with nil", fields{NewList()}, args{}, metaPropertyList{NewList()}},
-		{"+ve", fields{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, args{[]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewID("a"), NewStringData("factA"))}}, metaPropertyList{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}},
+		{"+ve", fields{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}, args{[]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}}, metaPropertyList{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -99,7 +99,7 @@ func Test_metaPropertyList_GetList(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with nil", fields{NewList()}, []properties.MetaProperty{}},
-		{"+ve", fields{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, []properties.MetaProperty{base.NewMetaProperty(baseIDs.NewID("a"), NewStringData("factA"))}},
+		{"+ve", fields{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}, []properties.MetaProperty{base.NewMetaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -127,8 +127,8 @@ func Test_metaPropertyList_GetMetaProperty(t *testing.T) {
 		want   properties.MetaProperty
 	}{
 		// TODO: Add test cases.
-		{"-ve", fields{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, args{base.NewMetaProperty(baseIDs.NewID("b"), NewStringData("factB")).GetID()}, nil},
-		{"+ve", fields{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, args{base.NewMetaProperty(baseIDs.NewID("a"), NewStringData("factA")).GetID()}, base.NewMetaProperty(baseIDs.NewID("a"), NewStringData("factA"))},
+		{"-ve", fields{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}, args{base.NewMetaProperty(baseIDs.NewStringID("b"), NewStringData("factB")).GetID()}, nil},
+		{"+ve", fields{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}, args{base.NewMetaProperty(baseIDs.NewStringID("a"), NewStringData("factA")).GetID()}, base.NewMetaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -153,7 +153,7 @@ func Test_metaPropertyList_ToPropertyList(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with nil", fields{NewList()}, NewPropertyList()},
-		{"+ve", fields{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, NewPropertyList([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)},
+		{"+ve", fields{NewList(metaPropertiesToListables([]properties.MetaProperty{base.NewMetaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}, NewPropertyList([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
