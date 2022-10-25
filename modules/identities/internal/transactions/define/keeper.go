@@ -15,9 +15,9 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type transactionKeeper struct {
@@ -41,9 +41,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	if mappable == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
-	identity := mappable.(mappables.Identity)
+	identity := mappable.(types.Identity)
 
-	if !identity.(mappables.Identity).IsProvisioned(message.From) {
+	if !identity.(types.Identity).IsProvisioned(message.From) {
 		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 

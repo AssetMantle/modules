@@ -39,8 +39,8 @@ a smooth workflow for all contributors, the general procedure for contributing h
     1. Ensure that the proposal has been accepted.
     2. Ensure that nobody else has already begun working on this issue. If they have, make sure to contact them to
        collaborate.
-    3. If nobody has been assigned for the issue, and you would like to work on it, make a comment on the issue to inform
-       the community of your intentions to begin work.
+    3. If nobody has been assigned for the issue, and you would like to work on it, make a comment on the issue to
+       inform the community of your intentions to begin work.
 5. To submit your work as a contribution to the repository follow standard GitHub best practices.
    See [pull request guideline](#pull-requests) below.
 
@@ -53,10 +53,10 @@ taken place in a GitHub issue, that PR runs a high likelihood of being rejected.
 When proposing an architecture decision for the AssetMantle modules, please start by opening
 an [issue](https://github.com/AssetMantle/modules/issues/new/choose) or
 a [discussion](https://github.com/AssetMantle/modules/discussions/new) with a summary of the proposal. Once the proposal
-has been discussed and there is rough alignment on a high-level approach to the design,
-are following this process to ensure all involved parties are in agreement before any party begins coding the proposed
-the [ADR creation process](./docs/architecture/PROCESS.md) can begin the implementation. If you would like to see examples of how these are written, please refer to the
-current ADR.
+has been discussed and there is rough alignment on a high-level approach to the design, are following this process to
+ensure all involved parties are in agreement before any party begins coding the proposed
+the [ADR creation process](./docs/architecture/PROCESS.md) can begin the implementation. If you would like to see
+examples of how these are written, please refer to the current ADR.
 
 ## Development Procedure
 
@@ -64,15 +64,16 @@ current ADR.
 - `master` must never fail `make lint test test-race`.
 - No `--force` onto `master` (except when reverting a broken commit, which should seldom happen).
 - Create a branch to start a wok:
-    - Fork the repo (core developers must create a branch directly in the AssetMantle modules repo), branch from the HEAD
-      of `master`, make some commits, and submit a PR to `master`.
-    - For core developers working within the `modules` repo, follow branch name conventions to ensure a clear
-      ownership of branches: `{moniker}/{issue#}-branch-name`.
+    - Fork the repo (core developers must create a branch directly in the AssetMantle modules repo), branch from the
+      HEAD of `master`, make some commits, and submit a PR to `master`.
+    - For core developers working within the `modules` repo, follow branch name conventions to ensure a clear ownership
+      of branches: `{moniker}/{issue#}-branch-name`.
     - See [Branching Model](#branching-model-and-release) for more details.
-- Be sure to run `make format` before every commit. The easiest way to do this is to have your editor run it for you upon
-  saving a file (most of the editors will do it anyway using a pre-configured setup of the programming language mode).
-  Additionally, be sure that your code is lint compliant by running `make lint-fix`. A convenience git `pre-commit` hook
-  that runs the formatters automatically before each commit is available in the `contrib/githooks/` directory.
+- Be sure to run `make format` before every commit. The easiest way to do this is to have your editor run it for you
+  upon saving a file (most of the editors will do it anyway using a pre-configured setup of the programming language
+  mode). Additionally, be sure that your code is lint compliant by running `make lint-fix`. A convenience
+  git `pre-commit` hook that runs the formatters automatically before each commit is available in
+  the `contrib/githooks/` directory.
 - Follow the [CODING GUIDELINES](CODING_GUIDELINES.md), which defines criteria for designing and coding a software.
 
 Code is merged into master through pull request procedure.
@@ -168,8 +169,8 @@ When writing documentation, follow the [Documentation Writing Guidelines](./docs
 
 We use [Go Modules](https://github.com/golang/go/wiki/Modules) to manage dependency versions.
 
-The master branch of every modules' repository should just build with `go get`, which means they should be kept up-to-date
-with their dependencies, so we can get away with telling people they can just `go get` our software.
+The master branch of every modules' repository should just build with `go get`, which means they should be kept
+up-to-date with their dependencies, so we can get away with telling people they can just `go get` our software.
 
 Since some dependencies are not under our control, a third party may break our build, in which case we can fall back
 on `go mod tidy -v`.
@@ -233,9 +234,9 @@ and similar).
 In the ethos of open source projects, and out of necessity to keep the code alive, the core contributor team will strive
 to permit special repo privileges to developers who show an aptitude towards developing with this code base.
 
-Several kinds of privileges may be granted however most common privileges to be granted are merging rights to
-either part of, or the entirety of the code base (through the GitHub `CODEOWNERS` file). The on-boarding process for new
-code owners is as follows: On a bi-monthly basis (or more frequently if agreeable) all the existing code owners will
+Several kinds of privileges may be granted however most common privileges to be granted are merging rights to either
+part of, or the entirety of the code base (through the GitHub `CODEOWNERS` file). The on-boarding process for new code
+owners is as follows: On a bi-monthly basis (or more frequently if agreeable) all the existing code owners will
 privately convene to discuss potential new candidates as well as the potential for existing code-owners to exit or "pass
 on the torch". This private meeting is to be a held as a phone/video meeting.
 
@@ -259,8 +260,8 @@ metric. Serving as a code owner is a symbol of great trust from the community of
 
 ## Concept & Feature Approval Process
 
-The process for how AssetMantle modules maintainers take features and ADRs from concept to release is broken up into three
-distinct stages: **Strategy Discovery**, **Concept Approval**, and
+The process for how AssetMantle modules maintainers take features and ADRs from concept to release is broken up into
+three distinct stages: **Strategy Discovery**, **Concept Approval**, and
 **Implementation & Release Approval**
 
 ### Strategy Discovery
@@ -270,8 +271,8 @@ distinct stages: **Strategy Discovery**, **Concept Approval**, and
 
 ### Concept Approval
 
-* Architecture Decision Records (ADRs) may be proposed by any contributors or maintainers of the AssetMantle modules, and
-  should follow the guidelines outlined in the
+* Architecture Decision Records (ADRs) may be proposed by any contributors or maintainers of the AssetMantle modules,
+  and should follow the guidelines outlined in the
   [ADR Creation Process](https://github.com/AssetMantle/modules/blob/master/docs/architecture/PROCESS.md)
 * After proposal, a time bound period for Request for Comment (RFC) on ADRs commences
 * ADRs are intended to be iterative, and may be merged into `master` while still in a `Proposed` status
@@ -300,8 +301,8 @@ Committee**.
 
 ### Implementation & Release Approval
 
-The following process should be adhered to both for implementation PRs corresponding to ADRs, and for PRs made as
-part of a release process:
+The following process should be adhered to both for implementation PRs corresponding to ADRs, and for PRs made as part
+of a release process:
 
 * Code reviewers should ensure the PR does exactly what the ADR said it should
 * Code reviewers should have more senior engineering capability

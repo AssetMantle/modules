@@ -14,7 +14,8 @@ Node modules and client utilities to build AssetMantle platform node application
 
 ## Contributing
 
-If you want to contribute to AssetMantle Modules, please read the instructions in [CODING_GUIDELINES.md](CODING_GUIDELINES.md).
+If you want to contribute to AssetMantle Modules, please read the instructions
+in [CODING_GUIDELINES.md](CODING_GUIDELINES.md).
 
 <div align="center">
 

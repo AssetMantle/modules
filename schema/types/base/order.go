@@ -1,31 +1,22 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
-
-package mappable
+package base
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type order struct {
 	qualified.Document
 }
 
-var _ mappables.Order = (*order)(nil)
+var _ types.Order = (*order)(nil)
 
 func (order order) GetExchangeRate() sdkTypes.Dec {
 	if property := order.GetProperty(constants.ExchangeRateProperty.GetID()); property != nil && property.IsMeta() {
@@ -75,17 +66,7 @@ func (order order) GetMakerOwnableSplit() sdkTypes.Dec {
 	}
 	return constants.MakerOwnableSplitProperty.GetData().(data.DecData).Get()
 }
-func (order order) GetKey() helpers.Key {
-	return key.NewKey(baseIDs.NewOrderID(order.GetClassificationID(), order.GetMakerOwnableID(), order.GetTakerOwnableID(), order.GetExchangeRate(), order.GetCreationHeight(), order.GetMakerID(), order.GetImmutables()))
-}
-func (order) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, order{})
-}
 
-func NewOrder(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) mappables.Order {
+func NewOrder(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) types.Order {
 	return order{Document: baseQualified.NewDocument(classificationID, immutables, mutables)}
-}
-
-func Prototype() helpers.Mappable {
-	return order{}
 }

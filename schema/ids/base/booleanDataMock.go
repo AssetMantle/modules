@@ -18,7 +18,7 @@ var _ data.BooleanData = (*booleanData)(nil)
 
 func (booleanData booleanData) GetID() ids.DataID {
 	panic("")
-	//return NewDataID(booleanData)
+	// return NewDataID(booleanData)
 }
 func (booleanData booleanData) Compare(listable traits.Listable) int {
 	return -1

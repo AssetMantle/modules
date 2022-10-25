@@ -4,11 +4,9 @@
 package identity
 
 import (
-	"github.com/AssetMantle/modules/modules/identities/internal/common"
-	"github.com/AssetMantle/modules/modules/identities/internal/mapper"
-	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -17,8 +15,12 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
+
+	"github.com/AssetMantle/modules/modules/identities/internal/common"
+	"github.com/AssetMantle/modules/modules/identities/internal/mapper"
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func CreateTestInputContext(t *testing.T) sdkTypes.Context {

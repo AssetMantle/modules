@@ -4,12 +4,13 @@
 package utilities
 
 import (
+	"reflect"
+	"testing"
+
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/base"
-	"reflect"
-	"testing"
 )
 
 func TestReadMetaProperty(t *testing.T) {

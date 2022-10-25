@@ -4,8 +4,9 @@
 package member
 
 import (
-	base2 "github.com/AssetMantle/modules/schema/qualified/base"
 	"testing"
+
+	base2 "github.com/AssetMantle/modules/schema/qualified/base"
 
 	"github.com/stretchr/testify/require"
 

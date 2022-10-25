@@ -8,10 +8,11 @@ import (
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type transactionKeeper struct {
@@ -26,11 +27,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	identityID := message.IdentityID
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 
-	mappable := identities.Get(key.NewKey(identityID))
-	if mappable == nil {
+	Mappable := identities.Get(key.NewKey(identityID))
+	if Mappable == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
-	identity := mappable.(mappables.Identity)
+	identity := Mappable.(types.Identity)
 
 	if !identity.IsProvisioned(message.From) {
 		return newTransactionResponse(errorConstants.NotAuthorized)
@@ -40,7 +41,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
-	identities.Mutate(identity.UnprovisionAddress().UnprovisionAddress(message.To))
+	identities.Mutate(mappable.NewMappable(identity.UnprovisionAddress(message.To)))
 
 	return newTransactionResponse(nil)
 }

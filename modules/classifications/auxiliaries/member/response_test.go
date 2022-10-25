@@ -4,8 +4,9 @@
 package member
 
 import (
-	"github.com/AssetMantle/modules/schema/errors/constants"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/errors/constants"
 
 	"github.com/stretchr/testify/require"
 )

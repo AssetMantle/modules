@@ -4,8 +4,9 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/helpers"
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -14,8 +15,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
+
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func initialize() (helpers.CLICommand, []helpers.CLIFlag) {
@@ -65,7 +67,7 @@ func TestNewCLICommand(t *testing.T) {
 }
 
 func Test_cliCommand_CreateCommand(t *testing.T) {
-	//_, testCliFlagList := initialize()
+	// _, testCliFlagList := initialize()
 	type fields struct {
 		use         string
 		short       string
@@ -197,7 +199,7 @@ func Test_cliCommand_ReadInt(t *testing.T) {
 		{"-ve unregistered flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", 1, ",usage")}, 1, true},
 		{"+ve", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name3", 123, ",usage")}, 0, false},
 		{"-ve should panic", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name4", struct{}{}, ",usage")}, 0, true},
-		//{"-ve should not panic", fields{"", "", "", nil}, args{NewCLIFlag("name4", 123, ",usage")}, 0, false},
+		// {"-ve should not panic", fields{"", "", "", nil}, args{NewCLIFlag("name4", 123, ",usage")}, 0, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

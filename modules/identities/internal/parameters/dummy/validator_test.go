@@ -4,11 +4,13 @@
 package dummy
 
 import (
+	"testing"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"testing"
 )
 
 func Test_validator(t *testing.T) {

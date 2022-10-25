@@ -5,6 +5,16 @@ package revoke
 
 import (
 	"encoding/json"
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -16,14 +26,6 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
 func createTestInput(t *testing.T) (rest.BaseReq, string, ids.IdentityID, ids.IdentityID, ids.ClassificationID) {
@@ -223,7 +225,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, message{testFromAccAddress, testFromID, testToID, testClassificationID}, false}, //TODO: Type & Data same but Not matching
+		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, message{testFromAccAddress, testFromID, testToID, testClassificationID}, false}, // TODO: Type & Data same but Not matching
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

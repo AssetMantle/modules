@@ -4,16 +4,17 @@
 package parameters
 
 import (
-	"github.com/AssetMantle/modules/modules/assets/internal/parameters/dummy"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/modules/assets/internal/parameters/dummy"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
 	tests := []struct {
 		name string
-		//want helpers.Parameters
+		// want helpers.Parameters
 		want      string
 		wantError error
 	}{

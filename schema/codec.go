@@ -15,7 +15,6 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/parameters"
 	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -43,8 +42,6 @@ func RegisterCodec(codec *codec.Codec) {
 
 	lists.RegisterCodec(codec)
 	baseLists.RegisterCodec(codec)
-
-	mappables.RegisterCodec(codec)
 
 	parameters.RegisterCodec(codec)
 	baseParameters.RegisterCodec(codec)

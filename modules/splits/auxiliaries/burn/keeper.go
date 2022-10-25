@@ -7,10 +7,11 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
+	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/mappables"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 type auxiliaryKeeper struct {
@@ -24,18 +25,19 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	splitID := baseIDs.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
 	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(splitID))
 
-	split := splits.Get(key.NewKey(splitID))
-	if split == nil {
+	Mappable := splits.Get(key.NewKey(splitID))
+	if Mappable == nil {
 		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
+	split := Mappable.(types.Split)
 
-	switch split = split.(mappables.Split).Send(auxiliaryRequest.Value).(mappables.Split); {
-	case split.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
+	switch split = split.Send(auxiliaryRequest.Value).(types.Split); {
+	case split.GetValue().LT(sdkTypes.ZeroDec()):
 		return newAuxiliaryResponse(constants.InsufficientBalance)
-	case split.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):
-		splits.Remove(split)
+	case split.GetValue().Equal(sdkTypes.ZeroDec()):
+		splits.Remove(mappable.NewMappable(split))
 	default:
-		splits.Mutate(split)
+		splits.Mutate(mappable.NewMappable(split))
 	}
 
 	return newAuxiliaryResponse(nil)

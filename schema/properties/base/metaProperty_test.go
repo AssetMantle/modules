@@ -184,7 +184,7 @@ func Test_metaProperty_GetDataID(t *testing.T) {
 	}
 }
 
-//func Test_metaProperty_GetHash(t *testing.T) {
+// func Test_metaProperty_GetHash(t *testing.T) {
 //	_, testPropertyID, testData, _ := createTestInput()
 //	type fields struct {
 //		ID   ids.PropertyID
@@ -209,7 +209,7 @@ func Test_metaProperty_GetDataID(t *testing.T) {
 //			}
 //		})
 //	}
-//}
+// }
 
 func Test_metaProperty_GetID(t *testing.T) {
 	_, testPropertyID, testData, _ := createTestInput()

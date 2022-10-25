@@ -4,10 +4,12 @@
 package provision
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func Test_keeperPrototype(t *testing.T) {

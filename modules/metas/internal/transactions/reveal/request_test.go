@@ -5,8 +5,9 @@ package reveal
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/schema/data/utilities"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/data/utilities"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"

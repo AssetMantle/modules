@@ -19,10 +19,10 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/mappables"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -47,15 +47,15 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 	orders.Iterate(
 		// TODO ***** define a proper new key
 		key.NewKey(baseIDs.PrototypeOrderID()),
-		func(mappable helpers.Mappable) bool {
-			order := mappable.(mappables.Order)
+		func(Mappable helpers.Mappable) bool {
+			order := Mappable.(types.Order)
 
 			if order.GetExpiryHeight().Compare(baseTypes.NewHeight(context.BlockHeight())) <= 0 {
 				// TODO ***** check security of sending and receiving from module and module account security
 				if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, order.GetMakerID(), order.GetMakerOwnableID(), order.GetMakerOwnableSplit())); !auxiliaryResponse.IsSuccessful() {
 					panic(auxiliaryResponse.GetError())
 				}
-				orders.Remove(order)
+				orders.Remove(mappable.NewMappable(order))
 			} else {
 				// TODO ***** test
 				id1 := baseIDs.NewOrderID(order.GetClassificationID(), order.GetMakerOwnableID(), order.GetTakerOwnableID(), sdkTypes.SmallestDec(), baseTypes.NewHeight(0), baseIDs.PrototypeIdentityID(), baseQualified.NewImmutables(baseLists.NewPropertyList()))
@@ -74,13 +74,13 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 
 		orders.Iterate(key.NewKey(partialOrderID),
 			func(Mappable helpers.Mappable) bool {
-				order := Mappable.(mappables.Order)
+				order := Mappable.(types.Order)
 				orders.Iterate(
 					key.NewKey(baseIDs.PrototypeOrderID()),
 					func(Mappable helpers.Mappable) bool {
-						executableOrder := Mappable.(mappables.Order)
-						var leftOrder mappables.Order
-						var rightOrder mappables.Order
+						executableOrder := Mappable.(types.Order)
+						var leftOrder types.Order
+						var rightOrder types.Order
 
 						orderHeight := order.GetCreationHeight()
 
@@ -123,8 +123,8 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 									panic(err)
 								}
 
-								orders.Mutate(mappable.NewOrder(leftOrder.GetClassificationID(), leftOrder.GetImmutables(), leftOrder.Mutate(mutableProperties.GetList()...).GetMutables()))
-								orders.Remove(rightOrder)
+								orders.Mutate(mappable.NewMappable(baseTypes.NewOrder(leftOrder.GetClassificationID(), leftOrder.GetImmutables(), leftOrder.Mutate(mutableProperties.GetList()...).GetMutables())))
+								orders.Remove(mappable.NewMappable(rightOrder))
 
 								if executableOrderHeight.Compare(orderHeight) > 0 {
 									return true
@@ -143,8 +143,8 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 									panic(err)
 								}
 
-								orders.Mutate(mappable.NewOrder(rightOrder.GetClassificationID(), rightOrder.GetImmutables(), rightOrder.GetMutables().Mutate(mutableProperties.GetList()...)))
-								orders.Remove(leftOrder)
+								orders.Mutate(mappable.NewMappable(baseTypes.NewOrder(rightOrder.GetClassificationID(), rightOrder.GetImmutables(), rightOrder.GetMutables().Mutate(mutableProperties.GetList()...))))
+								orders.Remove(mappable.NewMappable(leftOrder))
 
 								if orderHeight.Compare(executableOrderHeight) >= 0 {
 									return true
@@ -158,8 +158,8 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 									panic(auxiliaryResponse.GetError())
 								}
 
-								orders.Remove(rightOrder)
-								orders.Remove(leftOrder)
+								orders.Remove(mappable.NewMappable(rightOrder))
+								orders.Remove(mappable.NewMappable(leftOrder))
 								return true
 							}
 						} else {
@@ -176,6 +176,10 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 			continue
 		}
 	}
+}
+
+func Prototype() helpers.Block {
+	return block{}
 }
 
 func (block block) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Block {

@@ -12,7 +12,8 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/qualified/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
@@ -30,7 +31,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(constants.EntityAlreadyExists)
 	}
 
-	maintainers.Add(mappable.NewMaintainer(auxiliaryRequest.ClassificationID, base.NewImmutables(baseLists.NewPropertyList()), auxiliaryRequest.Mutables))
+	maintainers.Add(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.ClassificationID, baseQualified.NewImmutables(baseLists.NewPropertyList()), auxiliaryRequest.Mutables)))
 
 	return newAuxiliaryResponse(nil)
 }

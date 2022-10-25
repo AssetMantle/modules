@@ -5,6 +5,8 @@ package reveal
 
 import (
 	"github.com/AssetMantle/modules/schema/data/utilities"
+	"github.com/AssetMantle/modules/schema/types/base"
+
 	"reflect"
 	"testing"
 
@@ -77,7 +79,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, err)
 	newFact, err := utilities.ReadData("S|newFact")
 	require.Equal(t, nil, err)
-	keepers.MetasKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMeta(defaultFact))
+	keepers.MetasKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(base.NewMeta(defaultFact)))
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
 		if got := keepers.MetasKeeper.Transact(context, newMessage(defaultAddr, newFact)); !reflect.DeepEqual(got, want) {
