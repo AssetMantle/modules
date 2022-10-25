@@ -4,10 +4,11 @@
 package parameters
 
 import (
-	"github.com/AssetMantle/modules/modules/identities/internal/parameters/dummy"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/modules/identities/internal/parameters/dummy"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

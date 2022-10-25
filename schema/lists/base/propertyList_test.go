@@ -26,7 +26,7 @@ func TestNewPropertyList(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve", args{nil}, propertyList{List: NewList(propertiesToListables([]properties.Property{}...)...)}},
-		{"+ve", args{[]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}},
+		{"+ve", args{[]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -48,7 +48,7 @@ func Test_propertiesToListables(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve", args{nil}, propertiesToListables()},
-		{"+ve", args{[]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}}, propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)},
+		{"+ve", args{[]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}}, propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -74,8 +74,8 @@ func Test_propertyList_Add(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with no property addition", fields{NewList()}, args{nil}, propertyList{List: NewList()}},
-		{"+ve nil with property addition", fields{NewList(propertiesToListables([]properties.Property{}...)...)}, args{[]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}},
-		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, args{[]properties.Property{base.NewProperty(baseIDs.NewID("b"), NewStringData("factB"))}}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA")), base.NewProperty(baseIDs.NewID("b"), NewStringData("factB"))}...)...)}},
+		{"+ve nil with property addition", fields{NewList(propertiesToListables([]properties.Property{}...)...)}, args{[]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}},
+		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}, args{[]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("b"), NewStringData("factB"))}}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA")), base.NewMesaProperty(baseIDs.NewStringID("b"), NewStringData("factB"))}...)...)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -100,7 +100,7 @@ func Test_propertyList_GetList(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve", fields{NewList()}, []properties.Property{}},
-		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, []properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}},
+		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}, []properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -128,8 +128,8 @@ func Test_propertyList_GetProperty(t *testing.T) {
 		want   properties.Property
 	}{
 		// TODO: Add test cases.
-		{"-ve", fields{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, args{base.NewProperty(baseIDs.NewID("b"), NewStringData("factB")).GetID()}, nil},
-		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, args{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA")).GetID()}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}.GetList()[0]},
+		{"-ve", fields{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}, args{base.NewMesaProperty(baseIDs.NewStringID("b"), NewStringData("factB")).GetID()}, nil},
+		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}, args{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA")).GetID()}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}.GetList()[0]},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -157,8 +157,8 @@ func Test_propertyList_Mutate(t *testing.T) {
 		want   lists.PropertyList
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, args{nil}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}}, // TODO: Type & value same but not matching
-		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, args{[]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factB"))}}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factB"))}...)...)}},
+		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}, args{nil}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}}, // TODO: Type & value same but not matching
+		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}, args{[]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factB"))}}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factB"))}...)...)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -186,9 +186,9 @@ func Test_propertyList_Remove(t *testing.T) {
 		want   lists.PropertyList
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}, args{nil}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}...)...)}},
-		{"+ve", fields{NewList()}, args{[]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA"))}}, propertyList{NewList()}},
-		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA")), base.NewProperty(baseIDs.NewID("b"), NewStringData("factB"))}...)...)}, args{[]properties.Property{base.NewProperty(baseIDs.NewID("a"), NewStringData("factA")), base.NewProperty(baseIDs.NewID("b"), NewStringData("factB"))}}, propertyList{NewList()}},
+		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}, args{nil}, propertyList{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}...)...)}},
+		{"+ve", fields{NewList()}, args{[]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA"))}}, propertyList{NewList()}},
+		{"+ve", fields{NewList(propertiesToListables([]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA")), base.NewMesaProperty(baseIDs.NewStringID("b"), NewStringData("factB"))}...)...)}, args{[]properties.Property{base.NewMesaProperty(baseIDs.NewStringID("a"), NewStringData("factA")), base.NewMesaProperty(baseIDs.NewStringID("b"), NewStringData("factB"))}}, propertyList{NewList()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

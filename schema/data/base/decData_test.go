@@ -5,15 +5,17 @@ package base
 
 import (
 	"fmt"
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/assert"
-	"reflect"
-	"testing"
 )
 
 func TestNewDecData(t *testing.T) {
@@ -75,7 +77,7 @@ func Test_decData_Bytes(t *testing.T) {
 		want   []byte
 	}{
 		// TODO: Add test cases.
-		//{"+ve with nil", fields{}}, []byte{}},
+		// {"+ve with nil", fields{}}, []byte{}},
 		{"+ve with zero dec", fields{types.ZeroDec()}, decData{types.ZeroDec()}.Value.Bytes()},
 		{"+ve", fields{types.NewDec(100)}, decData{types.NewDec(100)}.Value.Bytes()},
 		{"+ve with -ve Dec", fields{types.NewDec(-100)}, decData{types.NewDec(-100)}.Value.Bytes()},
@@ -180,7 +182,7 @@ func Test_decData_GetID(t *testing.T) {
 		want   ids.DataID
 	}{
 		// TODO: Add test cases.
-		{"+ve with nil", fields{types.Dec{}}, baseIDs.NewDataID(decData{})}, //TODO: paincs for nil
+		{"+ve with nil", fields{types.Dec{}}, baseIDs.NewDataID(decData{})}, // TODO: paincs for nil
 		{"+ve with zero dec", fields{types.ZeroDec()}, baseIDs.NewDataID(decData{types.ZeroDec()})},
 		{"+ve", fields{types.NewDec(100)}, baseIDs.NewDataID(decData{types.NewDec(100)})},
 		{"+ve with -ve Dec", fields{types.NewDec(-100)}, baseIDs.NewDataID(decData{types.NewDec(-100)})},

@@ -4,10 +4,11 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/traits"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 func TestNewStringID(t *testing.T) {

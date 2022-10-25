@@ -4,6 +4,13 @@
 package mutate
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -15,11 +22,6 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
 func createTestInputForMessage(t *testing.T) (types.AccAddress, ids.IdentityID, ids.IdentityID, lists.MetaPropertyList, lists.PropertyList) {
@@ -32,7 +34,7 @@ func createTestInputForMessage(t *testing.T) (types.AccAddress, ids.IdentityID, 
 	testIdentityID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
 	mesaProperty := baseProperties.NewMesaProperty(baseIDs.NewStringID("id1"), baseData.NewStringData("Data1"))
-	testMutableMetaProperties := base.NewMetaProperties([]properties.MetaProperty{metaProperty}...)
+	testMutableMetaProperties := base.NewMetaPropertyList([]properties.MetaProperty{metaProperty}...)
 	testMutableProperties := base.NewPropertyList([]properties.Property{mesaProperty}...)
 
 	return testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties

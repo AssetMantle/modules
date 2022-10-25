@@ -4,6 +4,9 @@
 package base
 
 import (
+	"reflect"
+	"testing"
+
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -11,8 +14,6 @@ import (
 	"github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
-	"reflect"
-	"testing"
 )
 
 func TestNewImmutables(t *testing.T) {

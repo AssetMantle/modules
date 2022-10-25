@@ -6,6 +6,8 @@ package member
 import (
 	"testing"
 
+	base2 "github.com/AssetMantle/modules/schema/qualified/base"
+
 	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
@@ -15,13 +17,13 @@ import (
 )
 
 func Test_Conform_Request(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
-	mutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("Data1")))
-	immutableProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID2"), baseData.NewStringData("Data2")))
+	mutableProperties := base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1")))
+	immutableProperties := base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2")))
+	classificationID := baseIDs.NewClassificationID(base2.NewImmutables(immutableProperties), base2.NewMutables(mutableProperties))
 
-	testAuxiliaryRequest := NewAuxiliaryRequest(classificationID, immutableProperties, mutableProperties)
+	testAuxiliaryRequest := NewAuxiliaryRequest(classificationID, base2.NewImmutables(immutableProperties), base2.NewMutables(mutableProperties))
 
-	require.Equal(t, auxiliaryRequest{ClassificationID: classificationID, ImmutableProperties: immutableProperties, MutableProperties: mutableProperties}, testAuxiliaryRequest)
+	require.Equal(t, auxiliaryRequest{classificationID, base2.NewImmutables(immutableProperties), base2.NewMutables(mutableProperties)}, testAuxiliaryRequest)
 	require.Equal(t, nil, testAuxiliaryRequest.Validate())
 	require.Equal(t, testAuxiliaryRequest, auxiliaryRequestFromInterface(testAuxiliaryRequest))
 	require.Equal(t, auxiliaryRequest{}, auxiliaryRequestFromInterface(nil))

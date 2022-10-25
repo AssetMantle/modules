@@ -7,8 +7,6 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/schema/mappables"
 )
 
 func TestRegisterCodec(t *testing.T) {
@@ -24,7 +22,7 @@ func TestRegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mappables.RegisterCodec(tt.args.codec)
+			RegisterCodec(tt.args.codec)
 		})
 	}
 }

@@ -29,7 +29,7 @@ func TestKafkaProducerDeliverMessage(t *testing.T) {
 
 		producer, _ := sarama.NewSyncProducer(testProducer, nil)
 		// TODO: Add test cases.
-		//require.Nil(t, err)
+		// require.Nil(t, err)
 
 		require.Equal(t, kafkaProducerDeliverMessage(testKafkaMessage, "Topic", producer, Codec), nil)
 	})
@@ -42,7 +42,7 @@ func TestNewProducer(t *testing.T) {
 	producer, _ := sarama.NewSyncProducer(testProducer, nil)
 
 	// TODO: Add test cases.
-	//require.Nilf(t, err, "should not happened. err %v", err)
+	// require.Nilf(t, err, "should not happened. err %v", err)
 
 	require.Panics(t, func() {
 		require.Equal(t, newProducer(testProducer), producer)

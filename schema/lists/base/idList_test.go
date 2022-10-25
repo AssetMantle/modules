@@ -27,8 +27,8 @@ func Test_idList_Add(t *testing.T) {
 		want   lists.IDList
 	}{
 		// TODO: Add test cases.
-		{"+ve for nil", fields{NewList()}, args{[]ids.ID{base.NewID("ID")}}, idList{NewList(idsToListables([]ids.ID{base.NewID("ID")}...)...)}},                                                             // TODO: panic for nil
-		{"+ve", fields{NewList(idsToListables([]ids.ID{base.NewID("ID")}...)...)}, args{[]ids.ID{base.NewID("ID1")}}, idList{NewList(idsToListables([]ids.ID{base.NewID("ID"), base.NewID("ID1")}...)...)}}, // TODO: report
+		{"+ve for nil", fields{NewList()}, args{[]ids.ID{base.NewStringID("ID")}}, idList{NewList(idsToListables([]ids.ID{base.NewStringID("ID")}...)...)}},                                                                         // TODO: panic for nil
+		{"+ve", fields{NewList(idsToListables([]ids.ID{base.NewStringID("ID")}...)...)}, args{[]ids.ID{base.NewStringID("ID1")}}, idList{NewList(idsToListables([]ids.ID{base.NewStringID("ID"), base.NewStringID("ID1")}...)...)}}, // TODO: report
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -80,8 +80,8 @@ func Test_idList_Remove(t *testing.T) {
 		want   lists.IDList
 	}{
 		// TODO: Add test cases.
-		{"+ve with no removal", fields{NewList(idsToListables(base.NewID("ID1"), base.NewID("ID2"), base.NewID("ID3"))...)}, args{}, idList{NewList(idsToListables(base.NewID("ID1"), base.NewID("ID2"), base.NewID("ID3"))...)}},
-		{"+ve with removal", fields{NewList(idsToListables(base.NewID("ID1"), base.NewID("ID2"), base.NewID("ID3"))...)}, args{[]ids.ID{base.NewID("ID3")}}, idList{NewList(idsToListables(base.NewID("ID1"), base.NewID("ID2"))...)}},
+		{"+ve with no removal", fields{NewList(idsToListables(base.NewStringID("ID1"), base.NewStringID("ID2"), base.NewStringID("ID3"))...)}, args{}, idList{NewList(idsToListables(base.NewStringID("ID1"), base.NewStringID("ID2"), base.NewStringID("ID3"))...)}},
+		{"+ve with removal", fields{NewList(idsToListables(base.NewStringID("ID1"), base.NewStringID("ID2"), base.NewStringID("ID3"))...)}, args{[]ids.ID{base.NewStringID("ID3")}}, idList{NewList(idsToListables(base.NewStringID("ID1"), base.NewStringID("ID2"))...)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -110,9 +110,9 @@ func Test_idList_Search(t *testing.T) {
 		wantFound bool
 	}{
 		// TODO: Add test cases.
-		{"+ve with nil", fields{NewList(idsToListables([]ids.ID{}...)...)}, args{base.NewID("ID")}, 0, false}, // TODO report issue
-		{"+ve", fields{NewList(idsToListables([]ids.ID{base.NewID("ID")}...)...)}, args{base.NewID("ID")}, 0, true},
-		{"+ve with no entry", fields{NewList(idsToListables([]ids.ID{base.NewID("ID")}...)...)}, args{base.NewID("ID1")}, 1, false},
+		{"+ve with nil", fields{NewList(idsToListables([]ids.ID{}...)...)}, args{base.NewStringID("ID")}, 0, false}, // TODO report issue
+		{"+ve", fields{NewList(idsToListables([]ids.ID{base.NewStringID("ID")}...)...)}, args{base.NewStringID("ID")}, 0, true},
+		{"+ve with no entry", fields{NewList(idsToListables([]ids.ID{base.NewStringID("ID")}...)...)}, args{base.NewStringID("ID1")}, 1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -141,7 +141,7 @@ func Test_idsToListables(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with nil", args{}, []traits.Listable{}},
-		{"+ve", args{[]ids.ID{base.NewID("ID")}}, []traits.Listable{base.NewID("ID")}},
+		{"+ve", args{[]ids.ID{base.NewStringID("ID")}}, []traits.Listable{base.NewStringID("ID")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

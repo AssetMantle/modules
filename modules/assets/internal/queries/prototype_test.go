@@ -4,9 +4,10 @@
 package queries
 
 import (
-	"github.com/AssetMantle/modules/modules/assets/internal/queries/asset"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/modules/assets/internal/queries/asset"
 )
 
 func TestPrototype(t *testing.T) {

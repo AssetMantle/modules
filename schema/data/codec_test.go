@@ -4,12 +4,13 @@
 package data
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
 )
 
 func TestRegisterCodec(t *testing.T) {
-	//var Codec = codec.New()
+	// var Codec = codec.New()
 	type args struct {
 		codec *codec.Codec
 	}

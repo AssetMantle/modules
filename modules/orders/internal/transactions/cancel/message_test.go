@@ -4,6 +4,13 @@
 package cancel
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -14,18 +21,13 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
 func CreateTestInputForMessages(t *testing.T) (ids.OrderID, ids.IdentityID, sdkTypes.AccAddress, sdkTypes.Msg) {
-	//testOrderID := baseIDs.NewStringID("orderID")
+	// testOrderID := baseIDs.NewStringID("orderID")
 	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
-	//mutables2 := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID"), baseData.NewStringData(""))))
+	// mutables2 := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID"), baseData.NewStringData(""))))
 
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
@@ -33,7 +35,7 @@ func CreateTestInputForMessages(t *testing.T) (ids.OrderID, ids.IdentityID, sdkT
 	testTakerOwnableID := baseIDs.NewOwnableID(baseIDs.NewStringID("takerOwnableID"))
 	rate := sdkTypes.SmallestDec()
 	creationHeight := baseTypes.NewHeight(0)
-	//takerOwnableID ids.OwnableID, rate types.Dec, creationHeight types.Height, makerID ids.IdentityID, imutables qualified.Immutables
+	// takerOwnableID ids.OwnableID, rate types.Dec, creationHeight types.Height, makerID ids.IdentityID, imutables qualified.Immutables
 
 	testOrderID := baseIDs.NewOrderID(testClassificationID, testMakerOwnableID, testTakerOwnableID, rate, creationHeight, testFromID, immutables)
 

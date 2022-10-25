@@ -45,7 +45,7 @@ func TestQuery(t *testing.T) {
 	command := Query.Command(codec)
 	command.SetArgs([]string{
 		"test"})
-	require.Equal(t, `ABCIQuery: Post failed: Post "http://localhost:26657": dial tcp 127.0.0.1:26657: connect: connection refused`,
+	require.Equal(t, `ABCIQuery: Post failed: Post "http://localhost:26657": dial tcp [::1]:26657: connect: connection refused`,
 		command.ExecuteContext(context.Context()).Error())
 
 	// RESTQueryHandler

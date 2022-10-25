@@ -20,7 +20,7 @@ func dummyValidator(interface{}) error {
 	return nil
 }
 
-func createTestInput(t *testing.T) (ids.ID, data.Data, parameters.Parameter) {
+func createTestInput() (ids.StringID, data.Data, parameters.Parameter) {
 	id := baseIDs.NewStringID("ID")
 	stringData := baseData.NewStringData("Data")
 
@@ -31,7 +31,7 @@ func createTestInput(t *testing.T) (ids.ID, data.Data, parameters.Parameter) {
 func TestNewParameter(t *testing.T) {
 	id, testData, _ := createTestInput()
 	type args struct {
-		id        ids.ID
+		id        ids.StringID
 		data      data.Data
 		validator func(interface{}) error
 	}
@@ -57,7 +57,7 @@ func TestNewParameter(t *testing.T) {
 func Test_parameter_Equal(t *testing.T) {
 	id, testData, testParameter := createTestInput()
 	type fields struct {
-		ID        ids.ID
+		ID        ids.StringID
 		Data      data.Data
 		validator func(interface{}) error
 	}
@@ -73,7 +73,7 @@ func Test_parameter_Equal(t *testing.T) {
 
 		{"+ve", fields{id, testData, dummyValidator}, args{testParameter}, true},
 		{"+ve different validator", fields{id, testData, func(interface{}) error { return nil }}, args{testParameter}, true},
-		{"-ve different id", fields{baseIDs.NewID("different"), testData, dummyValidator}, args{testParameter}, false},
+		{"-ve different id", fields{baseIDs.NewStringID("different"), testData, dummyValidator}, args{testParameter}, false},
 		{"-ve different data", fields{id, baseData.NewStringData("different"), dummyValidator}, args{testParameter}, false},
 		{"-ve different data type", fields{id, baseData.NewBooleanData(false), dummyValidator}, args{testParameter}, false},
 	}
@@ -94,7 +94,7 @@ func Test_parameter_Equal(t *testing.T) {
 func Test_parameter_GetData(t *testing.T) {
 	id, testData, _ := createTestInput()
 	type fields struct {
-		ID        ids.ID
+		ID        ids.StringID
 		Data      data.Data
 		validator func(interface{}) error
 	}
@@ -123,14 +123,14 @@ func Test_parameter_GetData(t *testing.T) {
 func Test_parameter_GetID(t *testing.T) {
 	id, testData, _ := createTestInput()
 	type fields struct {
-		ID        ids.ID
+		ID        ids.StringID
 		Data      data.Data
 		validator func(interface{}) error
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   ids.ID
+		want   ids.StringID
 	}{
 
 		{"+ve", fields{id, testData, dummyValidator}, id},
@@ -152,7 +152,7 @@ func Test_parameter_GetID(t *testing.T) {
 func Test_parameter_GetValidator(t *testing.T) {
 	id, testData, _ := createTestInput()
 	type fields struct {
-		ID        ids.ID
+		ID        ids.StringID
 		Data      data.Data
 		validator func(interface{}) error
 	}
@@ -182,7 +182,7 @@ func Test_parameter_Mutate(t *testing.T) {
 	id, testData, _ := createTestInput()
 	newData := baseData.NewStringData("Data")
 	type fields struct {
-		ID        ids.ID
+		ID        ids.StringID
 		Data      data.Data
 		validator func(interface{}) error
 	}
@@ -215,7 +215,7 @@ func Test_parameter_Mutate(t *testing.T) {
 func Test_parameter_String(t *testing.T) {
 	id, testData, testParameter := createTestInput()
 	type fields struct {
-		ID        ids.ID
+		ID        ids.StringID
 		Data      data.Data
 		validator func(interface{}) error
 	}
@@ -244,7 +244,7 @@ func Test_parameter_String(t *testing.T) {
 func Test_parameter_Validate(t *testing.T) {
 	id, testData, _ := createTestInput()
 	type fields struct {
-		ID        ids.ID
+		ID        ids.StringID
 		Data      data.Data
 		validator func(interface{}) error
 	}
@@ -255,7 +255,7 @@ func Test_parameter_Validate(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with stringData", fields{id, testData, dummyValidator}, false},
-		{"+ve with decData", fields{baseIDs.NewID("ID"), baseData.NewDecData(sdkTypes.SmallestDec()), dummyValidator}, false},
+		{"+ve with decData", fields{baseIDs.NewStringID("ID"), baseData.NewDecData(sdkTypes.SmallestDec()), dummyValidator}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

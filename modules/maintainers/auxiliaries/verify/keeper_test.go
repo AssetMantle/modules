@@ -4,6 +4,9 @@
 package verify
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
@@ -14,6 +17,8 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types/base"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -22,8 +27,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
 )
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
@@ -72,7 +75,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			auxiliaryKeeper := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			auxiliaryKeeper.mapper.NewCollection(context).Add(mappable.NewMaintainer(classificationID, immutables, mutables))
+			auxiliaryKeeper.mapper.NewCollection(context).Add(mappable.NewMappable(base.NewMaintainer(classificationID, immutables, mutables)))
 			if got := auxiliaryKeeper.Help(tt.args.context, tt.args.request); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Help() = %v, want %v", got, tt.want)
 			}

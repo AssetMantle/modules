@@ -4,11 +4,12 @@
 package queries
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/modules/identities/internal/queries/identity"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"reflect"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {

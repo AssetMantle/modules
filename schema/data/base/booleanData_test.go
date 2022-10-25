@@ -5,14 +5,15 @@ package base
 
 import (
 	"fmt"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+
 	"github.com/AssetMantle/modules/schema/data"
 	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/stretchr/testify/assert"
-	"strconv"
-	"testing"
 )
 
 func TestNewBooleanData(t *testing.T) {
@@ -35,9 +36,9 @@ func TestNewBooleanData(t *testing.T) {
 	}
 }
 
-func TestReadBooleanData(t *testing.T) {
+func TestBooleanDataFromInterface(t *testing.T) {
 	type args struct {
-		dataString string
+		dataString data.Data
 	}
 	tests := []struct {
 		name    string
@@ -46,17 +47,16 @@ func TestReadBooleanData(t *testing.T) {
 		wantErr assert.ErrorAssertionFunc
 	}{
 		// TODO: Add test cases.
-		{"+ve with empty string", args{""}, booleanData{}.ZeroValue(), assert.NoError},
-		{"+ve", args{"true"}, booleanData{true}, assert.NoError},
-		{"-ve", args{"true1"}, booleanData{}.ZeroValue(), assert.Error},
+		{"-ve", args{NewBooleanData(false)}, booleanData{false}, assert.NoError},
+		{"+ve", args{NewBooleanData(true)}, booleanData{true}, assert.NoError},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ReadBooleanData(tt.args.dataString)
-			if !tt.wantErr(t, err, fmt.Sprintf("ReadBooleanData(%v)", tt.args.dataString)) {
+			got, err := booleanDataFromInterface(tt.args.dataString)
+			if !tt.wantErr(t, err, fmt.Sprintf("booleanDataFromInterface(%v)", tt.args.dataString)) {
 				return
 			}
-			assert.Equalf(t, tt.want, got, "ReadBooleanData(%v)", tt.args.dataString)
+			assert.Equalf(t, tt.want, got, "booleanDataFromInterface(%v)", tt.args.dataString)
 		})
 	}
 }
@@ -115,7 +115,7 @@ func Test_booleanData_Compare(t *testing.T) {
 	}
 }
 
-func Test_booleanData_GenerateHash(t *testing.T) {
+func Test_booleanData_GenerateHashID(t *testing.T) {
 	type fields struct {
 		Value bool
 	}
@@ -125,16 +125,16 @@ func Test_booleanData_GenerateHash(t *testing.T) {
 		want   ids.ID
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{}, baseIDs.NewID(strconv.FormatBool(false))},
-		{"+ve", fields{true}, baseIDs.NewID(strconv.FormatBool(true))},
-		{"+ve", fields{false}, baseIDs.NewID(strconv.FormatBool(false))},
+		{"+ve with nil", fields{}, baseIDs.GenerateHashID()},
+		{"+ve", fields{true}, baseIDs.GenerateHashID(booleanData{true}.Bytes())},
+		{"+ve", fields{false}, baseIDs.GenerateHashID()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			booleanData := booleanData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, booleanData.GenerateHash(), "GenerateHash()")
+			assert.Equalf(t, tt.want, booleanData.GenerateHashID(), "GenerateHashID()")
 		})
 	}
 }

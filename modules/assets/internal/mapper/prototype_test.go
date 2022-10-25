@@ -4,14 +4,16 @@
 package mapper
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
-//func TestPrototype(t *testing.T) {
+// func TestPrototype(t *testing.T) {
 //	storeKey := sdkTypes.NewKVStoreKey("test")
 //	newMapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
 //
@@ -31,10 +33,10 @@ import (
 //			}
 //		})
 //	}
-//}
+// }
 
 func TestPrototype(t *testing.T) {
-	//storeKey := sdkTypes.NewKVStoreKey("test")
+	// storeKey := sdkTypes.NewKVStoreKey("test")
 	require.Panics(t, func() {
 		require.Equal(t, Prototype(), baseHelpers.NewMapper(key.Prototype, mappable.Prototype))
 	})

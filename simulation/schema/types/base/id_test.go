@@ -14,10 +14,11 @@ func TestGenerateRandomID(t *testing.T) {
 		name      string
 		args      args
 		wantPanic bool
+		want      string
 	}{
 		// TODO: check for nil case
-		{"test for panic case", args{nil}, true},
-		{"test for id type", args{rand.New(rand.NewSource(7))}, false},
+		{"test for panic case", args{nil}, true, ""},
+		{"test for id type", args{rand.New(rand.NewSource(7))}, false, "base.stringID"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -27,8 +28,8 @@ func TestGenerateRandomID(t *testing.T) {
 					t.Errorf("GenerateRandomID() recover = %v, wantPanic = %v", r, tt.wantPanic)
 				}
 			}()
-			if got := GenerateRandomID(tt.args.r); reflect.TypeOf(got).String() != "base.id" {
-				t.Errorf("GenerateRandomID() = %v, want base.id", got)
+			if got := GenerateRandomID(tt.args.r); !reflect.DeepEqual(reflect.TypeOf(got).String(), tt.want) {
+				t.Errorf("GenerateRandomID() = %v, want %v", reflect.TypeOf(got).String(), tt.want)
 			}
 		})
 	}
@@ -42,10 +43,11 @@ func TestGenerateRandomIDWithDec(t *testing.T) {
 		name      string
 		args      args
 		wantPanic bool
+		want      string
 	}{
 		// TODO: check for nil case
-		{"test for panic case", args{nil}, true},
-		{"test for id type", args{rand.New(rand.NewSource(7))}, false},
+		{"test for panic case", args{nil}, true, ""},
+		{"test for id type", args{rand.New(rand.NewSource(7))}, false, "base.stringID"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -55,8 +57,8 @@ func TestGenerateRandomIDWithDec(t *testing.T) {
 					t.Errorf("GenerateRandomIDWithDec() recover = %v, wantPanic = %v", r, tt.wantPanic)
 				}
 			}()
-			if got := GenerateRandomIDWithDec(tt.args.r); reflect.TypeOf(got).String() != "base.id" {
-				t.Errorf("GenerateRandomIDWithDec() = %v, want base.id", got)
+			if got := GenerateRandomIDWithDec(tt.args.r); !reflect.DeepEqual(reflect.TypeOf(got).String(), tt.want) {
+				t.Errorf("GenerateRandomIDWithDec() = %v, want %v", reflect.TypeOf(got).String(), tt.want)
 			}
 		})
 	}
@@ -71,10 +73,11 @@ func TestGenerateRandomIDWithInt64(t *testing.T) {
 		name      string
 		args      args
 		wantPanic bool
+		want      string
 	}{
 		// TODO: check for nil case
-		{"test for panic case", args{nil}, true},
-		{"test for id type", args{rand.New(rand.NewSource(7))}, false},
+		{"test for panic case", args{nil}, true, ""},
+		{"test for id type", args{rand.New(rand.NewSource(7))}, false, "base.stringID"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -84,8 +87,8 @@ func TestGenerateRandomIDWithInt64(t *testing.T) {
 					t.Errorf("GenerateRandomIDWithInt64() recover = %v, wantPanic = %v", r, tt.wantPanic)
 				}
 			}()
-			if got := GenerateRandomIDWithInt64(tt.args.r); reflect.TypeOf(got).String() != "base.id" {
-				t.Errorf("GenerateRandomIDWithInt64() = %v, want base.id", got)
+			if got := GenerateRandomIDWithInt64(tt.args.r); !reflect.DeepEqual(reflect.TypeOf(got).String(), tt.want) {
+				t.Errorf("GenerateRandomIDWithInt64() = %v, want %v", reflect.TypeOf(got).String(), got)
 			}
 		})
 	}
