@@ -4,10 +4,17 @@
 package types
 
 import (
-	"github.com/AssetMantle/modules/schema/capabilities"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/schema/ids"
 )
 
 type Split interface {
-	capabilities.Ownable
-	capabilities.Transactional
+	GetOwnerID() ids.IdentityID
+	GetOwnableID() ids.OwnableID
+	GetValue() sdkTypes.Dec
+	CanSend(sdkTypes.Dec) bool
+
+	Send(sdkTypes.Dec) Split
+	Receive(sdkTypes.Dec) Split
 }
