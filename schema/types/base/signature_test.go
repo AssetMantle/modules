@@ -5,22 +5,22 @@ package base
 
 import (
 	"encoding/base64"
-	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/types"
-	"github.com/tendermint/tendermint/crypto"
 	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 func TestNewSignature(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
-	//pubKey := privateKey.PubKey()
+	// pubKey := privateKey.PubKey()
 	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
@@ -54,7 +54,7 @@ func TestNewSignature(t *testing.T) {
 func Test_signature_Bytes(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
-	//pubKey := privateKey.PubKey()
+	// pubKey := privateKey.PubKey()
 	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
@@ -83,7 +83,7 @@ func Test_signature_Bytes(t *testing.T) {
 func Test_signature_GetID(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
-	//pubKey := privateKey.PubKey()
+	// pubKey := privateKey.PubKey()
 	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
@@ -112,7 +112,7 @@ func Test_signature_GetID(t *testing.T) {
 func Test_signature_GetValidityHeight(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
-	//pubKey := privateKey.PubKey()
+	// pubKey := privateKey.PubKey()
 	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
@@ -141,7 +141,7 @@ func Test_signature_GetValidityHeight(t *testing.T) {
 func Test_signature_HasExpired(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
-	//pubKey := privateKey.PubKey()
+	// pubKey := privateKey.PubKey()
 	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
@@ -176,7 +176,7 @@ func Test_signature_HasExpired(t *testing.T) {
 func Test_signature_String(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
-	//pubKey := privateKey.PubKey()
+	// pubKey := privateKey.PubKey()
 	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)

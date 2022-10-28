@@ -8,10 +8,10 @@ import (
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
+	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type auxiliaryKeeper struct {
@@ -29,7 +29,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	if Mappable == nil {
 		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}
-	fromMaintainer := Mappable.(types.Maintainer)
+	fromMaintainer := Mappable.(documents.Maintainer)
 
 	if !fromMaintainer.CanRemoveMaintainer() {
 		return newAuxiliaryResponse(errorConstants.NotAuthorized)
@@ -40,7 +40,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	if Mappable == nil {
 		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}
-	toMaintainer := Mappable.(types.Maintainer)
+	toMaintainer := Mappable.(documents.Maintainer)
 
 	maintainers.Remove(mappable.NewMappable(toMaintainer))
 

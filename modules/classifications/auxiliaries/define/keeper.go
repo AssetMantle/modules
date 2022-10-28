@@ -9,10 +9,10 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
+	"github.com/AssetMantle/modules/schema/documents/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/property"
 )
 

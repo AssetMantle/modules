@@ -1,19 +1,18 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type asset struct {
 	qualified.Document
 }
 
-var _ types.Asset = (*asset)(nil)
+var _ documents.Asset = (*asset)(nil)
 
 func (asset asset) GetBurn() properties.Property {
 	if burn := asset.GetProperty(constants.BurnHeightProperty.GetID()); burn != nil {
@@ -37,8 +36,8 @@ func (asset asset) GetSupply() properties.Property {
 	return constants.SupplyProperty
 }
 
-func NewAsset(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) types.Asset {
+func NewAsset(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) documents.Asset {
 	return asset{
-		Document: baseQualified.NewDocument(classificationID, immutables, mutables),
+		Document: NewDocument(classificationID, immutables, mutables),
 	}
 }

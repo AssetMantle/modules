@@ -15,6 +15,8 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/documents"
+	"github.com/AssetMantle/modules/schema/documents/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -22,7 +24,6 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -76,7 +77,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	order := baseTypes.NewOrder(message.ClassificationID, immutables, mutables)
+	order := base.NewOrder(message.ClassificationID, immutables, mutables)
 	orders = orders.Add(mappable.NewMappable(order))
 
 	// Order execution
@@ -84,7 +85,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	orderLeftOverMakerOwnableSplit := message.MakerOwnableSplit
 
 	accumulator := func(mappableOrder helpers.Mappable) bool {
-		executableOrder := mappableOrder.(types.Order)
+		executableOrder := mappableOrder.(documents.Order)
 
 		executableOrderTakerOwnableSplitDemanded := executableOrder.GetExchangeRate().MulTruncate(executableOrder.GetMakerOwnableSplit()).MulTruncate(sdkTypes.SmallestDec())
 
@@ -119,7 +120,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 					panic(err)
 				}
 
-				orders.Mutate(mappable.NewMappable(baseTypes.NewOrder(executableOrder.GetClassificationID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(mutableProperties.GetList()...))))
+				orders.Mutate(mappable.NewMappable(base.NewOrder(executableOrder.GetClassificationID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(mutableProperties.GetList()...))))
 
 				orderLeftOverMakerOwnableSplit = sdkTypes.ZeroDec()
 			default:
@@ -157,7 +158,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 			return newTransactionResponse(err)
 		}
 
-		orders.Mutate(mappable.NewMappable(baseTypes.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(mutableProperties.GetList()...))))
+		orders.Mutate(mappable.NewMappable(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(mutableProperties.GetList()...))))
 	}
 
 	return newTransactionResponse(nil)

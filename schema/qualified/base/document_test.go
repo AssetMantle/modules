@@ -7,25 +7,21 @@ import (
 	"reflect"
 	"testing"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	base2 "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	"reflect"
-	"testing"
 )
 
 func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, qualified.Document) {
 	testImmutables := NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	testMutables := NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(testImmutables, testMutables)
-	testDocument := NewDocument(classificationID, testImmutables, testMutables)
+	testDocument := base2.NewDocument(classificationID, testImmutables, testMutables)
 	return classificationID, testImmutables, testMutables, testDocument
 }
 
@@ -42,15 +38,15 @@ func TestNewDocument(t *testing.T) {
 		want qualified.Document
 	}{
 		// TODO: Add test cases.
-		{"+ve", args{classificationID: classificationID, immutables: testImmutables, mutables: testMutables}, document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}},
-		{"+ve with nil classificationID", args{classificationID: nil, immutables: testImmutables, mutables: testMutables}, document{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}},
-		{"+ve with nil immutables", args{classificationID: classificationID, immutables: nil, mutables: testMutables}, document{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}},
-		{"+ve with nil mutables", args{classificationID: classificationID, immutables: testImmutables, mutables: nil}, document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: nil}},
-		{"+ve with all nil", args{}, document{}},
+		{"+ve", args{classificationID: classificationID, immutables: testImmutables, mutables: testMutables}, base2.document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}},
+		{"+ve with nil classificationID", args{classificationID: nil, immutables: testImmutables, mutables: testMutables}, base2.document{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}},
+		{"+ve with nil immutables", args{classificationID: classificationID, immutables: nil, mutables: testMutables}, base2.document{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}},
+		{"+ve with nil mutables", args{classificationID: classificationID, immutables: testImmutables, mutables: nil}, base2.document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: nil}},
+		{"+ve with all nil", args{}, base2.document{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewDocument(tt.args.classificationID, tt.args.immutables, tt.args.mutables); !reflect.DeepEqual(got, tt.want) {
+			if got := base2.NewDocument(tt.args.classificationID, tt.args.immutables, tt.args.mutables); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewDocument() = %v, want %v", got, tt.want)
 			}
 		})
@@ -78,7 +74,7 @@ func Test_document_GetClassificationID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			document := document{
+			document := base2.document{
 				ClassificationID: tt.fields.ClassificationID,
 				Immutables:       tt.fields.Immutables,
 				Mutables:         tt.fields.Mutables,
@@ -111,7 +107,7 @@ func Test_document_GetImmutables(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			document := document{
+			document := base2.document{
 				ClassificationID: tt.fields.ClassificationID,
 				Immutables:       tt.fields.Immutables,
 				Mutables:         tt.fields.Mutables,
@@ -144,7 +140,7 @@ func Test_document_GetMutables(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			document := document{
+			document := base2.document{
 				ClassificationID: tt.fields.ClassificationID,
 				Immutables:       tt.fields.Immutables,
 				Mutables:         tt.fields.Mutables,
@@ -178,17 +174,17 @@ func Test_document_GetProperty(t *testing.T) {
 		// TODO: Update unit test after issue # fix
 		{"+ve for Immutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, args{testImmutablePropertyID}, testImmutables.GetImmutablePropertyList().GetProperty(testImmutablePropertyID)},
 		{"+ve with nil classificationID for Immutable Property", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, args{testImmutablePropertyID}, testImmutables.GetImmutablePropertyList().GetProperty(testImmutablePropertyID)},
-		{"+ve with nil immutables for Immutable Property", fields{ClassificationID: classificationID, Immutables: immutables{}, Mutables: testMutables}, args{testImmutablePropertyID}, nil}, //TODO: panics for empty immutable struct
+		{"+ve with nil immutables for Immutable Property", fields{ClassificationID: classificationID, Immutables: immutables{}, Mutables: testMutables}, args{testImmutablePropertyID}, nil}, // TODO: panics for empty immutable struct
 		{"+ve with nil mutables for Immutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: mutables{}}, args{testImmutablePropertyID}, testImmutables.GetImmutablePropertyList().GetProperty(testImmutablePropertyID)},
-		{"+ve with all nil", fields{nil, immutables{}, mutables{}}, args{testImmutablePropertyID}, nil}, //TODO: panics for empty immutable struct
+		{"+ve with all nil", fields{nil, immutables{}, mutables{}}, args{testImmutablePropertyID}, nil}, // TODO: panics for empty immutable struct
 		{"+ve for Mutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID)},
 		{"+ve with nil classificationID for Mutable Property", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID)},
-		{"+ve with nil immutables for Mutable Property", fields{ClassificationID: classificationID, Immutables: immutables{}, Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID)}, //TODO: panics for empty immutable struct
+		{"+ve with nil immutables for Mutable Property", fields{ClassificationID: classificationID, Immutables: immutables{}, Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID)}, // TODO: panics for empty immutable struct
 		{"+ve with nil mutables for Mutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: mutables{}}, args{testMutablePropertyID}, nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			document := document{
+			document := base2.document{
 				ClassificationID: tt.fields.ClassificationID,
 				Immutables:       tt.fields.Immutables,
 				Mutables:         tt.fields.Mutables,
@@ -217,16 +213,16 @@ func Test_document_Mutate(t *testing.T) {
 		args   args
 		want   qualified.Document
 	}{
-		//TODO: Update after #59 fix https://github.com/AssetMantle/modules/issues/59
-		{"+ve with no mutation", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, args{}, document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}},
-		{"+ve with nil classificationID", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, args{[]properties.Property{testMutateProperty}}, document{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}.Mutate(testMutateProperty)},
-		{"+ve with nil immutables", fields{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}, args{[]properties.Property{testMutateProperty}}, document{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}.Mutate(testMutateProperty)},
-		{"+ve with nil mutables", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: mutables{}}, args{[]properties.Property{testMutateProperty}}, document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: mutables{}}.Mutate(testMutateProperty)}, // TODO: fix this
-		{"+ve with all nil", fields{nil, immutables{}, mutables{}}, args{[]properties.Property{testMutateProperty}}, document{nil, immutables{}, mutables{}}.Mutate(testMutateProperty)},                                                                                                                    // TODO: fix this
+		// TODO: Update after #59 fix https://github.com/AssetMantle/modules/issues/59
+		{"+ve with no mutation", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, args{}, base2.document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}},
+		{"+ve with nil classificationID", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, args{[]properties.Property{testMutateProperty}}, base2.document{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}.Mutate(testMutateProperty)},
+		{"+ve with nil immutables", fields{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}, args{[]properties.Property{testMutateProperty}}, base2.document{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}.Mutate(testMutateProperty)},
+		{"+ve with nil mutables", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: mutables{}}, args{[]properties.Property{testMutateProperty}}, base2.document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: mutables{}}.Mutate(testMutateProperty)}, // TODO: fix this
+		{"+ve with all nil", fields{nil, immutables{}, mutables{}}, args{[]properties.Property{testMutateProperty}}, base2.document{nil, immutables{}, mutables{}}.Mutate(testMutateProperty)},                                                                                                                    // TODO: fix this
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			document := document{
+			document := base2.document{
 				ClassificationID: tt.fields.ClassificationID,
 				Immutables:       tt.fields.Immutables,
 				Mutables:         tt.fields.Mutables,

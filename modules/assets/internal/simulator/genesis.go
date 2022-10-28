@@ -17,12 +17,12 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/parameters/dummy"
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	parameters2 "github.com/AssetMantle/modules/schema/parameters"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 )
 

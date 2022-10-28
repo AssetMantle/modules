@@ -12,6 +12,8 @@ import (
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	types2 "github.com/AssetMantle/modules/schema/documents"
+	base2 "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -21,7 +23,6 @@ import (
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	types2 "github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -29,7 +30,7 @@ func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mu
 	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	testDocument := baseQualified.NewDocument(classificationID, immutables, mutables)
+	testDocument := base2.NewDocument(classificationID, immutables, mutables)
 	return classificationID, immutables, mutables, testDocument
 }
 
@@ -46,7 +47,7 @@ func TestNewAsset(t *testing.T) {
 		want types2.Asset
 	}{
 		// TODO: Add test cases.
-		{"+ve", args{classificationID: classificationID, immutables: immutables, mutables: mutables}, mappable{Document: baseQualified.NewDocument(classificationID, immutables, mutables)}},
+		{"+ve", args{classificationID: classificationID, immutables: immutables, mutables: mutables}, mappable{Document: base2.NewDocument(classificationID, immutables, mutables)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -76,7 +77,7 @@ func TestPrototype(t *testing.T) {
 
 func Test_asset_GetBurn(t *testing.T) {
 	classificationID, immutables, _, testDocument := createTestInput()
-	testDocumentWithBurn := baseQualified.NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))))
+	testDocumentWithBurn := base2.NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))))
 
 	type fields struct {
 		Document qualified.Document
@@ -129,7 +130,7 @@ func Test_asset_GetKey(t *testing.T) {
 
 func Test_asset_GetLock(t *testing.T) {
 	classificationID, immutables, _, testDocument := createTestInput()
-	testDocumentWithLock := baseQualified.NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.LockProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))))
+	testDocumentWithLock := base2.NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.LockProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))))
 
 	type fields struct {
 		Document qualified.Document
@@ -157,7 +158,7 @@ func Test_asset_GetLock(t *testing.T) {
 
 func Test_asset_GetSupply(t *testing.T) {
 	classificationID, immutables, _, testDocument := createTestInput()
-	testDocumentWithSupply := baseQualified.NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.SupplyProperty.GetKey(), baseData.NewDecData(types.NewDec(1))))))
+	testDocumentWithSupply := base2.NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.SupplyProperty.GetKey(), baseData.NewDecData(types.NewDec(1))))))
 	type fields struct {
 		Document qualified.Document
 	}

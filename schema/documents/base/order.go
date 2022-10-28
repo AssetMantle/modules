@@ -4,11 +4,11 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -16,7 +16,7 @@ type order struct {
 	qualified.Document
 }
 
-var _ types.Order = (*order)(nil)
+var _ documents.Order = (*order)(nil)
 
 func (order order) GetExchangeRate() sdkTypes.Dec {
 	if property := order.GetProperty(constants.ExchangeRateProperty.GetID()); property != nil && property.IsMeta() {
@@ -67,6 +67,6 @@ func (order order) GetMakerOwnableSplit() sdkTypes.Dec {
 	return constants.MakerOwnableSplitProperty.GetData().(data.DecData).Get()
 }
 
-func NewOrder(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) types.Order {
-	return order{Document: baseQualified.NewDocument(classificationID, immutables, mutables)}
+func NewOrder(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) documents.Order {
+	return order{Document: NewDocument(classificationID, immutables, mutables)}
 }

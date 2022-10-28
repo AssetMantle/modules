@@ -11,12 +11,6 @@ import (
 
 func RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, height{})
-	codecUtilities.RegisterModuleConcrete(codec, height{})
-	codecUtilities.RegisterModuleConcrete(codec, height{})
-	codecUtilities.RegisterModuleConcrete(codec, height{})
-	codecUtilities.RegisterModuleConcrete(codec, height{})
-	codecUtilities.RegisterModuleConcrete(codec, height{})
-	codecUtilities.RegisterModuleConcrete(codec, height{})
-	codecUtilities.RegisterModuleConcrete(codec, height{})
 	codecUtilities.RegisterModuleConcrete(codec, signature{})
+	codecUtilities.RegisterModuleConcrete(codec, split{})
 }
