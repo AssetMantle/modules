@@ -7,7 +7,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -21,5 +20,5 @@ type Order interface {
 	GetExpiryHeight() types.Height
 	GetMakerOwnableSplit() sdkTypes.Dec
 
-	qualified.Document
+	Document
 }

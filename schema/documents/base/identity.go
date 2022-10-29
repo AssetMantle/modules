@@ -17,7 +17,7 @@ import (
 )
 
 type identity struct {
-	qualified.Document
+	documents.Document
 }
 
 var _ documents.Identity = (*identity)(nil)

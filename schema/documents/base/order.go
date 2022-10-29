@@ -13,7 +13,7 @@ import (
 )
 
 type order struct {
-	qualified.Document
+	documents.Document
 }
 
 var _ documents.Order = (*order)(nil)

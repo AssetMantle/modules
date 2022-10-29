@@ -7,7 +7,7 @@ import (
 )
 
 type classification struct {
-	qualified.Document
+	documents.Document
 }
 
 var _ documents.Classification = (*classification)(nil)

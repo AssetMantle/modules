@@ -9,7 +9,7 @@ import (
 )
 
 type asset struct {
-	qualified.Document
+	documents.Document
 }
 
 var _ documents.Asset = (*asset)(nil)

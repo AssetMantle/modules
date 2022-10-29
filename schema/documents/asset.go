@@ -5,7 +5,6 @@ package documents
 
 import (
 	"github.com/AssetMantle/modules/schema/capabilities"
-	"github.com/AssetMantle/modules/schema/qualified"
 )
 
 type Asset interface {
@@ -13,5 +12,5 @@ type Asset interface {
 	capabilities.Lockable
 	capabilities.Splittable
 
-	qualified.Document
+	Document
 }

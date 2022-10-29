@@ -26,7 +26,7 @@ import (
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
-func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, qualified.Document) {
+func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, types2.Document) {
 	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -80,7 +80,7 @@ func Test_asset_GetBurn(t *testing.T) {
 	testDocumentWithBurn := base2.NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))))
 
 	type fields struct {
-		Document qualified.Document
+		Document types2.Document
 	}
 	tests := []struct {
 		name   string
@@ -106,7 +106,7 @@ func Test_asset_GetBurn(t *testing.T) {
 func Test_asset_GetKey(t *testing.T) {
 	_, _, _, testDocument := createTestInput()
 	type fields struct {
-		Document qualified.Document
+		Document types2.Document
 	}
 	tests := []struct {
 		name   string
@@ -133,7 +133,7 @@ func Test_asset_GetLock(t *testing.T) {
 	testDocumentWithLock := base2.NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.LockProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))))
 
 	type fields struct {
-		Document qualified.Document
+		Document types2.Document
 	}
 	tests := []struct {
 		name   string
@@ -160,7 +160,7 @@ func Test_asset_GetSupply(t *testing.T) {
 	classificationID, immutables, _, testDocument := createTestInput()
 	testDocumentWithSupply := base2.NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.SupplyProperty.GetKey(), baseData.NewDecData(types.NewDec(1))))))
 	type fields struct {
-		Document qualified.Document
+		Document types2.Document
 	}
 	tests := []struct {
 		name   string
@@ -186,7 +186,7 @@ func Test_asset_GetSupply(t *testing.T) {
 func Test_asset_RegisterCodec(t *testing.T) {
 	_, _, _, testDocument := createTestInput()
 	type fields struct {
-		Document qualified.Document
+		Document types2.Document
 	}
 	type args struct {
 		codec *codec.Codec

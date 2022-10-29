@@ -10,7 +10,6 @@ import (
 const projectRoute = "/AssetMantle"
 
 var (
-	DeletionNotAllowed   = base.NewError(projectRoute, 101, "DeletionNotAllowed")
 	EntityAlreadyExists  = base.NewError(projectRoute, 102, "EntityAlreadyExists")
 	EntityNotFound       = base.NewError(projectRoute, 103, "EntityNotFound")
 	IncorrectFormat      = base.NewError(projectRoute, 104, "IncorrectFormat")

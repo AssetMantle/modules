@@ -99,7 +99,7 @@ func Test_accAddressesToData(t *testing.T) {
 func Test_identity_GetAuthentication(t *testing.T) {
 	testIdentity, _, _, _ := createTestInput()
 	type fields struct {
-		Document qualified.Document
+		Document documents.Document
 	}
 	tests := []struct {
 		name   string
@@ -123,7 +123,7 @@ func Test_identity_GetAuthentication(t *testing.T) {
 func Test_identity_GetExpiry(t *testing.T) {
 	testIdentity, _, _, _ := createTestInput()
 	type fields struct {
-		Document qualified.Document
+		Document documents.Document
 	}
 	tests := []struct {
 		name   string
@@ -148,7 +148,7 @@ func Test_identity_GetKey(t *testing.T) {
 	testIdentity, _, _, _ := createTestInput()
 
 	type fields struct {
-		Document qualified.Document
+		Document documents.Document
 	}
 	tests := []struct {
 		name   string
@@ -178,7 +178,7 @@ func Test_identity_IsProvisioned(t *testing.T) {
 	m := testIdentity2.(documents.Identity)
 	m.ProvisionAddress(fromAccAddress) // failing
 	type fields struct {
-		Document qualified.Document
+		Document documents.Document
 	}
 	type args struct {
 		accAddress sdkTypes.AccAddress
@@ -215,7 +215,7 @@ func Test_identity_ProvisionAddress(t *testing.T) {
 	// testIdentity.(identity).Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(testIdentity.(identity).GetAuthentication().Add(accAddressesToData(fromAccAddress)...))))
 
 	type fields struct {
-		Document qualified.Document
+		Document documents.Document
 	}
 	type args struct {
 		accAddresses []sdkTypes.AccAddress
@@ -246,7 +246,7 @@ func Test_identity_RegisterCodec(t *testing.T) {
 	testIdentity, _, _, _ := createTestInput()
 
 	type fields struct {
-		Document qualified.Document
+		Document documents.Document
 	}
 	type args struct {
 		codec *codec.Codec
@@ -274,7 +274,7 @@ func Test_identity_UnprovisionAddress(t *testing.T) {
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 	type fields struct {
-		Document qualified.Document
+		Document documents.Document
 	}
 	type args struct {
 		accAddresses []sdkTypes.AccAddress

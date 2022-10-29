@@ -5,5 +5,6 @@ import (
 )
 
 func RegisterCodec(codec *codec.Codec) {
+	codec.RegisterInterface((*error)(nil), nil)
 	codec.RegisterInterface((*Error)(nil), nil)
 }

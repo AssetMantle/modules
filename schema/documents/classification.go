@@ -3,10 +3,6 @@
 
 package documents
 
-import (
-	"github.com/AssetMantle/modules/schema/qualified"
-)
-
 type Classification interface {
-	qualified.Document
+	Document
 }

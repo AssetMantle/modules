@@ -4,7 +4,9 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/qualified"
 )
@@ -15,8 +17,11 @@ type document struct {
 	qualified.Mutables
 }
 
-var _ qualified.Document = (*document)(nil)
+var _ documents.Document = (*document)(nil)
 
+func (document document) GenerateHashID() ids.HashID {
+	return base.GenerateHashID(document.GetClassificationID().Bytes(), document.GetImmutables().GenerateHashID().Bytes())
+}
 func (document document) GetClassificationID() ids.ClassificationID {
 	return document.ClassificationID
 }
@@ -37,12 +42,12 @@ func (document document) GetMutables() qualified.Mutables {
 }
 
 // TODO write test case
-func (document document) Mutate(propertyList ...properties.Property) qualified.Document {
+func (document document) Mutate(propertyList ...properties.Property) documents.Document {
 	document.Mutables = document.Mutables.Mutate(propertyList...)
 	return document
 }
 
-func NewDocument(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) qualified.Document {
+func NewDocument(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) documents.Document {
 	return document{
 		ClassificationID: classificationID,
 		Immutables:       immutables,

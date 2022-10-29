@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"testing"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/AssetMantle/modules/schema/data"
@@ -18,8 +17,6 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestNewListData(t *testing.T) {
@@ -109,7 +106,7 @@ func Test_listData_Bytes(t *testing.T) {
 		want   []byte
 	}{
 		// TODO: Add test cases.
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, NewStringData("Data").Bytes()}, //for a single data no loop iteration is required so directly it's byte should match
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, NewStringData("Data").Bytes()}, // for a single data no loop iteration is required so directly it's byte should match
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, []byte(nil)},
 	}
 	for _, tt := range tests {

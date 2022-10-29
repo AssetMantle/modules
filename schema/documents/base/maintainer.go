@@ -12,7 +12,7 @@ import (
 )
 
 type maintainer struct {
-	qualified.Document
+	documents.Document
 }
 
 var _ documents.Maintainer = (*maintainer)(nil)
