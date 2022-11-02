@@ -21,7 +21,7 @@ func (maintainer maintainer) GetIdentityID() ids.IdentityID {
 	if property := maintainer.GetProperty(constantProperties.IdentityIDProperty.GetID()); property != nil && property.IsMeta() {
 		return property.(properties.MetaProperty).GetData().(data.IDData).Get().(ids.IdentityID)
 	}
-	return constantProperties.MaintainedClassificationIDProperty.GetData().(data.IDData).Get().(ids.IdentityID)
+	return constantProperties.IdentityIDProperty.GetData().(data.IDData).Get().(ids.IdentityID)
 }
 func (maintainer maintainer) GetMaintainedClassificationID() ids.ClassificationID {
 	if property := maintainer.GetProperty(constantProperties.MaintainedClassificationIDProperty.GetID()); property != nil && property.IsMeta() {
