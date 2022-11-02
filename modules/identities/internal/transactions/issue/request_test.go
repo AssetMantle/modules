@@ -28,7 +28,7 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-func createTestInputForRequest(t *testing.T) (*codec.Codec, helpers.CLICommand, context.CLIContext, string, string, string, string, lists.MetaPropertyList, lists.PropertyList, lists.MetaPropertyList, lists.PropertyList, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, rest.BaseReq) {
+func createTestInputForRequest(t *testing.T) (*codec.Codec, helpers.CLICommand, context.CLIContext, string, string, string, string, lists.PropertyList, lists.PropertyList, lists.PropertyList, lists.PropertyList, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, rest.BaseReq) {
 	var Codec = codec.New()
 
 	schema.RegisterCodec(Codec)
@@ -53,7 +53,7 @@ func createTestInputForRequest(t *testing.T) (*codec.Codec, helpers.CLICommand, 
 	immutableProperties, err = utilities.ReadProperties(immutablePropertiesString)
 	require.Equal(t, nil, err)
 
-	var mutableMetaProperties lists.MetaPropertyList
+	var mutableMetaProperties lists.PropertyList
 	mutableMetaProperties, err = utilities.ReadMetaPropertyList(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 

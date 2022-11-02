@@ -21,12 +21,16 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	scrubbedPropertyList := make([]properties.Property, len(auxiliaryRequest.MetaPropertyList))
+	scrubbedPropertyList := make([]properties.Property, len(auxiliaryRequest.PropertyList.GetList()))
 
-	for i, metaProperty := range auxiliaryRequest.MetaPropertyList {
-		scrubbedPropertyList[i] = metaProperty.RemoveData()
+	for i, property := range auxiliaryRequest.PropertyList.GetList() {
+		if property.IsMeta() {
+			scrubbedPropertyList[i] = property.(properties.MetaProperty).ScrubData()
+		} else {
+			scrubbedPropertyList[i] = property
+		}
 
-		if metaProperty.GetID().String() == "scrubError" {
+		if property.GetID().String() == "scrubError" {
 			return newAuxiliaryResponse(nil, constants.MockError)
 		}
 	}

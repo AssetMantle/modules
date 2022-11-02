@@ -22,7 +22,7 @@ var _ properties.MetaProperty = (*metaProperty)(nil)
 func (metaProperty metaProperty) GetData() data.Data {
 	return metaProperty.Data
 }
-func (metaProperty metaProperty) RemoveData() properties.Property {
+func (metaProperty metaProperty) ScrubData() properties.MesaProperty {
 	return NewMesaProperty(metaProperty.GetKey(), metaProperty.GetData())
 }
 func (metaProperty metaProperty) GetID() ids.PropertyID {
@@ -41,18 +41,11 @@ func (metaProperty metaProperty) IsMeta() bool {
 	return true
 }
 func (metaProperty metaProperty) Compare(listable traits.Listable) int {
-	if compareMetaProperty, err := metaPropertyFromInterface(listable); err != nil {
+	// NOTE: compare property can be meta or mesa, so listable must only be cast to Property Interface
+	if compareProperty, err := propertyFromInterface(listable); err != nil {
 		panic(err)
 	} else {
-		return metaProperty.GetID().Compare(compareMetaProperty.GetID())
-	}
-}
-func metaPropertyFromInterface(listable traits.Listable) (metaProperty, error) {
-	switch value := listable.(type) {
-	case metaProperty:
-		return value, nil
-	default:
-		return metaProperty{}, errorConstants.MetaDataError
+		return metaProperty.GetID().Compare(compareProperty.GetID())
 	}
 }
 

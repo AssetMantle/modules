@@ -7,10 +7,10 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
+	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type auxiliaryKeeper struct {
@@ -27,7 +27,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	if Mappable == nil {
 		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}
-	classification := Mappable.(types.Classification)
+	classification := Mappable.(documents.Classification)
 
 	if auxiliaryRequest.Immutables != nil {
 		if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList()) > len(classification.GetImmutables().GetImmutablePropertyList().GetList()) {

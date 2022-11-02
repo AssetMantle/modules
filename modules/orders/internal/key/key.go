@@ -32,7 +32,7 @@ func (key key) Equals(compareKey helpers.Key) bool {
 	if compareKey, err := keyFromInterface(compareKey); err != nil {
 		return false
 	} else {
-		return key.Compare(compareKey) == 0
+		return key.OrderID.Compare(compareKey.OrderID) == 0
 	}
 }
 func keyFromInterface(i interface{}) (key, error) {

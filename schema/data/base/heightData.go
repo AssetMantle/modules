@@ -69,7 +69,11 @@ func heightDataFromInterface(listable traits.Listable) (heightData, error) {
 	}
 }
 
-func NewHeightData(value types.Height) data.Data {
+func HeightDataPrototype() data.HeightData {
+	return heightData{}.ZeroValue().(data.HeightData)
+}
+
+func NewHeightData(value types.Height) data.HeightData {
 	return heightData{
 		Value: value,
 	}

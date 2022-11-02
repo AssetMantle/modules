@@ -15,12 +15,9 @@ type hashID struct {
 	HashBytes []byte
 }
 
-func (hashID hashID) IsHashID() {
-	// TODO implement me
-	panic("implement me")
-}
-
 var _ ids.HashID = (*hashID)(nil)
+
+func (hashID hashID) IsHashID() {}
 
 // TODO test if nil and empty result in ""
 func (hashID hashID) String() string {
@@ -52,7 +49,7 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 	}
 
 	if len(nonEmptyByteList) == 0 {
-		return hashID{HashBytes: []byte{}}
+		return hashID{HashBytes: nil}
 	}
 
 	sort.Slice(nonEmptyByteList, func(i, j int) bool { return bytes.Compare(nonEmptyByteList[i], nonEmptyByteList[j]) == -1 })
@@ -77,8 +74,8 @@ func ReadHashID(hashIDString string) (ids.HashID, error) {
 	}
 
 	if hashIDString == "" {
-		return PrototypeHashID(), nil
+		return nil, nil
 	}
 
-	return hashID{}, constants.MetaDataError
+	return hashID{}, constants.IncorrectFormat
 }

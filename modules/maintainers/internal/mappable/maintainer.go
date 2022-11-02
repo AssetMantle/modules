@@ -7,14 +7,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
+	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type mappable struct {
-	types.Maintainer
+	documents.Maintainer
 }
 
 var _ helpers.Mappable = (*mappable)(nil)
@@ -26,7 +26,7 @@ func (mappable) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, mappable{})
 }
 
-func NewMappable(maintainer types.Maintainer) helpers.Mappable {
+func NewMappable(maintainer documents.Maintainer) helpers.Mappable {
 	return mappable{Maintainer: maintainer}
 }
 

@@ -51,12 +51,12 @@ func Test_mutables_GetMutablePropertyList(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve", fields{}, base.NewPropertyList()},
-		{"+ve", fields{base.NewPropertyList(testMutableProperties)}, mutables{base.NewPropertyList(testMutableProperties)}.PropertyList},
+		{"+ve", fields{base.NewPropertyList(testMutableProperties)}, mutables{base.NewPropertyList(testMutableProperties)}.MesaPropertyList},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mutables := mutables{
-				PropertyList: tt.fields.PropertyList,
+				MesaPropertyList: tt.fields.PropertyList,
 			}
 			if got := mutables.GetMutablePropertyList(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetMutablePropertyList() = %v, want %v", got, tt.want)
@@ -89,7 +89,7 @@ func Test_mutables_Mutate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mutables := mutables{
-				PropertyList: tt.fields.PropertyList,
+				MesaPropertyList: tt.fields.PropertyList,
 			}
 			if got := mutables.Mutate(tt.args.propertyList...); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Mutate() = %v, want %v", got, tt.want)

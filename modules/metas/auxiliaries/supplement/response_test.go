@@ -19,7 +19,7 @@ import (
 func Test_Super_Response(t *testing.T) {
 
 	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
-	metaPropertyList := base.NewMetaPropertyList([]properties.MetaProperty{metaProperty}...)
+	metaPropertyList := base.NewPropertyList([]properties.MetaProperty{metaProperty}...)
 
 	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList, nil)
 	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, MetaProperties: metaPropertyList}, testAuxiliaryResponse)

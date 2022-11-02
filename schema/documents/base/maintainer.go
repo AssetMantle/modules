@@ -3,26 +3,25 @@ package base
 import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/documents"
+	"github.com/AssetMantle/modules/schema/documents/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/properties"
 	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/constants"
 )
 
 type maintainer struct {
-	qualified.Document
+	documents.Document
 }
 
-var _ types.Maintainer = (*maintainer)(nil)
+var _ documents.Maintainer = (*maintainer)(nil)
 
 func (maintainer maintainer) GetIdentityID() ids.IdentityID {
 	if property := maintainer.GetProperty(constantProperties.IdentityIDProperty.GetID()); property != nil && property.IsMeta() {
 		return property.(properties.MetaProperty).GetData().(data.IDData).Get().(ids.IdentityID)
 	}
-	return constantProperties.MaintainedClassificationIDProperty.GetData().(data.IDData).Get().(ids.IdentityID)
+	return constantProperties.IdentityIDProperty.GetData().(data.IDData).Get().(ids.IdentityID)
 }
 func (maintainer maintainer) GetMaintainedClassificationID() ids.ClassificationID {
 	if property := maintainer.GetProperty(constantProperties.MaintainedClassificationIDProperty.GetID()); property != nil && property.IsMeta() {
@@ -73,8 +72,8 @@ func (maintainer maintainer) MaintainsProperty(propertyID ids.PropertyID) bool {
 	return found
 }
 
-func NewMaintainer(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) types.Maintainer {
+func NewMaintainer(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) documents.Maintainer {
 	return maintainer{
-		Document: baseQualified.NewDocument(classificationID, immutables, mutables),
+		Document: NewDocument(classificationID, immutables, mutables),
 	}
 }

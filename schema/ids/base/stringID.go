@@ -15,13 +15,9 @@ type stringID struct {
 	IDString string `json:"idString"`
 }
 
-func (stringID stringID) IsStringID() {
-	// TODO implement me
-	panic("implement me")
-}
-
 var _ ids.StringID = (*stringID)(nil)
 
+func (stringID stringID) IsStringID() {}
 func (stringID stringID) String() string {
 	return stringID.IDString
 }
@@ -29,18 +25,14 @@ func (stringID stringID) Bytes() []byte {
 	return []byte(stringID.IDString)
 }
 func (stringID stringID) Compare(listable traits.Listable) int {
-	if compareStringID, err := stringIDFromInterface(listable); err != nil {
-		panic(err)
-	} else {
-		return strings.Compare(stringID.String(), compareStringID.String())
-	}
+	return strings.Compare(stringID.String(), stringIDFromInterface(listable).String())
 }
-func stringIDFromInterface(i interface{}) (stringID, error) {
+func stringIDFromInterface(i interface{}) stringID {
 	switch value := i.(type) {
 	case stringID:
-		return value, nil
+		return value
 	default:
-		return stringID{}, constants.MetaDataError
+		panic(constants.MetaDataError)
 	}
 }
 

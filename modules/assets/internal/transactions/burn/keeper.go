@@ -12,10 +12,11 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/burn"
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
-	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -42,14 +43,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 
-	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(types.Asset).GetBurn())))
+	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(documents.Asset).GetBurn())))
 	if err != nil {
 		return newTransactionResponse(err)
 	}
 
-	burnHeightMetaProperty := metaProperties.GetMetaProperty(constants.BurnHeightProperty.GetID())
-	if burnHeightMetaProperty != nil {
-		burnHeight := burnHeightMetaProperty.GetData().(data.HeightData).Get()
+	if burnHeightMetaProperty := metaProperties.GetProperty(constants.BurnHeightProperty.GetID()); burnHeightMetaProperty != nil {
+		burnHeight := burnHeightMetaProperty.(properties.MetaProperty).GetData().(data.HeightData).Get()
 		if burnHeight.Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
 			return newTransactionResponse(errorConstants.NotAuthorized)
 		}

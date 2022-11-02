@@ -3,7 +3,6 @@ package base
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/schema/capabilities"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/types"
 )
@@ -25,11 +24,11 @@ func (split split) GetOwnableID() ids.OwnableID {
 func (split split) GetValue() sdkTypes.Dec {
 	return split.Value
 }
-func (split split) Send(outValue sdkTypes.Dec) capabilities.Transactional {
+func (split split) Send(outValue sdkTypes.Dec) types.Split {
 	split.Value = split.Value.Sub(outValue)
 	return split
 }
-func (split split) Receive(inValue sdkTypes.Dec) capabilities.Transactional {
+func (split split) Receive(inValue sdkTypes.Dec) types.Split {
 	split.Value = split.Value.Add(inValue)
 	return split
 }

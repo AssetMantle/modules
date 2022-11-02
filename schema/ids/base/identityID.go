@@ -1,39 +1,28 @@
 package base
 
 import (
-	"bytes"
-
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
-	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
 type identityID struct {
-	ids.ClassificationID
 	ids.HashID
-}
-
-func (identityID identityID) IsIdentityID() {
-	// TODO implement me
-	panic("implement me")
 }
 
 var _ ids.IdentityID = (*identityID)(nil)
 
+// TODO deprecate
+func (identityID identityID) IsIdentityID() {}
 func (identityID identityID) String() string {
-	return stringUtilities.JoinIDStrings(identityID.ClassificationID.String(), identityID.HashID.String())
+	return identityID.HashID.String()
 }
 func (identityID identityID) Bytes() []byte {
-	var Bytes []byte
-	Bytes = append(Bytes, identityID.ClassificationID.Bytes()...)
-	Bytes = append(Bytes, identityID.HashID.Bytes()...)
-
-	return Bytes
+	return identityID.HashID.Bytes()
 }
 func (identityID identityID) Compare(listable traits.Listable) int {
-	return bytes.Compare(identityID.Bytes(), identityIDFromInterface(listable).Bytes())
+	return identityID.HashID.Compare(identityIDFromInterface(listable).HashID)
 }
 func (identityID identityID) GetHashID() ids.HashID {
 	return identityID.HashID
@@ -49,33 +38,23 @@ func identityIDFromInterface(i interface{}) identityID {
 
 func NewIdentityID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.IdentityID {
 	return identityID{
-		ClassificationID: classificationID,
-		HashID:           immutables.GenerateHashID(),
+		HashID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()),
 	}
 }
 
 func PrototypeIdentityID() ids.IdentityID {
 	return identityID{
-		ClassificationID: PrototypeClassificationID(),
-		HashID:           PrototypeHashID(),
+		HashID: PrototypeHashID(),
 	}
 }
 
 func ReadIdentityID(identityIDString string) (ids.IdentityID, error) {
-	if splitIdentityIDString := stringUtilities.SplitCompositeIDString(identityIDString); len(splitIdentityIDString) == 2 {
-		if classificationID, err := ReadClassificationID(splitIdentityIDString[0]); err == nil {
-			if hashID, err := ReadHashID(splitIdentityIDString[1]); err == nil {
-				return identityID{
-					ClassificationID: classificationID,
-					HashID:           hashID,
-				}, nil
-			}
-		}
+
+	if hashID, err := ReadHashID(identityIDString); err == nil {
+		return identityID{
+			HashID: hashID,
+		}, nil
 	}
 
-	if identityIDString == "" {
-		return PrototypeIdentityID(), nil
-	}
-
-	return identityID{}, errorConstants.MetaDataError
+	return identityID{}, errorConstants.IncorrectFormat
 }

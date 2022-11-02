@@ -25,13 +25,9 @@ type orderID struct {
 	ids.HashID
 }
 
-func (orderID orderID) IsOrderID() {
-	// TODO implement me
-	panic("implement me")
-}
-
 var _ ids.OrderID = (*orderID)(nil)
 
+func (orderID orderID) IsOrderID() {}
 func (orderID orderID) Bytes() []byte {
 	var Bytes []byte
 

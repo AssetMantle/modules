@@ -7,10 +7,10 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
+	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type auxiliaryKeeper struct {
@@ -30,7 +30,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	}
 
 	for _, maintainedProperty := range auxiliaryRequest.MaintainedMutables.GetMutablePropertyList().GetList() {
-		if !maintainer.(types.Maintainer).MaintainsProperty(maintainedProperty.GetID()) {
+		if !maintainer.(documents.Maintainer).MaintainsProperty(maintainedProperty.GetID()) {
 			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
 	}

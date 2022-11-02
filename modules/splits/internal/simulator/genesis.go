@@ -41,8 +41,8 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	mappableList := make([]helpers.Mappable, simulationState.Rand.Intn(99))
 
 	for i := range mappableList {
-		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomProperties(simulationState.Rand))
-		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomProperties(simulationState.Rand))
+		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
+		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
 		mappableList[i] = mappable.NewMappable(base.NewSplit(baseIDs.NewIdentityID(baseIDs.NewClassificationID(immutables, mutables), immutables), baseIDs.NewOwnableID(baseIDs.NewStringID(simulation.RandStringOfLength(simulationState.Rand, simulationState.Rand.Intn(99)))), simulation.RandomDecAmount(simulationState.Rand, sdkTypes.NewDec(9999999999))))
 	}
 

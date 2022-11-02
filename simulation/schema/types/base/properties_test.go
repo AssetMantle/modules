@@ -25,12 +25,12 @@ func TestGenerateRandomProperties(t *testing.T) {
 			defer func() {
 				r := recover()
 				if (r != nil) != tt.wantPanic {
-					t.Errorf("GenerateRandomProperties() recover = %v, wantPanic = %v", r, tt.wantPanic)
+					t.Errorf("GenerateRandomPropertyList() recover = %v, wantPanic = %v", r, tt.wantPanic)
 				}
 			}()
 
-			if got := GenerateRandomProperties(tt.args.r); reflect.TypeOf(got).String() != "base.propertyList" {
-				t.Errorf("GenerateRandomProperties() = %v, want base.propertyList", got)
+			if got := GenerateRandomPropertyList(tt.args.r); reflect.TypeOf(got).String() != "base.propertyList" {
+				t.Errorf("GenerateRandomPropertyList() = %v, want base.propertyList", got)
 			}
 		})
 	}

@@ -29,14 +29,18 @@ func (key key) IsPartial() bool {
 	return len(key.MetaID.Bytes()) == 0
 }
 func (key key) Equals(compareKey helpers.Key) bool {
-	return key.MetaID.Compare(keyFromInterface(compareKey)) == 0
+	if CompareKey, err := keyFromInterface(compareKey); err != nil {
+		return false
+	} else {
+		return key.MetaID.Compare(CompareKey.MetaID) == 0
+	}
 }
-func keyFromInterface(i interface{}) key {
+func keyFromInterface(i interface{}) (key, error) {
 	switch value := i.(type) {
 	case key:
-		return value
+		return value, nil
 	default:
-		panic(constants.MetaDataError)
+		return key{}, constants.MetaDataError
 	}
 }
 

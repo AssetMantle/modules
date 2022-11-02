@@ -7,14 +7,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
+	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type mappable struct {
-	types.Order
+	documents.Order
 }
 
 var _ helpers.Mappable = (*mappable)(nil)
@@ -26,7 +26,7 @@ func (mappable) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, mappable{})
 }
 
-func NewMappable(order types.Order) helpers.Mappable {
+func NewMappable(order documents.Order) helpers.Mappable {
 	return mappable{Order: order}
 }
 

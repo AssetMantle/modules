@@ -59,7 +59,11 @@ func idDataFromInterface(listable traits.Listable) (idData, error) {
 	}
 }
 
-func NewIDData(value ids.ID) data.Data {
+func IDDataPrototype() data.IDData {
+	return idData{}.ZeroValue().(data.IDData)
+}
+
+func NewIDData(value ids.ID) data.IDData {
 	return idData{
 		Value: value,
 	}

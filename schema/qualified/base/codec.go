@@ -10,7 +10,6 @@ import (
 )
 
 func RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, document{})
 	codecUtilities.RegisterModuleConcrete(codec, immutables{})
 	codecUtilities.RegisterModuleConcrete(codec, mutables{})
 }

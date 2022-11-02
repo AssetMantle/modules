@@ -41,15 +41,16 @@ func (mesaProperty mesaProperty) IsMesa() bool {
 	return true
 }
 func (mesaProperty mesaProperty) Compare(listable traits.Listable) int {
-	if compareProperty, err := mesaPropertyFromInterface(listable); err != nil {
+	// NOTE: compare property can be meta or mesa, so listable must only be cast to Property Interface and not MesaProperty
+	if compareProperty, err := propertyFromInterface(listable); err != nil {
 		panic(err)
 	} else {
 		return mesaProperty.GetID().Compare(compareProperty.GetID())
 	}
 }
-func mesaPropertyFromInterface(listable traits.Listable) (mesaProperty, error) {
+func propertyFromInterface(listable traits.Listable) (properties.Property, error) {
 	switch value := listable.(type) {
-	case mesaProperty:
+	case properties.Property:
 		return value, nil
 	default:
 		return mesaProperty{}, constants.MetaDataError
@@ -61,7 +62,7 @@ func NewEmptyMesaPropertyFromID(propertyID ids.PropertyID) properties.Property {
 		ID: propertyID,
 	}
 }
-func NewMesaProperty(key ids.StringID, data data.Data) properties.Property {
+func NewMesaProperty(key ids.StringID, data data.Data) properties.MesaProperty {
 	return mesaProperty{
 		ID:     baseIDs.NewPropertyID(key, data.GetType()),
 		DataID: data.GetID(),

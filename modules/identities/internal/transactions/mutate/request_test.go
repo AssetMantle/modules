@@ -28,7 +28,7 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-func createTestInput(t *testing.T) (*codec.Codec, helpers.CLICommand, context.CLIContext, string, string, lists.MetaPropertyList, lists.PropertyList, string, sdkTypes.AccAddress, rest.BaseReq) {
+func createTestInput(t *testing.T) (*codec.Codec, helpers.CLICommand, context.CLIContext, string, string, lists.PropertyList, lists.PropertyList, string, sdkTypes.AccAddress, rest.BaseReq) {
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)

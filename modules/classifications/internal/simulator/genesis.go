@@ -17,11 +17,11 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/parameters/dummy"
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	parameters2 "github.com/AssetMantle/modules/schema/parameters"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 )
 
@@ -39,8 +39,8 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	mappableList := make([]helpers.Mappable, simulationState.Rand.Intn(99))
 
 	for i := range mappableList {
-		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomProperties(simulationState.Rand))
-		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomProperties(simulationState.Rand))
+		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
+		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
 		mappableList[i] = mappable.NewMappable(base.NewClassification(immutables, mutables))
 	}
 

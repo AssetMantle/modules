@@ -75,20 +75,22 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	immutableProperties, err := utilities.ReadProperties(transactionRequest.ImmutableProperties)
+	immutableProperties, err := utilities.ReadMetaPropertyList(transactionRequest.ImmutableProperties)
 	if err != nil {
 		return nil, err
 	}
+	immutableProperties = immutableProperties.ScrubData()
 
 	mutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
 
-	mutableProperties, err := utilities.ReadProperties(transactionRequest.MutableProperties)
+	mutableProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableProperties)
 	if err != nil {
 		return nil, err
 	}
+	mutableProperties = mutableProperties.ScrubData()
 
 	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
 	if err != nil {

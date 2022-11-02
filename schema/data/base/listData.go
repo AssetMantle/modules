@@ -93,8 +93,12 @@ func listDataFromInterface(listable traits.Listable) (listData, error) {
 	}
 }
 
+func ListDataPrototype() data.ListData {
+	return listData{}.ZeroValue().(data.ListData)
+}
+
 // NewListData
 // * onus of ensuring all Data are of the same type is on DataList
-func NewListData(value lists.DataList) data.Data {
+func NewListData(value lists.DataList) data.ListData {
 	return listData{Value: value}
 }

@@ -14,13 +14,9 @@ type metaID struct {
 	ids.HashID
 }
 
-func (metaID metaID) IsMetaID() {
-	// TODO implement me
-	panic("implement me")
-}
-
 var _ ids.MetaID = (*metaID)(nil)
 
+func (metaID metaID) IsMetaID() {}
 func (metaID metaID) String() string {
 	return stringUtilities.JoinIDStrings(metaID.Type.String(), metaID.HashID.String())
 }

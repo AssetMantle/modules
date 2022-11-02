@@ -29,7 +29,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	if split == nil {
 		splits.Add(mappable.NewMappable(base.NewSplit(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value)))
 	} else {
-		splits.Mutate(mappable.NewMappable(split.(types.Split).Receive(auxiliaryRequest.Value).(types.Split)))
+		splits.Mutate(mappable.NewMappable(split.(types.Split).Receive(auxiliaryRequest.Value)))
 	}
 
 	return newAuxiliaryResponse(nil)

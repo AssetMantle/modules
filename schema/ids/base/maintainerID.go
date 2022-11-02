@@ -15,13 +15,9 @@ type maintainerID struct {
 	ids.IdentityID
 }
 
-func (maintainerID maintainerID) IsMaintainerID() {
-	// TODO implement me
-	panic("implement me")
-}
-
 var _ ids.MaintainerID = (*maintainerID)(nil)
 
+func (maintainerID maintainerID) IsMaintainerID() {}
 func (maintainerID maintainerID) Bytes() []byte {
 	return append(
 		maintainerID.ClassificationID.Bytes(),

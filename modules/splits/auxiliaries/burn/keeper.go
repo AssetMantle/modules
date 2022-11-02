@@ -31,7 +31,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	}
 	split := Mappable.(types.Split)
 
-	switch split = split.Send(auxiliaryRequest.Value).(types.Split); {
+	switch split = split.Send(auxiliaryRequest.Value); {
 	case split.GetValue().LT(sdkTypes.ZeroDec()):
 		return newAuxiliaryResponse(constants.InsufficientBalance)
 	case split.GetValue().Equal(sdkTypes.ZeroDec()):

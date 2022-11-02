@@ -11,7 +11,6 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
-	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
@@ -23,15 +22,19 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	scrubbedPropertyList := make([]properties.Property, len(auxiliaryRequest.MetaPropertyList))
+	scrubbedPropertyList := make([]properties.Property, len(auxiliaryRequest.PropertyList.GetList()))
 	metas := auxiliaryKeeper.mapper.NewCollection(context)
 
-	for i, metaProperty := range auxiliaryRequest.MetaPropertyList {
-		if metaProperty.GetData().GenerateHashID().Compare(baseIDs.GenerateHashID()) != 0 {
-			metas.Add(mappable.NewMappable(base.NewMeta(metaProperty.GetData())))
+	for i, property := range auxiliaryRequest.PropertyList.GetList() {
+		if property.IsMeta() {
+			metaProperty := property.(properties.MetaProperty)
+			if metaProperty.GetData().GenerateHashID().Compare(baseIDs.GenerateHashID()) != 0 {
+				metas.Add(mappable.NewMappable(metaProperty.GetData()))
+			}
+			scrubbedPropertyList[i] = metaProperty.ScrubData()
+		} else {
+			scrubbedPropertyList[i] = property
 		}
-
-		scrubbedPropertyList[i] = metaProperty.RemoveData()
 	}
 
 	return newAuxiliaryResponse(baseLists.NewPropertyList(scrubbedPropertyList...), nil)

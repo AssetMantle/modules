@@ -4,18 +4,27 @@ import (
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 type classificationID struct {
 	ids.HashID
 }
 
-func (c classificationID) IsClassificationID() {
-	// TODO implement me
-	panic("implement me")
-}
-
 var _ ids.ClassificationID = (*classificationID)(nil)
+
+func (classificationID classificationID) IsClassificationID() {}
+func (classificationID classificationID) Compare(listable traits.Listable) int {
+	return classificationID.HashID.Compare(classificationIDFromInterface(listable).HashID)
+}
+func classificationIDFromInterface(i interface{}) classificationID {
+	switch value := i.(type) {
+	case classificationID:
+		return value
+	default:
+		panic(constants.MetaDataError)
+	}
+}
 
 func NewClassificationID(immutables qualified.Immutables, mutables qualified.Mutables) ids.ClassificationID {
 	immutableIDByteList := make([][]byte, len(immutables.GetImmutablePropertyList().GetList()))

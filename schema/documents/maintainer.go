@@ -1,12 +1,11 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package types
+package documents
 
 import (
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/qualified"
 )
 
 type Maintainer interface {
@@ -23,5 +22,5 @@ type Maintainer interface {
 	CanMutateMaintainer() bool
 	MaintainsProperty(ids.PropertyID) bool
 
-	qualified.Document
+	Document
 }

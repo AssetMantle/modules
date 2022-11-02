@@ -14,9 +14,12 @@ import (
 	"github.com/AssetMantle/modules/schema/types"
 
 	"github.com/stretchr/testify/require"
+	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 func TestNewSignature(t *testing.T) {

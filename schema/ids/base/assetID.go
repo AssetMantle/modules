@@ -18,18 +18,10 @@ type assetID struct {
 	ids.HashID
 }
 
-func (assetID assetID) IsOwnableID() {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (assetID assetID) IsAssetID() {
-	// TODO implement me
-	panic("implement me")
-}
-
 var _ ids.AssetID = (*assetID)(nil)
 
+func (assetID assetID) IsOwnableID() {}
+func (assetID assetID) IsAssetID()   {}
 func (assetID assetID) String() string {
 	return stringUtilities.JoinIDStrings(assetID.ClassificationID.String(), assetID.HashID.String())
 }

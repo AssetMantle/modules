@@ -14,6 +14,8 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/documents"
+	"github.com/AssetMantle/modules/schema/documents/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -22,7 +24,6 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -48,7 +49,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 		// TODO ***** define a proper new key
 		key.NewKey(baseIDs.PrototypeOrderID()),
 		func(Mappable helpers.Mappable) bool {
-			order := Mappable.(types.Order)
+			order := Mappable.(documents.Order)
 
 			if order.GetExpiryHeight().Compare(baseTypes.NewHeight(context.BlockHeight())) <= 0 {
 				// TODO ***** check security of sending and receiving from module and module account security
@@ -74,13 +75,13 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 
 		orders.Iterate(key.NewKey(partialOrderID),
 			func(Mappable helpers.Mappable) bool {
-				order := Mappable.(types.Order)
+				order := Mappable.(documents.Order)
 				orders.Iterate(
 					key.NewKey(baseIDs.PrototypeOrderID()),
 					func(Mappable helpers.Mappable) bool {
-						executableOrder := Mappable.(types.Order)
-						var leftOrder types.Order
-						var rightOrder types.Order
+						executableOrder := Mappable.(documents.Order)
+						var leftOrder documents.Order
+						var rightOrder documents.Order
 
 						orderHeight := order.GetCreationHeight()
 
@@ -118,12 +119,12 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 									panic(auxiliaryResponse.GetError())
 								}
 
-								mutableProperties, err := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))))
+								mutableProperties, err := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded)))))))
 								if err != nil {
 									panic(err)
 								}
 
-								orders.Mutate(mappable.NewMappable(baseTypes.NewOrder(leftOrder.GetClassificationID(), leftOrder.GetImmutables(), leftOrder.Mutate(mutableProperties.GetList()...).GetMutables())))
+								orders.Mutate(mappable.NewMappable(base.NewOrder(leftOrder.GetClassificationID(), leftOrder.GetImmutables(), leftOrder.Mutate(mutableProperties.GetList()...).GetMutables())))
 								orders.Remove(mappable.NewMappable(rightOrder))
 
 								if executableOrderHeight.Compare(orderHeight) > 0 {
@@ -138,12 +139,12 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 									panic(auxiliaryResponse.GetError())
 								}
 
-								mutableProperties, err := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder))))))
+								mutableProperties, err := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder)))))))
 								if err != nil {
 									panic(err)
 								}
 
-								orders.Mutate(mappable.NewMappable(baseTypes.NewOrder(rightOrder.GetClassificationID(), rightOrder.GetImmutables(), rightOrder.GetMutables().Mutate(mutableProperties.GetList()...))))
+								orders.Mutate(mappable.NewMappable(base.NewOrder(rightOrder.GetClassificationID(), rightOrder.GetImmutables(), rightOrder.GetMutables().Mutate(mutableProperties.GetList()...))))
 								orders.Remove(mappable.NewMappable(leftOrder))
 
 								if orderHeight.Compare(executableOrderHeight) >= 0 {

@@ -59,7 +59,11 @@ func stringDataFromInterface(listable traits.Listable) (stringData, error) {
 	}
 }
 
-func NewStringData(value string) data.Data {
+func StringDataPrototype() data.StringData {
+	return stringData{}.ZeroValue().(data.StringData)
+}
+
+func NewStringData(value string) data.StringData {
 	return stringData{
 		Value: value,
 	}

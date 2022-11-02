@@ -66,6 +66,10 @@ func accAddressDataFromInterface(listable traits.Listable) (accAddressData, erro
 	}
 }
 
+func AccAddressDataPrototype() data.AccAddressData {
+	return accAddressData{}.ZeroValue().(data.AccAddressData)
+}
+
 func NewAccAddressData(value sdkTypes.AccAddress) data.AccAddressData {
 	return accAddressData{
 		Value: value,

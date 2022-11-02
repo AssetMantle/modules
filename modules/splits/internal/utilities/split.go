@@ -28,7 +28,7 @@ func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.
 	if split == nil {
 		splits.Add(mappable.NewMappable(base.NewSplit(ownerID, ownableID, value)))
 	} else {
-		splits.Mutate(mappable.NewMappable(split.(types.Split).Receive(value).(types.Split)))
+		splits.Mutate(mappable.NewMappable(split.(types.Split).Receive(value)))
 	}
 
 	return splits, nil
@@ -47,7 +47,7 @@ func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID
 	}
 	split := Mappable.(types.Split)
 
-	switch split = split.Send(value).(types.Split); {
+	switch split = split.Send(value); {
 	case split.GetValue().LT(sdkTypes.ZeroDec()):
 		return nil, constants.NotAuthorized
 	case split.GetValue().Equal(sdkTypes.ZeroDec()):

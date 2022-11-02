@@ -12,9 +12,9 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
+	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type transactionKeeper struct {
@@ -35,7 +35,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.OrderID))
 
-	order := orders.Get(key.NewKey(message.OrderID)).(types.Order)
+	order := orders.Get(key.NewKey(message.OrderID)).(documents.Order)
 	if order == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}

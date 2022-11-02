@@ -7,17 +7,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type mappable struct {
-	types.Identity
+	documents.Identity
 }
 
-var _ types.Identity = (*mappable)(nil)
+var _ documents.Identity = (*mappable)(nil)
 
 func (identity mappable) GetKey() helpers.Key {
 	return key.NewKey(baseIDs.NewIdentityID(identity.GetClassificationID(), identity.GetImmutables()))
@@ -26,7 +26,7 @@ func (mappable) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, mappable{})
 }
 
-func NewMappable(identity types.Identity) helpers.Mappable {
+func NewMappable(identity documents.Identity) helpers.Mappable {
 	return mappable{
 		Identity: identity,
 	}
