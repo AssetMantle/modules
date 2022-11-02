@@ -14,13 +14,9 @@ type splitID struct {
 	OwnableID ids.OwnableID
 }
 
-func (splitID splitID) IsSplitID() {
-	// TODO implement me
-	panic("implement me")
-}
-
 var _ ids.SplitID = (*splitID)(nil)
 
+func (splitID splitID) IsSplitID() {}
 func (splitID splitID) Bytes() []byte {
 	return append(
 		splitID.OwnerID.Bytes(),
