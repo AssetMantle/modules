@@ -313,8 +313,8 @@ func Test_metaProperty_RemoveData(t *testing.T) {
 				ID:   tt.fields.ID,
 				Data: tt.fields.Data,
 			}
-			if got := metaProperty.RemoveData(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("RemoveData() = %v, want %v", got, tt.want)
+			if got := metaProperty.ScrubData(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ScrubData() = %v, want %v", got, tt.want)
 			}
 		})
 	}

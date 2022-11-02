@@ -9,6 +9,6 @@ import (
 
 type MetaProperty interface {
 	GetData() data.Data
-	RemoveData() Property
+	ScrubData() MesaProperty
 	Property
 }
