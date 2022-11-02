@@ -16,60 +16,66 @@ import (
 	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
-func readAccAddressData(dataString string) (data.Data, error) {
+func readAccAddressData(dataString string) (data.AccAddressData, error) {
 	if dataString == "" {
-		return GetZeroValueDataFromID(dataConstants.AccAddressDataID), nil
+		return base.AccAddressDataPrototype(), nil
 	}
 
 	accAddress, err := sdkTypes.AccAddressFromBech32(dataString)
 	if err != nil {
-		return GetZeroValueDataFromID(dataConstants.AccAddressDataID), err
+		return base.AccAddressDataPrototype(), err
 	}
 
 	return base.NewAccAddressData(accAddress), nil
 }
-func readBooleanData(dataString string) (data.Data, error) {
+func readBooleanData(dataString string) (data.BooleanData, error) {
 	if dataString == "" {
-		return GetZeroValueDataFromID(dataConstants.BooleanDataID), nil
+		return base.BooleanDataPrototype(), nil
 	}
 
 	Bool, err := strconv.ParseBool(dataString)
 	if err != nil {
-		return GetZeroValueDataFromID(dataConstants.BooleanDataID), err
+		return base.BooleanDataPrototype(), err
 	}
 
 	return base.NewBooleanData(Bool), nil
 }
-func readDecData(dataString string) (data.Data, error) {
+func readDecData(dataString string) (data.DecData, error) {
 	if dataString == "" {
-		return GetZeroValueDataFromID(dataConstants.DecDataID), nil
+		return base.DecDataPrototype(), nil
 	}
 
 	dec, err := sdkTypes.NewDecFromStr(dataString)
 	if err != nil {
-		return GetZeroValueDataFromID(dataConstants.DecDataID), err
+		return base.DecDataPrototype(), err
 	}
 
 	return base.NewDecData(dec), nil
 }
-func readHeightData(dataString string) (data.Data, error) {
+func readHeightData(dataString string) (data.HeightData, error) {
 	if dataString == "" {
-		return GetZeroValueDataFromID(dataConstants.HeightDataID), nil
+		return base.HeightDataPrototype(), nil
 	}
 
 	height, err := strconv.ParseInt(dataString, 10, 64)
 	if err != nil {
-		return GetZeroValueDataFromID(dataConstants.HeightDataID), err
+		return base.HeightDataPrototype(), err
 	}
 
 	return base.NewHeightData(baseTypes.NewHeight(height)), nil
 }
-func readIDData(idData string) (data.Data, error) {
-	return base.NewIDData(baseIDs.NewStringID(idData)), nil
-}
-func readListData(dataString string) (data.Data, error) {
+
+// TODO read complex IDs than string ID
+func readIDData(dataString string) (data.IDData, error) {
 	if dataString == "" {
-		return GetZeroValueDataFromID(dataConstants.ListDataID), nil
+		return base.IDDataPrototype(), nil
+	}
+
+	return base.NewIDData(baseIDs.NewStringID(dataString)), nil
+}
+func readListData(dataString string) (data.ListData, error) {
+	if dataString == "" {
+		return base.ListDataPrototype(), nil
 	}
 
 	dataStringList := stringUtilities.SplitListString(dataString)
@@ -78,7 +84,7 @@ func readListData(dataString string) (data.Data, error) {
 	for i, datumString := range dataStringList {
 		Data, err := ReadData(datumString)
 		if err != nil {
-			return GetZeroValueDataFromID(dataConstants.ListDataID), err
+			return base.ListDataPrototype(), err
 		}
 
 		dataList[i] = Data
@@ -86,8 +92,11 @@ func readListData(dataString string) (data.Data, error) {
 
 	return base.NewListData(baseLists.NewDataList(dataList...)), nil
 }
-func readStringData(stringData string) (data.Data, error) {
-	return base.NewStringData(stringData), nil
+func readStringData(dataString string) (data.StringData, error) {
+	if dataString == "" {
+		return base.StringDataPrototype(), nil
+	}
+	return base.NewStringData(dataString), nil
 }
 func joinDataTypeAndValueStrings(dataType, dataValue string) string {
 	return strings.Join([]string{dataType, dataValue}, dataConstants.DataTypeAndValueSeparator)

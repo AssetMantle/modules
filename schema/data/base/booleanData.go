@@ -74,7 +74,11 @@ func booleanDataFromInterface(listable traits.Listable) (booleanData, error) {
 	}
 }
 
-func NewBooleanData(value bool) data.Data {
+func BooleanDataPrototype() data.BooleanData {
+	return booleanData{}.ZeroValue().(data.BooleanData)
+}
+
+func NewBooleanData(value bool) data.BooleanData {
 	return booleanData{
 		Value: value,
 	}

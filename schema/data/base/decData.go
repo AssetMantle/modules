@@ -69,7 +69,11 @@ func decDataFromInterface(listable traits.Listable) (decData, error) {
 	}
 }
 
-func NewDecData(value sdkTypes.Dec) data.Data {
+func DecDataPrototype() data.DecData {
+	return decData{}.ZeroValue().(data.DecData)
+}
+
+func NewDecData(value sdkTypes.Dec) data.DecData {
 	return decData{
 		Value: value,
 	}
