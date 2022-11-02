@@ -9,7 +9,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
