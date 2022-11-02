@@ -12,7 +12,7 @@ import (
 	"github.com/AssetMantle/modules/schema/properties"
 )
 
-func GenerateRandomProperties(r *rand.Rand) lists.PropertyList {
+func GenerateRandomPropertyList(r *rand.Rand) lists.PropertyList {
 	randomPositiveInt := int(math.Abs(float64(r.Int()))) % 11
 
 	propertyList := make([]properties.Property, randomPositiveInt)

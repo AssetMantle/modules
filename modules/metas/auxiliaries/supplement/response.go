@@ -10,9 +10,9 @@ import (
 )
 
 type auxiliaryResponse struct {
-	Success        bool                   `json:"success"`
-	Error          error                  `json:"error"`
-	MetaProperties lists.MetaPropertyList `json:"metaProperties"`
+	Success            bool  `json:"success"`
+	Error              error `json:"error"`
+	lists.PropertyList `json:"propertyList"`
 }
 
 var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
@@ -23,7 +23,7 @@ func (auxiliaryResponse auxiliaryResponse) IsSuccessful() bool {
 func (auxiliaryResponse auxiliaryResponse) GetError() error {
 	return auxiliaryResponse.Error
 }
-func newAuxiliaryResponse(metaProperties lists.MetaPropertyList, error error) helpers.AuxiliaryResponse {
+func newAuxiliaryResponse(metaProperties lists.PropertyList, error error) helpers.AuxiliaryResponse {
 	if error != nil {
 		return auxiliaryResponse{
 			Success: false,
@@ -32,16 +32,16 @@ func newAuxiliaryResponse(metaProperties lists.MetaPropertyList, error error) he
 	}
 
 	return auxiliaryResponse{
-		Success:        true,
-		MetaProperties: metaProperties,
+		Success:      true,
+		PropertyList: metaProperties,
 	}
 }
 
-func GetMetaPropertiesFromResponse(response helpers.AuxiliaryResponse) (lists.MetaPropertyList, error) {
+func GetMetaPropertiesFromResponse(response helpers.AuxiliaryResponse) (lists.PropertyList, error) {
 	switch value := response.(type) {
 	case auxiliaryResponse:
 		if value.IsSuccessful() {
-			return value.MetaProperties, nil
+			return value.PropertyList, nil
 		}
 
 		return nil, value.GetError()

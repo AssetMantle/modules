@@ -18,8 +18,8 @@ type mappable struct {
 
 var _ helpers.Mappable = (*mappable)(nil)
 
-func (classification mappable) GetKey() helpers.Key {
-	return key.NewKey(classification.GetClassificationID())
+func (mappable mappable) GetKey() helpers.Key {
+	return key.NewKey(mappable.GetClassificationID())
 }
 func (mappable) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, mappable{})

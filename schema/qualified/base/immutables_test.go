@@ -4,6 +4,9 @@
 package base
 
 import (
+	"reflect"
+	"testing"
+
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -11,8 +14,6 @@ import (
 	"github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
-	"reflect"
-	"testing"
 )
 
 func TestNewImmutables(t *testing.T) {
@@ -58,7 +59,7 @@ func Test_immutables_GenerateHashID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			testImmutables := immutables{
-				PropertyList: tt.fields.PropertyList,
+				MesaPropertyList: tt.fields.PropertyList,
 			}
 			if got := testImmutables.GenerateHashID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GenerateHashID() = %v, want %v", got, tt.want)
@@ -79,12 +80,12 @@ func Test_immutables_GetImmutablePropertyList(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with nil", fields{base.NewPropertyList()}, base.NewPropertyList()},
-		{"+ve", fields{testImmutablePropertyList}, immutables{testImmutablePropertyList}.PropertyList},
+		{"+ve", fields{testImmutablePropertyList}, immutables{testImmutablePropertyList}.MesaPropertyList},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			testImmutables := immutables{
-				PropertyList: tt.fields.PropertyList,
+				MesaPropertyList: tt.fields.PropertyList,
 			}
 			if got := testImmutables.GetImmutablePropertyList(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetImmutablePropertyList() = %v, want %v", got, tt.want)

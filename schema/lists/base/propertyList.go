@@ -1,6 +1,3 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
-
 package base
 
 import (
@@ -17,11 +14,11 @@ type propertyList struct {
 
 var _ lists.PropertyList = (*propertyList)(nil)
 
-// TODO write test
 func (propertyList propertyList) GetProperty(propertyID ids.PropertyID) properties.Property {
-	if i, found := propertyList.List.Search(base.NewEmptyMesaPropertyFromID(propertyID)); found {
+	if i, found := propertyList.Search(base.NewEmptyMesaPropertyFromID(propertyID)); found {
 		return propertyList.GetList()[i]
 	}
+
 	return nil
 }
 func (propertyList propertyList) GetList() []properties.Property {
@@ -29,7 +26,6 @@ func (propertyList propertyList) GetList() []properties.Property {
 	for i, listable := range propertyList.List.Get() {
 		Properties[i] = listable.(properties.Property)
 	}
-
 	return Properties
 }
 func (propertyList propertyList) Add(properties ...properties.Property) lists.PropertyList {
@@ -44,7 +40,17 @@ func (propertyList propertyList) Mutate(properties ...properties.Property) lists
 	propertyList.List = propertyList.List.Mutate(propertiesToListables(properties...)...)
 	return propertyList
 }
-
+func (propertyList propertyList) ScrubData() lists.PropertyList {
+	newPropertyList := NewPropertyList()
+	for _, listable := range propertyList.List.Get() {
+		if property := listable.(properties.Property); property.IsMeta() {
+			newPropertyList = newPropertyList.Add(property.(properties.MetaProperty).ScrubData())
+		} else {
+			newPropertyList = newPropertyList.Add(property)
+		}
+	}
+	return newPropertyList
+}
 func propertiesToListables(properties ...properties.Property) []traits.Listable {
 	listables := make([]traits.Listable, len(properties))
 	for i, property := range properties {

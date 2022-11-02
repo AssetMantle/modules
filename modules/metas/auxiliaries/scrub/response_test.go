@@ -19,16 +19,16 @@ import (
 func Test_Super_Response(t *testing.T) {
 
 	metaProperty := base2.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
-	metaPropertyList := base.NewMetaPropertyList([]properties.MetaProperty{metaProperty}...)
+	metaPropertyList := base.NewPropertyList([]properties.MetaProperty{metaProperty}...)
 	property := base2.NewMesaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
 	propertyList := base.NewPropertyList([]properties.Property{property}...)
 
-	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList.ToPropertyList(), nil)
-	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, Properties: metaPropertyList.ToPropertyList()}, testAuxiliaryResponse)
+	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList.ToMesaPropertyList(), nil)
+	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, Properties: metaPropertyList.ToMesaPropertyList()}, testAuxiliaryResponse)
 	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())
 	require.Equal(t, nil, testAuxiliaryResponse.GetError())
 
-	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList.ToPropertyList(), constants.IncorrectFormat)
+	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList.ToMesaPropertyList(), constants.IncorrectFormat)
 	require.Equal(t, auxiliaryResponse{Success: false, Error: constants.IncorrectFormat, Properties: nil}, testAuxiliaryResponse2)
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
 	require.Equal(t, constants.IncorrectFormat, testAuxiliaryResponse2.GetError())

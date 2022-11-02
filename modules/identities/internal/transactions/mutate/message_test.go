@@ -4,6 +4,13 @@
 package mutate
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -15,14 +22,9 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
-func createTestInputForMessage(t *testing.T) (types.AccAddress, ids.IdentityID, ids.IdentityID, lists.MetaPropertyList, lists.PropertyList) {
+func createTestInputForMessage(t *testing.T) (types.AccAddress, ids.IdentityID, ids.IdentityID, lists.PropertyList, lists.PropertyList) {
 	testFrom, err := types.AccAddressFromBech32("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c")
 	require.Nil(t, err)
 	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
@@ -84,7 +86,7 @@ func Test_message_GetSignBytes(t *testing.T) {
 		From                  types.AccAddress
 		FromID                ids.IdentityID
 		IdentityID            ids.IdentityID
-		MutableMetaProperties lists.MetaPropertyList
+		MutableMetaProperties lists.PropertyList
 		MutableProperties     lists.PropertyList
 	}
 	tests := []struct {
@@ -117,7 +119,7 @@ func Test_message_GetSigners(t *testing.T) {
 		From                  types.AccAddress
 		FromID                ids.IdentityID
 		IdentityID            ids.IdentityID
-		MutableMetaProperties lists.MetaPropertyList
+		MutableMetaProperties lists.PropertyList
 		MutableProperties     lists.PropertyList
 	}
 	tests := []struct {
@@ -151,7 +153,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 		From                  types.AccAddress
 		FromID                ids.IdentityID
 		IdentityID            ids.IdentityID
-		MutableMetaProperties lists.MetaPropertyList
+		MutableMetaProperties lists.PropertyList
 		MutableProperties     lists.PropertyList
 	}
 	type args struct {
@@ -186,7 +188,7 @@ func Test_message_Route(t *testing.T) {
 		From                  types.AccAddress
 		FromID                ids.IdentityID
 		IdentityID            ids.IdentityID
-		MutableMetaProperties lists.MetaPropertyList
+		MutableMetaProperties lists.PropertyList
 		MutableProperties     lists.PropertyList
 	}
 	tests := []struct {
@@ -220,7 +222,7 @@ func Test_message_Type(t *testing.T) {
 		From                  types.AccAddress
 		FromID                ids.IdentityID
 		IdentityID            ids.IdentityID
-		MutableMetaProperties lists.MetaPropertyList
+		MutableMetaProperties lists.PropertyList
 		MutableProperties     lists.PropertyList
 	}
 	tests := []struct {
@@ -254,7 +256,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 		From                  types.AccAddress
 		FromID                ids.IdentityID
 		IdentityID            ids.IdentityID
-		MutableMetaProperties lists.MetaPropertyList
+		MutableMetaProperties lists.PropertyList
 		MutableProperties     lists.PropertyList
 	}
 	tests := []struct {
@@ -288,7 +290,7 @@ func Test_newMessage(t *testing.T) {
 		from                  types.AccAddress
 		fromID                ids.IdentityID
 		identityID            ids.IdentityID
-		mutableMetaProperties lists.MetaPropertyList
+		mutableMetaProperties lists.PropertyList
 		mutableProperties     lists.PropertyList
 	}
 	tests := []struct {

@@ -44,7 +44,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	asset := Mappable.(documents.Asset)
 
-	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetList()...)))
+	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties)))
 	if err != nil {
 		return newTransactionResponse(err)
 	}

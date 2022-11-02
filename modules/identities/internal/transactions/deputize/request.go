@@ -74,7 +74,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	maintainedProperties, err := utilities.ReadProperties(transactionRequest.MaintainedProperties)
+	maintainedProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MaintainedProperties)
 	if err != nil {
 		return nil, err
 	}

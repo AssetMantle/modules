@@ -16,6 +16,7 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified/base"
 )
@@ -53,8 +54,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	if supplyMetaProperty := metaProperties.GetMetaProperty(constants.SupplyProperty.GetID()); supplyMetaProperty != nil {
-		value := supplyMetaProperty.GetData().(data.DecData).Get()
+	if supplyMetaProperty := metaProperties.GetProperty(constants.SupplyProperty.GetID()); supplyMetaProperty != nil && supplyMetaProperty.IsMeta() {
+		value := supplyMetaProperty.(properties.MetaProperty).GetData().(data.DecData).Get()
 		if auxiliaryResponse := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, value)); !auxiliaryResponse.IsSuccessful() {
 			return newTransactionResponse(auxiliaryResponse.GetError())
 		}

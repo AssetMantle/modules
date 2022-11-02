@@ -20,11 +20,11 @@ import (
 )
 
 type message struct {
-	From                  sdkTypes.AccAddress    `json:"from" valid:"required~required field from missing"`
-	FromID                ids.IdentityID         `json:"fromID" valid:"required~required field fromID missing"`
-	AssetID               ids.AssetID            `json:"assetID" valid:"required~required field assetID missing"`
-	MutableMetaProperties lists.MetaPropertyList `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
-	MutableProperties     lists.PropertyList     `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
+	From                  sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
+	FromID                ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
+	AssetID               ids.AssetID         `json:"assetID" valid:"required~required field assetID missing"`
+	MutableMetaProperties lists.PropertyList  `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
+	MutableProperties     lists.PropertyList  `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
 }
 
 var _ helpers.Message = message{}
@@ -43,7 +43,7 @@ func (message message) GetSignBytes() []byte {
 		message.MutableProperties = base.NewPropertyList(nil)
 	}
 	if len(message.MutableMetaProperties.GetList()) == 0 {
-		message.MutableMetaProperties = base.NewMetaPropertyList(nil)
+		message.MutableMetaProperties = base.NewPropertyList(nil)
 	}
 	return sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message))
 }
@@ -64,7 +64,7 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 func messagePrototype() helpers.Message {
 	return message{}
 }
-func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, assetID ids.AssetID, mutableMetaProperties lists.MetaPropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, assetID ids.AssetID, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return message{
 		From:                  from,
 		FromID:                fromID,

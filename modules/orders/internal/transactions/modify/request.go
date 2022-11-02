@@ -91,10 +91,11 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	mutableProperties, err := utilities.ReadProperties(transactionRequest.MutableProperties)
+	mutableProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableProperties)
 	if err != nil {
 		return nil, err
 	}
+	mutableProperties = mutableProperties.ScrubData()
 
 	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
 	if err != nil {

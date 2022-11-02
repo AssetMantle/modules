@@ -4,6 +4,13 @@
 package issue
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -15,14 +22,9 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
-func createTestInput(t *testing.T) (ids.IdentityID, ids.ClassificationID, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, lists.MetaPropertyList, lists.PropertyList, lists.MetaPropertyList, lists.PropertyList) {
+func createTestInput(t *testing.T) (ids.IdentityID, ids.ClassificationID, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, lists.PropertyList, lists.PropertyList, lists.PropertyList, lists.PropertyList) {
 	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -37,7 +39,7 @@ func createTestInput(t *testing.T) (ids.IdentityID, ids.ClassificationID, string
 	toAccAddress, err = sdkTypes.AccAddressFromBech32(toAddress)
 	require.Nil(t, err)
 
-	var immutableMetaProperties lists.MetaPropertyList
+	var immutableMetaProperties lists.PropertyList
 	immutableMetaProperties, err = utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 
@@ -45,7 +47,7 @@ func createTestInput(t *testing.T) (ids.IdentityID, ids.ClassificationID, string
 	immutableProperties, err = utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 
-	var mutableMetaProperties lists.MetaPropertyList
+	var mutableMetaProperties lists.PropertyList
 	mutableMetaProperties, err = utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 
@@ -103,9 +105,9 @@ func Test_message_GetSignBytes(t *testing.T) {
 		To                      sdkTypes.AccAddress
 		FromID                  ids.IdentityID
 		ClassificationID        ids.ClassificationID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -142,9 +144,9 @@ func Test_message_GetSigners(t *testing.T) {
 		To                      sdkTypes.AccAddress
 		FromID                  ids.IdentityID
 		ClassificationID        ids.ClassificationID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -181,9 +183,9 @@ func Test_message_RegisterCodec(t *testing.T) {
 		To                      sdkTypes.AccAddress
 		FromID                  ids.IdentityID
 		ClassificationID        ids.ClassificationID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	type args struct {
@@ -221,9 +223,9 @@ func Test_message_Route(t *testing.T) {
 		To                      sdkTypes.AccAddress
 		FromID                  ids.IdentityID
 		ClassificationID        ids.ClassificationID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -260,9 +262,9 @@ func Test_message_Type(t *testing.T) {
 		To                      sdkTypes.AccAddress
 		FromID                  ids.IdentityID
 		ClassificationID        ids.ClassificationID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -299,9 +301,9 @@ func Test_message_ValidateBasic(t *testing.T) {
 		To                      sdkTypes.AccAddress
 		FromID                  ids.IdentityID
 		ClassificationID        ids.ClassificationID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -339,9 +341,9 @@ func Test_newMessage(t *testing.T) {
 		to                      sdkTypes.AccAddress
 		fromID                  ids.IdentityID
 		classificationID        ids.ClassificationID
-		immutableMetaProperties lists.MetaPropertyList
+		immutableMetaProperties lists.PropertyList
 		immutableProperties     lists.PropertyList
-		mutableMetaProperties   lists.MetaPropertyList
+		mutableMetaProperties   lists.PropertyList
 		mutableProperties       lists.PropertyList
 	}
 	tests := []struct {

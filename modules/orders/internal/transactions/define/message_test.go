@@ -4,6 +4,13 @@
 package define
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -11,14 +18,9 @@ import (
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
-func CreateTestInputForMessage(t *testing.T) (ids.IdentityID, sdkTypes.AccAddress, lists.MetaPropertyList, lists.PropertyList, lists.MetaPropertyList, lists.PropertyList, sdkTypes.Msg) {
+func CreateTestInputForMessage(t *testing.T) (ids.IdentityID, sdkTypes.AccAddress, lists.PropertyList, lists.PropertyList, lists.PropertyList, lists.PropertyList, sdkTypes.Msg) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -80,13 +82,13 @@ func Test_messagePrototype(t *testing.T) {
 }
 
 func Test_message_GetSignBytes(t *testing.T) {
-	//testFromID, fromAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, testMessage := CreateTestInputForMessage(t)
+	// testFromID, fromAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, testMessage := CreateTestInputForMessage(t)
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromID                  ids.IdentityID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -95,7 +97,7 @@ func Test_message_GetSignBytes(t *testing.T) {
 		want   []byte
 	}{
 		// TODO: Add test cases.
-		//{"+ve", fields{fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(testMessage))},
+		// {"+ve", fields{fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(testMessage))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -119,9 +121,9 @@ func Test_message_GetSigners(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromID                  ids.IdentityID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -154,9 +156,9 @@ func Test_message_RegisterCodec(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromID                  ids.IdentityID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	type args struct {
@@ -190,9 +192,9 @@ func Test_message_Route(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromID                  ids.IdentityID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -225,9 +227,9 @@ func Test_message_Type(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromID                  ids.IdentityID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -260,9 +262,9 @@ func Test_message_ValidateBasic(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromID                  ids.IdentityID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -296,9 +298,9 @@ func Test_newMessage(t *testing.T) {
 	type args struct {
 		from                    sdkTypes.AccAddress
 		fromID                  ids.IdentityID
-		immutableMetaProperties lists.MetaPropertyList
+		immutableMetaProperties lists.PropertyList
 		immutableProperties     lists.PropertyList
-		mutableMetaProperties   lists.MetaPropertyList
+		mutableMetaProperties   lists.PropertyList
 		mutableProperties       lists.PropertyList
 	}
 	tests := []struct {

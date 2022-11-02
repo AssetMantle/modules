@@ -15,6 +15,7 @@ import (
 	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
@@ -47,9 +48,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	burnHeightMetaProperty := metaProperties.GetMetaProperty(constants.BurnHeightProperty.GetID())
-	if burnHeightMetaProperty != nil {
-		burnHeight := burnHeightMetaProperty.GetData().(data.HeightData).Get()
+	if burnHeightMetaProperty := metaProperties.GetProperty(constants.BurnHeightProperty.GetID()); burnHeightMetaProperty != nil {
+		burnHeight := burnHeightMetaProperty.(properties.MetaProperty).GetData().(data.HeightData).Get()
 		if burnHeight.Compare(baseTypes.NewHeight(context.BlockHeight())) > 0 {
 			return newTransactionResponse(errorConstants.NotAuthorized)
 		}

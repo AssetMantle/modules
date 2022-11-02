@@ -62,12 +62,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		}
 	}
 
+	// TODO ***** check logic of what gets scrubbed
 	mutableMetaProperties := message.MutableMetaProperties.Add(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(message.MakerOwnableSplit)))
 	mutableMetaProperties = mutableMetaProperties.Add(baseProperties.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+context.BlockHeight()))))
 
-	scrubbedMutableMetaProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties.GetList()...)))
-	if Error != nil {
-		return newTransactionResponse(Error)
+	scrubbedMutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(mutableMetaProperties)))
+	if err != nil {
+		return newTransactionResponse(err)
 	}
 
 	updatedMutables := order.GetMutables().Mutate(append(scrubbedMutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)

@@ -78,10 +78,10 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 
 	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
-	metaPropertyList := base.NewMetaPropertyList([]properties.MetaProperty{metaProperty}...)
+	metaPropertyList := base.NewPropertyList([]properties.MetaProperty{metaProperty}...)
 
 	t.Run("PositiveCase - ", func(t *testing.T) {
-		want := newAuxiliaryResponse(metaPropertyList.ToPropertyList(), nil)
+		want := newAuxiliaryResponse(metaPropertyList.ToMesaPropertyList(), nil)
 		if got := keepers.MetasKeeper.Help(context, NewAuxiliaryRequest(metaProperty)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

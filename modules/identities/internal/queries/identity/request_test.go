@@ -46,10 +46,10 @@ func Test_newQueryRequest(t *testing.T) {
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
-	//vars := make(map[string]string)
-	//vars["identities"] = "randomString"
-	//cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.IdentityID})
-	//cliContext := context.NewCLIContext().WithCodec(Codec)
+	// vars := make(map[string]string)
+	// vars["identities"] = "randomString"
+	// cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.IdentityID})
+	// cliContext := context.NewCLIContext().WithCodec(Codec)
 	testIdentity, emptyTestIdentity := createTestInput()
 
 	type args struct {
@@ -190,7 +190,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", fields{testIdentity}, args{cliCommand, cliContext}, queryRequest{testIdentity}, false}, //Todo: Need help
+		{"+ve", fields{testIdentity}, args{cliCommand, cliContext}, queryRequest{testIdentity}, false}, // Todo: Need help
 		{"+ve with empty Identity", fields{emptyTestIdentity}, args{cliCommand, cliContext}, queryRequest{emptyTestIdentity}, false},
 	}
 	for _, tt := range tests {

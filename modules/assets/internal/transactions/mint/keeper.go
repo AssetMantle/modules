@@ -19,6 +19,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
@@ -46,7 +47,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	immutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties.GetList()...)))
+	immutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties)))
 	if err != nil {
 		return newTransactionResponse(err)
 	}
@@ -60,7 +61,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
-	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties.GetList()...)))
+	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties)))
 	if err != nil {
 		return newTransactionResponse(err)
 	}
@@ -73,8 +74,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	split := sdkTypes.SmallestDec()
 
-	if metaPropertyList := baseLists.NewMetaPropertyList(append(message.ImmutableMetaProperties.GetList(), message.MutableMetaProperties.GetList()...)...); metaPropertyList.GetMetaProperty(constants.SupplyProperty.GetID()) != nil {
-		split = metaPropertyList.GetMetaProperty(constants.SupplyProperty.GetID()).GetData().(data.DecData).Get()
+	if metaPropertyList := baseLists.NewPropertyList(append(message.ImmutableMetaProperties.GetList(), message.MutableMetaProperties.GetList()...)...); metaPropertyList.GetProperty(constants.SupplyProperty.GetID()) != nil {
+		split = metaPropertyList.GetProperty(constants.SupplyProperty.GetID()).(properties.MetaProperty).GetData().(data.DecData).Get()
 	}
 
 	if auxiliaryResponse := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.ToID, assetID, split)); !auxiliaryResponse.IsSuccessful() {

@@ -4,6 +4,13 @@
 package define
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -11,11 +18,6 @@ import (
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
 	"github.com/AssetMantle/modules/utilities/transaction"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
 func Test_messageFromInterface(t *testing.T) {
@@ -92,9 +94,9 @@ func Test_message_GetSignBytes(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromIdentity            ids.IdentityID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -141,9 +143,9 @@ func Test_message_GetSigners(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromIdentity            ids.IdentityID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -190,9 +192,9 @@ func Test_message_RegisterCodec(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromIdentity            ids.IdentityID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	type args struct {
@@ -240,9 +242,9 @@ func Test_message_Route(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromIdentity            ids.IdentityID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -289,9 +291,9 @@ func Test_message_Type(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromIdentity            ids.IdentityID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -338,9 +340,9 @@ func Test_message_ValidateBasic(t *testing.T) {
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromIdentity            ids.IdentityID
-		ImmutableMetaProperties lists.MetaPropertyList
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -387,9 +389,9 @@ func Test_newMessage(t *testing.T) {
 	type args struct {
 		from                    sdkTypes.AccAddress
 		fromID                  ids.IdentityID
-		immutableMetaProperties lists.MetaPropertyList
+		immutableMetaProperties lists.PropertyList
 		immutableProperties     lists.PropertyList
-		mutableMetaProperties   lists.MetaPropertyList
+		mutableMetaProperties   lists.PropertyList
 		mutableProperties       lists.PropertyList
 	}
 	tests := []struct {

@@ -24,10 +24,10 @@ type message struct {
 	FromID                  ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
 	ToID                    ids.IdentityID      `json:"toID" valid:"required~required field toID missing"`
 	ids.ClassificationID    `json:"classificationID" valid:"required~required field classificationID missing"`
-	ImmutableMetaProperties lists.MetaPropertyList `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing"`
-	ImmutableProperties     lists.PropertyList     `json:"immutableProperties" valid:"required~required field immutableProperties missing"`
-	MutableMetaProperties   lists.MetaPropertyList `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
-	MutableProperties       lists.PropertyList     `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
+	ImmutableMetaProperties lists.PropertyList `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing"`
+	ImmutableProperties     lists.PropertyList `json:"immutableProperties" valid:"required~required field immutableProperties missing"`
+	MutableMetaProperties   lists.PropertyList `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
+	MutableProperties       lists.PropertyList `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
 }
 
 var _ helpers.Message = message{}
@@ -43,13 +43,13 @@ func (message message) ValidateBasic() error {
 }
 func (message message) GetSignBytes() []byte {
 	if len(message.ImmutableMetaProperties.GetList()) == 0 {
-		message.ImmutableMetaProperties = base.NewMetaPropertyList(nil)
+		message.ImmutableMetaProperties = base.NewPropertyList(nil)
 	}
 	if len(message.ImmutableProperties.GetList()) == 0 {
 		message.ImmutableProperties = base.NewPropertyList(nil)
 	}
 	if len(message.MutableMetaProperties.GetList()) == 0 {
-		message.MutableMetaProperties = base.NewMetaPropertyList(nil)
+		message.MutableMetaProperties = base.NewPropertyList(nil)
 	}
 	if len(message.MutableProperties.GetList()) == 0 {
 		message.MutableProperties = base.NewPropertyList(nil)
@@ -73,7 +73,7 @@ func messageFromInterface(msg sdkTypes.Msg) message {
 func messagePrototype() helpers.Message {
 	return message{}
 }
-func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, classificationID ids.ClassificationID, immutableMetaProperties lists.MetaPropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.MetaPropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, classificationID ids.ClassificationID, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return message{
 		From:                    from,
 		FromID:                  fromID,
