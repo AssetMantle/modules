@@ -12,7 +12,6 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
 )
@@ -42,42 +41,27 @@ func TestNewAsset(t *testing.T) {
 }
 
 func Test_asset_GetBurn(t *testing.T) {
-	classificationID, immutables, mutables, testDocument := createTestInput()
+	classificationID, immutables, _, testDocument := createTestInput()
 	testDocumentWithBurn := NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))))
-	testDocumentWithNils := NewDocument(nil, nil, nil)
-	testDocumentWithNilClassificationID := NewDocument(nil, immutables, mutables)
-	testDocumentWithNilImmutables := NewDocument(classificationID, nil, mutables)
-	testDocumentWithNilMutables := NewDocument(classificationID, immutables, nil)
 
 	type fields struct {
 		Document types2.Document
 	}
 	tests := []struct {
-		name      string
-		fields    fields
-		want      properties.Property
-		wantPanic bool
+		name   string
+		fields fields
+		want   properties.Property
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{Document: testDocumentWithBurn}, baseProperties.NewMesaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))), false},
-		{"+ve", fields{Document: testDocument}, constants.BurnHeightProperty, false},
-		{"-ve nil", fields{nil}, constants.BurnHeightProperty, true},
-		{"-ve nil document", fields{testDocumentWithNils}, constants.BurnHeightProperty, true},
-		{"-ve nil classificationID", fields{testDocumentWithNilClassificationID}, constants.BurnHeightProperty, false},
-		//GetProperty() searches by traversing through Immutables and Mutables of a document, hence setting them as nil should cause a fatal panic
-		{"-ve nil immutables", fields{testDocumentWithNilImmutables}, constants.BurnHeightProperty, true},
-		{"-ve nil mutables", fields{testDocumentWithNilMutables}, constants.BurnHeightProperty, true},
+		{"+ve", fields{Document: testDocumentWithBurn}, baseProperties.NewMesaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1)))},
+		{"+ve", fields{Document: testDocument}, constants.BurnHeightProperty},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			asset := asset{
 				Document: tt.fields.Document,
 			}
-			if tt.wantPanic {
-				require.Panics(t, func() {
-					asset.GetBurn()
-				})
-			} else if got := asset.GetBurn(); !reflect.DeepEqual(got, tt.want) {
+			if got := asset.GetBurn(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetBurn() = %v, want %v", got, tt.want)
 			}
 		})

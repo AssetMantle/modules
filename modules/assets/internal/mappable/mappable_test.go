@@ -7,6 +7,7 @@ import (
 	types2 "github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
+	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
 
@@ -74,19 +75,25 @@ func Test_mappable_GetKey(t *testing.T) {
 		Document mappable
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		want   helpers.Key
+		name      string
+		fields    fields
+		want      helpers.Key
+		wantPanic bool
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testMappable}, key.NewKey(baseIDs.NewAssetID(mappable{testMappable}.GetClassificationID(), mappable{testMappable}.GetImmutables()))},
+		{"+ve", fields{testMappable}, key.NewKey(baseIDs.NewAssetID(mappable{testMappable}.GetClassificationID(), mappable{testMappable}.GetImmutables())), false},
+		{"panic case nil", fields{mappable{nil}}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			asset := mappable{
 				Asset: tt.fields.Document,
 			}
-			if got := asset.GetKey(); !reflect.DeepEqual(got, tt.want) {
+			if tt.wantPanic {
+				require.Panics(t, func() {
+					asset.GetKey()
+				})
+			} else if got := asset.GetKey(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetKey() = %v, want %v", got, tt.want)
 			}
 		})
@@ -108,6 +115,7 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve", fields{testMappable}, args{codec: codec.New()}},
+		{"+ve nil", fields{mappable{nil}}, args{codec: codec.New()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
