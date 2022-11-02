@@ -15,7 +15,6 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/http-swagger v1.0.0
 	github.com/swaggo/swag v1.7.0
-	github.com/tendermint/crypto v0.0.0-20191022145703-50d29ede1e15
 	github.com/tendermint/tendermint v0.33.9
 	github.com/tendermint/tm-db v0.5.2
 	honnef.co/go/tools v0.0.1-2020.1.6

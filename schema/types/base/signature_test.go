@@ -8,6 +8,11 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/tendermint/tendermint/crypto"
+
+	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/types"
+
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"

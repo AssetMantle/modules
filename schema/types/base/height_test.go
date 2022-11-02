@@ -4,10 +4,11 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/types"
 	"math"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/types"
 )
 
 func TestNewHeight(t *testing.T) {

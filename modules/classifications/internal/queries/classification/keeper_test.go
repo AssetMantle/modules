@@ -25,6 +25,7 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
@@ -72,7 +73,7 @@ func Test_Query_Keeper_Classification(t *testing.T) {
 	require.Equal(t, nil, Error2)
 
 	classificationID := baseIDs.NewClassificationID(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))
-	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewClassification(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties)))
+	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(base.NewClassification(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))))
 
 	testQueryRequest := newQueryRequest(classificationID)
 	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.NewKey(classificationID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))

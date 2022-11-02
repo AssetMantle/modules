@@ -16,7 +16,7 @@ func TestGenerateRandomAddresses(t *testing.T) {
 		args      args
 		wantPanic bool
 	}{
-		//TODO: check for nil case
+		// TODO: check for nil case
 		{"type test", args{rand.New(rand.NewSource(7))}, false},
 		{"panic case", args{nil}, true},
 	}
@@ -45,7 +45,7 @@ func TestRandomBool(t *testing.T) {
 		args      args
 		wantPanic bool
 	}{
-		//TODO: check for nil case
+		// TODO: check for nil case
 		{"test panic case", args{nil}, true},
 		{"+ve case", args{rand.New(rand.NewSource(7))}, false},
 	}

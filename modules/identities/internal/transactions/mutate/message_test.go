@@ -34,7 +34,7 @@ func createTestInputForMessage(t *testing.T) (types.AccAddress, ids.IdentityID, 
 	testIdentityID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
 	mesaProperty := baseProperties.NewMesaProperty(baseIDs.NewStringID("id1"), baseData.NewStringData("Data1"))
-	testMutableMetaProperties := base.NewMetaProperties([]properties.MetaProperty{metaProperty}...)
+	testMutableMetaProperties := base.NewMetaPropertyList([]properties.MetaProperty{metaProperty}...)
 	testMutableProperties := base.NewPropertyList([]properties.Property{mesaProperty}...)
 
 	return testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties

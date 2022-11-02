@@ -4,11 +4,12 @@
 package base
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
-	"reflect"
-	"testing"
 )
 
 func TestNewDataList(t *testing.T) {
@@ -71,7 +72,7 @@ func Test_dataList_GetList(t *testing.T) {
 		want   []data.Data
 	}{
 		// TODO: Add test cases.
-		{"+ve with empty struct", fields{list{}}, []data.Data{}}, //TODO: issue Panic for nil
+		{"+ve with empty struct", fields{list{}}, []data.Data{}}, // TODO: issue Panic for nil
 		{"+ve", fields{NewList(dataToListables([]data.Data{NewStringData("Data")}...)...)}, []data.Data{NewStringData("Data")}},
 	}
 	for _, tt := range tests {
@@ -130,7 +131,7 @@ func Test_dataList_Search(t *testing.T) {
 		want1  bool
 	}{
 		// TODO: Add test cases.
-		{"+ve with empty struct", fields{NewList(dataToListables([]data.Data{}...)...)}, args{NewStringData("Data")}, 0, false}, //TODO: fix this
+		{"+ve with empty struct", fields{NewList(dataToListables([]data.Data{}...)...)}, args{NewStringData("Data")}, 0, false}, // TODO: fix this
 		{"+ve", fields{NewList(dataToListables([]data.Data{NewStringData("Data")}...)...)}, args{NewStringData("Data")}, 0, true},
 	}
 	for _, tt := range tests {

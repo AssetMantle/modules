@@ -4,10 +4,11 @@
 package make
 
 import (
-	"github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func Test_newTransactionResponse(t *testing.T) {

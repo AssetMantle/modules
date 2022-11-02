@@ -5,20 +5,22 @@ package nub
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
-	"github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/utilities/transaction"
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
+
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func CreateTestInputForRequest(t *testing.T) (*codec.Codec, helpers.CLICommand, context.CLIContext, string, sdkTypes.AccAddress, rest.BaseReq) {

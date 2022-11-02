@@ -4,12 +4,13 @@
 package mapper
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"reflect"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {
@@ -17,7 +18,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mapper
 	}{
-		//TODO: Same data and type but fails to equate
+		// TODO: Same data and type but fails to equate
 		{"+ve", baseHelpers.NewMapper(key.Prototype, mappable.Prototype)},
 	}
 	for _, tt := range tests {
