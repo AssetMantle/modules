@@ -9,7 +9,7 @@ import (
 
 // Note: Arranged alphabetically
 var (
-	AddMaintainer           = baseHelpers.NewCLIFlag("addMaintainer", false, "AddMaintainer")
+	CanAddMaintainer        = baseHelpers.NewCLIFlag("addMaintainer", false, "CanAddMaintainer")
 	AssetID                 = baseHelpers.NewCLIFlag("assetID", "", "AssetID")
 	ClassificationID        = baseHelpers.NewCLIFlag("classificationID", "", "ClassificationID")
 	Coins                   = baseHelpers.NewCLIFlag("coins", "", "Coins")
@@ -27,12 +27,12 @@ var (
 	MutableMetaProperties   = baseHelpers.NewCLIFlag("mutableMetaProperties", "", "mutableMetaProperties")
 	MutableProperties       = baseHelpers.NewCLIFlag("mutableProperties", "", "mutableProperties")
 	MetaID                  = baseHelpers.NewCLIFlag("metaID", "", "MetaID")
-	MutateMaintainer        = baseHelpers.NewCLIFlag("mutateMaintainer", false, "MutateMaintainer")
+	CanMutateMaintainer     = baseHelpers.NewCLIFlag("mutateMaintainer", false, "CanMutateMaintainer")
 	NubID                   = baseHelpers.NewCLIFlag("nubID", "", "NubID")
 	OrderID                 = baseHelpers.NewCLIFlag("orderID", "", "OrderID")
 	OwnableID               = baseHelpers.NewCLIFlag("ownableID", "", "MakerOwnableID")
 	Queuing                 = baseHelpers.NewCLIFlag("queuing", false, "Enable kafka queuing and squashing of transactions")
-	RemoveMaintainer        = baseHelpers.NewCLIFlag("removeMaintainer", false, "RemoveMaintainer")
+	CanRemoveMaintainer     = baseHelpers.NewCLIFlag("removeMaintainer", false, "CanRemoveMaintainer")
 	Value                   = baseHelpers.NewCLIFlag("value", "0", "Value")
 	SplitID                 = baseHelpers.NewCLIFlag("splitID", "", "SplitID")
 	To                      = baseHelpers.NewCLIFlag("to", "", "To")
