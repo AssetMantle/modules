@@ -42,3 +42,8 @@ func idsToListables(ids ...ids.ID) []traits.Listable {
 	}
 	return listables
 }
+func NewIDList(ids ...ids.ID) lists.IDList {
+	return &idList{
+		List: NewList(idsToListables(ids...)...),
+	}
+}
