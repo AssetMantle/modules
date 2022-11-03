@@ -53,9 +53,9 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadString(constants.ToID),
 		cliCommand.ReadString(constants.ClassificationID),
 		cliCommand.ReadString(constants.MaintainedProperties),
-		cliCommand.ReadBool(constants.AddMaintainer),
-		cliCommand.ReadBool(constants.RemoveMaintainer),
-		cliCommand.ReadBool(constants.MutateMaintainer),
+		cliCommand.ReadBool(constants.CanAddMaintainer),
+		cliCommand.ReadBool(constants.CanRemoveMaintainer),
+		cliCommand.ReadBool(constants.CanMutateMaintainer),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
