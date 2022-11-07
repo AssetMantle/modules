@@ -75,10 +75,26 @@ func (maintainer maintainer) MaintainsProperty(propertyID ids.PropertyID) bool {
 	return found
 }
 
+// TODO: Move to a common package
+func idListToDataList(idList lists.IDList) lists.DataList {
+	dataList := baseLists.NewDataList()
+	for _, id := range idList.GetList() {
+		dataList.Add(baseData.NewIDData(id))
+	}
+	return dataList
+}
+
 func NewMaintainer(identityID ids.IdentityID, maintainedClassificationID ids.ClassificationID, maintainedPropertyIDList lists.IDList, permissions lists.IDList) documents.Maintainer {
 	return maintainer{
 		Document: NewDocument(constansts.MaintainerClassificationID,
-			baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(identityID)), baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(maintainedClassificationID)))),
-			baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.MaintainedPropertiesProperty.GetKey(), baseData.NewListData(baseLists.NewDataList(baseData.NewIDData()))), baseProperties.NewMetaProperty(constantProperties.PermissionsProperty.GetKey(), permissions)))),
+			baseQualified.NewImmutables(baseLists.NewPropertyList(
+				baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(identityID)),
+				baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(maintainedClassificationID)),
+			)),
+			baseQualified.NewMutables(baseLists.NewPropertyList(
+				baseProperties.NewMetaProperty(constantProperties.MaintainedPropertiesProperty.GetKey(), baseData.NewListData(idListToDataList(maintainedPropertyIDList))),
+				baseProperties.NewMetaProperty(constantProperties.PermissionsProperty.GetKey(), baseData.NewListData(idListToDataList(permissions))),
+			)),
+		),
 	}
 }
