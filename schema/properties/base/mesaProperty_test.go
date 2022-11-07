@@ -94,7 +94,7 @@ func Test_mesaPropertyFromInterface(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := mesaPropertyFromInterface(tt.args.listable)
+			got, err := propertyFromInterface(tt.args.listable)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("mesaPropertyFromInterface() error = %v, wantErr %v", err, tt.wantErr)
 				return

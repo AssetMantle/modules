@@ -57,6 +57,7 @@ func Test_accAddressDataFromInterface(t *testing.T) {
 		wantErr assert.ErrorAssertionFunc
 	}{
 		// TODO: Add test cases.
+		{"-ve nil", args{nil}, accAddressData{}, assert.Error},
 		{"-ve empty String", args{accAddressData{}}, accAddressData{}, assert.NoError},
 		{"-ve wrong Address", args{stringData{}}, accAddressData{}, assert.Error},
 		{"+ve", args{accAddressData{fromAccAddress}}, accAddressData{fromAccAddress}, assert.NoError},

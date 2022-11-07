@@ -21,7 +21,8 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	maintainerID := base.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.IdentityID)
-	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(maintainerID))
+	x := auxiliaryKeeper.mapper.NewCollection(context)
+	maintainers := x.Fetch(key.NewKey(maintainerID))
 
 	maintainer := maintainers.Get(key.NewKey(maintainerID))
 	if maintainer == nil {

@@ -5,6 +5,7 @@ package define
 
 import (
 	"encoding/json"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 	"reflect"
 	"testing"
 
@@ -16,7 +17,6 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
 	utilities2 "github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 
@@ -45,11 +45,11 @@ func Test_newTransactionRequest(t *testing.T) {
 
 	// immutableMetaProperties, err := utilities.ReadMetaPropertyList(immutableMetaPropertiesString)
 	// require.Equal(t, nil, err)
-	// immutableProperties, err := utilities.ReadProperties(immutablePropertiesString)
+	// immutableProperties, err := utilities.ReadMetaPropertyList(immutablePropertiesString)
 	// require.Equal(t, nil, err)
 	// mutableMetaProperties, err := utilities.ReadMetaPropertyList(mutableMetaPropertiesString)
 	// require.Equal(t, nil, err)
-	// mutableProperties, err := utilities.ReadProperties(mutablePropertiesString)
+	// mutableProperties, err := utilities.ReadMetaPropertyList(mutablePropertiesString)
 	// require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
@@ -278,11 +278,11 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 	immutableMetaProperties, err := utilities2.ReadMetaProperty(immutableMetaPropertiesString)
 	require.Equal(t, nil, err)
-	immutableProperties, err := utilities.ReadProperties(immutablePropertiesString)
+	immutableProperties, err := utilities.ReadMetaPropertyList(immutablePropertiesString)
 	require.Equal(t, nil, err)
 	mutableMetaProperties, err := utilities2.ReadMetaProperty(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
-	mutableProperties, err := utilities.ReadProperties(mutablePropertiesString)
+	mutableProperties, err := utilities.ReadMetaPropertyList(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
@@ -309,7 +309,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{BaseReq: testBaseReq, FromID: "CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=.w1D9MwUD81HdnMXMEn-RjphrPDo76MVVH3EcgA81oVQ=", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, newMessage(fromAccAddress, testIdentity, base.NewMetaPropertyList(immutableMetaProperties), immutableProperties, base.NewMetaPropertyList(mutableMetaProperties), mutableProperties), false},
+		{"+ve", fields{BaseReq: testBaseReq, FromID: "CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=.w1D9MwUD81HdnMXMEn-RjphrPDo76MVVH3EcgA81oVQ=", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, newMessage(fromAccAddress, testIdentity, base.NewPropertyList(immutableMetaProperties), immutableProperties, base.NewPropertyList(mutableMetaProperties), mutableProperties), false},
 		{"-ve wrong Identity", fields{BaseReq: testBaseReq, FromID: "Wrong.Identity", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, nil, true},
 	}
 	for _, tt := range tests {

@@ -4,6 +4,7 @@
 package scrub
 
 import (
+	"github.com/AssetMantle/modules/schema/lists/base"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -17,9 +18,11 @@ import (
 func Test_Scrub_Request(t *testing.T) {
 
 	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
-	testAuxiliaryRequest := NewAuxiliaryRequest(metaProperty)
+	metaPropertyList := base.NewPropertyList([]properties.Property{metaProperty}...)
 
-	require.Equal(t, auxiliaryRequest{MetaPropertyList: []properties.MetaProperty{metaProperty}}, testAuxiliaryRequest)
+	testAuxiliaryRequest := NewAuxiliaryRequest(metaPropertyList)
+
+	require.Equal(t, auxiliaryRequest{PropertyList: metaPropertyList}, testAuxiliaryRequest)
 	require.Equal(t, nil, testAuxiliaryRequest.Validate())
 	require.Equal(t, testAuxiliaryRequest, auxiliaryRequestFromInterface(testAuxiliaryRequest))
 	require.Equal(t, auxiliaryRequest{}, auxiliaryRequestFromInterface(nil))

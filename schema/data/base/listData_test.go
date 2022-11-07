@@ -4,7 +4,11 @@
 package base
 
 import (
+	"bytes"
 	"fmt"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,8 +20,30 @@ import (
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
+
+var fromAddress string = "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
+
+var accAddress string = NewAccAddressData(sdkTypes.AccAddress(fromAddress)).String()
+
+func TestListDataPrototype(t *testing.T) {
+	type args struct {
+		value lists.DataList
+	}
+	tests := []struct {
+		name string
+		args args
+		want data.Data
+	}{
+		// TODO: Add test cases.
+		{"+ve", args{}, listData{}.ZeroValue()},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, ListDataPrototype(), "Prototype(%v)", tt.args.value)
+		})
+	}
+}
 
 func TestNewListData(t *testing.T) {
 	type args struct {
@@ -32,9 +58,10 @@ func TestNewListData(t *testing.T) {
 		{"+ve for some id", args{baseLists.NewDataList(NewStringData("Data"))}, listData{baseLists.NewDataList(NewStringData("Data"))}},
 		{"+ve for empty String", args{baseLists.NewDataList(NewStringData(""))}, listData{baseLists.NewDataList(NewStringData(""))}},
 
-		{"+ve empty string", args{""}, listData{}.ZeroValue(), assert.NoError},
-		{"+ve address string", args{"cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, NewListData(accAddressData{accAddress}), assert.NoError},
-		{"-ve wrong address string format", args{"cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk51f"}, listData{}.ZeroValue(), assert.Error},
+		{"+ve empty datalist", args{baseLists.NewDataList([]data.Data{}...)}, listData{}.ZeroValue()},
+		{"+ve address string", args{baseLists.NewDataList(NewStringData(fromAddress))}, listData{baseLists.NewDataList(NewStringData(fromAddress))}},
+		// TODO: Check address format
+		{"-ve wrong address string format", args{baseLists.NewDataList(NewStringData(fromAddress))}, listData{}.ZeroValue()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -77,21 +104,30 @@ func Test_listData_Add(t *testing.T) {
 		data []data.Data
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   data.ListData
+		name        string
+		fields      fields
+		args        args
+		want        data.ListData
+		wantFailure bool
 	}{
 		// TODO: Add test cases.
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"))}},
-		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{}, listData{baseLists.NewDataList(NewStringData(""))}},
+		{"+ve for multiple ids", fields{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"), NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"), NewStringData("Data"))}, false},
+		{"+ve for multiple ids/nils", fields{baseLists.NewDataList(NewStringData("Data"), NewStringData(""), NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"), NewStringData(""))}, false},
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"))}, false},
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{}, listData{baseLists.NewDataList(NewStringData(""))}, false},
+		{"-ve for value inequality", fields{baseLists.NewDataList(NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data1"))}, true},
+		{"-ve for occurrence inequality", fields{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"), NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"))}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			listData := listData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, listData.Add(tt.args.data...), "Add(%v)", tt.args.data)
+			if tt.wantFailure {
+				assert.NotEqualf(t, tt.want, listData.Add(tt.args.data...), "Add(%v)", tt.args.data)
+			} else {
+				assert.Equalf(t, tt.want, listData.Add(tt.args.data...), "Add(%v)", tt.args.data)
+			}
 		})
 	}
 }
@@ -107,6 +143,7 @@ func Test_listData_Bytes(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, NewStringData("Data").Bytes()}, // for a single data no loop iteration is required so directly it's byte should match
+		{"+ve for multiple ids", fields{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data1"))}, bytes.Join([][]byte{NewStringData("Data").Bytes(), NewStringData("Data1").Bytes()}, nil)},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, []byte(nil)},
 	}
 	for _, tt := range tests {
@@ -127,22 +164,28 @@ func Test_listData_Compare(t *testing.T) {
 		listable traits.Listable
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   int
+		name      string
+		fields    fields
+		args      args
+		want      int
+		wantPanic bool
 	}{
 		// TODO: Add test cases.
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{listData{baseLists.NewDataList(NewStringData("Data"))}}, 0},
-		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{listData{baseLists.NewDataList(NewStringData("Data"))}}, -1},
-		{"Test for Equal case", fields{baseLists.NewDataList(accAddressData{accAddress})}, args{NewListData(accAddressData{accAddress})}, 0, false},
-		{"Test for Not Equal case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, args{NewListData(accAddressData{accAddress})}, 1, false},
-		{"Test for Not Equal case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, args{heightData{baseTypes.NewHeight(100)}}, 1, true},
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{listData{baseLists.NewDataList(NewStringData("Data"))}}, 0, false},
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{listData{baseLists.NewDataList(NewStringData("Data"))}}, -1, false},
+		{"Test for Equal case", fields{baseLists.NewDataList(NewStringData(fromAddress))}, args{listData{baseLists.NewDataList(NewStringData(fromAddress))}}, 0, false},
+		{"Test for Not Equal case", fields{baseLists.NewDataList(NewStringData(fromAddress))}, args{listData{baseLists.NewDataList(NewStringData(accAddress))}}, 1, false},
+		{"panic test for Not Equal case", fields{baseLists.NewDataList(NewStringData(accAddress))}, args{heightData{baseTypes.NewHeight(100)}}, 1, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			listData := listData{
 				Value: tt.fields.Value,
+			}
+			if tt.wantPanic {
+				require.Panics(t, func() {
+					listData.Compare(tt.args.listable)
+				})
 			}
 			assert.Equalf(t, tt.want, listData.Compare(tt.args.listable), "Compare(%v)", tt.args.listable)
 		})
@@ -156,23 +199,23 @@ func Test_listData_GenerateHashID(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   ids.HashID
+		want   string
 	}{
 		// TODO: Add test cases.
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, baseIDs.GenerateHashID(listData{baseLists.NewDataList(NewStringData("Data"))}.Bytes())},
-		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, baseIDs.GenerateHashID(listData{baseLists.NewDataList(NewStringData(""))}.Bytes())},
-		{"empty string", fields{baseLists.NewDataList()}, baseIDs.NewID("")},
-		{"+ve case", fields{baseLists.NewDataList(accAddressData{accAddress})}, baseIDs.NewID("GVpq_tf8khitXl2MmMQfY-Ufu5DdATYNz3ZS9-wIl_U=")},
-		{"-ve case", fields{baseLists.NewDataList(accAddressData{accAddress1})}, baseIDs.NewID("")},
-		{"-ve case with empty datalist", fields{baseLists.NewDataList([]data.Data{}...)}, baseIDs.NewID("")},
-		// {"-ve case with nil data", fields{nil}, baseIDs.NewID("")},
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, baseIDs.GenerateHashID(listData{baseLists.NewDataList(NewStringData("Data"))}.Bytes()).String()},
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, baseIDs.GenerateHashID(listData{baseLists.NewDataList(NewStringData(""))}.Bytes()).String()},
+		{"empty string", fields{baseLists.NewDataList()}, baseIDs.NewStringID("ns").String()},
+		{"+ve case", fields{baseLists.NewDataList(NewStringData(accAddress))}, baseIDs.NewStringID("GVpq_tf8khitXl2MmMQfY-Ufu5DdATYNz3ZS9-wIl_U=").String()},
+		{"-ve case", fields{baseLists.NewDataList(NewStringData(accAddress))}, baseIDs.NewStringID("").String()},
+		{"-ve case with empty datalist", fields{baseLists.NewDataList([]data.Data{}...)}, baseIDs.NewStringID("").String()},
+		{"-ve case with nil data", fields{nil}, baseIDs.NewStringID("").String()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			listData := listData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, listData.GenerateHashID(), "GenerateHashID()")
+			assert.Equalf(t, tt.want, listData.GenerateHashID().String(), "GenerateHashID()")
 		})
 	}
 }

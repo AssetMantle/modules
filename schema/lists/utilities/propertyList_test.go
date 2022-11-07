@@ -24,12 +24,12 @@ func TestReadMetaProperties(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		{"+ve with empty string", args{""}, base.NewPropertyList([]properties2.MetaProperty{}...), false},
-		{"+ve", args{"ID:S|Data,ID1:S|Data1,ID2:S|Data2"}, base.NewPropertyList([]properties2.MetaProperty{base2.NewMetaProperty(base3.NewID("ID"), base2.NewStringData("Data")), base2.NewMetaProperty(base3.NewID("ID1"), base2.NewStringData("Data1")), base2.NewMetaProperty(base3.NewID("ID2"), base2.NewStringData("Data2"))}...), false},
+		{"+ve with empty string", args{""}, base.NewPropertyList([]properties2.Property{}...), false},
+		{"+ve", args{"ID:S|Data,ID1:S|Data1,ID2:S|Data2"}, base.NewPropertyList([]properties2.Property{base2.NewMetaProperty(base3.NewStringID("ID"), base2.NewStringData("Data")), base2.NewMetaProperty(base3.NewStringID("ID1"), base2.NewStringData("Data1")), base2.NewMetaProperty(base3.NewStringID("ID2"), base2.NewStringData("Data2"))}...), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ReadMetaProperties(tt.args.metaPropertiesString)
+			got, err := ReadMetaPropertyList(tt.args.metaPropertiesString)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ReadMetaProperties() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -25,7 +25,7 @@ func Test_newTransactionRequest(t *testing.T) {
 	// require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	// maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
+	// maintainedProperties, err := utilities.ReadMetaPropertyList(maintainedProperty)
 	// require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
@@ -132,7 +132,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 	// require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	// maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
+	// maintainedProperties, err := utilities.ReadMetaPropertyList(maintainedProperty)
 	// require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
@@ -191,7 +191,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	// require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	// maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
+	// maintainedProperties, err := utilities.ReadMetaPropertyList(maintainedProperty)
 	// require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
@@ -287,7 +287,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	// require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	// maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
+	// maintainedProperties, err := utilities.ReadMetaPropertyList(maintainedProperty)
 	// require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
@@ -336,7 +336,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 	// require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	// maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
+	// maintainedProperties, err := utilities.ReadMetaPropertyList(maintainedProperty)
 	// require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}

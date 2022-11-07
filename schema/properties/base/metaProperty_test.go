@@ -68,35 +68,6 @@ func TestNewMetaProperty(t *testing.T) {
 	}
 }
 
-func Test_metaPropertyFromInterface(t *testing.T) {
-	_, testPropertyID, testData, testMetaProperty := createTestInput()
-	type args struct {
-		listable traits.Listable
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    metaProperty
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-		{"+ve", args{testMetaProperty}, metaProperty{testPropertyID, testData}, false},
-		{"+ve with nil", args{metaProperty{}}, metaProperty{}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := metaPropertyFromInterface(tt.args.listable)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("metaPropertyFromInterface() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("metaPropertyFromInterface() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_metaProperty_Compare(t *testing.T) {
 	_, testPropertyID, testData, testMetaProperty := createTestInput()
 	type fields struct {

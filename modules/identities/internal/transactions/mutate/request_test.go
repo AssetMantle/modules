@@ -44,7 +44,7 @@ func createTestInput(t *testing.T) (*codec.Codec, helpers.CLICommand, context.CL
 
 	mutableMetaProperties, err := utilities.ReadMetaPropertyList(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
-	mutableProperties, err := utilities.ReadProperties(mutablePropertiesString)
+	mutableProperties, err := utilities.ReadMetaPropertyList(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

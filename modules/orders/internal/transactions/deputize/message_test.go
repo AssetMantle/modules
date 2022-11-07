@@ -4,6 +4,7 @@
 package deputize
 
 import (
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 	"reflect"
 	"testing"
 
@@ -18,7 +19,6 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
@@ -40,7 +40,7 @@ func CreateTestInputForMessage(t *testing.T) (ids.IdentityID, ids.IdentityID, id
 	require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, err := utilities.ReadProperties(maintainedProperty)
+	maintainedProperties, err := utilities.ReadMetaPropertyList(maintainedProperty)
 	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, true, true, true)
