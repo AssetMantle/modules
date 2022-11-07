@@ -11,7 +11,6 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
-	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
@@ -25,7 +24,6 @@ import (
 
 type transactionKeeper struct {
 	mapper                     helpers.Mapper
-	scrubAuxiliary             helpers.Auxiliary
 	authenticateAuxiliary      helpers.Auxiliary
 	conformAuxiliary           helpers.Auxiliary
 	maintainersVerifyAuxiliary helpers.Auxiliary
@@ -44,12 +42,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	immutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties)))
-	if err != nil {
-		return newTransactionResponse(err)
-	}
-
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...))
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...))
 
 	identityID := baseIDs.NewIdentityID(message.ClassificationID, immutables)
 
@@ -59,11 +52,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 
 	authenticationProperty := baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseLists.NewDataList(baseData.NewAccAddressData(message.To))))
-	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseLists.NewPropertyList(append(message.MutableMetaProperties.GetList(), authenticationProperty)...))))
-
-	if err != nil {
-		return newTransactionResponse(err)
-	}
+	mutableMetaProperties := baseLists.NewPropertyList(append(message.MutableMetaProperties.GetList(), authenticationProperty)...)
 
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
 
@@ -85,8 +74,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			switch value.GetName() {
 			case conform.Auxiliary.GetName():
 				transactionKeeper.conformAuxiliary = value
-			case scrub.Auxiliary.GetName():
-				transactionKeeper.scrubAuxiliary = value
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
 			case verify.Auxiliary.GetName():
