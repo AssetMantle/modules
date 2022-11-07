@@ -28,6 +28,13 @@ func (propertyList propertyList) GetList() []properties.Property {
 	}
 	return Properties
 }
+func (propertyList propertyList) GetPropertyIDList() lists.IDList {
+	propertyIDList := NewIDList()
+	for _, property := range propertyList.GetList() {
+		propertyIDList = propertyIDList.Add(property.GetID())
+	}
+	return propertyIDList
+}
 func (propertyList propertyList) Add(properties ...properties.Property) lists.PropertyList {
 	propertyList.List = propertyList.List.Add(propertiesToListables(properties...)...)
 	return propertyList

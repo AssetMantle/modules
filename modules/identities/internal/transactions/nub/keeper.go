@@ -9,13 +9,13 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
-	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/ids/constansts"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
@@ -37,14 +37,14 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	// TODO ***** add nub classificationID to genesis
 
-	identityID := baseIDs.NewIdentityID(module.NubClassificationID, immutables)
+	identityID := baseIDs.NewIdentityID(constansts.NubClassificationID, immutables)
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 	if identities.Get(key.NewKey(identityID)) != nil {
 		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
-	identities.Add(mappable.NewMappable(base.NewIdentity(module.NubClassificationID, immutables, baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseLists.NewDataList(baseData.NewAccAddressData(message.From)))))))))
+	identities.Add(mappable.NewMappable(base.NewIdentity(constansts.NubClassificationID, immutables, baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseLists.NewDataList(baseData.NewAccAddressData(message.From)))))))))
 
 	return newTransactionResponse(nil)
 }
