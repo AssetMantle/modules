@@ -6,7 +6,7 @@ package mappable
 import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	types2 "github.com/AssetMantle/modules/schema/documents"
+	documentsSchema "github.com/AssetMantle/modules/schema/documents"
 	asset "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -32,12 +32,12 @@ func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mu
 func TestNewMappable(t *testing.T) {
 	classificationID, immutables, mutables, testMappable := createTestInput()
 	type args struct {
-		Asset types2.Document
+		Asset documentsSchema.Document
 	}
 	tests := []struct {
 		name string
 		args args
-		want types2.Document
+		want documentsSchema.Document
 	}{
 		// TODO: Add test cases.
 		{"+ve", args{asset.NewDocument(classificationID, immutables, mutables)}, testMappable},

@@ -4,7 +4,7 @@
 package define
 
 import (
-	base3 "github.com/AssetMantle/modules/schema/documents/base"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"reflect"
 	"testing"
 
@@ -85,7 +85,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	testClassificationID := baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList()))
 
-	keepers.ClassificationsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(base3.NewClassification(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList()))))
+	keepers.ClassificationsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewClassification(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList()))))
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newAuxiliaryResponse(classificationID, nil)
