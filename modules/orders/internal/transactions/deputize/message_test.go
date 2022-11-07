@@ -116,9 +116,9 @@ func Test_message_GetSignBytes(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				AddMaintainer:        tt.fields.AddMaintainer,
-				RemoveMaintainer:     tt.fields.RemoveMaintainer,
-				MutateMaintainer:     tt.fields.MutateMaintainer,
+				CanAddMaintainer:     tt.fields.AddMaintainer,
+				CanRemoveMaintainer:  tt.fields.RemoveMaintainer,
+				CanMutateMaintainer:  tt.fields.MutateMaintainer,
 			}
 			if got := message.GetSignBytes(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSignBytes() = %v, want %v", got, tt.want)
@@ -156,9 +156,9 @@ func Test_message_GetSigners(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				AddMaintainer:        tt.fields.AddMaintainer,
-				RemoveMaintainer:     tt.fields.RemoveMaintainer,
-				MutateMaintainer:     tt.fields.MutateMaintainer,
+				CanAddMaintainer:     tt.fields.AddMaintainer,
+				CanRemoveMaintainer:  tt.fields.RemoveMaintainer,
+				CanMutateMaintainer:  tt.fields.MutateMaintainer,
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
@@ -199,9 +199,9 @@ func Test_message_RegisterCodec(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				AddMaintainer:        tt.fields.AddMaintainer,
-				RemoveMaintainer:     tt.fields.RemoveMaintainer,
-				MutateMaintainer:     tt.fields.MutateMaintainer,
+				CanAddMaintainer:     tt.fields.AddMaintainer,
+				CanRemoveMaintainer:  tt.fields.RemoveMaintainer,
+				CanMutateMaintainer:  tt.fields.MutateMaintainer,
 			}
 			me.RegisterCodec(tt.args.codec)
 		})
@@ -237,9 +237,9 @@ func Test_message_Route(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				AddMaintainer:        tt.fields.AddMaintainer,
-				RemoveMaintainer:     tt.fields.RemoveMaintainer,
-				MutateMaintainer:     tt.fields.MutateMaintainer,
+				CanAddMaintainer:     tt.fields.AddMaintainer,
+				CanRemoveMaintainer:  tt.fields.RemoveMaintainer,
+				CanMutateMaintainer:  tt.fields.MutateMaintainer,
 			}
 			if got := message.Route(); got != tt.want {
 				t.Errorf("Route() = %v, want %v", got, tt.want)
@@ -277,9 +277,9 @@ func Test_message_Type(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				AddMaintainer:        tt.fields.AddMaintainer,
-				RemoveMaintainer:     tt.fields.RemoveMaintainer,
-				MutateMaintainer:     tt.fields.MutateMaintainer,
+				CanAddMaintainer:     tt.fields.AddMaintainer,
+				CanRemoveMaintainer:  tt.fields.RemoveMaintainer,
+				CanMutateMaintainer:  tt.fields.MutateMaintainer,
 			}
 			if got := message.Type(); got != tt.want {
 				t.Errorf("Type() = %v, want %v", got, tt.want)
@@ -318,9 +318,9 @@ func Test_message_ValidateBasic(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				AddMaintainer:        tt.fields.AddMaintainer,
-				RemoveMaintainer:     tt.fields.RemoveMaintainer,
-				MutateMaintainer:     tt.fields.MutateMaintainer,
+				CanAddMaintainer:     tt.fields.AddMaintainer,
+				CanRemoveMaintainer:  tt.fields.RemoveMaintainer,
+				CanMutateMaintainer:  tt.fields.MutateMaintainer,
 			}
 			if err := message.ValidateBasic(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

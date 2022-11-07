@@ -25,9 +25,12 @@ type transactionRequest struct {
 	ToID                 string       `json:"toID" valid:"required~required field toID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field toID"`
 	ClassificationID     string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^[A-Za-z0-9-_=.]+$)~invalid field classificationID"`
 	MaintainedProperties string       `json:"maintainedProperties" valid:"required~required field maintainedProperties missing, matches(^.*$)~invalid field maintainedProperties"`
-	AddMaintainer        bool         `json:"addMaintainer"`
-	RemoveMaintainer     bool         `json:"removeMaintainer"`
-	MutateMaintainer     bool         `json:"mutateMaintainer"`
+	CanMintAsset         bool         `json:"canMintAsset"`
+	CanBurnAsset         bool         `json:"canBurnAsset"`
+	CanRenumerateAsset   bool         `json:"canRenumerateAsset"`
+	CanAddMaintainer     bool         `json:"canAddMaintainer"`
+	CanRemoveMaintainer  bool         `json:"canRemoveMaintainer"`
+	CanMutateMaintainer  bool         `json:"canMutateMaintainer"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -53,6 +56,9 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadString(constants.ToID),
 		cliCommand.ReadString(constants.ClassificationID),
 		cliCommand.ReadString(constants.MaintainedProperties),
+		cliCommand.ReadBool(constants.CanMintAsset),
+		cliCommand.ReadBool(constants.CanBurnAsset),
+		cliCommand.ReadBool(constants.CanRenumerateAsset),
 		cliCommand.ReadBool(constants.CanAddMaintainer),
 		cliCommand.ReadBool(constants.CanRemoveMaintainer),
 		cliCommand.ReadBool(constants.CanMutateMaintainer),
@@ -100,9 +106,12 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		toID,
 		classificationID,
 		maintainedProperties,
-		transactionRequest.AddMaintainer,
-		transactionRequest.RemoveMaintainer,
-		transactionRequest.MutateMaintainer,
+		transactionRequest.CanMintAsset,
+		transactionRequest.CanBurnAsset,
+		transactionRequest.CanRenumerateAsset,
+		transactionRequest.CanAddMaintainer,
+		transactionRequest.CanRemoveMaintainer,
+		transactionRequest.CanMutateMaintainer,
 	), nil
 }
 func (transactionRequest) RegisterCodec(codec *codec.Codec) {
@@ -112,15 +121,18 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainedProperties string, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainedProperties string, canMintAsset bool, canBurnAsset bool, canRenumerateAsset bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:              baseReq,
 		FromID:               fromID,
 		ToID:                 toID,
 		ClassificationID:     classificationID,
 		MaintainedProperties: maintainedProperties,
-		AddMaintainer:        addMaintainer,
-		RemoveMaintainer:     removeMaintainer,
-		MutateMaintainer:     mutateMaintainer,
+		CanMintAsset:         canMintAsset,
+		CanBurnAsset:         canBurnAsset,
+		CanRenumerateAsset:   canRenumerateAsset,
+		CanAddMaintainer:     canAddMaintainer,
+		CanRemoveMaintainer:  canRemoveMaintainer,
+		CanMutateMaintainer:  canMutateMaintainer,
 	}
 }

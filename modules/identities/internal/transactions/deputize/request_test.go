@@ -99,7 +99,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", AddMaintainer: false, RemoveMaintainer: false, MutateMaintainer: false}, args{cliCommand, cliContext}, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", AddMaintainer: false, RemoveMaintainer: false, MutateMaintainer: false}, false},
+		{"+ve", fields{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", AddMaintainer: false, RemoveMaintainer: false, MutateMaintainer: false}, args{cliCommand, cliContext}, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -109,9 +109,9 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				AddMaintainer:        tt.fields.AddMaintainer,
-				RemoveMaintainer:     tt.fields.RemoveMaintainer,
-				MutateMaintainer:     tt.fields.MutateMaintainer,
+				CanAddMaintainer:     tt.fields.AddMaintainer,
+				CanRemoveMaintainer:  tt.fields.RemoveMaintainer,
+				CanMutateMaintainer:  tt.fields.MutateMaintainer,
 			}
 			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.cliContext)
 			if (err != nil) != tt.wantErr {
@@ -168,9 +168,9 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				AddMaintainer:        tt.fields.AddMaintainer,
-				RemoveMaintainer:     tt.fields.RemoveMaintainer,
-				MutateMaintainer:     tt.fields.MutateMaintainer,
+				CanAddMaintainer:     tt.fields.AddMaintainer,
+				CanRemoveMaintainer:  tt.fields.RemoveMaintainer,
+				CanMutateMaintainer:  tt.fields.MutateMaintainer,
 			}
 			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
 			if (err != nil) != tt.wantErr {
@@ -221,9 +221,9 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				AddMaintainer:        tt.fields.AddMaintainer,
-				RemoveMaintainer:     tt.fields.RemoveMaintainer,
-				MutateMaintainer:     tt.fields.MutateMaintainer,
+				CanAddMaintainer:     tt.fields.AddMaintainer,
+				CanRemoveMaintainer:  tt.fields.RemoveMaintainer,
+				CanMutateMaintainer:  tt.fields.MutateMaintainer,
 			}
 			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
@@ -264,9 +264,9 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				AddMaintainer:        tt.fields.AddMaintainer,
-				RemoveMaintainer:     tt.fields.RemoveMaintainer,
-				MutateMaintainer:     tt.fields.MutateMaintainer,
+				CanAddMaintainer:     tt.fields.AddMaintainer,
+				CanRemoveMaintainer:  tt.fields.RemoveMaintainer,
+				CanMutateMaintainer:  tt.fields.MutateMaintainer,
 			}
 			got, err := transactionRequest.MakeMsg()
 			if (err != nil) != tt.wantErr {
@@ -320,9 +320,9 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				AddMaintainer:        tt.fields.AddMaintainer,
-				RemoveMaintainer:     tt.fields.RemoveMaintainer,
-				MutateMaintainer:     tt.fields.MutateMaintainer,
+				CanAddMaintainer:     tt.fields.AddMaintainer,
+				CanRemoveMaintainer:  tt.fields.RemoveMaintainer,
+				CanMutateMaintainer:  tt.fields.MutateMaintainer,
 			}
 			tr.RegisterCodec(tt.args.codec)
 		})
@@ -366,9 +366,9 @@ func Test_transactionRequest_Validate(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				AddMaintainer:        tt.fields.AddMaintainer,
-				RemoveMaintainer:     tt.fields.RemoveMaintainer,
-				MutateMaintainer:     tt.fields.MutateMaintainer,
+				CanAddMaintainer:     tt.fields.AddMaintainer,
+				CanRemoveMaintainer:  tt.fields.RemoveMaintainer,
+				CanMutateMaintainer:  tt.fields.MutateMaintainer,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
