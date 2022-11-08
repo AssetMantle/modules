@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"testing"
 
-	types2 "github.com/cosmos/cosmos-sdk/types"
+	typesCosmosSdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -59,7 +59,7 @@ func Test_heightDataFromInterface(t *testing.T) {
 		{"Test for empty height data", args{heightData{}}, heightData{}, false, ""},
 		{"Test for +ve int height data", args{heightData{baseTypes.NewHeight(100)}}, heightData{baseTypes.NewHeight(100)}, false, ""},
 		{"Test for -ve int height data", args{heightData{baseTypes.NewHeight(-100)}}, heightData{baseTypes.NewHeight(-100)}, false, ""},
-		{"Test for Other listable Type", args{decData{types2.ZeroDec()}.ZeroValue()}, heightData{}, true, constants.MetaDataError.Error()},
+		{"Test for Other listable Type", args{decData{typesCosmosSdk.ZeroDec()}.ZeroValue()}, heightData{}, true, constants.MetaDataError.Error()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -4,6 +4,7 @@
 package scrub
 
 import (
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -13,14 +14,13 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
-	base2 "github.com/AssetMantle/modules/schema/properties/base"
 )
 
 func Test_Super_Response(t *testing.T) {
 
-	metaProperty := base2.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
+	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
 	metaPropertyList := base.NewPropertyList([]properties.Property{metaProperty}...)
-	property := base2.NewMesaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
+	property := baseProperties.NewMesaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
 	propertyList := base.NewPropertyList([]properties.Property{property}...)
 
 	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList.ScrubData(), nil)
