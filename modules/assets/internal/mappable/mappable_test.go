@@ -4,58 +4,29 @@
 package mappable
 
 import (
-	"reflect"
-	"testing"
-
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	types2 "github.com/AssetMantle/modules/schema/documents"
-	base2 "github.com/AssetMantle/modules/schema/documents/base"
+	documentsSchema "github.com/AssetMantle/modules/schema/documents"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/stretchr/testify/require"
+	"reflect"
+	"testing"
 )
 
-func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, types2.Document) {
+func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, mappable) {
 	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	testDocument := base2.NewDocument(classificationID, immutables, mutables)
-	return classificationID, immutables, mutables, testDocument
-}
-
-func TestNewAsset(t *testing.T) {
-	classificationID, immutables, mutables, _ := createTestInput()
-	type args struct {
-		classificationID ids.ClassificationID
-		immutables       qualified.Immutables
-		mutables         qualified.Mutables
-	}
-	tests := []struct {
-		name string
-		args args
-		want types2.Asset
-	}{
-		// TODO: Add test cases.
-		{"+ve", args{classificationID: classificationID, immutables: immutables, mutables: mutables}, mappable{Document: base2.NewDocument(classificationID, immutables, mutables)}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewAsset(tt.args.classificationID, tt.args.immutables, tt.args.mutables); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewAsset() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	testMappable := mappable{Asset: baseDocuments.NewAsset(classificationID, immutables, mutables)}
+	return classificationID, immutables, mutables, testMappable
 }
 
 func TestPrototype(t *testing.T) {
@@ -75,118 +46,63 @@ func TestPrototype(t *testing.T) {
 	}
 }
 
-func Test_asset_GetBurn(t *testing.T) {
-	classificationID, immutables, _, testDocument := createTestInput()
-	testDocumentWithBurn := base2.NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))))
-
-	type fields struct {
-		Document types2.Document
+func TestNewMappable(t *testing.T) {
+	classificationID, immutables, mutables, testMappable := createTestInput()
+	type args struct {
+		Asset documentsSchema.Asset
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		want   properties.Property
+		name string
+		args args
+		want documentsSchema.Asset
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{Document: testDocumentWithBurn}, baseProperties.NewMesaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1)))},
-		{"+ve", fields{Document: testDocument}, constants.BurnHeightProperty},
+		{"+ve", args{baseDocuments.NewAsset(classificationID, immutables, mutables)}, testMappable},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			asset := mappable{
-				Document: tt.fields.Document,
-			}
-			if got := asset.GetBurn(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetBurn() = %v, want %v", got, tt.want)
+			if got := NewMappable(tt.args.Asset); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewAsset() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_asset_GetKey(t *testing.T) {
-	_, _, _, testDocument := createTestInput()
+func Test_mappable_GetKey(t *testing.T) {
+	_, _, _, testMappable := createTestInput()
 	type fields struct {
-		Document types2.Document
+		Document mappable
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		want   helpers.Key
+		name      string
+		fields    fields
+		want      helpers.Key
+		wantPanic bool
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testDocument}, key.NewKey(baseIDs.NewAssetID(mappable{testDocument}.GetClassificationID(), mappable{testDocument}.GetImmutables()))},
+		{"+ve", fields{testMappable}, key.NewKey(baseIDs.NewAssetID(mappable{testMappable}.GetClassificationID(), mappable{testMappable}.GetImmutables())), false},
+		{"panic case nil", fields{mappable{nil}}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			asset := mappable{
-				Document: tt.fields.Document,
+				Asset: tt.fields.Document,
 			}
-			if got := asset.GetKey(); !reflect.DeepEqual(got, tt.want) {
+			if tt.wantPanic {
+				require.Panics(t, func() {
+					asset.GetKey()
+				})
+			} else if got := asset.GetKey(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_asset_GetLock(t *testing.T) {
-	classificationID, immutables, _, testDocument := createTestInput()
-	testDocumentWithLock := base2.NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.LockProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))))
-
+func Test_mappable_RegisterCodec(t *testing.T) {
+	_, _, _, testMappable := createTestInput()
 	type fields struct {
-		Document types2.Document
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   properties.Property
-	}{
-		// TODO: Add test cases.
-		{"+ve with default lock", fields{testDocument}, constants.LockProperty},
-		{"+ve with mutated", fields{testDocumentWithLock}, baseProperties.NewMesaProperty(constants.LockProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1)))},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			asset := mappable{
-				Document: tt.fields.Document,
-			}
-			if got := asset.GetLock(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetLock() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_asset_GetSupply(t *testing.T) {
-	classificationID, immutables, _, testDocument := createTestInput()
-	testDocumentWithSupply := base2.NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.SupplyProperty.GetKey(), baseData.NewDecData(types.NewDec(1))))))
-	type fields struct {
-		Document types2.Document
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   properties.Property
-	}{
-		// TODO: Add test cases.
-		{"+ve", fields{testDocument}, constants.SupplyProperty},
-		{"+ve", fields{testDocumentWithSupply}, baseProperties.NewMesaProperty(constants.SupplyProperty.GetKey(), baseData.NewDecData(types.NewDec(1)))},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			asset := mappable{
-				Document: tt.fields.Document,
-			}
-			if got := asset.GetSupply(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetSupply() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_asset_RegisterCodec(t *testing.T) {
-	_, _, _, testDocument := createTestInput()
-	type fields struct {
-		Document types2.Document
+		Document mappable
 	}
 	type args struct {
 		codec *codec.Codec
@@ -197,12 +113,13 @@ func Test_asset_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testDocument}, args{codec: codec.New()}},
+		{"+ve", fields{testMappable}, args{codec: codec.New()}},
+		{"+ve nil", fields{mappable{nil}}, args{codec: codec.New()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			as := mappable{
-				Document: tt.fields.Document,
+				Asset: tt.fields.Document,
 			}
 			as.RegisterCodec(tt.args.codec)
 		})

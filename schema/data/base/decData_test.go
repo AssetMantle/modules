@@ -5,6 +5,7 @@ package base
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
 
@@ -127,22 +128,30 @@ func Test_decData_GenerateHashID(t *testing.T) {
 		Value types.Dec
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		want   ids.HashID
+		name      string
+		fields    fields
+		want      ids.HashID
+		wantPanic bool
 	}{
 		// TODO: Update Unit tests after fix
-		{"+ve with nil", fields{types.Dec{}}, baseIDs.GenerateHashID(decData{}.Bytes())}, // TODO: Panics for nil Dec
-		{"+ve with zero dec", fields{types.ZeroDec()}, baseIDs.GenerateHashID()},
-		{"+ve", fields{types.NewDec(100)}, baseIDs.GenerateHashID(decData{types.NewDec(100)}.Bytes())},
-		{"+ve with -ve Dec", fields{types.NewDec(-100)}, baseIDs.GenerateHashID(decData{types.NewDec(-100)}.Bytes())},
+		{"panic case with nil", fields{types.Dec{}}, baseIDs.GenerateHashID([]byte{}), true}, // TODO: Check if Panic case for nil Dec is expected behaviour
+		{"+ve with zero dec", fields{types.ZeroDec()}, baseIDs.GenerateHashID(), false},
+		{"+ve", fields{types.NewDec(100)}, baseIDs.GenerateHashID(decData{types.NewDec(100)}.Bytes()), false},
+		{"+ve with -ve Dec", fields{types.NewDec(-100)}, baseIDs.GenerateHashID(decData{types.NewDec(-100)}.Bytes()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			decData := decData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, decData.GenerateHashID(), "GenerateHashID()")
+			if tt.wantPanic {
+				require.Panics(t, func() {
+					decData.GenerateHashID()
+				})
+			} else {
+				assert.Equalf(t, tt.want, decData.GenerateHashID(), "GenerateHashID()")
+			}
+
 		})
 	}
 }
@@ -177,22 +186,27 @@ func Test_decData_GetID(t *testing.T) {
 		Value types.Dec
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		want   ids.DataID
+		name      string
+		fields    fields
+		want      ids.DataID
+		wantPanic bool
 	}{
 		// TODO: Add test cases.
-		{"+ve with nil", fields{types.Dec{}}, baseIDs.NewDataID(decData{})}, // TODO: paincs for nil
-		{"+ve with zero dec", fields{types.ZeroDec()}, baseIDs.NewDataID(decData{types.ZeroDec()})},
-		{"+ve", fields{types.NewDec(100)}, baseIDs.NewDataID(decData{types.NewDec(100)})},
-		{"+ve with -ve Dec", fields{types.NewDec(-100)}, baseIDs.NewDataID(decData{types.NewDec(-100)})},
+		{"panic case with nil", fields{types.Dec{}}, nil, true}, // TODO: Check whether planned panic in NewDataID is expected behaviour
+		{"+ve with zero dec", fields{types.ZeroDec()}, baseIDs.NewDataID(decData{types.ZeroDec()}), false},
+		{"+ve", fields{types.NewDec(100)}, baseIDs.NewDataID(decData{types.NewDec(100)}), false},
+		{"+ve with -ve Dec", fields{types.NewDec(-100)}, baseIDs.NewDataID(decData{types.NewDec(-100)}), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			decData := decData{
 				Value: tt.fields.Value,
 			}
-			if got := decData.GetID(); !reflect.DeepEqual(got, tt.want) {
+			if tt.wantPanic {
+				require.Panics(t, func() {
+					decData.GetID()
+				})
+			} else if got := decData.GetID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetID() = %v, want %v", got, tt.want)
 			}
 		})

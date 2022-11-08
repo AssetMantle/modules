@@ -4,6 +4,7 @@
 package base
 
 import (
+	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
 
@@ -167,21 +168,27 @@ func Test_document_GetProperty(t *testing.T) {
 		propertyID ids.PropertyID
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   properties.Property
+		name      string
+		fields    fields
+		args      args
+		want      properties.Property
+		wantPanic bool
 	}{
 		// TODO: Update unit test after issue # fix
-		{"+ve for Immutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, args{testImmutablePropertyID}, testImmutables.GetImmutablePropertyList().GetProperty(testImmutablePropertyID)},
-		{"+ve with nil classificationID for Immutable Property", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, args{testImmutablePropertyID}, testImmutables.GetImmutablePropertyList().GetProperty(testImmutablePropertyID)},
-		{"+ve with nil immutables for Immutable Property", fields{ClassificationID: classificationID, Immutables: baseQualified.NewImmutables(baseLists.NewPropertyList()), Mutables: testMutables}, args{testImmutablePropertyID}, nil}, // TODO: panics for empty immutable struct
-		{"+ve with nil mutables for Immutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: baseQualified.NewMutables(baseLists.NewPropertyList())}, args{testImmutablePropertyID}, testImmutables.GetImmutablePropertyList().GetProperty(testImmutablePropertyID)},
-		{"+ve with all nil", fields{nil, baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList())}, args{testImmutablePropertyID}, nil}, // TODO: panics for empty immutable struct
-		{"+ve for Mutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID)},
-		{"+ve with nil classificationID for Mutable Property", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID)},
-		{"+ve with nil immutables for Mutable Property", fields{ClassificationID: classificationID, Immutables: baseQualified.NewImmutables(baseLists.NewPropertyList()), Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID)}, // TODO: panics for empty immutable struct
-		{"+ve with nil mutables for Mutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: baseQualified.NewMutables(baseLists.NewPropertyList())}, args{testMutablePropertyID}, nil},
+		{"+ve for Immutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, args{testImmutablePropertyID}, testImmutables.GetImmutablePropertyList().GetProperty(testImmutablePropertyID), false},
+		{"+ve with nil classificationID for Immutable Property", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, args{testImmutablePropertyID}, testImmutables.GetImmutablePropertyList().GetProperty(testImmutablePropertyID), false},
+		{"+ve with nil immutables for Immutable Property", fields{ClassificationID: classificationID, Immutables: baseQualified.NewImmutables(baseLists.NewPropertyList()), Mutables: testMutables}, args{testImmutablePropertyID}, nil, false}, // TODO: panics for empty immutable struct
+		{"+ve with nil mutables for Immutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: baseQualified.NewMutables(baseLists.NewPropertyList())}, args{testImmutablePropertyID}, testImmutables.GetImmutablePropertyList().GetProperty(testImmutablePropertyID), false},
+		{"+ve with all nil", fields{nil, baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList())}, args{testImmutablePropertyID}, nil, false}, // TODO: panics for empty immutable struct
+		{"+ve for Mutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID), false},
+		{"+ve with nil classificationID for Mutable Property", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID), false},
+		{"+ve with nil immutables for Mutable Property", fields{ClassificationID: classificationID, Immutables: baseQualified.NewImmutables(baseLists.NewPropertyList()), Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID), false}, // TODO: panics for empty immutable struct
+		{"+ve with nil mutables for Mutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: baseQualified.NewMutables(baseLists.NewPropertyList())}, args{testMutablePropertyID}, nil, false},
+		//Panics for empty structs
+		//GetProperty() searches by traversing through Immutables and Mutables of a document, hence setting them as nil should cause a fatal panic
+		{"panic case nil immutables", fields{classificationID, nil, testMutables}, args{testImmutablePropertyID}, nil, true},
+		{"panic case nil mutables", fields{classificationID, testImmutables, nil}, args{testImmutablePropertyID}, nil, true},
+		{"panic case nil document", fields{nil, nil, nil}, args{testImmutablePropertyID}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -190,7 +197,11 @@ func Test_document_GetProperty(t *testing.T) {
 				Immutables:       tt.fields.Immutables,
 				Mutables:         tt.fields.Mutables,
 			}
-			if got := document.GetProperty(tt.args.propertyID); !reflect.DeepEqual(got, tt.want) {
+			if tt.wantPanic {
+				require.Panics(t, func() {
+					document.GetProperty(tt.args.propertyID)
+				})
+			} else if got := document.GetProperty(tt.args.propertyID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetProperty() = %v, want %v", got, tt.want)
 			}
 		})
@@ -209,17 +220,20 @@ func Test_document_Mutate(t *testing.T) {
 		propertyList []properties.Property
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   documents.Document
+		name      string
+		fields    fields
+		args      args
+		want      documents.Document
+		wantPanic bool
 	}{
 		// TODO: Update after #59 fix https://github.com/AssetMantle/modules/issues/59
-		{"+ve with no mutation", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, args{}, document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}},
-		{"+ve with nil classificationID", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, args{[]properties.Property{testMutateProperty}}, document{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}.Mutate(testMutateProperty)},
-		{"+ve with nil immutables", fields{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}, args{[]properties.Property{testMutateProperty}}, document{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}.Mutate(testMutateProperty)},
-		{"+ve with nil mutables", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: baseQualified.NewMutables(baseLists.NewPropertyList())}, args{[]properties.Property{testMutateProperty}}, document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: baseQualified.NewMutables(baseLists.NewPropertyList())}.Mutate(testMutateProperty)}, // TODO: fix this
-		{"+ve with all nil", fields{nil, baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList())}, args{[]properties.Property{testMutateProperty}}, document{nil, baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList())}.Mutate(testMutateProperty)},                            // TODO: fix this
+		{"+ve with no mutation", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, args{}, document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, false},
+		{"+ve with nil classificationID", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, args{[]properties.Property{testMutateProperty}}, document{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}.Mutate(testMutateProperty), false},
+		{"+ve with nil immutables", fields{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}, args{[]properties.Property{testMutateProperty}}, document{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}.Mutate(testMutateProperty), false},
+		{"+ve with nil mutables", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: baseQualified.NewMutables(baseLists.NewPropertyList())}, args{[]properties.Property{testMutateProperty}}, document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: baseQualified.NewMutables(baseLists.NewPropertyList())}.Mutate(testMutateProperty), false}, // TODO: fix this
+		{"+ve with all nil", fields{nil, baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList())}, args{[]properties.Property{testMutateProperty}}, document{nil, baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList())}.Mutate(testMutateProperty), false},                            // TODO: fix this
+		{"panic case nil document", fields{nil, nil, nil}, args{[]properties.Property{testMutateProperty}}, nil, true},
+		{"panic case nil mutables", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: nil}, args{[]properties.Property{testMutateProperty}}, document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: baseQualified.NewMutables(baseLists.NewPropertyList())}.Mutate(testMutateProperty), true}, // TODO: fix this
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -228,7 +242,11 @@ func Test_document_Mutate(t *testing.T) {
 				Immutables:       tt.fields.Immutables,
 				Mutables:         tt.fields.Mutables,
 			}
-			if got := document.Mutate(tt.args.propertyList...); !reflect.DeepEqual(got, tt.want) {
+			if tt.wantPanic {
+				require.Panics(t, func() {
+					document.Mutate(tt.args.propertyList...)
+				})
+			} else if got := document.Mutate(tt.args.propertyList...); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Mutate() = %v, want %v", got, tt.want)
 			}
 		})

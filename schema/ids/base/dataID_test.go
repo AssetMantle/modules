@@ -4,6 +4,7 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/traits"
 	"reflect"
 	"testing"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/AssetMantle/modules/schema/data/base"
 
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/traits"
 )
 
 // func TestNewDataID(t *testing.T) {

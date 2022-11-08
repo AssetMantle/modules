@@ -27,6 +27,7 @@ func TestNewIDData(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve", args{NewStringData("Data")}, idData{NewStringData("Data")}},
+		{"+ve empty string", args{NewStringData("")}, idData{NewStringData("")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

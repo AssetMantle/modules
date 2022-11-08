@@ -44,7 +44,7 @@ func createTestInput(t *testing.T) (ids.IdentityID, ids.ClassificationID, string
 	require.Equal(t, nil, err)
 
 	var immutableProperties lists.PropertyList
-	immutableProperties, err = utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err = utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties lists.PropertyList
@@ -52,7 +52,7 @@ func createTestInput(t *testing.T) (ids.IdentityID, ids.ClassificationID, string
 	require.Equal(t, nil, err)
 
 	var mutableProperties lists.PropertyList
-	mutableProperties, err = utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err = utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 
 	return testFromID, testClassificationID, fromAddress, fromAccAddress, toAddress, toAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties

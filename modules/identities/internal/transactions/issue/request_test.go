@@ -50,7 +50,7 @@ func createTestInputForRequest(t *testing.T) (*codec.Codec, helpers.CLICommand, 
 	require.Equal(t, nil, err)
 
 	var immutableProperties lists.PropertyList
-	immutableProperties, err = utilities.ReadProperties(immutablePropertiesString)
+	immutableProperties, err = utilities.ReadMetaPropertyList(immutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties lists.PropertyList
@@ -58,7 +58,7 @@ func createTestInputForRequest(t *testing.T) (*codec.Codec, helpers.CLICommand, 
 	require.Equal(t, nil, err)
 
 	var mutableProperties lists.PropertyList
-	mutableProperties, err = utilities.ReadProperties(mutablePropertiesString)
+	mutableProperties, err = utilities.ReadMetaPropertyList(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

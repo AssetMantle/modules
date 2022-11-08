@@ -28,11 +28,11 @@ func CreateTestInputForMessage(t *testing.T) (ids.IdentityID, sdkTypes.AccAddres
 
 	immutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
-	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 	mutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	testClassificationID := baseIDs.NewClassificationID(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))
 	testFromID := baseIDs.NewIdentityID(testClassificationID, baseQualified.NewImmutables(immutableProperties))

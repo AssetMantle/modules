@@ -20,12 +20,12 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	"github.com/AssetMantle/modules/modules/classifications/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
@@ -67,9 +67,9 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 
 func Test_Query_Keeper_Classification(t *testing.T) {
 	context, keepers := CreateTestInput2(t)
-	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableProperties, Error2 := utilities.ReadProperties("burn:S|100")
+	mutableProperties, Error2 := utilities.ReadMetaPropertyList("burn:S|100")
 	require.Equal(t, nil, Error2)
 
 	classificationID := baseIDs.NewClassificationID(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))
