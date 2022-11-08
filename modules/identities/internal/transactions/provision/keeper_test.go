@@ -4,10 +4,12 @@
 package provision
 
 import (
+	"fmt"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters"
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	base2 "github.com/AssetMantle/modules/schema/documents/base"
@@ -37,7 +39,7 @@ type TestKeepers struct {
 	ProvisionKeeper helpers.TransactionKeeper
 }
 
-func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper) {
+func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
@@ -74,7 +76,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ProvisionKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{authenticateAuxilary}).(helpers.TransactionKeeper),
 	}
 
-	return context, keepers, Mapper
+	return context, keepers, Mapper, Parameters
 }
 
 func Test_keeperPrototype(t *testing.T) {
@@ -95,6 +97,8 @@ func Test_keeperPrototype(t *testing.T) {
 }
 
 func Test_transactionKeeper_Initialize(t *testing.T) {
+	_, _, mapper, _parameters := CreateTestInput(t)
+	supplementAuxilary := supplement.AuxiliaryMock.Initialize(mapper, _parameters)
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -110,13 +114,15 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		// TODO: Add test cases.
+		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
+		{"+ve", fields{mapper}, args{mapper, _parameters, []interface{}{supplementAuxilary}}, transactionKeeper{mapper, supplementAuxilary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(got, tt.want) {
+			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
 			}
 		})
@@ -124,7 +130,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-	context, keepers, mapper := CreateTestInput(t)
+	context, keepers, mapper, _ := CreateTestInput(t)
 	immutables := baseQualified.NewImmutables(base.NewPropertyList(base3.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(base.NewDataList()))))
 	mutables := baseQualified.NewMutables(base.NewPropertyList(base3.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(base.NewDataList()))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
