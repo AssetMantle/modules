@@ -119,10 +119,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 									panic(auxiliaryResponse.GetError())
 								}
 
-								mutableProperties, err := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded)))))))
-								if err != nil {
-									panic(err)
-								}
+								mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))
 
 								orders.Mutate(mappable.NewMappable(base.NewOrder(leftOrder.GetClassificationID(), leftOrder.GetImmutables(), leftOrder.Mutate(mutableProperties.GetList()...).GetMutables())))
 								orders.Remove(mappable.NewMappable(rightOrder))

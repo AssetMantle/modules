@@ -6,8 +6,8 @@ package mappable
 import (
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	types2 "github.com/AssetMantle/modules/schema/documents"
-	asset "github.com/AssetMantle/modules/schema/documents/base"
+	documentsSchema "github.com/AssetMantle/modules/schema/documents"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -25,7 +25,7 @@ func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mu
 	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	testMappable := mappable{Asset: asset.NewAsset(classificationID, immutables, mutables)}
+	testMappable := mappable{Asset: baseDocuments.NewAsset(classificationID, immutables, mutables)}
 	return classificationID, immutables, mutables, testMappable
 }
 
@@ -49,15 +49,15 @@ func TestPrototype(t *testing.T) {
 func TestNewMappable(t *testing.T) {
 	classificationID, immutables, mutables, testMappable := createTestInput()
 	type args struct {
-		Asset types2.Asset
+		Asset documentsSchema.Asset
 	}
 	tests := []struct {
 		name string
 		args args
-		want types2.Asset
+		want documentsSchema.Asset
 	}{
 		// TODO: Add test cases.
-		{"+ve", args{asset.NewAsset(classificationID, immutables, mutables)}, testMappable},
+		{"+ve", args{baseDocuments.NewAsset(classificationID, immutables, mutables)}, testMappable},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

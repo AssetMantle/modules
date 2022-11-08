@@ -11,7 +11,6 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
-	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -24,7 +23,6 @@ type transactionKeeper struct {
 	mapper                helpers.Mapper
 	authenticateAuxiliary helpers.Auxiliary
 	maintainAuxiliary     helpers.Auxiliary
-	scrubAuxiliary        helpers.Auxiliary
 	conformAuxiliary      helpers.Auxiliary
 }
 
@@ -44,12 +42,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	asset := Mappable.(documents.Asset)
 
-	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties)))
-	if err != nil {
-		return newTransactionResponse(err)
-	}
-
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
 
 	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, mutables)); !auxiliaryResponse.IsSuccessful() {
 		if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.GetClassificationID(), nil, asset.GetMutables().Mutate(mutables.GetMutablePropertyList().GetList()...))); !auxiliaryResponse.IsSuccessful() {
@@ -73,8 +66,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.conformAuxiliary = value
 			case maintain.Auxiliary.GetName():
 				transactionKeeper.maintainAuxiliary = value
-			case scrub.Auxiliary.GetName():
-				transactionKeeper.scrubAuxiliary = value
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
 			}

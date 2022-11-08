@@ -15,7 +15,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
-	base2 "github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
@@ -23,8 +23,8 @@ import (
 )
 
 func createTestInput() (documents.Identity, ids.ClassificationID, qualified.Immutables, qualified.Mutables) {
-	immutables := baseQualified.NewImmutables(base2.NewPropertyList(baseProperties.NewMesaProperty(base.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(base2.NewPropertyList(baseProperties.NewMesaProperty(base.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(base.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(base.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := base.NewClassificationID(immutables, mutables)
 	testIdentity := base3.NewIdentity(classificationID, immutables, mutables)
 

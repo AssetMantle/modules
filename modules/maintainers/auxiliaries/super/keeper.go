@@ -8,12 +8,11 @@ import (
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/utilities"
 	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type auxiliaryKeeper struct {
@@ -31,7 +30,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(constants.EntityAlreadyExists)
 	}
 
-	maintainers.Add(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.ClassificationID, baseQualified.NewImmutables(baseLists.NewPropertyList()), auxiliaryRequest.Mutables)))
+	maintainers.Add(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.IdentityID, auxiliaryRequest.ClassificationID, auxiliaryRequest.Mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(true, true, true, true, true, true))))
 
 	return newAuxiliaryResponse(nil)
 }
