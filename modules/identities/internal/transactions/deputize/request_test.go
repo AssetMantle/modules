@@ -21,12 +21,8 @@ import (
 func Test_newTransactionRequest(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	// fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	// require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	// maintainedProperties, err := utilities.ReadMetaPropertyList(maintainedProperty)
-	// require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type args struct {
@@ -128,12 +124,8 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 func Test_transactionRequest_FromJSON(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	// fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	// require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	// maintainedProperties, err := utilities.ReadMetaPropertyList(maintainedProperty)
-	// require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	jsonMessage, _ := json.Marshal(newTransactionRequest(testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false))
@@ -187,12 +179,8 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	// fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	// require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	// maintainedProperties, err := utilities.ReadMetaPropertyList(maintainedProperty)
-	// require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type fields struct {
@@ -283,12 +271,8 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	// fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	// require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	// maintainedProperties, err := utilities.ReadMetaPropertyList(maintainedProperty)
-	// require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type fields struct {
@@ -332,12 +316,8 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 func Test_transactionRequest_Validate(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	// fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	// require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	// maintainedProperties, err := utilities.ReadMetaPropertyList(maintainedProperty)
-	// require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type fields struct {
