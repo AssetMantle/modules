@@ -1,3 +1,0 @@
-package constansts
-
-const IDSeparator = "."
