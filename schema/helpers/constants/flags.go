@@ -10,7 +10,7 @@ import (
 // Note: Arranged alphabetically
 var (
 	AssetID                 = baseHelpers.NewCLIFlag("assetID", "", "AssetID")
-	CanAddMaintainer        = baseHelpers.NewCLIFlag("addMaintainer", false, "CanAddMaintainer")
+	CanAddMaintainer        = baseHelpers.NewCLIFlag("canAddMaintainer", false, "CanAddMaintainer")
 	CanBurnAsset            = baseHelpers.NewCLIFlag("canBurnAsset", false, "CanBurnAsset")
 	CanMintAsset            = baseHelpers.NewCLIFlag("canMintAsset", false, "CanMintAsset")
 	CanMutateMaintainer     = baseHelpers.NewCLIFlag("canMutateMaintainer", false, "CanMutateMaintainer")
