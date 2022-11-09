@@ -4,16 +4,9 @@
 package module
 
 import (
-	"github.com/AssetMantle/modules/schema/documents/base"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	constantsQualified "github.com/AssetMantle/modules/schema/qualified/constants"
+	constantsHelpers "github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 const Name = "maintainers"
 
-var StoreKeyPrefix = constants.MaintainersStoreKeyPrefix
-
-var MaintainerClassificationID = baseIDs.NewClassificationID(constantsQualified.MaintainerImmutables, constantsQualified.MaintainerMutables)
-
-var GenesisMaintainer = base.NewMaintainer(MaintainerClassificationID, constantsQualified.MaintainerImmutables, constantsQualified.MaintainerMutables)
+var StoreKeyPrefix = constantsHelpers.MaintainersStoreKeyPrefix

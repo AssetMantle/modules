@@ -14,5 +14,5 @@ import (
 
 // TODO ***** add default classes NUB,maintainer, self class
 func Prototype() helpers.Genesis {
-	return baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{mappable.NewMappable(module.NubClassification), mappable.NewMappable(module.GenesisMaintainer)}, parameters.Prototype().GetList())
+	return baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{mappable.NewMappable(module.NubClassification), mappable.NewMappable(module.MaintainerClassification)}, parameters.Prototype().GetList())
 }
