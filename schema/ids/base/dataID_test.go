@@ -4,37 +4,35 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/traits"
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/data/base"
-
 	"github.com/AssetMantle/modules/schema/ids"
 )
 
-// func TestNewDataID(t *testing.T) {
-//	type args struct {
-//		data data.Data
-//	}
-//	tests := []struct {
-//		name string
-//		args args
-//		want ids.DataID
-//	}{
-//		// TODO: Add test cases.
-//		{"+ve", args{base.NewBooleanData(true)}, dataID{NewStringID("B"), base.NewBooleanData(true).GenerateHashID()}},
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			if got := NewDataID(tt.args.data); !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("NewDataID() = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-// }
-
+func TestNewDataID(t *testing.T) {
+	type args struct {
+		data data.Data
+	}
+	tests := []struct {
+		name string
+		args args
+		want ids.DataID
+	}{
+		// TODO: Add test cases.
+		{"+ve", args{}, dataID{}},
+		{"+ve", args{base.NewStringData("Data")}, dataID{}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewDataID(tt.args.data); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewDataID() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 func Test_dataIDFromInterface(t *testing.T) {
 	type args struct {
 		i interface{}
@@ -166,28 +164,6 @@ func Test_dataID_String(t *testing.T) {
 			}
 			if got := dataID.String(); got != tt.want {
 				t.Errorf("String() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestNewDataID(t *testing.T) {
-	type args struct {
-		data data.Data
-	}
-	tests := []struct {
-		name string
-		args args
-		want ids.DataID
-	}{
-		// TODO: Add test cases.
-		{"+ve", args{}, dataID{}},
-		{"+ve", args{base.NewStringData("Data")}, dataID{}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewDataID(tt.args.data); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewDataID() = %v, want %v", got, tt.want)
 			}
 		})
 	}
