@@ -4,6 +4,7 @@
 package module
 
 import (
+	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	qualifiedConstants "github.com/AssetMantle/modules/schema/qualified/constants"
@@ -14,3 +15,5 @@ const Name = "identities"
 var StoreKeyPrefix = constants.IdentitiesStoreKeyPrefix
 
 var NubClassificationID = baseIDs.NewClassificationID(qualifiedConstants.NubImmutables, qualifiedConstants.NubMutables)
+
+var NubIdentity = base.NewIdentity(NubClassificationID, qualifiedConstants.NubImmutables, qualifiedConstants.NubMutables)
