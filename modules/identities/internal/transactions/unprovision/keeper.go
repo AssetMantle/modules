@@ -37,8 +37,8 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
-	if identity.IsProvisioned(message.To) {
-		return newTransactionResponse(errorConstants.EntityAlreadyExists)
+	if !identity.IsProvisioned(message.To) {
+		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 
 	identities.Mutate(mappable.NewMappable(identity.UnprovisionAddress(message.To)))
