@@ -8,6 +8,7 @@ import (
 )
 
 // Note: Arranged alphabetically
+// TODO define usages
 var (
 	AssetID                 = baseHelpers.NewCLIFlag("assetID", "", "AssetID")
 	CanAddMaintainer        = baseHelpers.NewCLIFlag("canAddMaintainer", false, "CanAddMaintainer")
