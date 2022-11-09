@@ -13,5 +13,5 @@ import (
 )
 
 func Prototype() helpers.Genesis {
-	return baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{mappable.NewMappable(module.GenMaintainer)}, parameters.Prototype().GetList())
+	return baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{mappable.NewMappable(module.GenesisMaintainer)}, parameters.Prototype().GetList())
 }

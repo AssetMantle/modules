@@ -7,13 +7,13 @@ import (
 	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	qualifiedConstants "github.com/AssetMantle/modules/schema/qualified/constants"
+	constantsQualified "github.com/AssetMantle/modules/schema/qualified/constants"
 )
 
 const Name = "maintainers"
 
 var StoreKeyPrefix = constants.MaintainersStoreKeyPrefix
 
-var MaintainerClassificationID = baseIDs.NewClassificationID(qualifiedConstants.MaintainerImmutables, qualifiedConstants.MaintainerMutables)
+var MaintainerClassificationID = baseIDs.NewClassificationID(constantsQualified.MaintainerImmutables, constantsQualified.MaintainerMutables)
 
-var GenMaintainer = base.NewMaintainer(MaintainerClassificationID, qualifiedConstants.MaintainerImmutables, qualifiedConstants.MaintainerMutables)
+var GenesisMaintainer = base.NewMaintainer(MaintainerClassificationID, constantsQualified.MaintainerImmutables, constantsQualified.MaintainerMutables)
