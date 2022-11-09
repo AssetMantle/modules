@@ -2,7 +2,7 @@ package base
 
 import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	types2 "github.com/AssetMantle/modules/schema/documents"
+	documentsSchema "github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -26,7 +26,7 @@ func TestNewAsset(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want types2.Asset
+		want documentsSchema.Asset
 	}{
 		// TODO: Add test cases.
 		{"+ve", args{classificationID: classificationID, immutables: immutables, mutables: mutables}, asset{Document: NewDocument(classificationID, immutables, mutables)}},
@@ -45,7 +45,7 @@ func Test_asset_GetBurn(t *testing.T) {
 	testDocumentWithBurn := NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))))
 
 	type fields struct {
-		Document types2.Document
+		Document documentsSchema.Document
 	}
 	tests := []struct {
 		name   string
@@ -72,7 +72,7 @@ func Test_asset_GetLock(t *testing.T) {
 	testDocumentWithLock := NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.LockProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))))
 
 	type fields struct {
-		Document types2.Document
+		Document documentsSchema.Document
 	}
 	tests := []struct {
 		name   string
@@ -99,7 +99,7 @@ func Test_asset_GetSupply(t *testing.T) {
 	classificationID, immutables, _, testDocument := createTestInput()
 	testDocumentWithSupply := NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.SupplyProperty.GetKey(), baseData.NewDecData(types.NewDec(1))))))
 	type fields struct {
-		Document types2.Document
+		Document documentsSchema.Document
 	}
 	tests := []struct {
 		name   string

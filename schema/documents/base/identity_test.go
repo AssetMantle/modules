@@ -5,7 +5,7 @@ import (
 	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
-	base2 "github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/types"
@@ -44,8 +44,8 @@ func Test_identity_IsProvisioned(t *testing.T) {
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
-	testIdentity2 := NewIdentity(classificationID, immutables, mutables)
-	m := testIdentity2.(documents.Identity)
+	testIdentity := NewIdentity(classificationID, immutables, mutables)
+	m := testIdentity.(documents.Identity)
 	m.ProvisionAddress(fromAccAddress) // failing
 
 	type fields struct {
@@ -62,7 +62,7 @@ func Test_identity_IsProvisioned(t *testing.T) {
 	}{
 		// TODO: panic: MetaDataError fix it after
 		// https://github.com/AssetMantle/modules/issues/59
-		{"+ve", fields{testIdentity2}, args{fromAccAddress}, true},
+		{"+ve", fields{testIdentity}, args{fromAccAddress}, true},
 		{"-ve", fields{identity{NewDocument(classificationID, immutables, mutables)}}, args{fromAccAddress}, false},
 	}
 	for _, tt := range tests {
@@ -148,7 +148,7 @@ func Test_identity_GetAuthentication(t *testing.T) {
 		fields fields
 		want   lists.DataList
 	}{
-		{"+ve", fields{identity{NewDocument(classificationID, immutables, mutables)}}, base2.NewDataList(constants.AuthenticationProperty.GetData().(data.ListData).Get()...)},
+		{"+ve", fields{identity{NewDocument(classificationID, immutables, mutables)}}, baseLists.NewDataList(constants.AuthenticationProperty.GetData().(data.ListData).Get()...)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

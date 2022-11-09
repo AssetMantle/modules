@@ -22,16 +22,16 @@ func Test_validator(t *testing.T) {
 		wantError error
 	}{
 
-		//{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, errorConstants.IncorrectFormat},
-		//{"+ve", args{Parameter}, nil},
-		//{"-ve InvalidParameter", args{baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)}, errorConstants.InvalidParameter},
-		//{"-ve nil", args{}, errorConstants.IncorrectFormat},
-		//{"+ve with decData", args{baseData.NewDecData(sdkTypes.NewDec(-1))}, errorConstants.InvalidParameter},
-		//{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, errorConstants.IncorrectFormat},
-		//{"-ve InvalidParameter", args{baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)}, errorConstants.InvalidParameter},
+		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, errorConstants.IncorrectFormat},
+		{"+ve", args{Parameter}, nil},
+		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)}, errorConstants.InvalidParameter},
+		{"-ve nil", args{}, errorConstants.IncorrectFormat},
+		{"+ve with decData", args{baseData.NewDecData(sdkTypes.NewDec(-1))}, errorConstants.InvalidParameter},
+		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, errorConstants.IncorrectFormat},
+		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)}, errorConstants.InvalidParameter},
 		{"-ve with -ve decData", args{baseTypes.NewParameter(baseIDs.NewStringID("ID"), baseData.NewDecData(sdkTypes.NewDec(-1)), validator)}, errorConstants.InvalidParameter},
-		//{"+ve with +ve decData", args{baseTypes.NewParameter(baseIDs.NewStringID("ID"), baseData.NewDecData(sdkTypes.NewDec(1)), validator)}, nil},
-		//{"-ve nil", args{}, errorConstants.IncorrectFormat},
+		{"+ve with +ve decData", args{baseTypes.NewParameter(baseIDs.NewStringID("ID"), baseData.NewDecData(sdkTypes.NewDec(1)), validator)}, nil}, //TODO: Check whether input provided is right
+		{"-ve nil", args{}, errorConstants.IncorrectFormat},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

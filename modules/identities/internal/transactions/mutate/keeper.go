@@ -6,12 +6,11 @@ package mutate
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
-	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -24,8 +23,7 @@ type transactionKeeper struct {
 	mapper                helpers.Mapper
 	authenticateAuxiliary helpers.Auxiliary
 	maintainAuxiliary     helpers.Auxiliary
-	scrubAuxiliary        helpers.Auxiliary
-	conformAuxiliary      helpers.Auxiliary
+	memberAuxiliary       helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -44,14 +42,9 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	identity := Mappable.(documents.Identity)
 
-	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties)))
-	if err != nil {
-		return newTransactionResponse(err)
-	}
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
 
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
-
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(identity.GetClassificationID(), baseQualified.NewImmutables(baseLists.NewPropertyList()), mutables)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.memberAuxiliary.GetKeeper().Help(context, member.NewAuxiliaryRequest(identity.GetClassificationID(), nil, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
@@ -59,7 +52,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	identities.Mutate(mappable.NewMappable(base.NewIdentity(identity.GetClassificationID(), identity.GetImmutables(), baseQualified.NewMutables(identity.GetImmutables().GetImmutablePropertyList().Mutate(mutables.GetMutablePropertyList().GetList()...)))))
+	identities.Mutate(mappable.NewMappable(base.NewIdentity(identity.GetClassificationID(), identity.GetImmutables(), baseQualified.NewMutables(identity.GetMutables().GetMutablePropertyList().Mutate(mutables.GetMutablePropertyList().GetList()...)))))
 
 	return newTransactionResponse(nil)
 }
@@ -71,12 +64,10 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
-			case conform.Auxiliary.GetName():
-				transactionKeeper.conformAuxiliary = value
+			case member.Auxiliary.GetName():
+				transactionKeeper.memberAuxiliary = value
 			case maintain.Auxiliary.GetName():
 				transactionKeeper.maintainAuxiliary = value
-			case scrub.Auxiliary.GetName():
-				transactionKeeper.scrubAuxiliary = value
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
 			}

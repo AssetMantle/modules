@@ -51,7 +51,6 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/metas"
-	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/orders"
 	"github.com/AssetMantle/modules/modules/splits"
@@ -358,7 +357,6 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 	classificationsModule := classifications.Prototype().Initialize(
 		application.keys[classifications.Prototype().Name()],
 		paramsKeeper.Subspace(classifications.Prototype().Name()),
-		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 	)
 	maintainersModule := maintainers.Prototype().Initialize(
 		application.keys[metas.Prototype().Name()],
@@ -372,7 +370,7 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(member.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
@@ -396,7 +394,6 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		splitsModule.GetAuxiliary(renumerate.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
 		splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
@@ -410,7 +407,6 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-		metasModule.GetAuxiliary(scrub.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
 		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
 		splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
