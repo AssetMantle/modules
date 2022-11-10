@@ -12,13 +12,13 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	base2 "github.com/AssetMantle/modules/schema/documents/base"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
-	base3 "github.com/AssetMantle/modules/schema/properties/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -135,8 +135,8 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers, mapper, _ := CreateTestInput(t)
-	immutables := baseQualified.NewImmutables(base.NewPropertyList(base3.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(base.NewDataList()))))
-	mutables := baseQualified.NewMutables(base.NewPropertyList(base3.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(base.NewDataList()))))
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList()))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList()))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
@@ -144,7 +144,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Nil(t, err)
 	toAccAddress, err := types.AccAddressFromBech32("cosmos1u6xn6rv07p2yzzj2rm8st04x54xe5ur0t9nl5j")
 	require.Nil(t, err)
-	testIdentity := base2.NewIdentity(testClassificationID, immutables, mutables)
+	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutables, mutables)
 	testIdentity.ProvisionAddress([]types.AccAddress{toAccAddress}...)
 	keepers.UnProvisionKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testIdentity))
 	type fields struct {

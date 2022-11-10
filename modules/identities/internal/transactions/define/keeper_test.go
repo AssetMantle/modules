@@ -14,12 +14,12 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/documents/base"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	base3 "github.com/AssetMantle/modules/schema/ids/base"
-	base2 "github.com/AssetMantle/modules/schema/lists/base"
+	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -155,14 +155,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	fromAddress2 := "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
 	fromAccAddress2, err := sdkTypes.AccAddressFromBech32(fromAddress2)
 	require.Nil(t, err)
-	immutableMetaProperties := base2.NewPropertyList(baseProperties.NewMetaProperty(base3.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
-	immutableProperties := base2.NewPropertyList(baseProperties.NewMesaProperty(base3.NewStringID("ID11"), baseData.NewStringData("ImmutableData")))
-	mutableMetaProperties := base2.NewPropertyList(baseProperties.NewMetaProperty(base3.NewStringID("authentication"), baseData.NewListData(base2.NewDataList())))
-	mutableProperties := base2.NewPropertyList(baseProperties.NewMesaProperty(base3.NewStringID("authentication"), baseData.NewStringData("MutableData")))
+	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID11"), baseData.NewStringData("ImmutableData")))
+	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
+	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("authentication"), baseData.NewStringData("MutableData")))
 	immutables := baseQualified.NewImmutables(immutableMetaProperties)
 	mutables := baseQualified.NewMutables(mutableMetaProperties)
-	classificationID := base3.NewClassificationID(immutables, mutables)
-	identity := base.NewIdentity(classificationID, immutables, mutables)
+	classificationID := baseIds.NewClassificationID(immutables, mutables)
+	identity := baseDocuments.NewIdentity(classificationID, immutables, mutables)
 	identity = identity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
 	keepers.DefineKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(identity))
 	type fields struct {
@@ -183,8 +183,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want   helpers.TransactionResponse
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, newMessage(fromAccAddress, base3.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)}, newTransactionResponse(nil)},
-		{"-ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, newMessage(fromAccAddress2, base3.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)}, newTransactionResponse(constants.NotAuthorized)},
+		{"+ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, newMessage(fromAccAddress, baseIds.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)}, newTransactionResponse(nil)},
+		{"-ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, newMessage(fromAccAddress2, baseIds.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)}, newTransactionResponse(constants.NotAuthorized)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

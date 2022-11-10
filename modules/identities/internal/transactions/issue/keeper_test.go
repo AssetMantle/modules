@@ -13,12 +13,12 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/documents/base"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	base3 "github.com/AssetMantle/modules/schema/ids/base"
-	base2 "github.com/AssetMantle/modules/schema/lists/base"
+	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -148,15 +148,15 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	toAddress := "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
 	toAccAddress, err := types.AccAddressFromBech32(toAddress)
 	require.Nil(t, err)
-	immutableMetaProperties := base2.NewPropertyList(baseProperties.NewMetaProperty(base3.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
-	immutableProperties := base2.NewPropertyList(baseProperties.NewMesaProperty(base3.NewStringID("ID11"), baseData.NewStringData("ImmutableData")))
-	mutableMetaProperties := base2.NewPropertyList(baseProperties.NewMetaProperty(base3.NewStringID("authentication"), baseData.NewListData(base2.NewDataList())))
-	mutableProperties := base2.NewPropertyList(baseProperties.NewMesaProperty(base3.NewStringID("authentication"), baseData.NewStringData("MutableData")))
+	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID11"), baseData.NewStringData("ImmutableData")))
+	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
+	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("authentication"), baseData.NewStringData("MutableData")))
 	immutables := baseQualified.NewImmutables(immutableMetaProperties)
 	mutables := baseQualified.NewMutables(mutableMetaProperties)
-	classificationID := base3.NewClassificationID(immutables, mutables)
-	fromIdentityID := base3.NewIdentityID(classificationID, immutables)
-	identity := base.NewIdentity(classificationID, immutables, mutables)
+	classificationID := baseIds.NewClassificationID(immutables, mutables)
+	fromIdentityID := baseIds.NewIdentityID(classificationID, immutables)
+	identity := baseDocuments.NewIdentity(classificationID, immutables, mutables)
 	identity = identity.ProvisionAddress([]types.AccAddress{fromAccAddress}...)
 	identity.Mutate(immutableMetaProperties.GetList()...)
 	keepers.IssueKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(identity))
