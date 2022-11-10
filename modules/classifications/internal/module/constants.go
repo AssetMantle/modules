@@ -4,12 +4,12 @@
 package module
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers/constants"
+	constantsHelpers "github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 const Name = "classifications"
 
-var StoreKeyPrefix = constants.ClassificationsStoreKeyPrefix
+var StoreKeyPrefix = constantsHelpers.ClassificationsStoreKeyPrefix
 
 // MaxPropertyCount TODO convert it to module param
 const MaxPropertyCount = 22
