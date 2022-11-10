@@ -17,16 +17,23 @@ func TestNewDataID(t *testing.T) {
 		data data.Data
 	}
 	tests := []struct {
-		name string
-		args args
-		want ids.DataID
+		name      string
+		args      args
+		want      ids.DataID
+		wantError bool
 	}{
 		// TODO: Add test cases.
-		{"+ve", args{}, dataID{}},
-		{"+ve", args{base.NewStringData("Data")}, dataID{}},
+		{"+ve nil", args{}, dataID{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			defer func() {
+				r := recover()
+
+				if (r != nil) != tt.wantError {
+					t.Errorf("NewDataID() error = %v wantError = %v", r, tt.wantError)
+				}
+			}()
 			if got := NewDataID(tt.args.data); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewDataID() = %v, want %v", got, tt.want)
 			}
