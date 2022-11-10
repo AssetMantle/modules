@@ -23,6 +23,8 @@ in [CODING_GUIDELINES.md](CODING_GUIDELINES.md).
 [![Twitter](https://img.shields.io/twitter/follow/AssetMantle?color=blue&label=Twitter&style=for-the-badge&cacheSeconds=3600&logo=twitter)](https://twitter.com/AssetMantle)
 [![Reddit](https://img.shields.io/reddit/subreddit-subscribers/AssetMantle?style=for-the-badge&cacheSeconds=3600&logo=reddit&label=Reddit%20r/assetmantle&logoColor=white)](https://www.reddit.com/r/AssetMantle/)
 [![YouTube](https://img.shields.io/youtube/channel/subscribers/UCQkov-0kol99KGMxyXc-a6Q?label=YouTube&cacheSeconds=3600&logoColor=red&style=for-the-badge&logo=YouTube)](https://www.youtube.com/channel/UCQkov-0kol99KGMxyXc-a6Q/videos)
+[![Telegram](https://img.shields.io/badge/Telegram-chat-4995be?style=for-the-badge&cacheSeconds=3600)](https://t.me/assetmantlechat)
+[![Instagram](https://img.shields.io/badge/Instagram-follow-dd2a7b?style=for-the-badge&cacheSeconds=3600)](https://www.instagram.com/assetmantle/)
 
 </div>
 
