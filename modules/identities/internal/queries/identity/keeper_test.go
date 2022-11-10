@@ -10,12 +10,12 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	base2 "github.com/AssetMantle/modules/schema/documents/base"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
-	base3 "github.com/AssetMantle/modules/schema/properties/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -91,13 +91,13 @@ func Test_keeperPrototype(t *testing.T) {
 
 func Test_queryKeeper_Enquire(t *testing.T) {
 	context, keepers, Mapper, _ := CreateTestInput(t)
-	mutableProperties := base.NewPropertyList(base3.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(base.NewDataList())))
-	immutableProperties := base.NewPropertyList(base3.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(base.NewDataList())))
+	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList())))
 	immutables := baseQualified.NewImmutables(immutableProperties)
 	mutables := baseQualified.NewMutables(mutableProperties)
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
-	testIdentity := base2.NewIdentity(testClassificationID, immutables, mutables)
+	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutables, mutables)
 	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testIdentity))
 	type fields struct {
 		mapper helpers.Mapper
