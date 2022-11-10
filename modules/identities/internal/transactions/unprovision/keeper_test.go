@@ -17,7 +17,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -135,8 +135,8 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers, mapper, _ := CreateTestInput(t)
-	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(base.NewDataList()))))
-	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(base.NewDataList()))))
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList()))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList()))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
