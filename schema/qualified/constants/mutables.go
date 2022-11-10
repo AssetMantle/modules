@@ -7,4 +7,4 @@ import (
 )
 
 var NubMutables = base.NewMutables(baseLists.NewPropertyList(constants.AuthenticationProperty))
-var MaintainerMutables = base.NewMutables(baseLists.NewPropertyList(constants.MaintainedPropertiesProperty))
+var MaintainerMutables = base.NewMutables(baseLists.NewPropertyList(constants.MaintainedPropertiesProperty, constants.PermissionsProperty))
