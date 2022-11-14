@@ -4,11 +4,10 @@
 package reveal
 
 import (
-	"github.com/AssetMantle/modules/schema/data/utilities"
-	"github.com/AssetMantle/modules/schema/types/base"
-
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/data/utilities"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -75,11 +74,11 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 	defaultAddr := sdkTypes.AccAddress("addr")
-	defaultFact, err := utilities.ReadData("S|default")
+	data, err := utilities.ReadData("S|default")
 	require.Equal(t, nil, err)
 	newFact, err := utilities.ReadData("S|newFact")
 	require.Equal(t, nil, err)
-	keepers.MetasKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(base.NewMeta(defaultFact)))
+	keepers.MetasKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(data))
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
 		if got := keepers.MetasKeeper.Transact(context, newMessage(defaultAddr, newFact)); !reflect.DeepEqual(got, want) {
@@ -90,7 +89,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase-Reveal metas again", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(constants.EntityAlreadyExists)
-		if got := keepers.MetasKeeper.Transact(context, newMessage(defaultAddr, defaultFact)); !reflect.DeepEqual(got, want) {
+		if got := keepers.MetasKeeper.Transact(context, newMessage(defaultAddr, data)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

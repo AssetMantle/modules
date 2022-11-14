@@ -22,11 +22,11 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	metaID := baseIDs.NewMetaID(message.Data.GetType(), message.Data.GenerateHashID())
-	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(metaID))
+	dataID := baseIDs.NewDataID(message.Data)
+	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(dataID))
 
-	meta := metas.Get(key.NewKey(metaID))
-	if meta != nil {
+	data := metas.Get(key.NewKey(dataID))
+	if data != nil {
 		return newTransactionResponse(constants.EntityAlreadyExists)
 	}
 

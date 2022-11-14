@@ -15,7 +15,7 @@ import (
 )
 
 type queryRequest struct {
-	ids.MetaID `json:"metaID" valid:"required~required field metaID missing"`
+	ids.DataID `json:"dataID" valid:"required~required field dataID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
@@ -35,14 +35,14 @@ func (queryRequest queryRequest) Validate() error {
 	return err
 }
 func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
-	if metaID, err := baseIDs.ReadMetaID(cliCommand.ReadString(constants.MetaID)); err != nil {
+	if metaID, err := baseIDs.ReadDataID(cliCommand.ReadString(constants.MetaID)); err != nil {
 		return queryRequest{}, err
 	} else {
 		return newQueryRequest(metaID), nil
 	}
 }
 func (queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
-	if metaID, err := baseIDs.ReadMetaID(vars[Query.GetName()]); err != nil {
+	if metaID, err := baseIDs.ReadDataID(vars[Query.GetName()]); err != nil {
 		return queryRequest{}, err
 	} else {
 		return newQueryRequest(metaID), nil
@@ -69,6 +69,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 		return queryRequest{}
 	}
 }
-func newQueryRequest(metaID ids.MetaID) helpers.QueryRequest {
-	return queryRequest{MetaID: metaID}
+func newQueryRequest(dataID ids.DataID) helpers.QueryRequest {
+	return queryRequest{DataID: dataID}
 }
