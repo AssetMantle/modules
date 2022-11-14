@@ -11,10 +11,10 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
-	base3 "github.com/AssetMantle/modules/schema/documents/base"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/ids/base"
+	baseIds "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
@@ -23,10 +23,10 @@ import (
 )
 
 func createTestInput() (documents.Identity, ids.ClassificationID, qualified.Immutables, qualified.Mutables) {
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(base.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(base.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID := base.NewClassificationID(immutables, mutables)
-	testIdentity := base3.NewIdentity(classificationID, immutables, mutables)
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	classificationID := baseIds.NewClassificationID(immutables, mutables)
+	testIdentity := baseDocuments.NewIdentity(classificationID, immutables, mutables)
 
 	return testIdentity, classificationID, immutables, mutables
 }
@@ -43,11 +43,11 @@ func TestNewMappable(t *testing.T) {
 		args args
 		want mappable
 	}{
-		{"+ve", args{classificationID, immutables, mutables}, mappable{Identity: base3.NewIdentity(classificationID, immutables, mutables)}},
+		{"+ve", args{classificationID, immutables, mutables}, mappable{Identity: baseDocuments.NewIdentity(classificationID, immutables, mutables)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMappable(base3.NewIdentity(tt.args.classificationID, tt.args.immutables, tt.args.mutables)); !reflect.DeepEqual(got, tt.want) {
+			if got := NewMappable(baseDocuments.NewIdentity(tt.args.classificationID, tt.args.immutables, tt.args.mutables)); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewIdentity() = %v, want %v", got, tt.want)
 			}
 		})
@@ -82,7 +82,7 @@ func Test_identity_GetKey(t *testing.T) {
 		want      helpers.Key
 		wantPanic bool
 	}{
-		{"+ve", fields{testIdentity}, key.NewKey(base.NewIdentityID(testIdentity.GetClassificationID(), testIdentity.GetImmutables())), false},
+		{"+ve", fields{testIdentity}, key.NewKey(baseIds.NewIdentityID(testIdentity.GetClassificationID(), testIdentity.GetImmutables())), false},
 		{"panic case nil", fields{nil}, nil, true},
 	}
 	for _, tt := range tests {

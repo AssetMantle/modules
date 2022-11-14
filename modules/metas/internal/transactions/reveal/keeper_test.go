@@ -4,6 +4,7 @@
 package reveal
 
 import (
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	"reflect"
 	"testing"
 

@@ -17,7 +17,7 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
@@ -27,15 +27,15 @@ import (
 func createTestInputForMessage(t *testing.T) (types.AccAddress, ids.IdentityID, ids.IdentityID, lists.PropertyList, lists.PropertyList) {
 	testFrom, err := types.AccAddressFromBech32("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c")
 	require.Nil(t, err)
-	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
-	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	testIdentityID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
 	mesaProperty := baseProperties.NewMesaProperty(baseIDs.NewStringID("id1"), baseData.NewStringData("Data1"))
-	testMutableMetaProperties := base.NewPropertyList([]properties.Property{metaProperty}...)
-	testMutableProperties := base.NewPropertyList([]properties.Property{mesaProperty}...)
+	testMutableMetaProperties := baseLists.NewPropertyList([]properties.Property{metaProperty}...)
+	testMutableProperties := baseLists.NewPropertyList([]properties.Property{mesaProperty}...)
 
 	return testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties
 }
