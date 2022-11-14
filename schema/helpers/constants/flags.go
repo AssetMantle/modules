@@ -33,7 +33,6 @@ var (
 	MakerOwnableSplit       = baseHelpers.NewCLIFlag("makerOwnableSplit", "", "MakerOwnableSplit")
 	MutableMetaProperties   = baseHelpers.NewCLIFlag("mutableMetaProperties", "", "mutableMetaProperties")
 	MutableProperties       = baseHelpers.NewCLIFlag("mutableProperties", "", "mutableProperties")
-	MetaID                  = baseHelpers.NewCLIFlag("metaID", "", "MetaID")
 	NubID                   = baseHelpers.NewCLIFlag("nubID", "", "NubID")
 	OrderID                 = baseHelpers.NewCLIFlag("orderID", "", "OrderID")
 	OwnableID               = baseHelpers.NewCLIFlag("ownableID", "", "MakerOwnableID")
