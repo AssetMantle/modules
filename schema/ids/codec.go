@@ -15,7 +15,6 @@ func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*ID)(nil), nil)
 	codec.RegisterInterface((*IdentityID)(nil), nil)
 	codec.RegisterInterface((*MaintainerID)(nil), nil)
-	codec.RegisterInterface((*MetaID)(nil), nil)
 	codec.RegisterInterface((*OrderID)(nil), nil)
 	codec.RegisterInterface((*OwnableID)(nil), nil)
 	codec.RegisterInterface((*PropertyID)(nil), nil)
