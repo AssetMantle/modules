@@ -19,15 +19,15 @@ import (
 func Test_Super_Response(t *testing.T) {
 
 	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
-	metaPropertyList := base.NewPropertyList([]properties.MetaProperty{metaProperty}...)
+	metaPropertyList := base.NewPropertyList([]properties.Property{metaProperty}...)
 
 	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList, nil)
-	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, MetaProperties: metaPropertyList}, testAuxiliaryResponse)
+	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, PropertyList: metaPropertyList}, testAuxiliaryResponse)
 	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())
 	require.Equal(t, nil, testAuxiliaryResponse.GetError())
 
 	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList, constants.IncorrectFormat)
-	require.Equal(t, auxiliaryResponse{Success: false, Error: constants.IncorrectFormat, MetaProperties: nil}, testAuxiliaryResponse2)
+	require.Equal(t, auxiliaryResponse{Success: false, Error: constants.IncorrectFormat, PropertyList: nil}, testAuxiliaryResponse2)
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
 	require.Equal(t, constants.IncorrectFormat, testAuxiliaryResponse2.GetError())
 

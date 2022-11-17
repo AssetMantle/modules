@@ -53,7 +53,7 @@ type SimulationApplication struct {
 
 	transientStoreKeys map[string]*sdkTypes.TransientStoreKey
 	subspaces          map[string]params.Subspace
-	simulationManager  module.SimulationManager
+	simulationManager  *module.SimulationManager
 
 	AccountKeeper      auth.AccountKeeper
 	BankKeeper         bank.Keeper
@@ -100,7 +100,7 @@ func (simulationApplication SimulationApplication) ModuleAccountAddrs() map[stri
 }
 
 func (simulationApplication SimulationApplication) SimulationManager() *module.SimulationManager {
-	return &simulationApplication.simulationManager
+	return simulationApplication.simulationManager
 }
 
 func (simulationApplication SimulationApplication) ModuleManager() *module.Manager {
@@ -227,11 +227,6 @@ func (simulationApplication SimulationApplication) NewTestApplication(isCheckTx 
 	ctx := simulationApplication.GetBaseApp().NewContext(isCheckTx, abciTypes.Header{})
 
 	return app, ctx
-}
-
-func (simulationApplication SimulationApplication) SetApplication(application Application) *SimulationApplication {
-	simulationApplication.Application = application
-	return &simulationApplication
 }
 
 func (simulationApplication SimulationApplication) InitializeSimulationApplication(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.SimulationApplication {
@@ -373,7 +368,7 @@ func (simulationApplication SimulationApplication) InitializeSimulationApplicati
 		govRouter,
 	)
 
-	simulationApplication.simulationManager = *module.NewSimulationManager(
+	simulationApplication.simulationManager = module.NewSimulationManager(
 		auth.NewAppModule(simulationApplication.AccountKeeper),
 		bank.NewAppModule(simulationApplication.BankKeeper, simulationApplication.AccountKeeper),
 		supply.NewAppModule(simulationApplication.SupplyKeeper, simulationApplication.AccountKeeper),

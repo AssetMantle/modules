@@ -79,7 +79,7 @@ func (maintainer maintainer) MaintainsProperty(propertyID ids.PropertyID) bool {
 func idListToDataList(idList lists.IDList) lists.DataList {
 	dataList := baseLists.NewDataList()
 	for _, id := range idList.GetList() {
-		dataList.Add(baseData.NewIDData(id))
+		dataList = dataList.Add(baseData.NewIDData(id))
 	}
 	return dataList
 }
