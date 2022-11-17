@@ -7,10 +7,11 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
+	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/modules/splits/auxiliaries/burn"
+	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
@@ -22,7 +23,7 @@ import (
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
-	burnAuxiliary         helpers.Auxiliary
+	renumerateAuxiliary   helpers.Auxiliary
 	maintainAuxiliary     helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 	authenticateAuxiliary helpers.Auxiliary
@@ -38,12 +39,13 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.AssetID))
 
-	asset := assets.Get(key.NewKey(message.AssetID))
-	if asset == nil {
+	Mappable := assets.Get(key.NewKey(message.AssetID))
+	if Mappable == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
+	asset := Mappable.(documents.Asset)
 
-	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.(documents.Asset).GetBurn())))
+	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetBurn())))
 	if err != nil {
 		return newTransactionResponse(err)
 	}
@@ -55,10 +57,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		}
 	}
 
-	if auxiliaryResponse := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.SmallestDec())); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.ZeroDec())); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
-	assets.Remove(asset)
+
+	assets.Remove(mappable.NewMappable(asset))
 
 	return newTransactionResponse(nil)
 }
@@ -70,8 +73,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
-			case burn.Auxiliary.GetName():
-				transactionKeeper.burnAuxiliary = value
+			case renumerate.Auxiliary.GetName():
+				transactionKeeper.renumerateAuxiliary = value
 			case maintain.Auxiliary.GetName():
 				transactionKeeper.maintainAuxiliary = value
 			case supplement.Auxiliary.GetName():
