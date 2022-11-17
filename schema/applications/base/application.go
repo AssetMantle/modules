@@ -5,10 +5,6 @@ package base
 
 import (
 	"encoding/json"
-	"io"
-	"os"
-	"path/filepath"
-
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -36,6 +32,9 @@ import (
 	tendermintTypes "github.com/tendermint/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 	"honnef.co/go/tools/version"
+	"io"
+	"os"
+	"path/filepath"
 
 	"github.com/AssetMantle/modules/modules/assets"
 	"github.com/AssetMantle/modules/modules/classifications"
@@ -63,7 +62,7 @@ import (
 	wasmUtilities "github.com/AssetMantle/modules/utilities/wasm"
 )
 
-type application struct {
+type Application struct {
 	name string
 
 	moduleBasicManager module.BasicManager
@@ -86,24 +85,24 @@ type application struct {
 	baseapp.BaseApp
 }
 
-var _ applications.Application = (*application)(nil)
+var _ applications.Application = (*Application)(nil)
 
-func (application application) GetDefaultNodeHome() string {
+func (application Application) GetDefaultNodeHome() string {
 	return os.ExpandEnv("$HOME/." + application.name + "/Node")
 }
-func (application application) GetDefaultClientHome() string {
+func (application Application) GetDefaultClientHome() string {
 	return os.ExpandEnv("$HOME/." + application.name + "/Client")
 }
-func (application application) GetModuleBasicManager() module.BasicManager {
+func (application Application) GetModuleBasicManager() module.BasicManager {
 	return application.moduleBasicManager
 }
-func (application application) GetCodec() *codec.Codec {
+func (application Application) GetCodec() *codec.Codec {
 	return application.codec
 }
-func (application application) LoadHeight(height int64) error {
+func (application Application) LoadHeight(height int64) error {
 	return application.BaseApp.LoadVersion(height, application.keys[baseapp.MainStoreKey])
 }
-func (application application) ExportApplicationStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
+func (application Application) ExportApplicationStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
 	context := application.BaseApp.NewContext(true, abciTypes.Header{Height: application.BaseApp.LastBlockHeight()})
 
 	if forZeroHeight {
@@ -221,7 +220,8 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 	return applicationState, staking.WriteValidators(context, application.stakingKeeper), nil
 }
 
-func (application application) Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
+func (application Application) Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
+
 	application.BaseApp = *baseapp.NewBaseApp(
 		application.name,
 		logger,
@@ -584,7 +584,7 @@ func makeCodec(moduleBasicManager module.BasicManager) *codec.Codec {
 }
 
 func NewApplication(name string, moduleBasicManager module.BasicManager, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.Application {
-	return &application{
+	return &Application{
 		name:                        name,
 		moduleBasicManager:          moduleBasicManager,
 		codec:                       makeCodec(moduleBasicManager),

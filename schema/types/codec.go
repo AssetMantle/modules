@@ -5,9 +5,11 @@ package types
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
 func RegisterCodec(codec *codec.Codec) {
+	types.RegisterCodec(codec)
 	codec.RegisterInterface((*Height)(nil), nil)
 	codec.RegisterInterface((*Signature)(nil), nil)
 	codec.RegisterInterface((*Split)(nil), nil)
