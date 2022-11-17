@@ -4,6 +4,8 @@
 package base
 
 import (
+	"bytes"
+
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
@@ -19,7 +21,8 @@ var _ ids.AssetID = (*assetID)(nil)
 func (assetID assetID) IsOwnableID() {}
 func (assetID assetID) IsAssetID()   {}
 func (assetID assetID) Compare(listable traits.Listable) int {
-	return assetID.HashID.Compare(assetIDFromInterface(listable).HashID)
+	// TODO devise a better strategy to compare assetID and ownableID
+	return bytes.Compare(assetID.Bytes(), ownableIDFromInterface(listable).Bytes())
 }
 func assetIDFromInterface(i interface{}) assetID {
 	switch value := i.(type) {
