@@ -34,7 +34,7 @@ func assetIDFromInterface(i interface{}) assetID {
 }
 func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
 	return assetID{
-		GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()),
+		HashID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()),
 	}
 }
 
