@@ -4,11 +4,13 @@
 package applications
 
 import (
+	tendermintDB "github.com/tendermint/tm-db"
+	"io"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/types/module"
-
 	"github.com/cosmos/cosmos-sdk/x/auth/exported"
+	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 
@@ -36,4 +38,5 @@ type SimulationApplication interface {
 	Setup(bool) SimulationApplication
 	SetupWithGenesisAccounts([]exported.GenesisAccount) SimulationApplication
 	NewTestApplication(bool) (SimulationApplication, sdk.Context)
+	InitializeSimulationApplication(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) SimulationApplication
 }

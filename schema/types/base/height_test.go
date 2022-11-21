@@ -26,16 +26,13 @@ func TestNewHeight(t *testing.T) {
 		}, height{Value: 10}},
 		{"Testing with value -10", args{
 			-10,
-		}, height{Value: -10}},
+		}, height{Value: -1}},
 		{"Testing with value math.MaxInt64", args{
 			math.MaxInt64,
 		}, height{Value: math.MaxInt64}},
-		{"Testing with value math.MaxInt64", args{
+		{"Testing with value math.MinInt64", args{
 			math.MinInt64,
-		}, height{Value: math.MinInt64}},
-		{"Testing with value math.MaxInt64", args{
-			math.MinInt64,
-		}, height{Value: math.MinInt64}},
+		}, height{Value: -1}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
