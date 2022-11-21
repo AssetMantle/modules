@@ -64,15 +64,23 @@ test-race:
 
 .PHONY: test test-all test-ledger-mock test-ledger test-unit test-race
 
+run-simulations: test-sim-custom-genesis-fast test-sim-nondeterminism test-sim-import-export test-sim-after-import test-sim-custom-genesis-multi-seed test-sim-multi-seed-long test-sim-multi-seed-short test-sim-benchmark-invariants
+
 test-sim-nondeterminism:
 	@echo "Running non-determinism test..."
-	@go test -mod=readonly $(SIMAPP) -run TestAppStateDeterminism -Enabled=true \
+	@go test -mod=readonly $(SIMAPP) -run=TestAppStateDeterminism -Enabled=true \
 		-NumBlocks=100 -BlockSize=200 -Commit=true -Period=0 -v -timeout 24h
 
 test-sim-custom-genesis-fast:
 	@echo "Running custom genesis simulation..."
 	@echo "By default, ${HOME}/.assetNode/config/genesis.json will be used."
-	@go test -mod=readonly $(SIMAPP) -run TestFullAppSimulation -Genesis=${HOME}/.assetNode/config/genesis.json \
+	@go test -mod=readonly $(SIMAPP) -run=TestFullAppSimulation -Genesis=${HOME}/.assetNode/config/genesis.json \
+		-Enabled=true -NumBlocks=100 -BlockSize=200 -Commit=true -Seed=99 -Period=5 -v -timeout 24h
+
+test-sim-full-application:
+	@echo "Running custom genesis simulation..."
+	@echo "By default, ${HOME}/.assetNode/config/genesis.json will be used."
+	@go test -mod=readonly $(SIMAPP) -run=TestFullAppSimulation \
 		-Enabled=true -NumBlocks=100 -BlockSize=200 -Commit=true -Seed=99 -Period=5 -v -timeout 24h
 
 test-sim-import-export: runsim
