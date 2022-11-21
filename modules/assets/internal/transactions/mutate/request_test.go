@@ -40,7 +40,6 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}, transactionRequest{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}},
 	}
 	for _, tt := range tests {
@@ -57,7 +56,6 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", transactionRequest{}},
 	}
 	for _, tt := range tests {
@@ -129,7 +127,6 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}, args{types.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties}))}, newTransactionRequest(testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString), false},
 	}
 	for _, tt := range tests {
@@ -166,7 +163,6 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   rest.BaseReq
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}, testBaseRequest},
 	}
 	for _, tt := range tests {
@@ -199,7 +195,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}, newMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties1, mutableProperties1.ScrubData()), false},
 	}
 	for _, tt := range tests {
@@ -239,7 +234,6 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}, args{codec.New()}},
 	}
 	for _, tt := range tests {
@@ -269,7 +263,6 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}, false},
 	}
 	for _, tt := range tests {

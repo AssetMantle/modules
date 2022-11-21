@@ -164,7 +164,6 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{Mapper, Parameters, authenticateAuxiliary, deputizeAuxiliary}, args{context, newMessage(fromAccAddress, fromID, fromID, classificationID, mutableProperties, true, true, true, true, true, true)}, newTransactionResponse(nil)},
 	}
 	for _, tt := range tests {

@@ -34,7 +34,6 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		// TODO: Add test cases.
 		{"+ve", mappable{}},
 	}
 	for _, tt := range tests {
@@ -56,7 +55,6 @@ func TestNewMappable(t *testing.T) {
 		args args
 		want documentsSchema.Asset
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{baseDocuments.NewAsset(classificationID, immutables, mutables)}, testMappable},
 	}
 	for _, tt := range tests {
@@ -79,7 +77,6 @@ func Test_mappable_GetKey(t *testing.T) {
 		want      helpers.Key
 		wantPanic bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testMappable}, key.NewKey(baseIDs.NewAssetID(mappable{testMappable}.GetClassificationID(), mappable{testMappable}.GetImmutables())), false},
 		{"panic case nil", fields{mappable{nil}}, nil, true},
 	}
@@ -112,7 +109,6 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testMappable}, args{codec: codec.New()}},
 		{"+ve nil", fields{mappable{nil}}, args{codec: codec.New()}},
 	}

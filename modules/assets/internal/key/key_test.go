@@ -174,7 +174,6 @@ func Test_key_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testAssetID}, args{codec.New()}},
 		{"+ve", fields{baseIDs.PrototypeAssetID()}, args{codec.New()}},
 	}
