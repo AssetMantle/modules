@@ -4,6 +4,7 @@
 package renumerate
 
 import (
+	"fmt"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	"github.com/AssetMantle/modules/modules/splits/internal/parameters"
@@ -111,7 +112,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 }
 
 func Test_auxiliaryKeeper_Initialize(t *testing.T) {
-
+	_, _, Mapper, Parameters := createTestInput(t)
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -127,13 +128,14 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		// TODO: Add test cases.
+		{"+ve", fields{Mapper}, args{Mapper, Parameters, []interface{}{}}, auxiliaryKeeper{Mapper}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			au := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(got, tt.want) {
+			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
 			}
 		})
@@ -146,6 +148,7 @@ func Test_keeperPrototype(t *testing.T) {
 		want helpers.AuxiliaryKeeper
 	}{
 		// TODO: Add test cases.
+		{"+ve", auxiliaryKeeper{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
