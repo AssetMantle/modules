@@ -5,9 +5,10 @@ package base
 
 import (
 	"encoding/base64"
-	"github.com/AssetMantle/modules/schema/traits"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/traits"
 
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto"
@@ -22,12 +23,12 @@ type testableStringID struct {
 }
 
 func (t testableStringID) Compare(listable traits.Listable) int {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (t testableStringID) String() string {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
@@ -36,7 +37,7 @@ func (t testableStringID) Bytes() []byte {
 }
 
 func (t testableStringID) IsStringID() {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
@@ -214,9 +215,9 @@ func Test_signature_String(t *testing.T) {
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
 	tests := []struct {
-		name         string
-		baseSinature types.Signature
-		want         string
+		name          string
+		baseSignature types.Signature
+		want          string
 	}{
 		{"Test for String", baseSignature, base64.URLEncoding.EncodeToString(baseSignature.Bytes())},
 	}

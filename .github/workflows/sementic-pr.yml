@@ -1,4 +1,4 @@
-name: "Sementic PR"
+name: "Semantic PR"
 
 on:
   pull_request_target:
