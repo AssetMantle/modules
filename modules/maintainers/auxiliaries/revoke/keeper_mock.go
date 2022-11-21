@@ -8,7 +8,6 @@ import (
 
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type auxiliaryKeeperMock struct {
@@ -19,7 +18,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	if auxiliaryRequest.MaintainedClassificationID.Compare(baseIDs.NewStringID("revokeError")) == 0 {
+	if auxiliaryRequest.MaintainedClassificationID.String() == "revokeError" {
 		return newAuxiliaryResponse(constants.MockError)
 	}
 
