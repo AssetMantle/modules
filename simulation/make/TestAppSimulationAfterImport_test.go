@@ -8,12 +8,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/applications/base"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/AssetMantle/modules/schema/applications/base"
 )
 
 func TestAppSimulationAfterImport(t *testing.T) {

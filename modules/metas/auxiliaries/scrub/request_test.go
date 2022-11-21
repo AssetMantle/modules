@@ -4,8 +4,9 @@
 package scrub
 
 import (
-	"github.com/AssetMantle/modules/schema/lists/base"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/lists/base"
 
 	"github.com/stretchr/testify/require"
 
