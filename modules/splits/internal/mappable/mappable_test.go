@@ -12,7 +12,7 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/AssetMantle/modules/schema/types"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
@@ -27,7 +27,7 @@ var (
 	testOwnableID       = baseIds.NewOwnableID(baseIds.NewStringID("ownerid"))
 	splitID             = baseIds.NewSplitID(testOwnerIdentityID, testOwnableID)
 	testRate            = sdkTypes.NewDec(1)
-	split               = base.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
+	split               = baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
 )
 
 func TestNewMappable(t *testing.T) {

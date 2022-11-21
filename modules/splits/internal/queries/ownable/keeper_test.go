@@ -16,7 +16,7 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -98,7 +98,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 	testOwnerIdentityID := baseIds.NewIdentityID(classificationID, immutables)
 	testOwnableID := baseIds.NewOwnableID(baseIds.NewStringID("OwnerID"))
 	testRate := sdkTypes.NewDec(1)
-	split := base.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
+	split := baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
 	keepers.OwnableKeeper.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(split))
 	type fields struct {
 		mapper helpers.Mapper
