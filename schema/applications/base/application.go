@@ -5,10 +5,6 @@ package base
 
 import (
 	"encoding/json"
-	"io"
-	"os"
-	"path/filepath"
-
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -36,6 +32,9 @@ import (
 	tendermintTypes "github.com/tendermint/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 	"honnef.co/go/tools/version"
+	"io"
+	"os"
+	"path/filepath"
 
 	"github.com/AssetMantle/modules/modules/assets"
 	"github.com/AssetMantle/modules/modules/classifications"
@@ -410,7 +409,6 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
 	)
-
 	var wasmRouter = application.BaseApp.Router()
 
 	wasmDir := filepath.Join(home, wasm.ModuleName)
@@ -517,7 +515,6 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		crisis.ModuleName,
 		genutil.ModuleName,
 		evidence.ModuleName,
-		wasm.ModuleName,
 		assets.Prototype().Name(),
 		classifications.Prototype().Name(),
 		identities.Prototype().Name(),

@@ -5,13 +5,19 @@ package base
 
 import (
 	"encoding/json"
-	"os"
-	"testing"
-
+	"github.com/AssetMantle/modules/modules/assets"
+	"github.com/AssetMantle/modules/modules/classifications"
+	"github.com/AssetMantle/modules/modules/identities"
+	"github.com/AssetMantle/modules/modules/maintainers"
+	"github.com/AssetMantle/modules/modules/metas"
+	"github.com/AssetMantle/modules/modules/orders"
+	"github.com/AssetMantle/modules/modules/splits"
+	wasmUtilities "github.com/AssetMantle/modules/utilities/wasm"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
@@ -27,12 +33,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintTypes "github.com/tendermint/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
+	"io"
+	"os"
+	"path/filepath"
+	"testing"
 
 	"github.com/AssetMantle/modules/schema/applications"
 )
@@ -41,8 +52,8 @@ type SimulationApplication struct {
 	application
 
 	transientStoreKeys map[string]*sdkTypes.TransientStoreKey
-	simulationManager  *module.SimulationManager
 	subspaces          map[string]params.Subspace
+	simulationManager  *module.SimulationManager
 
 	AccountKeeper      auth.AccountKeeper
 	BankKeeper         bank.Keeper
@@ -61,27 +72,27 @@ type SimulationApplication struct {
 var _ applications.SimulationApplication = (*SimulationApplication)(nil)
 
 func (simulationApplication SimulationApplication) Codec() *codec.Codec {
-	return simulationApplication.application.codec
+	return simulationApplication.codec
 }
 
 func (simulationApplication SimulationApplication) BeginBlocker(ctx sdkTypes.Context, req abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
-	return simulationApplication.application.moduleManager.BeginBlock(ctx, req)
+	return simulationApplication.moduleManager.BeginBlock(ctx, req)
 }
 
 func (simulationApplication SimulationApplication) EndBlocker(ctx sdkTypes.Context, req abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock {
-	return simulationApplication.application.moduleManager.EndBlock(ctx, req)
+	return simulationApplication.moduleManager.EndBlock(ctx, req)
 }
 
 func (simulationApplication SimulationApplication) InitChainer(ctx sdkTypes.Context, req abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
 	var genesisState simapp.GenesisState
 
-	simulationApplication.application.codec.MustUnmarshalJSON(req.AppStateBytes, &genesisState)
+	simulationApplication.codec.MustUnmarshalJSON(req.AppStateBytes, &genesisState)
 
-	return simulationApplication.application.moduleManager.InitGenesis(ctx, genesisState)
+	return simulationApplication.moduleManager.InitGenesis(ctx, genesisState)
 }
 
 func (simulationApplication SimulationApplication) ExportAppStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
-	return simulationApplication.application.ExportApplicationStateAndValidators(forZeroHeight, jailWhiteList)
+	return simulationApplication.ExportApplicationStateAndValidators(forZeroHeight, jailWhiteList)
 }
 
 func (simulationApplication SimulationApplication) ModuleAccountAddrs() map[string]bool {
@@ -93,15 +104,15 @@ func (simulationApplication SimulationApplication) SimulationManager() *module.S
 }
 
 func (simulationApplication SimulationApplication) ModuleManager() *module.Manager {
-	return simulationApplication.application.moduleManager
+	return simulationApplication.moduleManager
 }
 
 func (simulationApplication SimulationApplication) GetBaseApp() *baseapp.BaseApp {
-	return &simulationApplication.application.BaseApp
+	return &simulationApplication.BaseApp
 }
 
 func (simulationApplication SimulationApplication) GetKey(storeKey string) *sdkTypes.KVStoreKey {
-	return simulationApplication.application.keys[storeKey]
+	return simulationApplication.keys[storeKey]
 }
 
 func (simulationApplication SimulationApplication) GetTKey(storeKey string) *sdkTypes.TransientStoreKey {
@@ -113,7 +124,7 @@ func (simulationApplication SimulationApplication) GetSubspace(moduleName string
 }
 
 func (simulationApplication SimulationApplication) GetModuleAccountPermissions() map[string][]string {
-	return simulationApplication.application.moduleAccountPermissions
+	return simulationApplication.moduleAccountPermissions
 }
 
 func (simulationApplication SimulationApplication) GetBlackListedAddresses() map[string]bool {
@@ -126,7 +137,7 @@ func (simulationApplication SimulationApplication) GetBlackListedAddresses() map
 }
 
 func (simulationApplication SimulationApplication) CheckBalance(t *testing.T, address sdkTypes.AccAddress, coins sdkTypes.Coins) {
-	ctxCheck := simulationApplication.application.BaseApp.NewContext(true, abciTypes.Header{})
+	ctxCheck := simulationApplication.BaseApp.NewContext(true, abciTypes.Header{})
 	res := simulationApplication.AccountKeeper.GetAccount(ctxCheck, address)
 
 	require.True(t, coins.IsEqual(res.GetCoins()))
@@ -216,6 +227,166 @@ func (simulationApplication SimulationApplication) NewTestApplication(isCheckTx 
 	ctx := simulationApplication.GetBaseApp().NewContext(isCheckTx, abciTypes.Header{})
 
 	return app, ctx
+}
+
+func (simulationApplication SimulationApplication) InitializeSimulationApplication(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.SimulationApplication {
+	cache := store.NewCommitKVStoreCacheManager()
+	baseAppOptions = append(baseAppOptions, baseapp.SetInterBlockCache(cache), baseapp.SetMinGasPrices(viper.GetString("minimum-gas-prices")))
+	simulationApplication.application = *simulationApplication.Initialize(logger, db, traceStore, loadLatest, invCheckPeriod, skipUpgradeHeights, home, baseAppOptions...).(*application)
+
+	simulationApplication.transientStoreKeys = sdkTypes.NewTransientStoreKeys(params.TStoreKey)
+
+	simulationApplication.ParamsKeeper = params.NewKeeper(
+		simulationApplication.codec,
+		simulationApplication.keys[params.StoreKey],
+		simulationApplication.transientStoreKeys[params.TStoreKey],
+	)
+
+	simulationApplication.AccountKeeper = auth.NewAccountKeeper(
+		simulationApplication.codec,
+		simulationApplication.keys[auth.StoreKey],
+		simulationApplication.ParamsKeeper.Subspace(auth.DefaultParamspace),
+		auth.ProtoBaseAccount,
+	)
+
+	blacklistedAddresses := make(map[string]bool)
+	for account := range simulationApplication.moduleAccountPermissions {
+		blacklistedAddresses[supply.NewModuleAddress(account).String()] = !simulationApplication.tokenReceiveAllowedModules[account]
+	}
+
+	simulationApplication.BankKeeper = bank.NewBaseKeeper(
+		simulationApplication.AccountKeeper,
+		simulationApplication.ParamsKeeper.Subspace(bank.DefaultParamspace),
+		blacklistedAddresses,
+	)
+
+	simulationApplication.SupplyKeeper = supply.NewKeeper(
+		simulationApplication.codec,
+		simulationApplication.keys[supply.StoreKey],
+		simulationApplication.AccountKeeper,
+		simulationApplication.BankKeeper,
+		simulationApplication.moduleAccountPermissions,
+	)
+
+	simulationApplication.StakingKeeper = simulationApplication.stakingKeeper
+
+	simulationApplication.MintKeeper = mint.NewKeeper(
+		simulationApplication.codec,
+		simulationApplication.keys[mint.StoreKey],
+		simulationApplication.ParamsKeeper.Subspace(mint.DefaultParamspace),
+		&simulationApplication.StakingKeeper,
+		simulationApplication.SupplyKeeper,
+		auth.FeeCollectorName,
+	)
+
+	blackListedModuleAddresses := make(map[string]bool)
+	for moduleAccount := range simulationApplication.moduleAccountPermissions {
+		blackListedModuleAddresses[supply.NewModuleAddress(moduleAccount).String()] = true
+	}
+
+	simulationApplication.DistributionKeeper = simulationApplication.distributionKeeper
+
+	simulationApplication.SlashingKeeper = simulationApplication.slashingKeeper
+
+	simulationApplication.CrisisKeeper = simulationApplication.crisisKeeper
+
+	simulationApplication.UpgradeKeeper = upgrade.NewKeeper(
+		skipUpgradeHeights,
+		simulationApplication.keys[upgrade.StoreKey],
+		simulationApplication.codec,
+	)
+
+	simulationApplication.EvidenceKeeper = *evidence.NewKeeper(
+		simulationApplication.codec,
+		simulationApplication.keys[evidence.StoreKey],
+		simulationApplication.ParamsKeeper.Subspace(evidence.DefaultParamspace),
+		&simulationApplication.StakingKeeper,
+		simulationApplication.SlashingKeeper,
+	)
+
+	evidenceRouter := evidence.NewRouter()
+	simulationApplication.EvidenceKeeper.SetRouter(evidenceRouter)
+
+	simulationApplication.StakingKeeper = simulationApplication.stakingKeeper
+
+	var wasmRouter = simulationApplication.BaseApp.Router()
+
+	wasmDir := filepath.Join(home, wasm.ModuleName)
+
+	wasmWrap := struct {
+		Wasm wasm.WasmConfig `mapstructure:"wasm"`
+	}{
+		Wasm: wasm.DefaultWasmConfig(),
+	}
+
+	err := viper.Unmarshal(&wasmWrap)
+	if err != nil {
+		panic("error while reading wasm config: " + err.Error())
+	}
+
+	wasmConfig := wasmWrap.Wasm
+
+	wasmKeeper := wasm.NewKeeper(
+		simulationApplication.codec,
+		simulationApplication.keys[wasm.StoreKey],
+		simulationApplication.ParamsKeeper.Subspace(wasm.DefaultParamspace),
+		simulationApplication.AccountKeeper,
+		simulationApplication.BankKeeper,
+		simulationApplication.StakingKeeper,
+		wasmRouter,
+		wasmDir,
+		wasmConfig,
+		staking.ModuleName,
+		&wasm.MessageEncoders{Custom: wasmUtilities.CustomEncoder(assets.Prototype(), classifications.Prototype(), identities.Prototype(), maintainers.Prototype(), metas.Prototype(), orders.Prototype(), splits.Prototype())},
+		nil)
+
+	govRouter := gov.NewRouter().AddRoute(
+		gov.RouterKey,
+		gov.ProposalHandler,
+	).AddRoute(
+		params.RouterKey,
+		params.NewParamChangeProposalHandler(simulationApplication.ParamsKeeper),
+	).AddRoute(
+		distribution.RouterKey,
+		distribution.NewCommunityPoolSpendProposalHandler(simulationApplication.DistributionKeeper),
+	).AddRoute(
+		upgrade.RouterKey,
+		upgrade.NewSoftwareUpgradeProposalHandler(simulationApplication.UpgradeKeeper),
+	)
+
+	if len(simulationApplication.enabledWasmProposalTypeList) != 0 {
+		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(wasmKeeper, simulationApplication.enabledWasmProposalTypeList))
+	}
+
+	simulationApplication.GovKeeper = gov.NewKeeper(
+		simulationApplication.codec,
+		simulationApplication.keys[gov.StoreKey],
+		simulationApplication.ParamsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable()),
+		simulationApplication.SupplyKeeper,
+		&simulationApplication.StakingKeeper,
+		govRouter,
+	)
+
+	simulationApplication.simulationManager = module.NewSimulationManager(
+		auth.NewAppModule(simulationApplication.AccountKeeper),
+		bank.NewAppModule(simulationApplication.BankKeeper, simulationApplication.AccountKeeper),
+		supply.NewAppModule(simulationApplication.SupplyKeeper, simulationApplication.AccountKeeper),
+		gov.NewAppModule(simulationApplication.GovKeeper, simulationApplication.AccountKeeper, simulationApplication.SupplyKeeper),
+		mint.NewAppModule(simulationApplication.MintKeeper),
+		staking.NewAppModule(simulationApplication.StakingKeeper, simulationApplication.AccountKeeper, simulationApplication.SupplyKeeper),
+		distribution.NewAppModule(simulationApplication.DistributionKeeper, simulationApplication.AccountKeeper, simulationApplication.SupplyKeeper, simulationApplication.StakingKeeper),
+		slashing.NewAppModule(simulationApplication.SlashingKeeper, simulationApplication.AccountKeeper, simulationApplication.StakingKeeper),
+		params.NewAppModule(),
+		assets.Prototype(),
+		classifications.Prototype(),
+		identities.Prototype(),
+		maintainers.Prototype(),
+		metas.Prototype(),
+		orders.Prototype(),
+		splits.Prototype(),
+	)
+
+	return &simulationApplication
 }
 
 func NewSimulationApplication(name string, moduleBasicManager module.BasicManager, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.SimulationApplication {
