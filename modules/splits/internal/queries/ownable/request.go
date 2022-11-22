@@ -5,7 +5,7 @@ package ownable
 
 import (
 	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -35,7 +35,7 @@ func (queryRequest queryRequest) Validate() error {
 	return err
 }
 
-func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
 	if ownableID, err := baseIDs.ReadOwnableID(cliCommand.ReadString(constants.OwnableID)); err != nil {
 		return queryRequest{}, err
 	} else {

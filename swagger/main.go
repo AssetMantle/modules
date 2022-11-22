@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/gorilla/mux"
 
 	"github.com/AssetMantle/modules/schema/applications/base"
@@ -36,7 +36,7 @@ var Prototype = base.NewApplication(
 
 func main() {
 	r := mux.NewRouter()
-	ctx := context.NewCLIContext()
+	ctx := client.Context{}
 	Prototype.GetModuleBasicManager().RegisterRESTRoutes(ctx, r)
 	r.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	log.Println("listen on :1318")

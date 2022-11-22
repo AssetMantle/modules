@@ -9,13 +9,9 @@ import (
 	"testing"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-
-	"github.com/cosmos/cosmos-sdk/store"
-
-	"github.com/AssetMantle/modules/schema/applications/base"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/distribution"
@@ -25,9 +21,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/AssetMantle/modules/modules/assets"
 	"github.com/AssetMantle/modules/modules/classifications"
@@ -36,6 +31,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas"
 	"github.com/AssetMantle/modules/modules/orders"
 	"github.com/AssetMantle/modules/modules/splits"
+	"github.com/AssetMantle/modules/schema/applications/base"
 )
 
 // GetProperty flags every time the simulator is run
@@ -108,8 +104,8 @@ func TestAppImportExport(t *testing.T) {
 	err = simulationApplication.Codec().UnmarshalJSON(appState, &genesisState)
 	require.NoError(t, err)
 
-	ctxA := simulationApplication.GetBaseApp().NewContext(true, abci.Header{Height: simulationApplication.GetBaseApp().LastBlockHeight()})
-	ctxB := newSimulationApplication.GetBaseApp().NewContext(true, abci.Header{Height: simulationApplication.GetBaseApp().LastBlockHeight()})
+	ctxA := simulationApplication.GetBaseApp().NewContext(true, abciTypes.Header{Height: simulationApplication.GetBaseApp().LastBlockHeight()})
+	ctxB := newSimulationApplication.GetBaseApp().NewContext(true, abciTypes.Header{Height: simulationApplication.GetBaseApp().LastBlockHeight()})
 	newSimulationApplication.ModuleManager().InitGenesis(ctxB, genesisState)
 
 	fmt.Printf("comparing stores...\n")

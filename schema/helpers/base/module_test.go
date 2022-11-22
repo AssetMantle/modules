@@ -8,7 +8,7 @@ import (
 	"math/rand"
 	"testing"
 
-	clientContext "github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/params"
@@ -19,7 +19,7 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	parameters2 "github.com/AssetMantle/modules/schema/parameters"
+	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 	helpersTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers"
 	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
@@ -31,7 +31,7 @@ var auxiliariesPrototype = func() helpers.Auxiliaries {
 var genesisPrototype = func() helpers.Genesis {
 	return NewGenesis(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype,
 		[]helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")},
-		[]parameters2.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })})
+		[]parametersSchema.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })})
 }
 var mapperPrototype = func() helpers.Mapper {
 	return NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype)
@@ -73,7 +73,7 @@ func TestModule(t *testing.T) {
 	require.Nil(t, Module.ValidateGenesis(Module.DefaultGenesis()))
 
 	// RegisterRESTRoutes
-	cliContext := clientContext.NewCLIContext().WithCodec(codec).WithChainID("test")
+	cliContext := client.NewCLIContext().WithCodec(codec).WithChainID("test")
 	router := mux.NewRouter()
 	require.NotPanics(t, func() {
 		Module.RegisterRESTRoutes(cliContext, router)

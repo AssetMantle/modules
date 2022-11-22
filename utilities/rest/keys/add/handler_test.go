@@ -10,12 +10,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/crypto/keys"
-	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
@@ -37,7 +34,7 @@ func TestHandler(t *testing.T) {
 	viper.Set(flags.FlagKeyringBackend, keys.BackendTest)
 	viper.Set(flags.FlagHome, t.TempDir())
 
-	keyring, err := cryptoKeys.NewKeyring(sdk.KeyringServiceName(), keys.BackendTest, t.TempDir(), strings.NewReader(""))
+	keyring, err := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), keys.BackendTest, t.TempDir(), strings.NewReader(""))
 	require.NoError(t, err)
 
 	router := mux.NewRouter()

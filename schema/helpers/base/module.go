@@ -9,7 +9,6 @@ import (
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
@@ -81,13 +80,13 @@ func (module module) ValidateGenesis(rawMessage json.RawMessage) error {
 	genesisState := module.genesisPrototype().Decode(rawMessage)
 	return genesisState.Validate()
 }
-func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
+func (module module) RegisterRESTRoutes(context client.Context, router *mux.Router) {
 	for _, query := range module.queriesPrototype().GetList() {
-		router.HandleFunc("/"+module.Name()+"/"+query.GetName()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(cliContext)).Methods("GET")
+		router.HandleFunc("/"+module.Name()+"/"+query.GetName()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(context)).Methods("GET")
 	}
 
 	for _, transaction := range module.transactionsPrototype().GetList() {
-		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
+		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(context)).Methods("POST")
 	}
 }
 func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {

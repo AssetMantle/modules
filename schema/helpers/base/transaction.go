@@ -4,22 +4,20 @@
 package base
 
 import (
-	"bufio"
 	"encoding/json"
 	"log"
 	"net/http"
 	"reflect"
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
+	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -43,9 +41,10 @@ var _ helpers.Transaction = (*transaction)(nil)
 func (transaction transaction) GetName() string { return transaction.name }
 func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
-		bufioReader := bufio.NewReader(command.InOrStdin())
-		transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(authClient.GetTxEncoder(codec))
-		cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
+		cliContext, err := client.GetClientTxContext(command)
+		if err != nil {
+			return err
+		}
 
 		transactionRequest, err := transaction.requestPrototype().FromCLI(transaction.cliCommand, cliContext)
 		if err != nil {
@@ -63,7 +62,7 @@ func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
 			return err
 		}
 
-		return authClient.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{msg})
+		return tx.GenerateOrBroadcastTxCLI(cliContext, transactionBuilder, []sdkTypes.Msg{msg})
 	}
 
 	return transaction.cliCommand.CreateCommand(runE)
@@ -84,10 +83,10 @@ func (transaction transaction) HandleMessage(context sdkTypes.Context, message s
 	return &sdkTypes.Result{Events: context.EventManager().Events()}, nil
 }
 
-func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
+func (transaction transaction) RESTRequestHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		transactionRequest := transaction.requestPrototype()
-		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &transactionRequest) {
+		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
 			return
 		} else if reflect.TypeOf(transaction.requestPrototype()) != reflect.TypeOf(transactionRequest) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
@@ -121,7 +120,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		}
 
 		if viper.GetBool(flags.FlagGenerateOnly) {
-			authClient.WriteGenerateStdTxResponse(responseWriter, cliContext, baseReq, []sdkTypes.Msg{msg})
+			tx.WriteGeneratedTxResponse(context, responseWriter, baseReq, []sdkTypes.Msg{msg})
 			return
 		}
 
@@ -140,7 +139,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		}
 
 		txBuilder := types.NewTxBuilder(
-			authClient.GetTxEncoder(cliContext.Codec), baseReq.AccountNumber, baseReq.Sequence, gas, gasAdj,
+			authClient.GetTxEncoder(context.Codec), baseReq.AccountNumber, baseReq.Sequence, gas, gasAdj,
 			baseReq.Simulate, baseReq.ChainID, baseReq.Memo, baseReq.Fees, baseReq.GasPrices,
 		)
 		msgList := []sdkTypes.Msg{msg}
@@ -151,14 +150,14 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 				return
 			}
 
-			txBuilder, err = authClient.EnrichWithGas(txBuilder, cliContext, msgList)
+			txBuilder, err = authClient.EnrichWithGas(txBuilder, context, msgList)
 			if err != nil {
 				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 				return
 			}
 
 			if baseReq.Simulate {
-				rest.WriteSimulationResponse(responseWriter, cliContext.Codec, txBuilder.Gas())
+				rest.WriteSimulationResponse(responseWriter, context.Codec, txBuilder.Gas())
 				return
 			}
 		}
@@ -172,9 +171,9 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			return
 		}
 
-		cliContext = cliContext.WithFromAddress(fromAddress)
-		cliContext = cliContext.WithFromName(fromName)
-		cliContext = cliContext.WithBroadcastMode(viper.GetString(flags.FlagBroadcastMode))
+		context = context.WithFromAddress(fromAddress)
+		context = context.WithFromName(fromName)
+		context = context.WithBroadcastMode(viper.GetString(flags.FlagBroadcastMode))
 
 		if queuing.KafkaState.IsEnabled {
 			responseWriter.WriteHeader(http.StatusAccepted)
@@ -183,8 +182,8 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 				msg,
 				queuing.TicketID(random.GenerateUniqueIdentifier(transaction.name)),
 				baseReq,
-				cliContext),
-				cliContext.Codec,
+				context),
+				context.Codec,
 			)
 
 			if _, err = responseWriter.Write(output); err != nil {
@@ -194,7 +193,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			var accountNumber uint64
 			var sequence uint64
 
-			accountNumber, sequence, err = types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
+			accountNumber, sequence, err = types.NewAccountRetriever(context).GetAccountNumberSequence(fromAddress)
 			if err != nil {
 				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 				return
@@ -214,7 +213,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			// broadcast to a node
 			var response sdkTypes.TxResponse
 
-			response, err = cliContext.BroadcastTx(stdMsg)
+			response, err = context.BroadcastTx(stdMsg)
 			if err != nil {
 				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 				return
@@ -222,7 +221,7 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 
 			var output []byte
 
-			output, err = cliContext.Codec.MarshalJSON(response)
+			output, err = context.Codec.MarshalJSON(response)
 			if err != nil {
 				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 				return

@@ -6,7 +6,6 @@ package add
 import (
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/crypto/keys"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema/errors/constants"

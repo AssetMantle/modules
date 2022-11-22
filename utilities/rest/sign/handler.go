@@ -9,20 +9,19 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 )
 
-func handler(cliContext context.CLIContext) http.HandlerFunc {
+func handler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		var request request
-		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
+		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &request) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
@@ -42,11 +41,11 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 		}
 
 		txBuilder := types.NewTxBuilder(
-			authClient.GetTxEncoder(cliContext.Codec), request.BaseRequest.AccountNumber, request.BaseRequest.Sequence, 0, 0,
+			authClient.GetTxEncoder(context.Codec), request.BaseRequest.AccountNumber, request.BaseRequest.Sequence, 0, 0,
 			request.BaseRequest.Simulate, request.BaseRequest.ChainID, request.BaseRequest.Memo, request.BaseRequest.Fees, request.BaseRequest.GasPrices,
 		)
 
-		accountNumber, sequence, err := types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
+		accountNumber, sequence, err := types.NewAccountRetriever(context).GetAccountNumberSequence(fromAddress)
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 			return
@@ -85,10 +84,10 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 			}
 		}
 
-		rest.PostProcessResponse(responseWriter, cliContext, newResponse(request.StdTx, nil))
+		rest.PostProcessResponse(responseWriter, context, newResponse(request.StdTx, nil))
 	}
 }
 
-func RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
-	router.HandleFunc("/sign", handler(cliContext)).Methods("POST")
+func RegisterRESTRoutes(context client.Context, router *mux.Router) {
+	router.HandleFunc("/sign", handler(context)).Methods("POST")
 }
