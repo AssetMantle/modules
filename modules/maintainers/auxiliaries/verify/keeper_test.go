@@ -7,17 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
-	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
-	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -26,6 +15,19 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/utilities"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
@@ -43,11 +45,14 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
+	immutableProperty := baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))
+	mutableProperty := baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(immutableProperty))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(mutableProperty))
 
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	identityID := baseIDs.NewIdentityID(classificationID, immutables)
+	permissions := utilities.SetPermissions(true, true, true, true, true, true)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
@@ -74,7 +79,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			auxiliaryKeeper := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			auxiliaryKeeper.mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewMaintainer(classificationID, immutables, mutables)))
+			auxiliaryKeeper.mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewMaintainer(identityID, classificationID, baseLists.NewPropertyList(mutableProperty).GetPropertyIDList(), permissions)))
 			if got := auxiliaryKeeper.Help(tt.args.context, tt.args.request); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Help() = %v, want %v", got, tt.want)
 			}

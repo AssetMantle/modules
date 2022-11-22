@@ -21,18 +21,19 @@ import (
 )
 
 type message struct {
-	From                    sdkTypes.AccAddress  `json:"from" valid:"required~required field from missing"`
-	FromID                  ids.IdentityID       `json:"fromID" valid:"required~required field fromID missing"`
-	ClassificationID        ids.ClassificationID `json:"classificationID" valid:"required~required field classificationID missing"`
-	MakerOwnableID          ids.OwnableID        `json:"makerOwnableID" valid:"required~required field makerOwnableID missing"`
-	TakerOwnableID          ids.OwnableID        `json:"takerOwnableID" valid:"required~required field takerOwnableID missing"`
-	ExpiresIn               types.Height         `json:"expiresIn" valid:"required~required field expiresIn missing"`
-	MakerOwnableSplit       sdkTypes.Dec         `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing"`
-	TakerOwnableSplit       sdkTypes.Dec         `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
-	ImmutableMetaProperties lists.PropertyList   `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing"`
-	ImmutableProperties     lists.PropertyList   `json:"immutableProperties" valid:"required~required field immutableProperties missing"`
-	MutableMetaProperties   lists.PropertyList   `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
-	MutableProperties       lists.PropertyList   `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
+	From                    sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
+	FromID                  ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
+	ids.ClassificationID    `json:"classificationID" valid:"required~required field classificationID missing"`
+	TakerID                 ids.IdentityID     `json:"takerID" valid:"required~required field takerID missing"`
+	MakerOwnableID          ids.OwnableID      `json:"makerOwnableID" valid:"required~required field makerOwnableID missing"`
+	TakerOwnableID          ids.OwnableID      `json:"takerOwnableID" valid:"required~required field takerOwnableID missing"`
+	ExpiresIn               types.Height       `json:"expiresIn" valid:"required~required field expiresIn missing"`
+	MakerOwnableSplit       sdkTypes.Dec       `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing"`
+	TakerOwnableSplit       sdkTypes.Dec       `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
+	ImmutableMetaProperties lists.PropertyList `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing"`
+	ImmutableProperties     lists.PropertyList `json:"immutableProperties" valid:"required~required field immutableProperties missing"`
+	MutableMetaProperties   lists.PropertyList `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
+	MutableProperties       lists.PropertyList `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -87,11 +88,12 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, makerOwnableID ids.OwnableID, takerOwnableID ids.OwnableID, expiresIn types.Height, makerOwnableSplit sdkTypes.Dec, takerOwnableSplit sdkTypes.Dec, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, takerID ids.IdentityID, makerOwnableID ids.OwnableID, takerOwnableID ids.OwnableID, expiresIn types.Height, makerOwnableSplit sdkTypes.Dec, takerOwnableSplit sdkTypes.Dec, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return message{
 		From:                    from,
 		FromID:                  fromID,
 		ClassificationID:        classificationID,
+		TakerID:                 takerID,
 		MakerOwnableID:          makerOwnableID,
 		TakerOwnableID:          takerOwnableID,
 		ExpiresIn:               expiresIn,

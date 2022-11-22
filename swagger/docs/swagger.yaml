@@ -1080,7 +1080,7 @@ paths:
       summary: Search for a maintainer by maintainer ID
       tags:
         - Maintainers
-  /metas/metas/{metaID}:
+  /metas/metas/{dataID}:
     get:
       consumes:
         - application/json
@@ -1088,7 +1088,7 @@ paths:
       parameters:
         - description: Unique identifier of metadata value.
           in: path
-          name: metaID
+          name: dataID
           required: true
           type: string
       produces:

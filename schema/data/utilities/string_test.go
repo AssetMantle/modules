@@ -4,11 +4,12 @@
 package utilities
 
 import (
+	"reflect"
+	"testing"
+
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	"reflect"
-	"testing"
 
 	"github.com/cosmos/cosmos-sdk/types"
 

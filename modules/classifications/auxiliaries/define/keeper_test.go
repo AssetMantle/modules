@@ -5,9 +5,10 @@ package define
 
 import (
 	"fmt"
-	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"reflect"
 	"testing"
+
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"

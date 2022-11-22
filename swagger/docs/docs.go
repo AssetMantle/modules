@@ -822,7 +822,7 @@ var doc = `{
                 }
             }
         },
-        "/metas/metas/{metaID}": {
+        "/metas/metas/{dataID}": {
             "get": {
                 "description": "Able to query the meta data",
                 "consumes": [
@@ -839,7 +839,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Unique identifier of metadata value.",
-                        "name": "metaID",
+                        "name": "dataID",
                         "in": "path",
                         "required": true
                     }

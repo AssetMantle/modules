@@ -54,7 +54,6 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/orders"
 	"github.com/AssetMantle/modules/modules/splits"
-	"github.com/AssetMantle/modules/modules/splits/auxiliaries/burn"
 	splitsMint "github.com/AssetMantle/modules/modules/splits/auxiliaries/mint"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
@@ -386,7 +385,6 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		application.keys[assets.Prototype().Name()],
 		paramsKeeper.Subspace(assets.Prototype().Name()),
 		identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
-		splitsModule.GetAuxiliary(burn.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
@@ -412,7 +410,6 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
 	)
-
 	var wasmRouter = application.BaseApp.Router()
 
 	wasmDir := filepath.Join(home, wasm.ModuleName)
@@ -519,7 +516,6 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		crisis.ModuleName,
 		genutil.ModuleName,
 		evidence.ModuleName,
-		wasm.ModuleName,
 		assets.Prototype().Name(),
 		classifications.Prototype().Name(),
 		identities.Prototype().Name(),
