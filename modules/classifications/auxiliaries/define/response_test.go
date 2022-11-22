@@ -119,7 +119,6 @@ func Test_newAuxiliaryResponse(t *testing.T) {
 		args args
 		want helpers.AuxiliaryResponse
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{classificationID, nil}, auxiliaryResponse{true, nil, classificationID}},
 		{"-ve", args{classificationID, constants.EntityNotFound}, auxiliaryResponse{false, constants.EntityNotFound, classificationID}},
 	}

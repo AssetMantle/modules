@@ -33,7 +33,6 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{createTestInput()}, key{createTestInput()}},
 	}
 	for _, tt := range tests {
