@@ -5,33 +5,55 @@ package base
 
 import (
 	"encoding/base64"
+	"github.com/AssetMantle/modules/schema/traits"
 	"reflect"
 	"testing"
-
-	"github.com/tendermint/tendermint/crypto"
-
-	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/types"
 
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
 )
+
+type testableStringID struct {
+	IDString string
+}
+
+func (t testableStringID) Compare(listable traits.Listable) int {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t testableStringID) String() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t testableStringID) Bytes() []byte {
+	return []byte(t.IDString)
+}
+
+func (t testableStringID) IsStringID() {
+	//TODO implement me
+	panic("implement me")
+}
+
+func NewStringID(idString string) ids.StringID {
+	return testableStringID{IDString: idString}
+}
 
 func TestNewSignature(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
 	// pubKey := privateKey.PubKey()
-	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
+	signatureBytes := []byte("Temp")
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := baseIDs.NewStringID("ID")
+	id := NewStringID("ID")
 	validityHeight := NewHeight(123)
 	testSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -60,12 +82,12 @@ func Test_signature_Bytes(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
 	// pubKey := privateKey.PubKey()
-	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
+	signatureBytes := NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := baseIDs.NewStringID("ID")
+	id := NewStringID("ID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -89,12 +111,12 @@ func Test_signature_GetID(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
 	// pubKey := privateKey.PubKey()
-	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
+	signatureBytes := NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := baseIDs.NewStringID("ID")
+	id := NewStringID("ID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -118,12 +140,12 @@ func Test_signature_GetValidityHeight(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
 	// pubKey := privateKey.PubKey()
-	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
+	signatureBytes := NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := baseIDs.NewStringID("ID")
+	id := NewStringID("ID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -147,12 +169,12 @@ func Test_signature_HasExpired(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
 	// pubKey := privateKey.PubKey()
-	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
+	signatureBytes := NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := baseIDs.NewStringID("ID")
+	id := NewStringID("ID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -182,12 +204,12 @@ func Test_signature_String(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
 	// pubKey := privateKey.PubKey()
-	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
+	signatureBytes := NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := baseIDs.NewStringID("ID")
+	id := NewStringID("ID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -211,12 +233,12 @@ func Test_signature_Verify(t *testing.T) {
 
 	privateKey := ed25519.GenPrivKey()
 	pubKey := privateKey.PubKey()
-	signatureBytes := baseIDs.NewStringID("Temp").Bytes()
+	signatureBytes := NewStringID("Temp").Bytes()
 
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := baseIDs.NewStringID("ID")
+	id := NewStringID("ID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 

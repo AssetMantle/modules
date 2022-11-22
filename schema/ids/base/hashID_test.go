@@ -17,7 +17,7 @@ func TestReadHashID(t *testing.T) {
 		want    ids.HashID
 		wantErr bool
 	}{
-		{name: "empty string", args: args{hashIDString: ""}, want: PrototypeHashID(), wantErr: false},
+		{name: "empty string", args: args{""}, want: hashID{[]uint8{}}, wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
