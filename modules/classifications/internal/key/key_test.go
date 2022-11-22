@@ -72,7 +72,7 @@ func Test_keyFromInterface(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", args{NewKey(createTestInput())}, key{createTestInput()}, false},
-		{"+ve MetaDataError", args{}, key{createTestInput()}, true},
+		{"+ve MetaDataError", args{}, key{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
