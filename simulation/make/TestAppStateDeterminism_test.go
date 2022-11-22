@@ -10,9 +10,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/applications/base"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/simapp"
+
+	"github.com/AssetMantle/modules/schema/applications/base"
 
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	"github.com/cosmos/cosmos-sdk/x/simulation"

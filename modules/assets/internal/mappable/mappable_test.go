@@ -4,6 +4,12 @@
 package mappable
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	documentsSchema "github.com/AssetMantle/modules/schema/documents"
@@ -15,10 +21,6 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
 func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, mappable) {

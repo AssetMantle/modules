@@ -4,8 +4,9 @@
 package genesis
 
 import (
-	"github.com/AssetMantle/modules/schema/documents/constants"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/documents/constants"
 
 	"github.com/stretchr/testify/require"
 

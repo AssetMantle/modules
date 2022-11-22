@@ -5,6 +5,19 @@ package unprovision
 
 import (
 	"fmt"
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/store"
+	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/stretchr/testify/require"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tendermintDB "github.com/tendermint/tm-db"
+
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
@@ -20,17 +33,6 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store"
-	"github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
 )
 
 type TestKeepers struct {
@@ -38,7 +40,7 @@ type TestKeepers struct {
 }
 
 var (
-	supplementAuxilary helpers.Auxiliary
+	supplementAuxiliary helpers.Auxiliary
 )
 
 func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
@@ -73,9 +75,9 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	authenticateAuxilary := authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
+	authenticateAuxiliary := authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
 	keepers := TestKeepers{
-		UnProvisionKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{authenticateAuxilary}).(helpers.TransactionKeeper),
+		UnProvisionKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{authenticateAuxiliary}).(helpers.TransactionKeeper),
 	}
 
 	return context, keepers, Mapper, Parameters
@@ -100,7 +102,7 @@ func Test_keeperPrototype(t *testing.T) {
 
 func Test_transactionKeeper_Initialize(t *testing.T) {
 	_, _, mapper, _parameters := CreateTestInput(t)
-	supplementAuxilary = supplement.AuxiliaryMock.Initialize(mapper, _parameters)
+	supplementAuxiliary = supplement.AuxiliaryMock.Initialize(mapper, _parameters)
 	type fields struct {
 		mapper              helpers.Mapper
 		supplementAuxiliary helpers.Auxiliary
@@ -118,7 +120,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
-		{"+ve", fields{mapper, supplementAuxilary}, args{mapper, _parameters, []interface{}{supplementAuxilary}}, transactionKeeper{mapper, supplementAuxilary}},
+		{"+ve", fields{mapper, supplementAuxiliary}, args{mapper, _parameters, []interface{}{supplementAuxiliary}}, transactionKeeper{mapper, supplementAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -162,9 +164,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want   helpers.TransactionResponse
 	}{
 		// TODO: Add test cases.
-		{"+ve Not Authorized", fields{mapper, supplementAuxilary}, args{context, newMessage(fromAccAddress, toAccAddress, testFromID)}, newTransactionResponse(errorConstants.NotAuthorized)},
-		{"+ve Not Found", fields{mapper, supplementAuxilary}, args{context, newMessage(toAccAddress, fromAccAddress, testFromID)}, newTransactionResponse(errorConstants.EntityNotFound)},
-		{"+ve", fields{mapper, supplementAuxilary}, args{context, newMessage(toAccAddress, toAccAddress, testFromID)}, newTransactionResponse(nil)},
+		{"+ve Not Authorized", fields{mapper, supplementAuxiliary}, args{context, newMessage(fromAccAddress, toAccAddress, testFromID)}, newTransactionResponse(errorConstants.NotAuthorized)},
+		{"+ve Not Found", fields{mapper, supplementAuxiliary}, args{context, newMessage(toAccAddress, fromAccAddress, testFromID)}, newTransactionResponse(errorConstants.EntityNotFound)},
+		{"+ve", fields{mapper, supplementAuxiliary}, args{context, newMessage(toAccAddress, toAccAddress, testFromID)}, newTransactionResponse(nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
