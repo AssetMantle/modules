@@ -100,8 +100,9 @@ func (cliCommand cliCommand) CreateCommand(runE func(command *cobra.Command, arg
 		RunE:  runE,
 	}
 	cliCommand.registerFlags(command)
+	flags.AddTxFlagsToCmd(command)
 
-	return flags.PostCommands(command)[0]
+	return command
 }
 
 func NewCLICommand(use string, short string, long string, cliFlagList []helpers.CLIFlag) helpers.CLICommand {
