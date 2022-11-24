@@ -41,7 +41,7 @@ func createTestInput() (ids.IdentityID, ids.IdentityID) {
 }
 
 func Test_newQueryRequest(t *testing.T) {
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
@@ -176,7 +176,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 func Test_queryRequest_FromCLI(t *testing.T) {
 	testIdentity, emptyTestIdentity := createTestInput()
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.IdentityID})
-	cliContext := context.NewCLIContext().WithCodec(codec.New())
+	cliContext := context.NewCLIContext().WithCodec(codec.NewLegacyAmino())
 	type fields struct {
 		IdentityID ids.IdentityID
 	}

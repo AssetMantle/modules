@@ -11,7 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/params"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
@@ -53,7 +53,7 @@ var blockPrototype = func() helpers.Block { return helpersTestUtilities.TestBloc
 func TestModule(t *testing.T) {
 	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
 	codec := baseTestUtilities.MakeCodec()
-	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test") // .WithKeyTable(parametersPrototype().GetKeyTable())
+	subspace := paramsTypes.NewSubspace(binaryCodec, codec, storeKey, transientStoreKey, "test") // .WithKeyTable(parametersPrototype().GetKeyTable())
 	// subspace.SetParamSet(context, parametersPrototype())
 	Module := NewModule("test", auxiliariesPrototype, genesisPrototype,
 		mapperPrototype, parametersPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype, blockPrototype).Initialize(storeKey, subspace).(module)

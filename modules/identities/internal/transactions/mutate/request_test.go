@@ -29,7 +29,7 @@ import (
 )
 
 func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, string, lists.PropertyList, lists.PropertyList, string, sdkTypes.AccAddress, rest.BaseReq) {
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
@@ -287,7 +287,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, args{codec.New()}},
+		{"+ve", fields{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

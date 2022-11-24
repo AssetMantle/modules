@@ -22,7 +22,7 @@ import (
 )
 
 func TestHandler(t *testing.T) {
-	Codec := codec.New()
+	Codec := codec.NewLegacyAmino()
 	schema.RegisterCodec(Codec)
 	Codec.RegisterConcrete(request{}, "request", nil)
 	Codec.RegisterConcrete(response{}, "response", nil)

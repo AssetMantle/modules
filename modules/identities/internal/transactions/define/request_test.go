@@ -132,7 +132,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
@@ -194,7 +194,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 }
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
@@ -333,7 +333,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, args{codec.New()}},
+		{"+ve", fields{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

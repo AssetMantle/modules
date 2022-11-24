@@ -166,7 +166,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with nil", fields{}, args{codec.NewLegacyAmino()}},
-		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, args{codec.New()}},
+		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

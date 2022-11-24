@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/cosmos/cosmos-sdk/x/params"
+	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -27,7 +27,7 @@ import (
 )
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Auxiliary, helpers.Auxiliary) {
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
@@ -47,12 +47,13 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Au
 	require.Nil(t, err)
 
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
-	paramsKeeper := params.NewKeeper(
+	ParamsKeeper := paramsKeeper.NewKeeper(
+		binaryCodec,
 		Codec,
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
+	Parameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 	transferAuxiliary := transfer.AuxiliaryMock.Initialize(Mapper, Parameters)
 	supplementAuxiliary := supplement.AuxiliaryMock.Initialize(Mapper, Parameters)
 

@@ -18,7 +18,7 @@ func TestRegisterModuleConcrete(t *testing.T) {
 		{
 			name: "positive",
 			args: args{
-				codec: codec.New(),
+				codec: codec.NewLegacyAmino(),
 				o:     args{},
 			},
 		},

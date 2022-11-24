@@ -23,7 +23,7 @@ import (
 )
 
 func CreateAssetsTestInput(t *testing.T) sdkTypes.Context {
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)

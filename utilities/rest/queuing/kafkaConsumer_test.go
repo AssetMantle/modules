@@ -18,7 +18,7 @@ import (
 func TestKafkaTopicConsumer(t *testing.T) {
 	testConsumers := []string{"testConsumers"}
 
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)

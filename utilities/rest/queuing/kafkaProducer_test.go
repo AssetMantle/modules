@@ -17,7 +17,7 @@ import (
 
 func TestKafkaProducerDeliverMessage(t *testing.T) {
 	testProducer := []string{"testProducer"}
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	require.Panics(t, func() {
 		schema.RegisterCodec(Codec)
 		sdkTypes.RegisterCodec(Codec)

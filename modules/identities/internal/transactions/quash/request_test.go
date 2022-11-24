@@ -82,7 +82,7 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	schema.RegisterCodec(Codec)
 	types.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
@@ -252,8 +252,8 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 		// TODO: Add test cases.
-		{"+ve with nil", fields{}, args{codec.New()}},
-		{"+ve", fields{testBaseReq, testToAddress, testFromID.String()}, args{codec.New()}},
+		{"+ve with nil", fields{}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testBaseReq, testToAddress, testFromID.String()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

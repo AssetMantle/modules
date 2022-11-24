@@ -26,7 +26,7 @@ import (
 )
 
 func TestHandler(t *testing.T) {
-	Codec := codec.New()
+	Codec := codec.NewLegacyAmino()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	Codec.RegisterConcrete(request{}, "request", nil)

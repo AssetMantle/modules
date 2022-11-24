@@ -43,7 +43,7 @@ func (testMessage) RegisterCodec(codec *codec.LegacyAmino) {
 
 func Test_Kafka(t *testing.T) {
 
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)

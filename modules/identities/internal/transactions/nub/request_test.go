@@ -24,7 +24,7 @@ import (
 )
 
 func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, sdkTypes.AccAddress, rest.BaseReq) {
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterLegacyAminoCodec(Codec)
 	codec.RegisterCrypto(Codec)

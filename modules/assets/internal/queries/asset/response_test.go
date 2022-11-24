@@ -24,7 +24,7 @@ import (
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)

@@ -324,7 +324,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, args{codec.New()}},
+		{"+ve", fields{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
