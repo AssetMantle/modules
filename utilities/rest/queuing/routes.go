@@ -9,5 +9,5 @@ import (
 )
 
 func RegisterRoutes(context client.Context, router *mux.Router) {
-	router.HandleFunc("/response/{TicketID}", queryDB(&context.Codec)).Methods("GET")
+	router.HandleFunc("/response/{TicketID}", queryDB(context.LegacyAmino)).Methods("GET")
 }
