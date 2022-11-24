@@ -18,17 +18,27 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	authKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/cosmos/cosmos-sdk/x/crisis"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	crisisKeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
 	"github.com/cosmos/cosmos-sdk/x/distribution"
+	distributionKeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	"github.com/cosmos/cosmos-sdk/x/evidence"
+	evidenceKeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
 	"github.com/cosmos/cosmos-sdk/x/gov"
+	govKeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	"github.com/cosmos/cosmos-sdk/x/mint"
+	mintKeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	"github.com/cosmos/cosmos-sdk/x/params"
+	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
+	slashingKeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
 	"github.com/cosmos/cosmos-sdk/x/staking"
+	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
+	upgradeKeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
@@ -56,24 +66,23 @@ type SimulationApplication struct {
 	subspaces          map[string]paramTypes.Subspace
 	simulationManager  *module.SimulationManager
 
-	AccountKeeper      auth.AccountKeeper
-	BankKeeper         bank.Keeper
-	SupplyKeeper       supply.Keeper
-	StakingKeeper      staking.Keeper
-	SlashingKeeper     slashing.Keeper
-	MintKeeper         mint.Keeper
-	DistributionKeeper distribution.Keeper
-	GovKeeper          gov.Keeper
-	CrisisKeeper       crisis.Keeper
-	UpgradeKeeper      upgrade.Keeper
-	ParamsKeeper       params.Keeper
-	EvidenceKeeper     evidence.Keeper
+	AccountKeeper      authKeeper.AccountKeeper
+	BankKeeper         bankKeeper.Keeper
+	StakingKeeper      stakingKeeper.Keeper
+	SlashingKeeper     slashingKeeper.Keeper
+	MintKeeper         mintKeeper.Keeper
+	DistributionKeeper distributionKeeper.Keeper
+	GovKeeper          govKeeper.Keeper
+	CrisisKeeper       crisisKeeper.Keeper
+	UpgradeKeeper      upgradeKeeper.Keeper
+	ParamsKeeper       paramsKeeper.Keeper
+	EvidenceKeeper     evidenceKeeper.Keeper
 }
 
 var _ applications.SimulationApplication = (*SimulationApplication)(nil)
 
 func (simulationApplication SimulationApplication) Codec() *codec.Codec {
-	return simulationApplication.codec
+	return &simulationApplication.codec
 }
 
 func (simulationApplication SimulationApplication) BeginBlocker(ctx sdkTypes.Context, req abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
@@ -237,7 +246,8 @@ func (simulationApplication SimulationApplication) InitializeSimulationApplicati
 
 	simulationApplication.transientStoreKeys = sdkTypes.NewTransientStoreKeys(params.TStoreKey)
 
-	simulationApplication.ParamsKeeper = params.NewKeeper(
+	simulationApplication.ParamsKeeper = paramsKeeper.NewKeeper(
+		binaryCodec,
 		simulationApplication.codec,
 		simulationApplication.keys[params.StoreKey],
 		simulationApplication.transientStoreKeys[params.TStoreKey],
