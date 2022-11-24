@@ -5,6 +5,7 @@ package unwrap
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
@@ -16,7 +17,7 @@ import (
 type transactionKeeper struct {
 	mapper                helpers.Mapper
 	parameters            helpers.Parameters
-	supplyKeeper          supply.Keeper
+	bankKeeper            bankKeeper.Keeper
 	authenticateAuxiliary helpers.Auxiliary
 }
 
@@ -33,7 +34,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	if err := transactionKeeper.supplyKeeper.SendCoinsFromModuleToAccount(context, module.Name, message.From, sdkTypes.NewCoins(sdkTypes.NewCoin(message.OwnableID.String(), message.Value))); err != nil {
+	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(context, module.Name, message.From, sdkTypes.NewCoins(sdkTypes.NewCoin(message.OwnableID.String(), message.Value))); err != nil {
 		return newTransactionResponse(err)
 	}
 
@@ -45,8 +46,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
-		case supply.Keeper:
-			transactionKeeper.supplyKeeper = value
+		case bankKeeper.Keeper:
+			transactionKeeper.bankKeeper = value
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case authenticate.Auxiliary.GetName():
