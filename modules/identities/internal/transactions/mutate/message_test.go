@@ -157,7 +157,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 		MutableProperties     lists.PropertyList
 	}
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
@@ -165,7 +165,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 		// TODO: Add test cases.
-		{"+ve with nil", fields{}, args{codec.New()}},
+		{"+ve with nil", fields{}, args{codec.NewLegacyAmino()}},
 		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, args{codec.New()}},
 	}
 	for _, tt := range tests {

@@ -246,7 +246,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		IdentityID string
 	}
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string

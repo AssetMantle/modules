@@ -30,7 +30,7 @@ type query struct {
 var _ helpers.Query = (*query)(nil)
 
 func (query query) GetName() string { return query.name }
-func (query query) Command(codec *codec.Codec) *cobra.Command {
+func (query query) Command(codec *codec.LegacyAmino) *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
 		cliContext := context.NewCLIContext().WithCodec(codec)
 

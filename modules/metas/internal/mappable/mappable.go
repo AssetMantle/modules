@@ -22,7 +22,7 @@ var _ helpers.Mappable = (*mappable)(nil)
 func (mappable mappable) GetKey() helpers.Key {
 	return key.NewKey(base.NewDataID(mappable.Data))
 }
-func (mappable) RegisterCodec(codec *codec.Codec) {
+func (mappable) RegisterCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(codec, mappable{})
 }
 

@@ -9,7 +9,7 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-func RegisterCodec(codec *codec.Codec) {
+func RegisterCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(codec, accAddressData{})
 	codecUtilities.RegisterModuleConcrete(codec, booleanData{})
 	codecUtilities.RegisterModuleConcrete(codec, decData{})

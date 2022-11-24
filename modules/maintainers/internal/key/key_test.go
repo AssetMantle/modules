@@ -172,7 +172,7 @@ func Test_key_RegisterCodec(t *testing.T) {
 		MaintainerID ids.MaintainerID
 	}
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string

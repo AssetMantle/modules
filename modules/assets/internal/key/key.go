@@ -22,7 +22,7 @@ var _ helpers.Key = (*key)(nil)
 func (key key) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(key.Bytes())
 }
-func (key) RegisterCodec(codec *codec.Codec) {
+func (key) RegisterCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(codec, key{})
 }
 func (key key) IsPartial() bool {

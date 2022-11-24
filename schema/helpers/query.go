@@ -15,7 +15,7 @@ import (
 
 type Query interface {
 	GetName() string
-	Command(*codec.Codec) *cobra.Command
+	Command(*codec.LegacyAmino) *cobra.Command
 	HandleMessage(sdkTypes.Context, abciTypes.RequestQuery) ([]byte, error)
 	RESTQueryHandler(client.Context) http.HandlerFunc
 	Initialize(Mapper, Parameters, ...interface{}) Query

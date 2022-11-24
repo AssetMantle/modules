@@ -15,7 +15,7 @@ import (
 )
 
 type genesis struct {
-	codec *codec.Codec
+	codec *codec.LegacyAmino
 
 	keyPrototype      func() helpers.Key
 	mappablePrototype func() helpers.Mappable
@@ -135,7 +135,7 @@ func (genesis genesis) GetMappableList() []helpers.Mappable {
 }
 
 func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable, defaultMappableList []helpers.Mappable, defaultParameterList []parameters2.Parameter) helpers.Genesis {
-	Codec := codec.New()
+	Codec := codec.NewLegacyAmino()
 	keyPrototype().RegisterCodec(Codec)
 	mappablePrototype().RegisterCodec(Codec)
 	schema.RegisterCodec(Codec)

@@ -32,7 +32,7 @@ func (mappable mappable) GetKey() helpers.Key {
 			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(mappable.Maintainer.GetIdentityID())),
 		))))
 }
-func (mappable) RegisterCodec(codec *codec.Codec) {
+func (mappable) RegisterCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(codec, mappable{})
 }
 

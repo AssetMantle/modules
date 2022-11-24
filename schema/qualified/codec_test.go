@@ -8,7 +8,7 @@ import (
 
 func TestRegisterCodec(t *testing.T) {
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 	}
 	tests := []struct {
 		name string

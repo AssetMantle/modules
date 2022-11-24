@@ -8,7 +8,7 @@ import (
 
 func TestRegisterModuleConcrete(t *testing.T) {
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 		o     interface{}
 	}
 	tests := []struct {

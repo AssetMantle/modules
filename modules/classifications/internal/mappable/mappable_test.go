@@ -76,7 +76,7 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 		Document mappable
 	}
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
@@ -84,8 +84,8 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testMappable}, args{codec: codec.New()}},
-		{"+ve nil", fields{mappable{nil}}, args{codec: codec.New()}},
+		{"+ve", fields{testMappable}, args{codec: codec.NewLegacyAmino()}},
+		{"+ve nil", fields{mappable{nil}}, args{codec: codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

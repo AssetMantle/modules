@@ -12,7 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
-func (simulator) WeightedOperations(appParams simulation.AppParams, codec *codec.Codec) simulation.WeightedOperations {
+func (simulator) WeightedOperations(appParams simulation.AppParams, codec *codec.LegacyAmino) simulation.WeightedOperations {
 	var weightMsg int
 
 	appParams.GetOrGenerate(codec, OpWeightMsg, &weightMsg, nil,

@@ -37,7 +37,7 @@ func (message testMessage) GetSigners() []sdkTypes.AccAddress {
 	fromAccAddress, _ := sdkTypes.AccAddressFromBech32(fromAddress)
 	return []sdkTypes.AccAddress{fromAccAddress}
 }
-func (testMessage) RegisterCodec(codec *codec.Codec) {
+func (testMessage) RegisterCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(codec, testMessage{})
 }
 

@@ -10,8 +10,8 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-func RegisterCodec(messagePrototype func() helpers.Message) *codec.Codec {
-	Codec := codec.New()
+func RegisterCodec(messagePrototype func() helpers.Message) *codec.LegacyAmino {
+	Codec := codec.NewLegacyAmino()
 	messagePrototype().RegisterCodec(Codec)
 	schema.RegisterCodec(Codec)
 	Codec.Seal()

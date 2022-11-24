@@ -96,7 +96,7 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 		Maintainer documents.Maintainer
 	}
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string

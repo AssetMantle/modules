@@ -11,7 +11,7 @@ import (
 	"github.com/AssetMantle/modules/utilities/module"
 )
 
-var Codec *codec.Codec
+var Codec *codec.LegacyAmino
 
 func init() {
 	Codec = module.RegisterCodec(key.Prototype, mappable.Prototype)

@@ -66,7 +66,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		baseIDs.NewStringID(transactionRequest.NubID),
 	), nil
 }
-func (transactionRequest) RegisterCodec(codec *codec.Codec) {
+func (transactionRequest) RegisterCodec(codec *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(codec, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {

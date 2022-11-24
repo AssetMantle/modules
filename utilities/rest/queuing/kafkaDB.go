@@ -13,7 +13,7 @@ import (
 )
 
 // setTicketIDtoDB : initiates TicketID in Database
-func setTicketIDtoDB(ticket TicketID, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec, msg []byte) {
+func setTicketIDtoDB(ticket TicketID, kafkaDB *dbm.GoLevelDB, cdc *codec.LegacyAmino, msg []byte) {
 	ticketID, err := cdc.MarshalJSON(ticket)
 	if err != nil {
 		panic(err)
@@ -25,7 +25,7 @@ func setTicketIDtoDB(ticket TicketID, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec, 
 }
 
 // addResponseToDB : Updates response to DB
-func addResponseToDB(ticket TicketID, response []byte, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec) {
+func addResponseToDB(ticket TicketID, response []byte, kafkaDB *dbm.GoLevelDB, cdc *codec.LegacyAmino) {
 	ticketID, err := cdc.MarshalJSON(ticket)
 	if err != nil {
 		panic(err)
@@ -38,7 +38,7 @@ func addResponseToDB(ticket TicketID, response []byte, kafkaDB *dbm.GoLevelDB, c
 }
 
 // getResponseFromDB : gives the response from DB
-func getResponseFromDB(ticket TicketID, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec) []byte {
+func getResponseFromDB(ticket TicketID, kafkaDB *dbm.GoLevelDB, cdc *codec.LegacyAmino) []byte {
 	ticketID, err := cdc.MarshalJSON(ticket)
 	if err != nil {
 		panic(err)
@@ -50,7 +50,7 @@ func getResponseFromDB(ticket TicketID, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec
 }
 
 // queryDB : REST outputs info from DB
-func queryDB(cdc *codec.Codec) http.HandlerFunc {
+func queryDB(cdc *codec.LegacyAmino) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 

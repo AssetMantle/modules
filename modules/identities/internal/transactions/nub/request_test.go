@@ -23,10 +23,10 @@ import (
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
-func CreateTestInputForRequest(t *testing.T) (*codec.Codec, helpers.CLICommand, client.Context, string, sdkTypes.AccAddress, rest.BaseReq) {
+func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, sdkTypes.AccAddress, rest.BaseReq) {
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
@@ -230,7 +230,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		NubID   string
 	}
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
@@ -238,7 +238,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testBaseReq, "nubID"}, args{codec.New()}},
+		{"+ve", fields{testBaseReq, "nubID"}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -129,7 +129,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 		NubID ids.ID
 	}
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
@@ -347,7 +347,7 @@ func Test_message_RegisterCodec1(t *testing.T) {
 		NubID ids.ID
 	}
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
@@ -555,7 +555,7 @@ func Test_message_RegisterCodec2(t *testing.T) {
 		NubID ids.ID
 	}
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
@@ -763,7 +763,7 @@ func Test_message_RegisterCodec3(t *testing.T) {
 		NubID ids.ID
 	}
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string

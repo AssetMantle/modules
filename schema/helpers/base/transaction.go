@@ -39,7 +39,7 @@ type transaction struct {
 var _ helpers.Transaction = (*transaction)(nil)
 
 func (transaction transaction) GetName() string { return transaction.name }
-func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
+func (transaction transaction) Command(codec *codec.LegacyAmino) *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
 		cliContext, err := client.GetClientTxContext(command)
 		if err != nil {
@@ -235,7 +235,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 	}
 }
 
-func (transaction transaction) RegisterCodec(codec *codec.Codec) {
+func (transaction transaction) RegisterCodec(codec *codec.LegacyAmino) {
 	transaction.messagePrototype().RegisterCodec(codec)
 	transaction.requestPrototype().RegisterCodec(codec)
 }

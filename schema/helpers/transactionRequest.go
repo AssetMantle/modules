@@ -18,6 +18,6 @@ type TransactionRequest interface {
 	FromCLI(CLICommand, client.Context) (TransactionRequest, error)
 	FromJSON(json.RawMessage) (TransactionRequest, error)
 	MakeMsg() (sdkTypes.Msg, error)
-	RegisterCodec(*codec.Codec)
+	RegisterCodec(*codec.LegacyAmino)
 	Request
 }

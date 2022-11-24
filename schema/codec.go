@@ -11,7 +11,6 @@ import (
 	"github.com/AssetMantle/modules/schema/documents"
 	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/errors"
-	baseErrors "github.com/AssetMantle/modules/schema/errors/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -28,7 +27,7 @@ import (
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
-func RegisterCodec(codec *codec.Codec) {
+func RegisterCodec(codec *codec.LegacyAmino) {
 
 	data.RegisterCodec(codec)
 	baseData.RegisterCodec(codec)
@@ -37,7 +36,6 @@ func RegisterCodec(codec *codec.Codec) {
 	baseDocuments.RegisterCodec(codec)
 
 	errors.RegisterCodec(codec)
-	baseErrors.RegisterCodec(codec)
 
 	helpers.RegisterCodec(codec)
 

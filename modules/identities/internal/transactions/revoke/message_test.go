@@ -153,7 +153,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 		ClassificationID ids.ClassificationID
 	}
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string

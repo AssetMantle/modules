@@ -149,7 +149,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 		OrderID ids.OrderID
 	}
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string

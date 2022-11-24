@@ -40,11 +40,11 @@ func SetupTest(t *testing.T) (sdkTypes.Context, *sdkTypes.KVStoreKey, *sdkTypes.
 	return context, storeKey, paramsTransientStoreKeys
 }
 
-func MakeCodec() *codec.Codec {
-	var Codec = codec.New()
+func MakeCodec() *codec.LegacyAmino {
+	var Codec = codec.NewLegacyAmino()
 
 	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
 	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
@@ -67,7 +67,7 @@ func (t testKey) GenerateStoreKeyBytes() []byte {
 	return append([]byte{0x11}, []byte(t.ID)...)
 }
 
-func (t testKey) RegisterCodec(codec *codec.Codec) {
+func (t testKey) RegisterCodec(codec *codec.LegacyAmino) {
 	codec.RegisterConcrete(testKey{}, "test/testKey", nil)
 }
 
@@ -99,7 +99,7 @@ func (t testMappable) GetKey() helpers.Key {
 	return NewKey(t.ID)
 }
 
-func (t testMappable) RegisterCodec(c *codec.Codec) {
+func (t testMappable) RegisterCodec(c *codec.LegacyAmino) {
 	c.RegisterConcrete(testMappable{}, "test/testMappable", nil)
 }
 

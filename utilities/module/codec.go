@@ -10,8 +10,8 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-func RegisterCodec(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) *codec.Codec {
-	Codec := codec.New()
+func RegisterCodec(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) *codec.LegacyAmino {
+	Codec := codec.NewLegacyAmino()
 	keyPrototype().RegisterCodec(Codec)
 	mappablePrototype().RegisterCodec(Codec)
 	schema.RegisterCodec(Codec)

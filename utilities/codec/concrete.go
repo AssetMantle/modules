@@ -9,6 +9,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
-func RegisterModuleConcrete(codec *codec.Codec, o interface{}) {
+func RegisterModuleConcrete(codec *codec.LegacyAmino, o interface{}) {
 	codec.RegisterConcrete(o, reflect.TypeOf(o).PkgPath()+"/"+reflect.TypeOf(o).Name(), nil)
 }

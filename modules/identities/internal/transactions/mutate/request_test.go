@@ -28,7 +28,7 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-func createTestInput(t *testing.T) (*codec.Codec, helpers.CLICommand, client.Context, string, string, lists.PropertyList, lists.PropertyList, string, sdkTypes.AccAddress, rest.BaseReq) {
+func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, string, lists.PropertyList, lists.PropertyList, string, sdkTypes.AccAddress, rest.BaseReq) {
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
@@ -279,7 +279,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		MutableProperties     string
 	}
 	type args struct {
-		codec *codec.Codec
+		codec *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
