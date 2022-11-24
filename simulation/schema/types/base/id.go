@@ -8,15 +8,14 @@ import (
 	"strconv"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/cosmos/cosmos-sdk/x/simulation"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func GenerateRandomID(r *rand.Rand) ids.ID {
-	return baseIDs.NewStringID(simulation.RandStringOfLength(r, r.Intn(99)))
+	return baseIDs.NewStringID(simulationTypes.RandStringOfLength(r, r.Intn(99)))
 }
 
 func GenerateRandomIDWithDec(r *rand.Rand) ids.ID {
