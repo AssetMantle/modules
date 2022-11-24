@@ -23,7 +23,7 @@ func kafkaConsumerMessages(context client.Context) {
 			case <-quit:
 				return
 			default:
-				msg = kafkaTopicConsumer("Topic", KafkaState.Consumers, &context.Codec)
+				msg = kafkaTopicConsumer("Topic", KafkaState.Consumers, context.LegacyAmino)
 				if msg.Msg != nil {
 					kafkaMsgList = append(kafkaMsgList, msg)
 				}
