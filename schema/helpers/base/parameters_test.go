@@ -6,7 +6,7 @@ package base
 import (
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/x/params"
+	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
@@ -22,7 +22,7 @@ func TestParameters(t *testing.T) {
 	Parameter := baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
 	ParameterList := []parameters2.Parameter{Parameter}
 	Parameters := NewParameters(ParameterList...)
-	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
+	subspace := paramTypes.NewSubspace(binaryCodec, codec, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
 	subspace.SetParamSet(context, Parameters)
 	Parameters = Parameters.Initialize(subspace).(parameters)
 

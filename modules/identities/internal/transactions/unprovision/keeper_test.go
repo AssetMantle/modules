@@ -12,7 +12,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -44,7 +43,7 @@ var (
 )
 
 func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
-	var Codec = codec.New()
+	var Codec = codec.NewLegacyAmino()
 	schema.RegisterCodec(Codec)
 	types.RegisterCodec(Codec)
 	codec.RegisterCrypto(Codec)
@@ -56,7 +55,7 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 	paramsStoreKey := types.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := types.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
-	paramsKeeper := params.NewKeeper(
+	ParamsKeeper := paramsKeeper.NewKeeper(
 		Codec,
 		paramsStoreKey,
 		paramsTransientStoreKeys,

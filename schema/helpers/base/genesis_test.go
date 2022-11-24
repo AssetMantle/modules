@@ -6,7 +6,7 @@ package base
 import (
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/x/params"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
@@ -25,7 +25,7 @@ func TestGenesis(t *testing.T) {
 	mappableList := []helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")}
 	ParameterList := []parameters2.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })}
 	Parameters := NewParameters(ParameterList...)
-	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
+	subspace := paramsTypes.NewSubspace(binaryCodec, codec, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
 	Parameters = Parameters.Initialize(subspace)
 
 	Genesis := NewGenesis(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype, mappableList, ParameterList).Initialize(mappableList, ParameterList).(genesis)
