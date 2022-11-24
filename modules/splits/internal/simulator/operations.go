@@ -9,13 +9,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
-func (simulator) WeightedOperations(appParams simulation.AppParams, codec *codec.LegacyAmino) simulation.WeightedOperations {
+func (simulator) WeightedOperations(appParams simulationTypes.AppParams, jsonCodec codec.JSONCodec) simulation.WeightedOperations {
 	var weightMsg int
 
-	appParams.GetOrGenerate(codec, OpWeightMsg, &weightMsg, nil,
+	appParams.GetOrGenerate(jsonCodec, OpWeightMsg, &weightMsg, nil,
 		func(_ *rand.Rand) {
 			weightMsg = DefaultWeightMsg
 		},
