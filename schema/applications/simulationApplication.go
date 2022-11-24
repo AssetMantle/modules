@@ -11,7 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/params"
+	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 )
@@ -23,7 +23,7 @@ type SimulationApplication interface {
 	GetBaseApp() *baseapp.BaseApp
 	GetKey(storeKey string) *sdk.KVStoreKey
 	GetTKey(storeKey string) *sdk.TransientStoreKey
-	GetSubspace(moduleName string) params.Subspace
+	GetSubspace(moduleName string) paramTypes.Subspace
 	GetModuleAccountPermissions() map[string][]string
 	GetBlackListedAddresses() map[string]bool
 	ModuleManager() *module.Manager

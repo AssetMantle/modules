@@ -12,7 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/params"
+	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -68,7 +68,7 @@ func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simu
 func (module module) Name() string {
 	return module.name
 }
-func (module module) RegisterCodec(codec *codec.Codec) {
+func (module module) RegisterCodec(codec *codec.LegacyAmino) {
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterCodec(codec)
 	}
@@ -89,7 +89,7 @@ func (module module) RegisterRESTRoutes(context client.Context, router *mux.Rout
 		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(context)).Methods("POST")
 	}
 }
-func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
+func (module module) GetTxCmd(codec *codec.LegacyAmino) *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
 		Use:                        module.name,
 		Short:                      "GetProperty root transaction command.",
@@ -109,7 +109,7 @@ func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 
 	return rootTransactionCommand
 }
-func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
+func (module module) GetQueryCmd(codec *codec.LegacyAmino) *cobra.Command {
 	rootQueryCommand := &cobra.Command{
 		Use:                        module.name,
 		Short:                      "GetProperty root query command.",
@@ -208,7 +208,7 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 	return nil, constants.IncorrectMessage
 }
 
-func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace params.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
+func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace paramTypes.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
 	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)
 
 	module.genesis = module.genesisPrototype().Initialize(module.genesisPrototype().GetMappableList(), module.genesisPrototype().GetParameterList())

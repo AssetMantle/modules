@@ -25,6 +25,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/mint"
 	"github.com/cosmos/cosmos-sdk/x/params"
+	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
@@ -52,7 +53,7 @@ type SimulationApplication struct {
 	application
 
 	transientStoreKeys map[string]*sdkTypes.TransientStoreKey
-	subspaces          map[string]params.Subspace
+	subspaces          map[string]paramTypes.Subspace
 	simulationManager  *module.SimulationManager
 
 	AccountKeeper      auth.AccountKeeper
@@ -119,7 +120,7 @@ func (simulationApplication SimulationApplication) GetTKey(storeKey string) *sdk
 	return simulationApplication.transientStoreKeys[storeKey]
 }
 
-func (simulationApplication SimulationApplication) GetSubspace(moduleName string) params.Subspace {
+func (simulationApplication SimulationApplication) GetSubspace(moduleName string) paramTypes.Subspace {
 	return simulationApplication.subspaces[moduleName]
 }
 
