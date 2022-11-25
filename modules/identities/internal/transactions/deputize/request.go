@@ -89,9 +89,6 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	if !base.NewInputValidator(constants.PropertyExpression).IsValid(transactionRequest.MaintainedProperties) {
-		return nil, errorConstants.IncorrectFormat
-	}
 	maintainedProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MaintainedProperties)
 	if err != nil {
 		return nil, err

@@ -69,10 +69,6 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	if !base.NewInputValidator(constants.NubIDExpression).IsValid(transactionRequest.NubID) {
-		return nil, errorConstants.IncorrectFormat
-	}
-
 	return newMessage(
 		from,
 		baseIDs.NewStringID(transactionRequest.NubID),
