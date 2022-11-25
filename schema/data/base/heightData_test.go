@@ -247,9 +247,9 @@ func Test_heightData_ZeroValue(t *testing.T) {
 		want   data.Data
 	}{
 
-		{"Test for zero value", fields{baseTypes.NewHeight(0)}, heightData{baseTypes.NewHeight(0)}},
-		{"Test for +ve Int value", fields{baseTypes.NewHeight(100)}, heightData{baseTypes.NewHeight(0)}},
-		{"Test for -ve Int value", fields{baseTypes.NewHeight(-100)}, heightData{baseTypes.NewHeight(0)}},
+		{"Test for zero value", fields{baseTypes.NewHeight(0)}, heightData{baseTypes.NewHeight(-1)}},
+		{"Test for +ve Int value", fields{baseTypes.NewHeight(100)}, heightData{baseTypes.NewHeight(-1)}},
+		{"Test for -ve Int value", fields{baseTypes.NewHeight(-100)}, heightData{baseTypes.NewHeight(-1)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
