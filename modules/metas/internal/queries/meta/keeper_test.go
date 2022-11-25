@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package asset
+package meta
 
 import (
 	"fmt"
@@ -18,25 +18,18 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/modules/assets/internal/key"
-	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
-	"github.com/AssetMantle/modules/modules/assets/internal/parameters"
+	"github.com/AssetMantle/modules/modules/metas/internal/key"
+	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
+	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/documents/base"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-
-	"github.com/cosmos/cosmos-sdk/types"
-
+	base2 "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type TestKeepers struct {
-	AssetKeeper helpers.QueryKeeper
+	MetaKeeper helpers.QueryKeeper
 }
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
@@ -72,7 +65,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		AssetKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.QueryKeeper),
+		MetaKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.QueryKeeper),
 	}
 
 	return context, keepers, Mapper, Parameters
@@ -96,16 +89,13 @@ func Test_keeperPrototype(t *testing.T) {
 
 func Test_queryKeeper_Enquire(t *testing.T) {
 	context, keepers, Mapper, _ := createTestInput(t)
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	testAssetID := baseIDs.NewAssetID(classificationID, immutables)
-	keepers.AssetKeeper.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(base.NewAsset(classificationID, immutables, mutables)))
+	testDataID := base.NewDataID(base2.NewStringData("Data"))
+	keepers.MetaKeeper.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(base2.NewStringData("Data")))
 	type fields struct {
 		mapper helpers.Mapper
 	}
 	type args struct {
-		context      types.Context
+		context      sdkTypes.Context
 		queryRequest helpers.QueryRequest
 	}
 	tests := []struct {
@@ -114,7 +104,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 		args   args
 		want   helpers.QueryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, newQueryRequest(testAssetID)}, newQueryResponse(keepers.AssetKeeper.(queryKeeper).mapper.NewCollection(context).Fetch(key.NewKey(testAssetID)), nil)},
+		{"+ve", fields{Mapper}, args{context, newQueryRequest(testDataID)}, newQueryResponse(keepers.MetaKeeper.(queryKeeper).mapper.NewCollection(context).Fetch(key.NewKey(queryRequestFromInterface(newQueryRequest(testDataID)).DataID)), nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -144,8 +134,6 @@ func Test_queryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-
-		{"+ve with nil", fields{}, args{}, queryKeeper{}},
 		{"+ve", fields{Mapper}, args{Mapper, Parameters, []interface{}{}}, queryKeeper{Mapper}},
 	}
 	for _, tt := range tests {
