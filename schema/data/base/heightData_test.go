@@ -119,8 +119,8 @@ func Test_heightData_GenerateHashID(t *testing.T) {
 		want   ids.HashID
 	}{
 
-		{"Test for zero value", fields{baseTypes.NewHeight(0)}, baseIDs.GenerateHashID()},
-		{"Test for -ve value", fields{baseTypes.NewHeight(-100)}, baseIDs.GenerateHashID(heightData{baseTypes.NewHeight(-100)}.Bytes())},
+		{"Test for zero value", fields{baseTypes.NewHeight(-1)}, baseIDs.GenerateHashID()},
+		{"Test for -ve value", fields{baseTypes.NewHeight(-100)}, baseIDs.GenerateHashID()},
 		{"Test for +ve value", fields{baseTypes.NewHeight(100)}, baseIDs.GenerateHashID(heightData{baseTypes.NewHeight(100)}.Bytes())},
 	}
 	for _, tt := range tests {
