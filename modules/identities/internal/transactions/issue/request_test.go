@@ -5,6 +5,7 @@ package issue
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -284,7 +285,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{testBaseReq, toAddress, "9UNIA3_tulK2vRE0nSmsHKNzhDxoCBHI4z8XXfLO1FM=.pvamJCA8talIpNPu8fekxGhvFtTGtjSRhAaaKQOrHfg", "9UNIA3_tulK2vRE0nSmsHKNzhDxoCBHI4z8XXfLO1FM=", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, newMessage(fromAccAddress, toAccAddress, testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), false}, // TODO: issue==> getting MetaDataError that is not expected
+		{"+ve", fields{testBaseReq, toAddress, "9UNIA3_tulK2vRE0nSmsHKNzhDxoCBHI4z8XXfLO1FM=", "9UNIA3_tulK2vRE0nSmsHKNzhDxoCBHI4z8XXfLO1FM=", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, newMessage(fromAccAddress, toAccAddress, testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), false}, // TODO: issue==> getting MetaDataError that is not expected
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -303,7 +304,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 				t.Errorf("MakeMsg() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("MakeMsg() got = %v, want %v", got, tt.want)
 			}
 		})
