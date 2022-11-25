@@ -35,10 +35,11 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.OrderID))
 
-	order := orders.Get(key.NewKey(message.OrderID)).(documents.Order)
-	if order == nil {
+	Mappable := orders.Get(key.NewKey(message.OrderID))
+	if Mappable == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
+	order := Mappable.(documents.Order)
 
 	if message.FromID.Compare(order.GetMakerID()) != 0 {
 		return newTransactionResponse(errorConstants.NotAuthorized)

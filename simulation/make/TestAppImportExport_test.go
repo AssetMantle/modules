@@ -5,9 +5,10 @@ package make
 
 import (
 	"fmt"
-	"github.com/CosmWasm/wasmd/x/wasm"
 	"os"
 	"testing"
+
+	"github.com/CosmWasm/wasmd/x/wasm"
 
 	"github.com/cosmos/cosmos-sdk/store"
 

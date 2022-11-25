@@ -5,11 +5,12 @@ package parameters
 
 import (
 	"fmt"
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters/dummy"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"reflect"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {

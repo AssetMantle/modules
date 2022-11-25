@@ -4,17 +4,19 @@
 package simulator
 
 import (
+	"math/rand"
+
 	"github.com/AssetMantle/modules/modules/maintainers/internal/utilities"
 	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"math/rand"
 
-	"github.com/AssetMantle/modules/utilities/random"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+
+	"github.com/AssetMantle/modules/utilities/random"
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/common"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"

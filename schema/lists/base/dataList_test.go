@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -23,7 +24,7 @@ func TestNewDataList(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with empty struct", args{[]data.Data{}}, dataList{List: NewList(dataToListables([]data.Data{}...)...)}},
-		{"+ve", args{[]data.Data{NewStringData("Data")}}, dataList{List: NewList(dataToListables([]data.Data{NewStringData("Data")}...)...)}},
+		{"+ve", args{[]data.Data{base.NewStringData("Data")}}, dataList{List: NewList(dataToListables([]data.Data{base.NewStringData("Data")}...)...)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -73,7 +74,7 @@ func Test_dataList_GetList(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with empty struct", fields{list{}}, []data.Data{}}, // TODO: issue Panic for nil
-		{"+ve", fields{NewList(dataToListables([]data.Data{NewStringData("Data")}...)...)}, []data.Data{NewStringData("Data")}},
+		{"+ve", fields{NewList(dataToListables([]data.Data{base.NewStringData("Data")}...)...)}, []data.Data{base.NewStringData("Data")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -102,7 +103,7 @@ func Test_dataList_Remove(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with empty struct", fields{NewList(dataToListables([]data.Data{}...)...)}, args{}, dataList{List: NewList(dataToListables([]data.Data{}...)...)}},
-		{"+ve", fields{NewList(dataToListables([]data.Data{NewStringData("Data")}...)...)}, args{[]data.Data{NewStringData("Data")}}, dataList{List: NewList(dataToListables([]data.Data{}...)...)}},
+		{"+ve", fields{NewList(dataToListables([]data.Data{base.NewStringData("Data")}...)...)}, args{[]data.Data{base.NewStringData("Data")}}, dataList{List: NewList(dataToListables([]data.Data{}...)...)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -131,8 +132,8 @@ func Test_dataList_Search(t *testing.T) {
 		want1  bool
 	}{
 		// TODO: Add test cases.
-		{"+ve with empty struct", fields{NewList(dataToListables([]data.Data{}...)...)}, args{NewStringData("Data")}, 0, false}, // TODO: fix this
-		{"+ve", fields{NewList(dataToListables([]data.Data{NewStringData("Data")}...)...)}, args{NewStringData("Data")}, 0, true},
+		{"+ve with empty struct", fields{NewList(dataToListables([]data.Data{}...)...)}, args{base.NewStringData("Data")}, 0, false}, // TODO: fix this
+		{"+ve", fields{NewList(dataToListables([]data.Data{base.NewStringData("Data")}...)...)}, args{base.NewStringData("Data")}, 0, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -161,7 +162,7 @@ func Test_dataToListables(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with empty struct", args{[]data.Data{}}, []traits.Listable{}},
-		{"+ve", args{[]data.Data{NewStringData("Data")}}, []traits.Listable{NewStringData("Data")}},
+		{"+ve", args{[]data.Data{base.NewStringData("Data")}}, []traits.Listable{base.NewStringData("Data")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

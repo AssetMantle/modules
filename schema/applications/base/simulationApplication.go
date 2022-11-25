@@ -5,14 +5,11 @@ package base
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/modules/assets"
-	"github.com/AssetMantle/modules/modules/classifications"
-	"github.com/AssetMantle/modules/modules/identities"
-	"github.com/AssetMantle/modules/modules/maintainers"
-	"github.com/AssetMantle/modules/modules/metas"
-	"github.com/AssetMantle/modules/modules/orders"
-	"github.com/AssetMantle/modules/modules/splits"
-	wasmUtilities "github.com/AssetMantle/modules/utilities/wasm"
+	"io"
+	"os"
+	"path/filepath"
+	"testing"
+
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -40,10 +37,15 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintTypes "github.com/tendermint/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
-	"io"
-	"os"
-	"path/filepath"
-	"testing"
+
+	"github.com/AssetMantle/modules/modules/assets"
+	"github.com/AssetMantle/modules/modules/classifications"
+	"github.com/AssetMantle/modules/modules/identities"
+	"github.com/AssetMantle/modules/modules/maintainers"
+	"github.com/AssetMantle/modules/modules/metas"
+	"github.com/AssetMantle/modules/modules/orders"
+	"github.com/AssetMantle/modules/modules/splits"
+	wasmUtilities "github.com/AssetMantle/modules/utilities/wasm"
 
 	"github.com/AssetMantle/modules/schema/applications"
 )

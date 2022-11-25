@@ -6,6 +6,7 @@ package utilities
 import (
 	"testing"
 
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIds "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/base"
@@ -25,7 +26,7 @@ func TestReadMetaProperties(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with empty string", args{""}, base.NewPropertyList([]properties2.Property{}...), false},
-		{"+ve", args{"ID:S|Data,ID1:S|Data1,ID2:S|Data2"}, base.NewPropertyList([]properties2.Property{baseProperties.NewMetaProperty(baseIds.NewStringID("ID"), baseProperties.NewStringData("Data")), baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseProperties.NewStringData("Data1")), baseProperties.NewMetaProperty(baseIds.NewStringID("ID2"), baseProperties.NewStringData("Data2"))}...), false},
+		{"+ve", args{"ID:S|Data,ID1:S|Data1,ID2:S|Data2"}, base.NewPropertyList([]properties2.Property{baseProperties.NewMetaProperty(baseIds.NewStringID("ID"), baseData.NewStringData("Data")), baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("Data1")), baseProperties.NewMetaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("Data2"))}...), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
