@@ -1,17 +1,20 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package asset
+package supplement
 
 import (
 	"fmt"
-	"github.com/AssetMantle/modules/modules/assets/internal/key"
-	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
-	"github.com/AssetMantle/modules/modules/assets/internal/parameters"
+	"github.com/AssetMantle/modules/modules/metas/internal/key"
+	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
+	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/documents/base"
+	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
@@ -27,14 +30,25 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 	"reflect"
 	"testing"
+)
 
-	"github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/schema/helpers"
+var (
+	propertiesList = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1")))
 )
 
 type TestKeepers struct {
-	AssetKeeper helpers.QueryKeeper
+	SupplementKeeper helpers.AuxiliaryKeeper
+}
+
+func createTestData() (ids.MaintainerID, documents.Maintainer) {
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
+	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
+	testIdentityID := baseIDs.NewIdentityID(testClassificationID, immutables)
+	testMaintainerID := baseIDs.NewMaintainerID(testClassificationID, testIdentityID)
+	testMaintainedPropertyID := baseLists.NewIDList(baseIDs.NewStringID("maintainer"))
+	testMaintainer := base.NewMaintainer(testIdentityID, testClassificationID, testMaintainedPropertyID, testMaintainedPropertyID)
+	return testMaintainerID, testMaintainer
 }
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
@@ -70,63 +84,42 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		AssetKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.QueryKeeper),
+		SupplementKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
 
 	return context, keepers, Mapper, Parameters
 }
 
-func Test_keeperPrototype(t *testing.T) {
-	tests := []struct {
-		name string
-		want helpers.QueryKeeper
-	}{
-		{"+ve", queryKeeper{}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_queryKeeper_Enquire(t *testing.T) {
-	context, keepers, Mapper, _ := createTestInput(t)
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	testAssetID := baseIDs.NewAssetID(classificationID, immutables)
-	keepers.AssetKeeper.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(base.NewAsset(classificationID, immutables, mutables)))
+func Test_auxiliaryKeeper_Help(t *testing.T) {
+	context, _, Mapper, _ := createTestInput(t)
 	type fields struct {
 		mapper helpers.Mapper
 	}
 	type args struct {
-		context      types.Context
-		queryRequest helpers.QueryRequest
+		context sdkTypes.Context
+		request helpers.AuxiliaryRequest
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
-		want   helpers.QueryResponse
+		want   helpers.AuxiliaryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, newQueryRequest(testAssetID)}, newQueryResponse(keepers.AssetKeeper.(queryKeeper).mapper.NewCollection(context).Fetch(key.NewKey(testAssetID)), nil)},
+		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(propertiesList.GetList()...)}, newAuxiliaryResponse(propertiesList, nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryKeeper := queryKeeper{
+			auxiliaryKeeper := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := queryKeeper.Enquire(tt.args.context, tt.args.queryRequest); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Enquire() = %v, want %v", got, tt.want)
+			if got := auxiliaryKeeper.Help(tt.args.context, tt.args.request); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Help() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_queryKeeper_Initialize(t *testing.T) {
+func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	_, _, Mapper, Parameters := createTestInput(t)
 	type fields struct {
 		mapper helpers.Mapper
@@ -142,17 +135,31 @@ func Test_queryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-
-		{"+ve with nil", fields{}, args{}, queryKeeper{}},
-		{"+ve", fields{Mapper}, args{Mapper, Parameters, []interface{}{}}, queryKeeper{Mapper}},
+		{"+ve", fields{Mapper}, args{Mapper, Parameters, []interface{}{}}, auxiliaryKeeper{Mapper}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryKeeper := queryKeeper{
+			au := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := queryKeeper.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
+			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_keeperPrototype(t *testing.T) {
+	tests := []struct {
+		name string
+		want helpers.AuxiliaryKeeper
+	}{
+		{"+ve", auxiliaryKeeper{}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
 			}
 		})
 	}
