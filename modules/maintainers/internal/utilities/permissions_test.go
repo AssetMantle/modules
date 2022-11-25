@@ -4,12 +4,13 @@
 package utilities
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/constansts"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"reflect"
-	"testing"
 )
 
 func TestSetPermissions(t *testing.T) {
@@ -27,7 +28,6 @@ func TestSetPermissions(t *testing.T) {
 		args args
 		want lists.IDList
 	}{
-		// TODO: Add test cases.
 		{"+ve for can Mint", args{true, false, false, false, false, false}, idList.Add(constansts.Mint)},
 		{"+ve for can Burn", args{false, true, false, false, false, false}, idList.Add(constansts.Burn)},
 		{"+ve for can Remunerate", args{false, false, true, false, false, false}, idList.Add(constansts.Renumerate)},

@@ -5,9 +5,10 @@ package define
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 
 	"github.com/stretchr/testify/require"
 

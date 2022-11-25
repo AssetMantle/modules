@@ -19,7 +19,6 @@ import (
 	"github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
@@ -31,13 +30,7 @@ func CreateTestInputForMessages(t *testing.T) (ids.OrderID, ids.IdentityID, sdkT
 
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
-	testMakerOwnableID := baseIDs.NewOwnableID(baseIDs.NewStringID("makerOwnableID"))
-	testTakerOwnableID := baseIDs.NewOwnableID(baseIDs.NewStringID("takerOwnableID"))
-	rate := sdkTypes.SmallestDec()
-	creationHeight := baseTypes.NewHeight(0)
-	// takerOwnableID ids.OwnableID, rate types.Dec, creationHeight types.Height, makerID ids.IdentityID, imutables qualified.Immutables
-
-	testOrderID := baseIDs.NewOrderID(testClassificationID, testMakerOwnableID, testTakerOwnableID, rate, creationHeight, testFromID, immutables)
+	testOrderID := baseIDs.NewOrderID(testClassificationID, immutables)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

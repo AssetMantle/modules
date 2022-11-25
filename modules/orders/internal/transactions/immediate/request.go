@@ -24,6 +24,7 @@ type transactionRequest struct {
 	BaseReq                 rest.BaseReq `json:"baseReq"`
 	FromID                  string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
 	ClassificationID        string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^[A-Za-z0-9-_=.]+$)~invalid field classificationID"`
+	TakerID                 string       `json:"takerID" valid:"required~required field takerID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field takerID"`
 	MakerOwnableID          string       `json:"makerOwnableID" valid:"required~required field makerOwnableID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field makerOwnableID"`
 	TakerOwnableID          string       `json:"takerOwnableID" valid:"required~required field takerOwnableID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field takerOwnableID"`
 	ExpiresIn               int64        `json:"expiresIn" valid:"required~required field expiresIn missing, matches(^[0-9]+$)~invalid field expiresIn"`
@@ -56,6 +57,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadBaseReq(cliContext),
 		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.ClassificationID),
+		cliCommand.ReadString(constants.TakerID),
 		cliCommand.ReadString(constants.MakerOwnableID),
 		cliCommand.ReadString(constants.TakerOwnableID),
 		cliCommand.ReadInt64(constants.ExpiresIn),
@@ -80,6 +82,31 @@ func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	if err != nil {
+		return nil, err
+	}
+
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	if err != nil {
+		return nil, err
+	}
+
+	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationID)
+	if err != nil {
+		return nil, err
+	}
+
+	takerID, err := baseIDs.ReadIdentityID(transactionRequest.TakerID)
+	if err != nil {
+		return nil, err
+	}
+
+	makerOwnableID, err := baseIDs.ReadOwnableID(transactionRequest.MakerOwnableID)
+	if err != nil {
+		return nil, err
+	}
+
+	takerOwnableID, err := baseIDs.ReadOwnableID(transactionRequest.TakerOwnableID)
 	if err != nil {
 		return nil, err
 	}
@@ -116,30 +143,11 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	}
 	mutableProperties = mutableProperties.ScrubData()
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
-	if err != nil {
-		return nil, err
-	}
-
-	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationID)
-	if err != nil {
-		return nil, err
-	}
-
-	makerOwnableID, err := baseIDs.ReadOwnableID(transactionRequest.MakerOwnableID)
-	if err != nil {
-		return nil, err
-	}
-
-	takerOwnableID, err := baseIDs.ReadOwnableID(transactionRequest.TakerOwnableID)
-	if err != nil {
-		return nil, err
-	}
-
 	return newMessage(
 		from,
 		fromID,
 		classificationID,
+		takerID,
 		makerOwnableID,
 		takerOwnableID,
 		baseTypes.NewHeight(transactionRequest.ExpiresIn),
@@ -158,11 +166,12 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, classificationID string, makerOwnableID string, takerOwnableID string, expiresIn int64, makerOwnableSplit, takerOwnableSplit string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, classificationID string, takerID string, makerOwnableID string, takerOwnableID string, expiresIn int64, makerOwnableSplit, takerOwnableSplit string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:                 baseReq,
 		FromID:                  fromID,
 		ClassificationID:        classificationID,
+		TakerID:                 takerID,
 		MakerOwnableID:          makerOwnableID,
 		TakerOwnableID:          takerOwnableID,
 		ExpiresIn:               expiresIn,

@@ -78,6 +78,7 @@ In other words: we define a use case input, current state and the expected outco
 >       And a sell order for 20 shares of MSFT stock should have been executed
 
 *
+
 Reference: [writing acceptance tests](https://openclassrooms.com/en/courses/4544611-write-agile-documentation-user-stories-acceptance-tests/4810081-writing-acceptance-tests)*
 .
 
