@@ -4,6 +4,8 @@
 package mappable
 
 import (
+	"github.com/AssetMantle/modules/schema/ids/constansts"
+	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
 	"reflect"
 	"testing"
 
@@ -76,7 +78,11 @@ func Test_mappable_GetKey(t *testing.T) {
 		fields fields
 		want   helpers.Key
 	}{
-		{"+ve", fields{testMaintainer}, key.NewKey(baseIDs.NewMaintainerID(testMaintainer.GetMaintainedClassificationID(), testMaintainer.GetImmutables()))},
+		{"+ve", fields{testMaintainer}, key.NewKey(baseIDs.NewMaintainerID(constansts.MaintainerClassificationID,
+			baseQualified.NewImmutables(baseLists.NewPropertyList(
+				baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(testMaintainer.GetMaintainedClassificationID())),
+				baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(testMaintainer.GetIdentityID())),
+			))))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
