@@ -4,9 +4,11 @@
 package define
 
 import (
-	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
+	"fmt"
 	"reflect"
 	"testing"
+
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -36,7 +38,7 @@ type TestKeepers struct {
 	ClassificationsKeeper helpers.AuxiliaryKeeper
 }
 
-func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
+func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
@@ -72,11 +74,11 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ClassificationsKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
 
-	return context, keepers
+	return context, keepers, Mapper, Parameters
 }
 
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
-	context, keepers := CreateTestInput(t)
+	context, keepers, _, _ := CreateTestInput(t)
 
 	immutableProperties := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutableProperties := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
@@ -125,4 +127,50 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
+}
+
+func Test_keeperPrototype(t *testing.T) {
+	tests := []struct {
+		name string
+		want helpers.AuxiliaryKeeper
+	}{
+		{"+ve", auxiliaryKeeper{}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_auxiliaryKeeper_Initialize(t *testing.T) {
+	_, _, Mapper, Parameters := CreateTestInput(t)
+	type fields struct {
+		mapper helpers.Mapper
+	}
+	type args struct {
+		mapper helpers.Mapper
+		in1    helpers.Parameters
+		in2    []interface{}
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   helpers.Keeper
+	}{
+		{"+ve", fields{Mapper}, args{Mapper, Parameters, []interface{}{}}, auxiliaryKeeper{Mapper}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			au := auxiliaryKeeper{
+				mapper: tt.fields.mapper,
+			}
+			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
+				t.Errorf("Initialize() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/AssetMantle/modules/schema/data"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -16,7 +17,7 @@ import (
 
 func createTestInput() (ids.StringID, ids.PropertyID, data.Data, properties.MetaProperty) {
 	testKey := base.NewStringID("ID")
-	testData := NewStringData("Data")
+	testData := baseData.NewStringData("Data")
 	testPropertyID := base.NewPropertyID(testKey, testData.GetType())
 	testMetaProperty := NewMetaProperty(testKey, testData)
 	return testKey, testPropertyID, testData, testMetaProperty
@@ -86,7 +87,7 @@ func Test_metaProperty_Compare(t *testing.T) {
 		// TODO: Add test cases.
 		{"+ve", fields{testPropertyID, testData}, args{testMetaProperty}, 0},
 		{"+ve compare with metaProperty with no Data", fields{testPropertyID, testData}, args{metaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S"))}}, 0},
-		{"+ve", fields{testPropertyID, testData}, args{metaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")), Data: NewStringData("Data2")}}, 0}}
+		{"+ve", fields{testPropertyID, testData}, args{metaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")), Data: baseData.NewStringData("Data2")}}, 0}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := metaProperty{
