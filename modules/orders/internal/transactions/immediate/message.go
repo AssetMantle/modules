@@ -24,6 +24,7 @@ type message struct {
 	From                    sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
 	FromID                  ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
 	ids.ClassificationID    `json:"classificationID" valid:"required~required field classificationID missing"`
+	TakerID                 ids.IdentityID     `json:"takerID" valid:"required~required field takerID missing"`
 	MakerOwnableID          ids.OwnableID      `json:"makerOwnableID" valid:"required~required field makerOwnableID missing"`
 	TakerOwnableID          ids.OwnableID      `json:"takerOwnableID" valid:"required~required field takerOwnableID missing"`
 	ExpiresIn               types.Height       `json:"expiresIn" valid:"required~required field expiresIn missing"`
@@ -87,11 +88,12 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, makerOwnableID ids.OwnableID, takerOwnableID ids.OwnableID, expiresIn types.Height, makerOwnableSplit sdkTypes.Dec, takerOwnableSplit sdkTypes.Dec, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, takerID ids.IdentityID, makerOwnableID ids.OwnableID, takerOwnableID ids.OwnableID, expiresIn types.Height, makerOwnableSplit sdkTypes.Dec, takerOwnableSplit sdkTypes.Dec, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return message{
 		From:                    from,
 		FromID:                  fromID,
 		ClassificationID:        classificationID,
+		TakerID:                 takerID,
 		MakerOwnableID:          makerOwnableID,
 		TakerOwnableID:          takerOwnableID,
 		ExpiresIn:               expiresIn,

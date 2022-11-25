@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/AssetMantle/modules/schema/data"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -16,7 +17,7 @@ import (
 
 func createTestInputForMesaProperty() (ids.StringID, ids.PropertyID, data.Data, properties.Property) {
 	testKey := base.NewStringID("ID")
-	testData := NewStringData("Data")
+	testData := baseData.NewStringData("Data")
 	testPropertyID := base.NewPropertyID(testKey, testData.GetType())
 	testProperty := NewMesaProperty(testKey, testData)
 	return testKey, testPropertyID, testData, testProperty
@@ -123,7 +124,7 @@ func Test_mesaProperty_Compare(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve compare with property with no Data", fields{testMesaPropertyID, testData.GetID()}, args{mesaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S"))}}, 0},
-		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{mesaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")), DataID: NewStringData("Data2").GetID()}}, 0},
+		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{mesaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")), DataID: baseData.NewStringData("Data2").GetID()}}, 0},
 		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{testMesaProperty}, 0},
 	}
 	for _, tt := range tests {

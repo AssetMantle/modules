@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
@@ -89,7 +90,7 @@ func Test_list_Mutate(t *testing.T) {
 		want lists.List
 	}{
 		// TODO: Add test cases.
-		{"+ve", []traits.Listable{baseProperties.NewMetaProperty(base.NewStringID("ID1"), NewStringData("Data1"))}, args{[]traits.Listable{baseProperties.NewMetaProperty(base.NewStringID("ID1"), NewStringData("Data2"))}}, list{baseProperties.NewMetaProperty(base.NewStringID("ID1"), NewStringData("Data2"))}},
+		{"+ve", []traits.Listable{baseProperties.NewMetaProperty(base.NewStringID("ID1"), baseData.NewStringData("Data1"))}, args{[]traits.Listable{baseProperties.NewMetaProperty(base.NewStringID("ID1"), baseData.NewStringData("Data2"))}}, list{baseProperties.NewMetaProperty(base.NewStringID("ID1"), baseData.NewStringData("Data2"))}},
 		{"+ve with nil", list{}, args{}, list{}},
 	}
 	for _, tt := range tests {

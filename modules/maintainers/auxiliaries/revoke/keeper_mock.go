@@ -18,14 +18,12 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	//if auxiliaryRequest.ClassificationID.Compare(baseIDs.NewStringID("revokeError")) == 0 {
-	if auxiliaryRequest.ClassificationID.String() == "revokeError" {
+	if auxiliaryRequest.MaintainedClassificationID.String() == "revokeError" {
 		return newAuxiliaryResponse(constants.MockError)
 	}
 
 	return newAuxiliaryResponse(nil)
 }
-
 func (auxiliaryKeeperMock) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
 	return auxiliaryKeeperMock{mapper: mapper}
 }
