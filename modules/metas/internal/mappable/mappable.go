@@ -10,7 +10,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids/base"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	codecUtilities "github.com/AssetMantle/modules/utilities"
 )
 
 type mappable struct {

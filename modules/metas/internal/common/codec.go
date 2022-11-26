@@ -8,11 +8,11 @@ import (
 
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
-	"github.com/AssetMantle/modules/utilities/module"
+	codec2 "github.com/AssetMantle/modules/utilities"
 )
 
 var Codec *codec.LegacyAmino
 
 func init() {
-	Codec = module.RegisterCodec(key.Prototype, mappable.Prototype)
+	Codec = codec2.MakeModuleCode(key.Prototype, mappable.Prototype)
 }

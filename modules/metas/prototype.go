@@ -11,7 +11,6 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
 	"github.com/AssetMantle/modules/modules/metas/internal/queries"
-	"github.com/AssetMantle/modules/modules/metas/internal/simulator"
 	"github.com/AssetMantle/modules/modules/metas/internal/transactions"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
@@ -25,7 +24,7 @@ func Prototype() helpers.Module {
 		mapper.Prototype,
 		parameters.Prototype,
 		queries.Prototype,
-		simulator.Prototype,
+		nil,
 		transactions.Prototype,
 		block.Prototype,
 	)

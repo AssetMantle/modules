@@ -80,9 +80,9 @@ func Test_decData_Bytes(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		// {"+ve with nil", fields{}}, []byte{}},
-		{"+ve with zero dec", fields{types.ZeroDec()}, decData{types.ZeroDec()}.Value.Bytes()},
-		{"+ve", fields{types.NewDec(100)}, decData{types.NewDec(100)}.Value.Bytes()},
-		{"+ve with -ve Dec", fields{types.NewDec(-100)}, decData{types.NewDec(-100)}.Value.Bytes()},
+		{"+ve with zero dec", fields{types.ZeroDec()}, types.SortableDecBytes(decData{types.ZeroDec()}.Value)},
+		{"+ve", fields{types.NewDec(100)}, types.SortableDecBytes(decData{types.NewDec(100)}.Value)},
+		{"+ve with -ve Dec", fields{types.NewDec(-100)}, types.SortableDecBytes(decData{types.NewDec(-100)}.Value)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

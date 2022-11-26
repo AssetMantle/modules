@@ -14,6 +14,7 @@ import (
 )
 
 type Immutables interface {
+	Size() int
 	// GetImmutablePropertyList return the immutable properties object
 	// does not return nil
 	GetImmutablePropertyList() lists.PropertyList

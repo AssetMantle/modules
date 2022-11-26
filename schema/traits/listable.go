@@ -6,7 +6,6 @@ package traits
 type Listable interface {
 	// Compare
 	// * panic if compared with Listable of different type
-	// TODO remove panic on compare with different type
-	// TODO optimize compare for all impls
+	// ***** TODO remove panic on compare with different type
 	Compare(Listable) int
 }

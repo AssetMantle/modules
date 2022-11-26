@@ -100,26 +100,7 @@ import (
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/modules/assets"
-	"github.com/AssetMantle/modules/modules/classifications"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
-	"github.com/AssetMantle/modules/modules/identities"
-	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/modules/maintainers"
-	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/deputize"
-	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
-	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/revoke"
-	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
-	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/metas"
-	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/modules/orders"
-	"github.com/AssetMantle/modules/modules/splits"
-	splitsMint "github.com/AssetMantle/modules/modules/splits/auxiliaries/mint"
-	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
-	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	"github.com/AssetMantle/modules/schema/applications"
 )
 
@@ -357,13 +338,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 
 		wasm.StoreKey,
 
-		assets.Prototype().Name(),
-		classifications.Prototype().Name(),
-		identities.Prototype().Name(),
-		maintainers.Prototype().Name(),
 		metas.Prototype().Name(),
-		orders.Prototype().Name(),
-		splits.Prototype().Name(),
 	)
 
 	transientStoreKeys := sdkTypes.NewTransientStoreKeys(paramsTypes.TStoreKey)
@@ -560,64 +535,6 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		application.keys[metas.Prototype().Name()],
 		ParamsKeeper.Subspace(metas.Prototype().Name()),
 	)
-	classificationsModule := classifications.Prototype().Initialize(
-		application.keys[classifications.Prototype().Name()],
-		ParamsKeeper.Subspace(classifications.Prototype().Name()),
-	)
-	maintainersModule := maintainers.Prototype().Initialize(
-		application.keys[metas.Prototype().Name()],
-		ParamsKeeper.Subspace(maintainers.Prototype().Name()),
-		classificationsModule.GetAuxiliary(member.Auxiliary.GetName()),
-	)
-	identitiesModule := identities.Prototype().Initialize(
-		application.keys[identities.Prototype().Name()],
-		ParamsKeeper.Subspace(identities.Prototype().Name()),
-		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
-		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-		classificationsModule.GetAuxiliary(member.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
-	)
-	splitsModule := splits.Prototype().Initialize(
-		application.keys[splits.Prototype().Name()],
-		ParamsKeeper.Subspace(splits.Prototype().Name()),
-		BankKeeper,
-		identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
-	)
-	assetsModule := assets.Prototype().Initialize(
-		application.keys[assets.Prototype().Name()],
-		ParamsKeeper.Subspace(assets.Prototype().Name()),
-		identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
-		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
-		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-		splitsModule.GetAuxiliary(renumerate.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-		splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
-	)
-	ordersModule := orders.Prototype().Initialize(
-		application.keys[orders.Prototype().Name()],
-		ParamsKeeper.Subspace(orders.Prototype().Name()),
-		identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
-		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
-		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-		splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
-	)
-
 	application.moduleManager = module.NewManager(
 		genutil.NewAppModule(AccountKeeper, application.stakingKeeper, application.BaseApp.DeliverTx, txConfig),
 		auth.NewAppModule(application.codec, AccountKeeper, nil),
@@ -641,13 +558,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 
 		wasm.NewAppModule(application.codec, &WasmKeeper, application.stakingKeeper, AccountKeeper, BankKeeper),
 
-		assetsModule,
-		classificationsModule,
-		identitiesModule,
-		maintainersModule,
 		metasModule,
-		ordersModule,
-		splitsModule,
 	)
 
 	application.moduleManager.SetOrderBeginBlockers(
@@ -691,8 +602,6 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		paramsTypes.ModuleName,
 		upgradeTypes.ModuleName,
 		vestingTypes.ModuleName,
-
-		ordersModule.Name(),
 	)
 	application.moduleManager.SetOrderInitGenesis(
 		capabilityTypes.ModuleName,
@@ -715,13 +624,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		upgradeTypes.ModuleName,
 		vestingTypes.ModuleName,
 
-		assets.Prototype().Name(),
-		classifications.Prototype().Name(),
-		identities.Prototype().Name(),
-		maintainers.Prototype().Name(),
 		metas.Prototype().Name(),
-		orders.Prototype().Name(),
-		splits.Prototype().Name(),
 	)
 	application.moduleManager.RegisterInvariants(&application.crisisKeeper)
 	application.moduleManager.RegisterRoutes(application.BaseApp.Router(), application.BaseApp.QueryRouter(), legacyAmino)
@@ -745,13 +648,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		ibc.NewAppModule(IBCKeeper),
 		ibcTransfer.NewAppModule(IBCTransferKeeper),
 
-		assets.Prototype(),
-		classifications.Prototype(),
-		identities.Prototype(),
-		maintainers.Prototype(),
 		metas.Prototype(),
-		orders.Prototype(),
-		splits.Prototype(),
 	).RegisterStoreDecoders()
 
 	application.BaseApp.MountKVStores(application.keys)

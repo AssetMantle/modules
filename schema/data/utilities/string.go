@@ -12,8 +12,8 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 func readAccAddressData(dataString string) (data.AccAddressData, error) {
@@ -78,7 +78,7 @@ func readListData(dataString string) (data.ListData, error) {
 		return base.ListDataPrototype(), nil
 	}
 
-	dataStringList := stringUtilities.SplitListString(dataString)
+	dataStringList := utilities.SplitListString(dataString)
 	dataList := make([]data.Data, len(dataStringList))
 
 	for i, datumString := range dataStringList {

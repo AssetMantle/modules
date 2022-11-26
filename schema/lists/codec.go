@@ -12,5 +12,4 @@ func RegisterCodec(codec *codec.LegacyAmino) {
 	codec.RegisterInterface((*IDList)(nil), nil)
 	codec.RegisterInterface((*List)(nil), nil)
 	codec.RegisterInterface((*PropertyList)(nil), nil)
-	codec.RegisterInterface((*SignatureList)(nil), nil)
 }

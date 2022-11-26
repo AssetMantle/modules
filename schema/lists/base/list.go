@@ -35,6 +35,16 @@ func (list list) Search(listable traits.Listable) (int, bool) {
 
 	return index, false
 }
+func (list list) HasRepeats() bool {
+	// ***** TODO write test
+	for i := 0; i < len(list); i++ {
+		if list[i].Compare(list[i-1]) == 0 {
+			return true
+		}
+	}
+
+	return false
+}
 func (list list) Add(listables ...traits.Listable) lists.List {
 	updatedList := list
 

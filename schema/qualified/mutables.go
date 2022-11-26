@@ -14,6 +14,7 @@ import (
 )
 
 type Mutables interface {
+	Size() int
 	// GetMutablePropertyList return the mutable properties object
 	// does not return nil
 	GetMutablePropertyList() lists.PropertyList

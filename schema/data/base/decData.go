@@ -41,7 +41,7 @@ func (decData decData) String() string {
 	return decData.Value.String()
 }
 func (decData decData) Bytes() []byte {
-	return decData.Value.Bytes()
+	return sdkTypes.SortableDecBytes(decData.Value)
 }
 func (decData decData) GetType() ids.StringID {
 	return dataConstants.DecDataID
