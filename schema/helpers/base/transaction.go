@@ -62,24 +62,12 @@ func (transaction transaction) Command() *cobra.Command {
 	return transaction.cliCommand.CreateCommand(runE)
 }
 
-func (transaction transaction) HandleMessage(context sdkTypes.Context, message sdkTypes.Msg) (*sdkTypes.Result, error) {
+func (transaction transaction) HandleMessage(context sdkTypes.Context, message helpers.Message) (*sdkTypes.Result, error) {
 	if transactionResponse := transaction.keeper.Transact(context, message); !transactionResponse.IsSuccessful() {
 		return nil, transactionResponse.GetError()
 	}
 
-	err := context.EventManager().EmitTypedEvent(
-		// TODO define event type
-		sdkTypes.NewEvent(
-			sdkTypes.EventTypeMessage,
-			sdkTypes.NewAttribute(sdkTypes.AttributeKeyModule, transaction.GetName()),
-		),
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &sdkTypes.Result{Events: context.EventManager().ABCIEvents()}, nil
+	return &sdkTypes.Result{Events: message.GenerateOnSuccessEvents().ToABCIEvents()}, nil
 }
 
 func (transaction transaction) RESTRequestHandler(context client.Context) http.HandlerFunc {
@@ -107,6 +95,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 			return
 		}
 
+		// TODO, allow for fully sign and broadcast txn also
 		if viper.GetBool(flags.FlagGenerateOnly) {
 			tx.WriteGeneratedTxResponse(context, responseWriter, baseReq, msg)
 			return
@@ -126,7 +115,6 @@ func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessa
 
 	return transactionRequest.MakeMsg()
 }
-
 func (transaction transaction) InitializeKeeper(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Transaction {
 	transaction.keeper = transaction.keeperPrototype().Initialize(mapper, parameters, auxiliaryKeepers).(helpers.TransactionKeeper)
 	return transaction

@@ -32,14 +32,17 @@ var _ helpers.Query = (*query)(nil)
 func (query query) GetName() string { return query.name }
 func (query query) Command(codec *codec.LegacyAmino) *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
-		cliContext := context.NewCLIContext().WithCodec(codec)
-
-		queryRequest, err := query.requestPrototype().FromCLI(query.cliCommand, cliContext)
+		context, err := client.GetClientTxContext(command)
 		if err != nil {
 			return err
 		}
 
-		responseBytes, _, err := query.query(queryRequest, cliContext)
+		queryRequest, err := query.requestPrototype().FromCLI(query.cliCommand, context)
+		if err != nil {
+			return err
+		}
+
+		responseBytes, _, err := query.query(queryRequest, context)
 		if err != nil {
 			return err
 		}
@@ -49,7 +52,7 @@ func (query query) Command(codec *codec.LegacyAmino) *cobra.Command {
 			return err
 		}
 
-		return cliContext.PrintOutput(response)
+		return context.PrintProto(response)
 	}
 
 	return query.cliCommand.CreateCommand(runE)

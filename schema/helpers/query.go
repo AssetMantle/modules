@@ -7,16 +7,19 @@ import (
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"google.golang.org/grpc"
 )
 
 type Query interface {
 	GetName() string
-	Command(*codec.LegacyAmino) *cobra.Command
+	Command() *cobra.Command
 	HandleMessage(sdkTypes.Context, abciTypes.RequestQuery) ([]byte, error)
 	RESTQueryHandler(client.Context) http.HandlerFunc
+	GRPCGatewayHandler(client.Context) (method string, pattern runtime.Pattern, handlerFunc runtime.HandlerFunc)
+	Service() (*grpc.ServiceDesc, interface{})
 	Initialize(Mapper, Parameters, ...interface{}) Query
 }

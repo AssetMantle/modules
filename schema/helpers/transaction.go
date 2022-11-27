@@ -11,13 +11,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
 )
 
 type Transaction interface {
 	GetName() string
 	Command() *cobra.Command
-	HandleMessage(sdkTypes.Context, sdkTypes.Msg) (*sdkTypes.Result, error)
+	HandleMessage(sdkTypes.Context, Message) (*sdkTypes.Result, error)
 	RESTRequestHandler(client.Context) http.HandlerFunc
+	Service() (*grpc.ServiceDesc, interface{})
 	RegisterCodec(*codec.LegacyAmino)
 	DecodeTransactionRequest(json.RawMessage) (sdkTypes.Msg, error)
 	InitializeKeeper(Mapper, Parameters, ...interface{}) Transaction

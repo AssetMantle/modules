@@ -6,15 +6,14 @@ package helpers
 import (
 	"math/rand"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
 type Simulator interface {
 	RandomizedGenesisState(*module.SimulationState)
-	WeightedOperations(simulationTypes.AppParams, codec.JSONCodec) simulation.WeightedOperations
-	WeightedProposalContentList() []simulation.WeightedProposalContent
-	ParamChangeList(*rand.Rand) []simulation.ParamChange
+	WeightedOperations(sdkModuleTypes.SimulationState) []simulationTypes.WeightedOperation
+	WeightedProposalContentList(sdkModuleTypes.SimulationState) []simulationTypes.WeightedProposalContent
+	ParamChangeList(*rand.Rand) []simulationTypes.ParamChange
 }
