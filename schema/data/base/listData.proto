@@ -1,6 +1,8 @@
-syntax="proto3";
+syntax = "proto3";
 package base;
-option go_package="github.com/AssetMantle/modules/schema/data/base";
+option go_package = "github.com/AssetMantle/modules/schema/data/base";
+import "schema/lists/base/list.proto";
 
 message ListData{
+  List value = 1;
 }

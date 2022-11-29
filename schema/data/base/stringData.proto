@@ -1,6 +1,7 @@
-syntax="proto3";
+syntax = "proto3";
 package base;
-option go_package="github.com/AssetMantle/modules/schema/data/base";
+option go_package = "github.com/AssetMantle/modules/schema/data/base";
 
 message StringData{
+  string value = 1;
 }

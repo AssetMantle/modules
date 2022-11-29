@@ -1,0 +1,11 @@
+syntax = "proto3";
+package base;
+option go_package = "github.com/AssetMantle/modules/schema/ids/base";
+
+import "schema/ids/base/identityID.proto";
+import "schema/ids/base/ownableID.proto";
+
+message SplitID {
+  IdentityID owner_id = 1;
+  OwnableID ownable_id = 2;
+}

@@ -21,7 +21,7 @@ func dummyValidator(interface{}) error {
 }
 
 func createTestInput() (ids.StringID, data.Data, parameters.Parameter) {
-	id := baseIDs.NewStringID("ID")
+	id := baseIDs.NewStringID("PropertyID")
 	stringData := baseData.NewStringData("Data")
 
 	testParameter := NewParameter(id, stringData, dummyValidator)
@@ -255,7 +255,7 @@ func Test_parameter_Validate(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with stringData", fields{id, testData, dummyValidator}, false},
-		{"+ve with decData", fields{baseIDs.NewStringID("ID"), baseData.NewDecData(sdkTypes.SmallestDec()), dummyValidator}, false},
+		{"+ve with decData", fields{baseIDs.NewStringID("PropertyID"), baseData.NewDecData(sdkTypes.SmallestDec()), dummyValidator}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

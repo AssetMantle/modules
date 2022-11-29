@@ -25,7 +25,7 @@ func TestNewList(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve", args{[]traits.Listable{}}, list{}},
-		{"+ve", args{[]traits.Listable{base.NewStringID("ID")}}, list{base.NewStringID("ID")}},
+		{"+ve", args{[]traits.Listable{base.NewStringID("PropertyID")}}, list{base.NewStringID("PropertyID")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -48,8 +48,8 @@ func Test_list_Add(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with nil", list{}, args{[]traits.Listable{}}, list{}},
-		{"+ve", []traits.Listable{}, args{[]traits.Listable{base.NewStringID("ID")}}, list{base.NewStringID("ID")}},
-		{"+ve", list{base.NewStringID("ID")}, args{[]traits.Listable{base.NewStringID("ID1")}}, list{base.NewStringID("ID"), base.NewStringID("ID1")}},
+		{"+ve", []traits.Listable{}, args{[]traits.Listable{base.NewStringID("PropertyID")}}, list{base.NewStringID("PropertyID")}},
+		{"+ve", list{base.NewStringID("PropertyID")}, args{[]traits.Listable{base.NewStringID("ID1")}}, list{base.NewStringID("PropertyID"), base.NewStringID("ID1")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -67,7 +67,7 @@ func Test_list_Get(t *testing.T) {
 		want []traits.Listable
 	}{
 		// TODO: Add test cases.
-		{"+ve", []traits.Listable{base.NewStringID("ID")}, list{base.NewStringID("ID")}},
+		{"+ve", []traits.Listable{base.NewStringID("PropertyID")}, list{base.NewStringID("PropertyID")}},
 		{"+ve", list{}, list{}},
 	}
 	for _, tt := range tests {
@@ -114,7 +114,7 @@ func Test_list_Remove(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve for nil", []traits.Listable{}, args{}, list{}},
-		{"+ve", []traits.Listable{base.NewStringID("ID")}, args{[]traits.Listable{base.NewStringID("ID2")}}, list{base.NewStringID("ID")}},
+		{"+ve", []traits.Listable{base.NewStringID("PropertyID")}, args{[]traits.Listable{base.NewStringID("ID2")}}, list{base.NewStringID("PropertyID")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -138,7 +138,7 @@ func Test_list_Search(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve for nil", []traits.Listable{}, args{}, 0, false}, // TODO: panics if list is nil
-		{"+ve", []traits.Listable{base.NewStringID("ID")}, args{base.NewStringID("ID")}, 0, true},
+		{"+ve", []traits.Listable{base.NewStringID("PropertyID")}, args{base.NewStringID("PropertyID")}, 0, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -161,7 +161,7 @@ func Test_list_Size(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve", []traits.Listable{}, 0},
-		{"+ve", []traits.Listable{base.NewStringID("ID")}, 1},
+		{"+ve", []traits.Listable{base.NewStringID("PropertyID")}, 1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

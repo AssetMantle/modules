@@ -1,0 +1,8 @@
+syntax = "proto3";
+package base;
+option go_package = "github.com/AssetMantle/modules/schema/ids/base";
+
+import "schema/ids/base/hashID.proto";
+message AssetID{
+  HashID hash_id = 1;
+}

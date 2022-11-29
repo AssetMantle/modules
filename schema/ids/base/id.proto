@@ -1,0 +1,31 @@
+syntax = "proto3";
+package base;
+option go_package = "github.com/AssetMantle/modules/schema/ids/base";
+
+import "schema/ids/base/assetID.proto";
+import "schema/ids/base/classificationID.proto";
+import "schema/ids/base/dataID.proto";
+import "schema/ids/base/hashID.proto";
+import "schema/ids/base/identityID.proto";
+import "schema/ids/base/maintainerID.proto";
+import "schema/ids/base/orderID.proto";
+import "schema/ids/base/ownableID.proto";
+import "schema/ids/base/propertyID.proto";
+import "schema/ids/base/splitID.proto";
+import "schema/ids/base/stringID.proto";
+
+message ID{
+  oneof impl{
+    AssetID asset_id = 1;
+    ClassificationID classification_id = 2;
+    DataID data_id = 3;
+    HashID hash_id = 4;
+    IdentityID identity_id = 5;
+    MaintainerID maintainer_id = 6;
+    OrderID order_id = 7;
+    OwnableID ownable_id = 8;
+    PropertyID property_id = 9;
+    SplitID split_id = 10;
+    StringID string_id = 11;
+  }
+}

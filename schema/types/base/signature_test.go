@@ -54,7 +54,7 @@ func TestNewSignature(t *testing.T) {
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := NewStringID("ID")
+	id := NewStringID("PropertyID")
 	validityHeight := NewHeight(123)
 	testSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -88,7 +88,7 @@ func Test_signature_Bytes(t *testing.T) {
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := NewStringID("ID")
+	id := NewStringID("PropertyID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -117,7 +117,7 @@ func Test_signature_GetID(t *testing.T) {
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := NewStringID("ID")
+	id := NewStringID("PropertyID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -146,7 +146,7 @@ func Test_signature_GetValidityHeight(t *testing.T) {
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := NewStringID("ID")
+	id := NewStringID("PropertyID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -175,7 +175,7 @@ func Test_signature_HasExpired(t *testing.T) {
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := NewStringID("ID")
+	id := NewStringID("PropertyID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -210,7 +210,7 @@ func Test_signature_String(t *testing.T) {
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := NewStringID("ID")
+	id := NewStringID("PropertyID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 
@@ -239,7 +239,7 @@ func Test_signature_Verify(t *testing.T) {
 	signedBytes, err := privateKey.Sign(signatureBytes)
 	require.Nil(t, err)
 
-	id := NewStringID("ID")
+	id := NewStringID("PropertyID")
 	validityHeight := NewHeight(123)
 	baseSignature := NewSignature(id, signedBytes, validityHeight)
 

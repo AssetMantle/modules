@@ -1,0 +1,10 @@
+syntax = "proto3";
+package base;
+option go_package = "github.com/AssetMantle/modules/schema/ids/base";
+
+import "schema/ids/base/stringID.proto";
+
+message PropertyID{
+  StringID key = 1;
+  StringID type = 2;
+}

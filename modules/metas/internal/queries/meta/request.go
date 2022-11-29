@@ -21,7 +21,7 @@ type queryRequest struct {
 var _ helpers.QueryRequest = (*queryRequest)(nil)
 
 // Validate godoc
-// @Summary Search for metadata by meta ID
+// @Summary Search for metadata by meta PropertyID
 // @Description Able to query the metadata
 // @Accept json
 // @Produce json

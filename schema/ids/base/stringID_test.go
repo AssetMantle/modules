@@ -21,7 +21,7 @@ func TestNewStringID(t *testing.T) {
 		want ids.StringID
 	}{
 
-		{"+ve", args{"ID"}, NewStringID("ID")},
+		{"+ve", args{"PropertyID"}, NewStringID("PropertyID")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -43,7 +43,7 @@ func Test_stringIDFromInterface(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", args{NewStringID("ID")}, stringID{IDString: "ID"}, false},
+		{"+ve", args{NewStringID("PropertyID")}, stringID{IDString: "PropertyID"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -72,7 +72,7 @@ func Test_stringID_Bytes(t *testing.T) {
 		want   []byte
 	}{
 
-		{"+ve", fields{"ID"}, []byte("ID")},
+		{"+ve", fields{"PropertyID"}, []byte("PropertyID")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -100,9 +100,9 @@ func Test_stringID_Compare(t *testing.T) {
 		want   int
 	}{
 
-		{"+ve", fields{"ID"}, args{NewStringID("ID")}, 0},
+		{"+ve", fields{"PropertyID"}, args{NewStringID("PropertyID")}, 0},
 		// TODO: It Should fail
-		{"-ve", fields{"ID"}, args{NewStringID("ID2")}, -1},
+		{"-ve", fields{"PropertyID"}, args{NewStringID("ID2")}, -1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -126,7 +126,7 @@ func Test_stringID_String(t *testing.T) {
 		want   string
 	}{
 
-		{"+ve", fields{"ID"}, "ID"},
+		{"+ve", fields{"PropertyID"}, "PropertyID"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

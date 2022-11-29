@@ -1,0 +1,13 @@
+syntax = "proto3";
+package base;
+option go_package = "github.com/AssetMantle/modules/schema/properties/base";
+
+import "schema/properties/base/mesaProperty.proto";
+import "schema/properties/base/metaProperty.proto";
+
+message Property{
+  oneof impl {
+    MesaProperty mesaProperty = 1;
+    MetaProperty metaProperty = 2;
+  }
+}

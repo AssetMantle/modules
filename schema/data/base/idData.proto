@@ -1,6 +1,9 @@
-syntax="proto3";
+syntax = "proto3";
 package base;
-option go_package="github.com/AssetMantle/modules/schema/data/base";
+option go_package = "github.com/AssetMantle/modules/schema/data/base";
+
+import "schema/ids/base/id.proto";
 
 message IDData{
+  ID value = 1;
 }

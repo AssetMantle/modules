@@ -41,7 +41,7 @@ func PrototypeOwnableID() ids.OwnableID {
 }
 
 func ReadOwnableID(ownableIDString string) (ids.OwnableID, error) {
-	// TODO ***** never allow ownable ID to be valid hash string
+	// TODO ***** never allow ownable PropertyID to be valid hash string
 	if assetID, err := ReadAssetID(ownableIDString); err == nil {
 		return assetID, nil
 	}

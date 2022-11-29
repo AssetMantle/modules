@@ -13,23 +13,23 @@ import (
 )
 
 type mesaProperty struct {
-	ID     ids.PropertyID
-	DataID ids.DataID
+	ids.PropertyID
+	ids.DataID
 }
 
 var _ properties.MesaProperty = (*mesaProperty)(nil)
 
 func (mesaProperty mesaProperty) GetID() ids.PropertyID {
-	return mesaProperty.ID
+	return mesaProperty.PropertyID
 }
 func (mesaProperty mesaProperty) GetDataID() ids.DataID {
 	return mesaProperty.DataID
 }
 func (mesaProperty mesaProperty) GetKey() ids.StringID {
-	return mesaProperty.ID.GetKey()
+	return mesaProperty.PropertyID.GetKey()
 }
 func (mesaProperty mesaProperty) GetType() ids.StringID {
-	return mesaProperty.ID.GetType()
+	return mesaProperty.PropertyID.GetType()
 }
 func (mesaProperty mesaProperty) GetHash() ids.ID {
 	return mesaProperty.DataID.GetHashID()
@@ -59,12 +59,12 @@ func propertyFromInterface(listable traits.Listable) (properties.Property, error
 
 func NewEmptyMesaPropertyFromID(propertyID ids.PropertyID) properties.Property {
 	return mesaProperty{
-		ID: propertyID,
+		PropertyID: propertyID,
 	}
 }
 func NewMesaProperty(key ids.StringID, data data.Data) properties.MesaProperty {
 	return mesaProperty{
-		ID:     baseIDs.NewPropertyID(key, data.GetType()),
-		DataID: data.GetID(),
+		PropertyID: baseIDs.NewPropertyID(key, data.GetType()),
+		DataID:     data.GetID(),
 	}
 }

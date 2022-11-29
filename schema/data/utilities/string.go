@@ -65,7 +65,7 @@ func readHeightData(dataString string) (data.HeightData, error) {
 	return base.NewHeightData(baseTypes.NewHeight(height)), nil
 }
 
-// TODO read complex IDs than string ID
+// TODO read complex IDs than string PropertyID
 func readIDData(dataString string) (data.IDData, error) {
 	if dataString == "" {
 		return base.IDDataPrototype(), nil

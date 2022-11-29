@@ -10,8 +10,8 @@ import (
 )
 
 type splitID struct {
-	OwnerID   ids.IdentityID
-	OwnableID ids.OwnableID
+	OwnerID ids.IdentityID
+	ids.OwnableID
 }
 
 var _ ids.SplitID = (*splitID)(nil)
