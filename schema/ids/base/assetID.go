@@ -4,50 +4,40 @@
 package base
 
 import (
-	"bytes"
-
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
-	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type assetID struct {
-	ids.HashID
-}
+var _ ids.AssetID = (*HashUser)(nil)
 
-var _ ids.AssetID = (*assetID)(nil)
+func (assetID HashUser) IsOwnableID() {}
+func (assetID HashUser) IsAssetID()   {}
 
-func (assetID assetID) IsOwnableID() {}
-func (assetID assetID) IsAssetID()   {}
-func (assetID assetID) Compare(listable traits.Listable) int {
-	// TODO devise a better strategy to compare assetID and ownableID
-	return bytes.Compare(assetID.Bytes(), ownableIDFromInterface(listable).Bytes())
-}
-func assetIDFromInterface(i interface{}) assetID {
+func assetIDFromInterface(i interface{}) *HashUser {
 	switch value := i.(type) {
-	case assetID:
-		return value
+	case HashUser:
+		return &value
 	default:
 		panic(errorConstants.MetaDataError)
 	}
 }
 func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
-	return assetID{
-		HashID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()),
+	return &HashUser{
+		HashId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
 	}
 }
 
 func PrototypeAssetID() ids.AssetID {
-	return assetID{
-		HashID: PrototypeHashID(),
+	return &HashUser{
+		HashId: PrototypeHashID().(*HashID),
 	}
 }
 
 func ReadAssetID(assetIDString string) (ids.AssetID, error) {
 	if hashID, err := ReadHashID(assetIDString); err == nil {
-		return assetID{
-			HashID: hashID,
+		return &HashUser{
+			HashId: hashID.(*HashID),
 		}, nil
 	}
 
@@ -55,5 +45,5 @@ func ReadAssetID(assetIDString string) (ids.AssetID, error) {
 		return PrototypeAssetID(), nil
 	}
 
-	return assetID{}, errorConstants.MetaDataError
+	return &HashUser{}, errorConstants.MetaDataError
 }
