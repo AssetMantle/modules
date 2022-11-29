@@ -19,13 +19,16 @@ import (
 func Prototype() helpers.Module {
 	return baseHelpers.NewModule(
 		module.Name,
+		1,
 		auxiliaries.Prototype,
+		block.Prototype,
 		genesis.Prototype,
+		nil,
 		mapper.Prototype,
+		nil,
 		parameters.Prototype,
 		queries.Prototype,
 		nil,
 		transactions.Prototype,
-		block.Prototype,
 	)
 }
