@@ -3,7 +3,6 @@ package base;
 
 option go_package = "schema/ids/base";
 
-message HashID {
-  bytes hash_bytes = 1;
+message StringID {
+  string id_string = 1;
 }
-
