@@ -7,10 +7,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
+	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	codecUtilities "github.com/AssetMantle/modules/utilities"
 )
 
 type key struct {
@@ -23,7 +23,7 @@ func (key key) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(key.Bytes())
 }
 func (key) RegisterCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(codec, key{})
+	schema.RegisterModuleConcrete(codec, key{})
 }
 func (key key) IsPartial() bool {
 	return len(key.DataID.GetHashID().Bytes()) == 0

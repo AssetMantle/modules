@@ -13,8 +13,8 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
+	"github.com/AssetMantle/modules/utilities/helpers"
 )
 
 type listData struct {
@@ -56,7 +56,7 @@ func (listData listData) String() string {
 		dataStrings[i] = datum.String()
 	}
 
-	return utilities.JoinListStrings(dataStrings...)
+	return helpers.JoinListStrings(dataStrings...)
 }
 func (listData listData) Bytes() []byte {
 	bytesList := make([][]byte, listData.Value.Size())

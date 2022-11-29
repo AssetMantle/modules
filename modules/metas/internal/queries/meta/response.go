@@ -14,6 +14,21 @@ type queryResponse struct {
 	List    []helpers.Mappable `json:"list"`
 }
 
+func (queryResponse queryResponse) Reset() {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (queryResponse queryResponse) String() string {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (queryResponse queryResponse) ProtoMessage() {
+	// TODO implement me
+	panic("implement me")
+}
+
 var _ helpers.QueryResponse = (*queryResponse)(nil)
 
 func (queryResponse queryResponse) IsSuccessful() bool {

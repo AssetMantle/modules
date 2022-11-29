@@ -6,19 +6,19 @@ package base
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	codecUtilities "github.com/AssetMantle/modules/utilities"
+	"github.com/AssetMantle/modules/schema"
 )
 
 func RegisterCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(codec, assetID{})
-	codecUtilities.RegisterModuleConcrete(codec, classificationID{})
-	codecUtilities.RegisterModuleConcrete(codec, dataID{})
-	codecUtilities.RegisterModuleConcrete(codec, hashID{})
-	codecUtilities.RegisterModuleConcrete(codec, identityID{})
-	codecUtilities.RegisterModuleConcrete(codec, maintainerID{})
-	codecUtilities.RegisterModuleConcrete(codec, orderID{})
-	codecUtilities.RegisterModuleConcrete(codec, ownableID{})
-	codecUtilities.RegisterModuleConcrete(codec, propertyID{})
-	codecUtilities.RegisterModuleConcrete(codec, splitID{})
-	codecUtilities.RegisterModuleConcrete(codec, stringID{})
+	schema.RegisterModuleConcrete(codec, assetID{})
+	schema.RegisterModuleConcrete(codec, classificationID{})
+	schema.RegisterModuleConcrete(codec, dataID{})
+	schema.RegisterModuleConcrete(codec, hashID{})
+	schema.RegisterModuleConcrete(codec, identityID{})
+	schema.RegisterModuleConcrete(codec, maintainerID{})
+	schema.RegisterModuleConcrete(codec, orderID{})
+	schema.RegisterModuleConcrete(codec, ownableID{})
+	schema.RegisterModuleConcrete(codec, propertyID{})
+	schema.RegisterModuleConcrete(codec, splitID{})
+	schema.RegisterModuleConcrete(codec, stringID{})
 }

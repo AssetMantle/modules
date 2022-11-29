@@ -10,6 +10,7 @@ import (
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
+	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -21,7 +22,32 @@ type message struct {
 	Data data.Data           `json:"data" valid:"required~required field data missing"`
 }
 
-var _ sdkTypes.Msg = message{}
+func (message message) GenerateOnSuccessEvents() sdkTypes.Events {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (message message) GetType() string {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (message message) Reset() {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (message message) String() string {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (message message) ProtoMessage() {
+	// TODO implement me
+	panic("implement me")
+}
+
+var _ helpers.Message = message{}
 
 func (message message) Route() string { return module.Name }
 func (message message) Type() string  { return Transaction.GetName() }
@@ -39,7 +65,7 @@ func (message message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
 func (message) RegisterCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(codec, message{})
+	schema.RegisterModuleConcrete(codec, message{})
 }
 func messageFromInterface(msg sdkTypes.Msg) message {
 	switch value := msg.(type) {

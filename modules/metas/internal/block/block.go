@@ -21,8 +21,8 @@ func (block block) Begin(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {
 
 }
 
-func (block block) End(_ sdkTypes.Context, _ abciTypes.RequestEndBlock) {
-
+func (block block) End(_ sdkTypes.Context, _ abciTypes.RequestEndBlock) []abciTypes.ValidatorUpdate {
+	return []abciTypes.ValidatorUpdate{}
 }
 
 func Prototype() helpers.Block {

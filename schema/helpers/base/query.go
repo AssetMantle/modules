@@ -7,12 +7,13 @@ import (
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"google.golang.org/grpc"
 
 	"github.com/AssetMantle/modules/schema/helpers"
 )
@@ -27,10 +28,20 @@ type query struct {
 	keeperPrototype   func() helpers.QueryKeeper
 }
 
+func (query query) GRPCGatewayHandler(context client.Context) (method string, pattern runtime.Pattern, handlerFunc runtime.HandlerFunc) {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (query query) Service() (*grpc.ServiceDesc, interface{}) {
+	// TODO implement me
+	panic("implement me")
+}
+
 var _ helpers.Query = (*query)(nil)
 
 func (query query) GetName() string { return query.name }
-func (query query) Command(codec *codec.LegacyAmino) *cobra.Command {
+func (query query) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
 		context, err := client.GetClientTxContext(command)
 		if err != nil {

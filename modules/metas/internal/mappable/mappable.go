@@ -7,10 +7,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
+	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids/base"
-	codecUtilities "github.com/AssetMantle/modules/utilities"
 )
 
 type mappable struct {
@@ -23,7 +23,7 @@ func (mappable mappable) GetKey() helpers.Key {
 	return key.NewKey(base.NewDataID(mappable.Data))
 }
 func (mappable) RegisterCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(codec, mappable{})
+	schema.RegisterModuleConcrete(codec, mappable{})
 }
 
 func NewMappable(data data.Data) helpers.Mappable {

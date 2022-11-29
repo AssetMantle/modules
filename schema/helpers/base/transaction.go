@@ -16,6 +16,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"google.golang.org/grpc"
 
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -28,6 +29,11 @@ type transaction struct {
 	requestPrototype func() helpers.TransactionRequest
 	messagePrototype func() helpers.Message
 	keeperPrototype  func() helpers.TransactionKeeper
+}
+
+func (transaction transaction) Service() (*grpc.ServiceDesc, interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.Transaction = (*transaction)(nil)

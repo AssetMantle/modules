@@ -1,4 +1,4 @@
-package utilities
+package helpers
 
 import (
 	"strings"
