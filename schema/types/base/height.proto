@@ -1,0 +1,7 @@
+syntax = "proto3";
+package base;
+option go_package = "github.com/AssetMantle/modules/schema/types/base";
+
+message Height{
+  int64 value = 1;
+}

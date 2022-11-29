@@ -2,8 +2,8 @@ syntax = "proto3";
 package base;
 option go_package = "github.com/AssetMantle/modules/schema/lists/base";
 
-message List {
-  oneof impl{
+import "google/protobuf/any.proto";
 
-  }
+message List {
+  repeated google.protobuf.Any data = 1;
 }

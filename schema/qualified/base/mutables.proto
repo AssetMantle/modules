@@ -1,0 +1,9 @@
+syntax = "proto3";
+package base;
+option go_package = "github.com/AssetMantle/modules/schema/qualified/base";
+
+import "schema/lists/base/popertyList.proto";
+
+message Mutables {
+  PropertyList property_list = 1;
+}

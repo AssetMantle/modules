@@ -2,8 +2,8 @@ syntax = "proto3";
 package base;
 option go_package = "github.com/AssetMantle/modules/schema/lists/base";
 
-import "schema/data/base/data.proto";
+import "schema/lists/base/list.proto";
 
 message DataList{
-  repeated Data list=1;
+  List list = 1;
 }
