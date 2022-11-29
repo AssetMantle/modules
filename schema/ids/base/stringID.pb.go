@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.28.1
 // 	protoc        v3.21.9
-// source: modules/schema/ids/base/stringID.proto
+// source: schema/ids/base/stringID.proto
 
 package base
 
@@ -31,7 +31,7 @@ type StringID struct {
 func (x *StringID) Reset() {
 	*x = StringID{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_modules_schema_ids_base_stringID_proto_msgTypes[0]
+		mi := &file_schema_ids_base_stringID_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -44,7 +44,7 @@ func (x *StringID) String() string {
 func (*StringID) ProtoMessage() {}
 
 func (x *StringID) ProtoReflect() protoreflect.Message {
-	mi := &file_modules_schema_ids_base_stringID_proto_msgTypes[0]
+	mi := &file_schema_ids_base_stringID_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +57,7 @@ func (x *StringID) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StringID.ProtoReflect.Descriptor instead.
 func (*StringID) Descriptor() ([]byte, []int) {
-	return file_modules_schema_ids_base_stringID_proto_rawDescGZIP(), []int{0}
+	return file_schema_ids_base_stringID_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *StringID) GetIdString() string {
@@ -67,36 +67,35 @@ func (x *StringID) GetIdString() string {
 	return ""
 }
 
-var File_modules_schema_ids_base_stringID_proto protoreflect.FileDescriptor
+var File_schema_ids_base_stringID_proto protoreflect.FileDescriptor
 
-var file_modules_schema_ids_base_stringID_proto_rawDesc = []byte{
-	0x0a, 0x26, 0x6d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x73, 0x2f, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61,
-	0x2f, 0x69, 0x64, 0x73, 0x2f, 0x62, 0x61, 0x73, 0x65, 0x2f, 0x73, 0x74, 0x72, 0x69, 0x6e, 0x67,
-	0x49, 0x44, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x04, 0x62, 0x61, 0x73, 0x65, 0x22, 0x27,
-	0x0a, 0x08, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x49, 0x44, 0x12, 0x1b, 0x0a, 0x09, 0x69, 0x64,
-	0x5f, 0x73, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x69,
-	0x64, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x42, 0x11, 0x5a, 0x0f, 0x73, 0x63, 0x68, 0x65, 0x6d,
-	0x61, 0x2f, 0x69, 0x64, 0x73, 0x2f, 0x62, 0x61, 0x73, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x33,
+var file_schema_ids_base_stringID_proto_rawDesc = []byte{
+	0x0a, 0x1e, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x2f, 0x69, 0x64, 0x73, 0x2f, 0x62, 0x61, 0x73,
+	0x65, 0x2f, 0x73, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x49, 0x44, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x12, 0x04, 0x62, 0x61, 0x73, 0x65, 0x22, 0x27, 0x0a, 0x08, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67,
+	0x49, 0x44, 0x12, 0x1b, 0x0a, 0x09, 0x69, 0x64, 0x5f, 0x73, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x69, 0x64, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x42,
+	0x11, 0x5a, 0x0f, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x2f, 0x69, 0x64, 0x73, 0x2f, 0x62, 0x61,
+	0x73, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
-	file_modules_schema_ids_base_stringID_proto_rawDescOnce sync.Once
-	file_modules_schema_ids_base_stringID_proto_rawDescData = file_modules_schema_ids_base_stringID_proto_rawDesc
+	file_schema_ids_base_stringID_proto_rawDescOnce sync.Once
+	file_schema_ids_base_stringID_proto_rawDescData = file_schema_ids_base_stringID_proto_rawDesc
 )
 
-func file_modules_schema_ids_base_stringID_proto_rawDescGZIP() []byte {
-	file_modules_schema_ids_base_stringID_proto_rawDescOnce.Do(func() {
-		file_modules_schema_ids_base_stringID_proto_rawDescData = protoimpl.X.CompressGZIP(file_modules_schema_ids_base_stringID_proto_rawDescData)
+func file_schema_ids_base_stringID_proto_rawDescGZIP() []byte {
+	file_schema_ids_base_stringID_proto_rawDescOnce.Do(func() {
+		file_schema_ids_base_stringID_proto_rawDescData = protoimpl.X.CompressGZIP(file_schema_ids_base_stringID_proto_rawDescData)
 	})
-	return file_modules_schema_ids_base_stringID_proto_rawDescData
+	return file_schema_ids_base_stringID_proto_rawDescData
 }
 
-var file_modules_schema_ids_base_stringID_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
-var file_modules_schema_ids_base_stringID_proto_goTypes = []interface{}{
+var file_schema_ids_base_stringID_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_schema_ids_base_stringID_proto_goTypes = []interface{}{
 	(*StringID)(nil), // 0: base.StringID
 }
-var file_modules_schema_ids_base_stringID_proto_depIdxs = []int32{
+var file_schema_ids_base_stringID_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
 	0, // [0:0] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -104,13 +103,13 @@ var file_modules_schema_ids_base_stringID_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_modules_schema_ids_base_stringID_proto_init() }
-func file_modules_schema_ids_base_stringID_proto_init() {
-	if File_modules_schema_ids_base_stringID_proto != nil {
+func init() { file_schema_ids_base_stringID_proto_init() }
+func file_schema_ids_base_stringID_proto_init() {
+	if File_schema_ids_base_stringID_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_modules_schema_ids_base_stringID_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_schema_ids_base_stringID_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*StringID); i {
 			case 0:
 				return &v.state
@@ -127,18 +126,18 @@ func file_modules_schema_ids_base_stringID_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_modules_schema_ids_base_stringID_proto_rawDesc,
+			RawDescriptor: file_schema_ids_base_stringID_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_modules_schema_ids_base_stringID_proto_goTypes,
-		DependencyIndexes: file_modules_schema_ids_base_stringID_proto_depIdxs,
-		MessageInfos:      file_modules_schema_ids_base_stringID_proto_msgTypes,
+		GoTypes:           file_schema_ids_base_stringID_proto_goTypes,
+		DependencyIndexes: file_schema_ids_base_stringID_proto_depIdxs,
+		MessageInfos:      file_schema_ids_base_stringID_proto_msgTypes,
 	}.Build()
-	File_modules_schema_ids_base_stringID_proto = out.File
-	file_modules_schema_ids_base_stringID_proto_rawDesc = nil
-	file_modules_schema_ids_base_stringID_proto_goTypes = nil
-	file_modules_schema_ids_base_stringID_proto_depIdxs = nil
+	File_schema_ids_base_stringID_proto = out.File
+	file_schema_ids_base_stringID_proto_rawDesc = nil
+	file_schema_ids_base_stringID_proto_goTypes = nil
+	file_schema_ids_base_stringID_proto_depIdxs = nil
 }
