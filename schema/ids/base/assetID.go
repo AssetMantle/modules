@@ -9,35 +9,35 @@ import (
 	"github.com/AssetMantle/modules/schema/qualified"
 )
 
-var _ ids.AssetID = (*HashUser)(nil)
+var _ ids.AssetID = (*HashID)(nil)
 
-func (assetID HashUser) IsOwnableID() {}
-func (assetID HashUser) IsAssetID()   {}
+func (assetID HashID) IsOwnableID() {}
+func (assetID HashID) IsAssetID()   {}
 
-func assetIDFromInterface(i interface{}) *HashUser {
+func assetIDFromInterface(i interface{}) *HashID {
 	switch value := i.(type) {
-	case HashUser:
+	case HashID:
 		return &value
 	default:
 		panic(errorConstants.MetaDataError)
 	}
 }
 func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
-	return &HashUser{
-		HashId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
+	return &HashID{
+		HashBytes: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).Bytes(),
 	}
 }
 
 func PrototypeAssetID() ids.AssetID {
-	return &HashUser{
-		HashId: PrototypeHashID().(*HashID),
+	return &HashID{
+		HashBytes: PrototypeHashID().Bytes(),
 	}
 }
 
 func ReadAssetID(assetIDString string) (ids.AssetID, error) {
 	if hashID, err := ReadHashID(assetIDString); err == nil {
-		return &HashUser{
-			HashId: hashID.(*HashID),
+		return &HashID{
+			HashBytes: hashID.Bytes(),
 		}, nil
 	}
 
@@ -45,5 +45,5 @@ func ReadAssetID(assetIDString string) (ids.AssetID, error) {
 		return PrototypeAssetID(), nil
 	}
 
-	return &HashUser{}, errorConstants.MetaDataError
+	return &HashID{}, errorConstants.MetaDataError
 }
