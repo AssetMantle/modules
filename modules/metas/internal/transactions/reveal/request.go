@@ -18,12 +18,12 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
-type transactionRequest struct {
-	BaseReq rest.BaseReq `json:"baseReq"`
-	Data    string       `json:"data" valid:"required~required field data missing, matches(^[DHIS]{1}[|]{1}.*$)"`
-}
+//type transactionRequest struct {
+//	BaseReq rest.BaseReq `json:"baseReq"`
+//	Data    string       `json:"data" valid:"required~required field data missing, matches(^[DHIS]{1}[|]{1}.*$)"`
+//}
 
-var _ helpers.TransactionRequest = (*transactionRequest)(nil)
+var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
 
 // Validate godoc
 // @Summary Reveal metas transaction
@@ -35,31 +35,26 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /metas/reveal [post]
-func (transactionRequest transactionRequest) Validate() error {
+func (transactionRequest TransactionRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(transactionRequest)
 	return err
 }
-func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
+func (transactionRequest TransactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(context),
 		cliCommand.ReadString(constants.Data),
 	), nil
 }
-func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
+func (transactionRequest TransactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
 	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
 		return nil, err
 	}
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
-	return transactionRequest.BaseReq
-}
-func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
-	if err != nil {
-		return nil, err
-	}
+
+func (transactionRequest TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
+	from := transactionRequest.GetFrom()
 
 	data, err := utilities.ReadData(transactionRequest.Data)
 	if err != nil {
@@ -67,19 +62,19 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	}
 
 	return newMessage(
-		from,
+		[]byte(from),
 		data,
 	), nil
 }
-func (transactionRequest) RegisterCodec(codec *codec.LegacyAmino) {
-	schema.RegisterModuleConcrete(codec, transactionRequest{})
+func (TransactionRequest) RegisterCodec(codec *codec.LegacyAmino) {
+	schema.RegisterModuleConcrete(codec, TransactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
-	return transactionRequest{}
+	return TransactionRequest{}
 }
 func newTransactionRequest(baseReq rest.BaseReq, data string) helpers.TransactionRequest {
-	return transactionRequest{
-		BaseReq: baseReq,
-		Data:    data,
+	return TransactionRequest{
+		From: baseReq.From,
+		Data: data,
 	}
 }

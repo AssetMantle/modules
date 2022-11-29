@@ -79,7 +79,7 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, data data.Data) sdkTypes.Msg {
+func newMessage(from []byte, data data.Data) sdkTypes.Msg {
 	return message{
 		From: from,
 		Data: data,
