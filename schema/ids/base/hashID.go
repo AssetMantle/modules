@@ -67,12 +67,12 @@ func PrototypeHashID() ids.HashID {
 
 func ReadHashID(hashIDString string) (ids.HashID, error) {
 	if hashBytes, err := base64.URLEncoding.DecodeString(hashIDString); err == nil {
-		return hashID{HashBytes: hashBytes}, nil
+		return &HashID{HashBytes: hashBytes}, nil
 	}
 
 	if hashIDString == "" {
 		return nil, nil
 	}
 
-	return hashID{}, constants.IncorrectFormat
+	return &HashID{}, constants.IncorrectFormat
 }
