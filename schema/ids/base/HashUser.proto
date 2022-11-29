@@ -5,6 +5,6 @@ option go_package = "schema/ids/base";
 
 import "schema/ids/base/hashID.proto";
 
-message MaintainerID {
+message HashUser {
   HashID hash_id = 1;
 }

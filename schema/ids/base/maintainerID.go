@@ -7,38 +7,38 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ ids.MaintainerID = (*MaintainerID)(nil)
+var _ ids.MaintainerID = (*HashUser)(nil)
 
-func (maintainerID MaintainerID) Bytes() []byte {
+func (maintainerID HashUser) Bytes() []byte {
 	return maintainerID.HashId.HashBytes
 }
-func (maintainerID MaintainerID) IsMaintainerID() {}
-func (maintainerID MaintainerID) Compare(listable traits.Listable) int {
+func (maintainerID HashUser) IsMaintainerID() {}
+func (maintainerID HashUser) Compare(listable traits.Listable) int {
 	return maintainerID.HashId.Compare(maintainerIDFromInterface(listable).HashId)
 }
-func maintainerIDFromInterface(i interface{}) *MaintainerID {
+func maintainerIDFromInterface(i interface{}) *HashUser {
 	switch value := i.(type) {
-	case MaintainerID:
+	case HashUser:
 		return &value
 	default:
 		panic(errorConstants.MetaDataError)
 	}
 }
 func NewMaintainerID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.MaintainerID {
-	return &MaintainerID{
+	return &HashUser{
 		HashId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
 	}
 }
 
 func PrototypeMaintainerID() ids.MaintainerID {
-	return &MaintainerID{
+	return &HashUser{
 		HashId: PrototypeHashID().(*HashID),
 	}
 }
 
 func ReadMaintainerID(maintainerIDString string) (ids.MaintainerID, error) {
 	if hashID, err := ReadHashID(maintainerIDString); err == nil {
-		return &MaintainerID{
+		return &HashUser{
 			HashId: hashID.(*HashID),
 		}, nil
 	}
@@ -47,5 +47,5 @@ func ReadMaintainerID(maintainerIDString string) (ids.MaintainerID, error) {
 		return PrototypeMaintainerID(), nil
 	}
 
-	return &MaintainerID{}, errorConstants.MetaDataError
+	return &HashUser{}, errorConstants.MetaDataError
 }
