@@ -1,0 +1,13 @@
+syntax = "proto3";
+package base;
+option go_package = "github.com/AssetMantle/modules/schema/documents/base";
+
+import "schema/ids/base/classificationID.proto";
+import "schema/qualified/base/immutables.proto";
+import "schema/qualified/base/mutables.proto";
+
+message Document {
+  ClassificationID classification_id = 1;
+  Immutables immutables = 2;
+  Mutables mutables = 3;
+}
