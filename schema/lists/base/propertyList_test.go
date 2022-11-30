@@ -75,6 +75,7 @@ func Test_propertyList_Add(t *testing.T) {
 	}{
 		{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData"))}...)...)}, args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData")), baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)},
 		{"-ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData"))}...)...)}, args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewDecData(sdkTypes.NewDec(1)))}}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData")), baseProperties.NewMetaProperty(NewStringID("ID1"), NewDecData(sdkTypes.NewDec(1)))}...)}, //TODO: Should fail as add method should not be able to mutate/add property with existing key
+		{"+ve with nil", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData"))}...)...)}, args{nil}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData"))}...)},                                                                                                                                                                                  //TODO: Should fail as add method should not be able to mutate/add property with existing key
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -124,7 +125,10 @@ func Test_propertyList_GetProperty(t *testing.T) {
 		args   args
 		want   properties.Property
 	}{
-		{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))}, baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))},
+		{"+ve Meta", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))}, baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))},
+		{"+ve Mesa", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMesaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))}, baseProperties.NewMesaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))},
+		{"-ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{propertyID: nil}, baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}, //TODO: panics if propertyID is nil
+		{"-ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewEmptyMetaPropertyFromID(baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D")))}...)...)}, args{baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))}, baseProperties.NewEmptyMetaPropertyFromID(baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D")))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -175,6 +179,7 @@ func Test_propertyList_Mutate(t *testing.T) {
 		want   lists.PropertyList
 	}{
 		{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(2)))}}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(2)))}...)},
+		//{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewStringData("test"))}}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewStringData("test"))}...)}, //TODO: Should handle error if different property data is tried to mutate
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -225,7 +230,7 @@ func Test_propertyList_ScrubData(t *testing.T) {
 		want   lists.PropertyList
 	}{
 		{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1))).ScrubData()}...)},
-		{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1))), baseProperties.NewMetaProperty(NewStringID("ID"), NewStringData("Test"))}...)...)}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1))).ScrubData(), baseProperties.NewMetaProperty(NewStringID("ID"), NewStringData("Test")).ScrubData()}...)},
+		{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMesaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1))), baseProperties.NewMetaProperty(NewStringID("ID"), NewStringData("Test"))}...)...)}, NewPropertyList([]properties.Property{baseProperties.NewMesaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1))), baseProperties.NewMetaProperty(NewStringID("ID"), NewStringData("Test")).ScrubData()}...)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
