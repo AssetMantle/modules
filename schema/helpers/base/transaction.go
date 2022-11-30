@@ -9,13 +9,11 @@ import (
 	"reflect"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -90,22 +88,22 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 			return
 		}
 
-		baseReq := transactionRequest.GetBaseReq().Sanitize()
+		baseReq := transactionRequest.GetRequest()
 		if !baseReq.ValidateBasic(responseWriter) {
 			rest.CheckBadRequestError(responseWriter, constants.InvalidRequest)
 			return
 		}
 
-		msg, err := transactionRequest.MakeMsg()
+		_, err := transactionRequest.MakeMsg()
 		if rest.CheckBadRequestError(responseWriter, err) {
 			return
 		}
 
-		// TODO, allow for fully sign and broadcast txn also
-		if viper.GetBool(flags.FlagGenerateOnly) {
-			tx.WriteGeneratedTxResponse(context, responseWriter, baseReq, msg)
-			return
-		}
+		// TODO, allow for fully sign and broadcast txn also - commented for now
+		//if viper.GetBool(flags.FlagGenerateOnly) {
+		//	tx.WriteGeneratedTxResponse(context, responseWriter, baseReq, msg)
+		//	return
+		//}
 	}
 }
 
