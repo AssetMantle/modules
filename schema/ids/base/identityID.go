@@ -1,35 +1,35 @@
 package base
 
 import (
+	"bytes"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type identityID struct {
-	ids.HashID
-}
+//
+//type identityID struct {
+//	ids.HashID
+//}
 
-var _ ids.IdentityID = (*identityID)(nil)
+var _ ids.IdentityID = (*IdentityID)(nil)
 
 // TODO deprecate
-func (identityID identityID) IsIdentityID() {}
-func (identityID identityID) String() string {
-	return identityID.HashID.String()
+func (identityID IdentityID) IsIdentityID() {}
+
+func (identityID IdentityID) Bytes() []byte {
+	return *identityID.HashId
 }
-func (identityID identityID) Bytes() []byte {
-	return identityID.HashID.Bytes()
+func (identityID IdentityID) Compare(listable traits.Listable) int {
+	return bytes.Compare(identityID.Bytes(), *identityIDFromInterface(listable).HashId)
 }
-func (identityID identityID) Compare(listable traits.Listable) int {
-	return identityID.HashID.Compare(identityIDFromInterface(listable).HashID)
+func (identityID IdentityID) GetHashID() ids.HashID {
+	return *identityID.HashId
 }
-func (identityID identityID) GetHashID() ids.HashID {
-	return identityID.HashID
-}
-func identityIDFromInterface(i interface{}) identityID {
+func identityIDFromInterface(i interface{}) IdentityID {
 	switch value := i.(type) {
-	case identityID:
+	case IdentityID:
 		return value
 	default:
 		panic(errorConstants.MetaDataError)
@@ -37,24 +37,24 @@ func identityIDFromInterface(i interface{}) identityID {
 }
 
 func NewIdentityID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.IdentityID {
-	return identityID{
-		HashID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()),
+	return &IdentityID{
+		HashId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
 	}
 }
 
 func PrototypeIdentityID() ids.IdentityID {
-	return identityID{
-		HashID: PrototypeHashID(),
+	return &IdentityID{
+		HashId: PrototypeHashID().(*HashID),
 	}
 }
 
 func ReadIdentityID(identityIDString string) (ids.IdentityID, error) {
 
 	if hashID, err := ReadHashID(identityIDString); err == nil {
-		return identityID{
-			HashID: hashID,
+		return &IdentityID{
+			HashId: hashID.(*HashID),
 		}, nil
 	}
 
-	return identityID{}, errorConstants.IncorrectFormat
+	return &IdentityID{}, errorConstants.IncorrectFormat
 }

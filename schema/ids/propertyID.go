@@ -3,9 +3,11 @@
 
 package ids
 
+import "github.com/AssetMantle/modules/schema/ids/base"
+
 type PropertyID interface {
-	GetKey() StringID
-	GetType() StringID
+	GetKey() *base.StringID
+	GetType() *base.StringID
 	ID
 	IsPropertyID()
 }

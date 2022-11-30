@@ -1,25 +1,34 @@
 package base
 
+import "C"
 import (
+	"bytes"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type classificationID struct {
-	ids.HashID
+//
+//type classificationID struct {
+//	ids.HashID
+//}
+
+var _ ids.ClassificationID = (*ClassificationID)(nil)
+
+func (classificationID ClassificationID) Bytes() []byte {
+	return *classificationID.HashId
 }
 
-var _ ids.ClassificationID = (*classificationID)(nil)
+func (classificationID ClassificationID) IsClassificationID() {}
 
-func (classificationID classificationID) IsClassificationID() {}
-func (classificationID classificationID) Compare(listable traits.Listable) int {
-	return classificationID.HashID.Compare(classificationIDFromInterface(listable).HashID)
+func (classificationID ClassificationID) Compare(listable traits.Listable) int {
+	return bytes.Compare(classificationID.Bytes(), classificationIDFromInterface(listable).Bytes())
 }
-func classificationIDFromInterface(i interface{}) classificationID {
+
+func classificationIDFromInterface(i interface{}) ClassificationID {
 	switch value := i.(type) {
-	case classificationID:
+	case ClassificationID:
 		return value
 	default:
 		panic(constants.MetaDataError)
@@ -48,23 +57,23 @@ func NewClassificationID(immutables qualified.Immutables, mutables qualified.Mut
 		}
 	}
 
-	return classificationID{HashID: GenerateHashID(GenerateHashID(immutableIDByteList...).Bytes(), GenerateHashID(mutableIDByteList...).Bytes(), GenerateHashID(defaultImmutableByteList...).Bytes())}
+	return &ClassificationID{HashId: GenerateHashID(GenerateHashID(immutableIDByteList...).Bytes(), GenerateHashID(mutableIDByteList...).Bytes(), GenerateHashID(defaultImmutableByteList...).Bytes()).(*HashID)}
 }
 
 func PrototypeClassificationID() ids.ClassificationID {
-	return classificationID{
-		HashID: PrototypeHashID(),
+	return &ClassificationID{
+		HashId: PrototypeHashID().(*HashID),
 	}
 }
 
 func ReadClassificationID(classificationIDString string) (ids.ClassificationID, error) {
 	if hashID, err := ReadHashID(classificationIDString); err == nil {
-		return classificationID{HashID: hashID}, nil
+		return &ClassificationID{HashId: hashID.(*HashID)}, nil
 	}
 
 	if classificationIDString == "" {
 		return PrototypeClassificationID(), nil
 	}
 
-	return classificationID{}, constants.MetaDataError
+	return &ClassificationID{}, constants.MetaDataError
 }

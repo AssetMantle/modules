@@ -8,35 +8,39 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-// TODO rename to something more appropriate
-type ownableID struct {
-	ids.StringID
+//
+//// TODO rename to something more appropriate
+//type ownableID struct {
+//	ids.StringID
+//}
+
+var _ ids.OwnableID = (*OwnableID)(nil)
+
+func (ownableID OwnableID) Bytes() []byte {
+	return *ownableID.StringId
 }
-
-var _ ids.OwnableID = (*ownableID)(nil)
-
-func (ownableID ownableID) IsOwnableID() {}
-func (ownableID ownableID) Compare(listable traits.Listable) int {
+func (ownableID OwnableID) IsOwnableID() {}
+func (ownableID OwnableID) Compare(listable traits.Listable) int {
 	// TODO devise a better strategy to compare assetID and ownableID
 	return bytes.Compare(ownableID.Bytes(), ownableIDFromInterface(listable).Bytes())
 }
 func ownableIDFromInterface(i interface{}) ids.OwnableID {
 	switch value := i.(type) {
-	case ids.OwnableID:
-		return value
+	case OwnableID:
+		return &value
 	default:
 		panic(constants.MetaDataError)
 	}
 }
 func NewOwnableID(stringID ids.StringID) ids.OwnableID {
-	return ownableID{
-		StringID: stringID,
+	return &OwnableID{
+		StringId: stringID.(*StringID),
 	}
 }
 
 func PrototypeOwnableID() ids.OwnableID {
-	return ownableID{
-		StringID: PrototypeStringID(),
+	return &OwnableID{
+		StringId: PrototypeStringID().(*StringID),
 	}
 }
 
@@ -46,7 +50,7 @@ func ReadOwnableID(ownableIDString string) (ids.OwnableID, error) {
 		return assetID, nil
 	}
 
-	return ownableID{
-		StringID: NewStringID(ownableIDString),
+	return &OwnableID{
+		StringId: NewStringID(ownableIDString).(*StringID),
 	}, nil
 }

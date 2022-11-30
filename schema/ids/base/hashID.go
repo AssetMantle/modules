@@ -13,7 +13,7 @@ import (
 
 //
 //type hashID struct {
-//	HashBytes []byte
+//	IdBytes []byte
 //}
 
 var _ ids.HashID = (*HashID)(nil)
@@ -21,7 +21,7 @@ var _ ids.HashID = (*HashID)(nil)
 func (hashID HashID) IsHashID() {}
 
 func (hashID HashID) Bytes() []byte {
-	return hashID.HashBytes
+	return hashID.IdBytes
 }
 func (hashID HashID) Compare(listable traits.Listable) int {
 	return bytes.Compare(hashID.Bytes(), hashIDFromInterface(listable).Bytes())
@@ -46,7 +46,7 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 	}
 
 	if len(nonEmptyByteList) == 0 {
-		return &HashID{HashBytes: nil}
+		return &HashID{IdBytes: nil}
 	}
 
 	sort.Slice(nonEmptyByteList, func(i, j int) bool { return bytes.Compare(nonEmptyByteList[i], nonEmptyByteList[j]) == -1 })
@@ -58,7 +58,7 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 		panic(err)
 	}
 
-	return &HashID{HashBytes: hash.Sum(nil)}
+	return &HashID{IdBytes: hash.Sum(nil)}
 }
 
 func PrototypeHashID() ids.HashID {
@@ -67,7 +67,7 @@ func PrototypeHashID() ids.HashID {
 
 func ReadHashID(hashIDString string) (ids.HashID, error) {
 	if hashBytes, err := base64.URLEncoding.DecodeString(hashIDString); err == nil {
-		return &HashID{HashBytes: hashBytes}, nil
+		return &HashID{IdBytes: hashBytes}, nil
 	}
 
 	if hashIDString == "" {

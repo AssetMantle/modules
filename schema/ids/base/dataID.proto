@@ -3,7 +3,9 @@ package base;
 option go_package = "github.com/AssetMantle/modules/schema/ids/base";
 
 import "schema/ids/base/hashID.proto";
+import "schema/ids/base/stringID.proto";
 
 message DataID {
-  HashID hash_id = 1;
+  StringID type = 1;
+  HashID hash_id = 2;
 }
