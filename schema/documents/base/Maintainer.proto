@@ -2,7 +2,7 @@ syntax = "proto3";
 package base;
 option go_package = "github.com/AssetMantle/modules/schema/documents/base";
 
-import "document.proto";
+import "schema/documents/base/document.proto";
 
 message Maintainer {
   Document document = 1;

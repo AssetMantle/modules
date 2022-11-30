@@ -1,7 +1,7 @@
-syntax="proto3";
+syntax = "proto3";
 package base;
-option go_package="github.com/AssetMantle/modules/schema/data/base";
-import "gogoproto/gogo.proto";
+option go_package = "github.com/AssetMantle/modules/schema/data/base";
+import "schema/thirdParty/proto/gogoproto/gogo.proto";
 
 message DecData{
   string value = 1 [(gogoproto.customtype) = "Dec", (gogoproto.nullable) = false];
