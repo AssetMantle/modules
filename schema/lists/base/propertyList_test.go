@@ -29,6 +29,7 @@ func TestNewPropertyList(t *testing.T) {
 		want lists.PropertyList
 	}{
 		{"+ve", args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData")), baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}}, propertyList{List: NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData")), baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}},
+		{"-ve", args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData")), baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData"))}}, propertyList{List: NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData")), baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData"))}...)...)}}, //TODO: Should fail for duplicate Property
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
