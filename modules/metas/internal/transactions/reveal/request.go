@@ -5,6 +5,7 @@ package reveal
 
 import (
 	"encoding/json"
+	"net/http"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -18,10 +19,10 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
-//type transactionRequest struct {
+// type transactionRequest struct {
 //	BaseReq rest.BaseReq `json:"baseReq"`
 //	Data    string       `json:"data" valid:"required~required field data missing, matches(^[DHIS]{1}[|]{1}.*$)"`
-//}
+// }
 
 var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
 
@@ -35,6 +36,15 @@ var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /metas/reveal [post]
+func (transactionRequest TransactionRequest) GetRequest() helpers.TransactionRequest {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (transactionRequest TransactionRequest) ValidateBasic(responseWriter http.ResponseWriter) bool {
+	// TODO implement me
+	panic("implement me")
+}
 func (transactionRequest TransactionRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(transactionRequest)
 	return err

@@ -14,9 +14,9 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
-//type queryRequest struct {
+// type queryRequest struct {
 //	ids.DataID `json:"dataID" valid:"required~required field dataID missing"`
-//}
+// }
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
@@ -70,5 +70,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) QueryRequest {
 	}
 }
 func newQueryRequest(dataID ids.DataID) helpers.QueryRequest {
-	return QueryRequest{DataId: dataID.(*baseIDs.DataID)}
+	return QueryRequest{DataID: dataID.(*baseIDs.DataID)}
 }

@@ -5,5 +5,5 @@ option go_package = "modules/metas/internal/queries/meta";
 import "schema/ids/base/dataID.proto";
 
 message QueryRequest {
-  base.DataID data_id = 1;
+  base.DataID data_i_d = 1;
 }

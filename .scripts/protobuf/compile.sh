@@ -11,6 +11,7 @@ protoc \
   schema/properties/base/*.proto \
   schema/qualified/base/*.proto \
   schema/types/base/*.proto \
+  modules/metas/internal/queries/meta/*.proto \
   -I. \
   --go_out=. \
   --go_opt=paths=source_relative
