@@ -5,7 +5,8 @@ package define
 
 import (
 	"encoding/json"
-
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -42,7 +43,14 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Router /identities/define [post]
 func (transactionRequest transactionRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(transactionRequest)
-	return err
+	if err != nil {
+		return err
+	}
+	inputValidator := base.NewInputValidator(constants.PropertyExpression)
+	if !inputValidator.IsValid(transactionRequest.ImmutableProperties, transactionRequest.ImmutableMetaProperties, transactionRequest.MutableProperties, transactionRequest.MutableMetaProperties) {
+		return errorConstants.IncorrectFormat
+	}
+	return nil
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
@@ -64,6 +72,7 @@ func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage
 func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
+
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
 	if err != nil {
