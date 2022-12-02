@@ -32,7 +32,7 @@ func Test_validator(t *testing.T) {
 		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, errorConstants.IncorrectFormat},
 		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)}, errorConstants.InvalidParameter},
 		{"-ve with -ve decData", args{baseTypes.NewParameter(baseIDs.NewStringID("ID"), baseData.NewDecData(sdkTypes.NewDec(-1)), validator)}, errorConstants.InvalidParameter},
-		{"+ve with +ve decData", args{baseTypes.NewParameter(baseIDs.NewStringID("dummy"), baseData.NewDecData(sdkTypes.NewDec(1)), validator)}, nil}, // TODO: Check whether input provided is right
+		{"+ve with +ve decData", args{baseTypes.NewParameter(baseIDs.NewStringID("dummy"), baseData.NewDecData(sdkTypes.NewDec(1)), validator)}, nil},
 		{"-ve nil", args{}, errorConstants.IncorrectFormat},
 	}
 	for _, tt := range tests {
