@@ -43,7 +43,6 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testBaseRequest, testFromID.String(), testFromID.String(), testClassificationID.String()}, transactionRequest{testBaseRequest, testFromID.String(), testFromID.String(), testClassificationID.String()}},
 	}
 	for _, tt := range tests {
@@ -60,7 +59,6 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", transactionRequest{}},
 	}
 	for _, tt := range tests {
@@ -89,9 +87,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		args    args
 		want    helpers.TransactionRequest
 		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
@@ -131,7 +127,6 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), testFromID.String(), testClassificationID.String()}, args{jsonMessage}, newTransactionRequest(testBaseRequest, testFromID.String(), testFromID.String(), testClassificationID.String()), false},
 	}
 	for _, tt := range tests {
@@ -166,7 +161,6 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   rest.BaseReq
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), testFromID.String(), testClassificationID.String()}, testBaseRequest},
 	}
 	for _, tt := range tests {
@@ -197,7 +191,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), testFromID.String(), testClassificationID.String()}, newMessage(fromAccAddress, testFromID, testFromID, testClassificationID), false},
 	}
 	for _, tt := range tests {
@@ -235,7 +228,6 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), testFromID.String(), testClassificationID.String()}, args{codec.New()}},
 	}
 	for _, tt := range tests {
@@ -263,7 +255,6 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), testFromID.String(), testClassificationID.String()}, false},
 	}
 	for _, tt := range tests {

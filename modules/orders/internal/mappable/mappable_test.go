@@ -36,7 +36,6 @@ func TestNewMappable(t *testing.T) {
 		args args
 		want helpers.Mappable
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testOrder}, mappable{baseDocuments.NewOrder(classificationID, immutables, mutables)}},
 	}
 	for _, tt := range tests {
@@ -53,7 +52,6 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		// TODO: Add test cases.
 		{"+ve", mappable{}},
 	}
 	for _, tt := range tests {
@@ -75,7 +73,6 @@ func Test_mappable_GetKey(t *testing.T) {
 		want      helpers.Key
 		wantPanic bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testOrder}, key.NewKey(baseIds.NewOrderID(classificationID, immutables)), false},
 		{"panic case nil", fields{nil}, nil, true},
 	}
@@ -107,7 +104,6 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testOrder}, args{codec.New()}},
 		{"+ve nil", fields{nil}, args{codec.New()}},
 	}

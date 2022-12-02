@@ -48,7 +48,6 @@ func Test_messageFromInterface(t *testing.T) {
 		args args
 		want message
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testMessage}, message{fromAccAddress, testFromID, testIdentityID}},
 	}
 	for _, tt := range tests {
@@ -65,7 +64,6 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		// TODO: Add test cases.
 		{"+ve", message{}},
 	}
 	for _, tt := range tests {
@@ -89,7 +87,6 @@ func Test_message_GetSignBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{fromAccAddress, testFromID, testIdentityID}, sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(testMessage))},
 	}
 	for _, tt := range tests {
@@ -119,7 +116,6 @@ func Test_message_GetSigners(t *testing.T) {
 		fields fields
 		want   []sdkTypes.AccAddress
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{fromAccAddress, testFromID, testIdentityID}, []sdkTypes.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
@@ -151,7 +147,6 @@ func Test_message_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{fromAccAddress, testFromID, testIdentityID}, args{codec.New()}},
 	}
 	for _, tt := range tests {
@@ -178,7 +173,6 @@ func Test_message_Route(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{fromAccAddress, testFromID, testIdentityID}, module.Name},
 	}
 	for _, tt := range tests {
@@ -207,7 +201,6 @@ func Test_message_Type(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{fromAccAddress, testFromID, testIdentityID}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
@@ -236,7 +229,6 @@ func Test_message_ValidateBasic(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{fromAccAddress, testFromID, testIdentityID}, false},
 		{"-ve", fields{}, true},
 	}
@@ -266,7 +258,6 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want sdkTypes.Msg
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{fromAccAddress, testFromID, testIdentityID}, message{fromAccAddress, testFromID, testIdentityID}},
 		{"-ve", args{}, message{}},
 	}

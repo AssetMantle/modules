@@ -45,7 +45,6 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}, transactionRequest{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}},
 	}
 	for _, tt := range tests {
@@ -62,7 +61,6 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", transactionRequest{}},
 	}
 	for _, tt := range tests {
@@ -133,7 +131,6 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}, args{jsonMessage}, newTransactionRequest(testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()), false},
 	}
 	for _, tt := range tests {
@@ -168,7 +165,6 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   rest.BaseReq
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}, testBaseRequest},
 	}
 	for _, tt := range tests {
@@ -199,7 +195,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}, newMessage(fromAccAddress, testFromID, takerOwnableSplit, testOrderID), false},
 	}
 	for _, tt := range tests {
@@ -237,7 +232,6 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}, args{codec.New()}},
 	}
 	for _, tt := range tests {
@@ -265,7 +259,6 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}, false},
 	}
 	for _, tt := range tests {

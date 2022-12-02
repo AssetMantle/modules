@@ -43,7 +43,6 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, transactionRequest{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}},
 	}
 	for _, tt := range tests {
@@ -60,7 +59,6 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", transactionRequest{}},
 	}
 	for _, tt := range tests {
@@ -100,7 +98,6 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanMintAsset: false, CanBurnAsset: false, CanRenumerateAsset: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, args{cliCommand, cliContext}, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, false},
 	}
 	for _, tt := range tests {
@@ -161,7 +158,6 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, args{jsonMessage}, transactionRequest{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, false},
 	}
 	for _, tt := range tests {
@@ -216,7 +212,6 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   rest.BaseReq
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, testBaseReq},
 	}
 	for _, tt := range tests {
@@ -265,7 +260,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, testFromID.String(), testFromID.String(), testClassificationID.String(), "maintainedProperty:S|maintainedProperty", false, false, false, false, false, false}, newMessage(fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false), false}, // TODO: issue==> getting MetaDataError that is not expected
 	}
 	for _, tt := range tests {
@@ -323,7 +317,6 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, args{codec.New()}},
 	}
 	for _, tt := range tests {
@@ -371,7 +364,6 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, false},
 	}
 	for _, tt := range tests {

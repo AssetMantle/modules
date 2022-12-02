@@ -72,3 +72,36 @@ func Test_Block_Methods(t *testing.T) {
 
 	block.End(context, abciTypes.RequestEndBlock{})
 }
+
+func Test_block_End(t *testing.T) {
+	type fields struct {
+		mapper              helpers.Mapper
+		parameters          helpers.Parameters
+		supplementAuxiliary helpers.Auxiliary
+		transferAuxiliary   helpers.Auxiliary
+		scrubAuxiliary      helpers.Auxiliary
+	}
+	type args struct {
+		context sdkTypes.Context
+		in1     abciTypes.RequestEndBlock
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+	}{
+		// TODO: Add test for Blockend.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			block := block{
+				mapper:              tt.fields.mapper,
+				parameters:          tt.fields.parameters,
+				supplementAuxiliary: tt.fields.supplementAuxiliary,
+				transferAuxiliary:   tt.fields.transferAuxiliary,
+				scrubAuxiliary:      tt.fields.scrubAuxiliary,
+			}
+			block.End(tt.args.context, tt.args.in1)
+		})
+	}
+}
