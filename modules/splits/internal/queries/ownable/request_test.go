@@ -27,7 +27,6 @@ func Test_newQueryRequest(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testOwnableID}, newQueryRequest(testOwnableID)},
 	}
 	for _, tt := range tests {
@@ -48,7 +47,6 @@ func Test_queryRequestFromInterface(t *testing.T) {
 		args args
 		want queryRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{newQueryRequest(testOwnableID)}, newQueryRequest(testOwnableID).(queryRequest)},
 	}
 	for _, tt := range tests {
@@ -78,7 +76,6 @@ func Test_queryRequest_Decode(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testOwnableID}, args{encodedReq}, newQueryRequest(testOwnableID), false},
 		{"+ve", fields{baseIds.PrototypeOwnableID()}, args{encodedReq1}, newQueryRequest(baseIds.PrototypeOwnableID()), false},
 	}
@@ -113,7 +110,6 @@ func Test_queryRequest_Encode(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testOwnableID}, encodedReq, false},
 		{"+ve", fields{baseIds.PrototypeOwnableID()}, encodedReq1, false},
 	}
@@ -184,7 +180,6 @@ func Test_queryRequest_FromMap(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testOwnableID}, args{vars}, newQueryRequest(testOwnableID), false},
 	}
 	for _, tt := range tests {
@@ -213,7 +208,6 @@ func Test_queryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testOwnableID}, false},
 	}
 	for _, tt := range tests {
@@ -233,7 +227,6 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", queryRequest{}},
 	}
 	for _, tt := range tests {

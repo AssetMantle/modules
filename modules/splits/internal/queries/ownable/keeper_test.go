@@ -78,7 +78,6 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.QueryKeeper
 	}{
-		// TODO: Add test cases.
 		{"+ve", queryKeeper{}},
 	}
 	for _, tt := range tests {
@@ -113,7 +112,6 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 		args   args
 		want   helpers.QueryResponse
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{Mapper}, args{context, newQueryRequest(testOwnableID)}, newQueryResponse(testRate, nil)},
 	}
 	for _, tt := range tests {
@@ -144,7 +142,6 @@ func Test_queryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{Mapper}, args{Mapper, Parameters, []interface{}{}}, queryKeeper{Mapper}},
 	}
 	for _, tt := range tests {

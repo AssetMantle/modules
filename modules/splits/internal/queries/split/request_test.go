@@ -36,7 +36,6 @@ func Test_newQueryRequest(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{splitID}, newQueryRequest(splitID)},
 	}
 	for _, tt := range tests {
@@ -57,7 +56,6 @@ func Test_queryRequestFromInterface(t *testing.T) {
 		args args
 		want queryRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{newQueryRequest(splitID)}, newQueryRequest(splitID).(queryRequest)},
 	}
 	for _, tt := range tests {
@@ -87,7 +85,6 @@ func Test_queryRequest_Decode(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{splitID}, args{encodedReq}, newQueryRequest(splitID), false},
 		{"+ve", fields{baseIds.PrototypeSplitID()}, args{encodedReq1}, newQueryRequest(baseIds.PrototypeSplitID()), false},
 	}
@@ -122,7 +119,6 @@ func Test_queryRequest_Encode(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{splitID}, encodedReq, false},
 		{"+ve", fields{baseIds.PrototypeSplitID()}, encodedReq1, false},
 	}
@@ -193,7 +189,6 @@ func Test_queryRequest_FromMap(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{splitID}, args{vars}, newQueryRequest(splitID), false},
 	}
 	for _, tt := range tests {
@@ -222,7 +217,6 @@ func Test_queryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{splitID}, false},
 	}
 	for _, tt := range tests {
@@ -242,7 +236,6 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", queryRequest{}},
 	}
 	for _, tt := range tests {

@@ -98,7 +98,6 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(testOwnerIdentityID, testOwnerIdentityID, testOwnableID, testRate)}, newAuxiliaryResponse(nil)},
 		{"+ve Not Authorized", fields{Mapper}, args{context, NewAuxiliaryRequest(testOwnerIdentityID, testOwnerIdentityID, testOwnableID, sdkTypes.ZeroDec())}, newAuxiliaryResponse(errorConstants.NotAuthorized)},
 		{"+ve Entity Not Found", fields{Mapper}, args{context, NewAuxiliaryRequest(testOwnerIdentityID, testOwnerIdentityID, baseIds.NewOwnableID(baseIds.NewStringID("test")), testRate)}, newAuxiliaryResponse(errorConstants.EntityNotFound)},
@@ -131,7 +130,6 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{Mapper}, args{Mapper, Parameters, []interface{}{}}, auxiliaryKeeper{Mapper}},
 	}
 	for _, tt := range tests {
@@ -151,7 +149,6 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.AuxiliaryKeeper
 	}{
-		// TODO: Add test cases.
 		{"+ve", auxiliaryKeeper{}},
 	}
 	for _, tt := range tests {
