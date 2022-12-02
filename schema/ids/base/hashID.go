@@ -28,8 +28,8 @@ func (hashID HashID) Compare(listable traits.Listable) int {
 }
 func hashIDFromInterface(i interface{}) HashID {
 	switch value := i.(type) {
-	case HashID:
-		return value
+	case *HashID:
+		return *value
 	default:
 		panic(constants.MetaDataError)
 	}

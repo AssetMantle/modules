@@ -39,8 +39,8 @@ func (propertyID PropertyID) Compare(listable traits.Listable) int {
 }
 func propertyIDFromInterface(listable traits.Listable) PropertyID {
 	switch value := listable.(type) {
-	case PropertyID:
-		return value
+	case *PropertyID:
+		return *value
 	default:
 		panic(errorConstants.MetaDataError)
 	}
