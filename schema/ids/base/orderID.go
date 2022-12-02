@@ -2,6 +2,7 @@ package base
 
 import (
 	"bytes"
+
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
@@ -15,7 +16,7 @@ func (orderID *OrderID) Compare(listable traits.Listable) int {
 }
 
 func (orderID *OrderID) Bytes() []byte {
-	return *orderID.OrderId
+	return orderID.OrderId.Bytes()
 }
 
 func (orderID OrderID) IsOrderID() {}

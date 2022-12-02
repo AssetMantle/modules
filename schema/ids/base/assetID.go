@@ -5,6 +5,7 @@ package base
 
 import (
 	"bytes"
+
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
@@ -14,7 +15,7 @@ import (
 var _ ids.AssetID = (*AssetID)(nil)
 
 func (assetID AssetID) Compare(listable traits.Listable) int {
-	return bytes.Compare(assetID.Bytes(), *assetIDFromInterface(listable).HashId)
+	return bytes.Compare(assetID.Bytes(), assetIDFromInterface(listable).HashId.Bytes())
 
 }
 
@@ -31,7 +32,7 @@ func assetIDFromInterface(i interface{}) *AssetID {
 }
 
 func (assetID AssetID) Bytes() []byte {
-	return *assetID.HashId
+	return assetID.HashId.Bytes()
 }
 func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
 	return &AssetID{

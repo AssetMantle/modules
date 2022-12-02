@@ -2,6 +2,7 @@ package base
 
 import (
 	"bytes"
+
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
@@ -13,7 +14,7 @@ var _ ids.MaintainerID = (*MaintainerID)(nil)
 func (maintainerID MaintainerID) IsMaintainerID() {}
 
 func (maintainerID MaintainerID) Bytes() []byte {
-	return *maintainerID.HashId
+	return maintainerID.HashId.Bytes()
 }
 
 func (maintainerID MaintainerID) Compare(listable traits.Listable) int {

@@ -2,6 +2,7 @@ package base
 
 import (
 	"bytes"
+
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
@@ -9,9 +10,9 @@ import (
 )
 
 //
-//type identityID struct {
+// type identityID struct {
 //	ids.HashID
-//}
+// }
 
 var _ ids.IdentityID = (*IdentityID)(nil)
 
@@ -19,13 +20,13 @@ var _ ids.IdentityID = (*IdentityID)(nil)
 func (identityID IdentityID) IsIdentityID() {}
 
 func (identityID IdentityID) Bytes() []byte {
-	return *identityID.HashId
+	return identityID.HashId.Bytes()
 }
 func (identityID IdentityID) Compare(listable traits.Listable) int {
-	return bytes.Compare(identityID.Bytes(), *identityIDFromInterface(listable).HashId)
+	return bytes.Compare(identityID.Bytes(), identityIDFromInterface(listable).HashId.Bytes())
 }
 func (identityID IdentityID) GetHashID() ids.HashID {
-	return *identityID.HashId
+	return identityID.HashId
 }
 func identityIDFromInterface(i interface{}) IdentityID {
 	switch value := i.(type) {

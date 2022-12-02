@@ -1,6 +1,6 @@
 syntax = "proto3";
 package base;
-option go_package = "github.com/AssetMantle/modules/schema/data/base";
+option go_package = "github.com/AssetMantle/modules/schema/data";
 import "schema/data/base/accAddressData.proto";
 import "schema/data/base/booleanData.proto";
 import "schema/data/base/decData.proto";

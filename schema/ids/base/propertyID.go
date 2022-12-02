@@ -12,25 +12,25 @@ import (
 )
 
 //
-//type propertyID struct {
+// type propertyID struct {
 //	Key  ids.StringID
 //	Type ids.StringID
-//}
+// }
 
 var _ ids.PropertyID = (*PropertyID)(nil)
 
 func (propertyID PropertyID) IsPropertyID() {}
 
-//func (propertyID PropertyID) GetType() ids.StringID {
-//	return propertyID.Type
-//}
-//func (propertyID PropertyID) String() string {
-//	return stringUtilities.JoinIDStrings(propertyID.Key.String(), propertyID.Type.String())
-//}
+// func (propertyID PropertyID) GetType() ids.StringID {
+// 	return propertyID.Type
+// }
+// func (propertyID PropertyID) String() string {
+// 	return stringUtilities.JoinIDStrings(propertyID.Key.String(), propertyID.Type.String())
+// }
 func (propertyID PropertyID) Bytes() []byte {
 	var Bytes []byte
-	Bytes = append(Bytes, *propertyID.Key)
-	Bytes = append(Bytes, *propertyID.Type)
+	Bytes = append(Bytes, propertyID.KeyID.Bytes()...)
+	Bytes = append(Bytes, propertyID.TypeID.Bytes()...)
 
 	return Bytes
 }
@@ -48,7 +48,7 @@ func propertyIDFromInterface(listable traits.Listable) PropertyID {
 
 func NewPropertyID(key, Type ids.StringID) ids.PropertyID {
 	return &PropertyID{
-		Key:  key.(*StringID),
-		Type: Type.(*StringID),
+		KeyID:  key.(*StringID),
+		TypeID: Type.(*StringID),
 	}
 }

@@ -3,6 +3,7 @@ package base
 import "C"
 import (
 	"bytes"
+
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
@@ -10,14 +11,14 @@ import (
 )
 
 //
-//type classificationID struct {
+// type classificationID struct {
 //	ids.HashID
-//}
+// }
 
 var _ ids.ClassificationID = (*ClassificationID)(nil)
 
 func (classificationID ClassificationID) Bytes() []byte {
-	return *classificationID.HashId
+	return classificationID.HashId.Bytes()
 }
 
 func (classificationID ClassificationID) IsClassificationID() {}

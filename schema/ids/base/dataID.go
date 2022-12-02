@@ -14,23 +14,23 @@ import (
 )
 
 //
-//type dataID struct {
+// type dataID struct {
 //	Type ids.StringID
 //	ids.HashID
-//}
+// }
 
 var _ ids.DataID = (*DataID)(nil)
 
 func (dataID DataID) IsDataID() {
 }
 
-//func (dataID DataID) String() string {
+// func (dataID DataID) String() string {
 //	return stringUtilities.JoinIDStrings(dataID.Type.String(), dataID.HashID.String())
-//}
+// }
 func (dataID DataID) Bytes() []byte {
 	var Bytes []byte
-	Bytes = append(Bytes, *dataID.Type)
-	Bytes = append(Bytes, *dataID.HashId)
+	Bytes = append(Bytes, dataID.Type.Bytes()...)
+	Bytes = append(Bytes, dataID.HashId.Bytes()...)
 
 	return Bytes
 }
@@ -38,7 +38,7 @@ func (dataID DataID) Compare(listable traits.Listable) int {
 	return bytes.Compare(dataID.Bytes(), dataIDFromInterface(listable).Bytes())
 }
 func (dataID DataID) GetHashID() ids.HashID {
-	return *dataID.HashId
+	return dataID.HashId
 }
 func dataIDFromInterface(i interface{}) DataID {
 	switch value := i.(type) {
