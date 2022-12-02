@@ -29,7 +29,6 @@ func TestNewDecData(t *testing.T) {
 		args args
 		want data.Data
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", args{}, decData{}},
 		{"+ve with zero dec", args{types.ZeroDec()}, decData{types.ZeroDec()}},
 		{"+ve", args{types.NewDec(100)}, decData{types.NewDec(100)}},
@@ -52,7 +51,6 @@ func Test_decDataFromInterface(t *testing.T) {
 		want    decData
 		wantErr assert.ErrorAssertionFunc
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", args{decData{}}, decData{}, assert.NoError},
 		{"+ve with zero dec", args{decData{types.ZeroDec()}}, decData{types.ZeroDec()}, assert.NoError},
 		{"+ve", args{decData{types.NewDec(100)}}, decData{types.NewDec(100)}, assert.NoError},
@@ -107,7 +105,6 @@ func Test_decData_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, args{decData{}}, 0},
 		{"+ve with zero dec", fields{types.ZeroDec()}, args{decData{types.ZeroDec()}}, 0},
 		{"+ve", fields{types.NewDec(100)}, args{decData{types.NewDec(100)}}, 0},
@@ -166,7 +163,6 @@ func Test_decData_Get(t *testing.T) {
 		fields fields
 		want   types.Dec
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, decData{}.Value},
 		{"+ve with zero dec", fields{types.ZeroDec()}, decData{types.ZeroDec()}.Value},
 		{"+ve", fields{types.NewDec(100)}, decData{types.NewDec(100)}.Value},
@@ -192,7 +188,6 @@ func Test_decData_GetID(t *testing.T) {
 		want      ids.DataID
 		wantPanic bool
 	}{
-		// TODO: Add test cases.
 		{"panic case with nil", fields{types.Dec{}}, nil, true}, // TODO: Check whether planned panic in NewDataID is expected behaviour
 		{"+ve with zero dec", fields{types.ZeroDec()}, baseIDs.NewDataID(decData{types.ZeroDec()}), false},
 		{"+ve", fields{types.NewDec(100)}, baseIDs.NewDataID(decData{types.NewDec(100)}), false},
@@ -223,7 +218,6 @@ func Test_decData_GetType(t *testing.T) {
 		fields fields
 		want   ids.StringID
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, dataConstants.DecDataID},
 		{"+ve with zero dec", fields{types.ZeroDec()}, dataConstants.DecDataID},
 		{"+ve", fields{types.NewDec(100)}, dataConstants.DecDataID},
@@ -248,7 +242,6 @@ func Test_decData_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, decData{}.Value.String()},
 		{"+ve with zero dec", fields{types.ZeroDec()}, decData{types.ZeroDec()}.Value.String()},
 		{"+ve", fields{types.NewDec(100)}, decData{types.NewDec(100)}.Value.String()},
@@ -273,7 +266,6 @@ func Test_decData_ZeroValue(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, decData{types.ZeroDec()}},
 		{"+ve with zero dec", fields{types.ZeroDec()}, decData{types.ZeroDec()}},
 		{"+ve", fields{types.NewDec(100)}, decData{types.ZeroDec()}},

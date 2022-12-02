@@ -24,7 +24,6 @@ func TestReadMetaProperties(t *testing.T) {
 		want    lists.PropertyList
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve with empty string", args{""}, base.NewPropertyList([]properties2.Property{}...), false},
 		{"+ve", args{"ID:S|Data,ID1:S|Data1,ID2:S|Data2"}, base.NewPropertyList([]properties2.Property{baseProperties.NewMetaProperty(baseIds.NewStringID("ID"), baseData.NewStringData("Data")), baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("Data1")), baseProperties.NewMetaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("Data2"))}...), false},
 	}

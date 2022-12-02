@@ -23,7 +23,6 @@ func TestReadMetaProperty(t *testing.T) {
 		want    properties.MetaProperty
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve with empty string", args{""}, nil, true},
 		{"+ve", args{"id:S|Data"}, base.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data")), false},
 		{"-ve incorrectFormat", args{"idS|Data"}, nil, true},

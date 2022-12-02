@@ -31,7 +31,6 @@ func TestNewEmptyMetaPropertyFromID(t *testing.T) {
 		args args
 		want properties.MetaProperty
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testPropertyID}, metaProperty{ID: testPropertyID}},
 		{"+ve with nil", args{}, metaProperty{}},
 	}
@@ -55,7 +54,6 @@ func TestNewMetaProperty(t *testing.T) {
 		args args
 		want properties.MetaProperty
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testKey, testData}, metaProperty{testPropertyID, testData}},
 	}
 	for _, tt := range tests {
@@ -82,7 +80,6 @@ func Test_metaProperty_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testPropertyID, testData}, args{testMetaProperty}, 0},
 		{"+ve compare with metaProperty with no Data", fields{testPropertyID, testData}, args{metaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S"))}}, 0},
 		{"+ve", fields{testPropertyID, testData}, args{metaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")), Data: NewStringData("Data2")}}, 0}}
@@ -110,7 +107,6 @@ func Test_metaProperty_GetData(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testPropertyID, testData}, testData},
 		{"+ve with nil", fields{}, nil},
 	}
@@ -138,7 +134,6 @@ func Test_metaProperty_GetDataID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testPropertyID, testData}, testMetaProperty.GetData().GetID()},
 	}
 	for _, tt := range tests {
@@ -165,7 +160,6 @@ func Test_metaProperty_GetID(t *testing.T) {
 		fields fields
 		want   ids.PropertyID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testPropertyID, testData}, testPropertyID},
 		{"+ve", fields{}, metaProperty{}.ID},
 	}
@@ -193,7 +187,6 @@ func Test_metaProperty_GetKey(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testPropertyID, testData}, testKey},
 	}
 	for _, tt := range tests {
@@ -220,7 +213,6 @@ func Test_metaProperty_GetType(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testPropertyID, testData}, testData.GetType()},
 	}
 	for _, tt := range tests {
@@ -247,7 +239,6 @@ func Test_metaProperty_RemoveData(t *testing.T) {
 		fields fields
 		want   properties.Property
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testPropertyID, testData}, mesaProperty{ID: testPropertyID, DataID: testData.GetID()}},
 	}
 	for _, tt := range tests {

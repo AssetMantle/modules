@@ -23,7 +23,6 @@ func TestNewDataID(t *testing.T) {
 		want      ids.DataID
 		wantError bool
 	}{
-		// TODO: Add test cases.
 		{"+ve nil", args{}, dataID{}, true},
 	}
 	for _, tt := range tests {
