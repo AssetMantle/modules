@@ -10,7 +10,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	base "schema/ids/base"
 	sync "sync"
 )
 
@@ -26,7 +25,7 @@ type OwnableID struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	StringId *base.StringID `protobuf:"bytes,1,opt,name=string_id,json=stringId,proto3" json:"string_id,omitempty"`
+	StringId *StringID `protobuf:"bytes,1,opt,name=string_id,json=stringId,proto3" json:"string_id,omitempty"`
 }
 
 func (x *OwnableID) Reset() {
@@ -61,7 +60,7 @@ func (*OwnableID) Descriptor() ([]byte, []int) {
 	return file_schema_ids_base_ownableID_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *OwnableID) GetStringId() *base.StringID {
+func (x *OwnableID) GetStringId() *StringID {
 	if x != nil {
 		return x.StringId
 	}
@@ -99,8 +98,8 @@ func file_schema_ids_base_ownableID_proto_rawDescGZIP() []byte {
 
 var file_schema_ids_base_ownableID_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_schema_ids_base_ownableID_proto_goTypes = []interface{}{
-	(*OwnableID)(nil),     // 0: base.OwnableID
-	(*base.StringID)(nil), // 1: base.StringID
+	(*OwnableID)(nil), // 0: base.OwnableID
+	(*StringID)(nil),  // 1: base.StringID
 }
 var file_schema_ids_base_ownableID_proto_depIdxs = []int32{
 	1, // 0: base.OwnableID.string_id:type_name -> base.StringID
@@ -116,6 +115,7 @@ func file_schema_ids_base_ownableID_proto_init() {
 	if File_schema_ids_base_ownableID_proto != nil {
 		return
 	}
+	file_schema_ids_base_stringID_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_schema_ids_base_ownableID_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*OwnableID); i {

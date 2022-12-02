@@ -10,7 +10,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	base "schema/ids/base"
 	sync "sync"
 )
 
@@ -101,7 +100,7 @@ func (x *ID) GetDataId() *DataID {
 	return nil
 }
 
-func (x *ID) GetHashId() *base.HashID {
+func (x *ID) GetHashId() *HashID {
 	if x, ok := x.GetImpl().(*ID_HashId); ok {
 		return x.HashId
 	}
@@ -150,7 +149,7 @@ func (x *ID) GetSplitId() *SplitID {
 	return nil
 }
 
-func (x *ID) GetStringId() *base.StringID {
+func (x *ID) GetStringId() *StringID {
 	if x, ok := x.GetImpl().(*ID_StringId); ok {
 		return x.StringId
 	}
@@ -174,7 +173,7 @@ type ID_DataId struct {
 }
 
 type ID_HashId struct {
-	HashId *base.HashID `protobuf:"bytes,4,opt,name=hash_id,json=hashId,proto3,oneof"`
+	HashId *HashID `protobuf:"bytes,4,opt,name=hash_id,json=hashId,proto3,oneof"`
 }
 
 type ID_IdentityId struct {
@@ -202,7 +201,7 @@ type ID_SplitId struct {
 }
 
 type ID_StringId struct {
-	StringId *base.StringID `protobuf:"bytes,11,opt,name=string_id,json=stringId,proto3,oneof"`
+	StringId *StringID `protobuf:"bytes,11,opt,name=string_id,json=stringId,proto3,oneof"`
 }
 
 func (*ID_AssetId) isID_Impl() {}
@@ -314,14 +313,14 @@ var file_schema_ids_base_id_proto_goTypes = []interface{}{
 	(*AssetID)(nil),          // 1: base.AssetID
 	(*ClassificationID)(nil), // 2: base.ClassificationID
 	(*DataID)(nil),           // 3: base.DataID
-	(*base.HashID)(nil),      // 4: base.HashID
+	(*HashID)(nil),           // 4: base.HashID
 	(*IdentityID)(nil),       // 5: base.IdentityID
 	(*MaintainerID)(nil),     // 6: base.MaintainerID
 	(*OrderID)(nil),          // 7: base.OrderID
 	(*OwnableID)(nil),        // 8: base.OwnableID
 	(*PropertyID)(nil),       // 9: base.PropertyID
 	(*SplitID)(nil),          // 10: base.SplitID
-	(*base.StringID)(nil),    // 11: base.StringID
+	(*StringID)(nil),         // 11: base.StringID
 }
 var file_schema_ids_base_id_proto_depIdxs = []int32{
 	1,  // 0: base.ID.asset_id:type_name -> base.AssetID
@@ -350,12 +349,14 @@ func file_schema_ids_base_id_proto_init() {
 	file_schema_ids_base_assetID_proto_init()
 	file_schema_ids_base_classificationID_proto_init()
 	file_schema_ids_base_dataID_proto_init()
+	file_schema_ids_base_hashID_proto_init()
 	file_schema_ids_base_identityID_proto_init()
 	file_schema_ids_base_maintainerID_proto_init()
 	file_schema_ids_base_orderID_proto_init()
 	file_schema_ids_base_ownableID_proto_init()
 	file_schema_ids_base_propertyID_proto_init()
 	file_schema_ids_base_splitID_proto_init()
+	file_schema_ids_base_stringID_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_schema_ids_base_id_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ID); i {

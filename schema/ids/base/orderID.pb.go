@@ -10,7 +10,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	base "schema/ids/base"
 	sync "sync"
 )
 
@@ -26,7 +25,7 @@ type OrderID struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	OrderId *base.HashID `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	OrderId *HashID `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 }
 
 func (x *OrderID) Reset() {
@@ -61,7 +60,7 @@ func (*OrderID) Descriptor() ([]byte, []int) {
 	return file_schema_ids_base_orderID_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *OrderID) GetOrderId() *base.HashID {
+func (x *OrderID) GetOrderId() *HashID {
 	if x != nil {
 		return x.OrderId
 	}
@@ -99,8 +98,8 @@ func file_schema_ids_base_orderID_proto_rawDescGZIP() []byte {
 
 var file_schema_ids_base_orderID_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_schema_ids_base_orderID_proto_goTypes = []interface{}{
-	(*OrderID)(nil),     // 0: base.OrderID
-	(*base.HashID)(nil), // 1: base.HashID
+	(*OrderID)(nil), // 0: base.OrderID
+	(*HashID)(nil),  // 1: base.HashID
 }
 var file_schema_ids_base_orderID_proto_depIdxs = []int32{
 	1, // 0: base.OrderID.order_id:type_name -> base.HashID
@@ -116,6 +115,7 @@ func file_schema_ids_base_orderID_proto_init() {
 	if File_schema_ids_base_orderID_proto != nil {
 		return
 	}
+	file_schema_ids_base_hashID_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_schema_ids_base_orderID_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*OrderID); i {

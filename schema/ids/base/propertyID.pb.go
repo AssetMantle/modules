@@ -10,7 +10,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	base "schema/ids/base"
 	sync "sync"
 )
 
@@ -26,8 +25,8 @@ type PropertyID struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Key  *base.StringID `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	Type *base.StringID `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	Key  *StringID `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Type *StringID `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
 }
 
 func (x *PropertyID) Reset() {
@@ -62,14 +61,14 @@ func (*PropertyID) Descriptor() ([]byte, []int) {
 	return file_schema_ids_base_propertyID_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *PropertyID) GetKey() *base.StringID {
+func (x *PropertyID) GetKey() *StringID {
 	if x != nil {
 		return x.Key
 	}
 	return nil
 }
 
-func (x *PropertyID) GetType() *base.StringID {
+func (x *PropertyID) GetType() *StringID {
 	if x != nil {
 		return x.Type
 	}
@@ -109,8 +108,8 @@ func file_schema_ids_base_propertyID_proto_rawDescGZIP() []byte {
 
 var file_schema_ids_base_propertyID_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_schema_ids_base_propertyID_proto_goTypes = []interface{}{
-	(*PropertyID)(nil),    // 0: base.PropertyID
-	(*base.StringID)(nil), // 1: base.StringID
+	(*PropertyID)(nil), // 0: base.PropertyID
+	(*StringID)(nil),   // 1: base.StringID
 }
 var file_schema_ids_base_propertyID_proto_depIdxs = []int32{
 	1, // 0: base.PropertyID.key:type_name -> base.StringID
@@ -127,6 +126,7 @@ func file_schema_ids_base_propertyID_proto_init() {
 	if File_schema_ids_base_propertyID_proto != nil {
 		return
 	}
+	file_schema_ids_base_stringID_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_schema_ids_base_propertyID_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*PropertyID); i {

@@ -10,7 +10,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	base "schema/ids/base"
 	sync "sync"
 )
 
@@ -26,8 +25,8 @@ type DataID struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Type   *base.StringID `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
-	HashId *base.HashID   `protobuf:"bytes,2,opt,name=hash_id,json=hashId,proto3" json:"hash_id,omitempty"`
+	Type   *StringID `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	HashId *HashID   `protobuf:"bytes,2,opt,name=hash_id,json=hashId,proto3" json:"hash_id,omitempty"`
 }
 
 func (x *DataID) Reset() {
@@ -62,14 +61,14 @@ func (*DataID) Descriptor() ([]byte, []int) {
 	return file_schema_ids_base_dataID_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *DataID) GetType() *base.StringID {
+func (x *DataID) GetType() *StringID {
 	if x != nil {
 		return x.Type
 	}
 	return nil
 }
 
-func (x *DataID) GetHashId() *base.HashID {
+func (x *DataID) GetHashId() *HashID {
 	if x != nil {
 		return x.HashId
 	}
@@ -111,9 +110,9 @@ func file_schema_ids_base_dataID_proto_rawDescGZIP() []byte {
 
 var file_schema_ids_base_dataID_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_schema_ids_base_dataID_proto_goTypes = []interface{}{
-	(*DataID)(nil),        // 0: base.DataID
-	(*base.StringID)(nil), // 1: base.StringID
-	(*base.HashID)(nil),   // 2: base.HashID
+	(*DataID)(nil),   // 0: base.DataID
+	(*StringID)(nil), // 1: base.StringID
+	(*HashID)(nil),   // 2: base.HashID
 }
 var file_schema_ids_base_dataID_proto_depIdxs = []int32{
 	1, // 0: base.DataID.type:type_name -> base.StringID
@@ -130,6 +129,8 @@ func file_schema_ids_base_dataID_proto_init() {
 	if File_schema_ids_base_dataID_proto != nil {
 		return
 	}
+	file_schema_ids_base_hashID_proto_init()
+	file_schema_ids_base_stringID_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_schema_ids_base_dataID_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DataID); i {

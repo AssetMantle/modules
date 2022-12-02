@@ -10,7 +10,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	base "schema/ids/base"
 	sync "sync"
 )
 
@@ -26,7 +25,7 @@ type MaintainerID struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	HashId *base.HashID `protobuf:"bytes,1,opt,name=hash_id,json=hashId,proto3" json:"hash_id,omitempty"`
+	HashId *HashID `protobuf:"bytes,1,opt,name=hash_id,json=hashId,proto3" json:"hash_id,omitempty"`
 }
 
 func (x *MaintainerID) Reset() {
@@ -61,7 +60,7 @@ func (*MaintainerID) Descriptor() ([]byte, []int) {
 	return file_schema_ids_base_maintainerID_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *MaintainerID) GetHashId() *base.HashID {
+func (x *MaintainerID) GetHashId() *HashID {
 	if x != nil {
 		return x.HashId
 	}
@@ -100,7 +99,7 @@ func file_schema_ids_base_maintainerID_proto_rawDescGZIP() []byte {
 var file_schema_ids_base_maintainerID_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_schema_ids_base_maintainerID_proto_goTypes = []interface{}{
 	(*MaintainerID)(nil), // 0: base.MaintainerID
-	(*base.HashID)(nil),  // 1: base.HashID
+	(*HashID)(nil),       // 1: base.HashID
 }
 var file_schema_ids_base_maintainerID_proto_depIdxs = []int32{
 	1, // 0: base.MaintainerID.hash_id:type_name -> base.HashID
@@ -116,6 +115,7 @@ func file_schema_ids_base_maintainerID_proto_init() {
 	if File_schema_ids_base_maintainerID_proto != nil {
 		return
 	}
+	file_schema_ids_base_hashID_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_schema_ids_base_maintainerID_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*MaintainerID); i {
