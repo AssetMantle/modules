@@ -12,9 +12,9 @@ import (
 )
 
 //
-//type hashID struct {
+// type hashID struct {
 //	IdBytes []byte
-//}
+// }
 
 var _ ids.HashID = (*HashID)(nil)
 
@@ -26,9 +26,9 @@ func (hashID HashID) Bytes() []byte {
 func (hashID HashID) Compare(listable traits.Listable) int {
 	return bytes.Compare(hashID.Bytes(), hashIDFromInterface(listable).Bytes())
 }
-func hashIDFromInterface(i interface{}) HashID {
+func hashIDFromInterface(i interface{}) *HashID {
 	switch value := i.(type) {
-	case HashID:
+	case *HashID:
 		return value
 	default:
 		panic(constants.MetaDataError)

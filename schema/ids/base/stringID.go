@@ -23,8 +23,8 @@ func (stringID StringID) Compare(listable traits.Listable) int {
 }
 func stringIDFromInterface(i interface{}) *StringID {
 	switch value := i.(type) {
-	case StringID:
-		return &value
+	case *StringID:
+		return value
 	default:
 		panic(constants.MetaDataError)
 	}

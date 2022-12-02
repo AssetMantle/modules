@@ -7,6 +7,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries"
 	"github.com/AssetMantle/modules/modules/metas/internal/block"
 	"github.com/AssetMantle/modules/modules/metas/internal/genesis"
+	"github.com/AssetMantle/modules/modules/metas/internal/invariants"
 	"github.com/AssetMantle/modules/modules/metas/internal/mapper"
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
@@ -23,7 +24,7 @@ func Prototype() helpers.Module {
 		auxiliaries.Prototype,
 		block.Prototype,
 		genesis.Prototype,
-		nil,
+		invariants.Prototype,
 		mapper.Prototype,
 		nil,
 		parameters.Prototype,
