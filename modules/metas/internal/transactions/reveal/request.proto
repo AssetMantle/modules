@@ -1,9 +1,0 @@
-syntax="proto3";
-package reveal;
-
-option go_package = "modules/metas/internal/transactions/reveal";
-
-message TransactionRequest {
-  string From = 1;
-  string Data = 2;
-}

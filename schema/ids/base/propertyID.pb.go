@@ -7,13 +7,10 @@
 package base
 
 import (
-	"reflect"
-	"sync"
-
-	"google.golang.org/protobuf/reflect/protoreflect"
-	"google.golang.org/protobuf/runtime/protoimpl"
-
-	"github.com/AssetMantle/modules/schema/ids"
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	reflect "reflect"
+	sync "sync"
 )
 
 const (
@@ -30,14 +27,6 @@ type PropertyID struct {
 
 	KeyID  *StringID `protobuf:"bytes,1,opt,name=key_i_d,json=keyID,proto3" json:"key_i_d,omitempty"`
 	TypeID *StringID `protobuf:"bytes,2,opt,name=type_i_d,json=typeID,proto3" json:"type_i_d,omitempty"`
-}
-
-func (propertyID PropertyID) GetKey() ids.StringID {
-	return propertyID.KeyID
-}
-
-func (propertyID PropertyID) GetType() ids.StringID {
-	return propertyID.TypeID
 }
 
 func (x *PropertyID) Reset() {

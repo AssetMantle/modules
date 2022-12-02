@@ -1,0 +1,12 @@
+syntax = "proto3";
+package reveal;
+option go_package = "github.com/AssetMantle/modules/metas/internal/transactions/reveal";
+
+import "modules/metas/internal/transactions/reveal/transactionRequest.proto";
+import "modules/metas/internal/transactions/reveal/transactionResponse.proto";
+
+
+service Reveal{
+  rpc Serve(TransactionRequest) returns (TransactionResponse){
+  }
+}

@@ -20,22 +20,12 @@ import (
 )
 
 // type transactionRequest struct {
-//	BaseReq rest.BaseReq `json:"baseReq"`
-//	Data    string       `json:"data" valid:"required~required field data missing, matches(^[DHIS]{1}[|]{1}.*$)"`
+// 	BaseReq rest.BaseReq `json:"baseReq"`
+// 	Data    string       `json:"data" valid:"required~required field data missing, matches(^[DHIS]{1}[|]{1}.*$)"`
 // }
 
 var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
 
-// Validate godoc
-// @Summary Reveal metas transaction
-// @Description Reveal metas transaction
-// @Accept text/plain
-// @Produce json
-// @Tags Metas
-// @Param body  transactionRequest true "Request body to reveal meta transaction"
-// @Success 200 {object} transactionResponse   "Message for a successful response."
-// @Failure default  {object}  transactionResponse "Message for an unexpected error response."
-// @Router /metas/reveal [post]
 func (transactionRequest TransactionRequest) GetRequest() helpers.TransactionRequest {
 	// TODO implement me
 	panic("implement me")
