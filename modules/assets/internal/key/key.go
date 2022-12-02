@@ -26,7 +26,6 @@ func (key) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, key{})
 }
 func (key key) IsPartial() bool {
-	// TODO test nil AssetID case
 	return len(key.AssetID.Bytes()) == 0
 }
 func (key key) Equals(compareKey helpers.Key) bool {
