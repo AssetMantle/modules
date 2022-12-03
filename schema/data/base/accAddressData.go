@@ -6,6 +6,7 @@ package base
 import (
 	"bytes"
 
+	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data"
@@ -16,9 +17,7 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type accAddressData struct {
-	Value sdkTypes.AccAddress `json:"value"`
-}
+type accAddressData base.AccAddressData
 
 var _ data.AccAddressData = (*accAddressData)(nil)
 

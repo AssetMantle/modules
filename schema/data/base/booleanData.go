@@ -6,6 +6,8 @@ package base
 import (
 	"strconv"
 
+	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
+
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -14,9 +16,7 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type booleanData struct {
-	Value bool `json:"value"`
-}
+type booleanData base.BooleanData
 
 var _ data.BooleanData = (*booleanData)(nil)
 
