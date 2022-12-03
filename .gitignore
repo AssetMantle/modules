@@ -2,3 +2,4 @@ vendor
 .vscode
 .idea
 .DS_Store
+*.pb.go
