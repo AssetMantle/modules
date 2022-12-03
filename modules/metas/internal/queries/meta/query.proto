@@ -1,0 +1,13 @@
+syntax = "proto3";
+package meta;
+option go_package = "github.com/AssetMantle/modules/metas/internal/queries/meta";
+
+import "schema/thirdParty/proto/google/api/annotations.proto";
+import "modules/metas/internal/queries/meta/queryRequest.proto";
+import "modules/metas/internal/queries/meta/queryResponse.proto";
+
+service Query{
+  rpc Meta(QueryRequest) returns(QueryResponse){
+    option (google.api.http).get = "/mantle/metas/v1beta1/meta/{dataID}";
+  }
+}

@@ -6,7 +6,6 @@ import "modules/metas/internal/transactions/reveal/transactionRequest.proto";
 import "modules/metas/internal/transactions/reveal/transactionResponse.proto";
 
 
-service Reveal{
-  rpc Serve(TransactionRequest) returns (TransactionResponse){
-  }
+service Transaction{
+  rpc Reveal(TransactionRequest) returns (TransactionResponse){}
 }

@@ -1,0 +1,11 @@
+syntax = "proto3";
+package meta;
+option go_package = "github.com/AssetMantle/modules/metas/internal/queries/meta";
+
+import "schema/data/data.proto";
+
+message QueryResponse{
+  bool success = 1;
+  string error = 2;
+  repeated base.Data data = 3;
+}
