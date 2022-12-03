@@ -15,7 +15,7 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-func createTestInputForMesaProperty() (ids.StringID, ids.PropertyID, data.Data, properties.Property) {
+func createTestInputForMesaProperty() (ids.StringID, ids.PropertyID, data.DataI, properties.Property) {
 	testKey := base.NewStringID("PropertyID")
 	testData := baseData.NewStringData("Data")
 	testPropertyID := base.NewPropertyID(testKey, testData.GetType())
@@ -51,7 +51,7 @@ func TestNewMesaProperty(t *testing.T) {
 	testKey, testPropertyID, testData, _ := createTestInputForMesaProperty()
 	type args struct {
 		key  ids.StringID
-		data data.Data
+		data data.DataI
 	}
 	tests := []struct {
 		name      string

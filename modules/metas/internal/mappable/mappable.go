@@ -14,20 +14,20 @@ import (
 )
 
 type mappable struct {
-	data.Data
+	data.DataI
 }
 
 var _ helpers.Mappable = (*mappable)(nil)
 
 func (mappable mappable) GetKey() helpers.Key {
-	return key.NewKey(base.NewDataID(mappable.Data))
+	return key.NewKey(base.NewDataID(mappable.DataI))
 }
 func (mappable) RegisterCodec(codec *codec.LegacyAmino) {
 	schema.RegisterModuleConcrete(codec, mappable{})
 }
 
-func NewMappable(data data.Data) helpers.Mappable {
-	return mappable{Data: data}
+func NewMappable(data data.DataI) helpers.Mappable {
+	return mappable{DataI: data}
 }
 
 func Prototype() helpers.Mappable {

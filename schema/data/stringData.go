@@ -4,6 +4,6 @@
 package data
 
 type StringData interface {
-	Data
+	DataI
 	Get() string
 }

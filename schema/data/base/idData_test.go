@@ -23,7 +23,7 @@ func TestNewIDData(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want data.Data
+		want data.DataI
 	}{
 		// TODO: Add test cases.
 		{"+ve", args{NewStringData("Data")}, idData{NewStringData("Data")}},
@@ -230,7 +230,7 @@ func Test_idData_ZeroValue(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   data.Data
+		want   data.DataI
 	}{
 		// TODO: Add test cases.
 		{"+ve", fields{NewStringData("Data")}, NewIDData(baseIDs.NewStringID(""))},

@@ -9,14 +9,14 @@ import (
 )
 
 // TODO URI and PropertyID data type
-type Data interface {
+type DataI interface {
 	GetID() ids.DataID
 
 	String() string
 	Bytes() []byte
 
 	GetType() ids.StringID
-	ZeroValue() Data
+	ZeroValue() DataI
 	// GenerateHash returns the hash of the Data as an PropertyID
 	// * Returns PropertyID of empty bytes when the value of Data is that Data type's zero value
 	GenerateHashID() ids.HashID

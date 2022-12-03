@@ -23,7 +23,7 @@ func TestNewStringData(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want data.Data
+		want data.DataI
 	}{
 		// TODO: Add test cases.
 		{"+ve data", args{"data"}, stringData{"data"}},
@@ -238,7 +238,7 @@ func Test_stringData_ZeroValue(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   data.Data
+		want   data.DataI
 	}{
 		// TODO: Add test cases.
 		{"+ve data", fields{"data"}, stringData{""}},

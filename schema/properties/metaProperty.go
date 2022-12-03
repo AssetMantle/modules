@@ -8,7 +8,7 @@ import (
 )
 
 type MetaProperty interface {
-	GetData() data.Data
+	GetData() data.DataI
 	ScrubData() MesaProperty
 	Property
 }

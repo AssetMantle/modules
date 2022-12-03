@@ -20,7 +20,7 @@ func dummyValidator(interface{}) error {
 	return nil
 }
 
-func createTestInput() (ids.StringID, data.Data, parameters.Parameter) {
+func createTestInput() (ids.StringID, data.DataI, parameters.Parameter) {
 	id := baseIDs.NewStringID("PropertyID")
 	stringData := baseData.NewStringData("Data")
 
@@ -32,7 +32,7 @@ func TestNewParameter(t *testing.T) {
 	id, testData, _ := createTestInput()
 	type args struct {
 		id        ids.StringID
-		data      data.Data
+		data      data.DataI
 		validator func(interface{}) error
 	}
 	tests := []struct {
@@ -58,7 +58,7 @@ func Test_parameter_Equal(t *testing.T) {
 	id, testData, testParameter := createTestInput()
 	type fields struct {
 		ID        ids.StringID
-		Data      data.Data
+		Data      data.DataI
 		validator func(interface{}) error
 	}
 	type args struct {
@@ -95,13 +95,13 @@ func Test_parameter_GetData(t *testing.T) {
 	id, testData, _ := createTestInput()
 	type fields struct {
 		ID        ids.StringID
-		Data      data.Data
+		Data      data.DataI
 		validator func(interface{}) error
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   data.Data
+		want   data.DataI
 	}{
 
 		{"+ve", fields{id, testData, dummyValidator}, testData},
@@ -124,7 +124,7 @@ func Test_parameter_GetID(t *testing.T) {
 	id, testData, _ := createTestInput()
 	type fields struct {
 		ID        ids.StringID
-		Data      data.Data
+		Data      data.DataI
 		validator func(interface{}) error
 	}
 	tests := []struct {
@@ -153,7 +153,7 @@ func Test_parameter_GetValidator(t *testing.T) {
 	id, testData, _ := createTestInput()
 	type fields struct {
 		ID        ids.StringID
-		Data      data.Data
+		Data      data.DataI
 		validator func(interface{}) error
 	}
 	tests := []struct {
@@ -183,11 +183,11 @@ func Test_parameter_Mutate(t *testing.T) {
 	newData := baseData.NewStringData("Data")
 	type fields struct {
 		ID        ids.StringID
-		Data      data.Data
+		Data      data.DataI
 		validator func(interface{}) error
 	}
 	type args struct {
-		data data.Data
+		data data.DataI
 	}
 	tests := []struct {
 		name   string
@@ -216,7 +216,7 @@ func Test_parameter_String(t *testing.T) {
 	id, testData, testParameter := createTestInput()
 	type fields struct {
 		ID        ids.StringID
-		Data      data.Data
+		Data      data.DataI
 		validator func(interface{}) error
 	}
 	tests := []struct {
@@ -245,7 +245,7 @@ func Test_parameter_Validate(t *testing.T) {
 	id, testData, _ := createTestInput()
 	type fields struct {
 		ID        ids.StringID
-		Data      data.Data
+		Data      data.DataI
 		validator func(interface{}) error
 	}
 	tests := []struct {

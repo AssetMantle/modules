@@ -48,8 +48,8 @@ func (identity identity) UnprovisionAddress(accAddresses ...sdkTypes.AccAddress)
 	identity.Document = identity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(identity.GetAuthentication().Remove(accAddressesToData(accAddresses...)...))))
 	return identity
 }
-func accAddressesToData(accAddresses ...sdkTypes.AccAddress) []data.Data {
-	accAddressData := make([]data.Data, len(accAddresses))
+func accAddressesToData(accAddresses ...sdkTypes.AccAddress) []data.DataI {
+	accAddressData := make([]data.DataI, len(accAddresses))
 	for i, accAddress := range accAddresses {
 		accAddressData[i] = baseData.NewAccAddressData(accAddress)
 	}

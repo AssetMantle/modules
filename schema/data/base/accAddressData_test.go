@@ -31,7 +31,7 @@ func TestNewAccAddressData(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want data.Data
+		want data.DataI
 	}{
 		// TODO: Add test cases.
 		{"+ve", args{_fromAddress}, accAddressData{_fromAddress}},
@@ -230,7 +230,7 @@ func Test_accAddressData_ZeroValue(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   data.Data
+		want   data.DataI
 	}{
 		// TODO: Add test cases.
 		{"+ve with nil", fields{}, NewAccAddressData(sdkTypes.AccAddress{})},

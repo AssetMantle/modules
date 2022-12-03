@@ -23,17 +23,17 @@ type listData struct {
 
 var _ data.ListData = (*listData)(nil)
 
-func (listData listData) Get() []data.Data {
+func (listData listData) Get() []data.DataI {
 	return listData.Value.GetList()
 }
-func (listData listData) Search(data data.Data) (int, bool) {
+func (listData listData) Search(data data.DataI) (int, bool) {
 	return listData.Value.Search(data)
 }
-func (listData listData) Add(data ...data.Data) data.ListData {
+func (listData listData) Add(data ...data.DataI) data.ListData {
 	listData.Value = listData.Value.Add(data...)
 	return listData
 }
-func (listData listData) Remove(data ...data.Data) data.ListData {
+func (listData listData) Remove(data ...data.DataI) data.ListData {
 	listData.Value = listData.Value.Remove(data...)
 	return listData
 }
@@ -72,8 +72,8 @@ func (listData listData) Bytes() []byte {
 func (listData listData) GetType() ids.StringID {
 	return dataConstants.ListDataID
 }
-func (listData listData) ZeroValue() data.Data {
-	return NewListData(base.NewDataList([]data.Data{}...))
+func (listData listData) ZeroValue() data.DataI {
+	return NewListData(base.NewDataList([]data.DataI{}...))
 }
 
 // TODO test

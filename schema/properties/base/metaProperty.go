@@ -14,13 +14,13 @@ import (
 
 type metaProperty struct {
 	ids.PropertyID
-	data.Data
+	data.DataI
 }
 
 var _ properties.MetaProperty = (*metaProperty)(nil)
 
-func (metaProperty metaProperty) GetData() data.Data {
-	return metaProperty.Data
+func (metaProperty metaProperty) GetData() data.DataI {
+	return metaProperty.DataI
 }
 func (metaProperty metaProperty) ScrubData() properties.MesaProperty {
 	return NewMesaProperty(metaProperty.GetKey(), metaProperty.GetData())
@@ -29,13 +29,13 @@ func (metaProperty metaProperty) GetID() ids.PropertyID {
 	return metaProperty.PropertyID
 }
 func (metaProperty metaProperty) GetDataID() ids.DataID {
-	return metaProperty.Data.GetID()
+	return metaProperty.DataI.GetID()
 }
 func (metaProperty metaProperty) GetKey() ids.StringID {
 	return metaProperty.PropertyID.GetKey()
 }
 func (metaProperty metaProperty) GetType() ids.StringID {
-	return metaProperty.Data.GetType()
+	return metaProperty.DataI.GetType()
 }
 func (metaProperty metaProperty) IsMeta() bool {
 	return true
@@ -54,12 +54,12 @@ func NewEmptyMetaPropertyFromID(propertyID ids.PropertyID) properties.MetaProper
 		PropertyID: propertyID,
 	}
 }
-func NewMetaProperty(key ids.StringID, data data.Data) properties.MetaProperty {
+func NewMetaProperty(key ids.StringID, data data.DataI) properties.MetaProperty {
 	if data == nil || key == nil {
 		panic(errorConstants.MetaDataError)
 	}
 	return metaProperty{
 		PropertyID: baseIDs.NewPropertyID(key, data.GetType()),
-		Data:       data,
+		DataI:      data,
 	}
 }

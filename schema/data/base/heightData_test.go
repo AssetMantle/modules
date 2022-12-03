@@ -29,7 +29,7 @@ func TestNewHeightData(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want data.Data
+		want data.DataI
 	}{
 
 		{"Test for +ve int", args{baseTypes.NewHeight(100)}, heightData{baseTypes.NewHeight(100)}},
@@ -244,7 +244,7 @@ func Test_heightData_ZeroValue(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   data.Data
+		want   data.DataI
 	}{
 
 		{"Test for zero value", fields{baseTypes.NewHeight(0)}, heightData{baseTypes.NewHeight(0)}},

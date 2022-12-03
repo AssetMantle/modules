@@ -4,11 +4,11 @@
 package data
 
 type ListData interface {
-	Get() []Data
+	Get() []DataI
 
-	Search(Data) (int, bool)
-	Add(...Data) ListData
-	Remove(...Data) ListData
+	Search(DataI) (int, bool)
+	Add(...DataI) ListData
+	Remove(...DataI) ListData
 
-	Data
+	DataI
 }

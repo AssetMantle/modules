@@ -8,6 +8,6 @@ import (
 )
 
 type DecData interface {
-	Data
+	DataI
 	Get() sdkTypes.Dec
 }

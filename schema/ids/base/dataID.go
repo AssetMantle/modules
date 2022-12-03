@@ -49,7 +49,7 @@ func dataIDFromInterface(i interface{}) DataID {
 	}
 }
 
-func NewDataID(data data.Data) ids.DataID {
+func NewDataID(data data.DataI) ids.DataID {
 	if data == nil {
 		panic(errorConstants.MetaDataError)
 	}

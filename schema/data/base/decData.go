@@ -46,7 +46,7 @@ func (decData decData) Bytes() []byte {
 func (decData decData) GetType() ids.StringID {
 	return dataConstants.DecDataID
 }
-func (decData decData) ZeroValue() data.Data {
+func (decData decData) ZeroValue() data.DataI {
 	return NewDecData(sdkTypes.ZeroDec())
 }
 func (decData decData) GenerateHashID() ids.HashID {

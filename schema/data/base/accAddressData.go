@@ -42,7 +42,7 @@ func (accAddressData accAddressData) Bytes() []byte {
 func (accAddressData accAddressData) GetType() ids.StringID {
 	return dataConstants.AccAddressDataID
 }
-func (accAddressData accAddressData) ZeroValue() data.Data {
+func (accAddressData accAddressData) ZeroValue() data.DataI {
 	return NewAccAddressData(sdkTypes.AccAddress{})
 }
 func (accAddressData accAddressData) GenerateHashID() ids.HashID {

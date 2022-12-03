@@ -27,7 +27,7 @@ func TestNewDecData(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want data.Data
+		want data.DataI
 	}{
 		// TODO: Add test cases.
 		{"+ve with nil", args{}, decData{}},
@@ -271,7 +271,7 @@ func Test_decData_ZeroValue(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   data.Data
+		want   data.DataI
 	}{
 		// TODO: Add test cases.
 		{"+ve with nil", fields{}, decData{types.ZeroDec()}},

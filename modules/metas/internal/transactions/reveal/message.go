@@ -19,7 +19,7 @@ import (
 
 type message struct {
 	From sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	Data data.Data           `json:"data" valid:"required~required field data missing"`
+	Data data.DataI          `json:"data" valid:"required~required field data missing"`
 }
 
 func (message message) GenerateOnSuccessEvents() sdkTypes.Events {
@@ -79,7 +79,7 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from []byte, data data.Data) sdkTypes.Msg {
+func newMessage(from []byte, data data.DataI) sdkTypes.Msg {
 	return message{
 		From: from,
 		Data: data,

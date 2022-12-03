@@ -4,6 +4,6 @@
 package data
 
 type BooleanData interface {
-	Data
+	DataI
 	Get() bool
 }

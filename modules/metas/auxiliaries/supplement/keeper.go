@@ -34,7 +34,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		} else {
 			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(property.GetDataID()))
 			if Mappable := metas.Get(key.NewKey(property.GetDataID())); Mappable != nil {
-				propertyList = propertyList.Add(baseProperties.NewMetaProperty(property.GetKey(), Mappable.(data.Data)))
+				propertyList = propertyList.Add(baseProperties.NewMetaProperty(property.GetKey(), Mappable.(data.DataI)))
 			}
 		}
 	}

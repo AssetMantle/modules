@@ -23,7 +23,7 @@ func TestNewBooleanData(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want data.Data
+		want data.DataI
 	}{
 		// TODO: Add test cases.
 		{"+ve", args{true}, booleanData{true}},
@@ -38,12 +38,12 @@ func TestNewBooleanData(t *testing.T) {
 
 func TestBooleanDataFromInterface(t *testing.T) {
 	type args struct {
-		dataString data.Data
+		dataString data.DataI
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    data.Data
+		want    data.DataI
 		wantErr assert.ErrorAssertionFunc
 	}{
 		// TODO: Add test cases.
@@ -242,7 +242,7 @@ func Test_booleanData_ZeroValue(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   data.Data
+		want   data.DataI
 	}{
 		// TODO: Add test cases.
 		{"+ve", fields{}, booleanData{}},

@@ -10,7 +10,7 @@ import (
 func RegisterCodec(codec *codec.LegacyAmino) {
 	codec.RegisterInterface((*AccAddressData)(nil), nil)
 	codec.RegisterInterface((*BooleanData)(nil), nil)
-	codec.RegisterInterface((*Data)(nil), nil)
+	codec.RegisterInterface((*DataI)(nil), nil)
 	codec.RegisterInterface((*DecData)(nil), nil)
 	codec.RegisterInterface((*HeightData)(nil), nil)
 	codec.RegisterInterface((*IDData)(nil), nil)

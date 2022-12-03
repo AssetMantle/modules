@@ -61,7 +61,7 @@ func (parameters parameters) GetList() []parametersSchema.Parameter {
 	return parameters.parameterList
 }
 func (parameters parameters) Fetch(context sdkTypes.Context, id ids.ID) helpers.Parameters {
-	var Data data.Data
+	var Data data.DataI
 
 	parameters.paramsSubspace.Get(context, id.Bytes(), &Data)
 

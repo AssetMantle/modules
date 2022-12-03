@@ -20,13 +20,12 @@ import (
 var _ ids.PropertyID = (*PropertyID)(nil)
 
 func (propertyID PropertyID) IsPropertyID() {}
-
-// func (propertyID PropertyID) GetType() ids.StringID {
-// 	return propertyID.Type
-// }
-// func (propertyID PropertyID) String() string {
-// 	return stringUtilities.JoinIDStrings(propertyID.Key.String(), propertyID.Type.String())
-// }
+func (propertyID PropertyID) GetKey() ids.StringID {
+	return propertyID.GetKeyID()
+}
+func (propertyID PropertyID) GetType() ids.StringID {
+	return propertyID.GetTypeID()
+}
 func (propertyID PropertyID) Bytes() []byte {
 	var Bytes []byte
 	Bytes = append(Bytes, propertyID.KeyID.Bytes()...)
