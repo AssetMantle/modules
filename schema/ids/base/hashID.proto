@@ -1,7 +1,6 @@
 syntax = "proto3";
 package base;
 
-option go_package = "github.com/AssetMantle/modules/schema/ids/base";
 
 message HashID {
   bytes id_bytes = 1;

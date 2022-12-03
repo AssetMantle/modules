@@ -1,6 +1,5 @@
 syntax = "proto3";
 package base;
-option go_package = "github.com/AssetMantle/modules/schema/documents/base";
 
 import "schema/documents/base/document.proto";
 

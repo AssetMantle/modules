@@ -1,6 +1,5 @@
 syntax = "proto3";
 package base;
-option go_package = "github.com/AssetMantle/modules/schema/data/base";
 
 message HeightData{
   int64 value = 1;

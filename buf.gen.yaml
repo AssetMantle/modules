@@ -1,8 +1,12 @@
 version: v1
+managed:
+  enabled: true
+  go_package_prefix:
+    default: github.com/AssetMantle/modules
 plugins:
-  - plugin: go
+  - plugin: buf.build/protocolbuffers/go:v1.28.1
     out: .
     opt: paths=source_relative
-  - plugin: go-grpc
+  - plugin: buf.build/grpc/go:v1.2.0
     out: .
     opt: paths=source_relative

@@ -1,6 +1,5 @@
 syntax = "proto3";
 package base;
-option go_package = "github.com/AssetMantle/modules/schema/lists/base";
 
 import "schema/lists/base/list.proto";
 
