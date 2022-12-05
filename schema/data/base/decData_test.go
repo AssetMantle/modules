@@ -76,8 +76,7 @@ func Test_decData_Bytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
-		// {"+ve with nil", fields{}}, []byte{}},
+		{"+ve with nil", fields{}, []byte{0x1}}, // TODO: Update test after fixing the bug
 		{"+ve with zero dec", fields{types.ZeroDec()}, decData{types.ZeroDec()}.Value.Bytes()},
 		{"+ve", fields{types.NewDec(100)}, decData{types.NewDec(100)}.Value.Bytes()},
 		{"+ve with -ve Dec", fields{types.NewDec(-100)}, decData{types.NewDec(-100)}.Value.Bytes()},
