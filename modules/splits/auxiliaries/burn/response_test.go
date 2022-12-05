@@ -4,6 +4,7 @@
 package burn
 
 import (
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"reflect"
 	"testing"
@@ -19,7 +20,8 @@ func Test_auxiliaryResponse_GetError(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{"+ve", fields{true, nil}, false},
+		{"+ve", fields{false, errorConstants.EntityNotFound}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -44,7 +46,8 @@ func Test_auxiliaryResponse_IsSuccessful(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		// TODO: Add test cases.
+		{"+ve", fields{true, nil}, true},
+		{"+ve", fields{false, errorConstants.EntityNotFound}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -68,7 +71,8 @@ func Test_newAuxiliaryResponse(t *testing.T) {
 		args args
 		want helpers.AuxiliaryResponse
 	}{
-		// TODO: Add test cases.
+		{"+ve", args{nil}, auxiliaryResponse{true, nil}},
+		{"-ve", args{errorConstants.EntityNotFound}, auxiliaryResponse{false, errorConstants.EntityNotFound}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
