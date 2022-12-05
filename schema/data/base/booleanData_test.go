@@ -248,3 +248,25 @@ func Test_booleanData_ZeroValue(t *testing.T) {
 		})
 	}
 }
+
+func Test_booleanData_Bytes(t *testing.T) {
+	type fields struct {
+		Value bool
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   []byte
+	}{
+		{"+ve", fields{true}, []byte{0x1}},
+		{"+ve", fields{false}, []byte{0x0}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			booleanData := booleanData{
+				Value: tt.fields.Value,
+			}
+			assert.Equalf(t, tt.want, booleanData.Bytes(), "Bytes()")
+		})
+	}
+}
