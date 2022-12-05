@@ -52,6 +52,7 @@ func Test_decDataFromInterface(t *testing.T) {
 		wantErr assert.ErrorAssertionFunc
 	}{
 		{"+ve with nil", args{decData{}}, decData{}, assert.NoError},
+		{"+ve with nil", args{decData{types.Dec{}}}, decData{}, assert.NoError},
 		{"+ve with zero dec", args{decData{types.ZeroDec()}}, decData{types.ZeroDec()}, assert.NoError},
 		{"+ve", args{decData{types.NewDec(100)}}, decData{types.NewDec(100)}, assert.NoError},
 		{"+ve with -ve Dec", args{decData{types.NewDec(-100)}}, decData{types.NewDec(-100)}, assert.NoError},
@@ -92,6 +93,9 @@ func Test_decData_Bytes(t *testing.T) {
 }
 
 func Test_decData_Compare(t *testing.T) {
+	require.Panics(t, func() {
+		decData{}.Compare(nil)
+	})
 	type fields struct {
 		Value types.Dec
 	}
@@ -105,6 +109,7 @@ func Test_decData_Compare(t *testing.T) {
 		want   int
 	}{
 		{"+ve with nil", fields{}, args{decData{}}, 0},
+		{"+ve with nil", fields{types.Dec{}}, args{decData{types.Dec{}}}, 0},
 		{"+ve with zero dec", fields{types.ZeroDec()}, args{decData{types.ZeroDec()}}, 0},
 		{"+ve", fields{types.NewDec(100)}, args{decData{types.NewDec(100)}}, 0},
 		{"-ve", fields{types.NewDec(-100)}, args{decData{types.NewDec(100)}}, -1},
@@ -130,8 +135,7 @@ func Test_decData_GenerateHashID(t *testing.T) {
 		want      ids.HashID
 		wantPanic bool
 	}{
-		// TODO: Update Unit tests after fix
-		{"panic case with nil", fields{types.Dec{}}, baseIDs.GenerateHashID([]byte{}), true}, // TODO: Check if Panic case for nil Dec is expected behaviour
+		{"panic case with nil", fields{types.Dec{}}, baseIDs.GenerateHashID(), false},
 		{"+ve with zero dec", fields{types.ZeroDec()}, baseIDs.GenerateHashID(), false},
 		{"+ve", fields{types.NewDec(100)}, baseIDs.GenerateHashID(decData{types.NewDec(100)}.Bytes()), false},
 		{"+ve with -ve Dec", fields{types.NewDec(-100)}, baseIDs.GenerateHashID(decData{types.NewDec(-100)}.Bytes()), false},
