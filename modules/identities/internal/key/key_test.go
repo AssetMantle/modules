@@ -77,7 +77,9 @@ func Test_keyFromInterface(t *testing.T) {
 		want    key
 		wantErr bool
 	}{
-		{"+ve", args{}, key{}, true},
+		{"+ve", args{nil}, key{nil}, true},
+		{"-ve", args{NewKey(nil)}, key{testIdentity}, false},
+		{"-ve", args{testIdentity}, key{nil}, true},
 		{"+ve", args{NewKey(testIdentity)}, key{testIdentity}, false},
 		{"-ve", args{baseIds.NewStringID("StringID")}, key{}, true},
 	}
@@ -109,6 +111,9 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
+		{"+ve", fields{nil}, args{key{nil}}, true},
+		{"-ve", fields{nil}, args{key{testIdentity}}, false},
+		{"-ve", fields{testIdentity}, args{key{nil}}, false},
 		{"+ve", fields{testIdentity}, args{key{testIdentity}}, true},
 	}
 	for _, tt := range tests {
