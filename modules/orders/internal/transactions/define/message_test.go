@@ -4,46 +4,23 @@
 package define
 
 import (
+	"github.com/AssetMantle/modules/utilities/transaction"
 	"reflect"
 	"testing"
-
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
-func CreateTestInputForMessage(t *testing.T) (ids.IdentityID, sdkTypes.AccAddress, lists.PropertyList, lists.PropertyList, lists.PropertyList, lists.PropertyList, sdkTypes.Msg) {
-
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-
-	immutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
-	require.Equal(t, nil, err)
-	immutableProperties, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, err)
-	mutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
-	require.Equal(t, nil, err)
-	mutableProperties, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, err)
-	testClassificationID := baseIDs.NewClassificationID(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))
-	testFromID := baseIDs.NewIdentityID(testClassificationID, baseQualified.NewImmutables(immutableProperties))
-
-	testMessage := newMessage(fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
-
-	return testFromID, fromAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, testMessage
-}
+var (
+	testMessage = newMessage(fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
+)
 
 func Test_messageFromInterface(t *testing.T) {
-	testFromID, fromAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, testMessage := CreateTestInputForMessage(t)
 	type args struct {
 		msg sdkTypes.Msg
 	}
@@ -80,7 +57,6 @@ func Test_messagePrototype(t *testing.T) {
 }
 
 func Test_message_GetSignBytes(t *testing.T) {
-	// testFromID, fromAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, testMessage := CreateTestInputForMessage(t)
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromID                  ids.IdentityID
@@ -94,8 +70,7 @@ func Test_message_GetSignBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
-		// {"+ve", fields{fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(testMessage))},
+		{"+ve", fields{fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(testMessage))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -115,7 +90,6 @@ func Test_message_GetSignBytes(t *testing.T) {
 }
 
 func Test_message_GetSigners(t *testing.T) {
-	testFromID, fromAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, _ := CreateTestInputForMessage(t)
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromID                  ids.IdentityID
@@ -149,7 +123,6 @@ func Test_message_GetSigners(t *testing.T) {
 }
 
 func Test_message_RegisterCodec(t *testing.T) {
-	testFromID, fromAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, _ := CreateTestInputForMessage(t)
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromID                  ids.IdentityID
@@ -184,7 +157,6 @@ func Test_message_RegisterCodec(t *testing.T) {
 }
 
 func Test_message_Route(t *testing.T) {
-	testFromID, fromAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, _ := CreateTestInputForMessage(t)
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromID                  ids.IdentityID
@@ -218,7 +190,6 @@ func Test_message_Route(t *testing.T) {
 }
 
 func Test_message_Type(t *testing.T) {
-	testFromID, fromAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, _ := CreateTestInputForMessage(t)
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromID                  ids.IdentityID
@@ -252,7 +223,6 @@ func Test_message_Type(t *testing.T) {
 }
 
 func Test_message_ValidateBasic(t *testing.T) {
-	testFromID, fromAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, _ := CreateTestInputForMessage(t)
 	type fields struct {
 		From                    sdkTypes.AccAddress
 		FromID                  ids.IdentityID
@@ -287,7 +257,6 @@ func Test_message_ValidateBasic(t *testing.T) {
 }
 
 func Test_newMessage(t *testing.T) {
-	testFromID, fromAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, _ := CreateTestInputForMessage(t)
 	type args struct {
 		from                    sdkTypes.AccAddress
 		fromID                  ids.IdentityID
