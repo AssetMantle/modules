@@ -78,7 +78,7 @@ func Test_keyFromInterface(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", args{nil}, key{nil}, true},
-		{"-ve", args{NewKey(nil)}, key{testIdentity}, false},
+		{"-ve", args{NewKey(nil)}, key{nil}, false},
 		{"-ve", args{testIdentity}, key{nil}, true},
 		{"+ve", args{NewKey(testIdentity)}, key{testIdentity}, false},
 		{"-ve", args{baseIds.NewStringID("StringID")}, key{}, true},
