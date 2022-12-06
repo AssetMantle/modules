@@ -6,9 +6,6 @@ package base
 import (
 	"bytes"
 
-	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data"
@@ -19,33 +16,31 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type accAddressData base.AccAddressData
+var _ data.AccAddressData = (*AccAddressDataI_AccAddressData)(nil)
 
-var _ data.AccAddressData = (*accAddressData)(nil)
-
-func (accAddressData *accAddressData) GetID() ids.DataID {
+func (accAddressData *AccAddressDataI_AccAddressData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(accAddressData)
 }
-func (accAddressData *accAddressData) Compare(listable traits.Listable) int {
+func (accAddressData *AccAddressDataI_AccAddressData) Compare(listable traits.Listable) int {
 	compareAccAddressData, err := accAddressDataFromInterface(listable)
 	if err != nil {
 		panic(err)
 	}
-	return bytes.Compare(accAddressData.Value, compareAccAddressData.Value)
+	return bytes.Compare(accAddressData.AccAddressData.Value, compareAccAddressData.AccAddressData.Value)
 }
-func (accAddressData *accAddressData) String() string {
-	return sdkTypes.AccAddress(accAddressData.Value).String()
+func (accAddressData *AccAddressDataI_AccAddressData) String() string {
+	return sdkTypes.AccAddress(accAddressData.AccAddressData.Value).String()
 }
-func (accAddressData *accAddressData) Bytes() []byte {
-	return sdkTypes.AccAddress(accAddressData.Value).Bytes()
+func (accAddressData *AccAddressDataI_AccAddressData) Bytes() []byte {
+	return sdkTypes.AccAddress(accAddressData.AccAddressData.Value).Bytes()
 }
-func (accAddressData *accAddressData) GetType() ids.StringID {
+func (accAddressData *AccAddressDataI_AccAddressData) GetType() ids.StringID {
 	return dataConstants.AccAddressDataID
 }
-func (accAddressData *accAddressData) ZeroValue() data.Data {
-	return NewAccAddressData(sdkTypes.AccAddress{})
+func (accAddressData *AccAddressDataI_AccAddressData) ZeroValue() data.Data {
+	return AccAddressDataPrototype()
 }
-func (accAddressData *accAddressData) GenerateHashID() ids.HashID {
+func (accAddressData *AccAddressDataI_AccAddressData) GenerateHashID() ids.HashID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
 		// TODO test
 		return baseIDs.GenerateHashID()
@@ -53,29 +48,32 @@ func (accAddressData *accAddressData) GenerateHashID() ids.HashID {
 
 	return baseIDs.GenerateHashID(accAddressData.Bytes())
 }
-func (accAddressData *accAddressData) Get() sdkTypes.AccAddress {
-	return accAddressData.Value
+func (accAddressData *AccAddressDataI_AccAddressData) Get() sdkTypes.AccAddress {
+	return accAddressData.AccAddressData.Value
 }
 
-func accAddressDataFromInterface(listable traits.Listable) (*accAddressData, error) {
+func accAddressDataFromInterface(listable traits.Listable) (*AccAddressDataI_AccAddressData, error) {
 	switch value := listable.(type) {
-	case *accAddressData:
+	case *AccAddressDataI_AccAddressData:
 		return value, nil
 	default:
-		return &accAddressData{}, errorConstants.MetaDataError
+		panic(errorConstants.MetaDataError)
 	}
 }
 
 func AccAddressDataPrototype() data.AccAddressData {
-	return (&accAddressDataI{}).ZeroValue().(data.AccAddressData)
+	return NewAccAddressData(sdkTypes.AccAddress{})
+}
+
+func GenerateAccAddressData(value sdkTypes.AccAddress) data.AccAddressData {
+	return NewAccAddressData(value)
 }
 
 func NewAccAddressData(value sdkTypes.AccAddress) data.AccAddressData {
-	// return &accAddressData{
-	//	Value: value,
-	// }
-	return &accAddressDataI{
-		Impl: &dataSchema.AccAddressData_AccAddressData{
-			AccAddressData: &base.AccAddressData{Value: value},
+	return &AccAddressDataI{
+		Impl: &AccAddressDataI_AccAddressData{
+			AccAddressData: &AccAddressData{
+				Value: value,
+			},
 		}}
 }

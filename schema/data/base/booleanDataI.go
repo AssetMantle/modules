@@ -1,44 +1,37 @@
 package base
 
 import (
-	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type booleanDataI dataSchema.BooleanData
+var _ data.BooleanData = (*BooleanDataI)(nil)
 
-func (b booleanDataI) GetID() ids.DataID {
+func (b BooleanDataI) GetID() ids.DataID {
 	return b.Impl.(data.BooleanData).GetID()
 }
 
-func (b booleanDataI) String() string {
-	return b.Impl.(data.BooleanData).String()
-}
-
-func (b booleanDataI) Bytes() []byte {
+func (b BooleanDataI) Bytes() []byte {
 	return b.Impl.(data.BooleanData).Bytes()
 }
 
-func (b booleanDataI) GetType() ids.StringID {
+func (b BooleanDataI) GetType() ids.StringID {
 	return b.Impl.(data.BooleanData).GetType()
 }
 
-func (b booleanDataI) ZeroValue() data.Data {
+func (b BooleanDataI) ZeroValue() data.Data {
 	return b.Impl.(data.BooleanData).ZeroValue()
 }
 
-func (b booleanDataI) GenerateHashID() ids.HashID {
+func (b BooleanDataI) GenerateHashID() ids.HashID {
 	return b.Impl.(data.BooleanData).GenerateHashID()
 }
 
-func (b booleanDataI) Compare(listable traits.Listable) int {
+func (b BooleanDataI) Compare(listable traits.Listable) int {
 	return b.Impl.(data.BooleanData).Compare(listable)
 }
 
-func (b booleanDataI) Get() bool {
+func (b BooleanDataI) Get() bool {
 	return b.Impl.(data.BooleanData).Get()
 }
-
-var _ data.BooleanData = &booleanDataI{}
