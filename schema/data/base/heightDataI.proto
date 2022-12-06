@@ -1,0 +1,9 @@
+syntax = "proto3";
+package base;
+
+
+message HeightData {
+  oneof impl {
+    HeightData height_data = 1;
+  }
+}

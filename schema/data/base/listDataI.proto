@@ -1,0 +1,8 @@
+syntax = "proto3";
+package base;
+
+message ListData {
+  oneof impl {
+    ListData list_data = 1;
+  }
+}

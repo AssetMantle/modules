@@ -4,9 +4,10 @@
 package base
 
 import (
+	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
+	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
 	"bytes"
 
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data"
@@ -17,7 +18,7 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type accAddressData base.AccAddressData
+type accAddressData dataSchema.AccAddressData
 
 var _ data.AccAddressData = (*accAddressData)(nil)
 
@@ -29,7 +30,8 @@ func (accAddressData *accAddressData) Compare(listable traits.Listable) int {
 	if err != nil {
 		panic(err)
 	}
-
+	x := &accAddressData
+	c := x.(*base.AccAddressData)
 	return bytes.Compare(accAddressData.Value, compareAccAddressData.Value)
 }
 func (accAddressData *accAddressData) String() string {

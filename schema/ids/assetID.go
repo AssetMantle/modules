@@ -15,6 +15,7 @@ type assetID ids.AssetID
 
 func (assetID *assetID) Compare(listable traits.Listable) int {
 	// TODO implement me
+
 	panic("implement me")
 }
 
