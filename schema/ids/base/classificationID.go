@@ -4,6 +4,7 @@ import "C"
 import (
 	"bytes"
 
+	ids2 "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids"
 	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
 
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -18,15 +19,14 @@ import (
 // }
 type classificationID base.ClassificationID
 
-func (classificationID *classificationID) String() string {
-	// TODO implement me
-	panic("implement me")
-}
-
 var _ ids.ClassificationID = (*classificationID)(nil)
 
+func (classificationID *classificationID) String() string {
+	return classificationID.HashId.String()
+}
+
 func (classificationID *classificationID) Bytes() []byte {
-	return classificationID.HashId.Bytes()
+	return classificationID.HashId.GetHashID().GetIdBytes()
 }
 
 func (classificationID *classificationID) IsClassificationID() {}
@@ -35,16 +35,16 @@ func (classificationID *classificationID) Compare(listable traits.Listable) int 
 	return bytes.Compare(classificationID.Bytes(), classificationIDFromInterface(listable).Bytes())
 }
 
-func classificationIDFromInterface(i interface{}) classificationID {
+func classificationIDFromInterface(i interface{}) *classificationID {
 	switch value := i.(type) {
-	case classificationID:
+	case *classificationID:
 		return value
 	default:
 		panic(constants.MetaDataError)
 	}
 }
 
-func NewClassificationID(immutables qualified.Immutables, mutables qualified.Mutables) ids.ClassificationID {
+func GenerateClassificationID(immutables qualified.Immutables, mutables qualified.Mutables) ids.ClassificationID {
 	immutableIDByteList := make([][]byte, len(immutables.GetImmutablePropertyList().GetList()))
 
 	for i, property := range immutables.GetImmutablePropertyList().GetList() {
@@ -66,18 +66,23 @@ func NewClassificationID(immutables qualified.Immutables, mutables qualified.Mut
 		}
 	}
 
-	return &classificationID{HashId: GenerateHashID(GenerateHashID(immutableIDByteList...).Bytes(), GenerateHashID(mutableIDByteList...).Bytes(), GenerateHashID(defaultImmutableByteList...).Bytes()).(*hashID)}
+	return NewClassificationID(GenerateHashID(GenerateHashID(immutableIDByteList...).Bytes(), GenerateHashID(mutableIDByteList...).Bytes(), GenerateHashID(defaultImmutableByteList...).Bytes()).(*hashID))
 }
 
-func PrototypeClassificationID() ids.ClassificationID {
-	return &classificationID{
-		HashId: PrototypeHashID().(*hashID),
+func NewClassificationID(hashID *ids2.HashID) ids.ClassificationID {
+	return &classificationIDI{
+		Impl: &ids2.ClassificationID_ClassificationID{
+			ClassificationID: &base.ClassificationID{HashId: hashID},
+		},
 	}
+}
+func PrototypeClassificationID() ids.ClassificationID {
+	return NewClassificationID(PrototypeHashID())
 }
 
 func ReadClassificationID(classificationIDString string) (ids.ClassificationID, error) {
 	if hashID, err := ReadHashID(classificationIDString); err == nil {
-		return &classificationID{HashId: hashID.(*hashID)}, nil
+		return NewClassificationID(hashID), nil
 	}
 
 	if classificationIDString == "" {

@@ -3,7 +3,7 @@ package ids;
 
 import "schema/ids/base/identityID.proto";
 
-message IdentityID {
+message IdentityIDI {
   oneof impl {
     base.IdentityID identityID = 1;
   }

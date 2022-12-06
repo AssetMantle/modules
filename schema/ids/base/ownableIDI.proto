@@ -3,7 +3,7 @@ package ids;
 
 import "schema/ids/base/ownableID.proto";
 
-message OwnableID {
+message OwnableIDI {
   oneof impl {
     base.OwnableID ownableID = 1;
   }

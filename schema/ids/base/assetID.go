@@ -7,6 +7,7 @@ import (
 	"bytes"
 
 	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
+	ids2 "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -14,7 +15,7 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type assetID base.AssetID
+type assetID ids2.AssetIDI_AssetID
 
 var _ ids.AssetID = (*assetID)(nil)
 
@@ -22,7 +23,7 @@ func (assetID *assetID) String() string {
 	return assetID.String()
 }
 func (assetID *assetID) Compare(listable traits.Listable) int {
-	return bytes.Compare(assetID.Bytes(), assetIDFromInterface(listable).HashId.Bytes())
+	return bytes.Compare(assetID.Bytes(), assetIDFromInterface(listable).Bytes())
 
 }
 func (assetID *assetID) IsOwnableID() {}
@@ -38,25 +39,29 @@ func assetIDFromInterface(i interface{}) *assetID {
 }
 
 func (assetID *assetID) Bytes() []byte {
-	return assetID.HashId.GetIdBytes()
+	return assetID.AssetID.HashId.IdBytes
 }
-func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
-	return &assetID{
-		HashId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()),
+func GenerateAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
+	return NewAssetID(GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(ids2.HashID))
+}
+
+func NewAssetID(hashID hashIDI) ids.AssetID {
+	return &assetIDI{
+		Impl: &ids2.AssetIDI_AssetID{
+			AssetID: &base.AssetID{
+				HashId: NewHashID(),
+			},
+		},
 	}
 }
 
 func PrototypeAssetID() ids.AssetID {
-	return &assetID{
-		HashId: PrototypeHashID(),
-	}
+	return NewAssetID(PrototypeHashID())
 }
 
 func ReadAssetID(assetIDString string) (ids.AssetID, error) {
 	if hashID, err := ReadHashID(assetIDString); err == nil {
-		return &assetID{
-			HashId: hashID,
-		}, nil
+		return NewAssetID(hashID), nil
 	}
 
 	if assetIDString == "" {

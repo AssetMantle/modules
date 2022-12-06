@@ -3,7 +3,7 @@ package ids;
 
 import "schema/ids/base/orderID.proto";
 
-message OrderID {
+message OrderIDI {
   oneof impl {
     base.OrderID orderID = 1;
   }
