@@ -4,9 +4,10 @@
 package base
 
 import (
+	"bytes"
+
 	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
 	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
-	"bytes"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -23,7 +24,7 @@ type accAddressData base.AccAddressData
 var _ data.AccAddressData = (*accAddressData)(nil)
 
 func (accAddressData *accAddressData) GetID() ids.DataID {
-	return baseIDs.NewDataID(accAddressData)
+	return baseIDs.GenerateDataID(accAddressData)
 }
 func (accAddressData *accAddressData) Compare(listable traits.Listable) int {
 	compareAccAddressData, err := accAddressDataFromInterface(listable)
@@ -70,9 +71,9 @@ func AccAddressDataPrototype() data.AccAddressData {
 }
 
 func NewAccAddressData(value sdkTypes.AccAddress) data.AccAddressData {
-	//return &accAddressData{
+	// return &accAddressData{
 	//	Value: value,
-	//}
+	// }
 	return &accAddressDataI{
 		Impl: &dataSchema.AccAddressData_AccAddressData{
 			AccAddressData: &base.AccAddressData{Value: value},

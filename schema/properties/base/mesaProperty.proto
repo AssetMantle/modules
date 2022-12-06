@@ -2,9 +2,9 @@ syntax = "proto3";
 package base;
 
 import "schema/ids/base/propertyID.proto";
-import "schema/data/data.proto";
+import "schema/data/base/dataI.proto";
 
 message MesaProperty{
   PropertyID property_id = 1;
-  Data data = 2;
+  DataI data = 2;
 }

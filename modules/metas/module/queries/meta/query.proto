@@ -7,6 +7,6 @@ import "modules/metas/module/queries/meta/queryResponse.proto";
 
 service Query{
   rpc Meta(QueryRequest) returns(QueryResponse){
-    option (google.api.http).get = "/mantle/metas/v1beta1/meta/{dataID}";
+    option (google.api.http).get = "/mantle/metas/v1beta1/meta";
   }
 }

@@ -4,8 +4,9 @@
 package base
 
 import (
-	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
 	"strconv"
+
+	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
 
 	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
 
@@ -22,7 +23,7 @@ type booleanData base.BooleanData
 var _ data.BooleanData = (*booleanData)(nil)
 
 func (booleanData *booleanData) GetID() ids.DataID {
-	return baseIDs.NewDataID(booleanData)
+	return baseIDs.GenerateDataID(booleanData)
 }
 func (booleanData *booleanData) Compare(listable traits.Listable) int {
 	compareBooleanData, err := booleanDataFromInterface(listable)
@@ -80,9 +81,9 @@ func BooleanDataPrototype() data.BooleanData {
 }
 
 func NewBooleanData(value bool) data.BooleanData {
-	//return &booleanData{
+	// return &booleanData{
 	//	Value: value,
-	//}
+	// }
 
 	return &booleanDataI{
 		Impl: &dataSchema.BooleanData_BooleanData{

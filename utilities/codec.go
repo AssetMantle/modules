@@ -6,25 +6,7 @@ package utilities
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/AssetMantle/modules/schema/data"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/documents"
-	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
-	"github.com/AssetMantle/modules/schema/errors"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/parameters"
-	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
-	"github.com/AssetMantle/modules/schema/properties"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	"github.com/AssetMantle/modules/schema/qualified"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/traits"
-	typesSchema "github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func MakeModuleCode(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) *codec.LegacyAmino {
@@ -48,33 +30,33 @@ func MakeMessageCodec(messagePrototype func() helpers.Message) *codec.LegacyAmin
 
 func RegisterCodec(codec *codec.LegacyAmino) {
 
-	data.RegisterCodec(codec)
-	baseData.RegisterCodec(codec)
-
-	documents.RegisterCodec(codec)
-	baseDocuments.RegisterCodec(codec)
-
-	errors.RegisterCodec(codec)
-
-	helpers.RegisterCodec(codec)
-
-	ids.RegisterCodec(codec)
-	baseIDs.RegisterCodec(codec)
-
-	lists.RegisterCodec(codec)
-	baseLists.RegisterCodec(codec)
-
-	parameters.RegisterCodec(codec)
-	baseParameters.RegisterCodec(codec)
-
-	properties.RegisterCodec(codec)
-	baseProperties.RegisterCodec(codec)
-
-	qualified.RegisterCodec(codec)
-	baseQualified.RegisterCodec(codec)
-
-	traits.RegisterCodec(codec)
-
-	typesSchema.RegisterCodec(codec)
-	baseTypes.RegisterCodec(codec)
+	// data.RegisterCodec(codec)
+	// baseData.RegisterCodec(codec)
+	//
+	// documents.RegisterCodec(codec)
+	// baseDocuments.RegisterCodec(codec)
+	//
+	// errors.RegisterCodec(codec)
+	//
+	// helpers.RegisterCodec(codec)
+	//
+	// ids.RegisterCodec(codec)
+	// baseIDs.RegisterCodec(codec)
+	//
+	// lists.RegisterCodec(codec)
+	// baseLists.RegisterCodec(codec)
+	//
+	// parameters.RegisterCodec(codec)
+	// baseParameters.RegisterCodec(codec)
+	//
+	// properties.RegisterCodec(codec)
+	// baseProperties.RegisterCodec(codec)
+	//
+	// qualified.RegisterCodec(codec)
+	// baseQualified.RegisterCodec(codec)
+	//
+	// traits.RegisterCodec(codec)
+	//
+	// typesSchema.RegisterCodec(codec)
+	// baseTypes.RegisterCodec(codec)
 }

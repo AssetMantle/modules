@@ -14,7 +14,7 @@ func RegisterCodec(codec *codec.LegacyAmino) {
 	schema.RegisterModuleConcrete(codec, booleanData{})
 	schema.RegisterModuleConcrete(codec, decData{})
 	schema.RegisterModuleConcrete(codec, heightData{})
-	schema.RegisterModuleConcrete(codec, idData{})
+	schema.RegisterModuleConcrete(codec, IDData{})
 	schema.RegisterModuleConcrete(codec, listData{})
 	schema.RegisterModuleConcrete(codec, stringData{})
 }

@@ -6,39 +6,33 @@ package base
 import (
 	"bytes"
 
-	ids2 "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
-
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type assetID ids2.AssetIDI_AssetID
+var _ ids.AssetID = (*AssetIDI_AssetID)(nil)
 
-var _ ids.AssetID = (*assetID)(nil)
-
-func (assetID *assetID) String() string {
+func (assetID *AssetIDI_AssetID) String() string {
 	return assetID.String()
 }
-func (assetID *assetID) Compare(listable traits.Listable) int {
+func (assetID *AssetIDI_AssetID) Compare(listable traits.Listable) int {
 	return bytes.Compare(assetID.Bytes(), assetIDFromInterface(listable).Bytes())
 
 }
-func (assetID *assetID) IsOwnableID() {}
-func (assetID *assetID) IsAssetID()   {}
-
-func assetIDFromInterface(i interface{}) *assetID {
+func (assetID *AssetIDI_AssetID) IsOwnableID() {}
+func (assetID *AssetIDI_AssetID) IsAssetID()   {}
+func (assetID *AssetIDI_AssetID) Bytes() []byte {
+	return assetID.AssetID.HashId.GetHashID().IdBytes
+}
+func assetIDFromInterface(i interface{}) *AssetIDI_AssetID {
 	switch value := i.(type) {
-	case assetID:
-		return &value
+	case *AssetIDI_AssetID:
+		return value
 	default:
 		panic(errorConstants.MetaDataError)
 	}
-}
-
-func (assetID *assetID) Bytes() []byte {
-	return assetID.AssetID.HashId.GetHashID().IdBytes
 }
 func GenerateAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
 	return NewAssetID(GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()))
@@ -67,5 +61,5 @@ func ReadAssetID(assetIDString string) (ids.AssetID, error) {
 		return PrototypeAssetID(), nil
 	}
 
-	return &assetID{}, errorConstants.MetaDataError
+	return PrototypeAssetID(), errorConstants.MetaDataError
 }

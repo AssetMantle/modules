@@ -2,10 +2,11 @@ version: v1
 name: buf.build/assetmantle/schema
 deps:
     - buf.build/googleapis/googleapis
-    - buf.build/yamnord/gogoproto
+    - buf.build/gogo/protobuf
 breaking:
   use:
     - FILE
 lint:
   use:
     - DEFAULT
+

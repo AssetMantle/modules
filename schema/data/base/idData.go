@@ -6,8 +6,6 @@ package base
 import (
 	"bytes"
 
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
-
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -16,14 +14,12 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type idData base.IDData
+var _ data.IDData = (*IdDataI_IdData)(nil)
 
-var _ data.IDData = (*idData)(nil)
-
-func (idData *idData) GetID() ids.DataID {
-	return baseIDs.NewDataID(idData)
+func (idData *IdDataI_IdData) GetID() ids.DataID {
+	return baseIDs.GenerateDataID(idData)
 }
-func (idData *idData) Compare(listable traits.Listable) int {
+func (idData *IdDataI_IdData) Compare(listable traits.Listable) int {
 	compareIDData, err := idDataFromInterface(listable)
 	if err != nil {
 		panic(err)
@@ -31,40 +27,44 @@ func (idData *idData) Compare(listable traits.Listable) int {
 
 	return bytes.Compare(idData.Bytes(), compareIDData.Bytes())
 }
-func (idData *idData) String() string {
-	return idData.Value.String()
+func (idData *IdDataI_IdData) String() string {
+	return idData.IdData.String()
 }
-func (idData *idData) Bytes() []byte {
+func (idData *IdDataI_IdData) Bytes() []byte {
 	return idData.Bytes()
 }
-func (idData *idData) GetType() ids.StringID {
+func (idData *IdDataI_IdData) GetType() ids.StringID {
 	return dataConstants.IDDataID
 }
-func (idData *idData) ZeroValue() data.Data {
-	return NewIDData(baseIDs.NewStringID(""))
+func (idData *IdDataI_IdData) ZeroValue() data.Data {
+	return IDDataPrototype()
 }
-func (idData *idData) GenerateHashID() ids.HashID {
+func (idData *IdDataI_IdData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(idData.Bytes())
 }
-func (idData *idData) Get() ids.ID {
-	return idData.(data.IDData)
+func (idData *IdDataI_IdData) Get() ids.ID {
+	return idData.IdData.Value
 }
 
-func idDataFromInterface(listable traits.Listable) (*idData, error) {
+func idDataFromInterface(listable traits.Listable) (*IdDataI_IdData, error) {
 	switch value := listable.(type) {
-	case *idData:
+	case *IdDataI_IdData:
 		return value, nil
 	default:
-		return &idData{}, constants.MetaDataError
+		return nil, constants.MetaDataError
 	}
 }
 
 func IDDataPrototype() data.IDData {
-	return (&idDataI{}).ZeroValue().(data.IDData)
+	return NewIDData(baseIDs.NewStringID(""))
 }
 
 func NewIDData(value ids.ID) data.IDData {
-	return &idData{
-		Value: value,
+	return &IdDataI{
+		Impl: &IdDataI_IdData{
+			IdData: &IDData{
+				Value: value.(*baseIDs.IDI),
+			},
+		},
 	}
 }

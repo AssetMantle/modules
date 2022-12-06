@@ -9,7 +9,7 @@ import "schema/data/base/listDataI.proto";
 import "schema/data/base/stringDataI.proto";
 
 
-message Data{
+message DataI{
   oneof impl{
     AccAddressDataI accAddressData = 1;
     BooleanDataI booleanData = 2;

@@ -1,10 +1,10 @@
 syntax = "proto3";
 package base;
-import "schema/data/data.proto";
+import "schema/data/base/dataI.proto";
 
 
 message Listable{
   oneof impl{
-    Data data = 1;
+    DataI data = 1;
   }
 }

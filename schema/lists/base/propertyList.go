@@ -6,7 +6,6 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/properties"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
@@ -25,9 +24,9 @@ func (propertyList *propertyList) HasRepeats() bool {
 var _ lists.PropertyList = (*propertyList)(nil)
 
 func (propertyList *propertyList) GetProperty(propertyID ids.PropertyID) properties.Property {
-	if i, found := propertyList.Search(baseProperties.NewEmptyMesaPropertyFromID(propertyID)); found {
-		return propertyList.GetList()[i]
-	}
+	// if i, found := propertyList.Search(baseProperties.NewEmptyMesaPropertyFromID(propertyID)); found {
+	// 	return propertyList.GetList()[i]
+	// }
 
 	return nil
 }

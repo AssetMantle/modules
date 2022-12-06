@@ -4,9 +4,10 @@
 package base
 
 import (
-	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
 	"encoding/binary"
 	"strconv"
+
+	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
 
 	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
 
@@ -25,7 +26,7 @@ type heightData base.HeightData
 var _ data.HeightData = (*heightData)(nil)
 
 func (heightData *heightData) GetID() ids.DataID {
-	return baseIDs.NewDataID(heightData)
+	return baseIDs.GenerateDataID(heightData)
 }
 func (heightData *heightData) Compare(listable traits.Listable) int {
 	compareHeightData, err := heightDataFromInterface(listable)
