@@ -1,0 +1,10 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/hashID.proto";
+
+message HashID {
+  oneof impl {
+    base.HashID hashID = 1;
+  }
+}

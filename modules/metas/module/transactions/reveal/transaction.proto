@@ -1,0 +1,10 @@
+syntax = "proto3";
+package reveal;
+
+import "modules/metas/module/transactions/reveal/transactionRequest.proto";
+import "modules/metas/module/transactions/reveal/transactionResponse.proto";
+
+
+service Transaction{
+  rpc Reveal(TransactionRequest) returns (TransactionResponse){}
+}

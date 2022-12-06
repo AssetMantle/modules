@@ -8,6 +8,6 @@ import (
 )
 
 type IDData interface {
-	DataI
+	Data
 	Get() ids.ID
 }

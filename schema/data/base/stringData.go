@@ -40,7 +40,7 @@ func (stringData *stringData) Bytes() []byte {
 func (stringData *stringData) GetType() ids.StringID {
 	return dataConstants.StringDataID
 }
-func (stringData *stringData) ZeroValue() data.DataI {
+func (stringData *stringData) ZeroValue() data.Data {
 	return NewStringData("")
 }
 func (stringData *stringData) GenerateHashID() ids.HashID {

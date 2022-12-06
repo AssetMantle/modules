@@ -3,7 +3,6 @@ module github.com/AssetMantle/modules
 go 1.18
 
 require (
-	buf.build/gen/go/assetmantle/schema/protocolbuffers/go v1.28.1-20221203092218-0bfbf5f9764d.4
 	github.com/CosmWasm/wasmd v0.29.1
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
 	github.com/cosmos/cosmos-sdk v0.45.9
@@ -22,6 +21,7 @@ require (
 )
 
 require (
+	buf.build/gen/go/assetmantle/schema/protocolbuffers/go v1.28.1-20221206083920-665752932899.4 // indirect
 	buf.build/gen/go/yamnord/gogoproto/protocolbuffers/go v1.28.1-20211009004253-977a8cb0a032.4 // indirect
 	filippo.io/edwards25519 v1.0.0-beta.2 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect

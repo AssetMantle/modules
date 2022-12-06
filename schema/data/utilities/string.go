@@ -79,7 +79,7 @@ func readListData(dataString string) (data.ListData, error) {
 	}
 
 	dataStringList := helpers.SplitListString(dataString)
-	dataList := make([]data.DataI, len(dataStringList))
+	dataList := make([]data.Data, len(dataStringList))
 
 	for i, datumString := range dataStringList {
 		Data, err := ReadData(datumString)
@@ -111,10 +111,10 @@ func splitDataTypeAndValueStrings(dataTypeAndValueString string) (dataType, data
 
 // ReadData
 // CHECK-TODO if data type added see if added here
-func ReadData(dataString string) (data.DataI, error) {
+func ReadData(dataString string) (data.Data, error) {
 	dataTypeString, dataValueString := splitDataTypeAndValueStrings(dataString)
 	if dataTypeString != "" {
-		var Data data.DataI
+		var Data data.Data
 
 		var err error
 

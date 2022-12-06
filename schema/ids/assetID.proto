@@ -1,0 +1,10 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/assetID.proto";
+
+message AssetID {
+  oneof impl {
+    base.AssetID assetID = 1;
+  }
+}

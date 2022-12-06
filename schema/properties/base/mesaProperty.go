@@ -62,7 +62,7 @@ func NewEmptyMesaPropertyFromID(propertyID ids.PropertyID) properties.Property {
 		PropertyID: propertyID,
 	}
 }
-func NewMesaProperty(key ids.StringID, data data.DataI) properties.MesaProperty {
+func NewMesaProperty(key ids.StringID, data data.Data) properties.MesaProperty {
 	return mesaProperty{
 		PropertyID: baseIDs.NewPropertyID(key, data.GetType()),
 		DataID:     data.GetID(),

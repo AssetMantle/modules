@@ -1,0 +1,10 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/maintainerID.proto";
+
+message MaintainerID {
+  oneof impl {
+    base.MaintainerID maintainerID = 1;
+  }
+}

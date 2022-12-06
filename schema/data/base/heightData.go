@@ -45,7 +45,7 @@ func (heightData *heightData) Bytes() []byte {
 func (heightData *heightData) GetType() ids.StringID {
 	return dataConstants.HeightDataID
 }
-func (heightData *heightData) ZeroValue() data.DataI {
+func (heightData *heightData) ZeroValue() data.Data {
 	return NewHeightData(baseTypes.NewHeight(-1))
 }
 func (heightData *heightData) GenerateHashID() ids.HashID {

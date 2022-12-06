@@ -51,7 +51,7 @@ func (booleanData *booleanData) Bytes() []byte {
 func (booleanData *booleanData) GetType() ids.StringID {
 	return dataConstants.BooleanDataID
 }
-func (booleanData *booleanData) ZeroValue() data.DataI {
+func (booleanData *booleanData) ZeroValue() data.Data {
 	return NewBooleanData(false)
 }
 func (booleanData *booleanData) GenerateHashID() ids.HashID {

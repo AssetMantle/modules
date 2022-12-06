@@ -30,10 +30,10 @@ var _ ids.PropertyID = (*propertyID)(nil)
 
 func (propertyID *propertyID) IsPropertyID() {}
 func (propertyID *propertyID) GetKey() ids.StringID {
-	return propertyID.GetKeyID()
+	return propertyID.KeyID
 }
 func (propertyID *propertyID) GetType() ids.StringID {
-	return propertyID.GetTypeID()
+	return propertyID.TypeID
 }
 func (propertyID *propertyID) Bytes() []byte {
 	var Bytes []byte

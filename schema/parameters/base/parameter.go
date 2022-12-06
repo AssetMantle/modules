@@ -13,7 +13,7 @@ import (
 
 type parameter struct {
 	ID        ids.StringID `json:"id"`
-	Data      data.DataI   `json:"data"`
+	Data      data.Data    `json:"data"`
 	validator func(interface{}) error
 }
 
@@ -40,18 +40,18 @@ func (parameter parameter) Validate() error {
 func (parameter parameter) GetID() ids.ID {
 	return parameter.ID
 }
-func (parameter parameter) GetData() data.DataI {
+func (parameter parameter) GetData() data.Data {
 	return parameter.Data
 }
 func (parameter parameter) GetValidator() func(interface{}) error {
 	return parameter.validator
 }
-func (parameter parameter) Mutate(data data.DataI) parameters.Parameter {
+func (parameter parameter) Mutate(data data.Data) parameters.Parameter {
 	parameter.Data = data
 	return parameter
 }
 
-func NewParameter(id ids.StringID, data data.DataI, validator func(interface{}) error) parameters.Parameter {
+func NewParameter(id ids.StringID, data data.Data, validator func(interface{}) error) parameters.Parameter {
 	return parameter{
 		ID:        id,
 		Data:      data,

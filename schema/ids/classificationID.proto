@@ -1,0 +1,10 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/classificationID.proto";
+
+message ClassificationID {
+  oneof impl {
+    base.ClassificationID classificationID = 1;
+  }
+}

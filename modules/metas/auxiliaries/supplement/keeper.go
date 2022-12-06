@@ -6,7 +6,7 @@ package supplement
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/modules/metas/internal/key"
+	"github.com/AssetMantle/modules/modules/metas/module/key"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/data/utilities"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -34,7 +34,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		} else {
 			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(property.GetDataID()))
 			if Mappable := metas.Get(key.NewKey(property.GetDataID())); Mappable != nil {
-				propertyList = propertyList.Add(baseProperties.NewMetaProperty(property.GetKey(), Mappable.(data.DataI)))
+				propertyList = propertyList.Add(baseProperties.NewMetaProperty(property.GetKey(), Mappable.(data.Data)))
 			}
 		}
 	}

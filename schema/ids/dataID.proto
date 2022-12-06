@@ -1,0 +1,10 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/dataID.proto";
+
+message DataID {
+  oneof impl {
+    DataID dataID = 1;
+  }
+}

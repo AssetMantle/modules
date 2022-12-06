@@ -22,7 +22,7 @@ func TestReadData(t *testing.T) {
 	fromAddress1 := "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
 	fromAccAddress, _ := types.AccAddressFromBech32(fromAddress)
 	fromAccAddress1, _ := types.AccAddressFromBech32(fromAddress1)
-	dataList := make([]data.DataI, 2)
+	dataList := make([]data.Data, 2)
 	dataList[0] = base.NewAccAddressData(fromAccAddress)
 	dataList[1] = base.NewAccAddressData(fromAccAddress1)
 
@@ -32,7 +32,7 @@ func TestReadData(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    data.DataI
+		want    data.Data
 		wantErr bool
 	}{
 		// TODO:  fix after issue #50 fix, https://github.com/AssetMantle/modules/issues/50

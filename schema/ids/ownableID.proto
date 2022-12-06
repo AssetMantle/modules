@@ -1,0 +1,10 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/ownableID.proto";
+
+message OwnableID {
+  oneof impl {
+    base.OwnableID ownableID = 1;
+  }
+}

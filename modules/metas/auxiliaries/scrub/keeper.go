@@ -6,7 +6,7 @@ package scrub
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
+	"github.com/AssetMantle/modules/modules/metas/module/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"

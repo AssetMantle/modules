@@ -175,7 +175,7 @@ func Test_accAddressesToData(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want []data.DataI
+		want []data.Data
 	}{
 		// {"+ve", args{}, },
 	}

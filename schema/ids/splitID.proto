@@ -1,0 +1,10 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/propertyID.proto";
+
+message PropertyID {
+  oneof impl {
+    base.PropertyID propertyID = 1;
+  }
+}

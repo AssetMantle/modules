@@ -1,0 +1,10 @@
+syntax = "proto3";
+package base;
+import "schema/data/data.proto";
+
+
+message Listable{
+  oneof impl{
+    Data data = 1;
+  }
+}
