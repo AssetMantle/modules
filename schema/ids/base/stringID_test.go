@@ -20,8 +20,8 @@ func TestNewStringID(t *testing.T) {
 		args args
 		want ids.StringID
 	}{
-
-		{"+ve", args{"ID"}, NewStringID("ID")},
+		{"+ve", args{"ID"}, stringID{"ID"}},
+		{"+ve", args{"S|ID"}, stringID{"S|ID"}}, //TODO: It should fail
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

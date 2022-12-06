@@ -45,6 +45,8 @@ func TestReadData(t *testing.T) {
 		{"Dec Data", args{"D|100"}, base.NewDecData(types.NewDec(100)), false},
 		{"Bool Data", args{"B|true"}, base.NewBooleanData(true), false},
 		{"AccAddress data", args{"A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"}, base.NewAccAddressData(fromAccAddress), false},
+		{"String Data", args{"S|S,|newFact"}, base.NewStringData("S,|newFact"), true},
+		{"List Data String", args{"L|S|,TestData,S|,Test"}, base.NewListData(baseLists.NewDataList([]data.Data{base.NewStringData("S|,TestData"), base.NewStringData("S|,Test")}...)), true},
 	}
 
 	for _, tt := range tests {
