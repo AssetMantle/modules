@@ -17,15 +17,15 @@ import (
 	"github.com/AssetMantle/modules/schema/data/base"
 )
 
-func TestReadData(t *testing.T) {
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAddress1 := "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
-	fromAccAddress, _ := types.AccAddressFromBech32(fromAddress)
-	fromAccAddress1, _ := types.AccAddressFromBech32(fromAddress1)
-	dataList := make([]data.Data, 2)
-	dataList[0] = base.NewAccAddressData(fromAccAddress)
-	dataList[1] = base.NewAccAddressData(fromAccAddress1)
+var (
+	fromAddress        = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
+	fromAddress1       = "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
+	fromAccAddress, _  = types.AccAddressFromBech32(fromAddress)
+	fromAccAddress1, _ = types.AccAddressFromBech32(fromAddress1)
+	dataList           = []data.Data{base.NewAccAddressData(fromAccAddress), base.NewAccAddressData(fromAccAddress1)}
+)
 
+func TestReadData(t *testing.T) {
 	type args struct {
 		dataString string
 	}
@@ -205,7 +205,8 @@ func Test_readIDData(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve nil", args{}, base.IDDataPrototype(), false},
-		{"+ve string", args{"testDataString"}, base.NewIDData(baseIDs.NewStringID("testDataString")), false},
+		{"+", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewIDData(baseIDs.NewStringID("L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")), false},
+		{"-ve string with special char", args{"testDataString|,"}, base.NewIDData(baseIDs.NewStringID("testDataString|,")), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
