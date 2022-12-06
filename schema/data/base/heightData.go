@@ -38,7 +38,6 @@ func (heightData heightData) String() string {
 	return strconv.FormatInt(heightData.Value.Get(), 10)
 }
 
-// TODO test
 func (heightData heightData) Bytes() []byte {
 	bytes := make([]byte, 8)
 	binary.LittleEndian.PutUint64(bytes, uint64(heightData.Get().Get()))
