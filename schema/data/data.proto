@@ -11,12 +11,12 @@ import "schema/data/base/stringDataI.proto";
 
 message Data{
   oneof impl{
-    AccAddressData accAddressData = 1;
-    BooleanData booleanData = 2;
-    DecData decData = 3;
-    HeightData heightData = 4;
-    IDData idData = 5;
-    ListData listData = 6;
-    StringData stringData = 7;
+    AccAddressDataI accAddressData = 1;
+    BooleanDataI booleanData = 2;
+    DecDataI decData = 3;
+    HeightDataI heightData = 4;
+    IdDataI idData = 5;
+    ListDataI listData = 6;
+    StringDataI stringData = 7;
   }
 }

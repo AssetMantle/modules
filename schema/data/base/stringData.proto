@@ -1,8 +1,6 @@
 syntax = "proto3";
 package base;
 
-import "schema/data/base/stringData.proto";
-
 message StringData{
   string value = 1;
 }
