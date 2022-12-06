@@ -3,59 +3,58 @@ package base
 import (
 	"bytes"
 
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
-
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type maintainerID base.MaintainerID
+var _ ids.MaintainerID = (*MaintainerIDI_MaintainerID)(nil)
 
-var _ ids.MaintainerID = (*maintainerID)(nil)
-
-func (maintainerID *maintainerID) IsMaintainerID() {}
-func (maintainerID *maintainerID) String() string {
-	return maintainerID.HashId.String()
+func (maintainerID *MaintainerIDI_MaintainerID) IsMaintainerID() {}
+func (maintainerID *MaintainerIDI_MaintainerID) String() string {
+	return maintainerID.MaintainerID.String()
 }
-func (maintainerID *maintainerID) Bytes() []byte {
-	return maintainerID.HashId.Bytes()
+func (maintainerID *MaintainerIDI_MaintainerID) Bytes() []byte {
+	return maintainerID.MaintainerID.HashId.Bytes()
 }
-func (maintainerID *maintainerID) Compare(listable traits.Listable) int {
+func (maintainerID *MaintainerIDI_MaintainerID) Compare(listable traits.Listable) int {
 	return bytes.Compare(maintainerID.Bytes(), maintainerIDFromInterface(listable).Bytes())
 }
 
-func maintainerIDFromInterface(i interface{}) *hashID {
+func maintainerIDFromInterface(i interface{}) *MaintainerIDI_MaintainerID {
 	switch value := i.(type) {
-	case hashID:
-		return &value
+	case *MaintainerIDI_MaintainerID:
+		return value
 	default:
 		panic(errorConstants.MetaDataError)
 	}
 }
-func NewMaintainerID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.MaintainerID {
-	return &maintainerID{
-		HashId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*hashID),
+func GenerateMaintainerID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.MaintainerID {
+	return NewMaintainerID(GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()))
+}
+func NewMaintainerID(hashID ids.HashID) ids.MaintainerID {
+	return &MaintainerIDI{
+		Impl: &MaintainerIDI_MaintainerID{
+			MaintainerID: &MaintainerID{
+				HashId: hashID.(*HashIDI),
+			},
+		},
 	}
 }
 
 func PrototypeMaintainerID() ids.MaintainerID {
-	return &maintainerID{
-		HashId: PrototypeHashID().(*hashID),
-	}
+	return NewMaintainerID(PrototypeHashID())
 }
 
 func ReadMaintainerID(maintainerIDString string) (ids.MaintainerID, error) {
 	if hashID, err := ReadHashID(maintainerIDString); err == nil {
-		return &maintainerID{
-			HashId: hashID.(*hashID),
-		}, nil
+		return NewMaintainerID(hashID), nil
 	}
 
 	if maintainerIDString == "" {
 		return PrototypeMaintainerID(), nil
 	}
 
-	return &maintainerID{}, errorConstants.MetaDataError
+	return PrototypeMaintainerID(), errorConstants.MetaDataError
 }

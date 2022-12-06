@@ -6,7 +6,6 @@ package base
 import (
 	"bytes"
 
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
 	ids2 "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
@@ -39,17 +38,17 @@ func assetIDFromInterface(i interface{}) *assetID {
 }
 
 func (assetID *assetID) Bytes() []byte {
-	return assetID.AssetID.HashId.IdBytes
+	return assetID.AssetID.HashId.GetHashID().IdBytes
 }
 func GenerateAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
-	return NewAssetID(GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(ids2.HashID))
+	return NewAssetID(GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()))
 }
 
-func NewAssetID(hashID hashIDI) ids.AssetID {
-	return &assetIDI{
-		Impl: &ids2.AssetIDI_AssetID{
-			AssetID: &base.AssetID{
-				HashId: NewHashID(),
+func NewAssetID(hashID ids.HashID) ids.AssetID {
+	return &AssetIDI{
+		Impl: &AssetIDI_AssetID{
+			AssetID: &AssetID{
+				HashId: hashID.(*HashIDI),
 			},
 		},
 	}

@@ -18,7 +18,7 @@ import (
 func createTestInputForMesaProperty() (ids.StringID, ids.PropertyID, data.Data, properties.Property) {
 	testKey := base.NewStringID("PropertyID")
 	testData := baseData.NewStringData("Data")
-	testPropertyID := base.NewPropertyID(testKey, testData.GetType())
+	testPropertyID := base.GeneratePropertyID(testKey, testData.GetType())
 	testProperty := NewMesaProperty(testKey, testData)
 	return testKey, testPropertyID, testData, testProperty
 }
@@ -123,8 +123,8 @@ func Test_mesaProperty_Compare(t *testing.T) {
 		want   int
 	}{
 		// TODO: Add test cases.
-		{"+ve compare with property with no Data", fields{testMesaPropertyID, testData.GetID()}, args{mesaProperty{PropertyID: base.NewPropertyID(base.NewStringID("PropertyID"), base.NewStringID("S"))}}, 0},
-		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{mesaProperty{PropertyID: base.NewPropertyID(base.NewStringID("PropertyID"), base.NewStringID("S")), DataID: baseData.NewStringData("Data2").GetID()}}, 0},
+		{"+ve compare with property with no Data", fields{testMesaPropertyID, testData.GetID()}, args{mesaProperty{PropertyID: base.GeneratePropertyID(base.NewStringID("PropertyID"), base.NewStringID("S"))}}, 0},
+		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{mesaProperty{PropertyID: base.GeneratePropertyID(base.NewStringID("PropertyID"), base.NewStringID("S")), DataID: baseData.NewStringData("Data2").GetID()}}, 0},
 		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{testMesaProperty}, 0},
 	}
 	for _, tt := range tests {

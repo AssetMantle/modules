@@ -3,53 +3,44 @@ package base
 import (
 	"bytes"
 
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
-
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//
-// // TODO rename to something more appropriate
-// type ownableID struct {
-//	ids.StringID
-// }
-type ownableID base.OwnableID
+var _ ids.OwnableID = (*OwnableIDI_OwnableID)(nil)
 
-func (ownableID *ownableID) String() string {
-	// TODO implement me
-	panic("implement me")
+func (ownableID *OwnableIDI_OwnableID) String() string {
+	return ownableID.OwnableID.StringId.String()
 }
-
-var _ ids.OwnableID = (*ownableID)(nil)
-
-func (ownableID *ownableID) Bytes() []byte {
-	return ownableID.StringId.Bytes()
+func (ownableID *OwnableIDI_OwnableID) Bytes() []byte {
+	return ownableID.OwnableID.StringId.Bytes()
 }
-func (ownableID *ownableID) IsOwnableID() {}
-func (ownableID *ownableID) Compare(listable traits.Listable) int {
+func (ownableID *OwnableIDI_OwnableID) IsOwnableID() {}
+func (ownableID *OwnableIDI_OwnableID) Compare(listable traits.Listable) int {
 	// TODO devise a better strategy to compare assetID and ownableID
 	return bytes.Compare(ownableID.Bytes(), ownableIDFromInterface(listable).Bytes())
 }
 func ownableIDFromInterface(i interface{}) ids.OwnableID {
 	switch value := i.(type) {
-	case ownableID:
-		return &value
+	case ids.OwnableID:
+		return value
 	default:
 		panic(constants.MetaDataError)
 	}
 }
 func NewOwnableID(stringID ids.StringID) ids.OwnableID {
-	return &ownableID{
-		StringId: stringID.(*stringID),
+	return &OwnableIDI{
+		Impl: &OwnableIDI_OwnableID{
+			OwnableID: &OwnableID{
+				StringId: stringID.(*StringIDI),
+			},
+		},
 	}
 }
 
 func PrototypeOwnableID() ids.OwnableID {
-	return &ownableID{
-		StringId: PrototypeStringID().(*stringID),
-	}
+	return NewOwnableID(PrototypeStringID())
 }
 
 func ReadOwnableID(ownableIDString string) (ids.OwnableID, error) {
@@ -58,7 +49,5 @@ func ReadOwnableID(ownableIDString string) (ids.OwnableID, error) {
 		return assetID, nil
 	}
 
-	return &ownableID{
-		StringId: NewStringID(ownableIDString).(*stringID),
-	}, nil
+	return NewOwnableID(NewStringID(ownableIDString)), nil
 }

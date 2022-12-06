@@ -6,9 +6,6 @@ import (
 	"encoding/base64"
 	"sort"
 
-	ids2 "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids"
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
-
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -18,25 +15,24 @@ import (
 // type hashID struct {
 //	IdBytes []byte
 // }
-type hashID base.HashID
 
-var _ ids.HashID = (*hashID)(nil)
+var _ ids.HashID = (*HashIDI_HashID)(nil)
 
-func (hashID *hashID) String() string {
+func (hashID *HashIDI_HashID) String() string {
 	return (hashID).String()
 }
 
-func (hashID *hashID) IsHashID() {}
+func (hashID *HashIDI_HashID) IsHashID() {}
 
-func (hashID *hashID) Bytes() []byte {
-	return hashID.IdBytes
+func (hashID *HashIDI_HashID) Bytes() []byte {
+	return hashID.HashID.IdBytes
 }
-func (hashID *hashID) Compare(listable traits.Listable) int {
+func (hashID *HashIDI_HashID) Compare(listable traits.Listable) int {
 	return bytes.Compare(hashID.Bytes(), hashIDFromInterface(listable).Bytes())
 }
-func hashIDFromInterface(i interface{}) *hashID {
+func hashIDFromInterface(i interface{}) *HashIDI_HashID {
 	switch value := i.(type) {
-	case *hashID:
+	case *HashIDI_HashID:
 		return value
 	default:
 		panic(constants.MetaDataError)
@@ -69,9 +65,9 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 	return NewHashID(hash.Sum(nil))
 }
 func NewHashID(idBytes []byte) ids.HashID {
-	return &hashIDI{
-		Impl: &ids2.HashID_HashID{
-			HashID: &base.HashID{
+	return &HashIDI{
+		Impl: &HashIDI_HashID{
+			HashID: &HashID{
 				IdBytes: idBytes,
 			},
 		},
@@ -83,12 +79,12 @@ func PrototypeHashID() ids.HashID {
 
 func ReadHashID(hashIDString string) (ids.HashID, error) {
 	if hashBytes, err := base64.URLEncoding.DecodeString(hashIDString); err == nil {
-		return &hashID{IdBytes: hashBytes}, nil
+		return NewHashID(hashBytes), nil
 	}
 
 	if hashIDString == "" {
 		return nil, nil
 	}
 
-	return &hashID{}, constants.IncorrectFormat
+	return PrototypeHashID(), constants.IncorrectFormat
 }

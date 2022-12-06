@@ -59,7 +59,7 @@ func NewMetaProperty(key ids.StringID, data data.Data) properties.MetaProperty {
 		panic(errorConstants.MetaDataError)
 	}
 	return metaProperty{
-		PropertyID: baseIDs.NewPropertyID(key, data.GetType()),
+		PropertyID: baseIDs.GeneratePropertyID(key, data.GetType()),
 		Data:       data,
 	}
 }

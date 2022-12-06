@@ -6,33 +6,26 @@ package base
 import (
 	"strings"
 
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
-
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type stringID base.StringID
+var _ ids.StringID = (*StringIDI_StringID)(nil)
 
-func (stringID *stringID) String() string {
-	// TODO implement me
-	panic("implement me")
+func (stringID *StringIDI_StringID) String() string {
+	return stringID.StringID.String()
 }
-
-var _ ids.StringID = (*stringID)(nil)
-
-func (stringID *stringID) IsStringID() {}
-
-func (stringID *stringID) Bytes() []byte {
-	return []byte(stringID.IdString)
+func (stringID *StringIDI_StringID) IsStringID() {}
+func (stringID *StringIDI_StringID) Bytes() []byte {
+	return []byte(stringID.String())
 }
-func (stringID *stringID) Compare(listable traits.Listable) int {
+func (stringID *StringIDI_StringID) Compare(listable traits.Listable) int {
 	return strings.Compare(stringID.String(), stringIDFromInterface(listable).String())
 }
-func stringIDFromInterface(i interface{}) *stringID {
+func stringIDFromInterface(i interface{}) *StringIDI_StringID {
 	switch value := i.(type) {
-	case *stringID:
+	case *StringIDI_StringID:
 		return value
 	default:
 		panic(constants.MetaDataError)
@@ -40,11 +33,15 @@ func stringIDFromInterface(i interface{}) *stringID {
 }
 
 func NewStringID(idString string) ids.StringID {
-	return &stringID{IdString: idString}
+	return &StringIDI{
+		Impl: &StringIDI_StringID{
+			StringID: &StringID{
+				IdString: idString,
+			},
+		},
+	}
 }
 
 func PrototypeStringID() ids.StringID {
-	return &stringID{
-		IdString: "",
-	}
+	return NewStringID("")
 }

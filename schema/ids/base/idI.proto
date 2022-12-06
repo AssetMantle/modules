@@ -13,7 +13,7 @@ import "schema/ids/base/propertyIDI.proto";
 import "schema/ids/base/splitIDI.proto";
 import "schema/ids/base/stringIDI.proto";
 
-message ID {
+message IDI {
   oneof impl {
     AssetIDI AssetID = 1;
     ClassificationIDI ClassificationID = 2;

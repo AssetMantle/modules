@@ -3,63 +3,58 @@ package base
 import (
 	"bytes"
 
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
-
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type orderID base.OrderID
+var _ ids.OrderID = (*OrderIDI_OrderID)(nil)
 
-var _ ids.OrderID = (*orderID)(nil)
-
-func (orderID *orderID) String() string {
-	// TODO implement me
-	panic("implement me")
+func (orderID *OrderIDI_OrderID) String() string {
+	return orderID.OrderID.String()
 }
-func (orderID *orderID) Compare(listable traits.Listable) int {
+func (orderID *OrderIDI_OrderID) Compare(listable traits.Listable) int {
 	return bytes.Compare(orderID.Bytes(), orderIDFromInterface(listable).Bytes())
 }
-
-func (orderID *orderID) Bytes() []byte {
-	return orderID.OrderId.Bytes()
+func (orderID *OrderIDI_OrderID) Bytes() []byte {
+	return orderID.OrderID.OrderId.Bytes()
 }
-
-func (orderID *orderID) IsOrderID() {}
-
-func orderIDFromInterface(i interface{}) *orderID {
+func (orderID *OrderIDI_OrderID) IsOrderID() {}
+func orderIDFromInterface(i interface{}) *OrderIDI_OrderID {
 	switch value := i.(type) {
-	case orderID:
-		return &value
+	case *OrderIDI_OrderID:
+		return value
 	default:
 		panic(constants.MetaDataError)
 	}
 }
 
-func NewOrderID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.OrderID {
-	return &orderID{
-		OrderId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*hashID),
+func GenerateOrderID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.OrderID {
+	return NewOrderID(GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()))
+}
+func NewOrderID(hashID ids.HashID) ids.OrderID {
+	return &OrderIDI{
+		Impl: &OrderIDI_OrderID{
+			OrderID: &OrderID{
+				OrderId: hashID.(*HashIDI),
+			},
+		},
 	}
 }
 
 func PrototypeOrderID() ids.OrderID {
-	return &orderID{
-		OrderId: PrototypeHashID().(*hashID),
-	}
+	return NewOrderID(PrototypeHashID())
 }
 
 func ReadOrderID(orderIDString string) (ids.OrderID, error) {
 	if hashID, err := ReadHashID(orderIDString); err == nil {
-		return &orderID{
-			OrderId: hashID.(*hashID),
-		}, nil
+		return NewOrderID(hashID), nil
 	}
 
 	if orderIDString == "" {
 		return PrototypeOrderID(), nil
 	}
 
-	return &orderID{}, nil
+	return PrototypeOrderID(), nil
 }

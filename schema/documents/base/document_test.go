@@ -157,8 +157,8 @@ func Test_document_GetMutables(t *testing.T) {
 
 func Test_document_GetProperty(t *testing.T) {
 	classificationID, testImmutables, testMutables, _ := createTestInput()
-	testImmutablePropertyID := baseIDs.NewPropertyID(baseIDs.NewStringID("ID1"), baseIDs.NewStringID("ImmutableData"))
-	testMutablePropertyID := baseIDs.NewPropertyID(baseIDs.NewStringID("ID2"), baseIDs.NewStringID("MutableData"))
+	testImmutablePropertyID := baseIDs.GeneratePropertyID(baseIDs.NewStringID("ID1"), baseIDs.NewStringID("ImmutableData"))
+	testMutablePropertyID := baseIDs.GeneratePropertyID(baseIDs.NewStringID("ID2"), baseIDs.NewStringID("MutableData"))
 
 	type fields struct {
 		ClassificationID ids.ClassificationID

@@ -3,8 +3,6 @@ package base
 import (
 	"bytes"
 
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
-
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
@@ -16,54 +14,56 @@ import (
 //	ids.HashID
 // }
 
-type identityID base.IdentityID
+var _ ids.IdentityID = (*IdentityIDI_IdentityID)(nil)
 
-var _ ids.IdentityID = (*identityID)(nil)
-
-func (identityID *identityID) String() string {
-	return identityID.HashId.String()
+func (identityID *IdentityIDI_IdentityID) String() string {
+	return identityID.IdentityID.HashId.String()
 }
 
 // TODO deprecate
-func (identityID *identityID) IsIdentityID() {}
+func (identityID *IdentityIDI_IdentityID) IsIdentityID() {}
 
-func (identityID *identityID) Bytes() []byte {
-	return identityID.HashId.Bytes()
+func (identityID *IdentityIDI_IdentityID) Bytes() []byte {
+	return identityID.IdentityID.HashId.Bytes()
 }
-func (identityID *identityID) Compare(listable traits.Listable) int {
-	return bytes.Compare(identityID.Bytes(), identityIDFromInterface(listable).HashId.Bytes())
+func (identityID *IdentityIDI_IdentityID) Compare(listable traits.Listable) int {
+	return bytes.Compare(identityID.Bytes(), identityIDFromInterface(listable).Bytes())
 }
-func (identityID *identityID) GetHashID() ids.HashID {
-	return identityID.HashId
+func (identityID *IdentityIDI_IdentityID) GetHashID() ids.HashID {
+	return identityID.IdentityID.HashId
 }
-func identityIDFromInterface(i interface{}) identityID {
+func identityIDFromInterface(i interface{}) *IdentityIDI_IdentityID {
 	switch value := i.(type) {
-	case identityID:
+	case *IdentityIDI_IdentityID:
 		return value
 	default:
 		panic(errorConstants.MetaDataError)
 	}
 }
 
-func NewIdentityID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.IdentityID {
-	return &identityID{
-		HashId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*hashID),
+func GenerateIdentityID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.IdentityID {
+	return NewIdentityID(GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()))
+}
+
+func NewIdentityID(hashID ids.HashID) ids.IdentityID {
+	return &IdentityIDI{
+		Impl: &IdentityIDI_IdentityID{
+			IdentityID: &IdentityID{
+				HashId: hashID.(*HashIDI),
+			},
+		},
 	}
 }
 
 func PrototypeIdentityID() ids.IdentityID {
-	return &identityID{
-		HashId: PrototypeHashID().(*hashID),
-	}
+	return NewIdentityID(PrototypeHashID())
 }
 
 func ReadIdentityID(identityIDString string) (ids.IdentityID, error) {
 
 	if hashID, err := ReadHashID(identityIDString); err == nil {
-		return &identityID{
-			HashId: hashID.(*hashID),
-		}, nil
+		return NewIdentityID(hashID), nil
 	}
 
-	return &identityID{}, errorConstants.IncorrectFormat
+	return PrototypeIdentityID(), errorConstants.IncorrectFormat
 }
