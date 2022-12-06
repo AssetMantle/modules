@@ -42,7 +42,7 @@ func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (h
 	}
 }
 func (*QueryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
-	if dataID, err := baseIDs.ReadDataID(vars[Query().GetName()]); err != nil {
+	if dataID, err := baseIDs.ReadDataID(vars[Query.GetName()]); err != nil {
 		return &QueryRequest{}, err
 	} else {
 		return newQueryRequest(dataID), nil

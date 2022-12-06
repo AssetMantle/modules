@@ -5,13 +5,15 @@ package meta
 
 import (
 	"context"
+
+	"github.com/cosmos/cosmos-sdk/client"
+	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+
 	"github.com/AssetMantle/modules/modules/metas/module/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
-	"github.com/cosmos/cosmos-sdk/client"
-	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 )
 
 type Configurator struct{}
@@ -26,20 +28,17 @@ func (c Configurator) ConfigureGRPCGatewayHandler(clientCtx client.Context, mux 
 
 var _ helpers.GRPCConfigurator = &Configurator{}
 
-func Query() helpers.Query {
-	query := baseHelpers.NewQuery(
-		"metas",
-		"",
-		"",
+var Query = baseHelpers.NewQuery(
+	"metas",
+	"",
+	"",
 
-		module.Name,
+	module.Name,
 
-		requestPrototype,
-		responsePrototype,
-		keeperPrototype,
-		Configurator{},
+	requestPrototype,
+	responsePrototype,
+	keeperPrototype,
+	Configurator{},
 
-		constants.DataID,
-	)
-	return query
-}
+	constants.DataID,
+)
