@@ -1,7 +1,7 @@
 syntax = "proto3";
 package base;
 
-message DecData {
+message DecDataI {
   oneof impl {
     DecData dec_data = 1;
   }

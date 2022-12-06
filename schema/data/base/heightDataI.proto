@@ -2,7 +2,7 @@ syntax = "proto3";
 package base;
 
 
-message HeightData {
+message HeightDataI {
   oneof impl {
     HeightData height_data = 1;
   }
