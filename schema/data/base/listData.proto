@@ -1,7 +1,0 @@
-syntax = "proto3";
-package base;
-import "schema/lists/base/list.proto";
-
-message ListData{
-  List value = 1;
-}

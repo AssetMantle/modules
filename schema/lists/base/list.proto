@@ -1,8 +1,0 @@
-syntax = "proto3";
-package base;
-
-import "google/protobuf/any.proto";
-
-message List {
-  repeated google.protobuf.Any data = 1;
-}

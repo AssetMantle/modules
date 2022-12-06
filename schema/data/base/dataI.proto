@@ -5,7 +5,6 @@ import "schema/data/base/booleanDataI.proto";
 import "schema/data/base/decDataI.proto";
 import "schema/data/base/heightDataI.proto";
 import "schema/data/base/idDataI.proto";
-import "schema/data/base/listDataI.proto";
 import "schema/data/base/stringDataI.proto";
 
 
@@ -16,7 +15,6 @@ message DataI{
     DecDataI decData = 3;
     HeightDataI heightData = 4;
     IdDataI idData = 5;
-    ListDataI listData = 6;
     StringDataI stringData = 7;
   }
 }
