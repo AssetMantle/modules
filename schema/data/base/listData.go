@@ -76,7 +76,6 @@ func (listData listData) ZeroValue() data.Data {
 	return NewListData(base.NewDataList([]data.Data{}...))
 }
 
-// TODO test
 func (listData listData) GenerateHashID() ids.HashID {
 	if listData.Compare(listData.ZeroValue()) == 0 {
 		return baseIDs.GenerateHashID()
