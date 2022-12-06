@@ -77,7 +77,8 @@ func (module module) RegisterRESTRoutes(context client.Context, router *mux.Rout
 }
 func (module module) RegisterGRPCGatewayRoutes(context client.Context, serveMux *runtime.ServeMux) {
 	for _, query := range module.queriesPrototype().GetList() {
-		serveMux.Handle(query.GRPCGatewayHandler(context))
+		//serveMux.Handle(query.GRPCGatewayHandler(context))
+		query.GetGRPCConfigurator().ConfigureGRPCGatewayHandler(context, serveMux)
 	}
 }
 func (module module) GetTxCmd() *cobra.Command {
@@ -171,12 +172,13 @@ func (module module) LegacyQuerierHandler(_ *codec.LegacyAmino) sdkTypes.Querier
 }
 func (module module) RegisterServices(configurator sdkModuleTypes.Configurator) {
 	for _, query := range module.queriesPrototype().GetList() {
-		configurator.QueryServer().RegisterService(query.Service())
+		//configurator.QueryServer().RegisterService(query.Service())
+		query.GetGRPCConfigurator().ConfigureGRPCServer(configurator)
 	}
 
-	for _, transaction := range module.transactionsPrototype().GetList() {
-		configurator.MsgServer().RegisterService(transaction.Service())
-	}
+	//for _, transaction := range module.transactionsPrototype().GetList() {
+	//	configurator.MsgServer().RegisterService(transaction.Service())
+	//}
 }
 func (module module) ConsensusVersion() uint64 {
 	return module.consensusVersion

@@ -46,7 +46,7 @@ func (dataID *dataID) Compare(listable traits.Listable) int {
 	return bytes.Compare(dataID.Bytes(), dataIDFromInterface(listable).Bytes())
 }
 func (dataID *dataID) GetHashID() ids.HashID {
-	return dataID.HashId
+	return dataID.HashId.Impl.(ids.HashID)
 }
 func dataIDFromInterface(i interface{}) *dataID {
 	switch value := i.(type) {
