@@ -1,14 +1,14 @@
 package base
 
 import (
-	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
-type decDataI dataSchema.DecData
+type decDataI DecData
 
 func (d decDataI) GetID() ids.DataID {
 	return d.Impl.(data.DecData).GetID()

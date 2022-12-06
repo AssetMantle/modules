@@ -4,7 +4,6 @@
 package base
 
 import (
-	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
 	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -78,7 +77,7 @@ func DecDataPrototype() data.DecData {
 
 func NewDecData(value sdkTypes.Dec) data.DecData {
 	return &decDataI{
-		Impl: &dataSchema.DecData_DecData{
+		Impl: &base.DecDataI_DecData{
 			DecData: &base.DecData{
 				Value: value.String(),
 			},
