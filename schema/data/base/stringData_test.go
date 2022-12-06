@@ -69,7 +69,7 @@ func Test_stringData_Bytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
+		{"+ve data", fields{"data"}, []byte("data")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
