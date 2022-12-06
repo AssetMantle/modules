@@ -23,6 +23,10 @@ import (
 
 type dataID base.DataID
 
+func (dataID *dataID) String() string {
+	return stringUtilities.JoinIDStrings(dataID.Type.String(), dataID.HashId.String())
+}
+
 var _ ids.DataID = (*dataID)(nil)
 
 func (dataID *dataID) IsDataID() {
@@ -33,8 +37,8 @@ func (dataID *dataID) IsDataID() {
 // }
 func (dataID *dataID) Bytes() []byte {
 	var Bytes []byte
-	Bytes = append(Bytes, dataID.Type.Bytes()...)
-	Bytes = append(Bytes, dataID.HashId.Bytes()...)
+	Bytes = append(Bytes, dataID.Type.GetStringID().GetIdString()...)
+	Bytes = append(Bytes, dataID.HashId.GetHashID().GetIdBytes()...)
 
 	return Bytes
 }
@@ -44,9 +48,9 @@ func (dataID *dataID) Compare(listable traits.Listable) int {
 func (dataID *dataID) GetHashID() ids.HashID {
 	return dataID.HashId
 }
-func dataIDFromInterface(i interface{}) dataID {
+func dataIDFromInterface(i interface{}) *dataID {
 	switch value := i.(type) {
-	case dataID:
+	case *dataID:
 		return value
 	default:
 		panic(errorConstants.MetaDataError)

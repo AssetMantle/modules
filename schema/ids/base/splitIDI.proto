@@ -3,7 +3,7 @@ package ids;
 
 import "schema/ids/base/splitID.proto";
 
-message SplitID {
+message SplitIDI {
   oneof impl {
     base.SplitID splitID = 1;
   }

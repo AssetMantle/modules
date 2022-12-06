@@ -5,5 +5,5 @@ import (
 	qualifiedConstants "github.com/AssetMantle/modules/schema/qualified/constants"
 )
 
-var NubClassificationID = baseIDs.NewClassificationID(qualifiedConstants.NubImmutables, qualifiedConstants.NubMutables)
-var MaintainerClassificationID = baseIDs.NewClassificationID(qualifiedConstants.MaintainerImmutables, qualifiedConstants.MaintainerMutables)
+var NubClassificationID = baseIDs.GenerateClassificationID(qualifiedConstants.NubImmutables, qualifiedConstants.NubMutables)
+var MaintainerClassificationID = baseIDs.GenerateClassificationID(qualifiedConstants.MaintainerImmutables, qualifiedConstants.MaintainerMutables)

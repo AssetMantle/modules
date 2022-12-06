@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"sort"
 
+	ids2 "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids"
 	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
 
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -19,11 +20,11 @@ import (
 // }
 type hashID base.HashID
 
+var _ ids.HashID = (*hashID)(nil)
+
 func (hashID *hashID) String() string {
 	return (hashID).String()
 }
-
-var _ ids.HashID = (*hashID)(nil)
 
 func (hashID *hashID) IsHashID() {}
 
@@ -53,7 +54,7 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 	}
 
 	if len(nonEmptyByteList) == 0 {
-		return &hashID{IdBytes: nil}
+		return NewHashID(nil)
 	}
 
 	sort.Slice(nonEmptyByteList, func(i, j int) bool { return bytes.Compare(nonEmptyByteList[i], nonEmptyByteList[j]) == -1 })
@@ -65,9 +66,17 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 		panic(err)
 	}
 
-	return &hashID{IdBytes: hash.Sum(nil)}
+	return NewHashID(hash.Sum(nil))
 }
-
+func NewHashID(idBytes []byte) ids.HashID {
+	return &hashIDI{
+		Impl: &ids2.HashID_HashID{
+			HashID: &base.HashID{
+				IdBytes: idBytes,
+			},
+		},
+	}
+}
 func PrototypeHashID() ids.HashID {
 	return GenerateHashID()
 }

@@ -3,7 +3,7 @@ package ids;
 
 import "schema/ids/base/hashID.proto";
 
-message HashID {
+message HashIDI {
   oneof impl {
     base.HashID hashID = 1;
   }

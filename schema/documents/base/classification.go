@@ -14,6 +14,6 @@ var _ documents.Classification = (*classification)(nil)
 
 func NewClassification(immutables qualified.Immutables, mutables qualified.Mutables) documents.Classification {
 	return classification{
-		Document: NewDocument(base.NewClassificationID(immutables, mutables), immutables, mutables),
+		Document: NewDocument(base.GenerateClassificationID(immutables, mutables), immutables, mutables),
 	}
 }

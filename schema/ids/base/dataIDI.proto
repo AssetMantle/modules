@@ -3,8 +3,8 @@ package ids;
 
 import "schema/ids/base/dataID.proto";
 
-message DataID {
+message DataIDI {
   oneof impl {
-    DataID dataID = 1;
+    base.DataID dataID = 1;
   }
 }
