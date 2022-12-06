@@ -26,6 +26,13 @@ type query struct {
 	requestPrototype  func() helpers.QueryRequest
 	responsePrototype func() helpers.QueryResponse
 	keeperPrototype   func() helpers.QueryKeeper
+	Configurator      helpers.GRPCConfigurator
+}
+
+var _ helpers.Query = (*query)(nil)
+
+func (query query) GetGRPCConfigurator() helpers.GRPCConfigurator {
+	return query.Configurator
 }
 
 func (query query) GRPCGatewayHandler(context client.Context) (method string, pattern runtime.Pattern, handlerFunc runtime.HandlerFunc) {
@@ -37,8 +44,6 @@ func (query query) Service() (*grpc.ServiceDesc, interface{}) {
 	// TODO implement me
 	panic("implement me")
 }
-
-var _ helpers.Query = (*query)(nil)
 
 func (query query) GetName() string { return query.name }
 func (query query) Command() *cobra.Command {
@@ -116,7 +121,7 @@ func (query query) query(queryRequest helpers.QueryRequest, context client.Conte
 	return context.QueryWithData("custom"+"/"+query.moduleName+"/"+query.name, bytes)
 }
 
-func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, flagList ...helpers.CLIFlag) helpers.Query {
+func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, configurator helpers.GRPCConfigurator, flagList ...helpers.CLIFlag) helpers.Query {
 	return query{
 		name:              name,
 		cliCommand:        NewCLICommand(name, short, long, flagList),
@@ -124,5 +129,6 @@ func NewQuery(name string, short string, long string, moduleName string, request
 		requestPrototype:  requestPrototype,
 		responsePrototype: responsePrototype,
 		keeperPrototype:   keeperPrototype,
+		Configurator:      configurator,
 	}
 }

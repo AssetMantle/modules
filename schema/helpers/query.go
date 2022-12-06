@@ -22,4 +22,5 @@ type Query interface {
 	GRPCGatewayHandler(client.Context) (method string, pattern runtime.Pattern, handlerFunc runtime.HandlerFunc)
 	Service() (*grpc.ServiceDesc, interface{})
 	Initialize(Mapper, Parameters, ...interface{}) Query
+	GetGRPCConfigurator() GRPCConfigurator
 }
