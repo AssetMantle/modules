@@ -4,7 +4,6 @@
 package base
 
 import (
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data"
@@ -15,14 +14,12 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type decData base.DecData
+var _ data.DecData = (*DecDataI_DecData)(nil)
 
-var _ data.DecData = (*decData)(nil)
-
-func (decData *decData) GetID() ids.DataID {
+func (decData *DecDataI_DecData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(decData)
 }
-func (decData *decData) Compare(listable traits.Listable) int {
+func (decData *DecDataI_DecData) Compare(listable traits.Listable) int {
 	compareDecData, err := decDataFromInterface(listable)
 	if err != nil {
 		panic(err)
@@ -36,49 +33,49 @@ func (decData *decData) Compare(listable traits.Listable) int {
 
 	return 0
 }
-func (decData *decData) String() string {
-	return decData.Value
+func (decData *DecDataI_DecData) String() string {
+	return decData.DecData.Value
 }
-func (decData *decData) Bytes() []byte {
-	dec, _ := sdkTypes.NewDecFromStr(decData.Value)
+func (decData *DecDataI_DecData) Bytes() []byte {
+	dec, _ := sdkTypes.NewDecFromStr(decData.DecData.Value)
 
 	return sdkTypes.SortableDecBytes(dec)
 }
-func (decData *decData) GetType() ids.StringID {
+func (decData *DecDataI_DecData) GetType() ids.StringID {
 	return dataConstants.DecDataID
 }
-func (decData *decData) ZeroValue() data.Data {
+func (decData *DecDataI_DecData) ZeroValue() data.Data {
 	return NewDecData(sdkTypes.ZeroDec())
 }
-func (decData *decData) GenerateHashID() ids.HashID {
+func (decData *DecDataI_DecData) GenerateHashID() ids.HashID {
 	if decData.Compare(decData.ZeroValue()) == 0 {
 		return baseIDs.GenerateHashID()
 	}
 
 	return baseIDs.GenerateHashID(decData.Bytes())
 }
-func (decData *decData) Get() sdkTypes.Dec {
-	dec, _ := sdkTypes.NewDecFromStr(decData.Value)
+func (decData *DecDataI_DecData) Get() sdkTypes.Dec {
+	dec, _ := sdkTypes.NewDecFromStr(decData.DecData.Value)
 	return dec
 }
 
-func decDataFromInterface(listable traits.Listable) (*decData, error) {
+func decDataFromInterface(listable traits.Listable) (*DecDataI_DecData, error) {
 	switch value := listable.(type) {
-	case *decData:
+	case *DecDataI_DecData:
 		return value, nil
 	default:
-		return &decData{}, constants.MetaDataError
+		return nil, constants.MetaDataError
 	}
 }
 
 func DecDataPrototype() data.DecData {
-	return (&decDataI{}).ZeroValue().(data.DecData)
+	return NewDecData(sdkTypes.ZeroDec()).ZeroValue().(data.DecData)
 }
 
 func NewDecData(value sdkTypes.Dec) data.DecData {
-	return &decDataI{
-		Impl: &base.DecDataI_DecData{
-			DecData: &base.DecData{
+	return &DecDataI{
+		Impl: &DecDataI_DecData{
+			DecData: &DecData{
 				Value: value.String(),
 			},
 		},
