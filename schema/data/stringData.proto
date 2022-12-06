@@ -1,0 +1,10 @@
+syntax = "proto3";
+package data;
+
+import "schema/data/base/stringData.proto";
+
+message StringData {
+  oneof impl {
+    base.StringData string_data = 1;
+  }
+}

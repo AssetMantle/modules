@@ -1,0 +1,10 @@
+syntax = "proto3";
+package data;
+
+import "schema/data/base/accAddressData.proto";
+
+message AccAddressData {
+  oneof impl {
+    base.AccAddressData acc_address_data = 1;
+  }
+}
