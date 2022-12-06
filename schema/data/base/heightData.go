@@ -4,6 +4,7 @@
 package base
 
 import (
+	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
 	"encoding/binary"
 	"strconv"
 
@@ -68,11 +69,15 @@ func heightDataFromInterface(listable traits.Listable) (*heightData, error) {
 }
 
 func HeightDataPrototype() data.HeightData {
-	return (&heightData{}).ZeroValue().(data.HeightData)
+	return (&heightDataI{}).ZeroValue().(data.HeightData)
 }
 
 func NewHeightData(value types.Height) data.HeightData {
-	return &heightData{
-		Value: value.Get(),
+	return &heightDataI{
+		Impl: &dataSchema.HeightData_HeightData{
+			HeightData: &base.HeightData{
+				Value: value.Get(),
+			},
+		},
 	}
 }

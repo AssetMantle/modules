@@ -4,6 +4,7 @@
 package base
 
 import (
+	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
 	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -72,11 +73,15 @@ func decDataFromInterface(listable traits.Listable) (*decData, error) {
 }
 
 func DecDataPrototype() data.DecData {
-	return (&decData{}).ZeroValue().(data.DecData)
+	return (&decDataI{}).ZeroValue().(data.DecData)
 }
 
 func NewDecData(value sdkTypes.Dec) data.DecData {
-	return &decData{
-		Value: value.String(),
+	return &decDataI{
+		Impl: &dataSchema.DecData_DecData{
+			DecData: &base.DecData{
+				Value: value.String(),
+			},
+		},
 	}
 }

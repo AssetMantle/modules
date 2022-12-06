@@ -4,6 +4,7 @@
 package base
 
 import (
+	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
 	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
 	"bytes"
 
@@ -65,11 +66,15 @@ func accAddressDataFromInterface(listable traits.Listable) (*accAddressData, err
 }
 
 func AccAddressDataPrototype() data.AccAddressData {
-	return (&accAddressData{}).ZeroValue().(data.AccAddressData)
+	return (&accAddressDataI{}).ZeroValue().(data.AccAddressData)
 }
 
 func NewAccAddressData(value sdkTypes.AccAddress) data.AccAddressData {
-	return &accAddressData{
-		Value: value,
-	}
+	//return &accAddressData{
+	//	Value: value,
+	//}
+	return &accAddressDataI{
+		Impl: &dataSchema.AccAddressData_AccAddressData{
+			AccAddressData: &base.AccAddressData{Value: value},
+		}}
 }

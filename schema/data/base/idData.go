@@ -35,7 +35,7 @@ func (idData *idData) String() string {
 	return idData.Value.String()
 }
 func (idData *idData) Bytes() []byte {
-	iiiiiii
+	return idData.Bytes()
 }
 func (idData *idData) GetType() ids.StringID {
 	return dataConstants.IDDataID
@@ -47,7 +47,7 @@ func (idData *idData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(idData.Bytes())
 }
 func (idData *idData) Get() ids.ID {
-	return idData.Value
+	return idData.(data.IDData)
 }
 
 func idDataFromInterface(listable traits.Listable) (*idData, error) {
@@ -60,7 +60,7 @@ func idDataFromInterface(listable traits.Listable) (*idData, error) {
 }
 
 func IDDataPrototype() data.IDData {
-	return (&idData{}).ZeroValue().(data.IDData)
+	return (&idDataI{}).ZeroValue().(data.IDData)
 }
 
 func NewIDData(value ids.ID) data.IDData {

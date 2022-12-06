@@ -4,6 +4,7 @@
 package base
 
 import (
+	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
 	"strconv"
 
 	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
@@ -75,11 +76,19 @@ func booleanDataFromInterface(listable traits.Listable) (*booleanData, error) {
 }
 
 func BooleanDataPrototype() data.BooleanData {
-	return (&booleanData{}).ZeroValue().(data.BooleanData)
+	return (&booleanDataI{}).ZeroValue().(data.BooleanData)
 }
 
 func NewBooleanData(value bool) data.BooleanData {
-	return &booleanData{
-		Value: value,
+	//return &booleanData{
+	//	Value: value,
+	//}
+
+	return &booleanDataI{
+		Impl: &dataSchema.BooleanData_BooleanData{
+			BooleanData: &base.BooleanData{
+				Value: value,
+			},
+		},
 	}
 }

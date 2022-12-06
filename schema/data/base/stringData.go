@@ -4,6 +4,7 @@
 package base
 
 import (
+	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
 	"strings"
 
 	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
@@ -60,11 +61,15 @@ func stringDataFromInterface(listable traits.Listable) (*stringData, error) {
 }
 
 func StringDataPrototype() data.StringData {
-	return (&stringData{}).ZeroValue().(data.StringData)
+	return (&stringDataI{}).ZeroValue().(data.StringData)
 }
 
 func NewStringData(value string) data.StringData {
-	return &stringData{
-		Value: value,
+	return &stringDataI{
+		Impl: &dataSchema.StringData_StringData{
+			StringData: &base.StringData{
+				Value: value,
+			},
+		},
 	}
 }
