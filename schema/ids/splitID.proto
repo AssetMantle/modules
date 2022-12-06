@@ -1,10 +1,10 @@
 syntax = "proto3";
 package ids;
 
-import "schema/ids/base/propertyID.proto";
+import "schema/ids/base/splitID.proto";
 
-message PropertyID {
+message SplitID {
   oneof impl {
-    base.PropertyID propertyID = 1;
+    base.SplitID splitID = 1;
   }
 }

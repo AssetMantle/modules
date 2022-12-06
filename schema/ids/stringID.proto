@@ -1,0 +1,10 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/stringID.proto";
+
+message StringID {
+  oneof impl {
+    base.StringID stringID = 1;
+  }
+}

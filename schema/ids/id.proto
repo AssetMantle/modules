@@ -1,17 +1,17 @@
 syntax = "proto3";
 package ids;
 
-import "schema/ids/base/assetID.proto";
-import "schema/ids/base/classificationID.proto";
+import "schema/ids/assetID.proto";
+import "schema/ids/classificationID.proto";
 import "schema/ids/dataID.proto";
-import "schema/ids/base/hashID.proto";
-import "schema/ids/base/identityID.proto";
-import "schema/ids/base/maintainerID.proto";
-import "schema/ids/base/orderID.proto";
-import "schema/ids/base/ownableID.proto";
-import "schema/ids/base/propertyID.proto";
-import "schema/ids/base/splitID.proto";
-import "schema/ids/base/stringID.proto";
+import "schema/ids/hashID.proto";
+import "schema/ids/identityID.proto";
+import "schema/ids/maintainerID.proto";
+import "schema/ids/orderID.proto";
+import "schema/ids/ownableID.proto";
+import "schema/ids/propertyID.proto";
+import "schema/ids/splitID.proto";
+import "schema/ids/stringID.proto";
 
 message ID {
   oneof impl {
