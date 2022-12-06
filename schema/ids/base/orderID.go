@@ -3,27 +3,35 @@ package base
 import (
 	"bytes"
 
+	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
+
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ ids.OrderID = (*OrderID)(nil)
+type orderID base.OrderID
 
-func (orderID *OrderID) Compare(listable traits.Listable) int {
+var _ ids.OrderID = (*orderID)(nil)
+
+func (orderID *orderID) String() string {
+	// TODO implement me
+	panic("implement me")
+}
+func (orderID *orderID) Compare(listable traits.Listable) int {
 	return bytes.Compare(orderID.Bytes(), orderIDFromInterface(listable).Bytes())
 }
 
-func (orderID *OrderID) Bytes() []byte {
+func (orderID *orderID) Bytes() []byte {
 	return orderID.OrderId.Bytes()
 }
 
-func (orderID OrderID) IsOrderID() {}
+func (orderID *orderID) IsOrderID() {}
 
-func orderIDFromInterface(i interface{}) *OrderID {
+func orderIDFromInterface(i interface{}) *orderID {
 	switch value := i.(type) {
-	case OrderID:
+	case orderID:
 		return &value
 	default:
 		panic(constants.MetaDataError)
@@ -31,21 +39,21 @@ func orderIDFromInterface(i interface{}) *OrderID {
 }
 
 func NewOrderID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.OrderID {
-	return &OrderID{
-		OrderId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
+	return &orderID{
+		OrderId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*hashID),
 	}
 }
 
 func PrototypeOrderID() ids.OrderID {
-	return &OrderID{
-		OrderId: PrototypeHashID().(*HashID),
+	return &orderID{
+		OrderId: PrototypeHashID().(*hashID),
 	}
 }
 
 func ReadOrderID(orderIDString string) (ids.OrderID, error) {
 	if hashID, err := ReadHashID(orderIDString); err == nil {
-		return &OrderID{
-			OrderId: hashID.(*HashID),
+		return &orderID{
+			OrderId: hashID.(*hashID),
 		}, nil
 	}
 
@@ -53,5 +61,5 @@ func ReadOrderID(orderIDString string) (ids.OrderID, error) {
 		return PrototypeOrderID(), nil
 	}
 
-	return &OrderID{}, nil
+	return &orderID{}, nil
 }

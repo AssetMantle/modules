@@ -70,5 +70,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) QueryRequest {
 	}
 }
 func newQueryRequest(dataID ids.DataID) helpers.QueryRequest {
-	return QueryRequest{DataID: dataID.(*baseIDs.DataID)}
+	return QueryRequest{DataID: dataID.(*baseIDs.dataID)}
 }

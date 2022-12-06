@@ -21,30 +21,30 @@ type accAddressData base.AccAddressData
 
 var _ data.AccAddressData = (*accAddressData)(nil)
 
-func (accAddressData accAddressData) GetID() ids.DataID {
+func (accAddressData *accAddressData) GetID() ids.DataID {
 	return baseIDs.NewDataID(accAddressData)
 }
-func (accAddressData accAddressData) Compare(listable traits.Listable) int {
+func (accAddressData *accAddressData) Compare(listable traits.Listable) int {
 	compareAccAddressData, err := accAddressDataFromInterface(listable)
 	if err != nil {
 		panic(err)
 	}
 
-	return bytes.Compare(accAddressData.Value.Bytes(), compareAccAddressData.Value.Bytes())
+	return bytes.Compare(accAddressData.Value, compareAccAddressData.Value)
 }
-func (accAddressData accAddressData) String() string {
-	return accAddressData.Value.String()
+func (accAddressData *accAddressData) String() string {
+	return sdkTypes.AccAddress(accAddressData.Value).String()
 }
-func (accAddressData accAddressData) Bytes() []byte {
-	return accAddressData.Value.Bytes()
+func (accAddressData *accAddressData) Bytes() []byte {
+	return sdkTypes.AccAddress(accAddressData.Value).Bytes()
 }
-func (accAddressData accAddressData) GetType() ids.StringID {
+func (accAddressData *accAddressData) GetType() ids.StringID {
 	return dataConstants.AccAddressDataID
 }
-func (accAddressData accAddressData) ZeroValue() data.DataI {
+func (accAddressData *accAddressData) ZeroValue() data.DataI {
 	return NewAccAddressData(sdkTypes.AccAddress{})
 }
-func (accAddressData accAddressData) GenerateHashID() ids.HashID {
+func (accAddressData *accAddressData) GenerateHashID() ids.HashID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
 		// TODO test
 		return baseIDs.GenerateHashID()
@@ -52,25 +52,25 @@ func (accAddressData accAddressData) GenerateHashID() ids.HashID {
 
 	return baseIDs.GenerateHashID(accAddressData.Bytes())
 }
-func (accAddressData accAddressData) Get() sdkTypes.AccAddress {
+func (accAddressData *accAddressData) Get() sdkTypes.AccAddress {
 	return accAddressData.Value
 }
 
-func accAddressDataFromInterface(listable traits.Listable) (accAddressData, error) {
+func accAddressDataFromInterface(listable traits.Listable) (*accAddressData, error) {
 	switch value := listable.(type) {
-	case accAddressData:
+	case *accAddressData:
 		return value, nil
 	default:
-		return accAddressData{}, errorConstants.MetaDataError
+		return &accAddressData{}, errorConstants.MetaDataError
 	}
 }
 
 func AccAddressDataPrototype() data.AccAddressData {
-	return accAddressData{}.ZeroValue().(data.AccAddressData)
+	return (&accAddressData{}).ZeroValue().(data.AccAddressData)
 }
 
 func NewAccAddressData(value sdkTypes.AccAddress) data.AccAddressData {
-	return accAddressData{
+	return &accAddressData{
 		Value: value,
 	}
 }

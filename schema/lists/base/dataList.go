@@ -4,18 +4,23 @@
 package base
 
 import (
+	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/lists/base"
+
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type dataList struct {
-	lists.List
+type dataList base.DataList
+
+func (dataList *dataList) Size() int {
+	// TODO implement me
+	panic("implement me")
 }
 
 var _ lists.DataList = (*dataList)(nil)
 
-func (dataList dataList) GetList() []data.DataI {
+func (dataList *dataList) GetList() []data.DataI {
 	DataList := make([]data.DataI, dataList.List.Size())
 
 	for i, listable := range dataList.List.Get() {
@@ -24,14 +29,14 @@ func (dataList dataList) GetList() []data.DataI {
 
 	return DataList
 }
-func (dataList dataList) Search(data data.DataI) (int, bool) {
+func (dataList *dataList) Search(data data.DataI) (int, bool) {
 	return dataList.List.Search(data)
 }
-func (dataList dataList) Add(data ...data.DataI) lists.DataList {
+func (dataList *dataList) Add(data ...data.DataI) lists.DataList {
 	dataList.List = dataList.List.Add(dataToListables(data...)...)
 	return dataList
 }
-func (dataList dataList) Remove(data ...data.DataI) lists.DataList {
+func (dataList *dataList) Remove(data ...data.DataI) lists.DataList {
 	dataList.List = dataList.List.Remove(dataToListables(data...)...)
 	return dataList
 }

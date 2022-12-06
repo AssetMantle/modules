@@ -6,6 +6,8 @@ package base
 import (
 	"bytes"
 
+	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
+
 	"github.com/AssetMantle/modules/schema/data"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -19,30 +21,32 @@ import (
 //	ids.HashID
 // }
 
-var _ ids.DataID = (*DataID)(nil)
+type dataID base.DataID
 
-func (dataID DataID) IsDataID() {
+var _ ids.DataID = (*dataID)(nil)
+
+func (dataID *dataID) IsDataID() {
 }
 
-// func (dataID DataID) String() string {
+// func (dataID *dataID) String() string {
 //	return stringUtilities.JoinIDStrings(dataID.Type.String(), dataID.HashID.String())
 // }
-func (dataID DataID) Bytes() []byte {
+func (dataID *dataID) Bytes() []byte {
 	var Bytes []byte
 	Bytes = append(Bytes, dataID.Type.Bytes()...)
 	Bytes = append(Bytes, dataID.HashId.Bytes()...)
 
 	return Bytes
 }
-func (dataID DataID) Compare(listable traits.Listable) int {
+func (dataID *dataID) Compare(listable traits.Listable) int {
 	return bytes.Compare(dataID.Bytes(), dataIDFromInterface(listable).Bytes())
 }
-func (dataID DataID) GetHashID() ids.HashID {
+func (dataID *dataID) GetHashID() ids.HashID {
 	return dataID.HashId
 }
-func dataIDFromInterface(i interface{}) DataID {
+func dataIDFromInterface(i interface{}) dataID {
 	switch value := i.(type) {
-	case DataID:
+	case dataID:
 		return value
 	default:
 		panic(errorConstants.MetaDataError)
@@ -54,16 +58,16 @@ func NewDataID(data data.DataI) ids.DataID {
 		panic(errorConstants.MetaDataError)
 	}
 
-	return &DataID{
-		Type:   data.GetType().(*StringID),
-		HashId: data.GenerateHashID().(*HashID),
+	return &dataID{
+		Type:   data.GetType().(*stringID),
+		HashId: data.GenerateHashID().(*hashID),
 	}
 }
 
 func PrototypeDataID() ids.DataID {
-	return &DataID{
-		Type:   PrototypeStringID().(*StringID),
-		HashId: PrototypeHashID().(*HashID),
+	return &dataID{
+		Type:   PrototypeStringID().(*stringID),
+		HashId: PrototypeHashID().(*hashID),
 	}
 }
 
@@ -71,9 +75,9 @@ func ReadDataID(dataIDString string) (ids.DataID, error) {
 	if typeAndHashIDString := stringUtilities.SplitCompositeIDString(dataIDString); len(typeAndHashIDString) == 2 {
 		Type := NewStringID(typeAndHashIDString[0])
 		if hashID, err := ReadHashID(typeAndHashIDString[1]); err == nil {
-			return &DataID{
-				Type:   Type.(*StringID),
-				HashId: hashID.(*HashID),
+			return &dataID{
+				Type:   Type.(*stringID),
+				HashId: hashID.(*hashID),
 			}, nil
 		}
 	}
@@ -82,5 +86,5 @@ func ReadDataID(dataIDString string) (ids.DataID, error) {
 		return PrototypeDataID(), nil
 	}
 
-	return &DataID{}, errorConstants.MetaDataError
+	return &dataID{}, errorConstants.MetaDataError
 }

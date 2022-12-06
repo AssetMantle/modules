@@ -6,6 +6,8 @@ import (
 	"encoding/base64"
 	"sort"
 
+	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
+
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -15,20 +17,25 @@ import (
 // type hashID struct {
 //	IdBytes []byte
 // }
+type hashID base.HashID
 
-var _ ids.HashID = (*HashID)(nil)
+func (hashID *hashID) String() string {
+	return (hashID).String()
+}
 
-func (hashID HashID) IsHashID() {}
+var _ ids.HashID = (*hashID)(nil)
 
-func (hashID HashID) Bytes() []byte {
+func (hashID *hashID) IsHashID() {}
+
+func (hashID *hashID) Bytes() []byte {
 	return hashID.IdBytes
 }
-func (hashID HashID) Compare(listable traits.Listable) int {
+func (hashID *hashID) Compare(listable traits.Listable) int {
 	return bytes.Compare(hashID.Bytes(), hashIDFromInterface(listable).Bytes())
 }
-func hashIDFromInterface(i interface{}) *HashID {
+func hashIDFromInterface(i interface{}) *hashID {
 	switch value := i.(type) {
-	case *HashID:
+	case *hashID:
 		return value
 	default:
 		panic(constants.MetaDataError)
@@ -46,7 +53,7 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 	}
 
 	if len(nonEmptyByteList) == 0 {
-		return &HashID{IdBytes: nil}
+		return &hashID{IdBytes: nil}
 	}
 
 	sort.Slice(nonEmptyByteList, func(i, j int) bool { return bytes.Compare(nonEmptyByteList[i], nonEmptyByteList[j]) == -1 })
@@ -58,7 +65,7 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 		panic(err)
 	}
 
-	return &HashID{IdBytes: hash.Sum(nil)}
+	return &hashID{IdBytes: hash.Sum(nil)}
 }
 
 func PrototypeHashID() ids.HashID {
@@ -67,12 +74,12 @@ func PrototypeHashID() ids.HashID {
 
 func ReadHashID(hashIDString string) (ids.HashID, error) {
 	if hashBytes, err := base64.URLEncoding.DecodeString(hashIDString); err == nil {
-		return &HashID{IdBytes: hashBytes}, nil
+		return &hashID{IdBytes: hashBytes}, nil
 	}
 
 	if hashIDString == "" {
 		return nil, nil
 	}
 
-	return &HashID{}, constants.IncorrectFormat
+	return &hashID{}, constants.IncorrectFormat
 }

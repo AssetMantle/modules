@@ -6,6 +6,8 @@ package base
 import (
 	"bytes"
 
+	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
+
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -14,57 +16,55 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type idData struct {
-	Value ids.ID `json:"value"`
-}
+type idData base.IDData
 
 var _ data.IDData = (*idData)(nil)
 
-func (idData idData) GetID() ids.DataID {
+func (idData *idData) GetID() ids.DataID {
 	return baseIDs.NewDataID(idData)
 }
-func (idData idData) Compare(listable traits.Listable) int {
+func (idData *idData) Compare(listable traits.Listable) int {
 	compareIDData, err := idDataFromInterface(listable)
 	if err != nil {
 		panic(err)
 	}
 
-	return bytes.Compare(idData.Value.Bytes(), compareIDData.Value.Bytes())
+	return bytes.Compare(idData.Bytes(), compareIDData.Bytes())
 }
-func (idData idData) String() string {
+func (idData *idData) String() string {
 	return idData.Value.String()
 }
-func (idData idData) Bytes() []byte {
-	return idData.Value.Bytes()
+func (idData *idData) Bytes() []byte {
+	iiiiiii
 }
-func (idData idData) GetType() ids.StringID {
+func (idData *idData) GetType() ids.StringID {
 	return dataConstants.IDDataID
 }
-func (idData idData) ZeroValue() data.DataI {
+func (idData *idData) ZeroValue() data.DataI {
 	return NewIDData(baseIDs.NewStringID(""))
 }
-func (idData idData) GenerateHashID() ids.HashID {
+func (idData *idData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(idData.Bytes())
 }
-func (idData idData) Get() ids.ID {
+func (idData *idData) Get() ids.ID {
 	return idData.Value
 }
 
-func idDataFromInterface(listable traits.Listable) (idData, error) {
+func idDataFromInterface(listable traits.Listable) (*idData, error) {
 	switch value := listable.(type) {
-	case idData:
+	case *idData:
 		return value, nil
 	default:
-		return idData{}, constants.MetaDataError
+		return &idData{}, constants.MetaDataError
 	}
 }
 
 func IDDataPrototype() data.IDData {
-	return idData{}.ZeroValue().(data.IDData)
+	return (&idData{}).ZeroValue().(data.IDData)
 }
 
 func NewIDData(value ids.ID) data.IDData {
-	return idData{
+	return &idData{
 		Value: value,
 	}
 }

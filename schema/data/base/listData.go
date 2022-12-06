@@ -6,41 +6,41 @@ package base
 import (
 	"bytes"
 
+	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
+
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/utilities/helpers"
 )
 
-type listData struct {
-	Value lists.DataList `json:"value"`
-}
+type listData base.ListData
 
 var _ data.ListData = (*listData)(nil)
 
-func (listData listData) Get() []data.DataI {
+func (listData *listData) Get() []data.DataI {
 	return listData.Value.GetList()
 }
-func (listData listData) Search(data data.DataI) (int, bool) {
+func (listData *listData) Search(data data.DataI) (int, bool) {
 	return listData.Value.Search(data)
 }
-func (listData listData) Add(data ...data.DataI) data.ListData {
+func (listData *listData) Add(data ...data.DataI) data.ListData {
 	listData.Value = listData.Value.Add(data...)
 	return listData
 }
-func (listData listData) Remove(data ...data.DataI) data.ListData {
+func (listData *listData) Remove(data ...data.DataI) data.ListData {
 	listData.Value = listData.Value.Remove(data...)
 	return listData
 }
-func (listData listData) GetID() ids.DataID {
+func (listData *listData) GetID() ids.DataID {
 	return baseIDs.NewDataID(listData)
 }
-func (listData listData) Compare(listable traits.Listable) int {
+func (listData *listData) Compare(listable traits.Listable) int {
 	compareListData, err := listDataFromInterface(listable)
 	if err != nil {
 		panic(err)
@@ -49,7 +49,7 @@ func (listData listData) Compare(listable traits.Listable) int {
 	// TODO check for optimization
 	return bytes.Compare(listData.Bytes(), compareListData.Bytes())
 }
-func (listData listData) String() string {
+func (listData *listData) String() string {
 	dataStrings := make([]string, listData.Value.Size())
 
 	for i, datum := range listData.Value.GetList() {
@@ -58,7 +58,7 @@ func (listData listData) String() string {
 
 	return helpers.JoinListStrings(dataStrings...)
 }
-func (listData listData) Bytes() []byte {
+func (listData *listData) Bytes() []byte {
 	bytesList := make([][]byte, listData.Value.Size())
 
 	for i, datum := range listData.Value.GetList() {
@@ -69,15 +69,15 @@ func (listData listData) Bytes() []byte {
 	// TODO see if separator required
 	return bytes.Join(bytesList, nil)
 }
-func (listData listData) GetType() ids.StringID {
+func (listData *listData) GetType() ids.StringID {
 	return dataConstants.ListDataID
 }
-func (listData listData) ZeroValue() data.DataI {
-	return NewListData(base.NewDataList([]data.DataI{}...))
+func (listData *listData) ZeroValue() data.DataI {
+	return NewListData(baseLists.NewDataList([]data.DataI{}...))
 }
 
 // TODO test
-func (listData listData) GenerateHashID() ids.HashID {
+func (listData *listData) GenerateHashID() ids.HashID {
 	if listData.Compare(listData.ZeroValue()) == 0 {
 		return baseIDs.GenerateHashID()
 	}

@@ -20,10 +20,10 @@ type booleanData base.BooleanData
 
 var _ data.BooleanData = (*booleanData)(nil)
 
-func (booleanData booleanData) GetID() ids.DataID {
+func (booleanData *booleanData) GetID() ids.DataID {
 	return baseIDs.NewDataID(booleanData)
 }
-func (booleanData booleanData) Compare(listable traits.Listable) int {
+func (booleanData *booleanData) Compare(listable traits.Listable) int {
 	compareBooleanData, err := booleanDataFromInterface(listable)
 	if err != nil {
 		panic(err)
@@ -37,49 +37,49 @@ func (booleanData booleanData) Compare(listable traits.Listable) int {
 
 	return -1
 }
-func (booleanData booleanData) String() string {
+func (booleanData *booleanData) String() string {
 	return strconv.FormatBool(booleanData.Value)
 }
 
 // TODO test
-func (booleanData booleanData) Bytes() []byte {
+func (booleanData *booleanData) Bytes() []byte {
 	if booleanData.Get() {
 		return []byte{0x1}
 	}
 	return []byte{0x0}
 }
-func (booleanData booleanData) GetType() ids.StringID {
+func (booleanData *booleanData) GetType() ids.StringID {
 	return dataConstants.BooleanDataID
 }
-func (booleanData booleanData) ZeroValue() data.DataI {
+func (booleanData *booleanData) ZeroValue() data.DataI {
 	return NewBooleanData(false)
 }
-func (booleanData booleanData) GenerateHashID() ids.HashID {
+func (booleanData *booleanData) GenerateHashID() ids.HashID {
 	if booleanData.Compare(booleanData.ZeroValue()) == 0 {
 		return baseIDs.GenerateHashID()
 	}
 
 	return baseIDs.GenerateHashID(booleanData.Bytes())
 }
-func (booleanData booleanData) Get() bool {
+func (booleanData *booleanData) Get() bool {
 	return booleanData.Value
 }
 
-func booleanDataFromInterface(listable traits.Listable) (booleanData, error) {
+func booleanDataFromInterface(listable traits.Listable) (*booleanData, error) {
 	switch value := listable.(type) {
-	case booleanData:
+	case *booleanData:
 		return value, nil
 	default:
-		return booleanData{}, constants.MetaDataError
+		return &booleanData{}, constants.MetaDataError
 	}
 }
 
 func BooleanDataPrototype() data.BooleanData {
-	return booleanData{}.ZeroValue().(data.BooleanData)
+	return (&booleanData{}).ZeroValue().(data.BooleanData)
 }
 
 func NewBooleanData(value bool) data.BooleanData {
-	return booleanData{
+	return &booleanData{
 		Value: value,
 	}
 }

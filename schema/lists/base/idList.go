@@ -4,18 +4,19 @@
 package base
 
 import (
+	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/lists/base"
+
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type idList struct {
-	lists.List
-}
+type idList base.IDList
 
 var _ lists.IDList = (*idList)(nil)
 
-func (idList idList) GetList() []ids.ID {
+func (idList *idList) GetList() []ids.ID {
+
 	returnIDList := make([]ids.ID, idList.List.Size())
 
 	for i, listable := range idList.List.Get() {
@@ -24,14 +25,14 @@ func (idList idList) GetList() []ids.ID {
 
 	return returnIDList
 }
-func (idList idList) Search(id ids.ID) (index int, found bool) {
+func (idList *idList) Search(id ids.ID) (index int, found bool) {
 	return idList.List.Search(id)
 }
-func (idList idList) Add(ids ...ids.ID) lists.IDList {
+func (idList *idList) Add(ids ...ids.ID) lists.IDList {
 	idList.List = idList.List.Add(idsToListables(ids...)...)
 	return idList
 }
-func (idList idList) Remove(ids ...ids.ID) lists.IDList {
+func (idList *idList) Remove(ids ...ids.ID) lists.IDList {
 	idList.List = idList.List.Remove(idsToListables(ids...)...)
 	return idList
 }

@@ -6,6 +6,8 @@ package base
 import (
 	"bytes"
 
+	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
+
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -17,28 +19,35 @@ import (
 //	Type ids.StringID
 // }
 
-var _ ids.PropertyID = (*PropertyID)(nil)
+type propertyID base.PropertyID
 
-func (propertyID PropertyID) IsPropertyID() {}
-func (propertyID PropertyID) GetKey() ids.StringID {
+func (propertyID *propertyID) String() string {
+	// TODO implement me
+	panic("implement me")
+}
+
+var _ ids.PropertyID = (*propertyID)(nil)
+
+func (propertyID *propertyID) IsPropertyID() {}
+func (propertyID *propertyID) GetKey() ids.StringID {
 	return propertyID.GetKeyID()
 }
-func (propertyID PropertyID) GetType() ids.StringID {
+func (propertyID *propertyID) GetType() ids.StringID {
 	return propertyID.GetTypeID()
 }
-func (propertyID PropertyID) Bytes() []byte {
+func (propertyID *propertyID) Bytes() []byte {
 	var Bytes []byte
 	Bytes = append(Bytes, propertyID.KeyID.Bytes()...)
 	Bytes = append(Bytes, propertyID.TypeID.Bytes()...)
 
 	return Bytes
 }
-func (propertyID PropertyID) Compare(listable traits.Listable) int {
+func (propertyID *propertyID) Compare(listable traits.Listable) int {
 	return bytes.Compare(propertyID.Bytes(), propertyIDFromInterface(listable).Bytes())
 }
-func propertyIDFromInterface(listable traits.Listable) *PropertyID {
+func propertyIDFromInterface(listable traits.Listable) *propertyID {
 	switch value := listable.(type) {
-	case *PropertyID:
+	case *propertyID:
 		return value
 	default:
 		panic(errorConstants.MetaDataError)
@@ -46,8 +55,8 @@ func propertyIDFromInterface(listable traits.Listable) *PropertyID {
 }
 
 func NewPropertyID(key, Type ids.StringID) ids.PropertyID {
-	return &PropertyID{
-		KeyID:  key.(*StringID),
-		TypeID: Type.(*StringID),
+	return &propertyID{
+		KeyID:  key.(*stringID),
+		TypeID: Type.(*stringID),
 	}
 }

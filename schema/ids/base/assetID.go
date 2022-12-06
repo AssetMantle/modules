@@ -6,50 +6,56 @@ package base
 import (
 	"bytes"
 
+	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/ids/base"
+
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ ids.AssetID = (*AssetID)(nil)
+type assetID base.AssetID
 
-func (assetID AssetID) Compare(listable traits.Listable) int {
+var _ ids.AssetID = (*assetID)(nil)
+
+func (assetID *assetID) String() string {
+	return assetID.String()
+}
+func (assetID *assetID) Compare(listable traits.Listable) int {
 	return bytes.Compare(assetID.Bytes(), assetIDFromInterface(listable).HashId.Bytes())
 
 }
+func (assetID *assetID) IsOwnableID() {}
+func (assetID *assetID) IsAssetID()   {}
 
-func (assetID AssetID) IsOwnableID() {}
-func (assetID AssetID) IsAssetID()   {}
-
-func assetIDFromInterface(i interface{}) *AssetID {
+func assetIDFromInterface(i interface{}) *assetID {
 	switch value := i.(type) {
-	case AssetID:
+	case assetID:
 		return &value
 	default:
 		panic(errorConstants.MetaDataError)
 	}
 }
 
-func (assetID AssetID) Bytes() []byte {
-	return assetID.HashId.Bytes()
+func (assetID *assetID) Bytes() []byte {
+	return assetID.HashId.GetIdBytes()
 }
 func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
-	return &AssetID{
-		HashId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
+	return &assetID{
+		HashId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()),
 	}
 }
 
 func PrototypeAssetID() ids.AssetID {
-	return &AssetID{
-		HashId: PrototypeHashID().(*HashID),
+	return &assetID{
+		HashId: PrototypeHashID(),
 	}
 }
 
 func ReadAssetID(assetIDString string) (ids.AssetID, error) {
 	if hashID, err := ReadHashID(assetIDString); err == nil {
-		return &AssetID{
-			HashId: hashID.(*HashID),
+		return &assetID{
+			HashId: hashID,
 		}, nil
 	}
 
@@ -57,5 +63,5 @@ func ReadAssetID(assetIDString string) (ids.AssetID, error) {
 		return PrototypeAssetID(), nil
 	}
 
-	return &AssetID{}, errorConstants.MetaDataError
+	return &assetID{}, errorConstants.MetaDataError
 }
