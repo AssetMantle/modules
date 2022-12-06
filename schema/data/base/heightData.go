@@ -54,9 +54,9 @@ func (heightData *HeightDataI_HeightData) Get() types.Height {
 	return baseTypes.NewHeight(heightData.HeightData.Value)
 }
 
-func heightDataFromInterface(listable traits.Listable) (*HeightDataI_HeightData, error) {
+func heightDataFromInterface(listable traits.Listable) (*HeightDataI, error) {
 	switch value := listable.(type) {
-	case *HeightDataI_HeightData:
+	case *HeightDataI:
 		return value, nil
 	default:
 		return nil, constants.MetaDataError

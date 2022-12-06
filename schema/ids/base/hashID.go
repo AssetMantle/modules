@@ -30,9 +30,9 @@ func (hashID *HashIDI_HashID) Bytes() []byte {
 func (hashID *HashIDI_HashID) Compare(listable traits.Listable) int {
 	return bytes.Compare(hashID.Bytes(), hashIDFromInterface(listable).Bytes())
 }
-func hashIDFromInterface(i interface{}) *HashIDI_HashID {
+func hashIDFromInterface(i interface{}) *HashIDI {
 	switch value := i.(type) {
-	case *HashIDI_HashID:
+	case *HashIDI:
 		return value
 	default:
 		panic(constants.MetaDataError)

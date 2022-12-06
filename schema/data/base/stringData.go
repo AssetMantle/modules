@@ -46,9 +46,9 @@ func (stringData *StringDataI_StringData) Get() string {
 	return stringData.StringData.Value
 }
 
-func stringDataFromInterface(listable traits.Listable) (*StringDataI_StringData, error) {
+func stringDataFromInterface(listable traits.Listable) (*StringDataI, error) {
 	switch value := listable.(type) {
-	case *StringDataI_StringData:
+	case *StringDataI:
 		return value, nil
 	default:
 		return nil, constants.MetaDataError

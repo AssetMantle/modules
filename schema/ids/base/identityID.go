@@ -32,9 +32,9 @@ func (identityID *IdentityIDI_IdentityID) Compare(listable traits.Listable) int 
 func (identityID *IdentityIDI_IdentityID) GetHashID() ids.HashID {
 	return identityID.IdentityID.HashId
 }
-func identityIDFromInterface(i interface{}) *IdentityIDI_IdentityID {
+func identityIDFromInterface(i interface{}) *IdentityIDI {
 	switch value := i.(type) {
-	case *IdentityIDI_IdentityID:
+	case *IdentityIDI:
 		return value
 	default:
 		panic(errorConstants.MetaDataError)

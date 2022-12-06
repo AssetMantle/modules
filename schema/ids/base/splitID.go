@@ -27,9 +27,9 @@ func (splitID *SplitIDI_SplitID) Compare(listable traits.Listable) int {
 func (splitID *SplitIDI_SplitID) GetOwnableID() ids.ID {
 	return splitID.SplitID.OwnableId
 }
-func splitIDFromInterface(i interface{}) *SplitIDI_SplitID {
+func splitIDFromInterface(i interface{}) *SplitIDI {
 	switch value := i.(type) {
-	case *SplitIDI_SplitID:
+	case *SplitIDI:
 		return value
 	default:
 		panic(i)

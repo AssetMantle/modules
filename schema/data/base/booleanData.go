@@ -23,7 +23,7 @@ func (booleanData *BooleanDataI_BooleanData) Compare(listable traits.Listable) i
 		panic(err)
 	}
 
-	if booleanData.BooleanData.Value == compareBooleanData.BooleanData.Value {
+	if booleanData.BooleanData.Value == compareBooleanData.GetBooleanData().Value {
 		return 0
 	} else if booleanData.BooleanData.Value == true {
 		return 1
@@ -60,9 +60,9 @@ func (booleanData *BooleanDataI_BooleanData) Get() bool {
 	return booleanData.BooleanData.Value
 }
 
-func booleanDataFromInterface(listable traits.Listable) (*BooleanDataI_BooleanData, error) {
+func booleanDataFromInterface(listable traits.Listable) (*BooleanDataI, error) {
 	switch value := listable.(type) {
-	case *BooleanDataI_BooleanData:
+	case *BooleanDataI:
 		return value, nil
 	default:
 		panic(constants.MetaDataError)

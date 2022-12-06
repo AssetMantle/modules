@@ -68,7 +68,7 @@ func (transaction transaction) Command() *cobra.Command {
 
 func (transaction transaction) HandleMessage(context sdkTypes.Context, message helpers.Message) (*sdkTypes.Result, error) {
 	if transactionResponse := transaction.keeper.Transact(context, message); !transactionResponse.IsSuccessful() {
-		return nil, transactionResponse.GetError()
+		return nil, nil
 	}
 
 	return &sdkTypes.Result{Events: message.GenerateOnSuccessEvents().ToABCIEvents()}, nil
@@ -100,10 +100,10 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 		}
 
 		// TODO, allow for fully sign and broadcast txn also - commented for now
-		//if viper.GetBool(flags.FlagGenerateOnly) {
+		// if viper.GetBool(flags.FlagGenerateOnly) {
 		//	tx.WriteGeneratedTxResponse(context, responseWriter, baseReq, msg)
 		//	return
-		//}
+		// }
 	}
 }
 

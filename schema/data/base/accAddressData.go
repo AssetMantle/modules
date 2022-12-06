@@ -26,7 +26,7 @@ func (accAddressData *AccAddressDataI_AccAddressData) Compare(listable traits.Li
 	if err != nil {
 		panic(err)
 	}
-	return bytes.Compare(accAddressData.AccAddressData.Value, compareAccAddressData.AccAddressData.Value)
+	return bytes.Compare(accAddressData.AccAddressData.Value, compareAccAddressData.Bytes())
 }
 func (accAddressData *AccAddressDataI_AccAddressData) String() string {
 	return sdkTypes.AccAddress(accAddressData.AccAddressData.Value).String()
@@ -52,9 +52,9 @@ func (accAddressData *AccAddressDataI_AccAddressData) Get() sdkTypes.AccAddress 
 	return accAddressData.AccAddressData.Value
 }
 
-func accAddressDataFromInterface(listable traits.Listable) (*AccAddressDataI_AccAddressData, error) {
+func accAddressDataFromInterface(listable traits.Listable) (*AccAddressDataI, error) {
 	switch value := listable.(type) {
-	case *AccAddressDataI_AccAddressData:
+	case *AccAddressDataI:
 		return value, nil
 	default:
 		panic(errorConstants.MetaDataError)

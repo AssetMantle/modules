@@ -10,5 +10,5 @@ import (
 type Response interface {
 	proto.Message
 	IsSuccessful() bool
-	GetError() error
+	GetError() string
 }

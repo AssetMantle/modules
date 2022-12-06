@@ -28,9 +28,9 @@ func (classificationID *ClassificationIDI_ClassificationID) Compare(listable tra
 	return bytes.Compare(classificationID.Bytes(), classificationIDFromInterface(listable).Bytes())
 }
 
-func classificationIDFromInterface(i interface{}) *ClassificationIDI_ClassificationID {
+func classificationIDFromInterface(i interface{}) *ClassificationIDI {
 	switch value := i.(type) {
-	case *ClassificationIDI_ClassificationID:
+	case *ClassificationIDI:
 		return value
 	default:
 		panic(constants.MetaDataError)

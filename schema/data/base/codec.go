@@ -10,10 +10,10 @@ import (
 )
 
 func RegisterCodec(codec *codec.LegacyAmino) {
-	schema.RegisterModuleConcrete(codec, accAddressData{})
-	schema.RegisterModuleConcrete(codec, booleanData{})
-	schema.RegisterModuleConcrete(codec, decData{})
-	schema.RegisterModuleConcrete(codec, heightData{})
+	schema.RegisterModuleConcrete(codec, AccAddressData{})
+	schema.RegisterModuleConcrete(codec, BooleanData{})
+	schema.RegisterModuleConcrete(codec, DecData{})
+	schema.RegisterModuleConcrete(codec, HeightData{})
 	schema.RegisterModuleConcrete(codec, IDData{})
-	schema.RegisterModuleConcrete(codec, stringData{})
+	schema.RegisterModuleConcrete(codec, StringData{})
 }

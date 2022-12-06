@@ -59,9 +59,9 @@ func (decData *DecDataI_DecData) Get() sdkTypes.Dec {
 	return dec
 }
 
-func decDataFromInterface(listable traits.Listable) (*DecDataI_DecData, error) {
+func decDataFromInterface(listable traits.Listable) (*DecDataI, error) {
 	switch value := listable.(type) {
-	case *DecDataI_DecData:
+	case *DecDataI:
 		return value, nil
 	default:
 		return nil, constants.MetaDataError

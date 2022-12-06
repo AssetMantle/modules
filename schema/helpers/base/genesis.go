@@ -132,9 +132,9 @@ func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList
 		genesis.ParameterList = parameterList
 	}
 
-	if err := genesis.Validate(); err != nil {
-		panic(err)
-	}
+	// if err := genesis.Validate(); err != nil {
+	// 	panic(err)
+	// }
 
 	return genesis
 }

@@ -20,7 +20,7 @@ func Prototype() helpers.Module {
 	return baseHelpers.NewModule(
 		module.Name,
 		1,
-		nil,
+		Prototypee,
 		block.Prototype,
 		genesis.Prototype,
 		invariants.Prototype,
@@ -31,4 +31,7 @@ func Prototype() helpers.Module {
 		nil,
 		transactions.Prototype,
 	)
+}
+func Prototypee() helpers.Auxiliaries {
+	return baseHelpers.NewAuxiliaries()
 }

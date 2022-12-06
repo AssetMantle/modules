@@ -39,9 +39,9 @@ func (propertyID *PropertyIDI_PropertyID) Bytes() []byte {
 func (propertyID *PropertyIDI_PropertyID) Compare(listable traits.Listable) int {
 	return bytes.Compare(propertyID.Bytes(), propertyIDFromInterface(listable).Bytes())
 }
-func propertyIDFromInterface(listable traits.Listable) *PropertyIDI_PropertyID {
+func propertyIDFromInterface(listable traits.Listable) *PropertyIDI {
 	switch value := listable.(type) {
-	case *PropertyIDI_PropertyID:
+	case *PropertyIDI:
 		return value
 	default:
 		panic(errorConstants.MetaDataError)

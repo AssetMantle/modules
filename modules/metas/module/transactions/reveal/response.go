@@ -7,18 +7,10 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-type transactionResponse struct {
-	Success bool  `json:"success"`
-	Error   error `json:"error" swaggertype:"string"`
-}
+var _ helpers.TransactionResponse = (*TransactionResponse)(nil)
 
-var _ helpers.TransactionResponse = (*transactionResponse)(nil)
-
-func (transactionResponse transactionResponse) IsSuccessful() bool {
+func (transactionResponse *TransactionResponse) IsSuccessful() bool {
 	return transactionResponse.Success
-}
-func (transactionResponse transactionResponse) GetError() error {
-	return transactionResponse.Error
 }
 func newTransactionResponse(error error) helpers.TransactionResponse {
 	success := true
@@ -26,8 +18,8 @@ func newTransactionResponse(error error) helpers.TransactionResponse {
 		success = false
 	}
 
-	return transactionResponse{
+	return &TransactionResponse{
 		Success: success,
-		Error:   error,
+		Error:   error.Error(),
 	}
 }

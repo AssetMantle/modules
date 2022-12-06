@@ -21,9 +21,9 @@ func (orderID *OrderIDI_OrderID) Bytes() []byte {
 	return orderID.OrderID.OrderId.Bytes()
 }
 func (orderID *OrderIDI_OrderID) IsOrderID() {}
-func orderIDFromInterface(i interface{}) *OrderIDI_OrderID {
+func orderIDFromInterface(i interface{}) *OrderIDI {
 	switch value := i.(type) {
-	case *OrderIDI_OrderID:
+	case *OrderIDI:
 		return value
 	default:
 		panic(constants.MetaDataError)

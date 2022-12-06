@@ -22,9 +22,9 @@ func (maintainerID *MaintainerIDI_MaintainerID) Compare(listable traits.Listable
 	return bytes.Compare(maintainerID.Bytes(), maintainerIDFromInterface(listable).Bytes())
 }
 
-func maintainerIDFromInterface(i interface{}) *MaintainerIDI_MaintainerID {
+func maintainerIDFromInterface(i interface{}) *MaintainerIDI {
 	switch value := i.(type) {
-	case *MaintainerIDI_MaintainerID:
+	case *MaintainerIDI:
 		return value
 	default:
 		panic(errorConstants.MetaDataError)

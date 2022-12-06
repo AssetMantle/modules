@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/modules/metas/module/transactions/reveal"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -19,8 +18,6 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
-
-type TransactionRequest reveal.TransactionRequest
 
 var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
 

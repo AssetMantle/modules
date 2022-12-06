@@ -18,9 +18,7 @@ import (
 //	ids.DataID `json:"dataID" valid:"required~required field dataID missing"`
 // }
 
-type queryRequest QueryRequest
-
-var _ helpers.QueryRequest = (*queryRequest)(nil)
+var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
 // Validate godoc
 // @Summary Search for metadata by meta ID
@@ -32,28 +30,28 @@ var _ helpers.QueryRequest = (*queryRequest)(nil)
 // @Success 200 {object} queryResponse "Message for a successful query response"
 // @Failure default  {object}  queryResponse "Message for an unexpected error response."
 // @Router /metas/metas/{dataID} [get]
-func (queryRequest *queryRequest) Validate() error {
+func (queryRequest *QueryRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(queryRequest)
 	return err
 }
-func (*queryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
+func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
 	if dataID, err := baseIDs.ReadDataID(cliCommand.ReadString(constants.DataID)); err != nil {
-		return &queryRequest{}, err
+		return &QueryRequest{}, err
 	} else {
 		return newQueryRequest(dataID), nil
 	}
 }
-func (*queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
+func (*QueryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
 	if dataID, err := baseIDs.ReadDataID(vars[Query().GetName()]); err != nil {
-		return &queryRequest{}, err
+		return &QueryRequest{}, err
 	} else {
 		return newQueryRequest(dataID), nil
 	}
 }
-func (queryRequest *queryRequest) Encode() ([]byte, error) {
+func (queryRequest *QueryRequest) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryRequest)
 }
-func (queryRequest *queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
+func (queryRequest *QueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
 	if err := common.Codec.UnmarshalJSON(bytes, &queryRequest); err != nil {
 		return nil, err
 	}
@@ -61,16 +59,16 @@ func (queryRequest *queryRequest) Decode(bytes []byte) (helpers.QueryRequest, er
 	return queryRequest, nil
 }
 func requestPrototype() helpers.QueryRequest {
-	return &queryRequest{}
+	return &QueryRequest{}
 }
-func queryRequestFromInterface(request helpers.QueryRequest) *queryRequest {
+func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	switch value := request.(type) {
-	case *queryRequest:
+	case *QueryRequest:
 		return value
 	default:
-		return &queryRequest{}
+		return &QueryRequest{}
 	}
 }
 func newQueryRequest(dataID ids.DataID) helpers.QueryRequest {
-	return &queryRequest{DataID: dataID}
+	return &QueryRequest{DataID: dataID.(*baseIDs.DataIDI)}
 }

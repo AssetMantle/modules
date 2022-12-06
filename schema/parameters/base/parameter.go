@@ -4,8 +4,6 @@
 package base
 
 import (
-	"encoding/json"
-
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/parameters"
@@ -20,12 +18,7 @@ type parameter struct {
 var _ parameters.Parameter = (*parameter)(nil)
 
 func (parameter parameter) String() string {
-	bytes, err := json.Marshal(parameter)
-	if err != nil {
-		return err.Error()
-	}
-
-	return string(bytes)
+	return parameter.ID.String()
 }
 func (parameter parameter) Equal(compareParameter parameters.Parameter) bool {
 	if compareParameter != nil && parameter.ID.Compare(compareParameter.GetID()) == 0 && parameter.Data.GetType().Compare(compareParameter.GetData().GetType()) == 0 && parameter.Data.Compare(compareParameter.GetData()) == 0 {

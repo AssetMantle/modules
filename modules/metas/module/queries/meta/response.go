@@ -4,26 +4,19 @@
 package meta
 
 import (
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/modules/metas/module/queries/meta"
-
 	"github.com/AssetMantle/modules/modules/metas/module/common"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-type queryResponse meta.QueryResponse
+var _ helpers.QueryResponse = (*QueryResponse)(nil)
 
-var _ helpers.QueryResponse = (*queryResponse)(nil)
-
-func (queryResponse *queryResponse) IsSuccessful() bool {
+func (queryResponse *QueryResponse) IsSuccessful() bool {
 	return queryResponse.Success
 }
-func (queryResponse *queryResponse) GetError() error {
-	return queryResponse.Error
-}
-func (queryResponse *queryResponse) Encode() ([]byte, error) {
+func (queryResponse *QueryResponse) Encode() ([]byte, error) {
 	return common.Codec.MarshalJSON(queryResponse)
 }
-func (queryResponse *queryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
+func (queryResponse *QueryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
 	if err := common.Codec.UnmarshalJSON(bytes, &queryResponse); err != nil {
 		return nil, err
 	}
@@ -31,7 +24,7 @@ func (queryResponse *queryResponse) Decode(bytes []byte) (helpers.QueryResponse,
 	return queryResponse, nil
 }
 func responsePrototype() helpers.QueryResponse {
-	return &queryResponse{}
+	return &QueryResponse{}
 }
 func newQueryResponse(collection helpers.Collection, error error) helpers.QueryResponse {
 	success := true
@@ -39,9 +32,9 @@ func newQueryResponse(collection helpers.Collection, error error) helpers.QueryR
 		success = false
 	}
 
-	return &queryResponse{
+	return &QueryResponse{
 		Success: success,
-		Error:   error,
-		List:    collection.GetList(),
+		Error:   error.Error(),
+		List:    nil,
 	}
 }

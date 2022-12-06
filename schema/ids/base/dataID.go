@@ -39,9 +39,9 @@ func (dataID *DataIDI_DataID) Compare(listable traits.Listable) int {
 func (dataID *DataIDI_DataID) GetHashID() ids.HashID {
 	return dataID.DataID.HashId
 }
-func dataIDFromInterface(i interface{}) *DataIDI_DataID {
+func dataIDFromInterface(i interface{}) *DataIDI {
 	switch value := i.(type) {
-	case *DataIDI_DataID:
+	case *DataIDI:
 		return value
 	default:
 		panic(errorConstants.MetaDataError)

@@ -26,9 +26,9 @@ func (assetID *AssetIDI_AssetID) IsAssetID()   {}
 func (assetID *AssetIDI_AssetID) Bytes() []byte {
 	return assetID.AssetID.HashId.GetHashID().IdBytes
 }
-func assetIDFromInterface(i interface{}) *AssetIDI_AssetID {
+func assetIDFromInterface(i interface{}) *AssetIDI {
 	switch value := i.(type) {
-	case *AssetIDI_AssetID:
+	case *AssetIDI:
 		return value
 	default:
 		panic(errorConstants.MetaDataError)

@@ -14,7 +14,7 @@ import (
 var _ ids.StringID = (*StringIDI_StringID)(nil)
 
 func (stringID *StringIDI_StringID) String() string {
-	return stringID.StringID.String()
+	return stringID.StringID.IdString
 }
 func (stringID *StringIDI_StringID) IsStringID() {}
 func (stringID *StringIDI_StringID) Bytes() []byte {
@@ -23,9 +23,9 @@ func (stringID *StringIDI_StringID) Bytes() []byte {
 func (stringID *StringIDI_StringID) Compare(listable traits.Listable) int {
 	return strings.Compare(stringID.String(), stringIDFromInterface(listable).String())
 }
-func stringIDFromInterface(i interface{}) *StringIDI_StringID {
+func stringIDFromInterface(i interface{}) *StringIDI {
 	switch value := i.(type) {
-	case *StringIDI_StringID:
+	case *StringIDI:
 		return value
 	default:
 		panic(constants.MetaDataError)
