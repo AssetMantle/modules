@@ -1,0 +1,8 @@
+syntax = "proto3";
+package base;
+
+message BooleanData {
+  oneof impl {
+    BooleanData boolean_data = 1;
+  }
+}

@@ -1,12 +1,12 @@
 syntax = "proto3";
 package base;
-import "schema/data/base/accAddressData.proto";
-import "schema/data/base/booleanData.proto";
-import "schema/data/base/decData.proto";
-import "schema/data/base/heightData.proto";
-import "schema/data/base/idData.proto";
-import "schema/data/base/listData.proto";
-import "schema/data/base/stringData.proto";
+import "schema/data/base/accAddressDataI.proto";
+import "schema/data/base/booleanDataI.proto";
+import "schema/data/base/decDataI.proto";
+import "schema/data/base/heightDataI.proto";
+import "schema/data/base/idDataI.proto";
+import "schema/data/base/listDataI.proto";
+import "schema/data/base/stringDataI.proto";
 
 
 message Data{

@@ -4,9 +4,9 @@
 package base
 
 import (
+	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
 	"bytes"
 
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data"
@@ -29,7 +29,6 @@ func (accAddressData *accAddressData) Compare(listable traits.Listable) int {
 	if err != nil {
 		panic(err)
 	}
-
 	return bytes.Compare(accAddressData.Value, compareAccAddressData.Value)
 }
 func (accAddressData *accAddressData) String() string {
