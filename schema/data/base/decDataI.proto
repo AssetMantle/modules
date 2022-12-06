@@ -1,6 +1,8 @@
 syntax = "proto3";
 package base;
 
+import "schema/data/base/decData.proto";
+
 message DecDataI {
   oneof impl {
     DecData dec_data = 1;

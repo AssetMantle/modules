@@ -1,8 +1,10 @@
 syntax = "proto3";
 package base;
 
+import "schema/data/base/idData.proto";
+
 message IdDataI {
   oneof impl {
-    IdData id_data = 1;
+    IDData id_data = 1;
   }
 }

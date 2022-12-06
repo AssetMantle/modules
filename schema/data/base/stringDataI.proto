@@ -1,6 +1,8 @@
 syntax = "proto3";
 package base;
 
+import "schema/data/base/stringData.proto";
+
 message StringDataI {
   oneof impl {
     StringData string_data = 1;
