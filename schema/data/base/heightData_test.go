@@ -31,7 +31,7 @@ func TestNewHeightData(t *testing.T) {
 		args args
 		want data.Data
 	}{
-
+		{"+ve with nil", args{nil}, heightData{nil}},
 		{"Test for +ve int", args{baseTypes.NewHeight(100)}, heightData{baseTypes.NewHeight(100)}},
 		{"Test for +ve int", args{baseTypes.NewHeight(-100)}, heightData{baseTypes.NewHeight(-100)}},
 	}
@@ -259,6 +259,30 @@ func Test_heightData_ZeroValue(t *testing.T) {
 			if got := heightData.ZeroValue(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ZeroValue() = %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func Test_heightData_Bytes(t *testing.T) {
+	type fields struct {
+		Value types.Height
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   []byte
+	}{
+		{"+ve with ZeroHeight", fields{baseTypes.NewHeight(-1)}, baseTypes.NewHeight(-1).Bytes()},
+		{"+ve with nil", fields{nil}, []byte{}},
+		{"+ve", fields{baseTypes.NewHeight(100)}, baseTypes.NewHeight(100).Bytes()},
+		{"+ve with max int", fields{baseTypes.NewHeight(int64(^uint(0) >> 1))}, baseTypes.NewHeight(int64(^uint(0) >> 1)).Bytes()},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			heightData := heightData{
+				Value: tt.fields.Value,
+			}
+			assert.Equalf(t, tt.want, heightData.Bytes(), "Bytes()")
 		})
 	}
 }
