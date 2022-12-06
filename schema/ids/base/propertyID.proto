@@ -1,9 +1,9 @@
 syntax = "proto3";
 package base;
 
-import "schema/ids/base/stringID.proto";
+import "schema/ids/stringID.proto";
 
 message PropertyID{
-  StringID key_i_d = 1;
-  StringID type_i_d = 2;
+  ids.StringID key_i_d = 1;
+  ids.StringID type_i_d = 2;
 }

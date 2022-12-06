@@ -26,7 +26,7 @@ type Data interface {
 	traits.Listable
 }
 
-type data data2.DataI
+type data data2.Data
 
 var _ Data = (*data)(nil)
 

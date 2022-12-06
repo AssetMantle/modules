@@ -1,7 +1,7 @@
 syntax = "proto3";
 package base;
 
-import "schema/ids/base/hashID.proto";
+import "schema/ids/hashID.proto";
 message AssetID{
-  HashID hash_id = 1;
+  ids.HashID hash_id = 1;
 }

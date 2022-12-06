@@ -2,6 +2,10 @@ buf.build/gen/go/assetmantle/schema/protocolbuffers/go v1.28.1-20221206080211-fc
 buf.build/gen/go/assetmantle/schema/protocolbuffers/go v1.28.1-20221206080211-fc6ff7a0174b.4/go.mod h1:+vl1sgWgFmCkA9Op3Ef75UOthE321bO76Ox0u1FHMsA=
 buf.build/gen/go/assetmantle/schema/protocolbuffers/go v1.28.1-20221206083920-665752932899.4 h1:UwWiirbNMFmjNVvGZ9Ez5c3nHNW1IyTJgNIi1RdMEuo=
 buf.build/gen/go/assetmantle/schema/protocolbuffers/go v1.28.1-20221206083920-665752932899.4/go.mod h1:+vl1sgWgFmCkA9Op3Ef75UOthE321bO76Ox0u1FHMsA=
+buf.build/gen/go/assetmantle/schema/protocolbuffers/go v1.28.1-20221206084842-c135511ba6f8.4 h1:zYsZgmytp6zW/dIhRl0yeR9SJf8zo0rvmXX5avPE7M4=
+buf.build/gen/go/assetmantle/schema/protocolbuffers/go v1.28.1-20221206084842-c135511ba6f8.4/go.mod h1:+vl1sgWgFmCkA9Op3Ef75UOthE321bO76Ox0u1FHMsA=
+buf.build/gen/go/assetmantle/schema/protocolbuffers/go v1.28.1-20221206094745-611b207e2748.4 h1:fVAPuE7JwLamBddLzIX202q00i1geW7q1NIosjbkG04=
+buf.build/gen/go/assetmantle/schema/protocolbuffers/go v1.28.1-20221206094745-611b207e2748.4/go.mod h1:+vl1sgWgFmCkA9Op3Ef75UOthE321bO76Ox0u1FHMsA=
 buf.build/gen/go/yamnord/gogoproto/protocolbuffers/go v1.28.1-20211009004253-977a8cb0a032.4 h1:OJNlqNvKdlDOONSJ4qGO5eopPfPUwZwBCnwC1L5V0bc=
 buf.build/gen/go/yamnord/gogoproto/protocolbuffers/go v1.28.1-20211009004253-977a8cb0a032.4/go.mod h1:KvVysy2UkqhATZyt8T+YqnmsQM6GWSMuFNsfC8TbmaY=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
