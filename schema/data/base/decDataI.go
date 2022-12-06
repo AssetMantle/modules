@@ -1,37 +1,45 @@
 package base
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
-var _ data.DecData = (*DecDataI)(nil)
+type decDataI DecData
 
-func (d DecDataI) GetID() ids.DataID {
+func (d decDataI) GetID() ids.DataID {
 	return d.Impl.(data.DecData).GetID()
 }
-func (d DecDataI) Bytes() []byte {
+
+func (d decDataI) String() string {
+	return d.Impl.(data.DecData).String()
+}
+
+func (d decDataI) Bytes() []byte {
 	return d.Impl.(data.DecData).Bytes()
 }
 
-func (d DecDataI) GetType() ids.StringID {
+func (d decDataI) GetType() ids.StringID {
 	return d.Impl.(data.DecData).GetType()
 }
 
-func (d DecDataI) ZeroValue() data.Data {
+func (d decDataI) ZeroValue() data.Data {
 	return d.Impl.(data.DecData).ZeroValue()
 }
 
-func (d DecDataI) GenerateHashID() ids.HashID {
+func (d decDataI) GenerateHashID() ids.HashID {
 	return d.Impl.(data.DecData).GenerateHashID()
 }
 
-func (d DecDataI) Compare(listable traits.Listable) int {
+func (d decDataI) Compare(listable traits.Listable) int {
 	return d.Impl.(data.DecData).Compare(listable)
 }
 
-func (d DecDataI) Get() sdkTypes.Dec {
+func (d decDataI) Get() sdkTypes.Dec {
 	return d.Impl.(data.DecData).Get()
 }
+
+var _ data.DecData = (*decDataI)(nil)

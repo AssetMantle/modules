@@ -6,10 +6,6 @@ package base
 import (
 	"strings"
 
-	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
-
-	"buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data/base"
-
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -18,57 +14,55 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type stringData base.StringData
+var _ data.StringData = (*StringDataI_StringData)(nil)
 
-var _ data.StringData = (*stringData)(nil)
-
-func (stringData *stringData) GetID() ids.DataID {
+func (stringData *StringDataI_StringData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(stringData)
 }
-func (stringData *stringData) Compare(listable traits.Listable) int {
+func (stringData *StringDataI_StringData) Compare(listable traits.Listable) int {
 	compareStringData, err := stringDataFromInterface(listable)
 	if err != nil {
 		panic(err)
 	}
 
-	return strings.Compare(stringData.Value, compareStringData.Value)
+	return strings.Compare(stringData.Get(), compareStringData.Get())
 }
-func (stringData *stringData) String() string {
-	return stringData.Value
+func (stringData *StringDataI_StringData) String() string {
+	return stringData.StringData.String()
 }
-func (stringData *stringData) Bytes() []byte {
-	return []byte(stringData.Value)
+func (stringData *StringDataI_StringData) Bytes() []byte {
+	return []byte(stringData.String())
 }
-func (stringData *stringData) GetType() ids.StringID {
+func (stringData *StringDataI_StringData) GetType() ids.StringID {
 	return dataConstants.StringDataID
 }
-func (stringData *stringData) ZeroValue() data.Data {
+func (stringData *StringDataI_StringData) ZeroValue() data.Data {
 	return NewStringData("")
 }
-func (stringData *stringData) GenerateHashID() ids.HashID {
+func (stringData *StringDataI_StringData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(stringData.Bytes())
 }
-func (stringData *stringData) Get() string {
-	return stringData.Value
+func (stringData *StringDataI_StringData) Get() string {
+	return stringData.StringData.Value
 }
 
-func stringDataFromInterface(listable traits.Listable) (*stringData, error) {
+func stringDataFromInterface(listable traits.Listable) (*StringDataI_StringData, error) {
 	switch value := listable.(type) {
-	case *stringData:
+	case *StringDataI_StringData:
 		return value, nil
 	default:
-		return &stringData{}, constants.MetaDataError
+		return nil, constants.MetaDataError
 	}
 }
 
 func StringDataPrototype() data.StringData {
-	return (&stringDataI{}).ZeroValue().(data.StringData)
+	return NewStringData("")
 }
 
 func NewStringData(value string) data.StringData {
-	return &stringDataI{
-		Impl: &dataSchema.StringData_StringData{
-			StringData: &base.StringData{
+	return &StringDataI{
+		Impl: &StringDataI_StringData{
+			StringData: &StringData{
 				Value: value,
 			},
 		},

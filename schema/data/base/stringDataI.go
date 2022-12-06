@@ -1,38 +1,31 @@
 package base
 
 import (
-	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
-
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type stringDataI dataSchema.StringData
+var _ data.StringData = (*StringDataI)(nil)
 
-var _ data.StringData = (*stringDataI)(nil)
-
-func (s *stringDataI) GetID() ids.DataID {
+func (s *StringDataI) GetID() ids.DataID {
 	return s.Impl.(data.StringData).GetID()
 }
-func (s *stringDataI) String() string {
-	return s.Impl.(data.StringData).String()
-}
-func (s *stringDataI) Bytes() []byte {
+func (s *StringDataI) Bytes() []byte {
 	return s.Impl.(data.StringData).Bytes()
 }
-func (s *stringDataI) GetType() ids.StringID {
+func (s *StringDataI) GetType() ids.StringID {
 	return s.Impl.(data.StringData).GetType()
 }
-func (s *stringDataI) ZeroValue() data.Data {
+func (s *StringDataI) ZeroValue() data.Data {
 	return s.Impl.(data.StringData).ZeroValue()
 }
-func (s *stringDataI) GenerateHashID() ids.HashID {
+func (s *StringDataI) GenerateHashID() ids.HashID {
 	return s.Impl.(data.StringData).GenerateHashID()
 }
-func (s *stringDataI) Compare(listable traits.Listable) int {
+func (s *StringDataI) Compare(listable traits.Listable) int {
 	return s.Impl.(data.StringData).Compare(listable)
 }
-func (s *stringDataI) Get() string {
+func (s *StringDataI) Get() string {
 	return s.Impl.(data.StringData).Get()
 }

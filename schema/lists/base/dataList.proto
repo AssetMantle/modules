@@ -1,8 +1,0 @@
-syntax = "proto3";
-package base;
-
-import "schema/lists/base/list.proto";
-
-message DataList{
-  List list = 1;
-}

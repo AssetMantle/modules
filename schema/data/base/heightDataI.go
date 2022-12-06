@@ -1,45 +1,32 @@
 package base
 
 import (
-	dataSchema "buf.build/gen/go/assetmantle/schema/protocolbuffers/go/schema/data"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
-type heightDataI dataSchema.HeightData
+var _ data.HeightData = (*HeightDataI)(nil)
 
-func (h heightDataI) GetID() ids.DataID {
+func (h *HeightDataI) GetID() ids.DataID {
 	return h.Impl.(data.HeightData).GetID()
 }
-
-func (h heightDataI) String() string {
-	return h.Impl.(data.HeightData).String()
-}
-
-func (h heightDataI) Bytes() []byte {
+func (h *HeightDataI) Bytes() []byte {
 	return h.Impl.(data.HeightData).Bytes()
 }
-
-func (h heightDataI) GetType() ids.StringID {
+func (h *HeightDataI) GetType() ids.StringID {
 	return h.Impl.(data.HeightData).GetType()
 }
-
-func (h heightDataI) ZeroValue() data.Data {
+func (h *HeightDataI) ZeroValue() data.Data {
 	return h.Impl.(data.HeightData).ZeroValue()
 }
-
-func (h heightDataI) GenerateHashID() ids.HashID {
+func (h *HeightDataI) GenerateHashID() ids.HashID {
 	return h.Impl.(data.HeightData).GenerateHashID()
 }
-
-func (h heightDataI) Compare(listable traits.Listable) int {
+func (h *HeightDataI) Compare(listable traits.Listable) int {
 	return h.Impl.(data.HeightData).Compare(listable)
 }
-
-func (h heightDataI) Get() types.Height {
+func (h *HeightDataI) Get() types.Height {
 	return h.Impl.(data.HeightData).Get()
 }
-
-var _ data.HeightData = (*heightDataI)(nil)

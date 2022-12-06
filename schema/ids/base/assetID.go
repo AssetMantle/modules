@@ -15,7 +15,7 @@ import (
 var _ ids.AssetID = (*AssetIDI_AssetID)(nil)
 
 func (assetID *AssetIDI_AssetID) String() string {
-	return assetID.String()
+	return assetID.AssetID.String()
 }
 func (assetID *AssetIDI_AssetID) Compare(listable traits.Listable) int {
 	return bytes.Compare(assetID.Bytes(), assetIDFromInterface(listable).Bytes())
