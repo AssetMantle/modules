@@ -1,0 +1,10 @@
+syntax = "proto3";
+package base;
+
+import "schema/documents/base/asset.proto";
+
+message AssetI {
+  oneof impl {
+    Asset asset = 1;
+  }
+}

@@ -1,8 +1,8 @@
 syntax = "proto3";
 package base;
 
-import "schema/documents/base/document.proto";
+import "schema/documents/base/documentI.proto";
 
 message Classification {
-  Document document = 1;
+  DocumentI document = 1;
 }

@@ -1,0 +1,10 @@
+syntax = "proto3";
+package base;
+
+import "schema/documents/base/identity.proto";
+
+message IdentityI {
+  oneof impl {
+    Identity identity = 1;
+  }
+}

@@ -1,0 +1,19 @@
+syntax = "proto3";
+package base;
+
+import "schema/documents/base/documentI.proto";
+import "schema/documents/base/assetI.proto";
+import "schema/documents/base/classificationI.proto";
+import "schema/documents/base/identityI.proto";
+import "schema/documents/base/maintainerI.proto";
+
+
+message DocumentsI {
+  oneof impl {
+    AssetI asset = 1;
+    ClassificationI classification = 2;
+    DocumentI document = 3;
+    IdentityI identity = 4;
+    MaintainerI maintainer = 5;
+  }
+}

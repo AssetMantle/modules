@@ -3,6 +3,8 @@ package base;
 
 import "schema/documents/base/document.proto";
 
-message Maintainer {
-  Document document = 1;
+message DocumentI {
+  oneof impl {
+    Document document = 1;
+  }
 }

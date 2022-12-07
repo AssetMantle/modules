@@ -3,6 +3,6 @@ package base;
 
 import "schema/documents/base/documentI.proto";
 
-message Identity {
+message Maintainer {
   DocumentI document = 1;
 }
