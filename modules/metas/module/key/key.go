@@ -11,10 +11,11 @@ import (
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type key struct {
-	ids.DataID
+	ids.ID
 }
 
 var _ helpers.Key = (*key)(nil)
@@ -26,13 +27,13 @@ func (key) RegisterCodec(codec *codec.LegacyAmino) {
 	schema.RegisterModuleConcrete(codec, key{})
 }
 func (key key) IsPartial() bool {
-	return len(key.DataID.GetHashID().Bytes()) == 0
+	return key.ID.(*base.ID).GetDataID().HashId == nil
 }
 func (key key) Equals(compareKey helpers.Key) bool {
 	if CompareKey, err := keyFromInterface(compareKey); err != nil {
 		return false
 	} else {
-		return key.DataID.Compare(CompareKey.DataID) == 0
+		return key.ID.Compare(CompareKey.ID) == 0
 	}
 }
 func keyFromInterface(i interface{}) (key, error) {
@@ -44,9 +45,9 @@ func keyFromInterface(i interface{}) (key, error) {
 	}
 }
 
-func NewKey(dataID ids.DataID) helpers.Key {
+func NewKey(dataID ids.ID) helpers.Key {
 	return key{
-		DataID: dataID,
+		ID: dataID,
 	}
 }
 

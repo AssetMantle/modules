@@ -5,7 +5,6 @@ import (
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
@@ -20,9 +19,6 @@ func (maintainerID *ID_MaintainerID) Bytes() []byte {
 }
 func (maintainerID *ID_MaintainerID) Compare(listable traits.Listable) int {
 	return bytes.Compare(maintainerID.Bytes(), idFromInterface(listable).Bytes())
-}
-func GenerateMaintainerID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.ID {
-	return NewMaintainerID(GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()))
 }
 func NewMaintainerID(hashID ids.ID) ids.ID {
 	if hashID.(*ID).GetHashID() == nil {

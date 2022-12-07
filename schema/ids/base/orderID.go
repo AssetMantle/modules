@@ -5,7 +5,6 @@ import (
 
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
@@ -22,9 +21,6 @@ func (orderID *ID_OrderID) Bytes() []byte {
 }
 func (orderID *ID_OrderID) IsOrderID() {}
 
-func GenerateOrderID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.ID {
-	return NewOrderID(GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()))
-}
 func NewOrderID(hashID ids.ID) ids.ID {
 	if hashID.(*ID).GetHashID() == nil {
 		panic(constants.MetaDataError)

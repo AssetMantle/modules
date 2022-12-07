@@ -13,26 +13,26 @@ import (
 )
 
 type mesaProperty struct {
-	ids.PropertyID
-	ids.DataID
+	PropertyID ids.ID
+	DataID     ids.ID
 }
 
 var _ properties.MesaProperty = (*mesaProperty)(nil)
 
-func (mesaProperty mesaProperty) GetID() ids.PropertyID {
+func (mesaProperty mesaProperty) GetID() ids.ID {
 	return mesaProperty.PropertyID
 }
-func (mesaProperty mesaProperty) GetDataID() ids.DataID {
+func (mesaProperty mesaProperty) GetDataID() ids.ID {
 	return mesaProperty.DataID
 }
-func (mesaProperty mesaProperty) GetKey() ids.StringID {
-	return mesaProperty.PropertyID.GetKey()
+func (mesaProperty mesaProperty) GetKey() ids.ID {
+	return baseIDs.NewStringID(mesaProperty.PropertyID.(*baseIDs.ID).GetPropertyID().KeyID.IdString)
 }
-func (mesaProperty mesaProperty) GetType() ids.StringID {
-	return mesaProperty.PropertyID.GetType()
+func (mesaProperty mesaProperty) GetType() ids.ID {
+	return baseIDs.NewStringID(mesaProperty.PropertyID.(*baseIDs.ID).GetPropertyID().TypeID.IdString)
 }
 func (mesaProperty mesaProperty) GetHash() ids.ID {
-	return mesaProperty.DataID.GetHashID()
+	return baseIDs.NewHashID(mesaProperty.DataID.(*baseIDs.ID).GetDataID().HashId.IdBytes)
 }
 func (mesaProperty mesaProperty) IsMeta() bool {
 	return false
@@ -62,7 +62,7 @@ func NewEmptyMesaPropertyFromID(propertyID ids.PropertyID) properties.Property {
 		PropertyID: propertyID,
 	}
 }
-func NewMesaProperty(key ids.StringID, data data.Data) properties.MesaProperty {
+func NewMesaProperty(key ids.ID, data data.Data) properties.MesaProperty {
 	return mesaProperty{
 		PropertyID: baseIDs.GeneratePropertyID(key, data.GetType()),
 		DataID:     data.GetID(),

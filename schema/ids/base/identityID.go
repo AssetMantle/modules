@@ -5,7 +5,6 @@ import (
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
@@ -26,10 +25,6 @@ func (identityID *ID_IdentityID) Compare(listable traits.Listable) int {
 }
 func (identityID *ID_IdentityID) GetHashID() ids.ID {
 	return &ID{Impl: &ID_HashID{HashID: identityID.IdentityID.HashId}}
-}
-
-func GenerateIdentityID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.ID {
-	return NewIdentityID(GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()))
 }
 
 func NewIdentityID(hashID ids.ID) ids.ID {

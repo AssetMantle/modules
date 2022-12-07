@@ -69,6 +69,9 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 		return &QueryRequest{}
 	}
 }
-func newQueryRequest(dataID ids.DataID) helpers.QueryRequest {
-	return &QueryRequest{DataID: dataID.(*baseIDs.DataIDI)}
+func newQueryRequest(dataID ids.ID) helpers.QueryRequest {
+	if dataID.(*baseIDs.ID).GetDataID() == nil {
+		panic("dataID is nil")
+	}
+	return &QueryRequest{DataID: dataID.(*baseIDs.ID).GetDataID()}
 }

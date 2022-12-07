@@ -1,8 +1,0 @@
-syntax = "proto3";
-package base;
-
-import "schema/documents/base/documentI.proto";
-
-message Asset {
-  DocumentI document = 1;
-}

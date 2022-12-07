@@ -10,8 +10,8 @@ import (
 )
 
 type parameter struct {
-	ID        ids.StringID `json:"id"`
-	Data      data.Data    `json:"data"`
+	ID        ids.ID    `json:"id"`
+	Data      data.Data `json:"data"`
 	validator func(interface{}) error
 }
 
@@ -44,7 +44,7 @@ func (parameter parameter) Mutate(data data.Data) parameters.Parameter {
 	return parameter
 }
 
-func NewParameter(id ids.StringID, data data.Data, validator func(interface{}) error) parameters.Parameter {
+func NewParameter(id ids.ID, data data.Data, validator func(interface{}) error) parameters.Parameter {
 	return parameter{
 		ID:        id,
 		Data:      data,
