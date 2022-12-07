@@ -3,8 +3,10 @@ package reveal;
 
 import "modules/metas/module/transactions/reveal/transactionRequest.proto";
 import "modules/metas/module/transactions/reveal/transactionResponse.proto";
-
+import "google/api/annotations.proto";
 
 service Transaction{
-  rpc Reveal(TransactionRequest) returns (TransactionResponse){}
+  rpc Reveal(TransactionRequest) returns (TransactionResponse){
+    option (google.api.http).post = "/mantle/metas/reveal";
+  }
 }
