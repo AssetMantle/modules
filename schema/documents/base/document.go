@@ -38,7 +38,7 @@ func (document *DocumentI_Document) GetMutables() qualified.Mutables {
 
 // TODO write test case
 func (document *DocumentI_Document) Mutate(propertyList ...properties.Property) documents.Document {
-	//document.Document.Mutables = document.Document.Mutables.Mutate(propertyList...)
+	document.Document.Mutables = document.Document.Mutables.Mutate(propertyList...)
 	return document
 }
 

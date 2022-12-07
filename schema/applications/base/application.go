@@ -5,6 +5,14 @@ package base
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"os"
+	"path/filepath"
+
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
@@ -91,10 +99,6 @@ import (
 	tendermintOS "github.com/tendermint/tendermint/libs/os"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
-	"io"
-	"log"
-	"net/http"
-	"os"
 
 	"github.com/AssetMantle/modules/modules/metas"
 	"github.com/AssetMantle/modules/schema/applications"
@@ -107,8 +111,9 @@ type application struct {
 
 	codec codec.Codec
 
-	moduleAccountPermissions   map[string][]string
-	tokenReceiveAllowedModules map[string]bool
+	enabledWasmProposalTypeList []wasm.ProposalType
+	moduleAccountPermissions    map[string][]string
+	tokenReceiveAllowedModules  map[string]bool
 
 	keys map[string]*sdkTypes.KVStoreKey
 
@@ -307,7 +312,7 @@ func (application application) RegisterTendermintService(context client.Context)
 	tmservice.RegisterTendermintService(application.BaseApp.GRPCQueryRouter(), context, context.InterfaceRegistry)
 }
 
-func (application application) Initialize(logger tendermintLog.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, txConfig client.TxConfig, interfaceRegistry types.InterfaceRegistry, legacyAmino *codec.LegacyAmino, appOptions serverTypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
+func (application application) Initialize(logger tendermintLog.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, txConfig client.TxConfig, interfaceRegistry types.InterfaceRegistry, legacyAmino *codec.LegacyAmino, appOptions serverTypes.AppOptions, wasmOptions []wasm.Option, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
 	application.BaseApp = baseapp.NewBaseApp(application.name, logger, db, txConfig.TxDecoder(), baseAppOptions...)
 	application.BaseApp.SetCommitMultiStoreTracer(traceStore)
 	application.BaseApp.SetVersion(version.Version)
@@ -331,6 +336,8 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		authzKeeper.StoreKey,
 		icaHostTypes.StoreKey,
 
+		wasm.StoreKey,
+
 		metas.Prototype().Name(),
 	)
 
@@ -350,6 +357,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 	scopedIBCKeeper := CapabilityKeeper.ScopeToModule(ibcHost.ModuleName)
 	scopedTransferKeeper := CapabilityKeeper.ScopeToModule(ibcTransferTypes.ModuleName)
 	scopedICAHostKeeper := CapabilityKeeper.ScopeToModule(icaHostTypes.SubModuleName)
+	scopedWasmKeeper := CapabilityKeeper.ScopeToModule(wasm.ModuleName)
 	CapabilityKeeper.Seal()
 
 	AccountKeeper := authKeeper.NewAccountKeeper(
@@ -494,6 +502,35 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		application.slashingKeeper,
 	)
 
+	wasmConfig, err := wasm.ReadWasmConfig(appOptions)
+	if err != nil {
+		panic(fmt.Sprintf("error while reading wasm config: %s", err))
+	}
+
+	WasmKeeper := wasm.NewKeeper(
+		application.codec,
+		application.keys[wasm.StoreKey],
+		ParamsKeeper.Subspace(wasm.ModuleName),
+		AccountKeeper,
+		BankKeeper,
+		application.stakingKeeper,
+		application.distributionKeeper,
+		IBCKeeper.ChannelKeeper,
+		&IBCKeeper.PortKeeper,
+		scopedWasmKeeper,
+		IBCTransferKeeper,
+		application.MsgServiceRouter(),
+		application.GRPCQueryRouter(),
+		filepath.Join(home, wasm.ModuleName),
+		wasmConfig,
+		"",
+		wasmOptions...,
+	)
+
+	if len(application.enabledWasmProposalTypeList) != 0 {
+		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(WasmKeeper, application.enabledWasmProposalTypeList))
+	}
+
 	metasModule := metas.Prototype().Initialize(
 		application.keys[metas.Prototype().Name()],
 		ParamsKeeper.Subspace(metas.Prototype().Name()),
@@ -518,6 +555,8 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		params.NewAppModule(ParamsKeeper),
 		ibcTransfer.NewAppModule(IBCTransferKeeper),
 		ica.NewAppModule(nil, &ICAHostKeeper),
+
+		wasm.NewAppModule(application.codec, &WasmKeeper, application.stakingKeeper, AccountKeeper, BankKeeper),
 
 		metasModule,
 	)

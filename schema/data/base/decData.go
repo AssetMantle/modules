@@ -14,12 +14,12 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ data.DecData = (*DecData)(nil)
+var _ data.DecData = (*DecDataI_DecData)(nil)
 
-func (decData *DecData) GetID() ids.DataID {
+func (decData *DecDataI_DecData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(decData)
 }
-func (decData *DecData) Compare(listable traits.Listable) int {
+func (decData *DecDataI_DecData) Compare(listable traits.Listable) int {
 	compareDecData, err := decDataFromInterface(listable)
 	if err != nil {
 		panic(err)
@@ -33,26 +33,29 @@ func (decData *DecData) Compare(listable traits.Listable) int {
 
 	return 0
 }
-func (decData *DecData) Bytes() []byte {
-	dec, _ := sdkTypes.NewDecFromStr(decData.Value)
+func (decData *DecDataI_DecData) String() string {
+	return decData.DecData.Value
+}
+func (decData *DecDataI_DecData) Bytes() []byte {
+	dec, _ := sdkTypes.NewDecFromStr(decData.DecData.Value)
 
 	return sdkTypes.SortableDecBytes(dec)
 }
-func (decData *DecData) GetType() ids.StringID {
+func (decData *DecDataI_DecData) GetType() ids.StringID {
 	return dataConstants.DecDataID
 }
-func (decData *DecData) ZeroValue() data.Data {
+func (decData *DecDataI_DecData) ZeroValue() data.Data {
 	return NewDecData(sdkTypes.ZeroDec())
 }
-func (decData *DecData) GenerateHashID() ids.HashID {
+func (decData *DecDataI_DecData) GenerateHashID() ids.HashID {
 	if decData.Compare(decData.ZeroValue()) == 0 {
 		return baseIDs.GenerateHashID()
 	}
 
 	return baseIDs.GenerateHashID(decData.Bytes())
 }
-func (decData *DecData) Get() sdkTypes.Dec {
-	dec, _ := sdkTypes.NewDecFromStr(decData.Value)
+func (decData *DecDataI_DecData) Get() sdkTypes.Dec {
+	dec, _ := sdkTypes.NewDecFromStr(decData.DecData.Value)
 	return dec
 }
 
@@ -70,7 +73,11 @@ func DecDataPrototype() data.DecData {
 }
 
 func NewDecData(value sdkTypes.Dec) data.DecData {
-	return &DecData{
-		Value: value,
+	return &DecDataI{
+		Impl: &DecDataI_DecData{
+			DecData: &DecData{
+				Value: value.String(),
+			},
+		},
 	}
 }
