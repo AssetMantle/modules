@@ -1,8 +1,8 @@
 syntax = "proto3";
 package base;
 
-import "schema/ids/base/hashIDI.proto";
+import "schema/ids/base/hashID.proto";
 
 message ClassificationID {
-  ids.HashIDI hash_id = 1;
+  base.HashID hash_id = 1;
 }

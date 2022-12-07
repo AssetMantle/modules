@@ -12,47 +12,42 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ ids.AssetID = (*AssetIDI_AssetID)(nil)
+var _ ids.AssetID = (*ID_AssetID)(nil)
 
-func (assetID *AssetIDI_AssetID) String() string {
+func (assetID *ID_AssetID) String() string {
 	return assetID.AssetID.String()
 }
-func (assetID *AssetIDI_AssetID) Compare(listable traits.Listable) int {
-	return bytes.Compare(assetID.Bytes(), assetIDFromInterface(listable).Bytes())
+func (assetID *ID_AssetID) Compare(listable traits.Listable) int {
+	return bytes.Compare(assetID.Bytes(), idFromInterface(listable).Bytes())
 
 }
-func (assetID *AssetIDI_AssetID) IsOwnableID() {}
-func (assetID *AssetIDI_AssetID) IsAssetID()   {}
-func (assetID *AssetIDI_AssetID) Bytes() []byte {
-	return assetID.AssetID.HashId.GetHashID().IdBytes
+func (assetID *ID_AssetID) IsOwnableID() {}
+func (assetID *ID_AssetID) IsAssetID()   {}
+func (assetID *ID_AssetID) Bytes() []byte {
+	return assetID.AssetID.HashId.IdBytes
 }
-func assetIDFromInterface(i interface{}) *AssetIDI {
-	switch value := i.(type) {
-	case *AssetIDI:
-		return value
-	default:
-		panic(errorConstants.MetaDataError)
-	}
-}
-func GenerateAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
+func GenerateAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.ID {
 	return NewAssetID(GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()))
 }
 
-func NewAssetID(hashID ids.HashID) ids.AssetID {
-	return &AssetIDI{
-		Impl: &AssetIDI_AssetID{
+func NewAssetID(hashID ids.ID) ids.ID {
+	if hashID.(*ID).GetHashID() == nil {
+		panic(errorConstants.MetaDataError)
+	}
+	return &ID{
+		Impl: &ID_AssetID{
 			AssetID: &AssetID{
-				HashId: hashID.(*HashIDI),
+				HashId: hashID.(*ID).GetHashID(),
 			},
 		},
 	}
 }
 
-func PrototypeAssetID() ids.AssetID {
+func PrototypeAssetID() ids.ID {
 	return NewAssetID(PrototypeHashID())
 }
 
-func ReadAssetID(assetIDString string) (ids.AssetID, error) {
+func ReadAssetID(assetIDString string) (ids.ID, error) {
 	if hashID, err := ReadHashID(assetIDString); err == nil {
 		return NewAssetID(hashID), nil
 	}

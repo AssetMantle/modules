@@ -8,16 +8,16 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ ids.OwnableID = (*OwnableIDI_OwnableID)(nil)
+var _ ids.OwnableID = (*ID_OwnableID)(nil)
 
-func (ownableID *OwnableIDI_OwnableID) String() string {
+func (ownableID *ID_OwnableID) String() string {
 	return ownableID.OwnableID.StringId.String()
 }
-func (ownableID *OwnableIDI_OwnableID) Bytes() []byte {
-	return ownableID.OwnableID.StringId.Bytes()
+func (ownableID *ID_OwnableID) Bytes() []byte {
+	return []byte(ownableID.OwnableID.StringId.IdString)
 }
-func (ownableID *OwnableIDI_OwnableID) IsOwnableID() {}
-func (ownableID *OwnableIDI_OwnableID) Compare(listable traits.Listable) int {
+func (ownableID *ID_OwnableID) IsOwnableID() {}
+func (ownableID *ID_OwnableID) Compare(listable traits.Listable) int {
 	// TODO devise a better strategy to compare assetID and ownableID
 	return bytes.Compare(ownableID.Bytes(), ownableIDFromInterface(listable).Bytes())
 }
@@ -29,21 +29,24 @@ func ownableIDFromInterface(i interface{}) ids.OwnableID {
 		panic(constants.MetaDataError)
 	}
 }
-func NewOwnableID(stringID ids.StringID) ids.OwnableID {
-	return &OwnableIDI{
-		Impl: &OwnableIDI_OwnableID{
+func NewOwnableID(stringID ids.ID) ids.ID {
+	if stringID.(*ID).GetStringID() == nil {
+		panic(constants.MetaDataError)
+	}
+	return &ID{
+		Impl: &ID_OwnableID{
 			OwnableID: &OwnableID{
-				StringId: stringID.(*StringIDI),
+				StringId: stringID.(*ID).GetStringID(),
 			},
 		},
 	}
 }
 
-func PrototypeOwnableID() ids.OwnableID {
+func PrototypeOwnableID() ids.ID {
 	return NewOwnableID(PrototypeStringID())
 }
 
-func ReadOwnableID(ownableIDString string) (ids.OwnableID, error) {
+func ReadOwnableID(ownableIDString string) (ids.ID, error) {
 	// TODO ***** never allow ownable PropertyID to be valid hash string
 	if assetID, err := ReadAssetID(ownableIDString); err == nil {
 		return assetID, nil

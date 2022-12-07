@@ -1,8 +1,8 @@
 syntax = "proto3";
 package base;
 
-import "schema/ids/base/stringIDI.proto";
+import "schema/ids/base/stringID.proto";
 
 message OwnableID{
-  ids.StringIDI string_id = 1;
+  base.StringID string_id = 1;
 }
