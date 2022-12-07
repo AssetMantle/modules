@@ -7,11 +7,13 @@
 package reveal
 
 import (
-	base "github.com/AssetMantle/modules/schema/data/base"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	reflect "reflect"
-	sync "sync"
+	"reflect"
+	"sync"
+
+	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/runtime/protoimpl"
+
+	"github.com/AssetMantle/modules/schema/data/base"
 )
 
 const (

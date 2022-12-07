@@ -6,12 +6,15 @@ package reveal
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/types/msgservice"
 
 	"github.com/AssetMantle/modules/modules/metas/module/module"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/data"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	codecUtilities "github.com/AssetMantle/modules/utilities"
@@ -19,6 +22,13 @@ import (
 
 var _ helpers.Message = (*Message)(nil)
 
+func (message *Message) RegisterInterfaces(registry types.InterfaceRegistry) {
+	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
+		&Message{},
+	)
+
+	msgservice.RegisterMsgServiceDesc(registry, &Transaction_ServiceDesc)
+}
 func (message *Message) GenerateOnSuccessEvents() sdkTypes.Events {
 	return nil
 }
@@ -35,7 +45,7 @@ func (message *Message) GetSignBytes() []byte {
 	return sdkTypes.MustSortJSON(codecUtilities.MakeMessageCodec(messagePrototype).MustMarshalJSON(message))
 }
 func (message *Message) GetSigners() []sdkTypes.AccAddress {
-	return []sdkTypes.AccAddress{sdkTypes.MustAccAddressFromBech32(message.From)}
+	return []sdkTypes.AccAddress{sdkTypes.AccAddress(message.From)}
 }
 func (*Message) RegisterCodec(codec *codec.LegacyAmino) {
 	schema.RegisterModuleConcrete(codec, &Message{})
@@ -55,6 +65,6 @@ func messagePrototype() helpers.Message {
 func newMessage(from []byte, data data.Data) sdkTypes.Msg {
 	return &Message{
 		From: from,
-		Data: data,
+		Data: data.(*baseData.Data),
 	}
 }

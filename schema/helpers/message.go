@@ -5,12 +5,14 @@ package helpers
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type Message interface {
 	// TODO check if register message code is required
 	RegisterCodec(*codec.LegacyAmino)
+	RegisterInterfaces(types.InterfaceRegistry)
 	GenerateOnSuccessEvents() sdkTypes.Events
 	GetType() string
 	sdkTypes.Msg

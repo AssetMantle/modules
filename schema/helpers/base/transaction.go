@@ -11,6 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/cobra"
@@ -36,6 +37,9 @@ func (transaction transaction) Service() (*grpc.ServiceDesc, interface{}) {
 
 var _ helpers.Transaction = (*transaction)(nil)
 
+func (transaction transaction) RegisterInterfaces(interfaceRegistry types.InterfaceRegistry) {
+	transaction.messagePrototype().RegisterInterfaces(interfaceRegistry)
+}
 func (transaction transaction) GetName() string { return transaction.name }
 func (transaction transaction) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
@@ -65,7 +69,6 @@ func (transaction transaction) Command() *cobra.Command {
 
 	return transaction.cliCommand.CreateCommand(runE)
 }
-
 func (transaction transaction) HandleMessage(context sdkTypes.Context, message helpers.Message) (*sdkTypes.Result, error) {
 	if transactionResponse := transaction.keeper.Transact(context, message); !transactionResponse.IsSuccessful() {
 		return nil, nil
@@ -73,7 +76,6 @@ func (transaction transaction) HandleMessage(context sdkTypes.Context, message h
 
 	return &sdkTypes.Result{Events: message.GenerateOnSuccessEvents().ToABCIEvents()}, nil
 }
-
 func (transaction transaction) RESTRequestHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		transactionRequest := transaction.requestPrototype()
@@ -106,7 +108,6 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 		// }
 	}
 }
-
 func (transaction transaction) RegisterCodec(codec *codec.LegacyAmino) {
 	transaction.messagePrototype().RegisterCodec(codec)
 	transaction.requestPrototype().RegisterCodec(codec)
