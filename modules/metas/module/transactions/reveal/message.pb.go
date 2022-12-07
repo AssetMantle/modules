@@ -8,6 +8,7 @@ package reveal
 
 import (
 	base "github.com/AssetMantle/modules/schema/data/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

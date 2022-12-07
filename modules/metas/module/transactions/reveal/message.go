@@ -17,70 +17,43 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities"
 )
 
-type message struct {
-	From sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	Data data.Data           `json:"data" valid:"required~required field data missing"`
+var _ helpers.Message = (*Message)(nil)
+
+func (message *Message) GenerateOnSuccessEvents() sdkTypes.Events {
+	return nil
 }
-
-func (message message) GenerateOnSuccessEvents() sdkTypes.Events {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (message message) GetType() string {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (message message) Reset() {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (message message) String() string {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (message message) ProtoMessage() {
-	// TODO implement me
-	panic("implement me")
-}
-
-var _ helpers.Message = message{}
-
-func (message message) Route() string { return module.Name }
-func (message message) Type() string  { return Transaction.GetName() }
-func (message message) ValidateBasic() error {
+func (message *Message) Route() string   { return module.Name }
+func (message *Message) GetType() string { return Transaction.GetName() }
+func (message *Message) ValidateBasic() error {
 	if _, err := govalidator.ValidateStruct(message); err != nil {
 		return sdkErrors.Wrap(constants.IncorrectMessage, err.Error())
 	}
 
 	return nil
 }
-func (message message) GetSignBytes() []byte {
+func (message *Message) GetSignBytes() []byte {
 	return sdkTypes.MustSortJSON(codecUtilities.MakeMessageCodec(messagePrototype).MustMarshalJSON(message))
 }
-func (message message) GetSigners() []sdkTypes.AccAddress {
-	return []sdkTypes.AccAddress{message.From}
+func (message *Message) GetSigners() []sdkTypes.AccAddress {
+	return []sdkTypes.AccAddress{sdkTypes.MustAccAddressFromBech32(message.From)}
 }
-func (message) RegisterCodec(codec *codec.LegacyAmino) {
-	schema.RegisterModuleConcrete(codec, message{})
+func (*Message) RegisterCodec(codec *codec.LegacyAmino) {
+	schema.RegisterModuleConcrete(codec, &Message{})
 }
-func messageFromInterface(msg sdkTypes.Msg) message {
+func messageFromInterface(msg sdkTypes.Msg) *Message {
 	switch value := msg.(type) {
-	case message:
+	case *Message:
 		return value
 	default:
-		return message{}
+		return &Message{}
 	}
 }
 func messagePrototype() helpers.Message {
-	return message{}
+	return &Message{}
 }
 
 func newMessage(from []byte, data data.Data) sdkTypes.Msg {
-	return &message{
+	return &Message{
 		From: from,
 		Data: data,
 	}
