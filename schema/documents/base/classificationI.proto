@@ -1,0 +1,10 @@
+syntax = "proto3";
+package base;
+
+import "schema/documents/base/classification.proto";
+
+message ClassificationI {
+  oneof impl {
+    Classification classification = 1;
+  }
+}

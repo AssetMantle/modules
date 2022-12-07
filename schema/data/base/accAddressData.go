@@ -16,31 +16,31 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ data.AccAddressData = (*Data_AccAddressData)(nil)
+var _ data.AccAddressData = (*AccAddressDataI_AccAddressData)(nil)
 
-func (accAddressData *Data_AccAddressData) String() string {
-	return sdkTypes.AccAddress(accAddressData.AccAddressData.Value).String()
-}
-func (accAddressData *Data_AccAddressData) GetID() ids.ID {
+func (accAddressData *AccAddressDataI_AccAddressData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(accAddressData)
 }
-func (accAddressData *Data_AccAddressData) Compare(listable traits.Listable) int {
+func (accAddressData *AccAddressDataI_AccAddressData) Compare(listable traits.Listable) int {
 	compareAccAddressData, err := accAddressDataFromInterface(listable)
 	if err != nil {
 		panic(err)
 	}
-	return bytes.Compare(accAddressData.Value, compareAccAddressData.Bytes())
+	return bytes.Compare(accAddressData.AccAddressData.Value, compareAccAddressData.Bytes())
 }
-func (accAddressData *Data_AccAddressData) Bytes() []byte {
-	return sdkTypes.AccAddress(accAddressData.Value).Bytes()
+func (accAddressData *AccAddressDataI_AccAddressData) String() string {
+	return sdkTypes.AccAddress(accAddressData.AccAddressData.Value).String()
 }
-func (accAddressData *Data_AccAddressData) GetType() ids.StringID {
+func (accAddressData *AccAddressDataI_AccAddressData) Bytes() []byte {
+	return sdkTypes.AccAddress(accAddressData.AccAddressData.Value).Bytes()
+}
+func (accAddressData *AccAddressDataI_AccAddressData) GetType() ids.StringID {
 	return dataConstants.AccAddressDataID
 }
-func (accAddressData *Data_AccAddressData) ZeroValue() data.Data {
+func (accAddressData *AccAddressDataI_AccAddressData) ZeroValue() data.Data {
 	return AccAddressDataPrototype()
 }
-func (accAddressData *Data_AccAddressData) GenerateHashID() ids.HashID {
+func (accAddressData *AccAddressDataI_AccAddressData) GenerateHashID() ids.HashID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
 		// TODO test
 		return baseIDs.GenerateHashID()
@@ -48,8 +48,8 @@ func (accAddressData *Data_AccAddressData) GenerateHashID() ids.HashID {
 
 	return baseIDs.GenerateHashID(accAddressData.Bytes())
 }
-func (accAddressData *Data_AccAddressData) Get() sdkTypes.AccAddress {
-	return accAddressData.Value
+func (accAddressData *AccAddressDataI_AccAddressData) Get() sdkTypes.AccAddress {
+	return accAddressData.AccAddressData.Value
 }
 
 func accAddressDataFromInterface(listable traits.Listable) (*AccAddressDataI, error) {
@@ -69,6 +69,11 @@ func GenerateAccAddressData(value sdkTypes.AccAddress) data.AccAddressData {
 	return NewAccAddressData(value)
 }
 
-func NewAccAddressData(value sdkTypes.AccAddress) data.Data {
-	return &Data{Impl: &Data_AccAddressData{AccAddressData: &AccAddressData{Value: value.Bytes()}}}
+func NewAccAddressData(value sdkTypes.AccAddress) data.AccAddressData {
+	return &AccAddressDataI{
+		Impl: &AccAddressDataI_AccAddressData{
+			AccAddressData: &AccAddressData{
+				Value: value,
+			},
+		}}
 }

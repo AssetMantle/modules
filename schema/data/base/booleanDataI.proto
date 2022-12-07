@@ -1,0 +1,10 @@
+syntax = "proto3";
+package base;
+
+import "schema/data/base/booleanData.proto";
+
+message BooleanDataI {
+  oneof impl {
+    BooleanData boolean_data = 1;
+  }
+}

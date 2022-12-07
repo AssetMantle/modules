@@ -1,0 +1,10 @@
+syntax = "proto3";
+package base;
+
+import "schema/data/base/heightData.proto";
+
+message HeightDataI {
+  oneof impl {
+    HeightData height_data = 1;
+  }
+}

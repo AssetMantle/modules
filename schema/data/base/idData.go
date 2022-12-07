@@ -14,12 +14,12 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ data.IDData = (*IDData)(nil)
+var _ data.IDData = (*IdDataI_IdData)(nil)
 
-func (idData *IDData) GetID() ids.DataID {
+func (idData *IdDataI_IdData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(idData)
 }
-func (idData *IDData) Compare(listable traits.Listable) int {
+func (idData *IdDataI_IdData) Compare(listable traits.Listable) int {
 	compareIDData, err := idDataFromInterface(listable)
 	if err != nil {
 		panic(err)
@@ -27,25 +27,28 @@ func (idData *IDData) Compare(listable traits.Listable) int {
 
 	return bytes.Compare(idData.Bytes(), compareIDData.Bytes())
 }
-func (idData *IDData) Bytes() []byte {
+func (idData *IdDataI_IdData) String() string {
+	return idData.IdData.String()
+}
+func (idData *IdDataI_IdData) Bytes() []byte {
 	return idData.Bytes()
 }
-func (idData *IDData) GetType() ids.StringID {
+func (idData *IdDataI_IdData) GetType() ids.StringID {
 	return dataConstants.IDDataID
 }
-func (idData *IDData) ZeroValue() data.Data {
+func (idData *IdDataI_IdData) ZeroValue() data.Data {
 	return IDDataPrototype()
 }
-func (idData *IDData) GenerateHashID() ids.HashID {
+func (idData *IdDataI_IdData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(idData.Bytes())
 }
-func (idData *IDData) Get() ids.ID {
-	return idData.Value
+func (idData *IdDataI_IdData) Get() ids.ID {
+	return idData.IdData.Value
 }
 
-func idDataFromInterface(listable traits.Listable) (data.IDData, error) {
+func idDataFromInterface(listable traits.Listable) (*IdDataI, error) {
 	switch value := listable.(type) {
-	case *IDData:
+	case *IdDataI:
 		return value, nil
 	default:
 		return nil, constants.MetaDataError
@@ -57,7 +60,11 @@ func IDDataPrototype() data.IDData {
 }
 
 func NewIDData(value ids.ID) data.IDData {
-	return &IDData{
-		Value: value,
+	return &IdDataI{
+		Impl: &IdDataI_IdData{
+			IdData: &IDData{
+				Value: value.(*baseIDs.IDI),
+			},
+		},
 	}
 }

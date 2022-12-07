@@ -1,0 +1,10 @@
+syntax = "proto3";
+package base;
+
+import "schema/documents/base/maintainer.proto";
+
+message MaintainerI {
+  oneof impl {
+    Maintainer maintainer = 1;
+  }
+}
