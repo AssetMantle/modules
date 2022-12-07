@@ -15,29 +15,19 @@ import (
 //	ids.HashID
 // }
 
-var _ ids.ClassificationID = (*ClassificationIDI_ClassificationID)(nil)
+var _ ids.ClassificationID = (*ID_ClassificationID)(nil)
 
-func (classificationID *ClassificationIDI_ClassificationID) String() string {
+func (classificationID *ID_ClassificationID) String() string {
 	return classificationID.ClassificationID.String()
 }
-func (classificationID *ClassificationIDI_ClassificationID) Bytes() []byte {
-	return classificationID.ClassificationID.HashId.Bytes()
+func (classificationID *ID_ClassificationID) Bytes() []byte {
+	return classificationID.ClassificationID.HashId.IdBytes
 }
-func (classificationID *ClassificationIDI_ClassificationID) IsClassificationID() {}
-func (classificationID *ClassificationIDI_ClassificationID) Compare(listable traits.Listable) int {
-	return bytes.Compare(classificationID.Bytes(), classificationIDFromInterface(listable).Bytes())
+func (classificationID *ID_ClassificationID) IsClassificationID() {}
+func (classificationID *ID_ClassificationID) Compare(listable traits.Listable) int {
+	return bytes.Compare(classificationID.Bytes(), idFromInterface(listable).Bytes())
 }
-
-func classificationIDFromInterface(i interface{}) *ClassificationIDI {
-	switch value := i.(type) {
-	case *ClassificationIDI:
-		return value
-	default:
-		panic(constants.MetaDataError)
-	}
-}
-
-func GenerateClassificationID(immutables qualified.Immutables, mutables qualified.Mutables) ids.ClassificationID {
+func GenerateClassificationID(immutables qualified.Immutables, mutables qualified.Mutables) ids.ID {
 	immutableIDByteList := make([][]byte, len(immutables.GetImmutablePropertyList().GetList()))
 
 	for i, property := range immutables.GetImmutablePropertyList().GetList() {
@@ -62,18 +52,18 @@ func GenerateClassificationID(immutables qualified.Immutables, mutables qualifie
 	return NewClassificationID(GenerateHashID(GenerateHashID(immutableIDByteList...).Bytes(), GenerateHashID(mutableIDByteList...).Bytes(), GenerateHashID(defaultImmutableByteList...).Bytes()))
 }
 
-func NewClassificationID(hashID ids.HashID) ids.ClassificationID {
-	return &ClassificationIDI{
-		Impl: &ClassificationIDI_ClassificationID{
-			ClassificationID: &ClassificationID{HashId: hashID.(*HashIDI)},
+func NewClassificationID(hashID ids.ID) ids.ID {
+	return &ID{
+		Impl: &ID_ClassificationID{
+			ClassificationID: &ClassificationID{HashId: hashID.(*ID).GetHashID()},
 		},
 	}
 }
-func PrototypeClassificationID() ids.ClassificationID {
+func PrototypeClassificationID() ids.ID {
 	return NewClassificationID(PrototypeHashID())
 }
 
-func ReadClassificationID(classificationIDString string) (ids.ClassificationID, error) {
+func ReadClassificationID(classificationIDString string) (ids.ID, error) {
 	if hashID, err := ReadHashID(classificationIDString); err == nil {
 		return NewClassificationID(hashID), nil
 	}

@@ -9,45 +9,40 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ ids.OrderID = (*OrderIDI_OrderID)(nil)
+var _ ids.OrderID = (*ID_OrderID)(nil)
 
-func (orderID *OrderIDI_OrderID) String() string {
+func (orderID *ID_OrderID) String() string {
 	return orderID.OrderID.String()
 }
-func (orderID *OrderIDI_OrderID) Compare(listable traits.Listable) int {
-	return bytes.Compare(orderID.Bytes(), orderIDFromInterface(listable).Bytes())
+func (orderID *ID_OrderID) Compare(listable traits.Listable) int {
+	return bytes.Compare(orderID.Bytes(), idFromInterface(listable).Bytes())
 }
-func (orderID *OrderIDI_OrderID) Bytes() []byte {
-	return orderID.OrderID.OrderId.Bytes()
+func (orderID *ID_OrderID) Bytes() []byte {
+	return orderID.OrderID.OrderId.IdBytes
 }
-func (orderID *OrderIDI_OrderID) IsOrderID() {}
-func orderIDFromInterface(i interface{}) *OrderIDI {
-	switch value := i.(type) {
-	case *OrderIDI:
-		return value
-	default:
-		panic(constants.MetaDataError)
-	}
-}
+func (orderID *ID_OrderID) IsOrderID() {}
 
-func GenerateOrderID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.OrderID {
+func GenerateOrderID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.ID {
 	return NewOrderID(GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()))
 }
-func NewOrderID(hashID ids.HashID) ids.OrderID {
-	return &OrderIDI{
-		Impl: &OrderIDI_OrderID{
+func NewOrderID(hashID ids.ID) ids.ID {
+	if hashID.(*ID).GetHashID() == nil {
+		panic(constants.MetaDataError)
+	}
+	return &ID{
+		Impl: &ID_OrderID{
 			OrderID: &OrderID{
-				OrderId: hashID.(*HashIDI),
+				OrderId: hashID.(*ID).GetHashID(),
 			},
 		},
 	}
 }
 
-func PrototypeOrderID() ids.OrderID {
+func PrototypeOrderID() ids.ID {
 	return NewOrderID(PrototypeHashID())
 }
 
-func ReadOrderID(orderIDString string) (ids.OrderID, error) {
+func ReadOrderID(orderIDString string) (ids.ID, error) {
 	if hashID, err := ReadHashID(orderIDString); err == nil {
 		return NewOrderID(hashID), nil
 	}

@@ -9,45 +9,39 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ ids.MaintainerID = (*MaintainerIDI_MaintainerID)(nil)
+var _ ids.MaintainerID = (*ID_MaintainerID)(nil)
 
-func (maintainerID *MaintainerIDI_MaintainerID) IsMaintainerID() {}
-func (maintainerID *MaintainerIDI_MaintainerID) String() string {
+func (maintainerID *ID_MaintainerID) IsMaintainerID() {}
+func (maintainerID *ID_MaintainerID) String() string {
 	return maintainerID.MaintainerID.String()
 }
-func (maintainerID *MaintainerIDI_MaintainerID) Bytes() []byte {
-	return maintainerID.MaintainerID.HashId.Bytes()
+func (maintainerID *ID_MaintainerID) Bytes() []byte {
+	return maintainerID.MaintainerID.HashId.IdBytes
 }
-func (maintainerID *MaintainerIDI_MaintainerID) Compare(listable traits.Listable) int {
-	return bytes.Compare(maintainerID.Bytes(), maintainerIDFromInterface(listable).Bytes())
+func (maintainerID *ID_MaintainerID) Compare(listable traits.Listable) int {
+	return bytes.Compare(maintainerID.Bytes(), idFromInterface(listable).Bytes())
 }
-
-func maintainerIDFromInterface(i interface{}) *MaintainerIDI {
-	switch value := i.(type) {
-	case *MaintainerIDI:
-		return value
-	default:
-		panic(errorConstants.MetaDataError)
-	}
-}
-func GenerateMaintainerID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.MaintainerID {
+func GenerateMaintainerID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.ID {
 	return NewMaintainerID(GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()))
 }
-func NewMaintainerID(hashID ids.HashID) ids.MaintainerID {
-	return &MaintainerIDI{
-		Impl: &MaintainerIDI_MaintainerID{
+func NewMaintainerID(hashID ids.ID) ids.ID {
+	if hashID.(*ID).GetHashID() == nil {
+		panic(errorConstants.MetaDataError)
+	}
+	return &ID{
+		Impl: &ID_MaintainerID{
 			MaintainerID: &MaintainerID{
-				HashId: hashID.(*HashIDI),
+				HashId: hashID.(*ID).GetHashID(),
 			},
 		},
 	}
 }
 
-func PrototypeMaintainerID() ids.MaintainerID {
+func PrototypeMaintainerID() ids.ID {
 	return NewMaintainerID(PrototypeHashID())
 }
 
-func ReadMaintainerID(maintainerIDString string) (ids.MaintainerID, error) {
+func ReadMaintainerID(maintainerIDString string) (ids.ID, error) {
 	if hashID, err := ReadHashID(maintainerIDString); err == nil {
 		return NewMaintainerID(hashID), nil
 	}

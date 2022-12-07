@@ -13,14 +13,14 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/gogo/protobuf/proto"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/grpc-ecosystem/grpc-gateway/utilities"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 )
 
 // Suppress "imported and not used" errors
@@ -79,7 +79,7 @@ func RegisterQueryHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req) //, "/meta.Query/Meta", runtime.WithHTTPPathPattern("/mantle/metas/v1beta1/meta"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/meta.Query/Meta", runtime.WithHTTPPathPattern("/mantle/metas/v1beta1/meta"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -141,7 +141,7 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req) //, "/meta.Query/Meta", runtime.WithHTTPPathPattern("/mantle/metas/v1beta1/meta"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/meta.Query/Meta", runtime.WithHTTPPathPattern("/mantle/metas/v1beta1/meta"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return

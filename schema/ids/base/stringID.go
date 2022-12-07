@@ -6,35 +6,26 @@ package base
 import (
 	"strings"
 
-	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ ids.StringID = (*StringIDI_StringID)(nil)
+var _ ids.StringID = (*ID_StringID)(nil)
 
-func (stringID *StringIDI_StringID) String() string {
+func (stringID *ID_StringID) String() string {
 	return stringID.StringID.IdString
 }
-func (stringID *StringIDI_StringID) IsStringID() {}
-func (stringID *StringIDI_StringID) Bytes() []byte {
+func (stringID *ID_StringID) IsStringID() {}
+func (stringID *ID_StringID) Bytes() []byte {
 	return []byte(stringID.String())
 }
-func (stringID *StringIDI_StringID) Compare(listable traits.Listable) int {
-	return strings.Compare(stringID.String(), stringIDFromInterface(listable).Impl.(ids.StringID).String())
-}
-func stringIDFromInterface(i interface{}) *StringIDI {
-	switch value := i.(type) {
-	case *StringIDI:
-		return value
-	default:
-		panic(constants.MetaDataError)
-	}
+func (stringID *ID_StringID) Compare(listable traits.Listable) int {
+	return strings.Compare(stringID.String(), idFromInterface(listable).String())
 }
 
-func NewStringID(idString string) ids.StringID {
-	return &StringIDI{
-		Impl: &StringIDI_StringID{
+func NewStringID(idString string) ids.ID {
+	return &ID{
+		Impl: &ID_StringID{
 			StringID: &StringID{
 				IdString: idString,
 			},
@@ -42,6 +33,6 @@ func NewStringID(idString string) ids.StringID {
 	}
 }
 
-func PrototypeStringID() ids.StringID {
+func PrototypeStringID() ids.ID {
 	return NewStringID("")
 }

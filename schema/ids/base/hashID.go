@@ -11,36 +11,23 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//
-// type hashID struct {
-//	IdBytes []byte
-// }
+var _ ids.HashID = (*ID_HashID)(nil)
 
-var _ ids.HashID = (*HashIDI_HashID)(nil)
-
-func (hashID *HashIDI_HashID) String() string {
+func (hashID *ID_HashID) String() string {
 	return (hashID).String()
 }
 
-func (hashID *HashIDI_HashID) IsHashID() {}
+func (hashID *ID_HashID) IsHashID() {}
 
-func (hashID *HashIDI_HashID) Bytes() []byte {
+func (hashID *ID_HashID) Bytes() []byte {
 	return hashID.HashID.IdBytes
 }
-func (hashID *HashIDI_HashID) Compare(listable traits.Listable) int {
-	return bytes.Compare(hashID.Bytes(), hashIDFromInterface(listable).Bytes())
-}
-func hashIDFromInterface(i interface{}) *HashIDI {
-	switch value := i.(type) {
-	case *HashIDI:
-		return value
-	default:
-		panic(constants.MetaDataError)
-	}
+func (hashID *ID_HashID) Compare(listable traits.Listable) int {
+	return bytes.Compare(hashID.Bytes(), idFromInterface(listable).Bytes())
 }
 
 // TODO test
-func GenerateHashID(toHashList ...[]byte) ids.HashID {
+func GenerateHashID(toHashList ...[]byte) ids.ID {
 	var nonEmptyByteList [][]byte
 
 	for _, value := range toHashList {
@@ -64,20 +51,20 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 
 	return NewHashID(hash.Sum(nil))
 }
-func NewHashID(idBytes []byte) ids.HashID {
-	return &HashIDI{
-		Impl: &HashIDI_HashID{
+func NewHashID(idBytes []byte) ids.ID {
+	return &ID{
+		Impl: &ID_HashID{
 			HashID: &HashID{
 				IdBytes: idBytes,
 			},
 		},
 	}
 }
-func PrototypeHashID() ids.HashID {
+func PrototypeHashID() ids.ID {
 	return GenerateHashID()
 }
 
-func ReadHashID(hashIDString string) (ids.HashID, error) {
+func ReadHashID(hashIDString string) (ids.ID, error) {
 	if hashBytes, err := base64.URLEncoding.DecodeString(hashIDString); err == nil {
 		return NewHashID(hashBytes), nil
 	}
