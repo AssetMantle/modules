@@ -1,8 +1,8 @@
 syntax = "proto3";
 package base;
 
-import "schema/documents/base/documentI.proto";
+import "schema/documents/base/document.proto";
 
 message Maintainer {
-  DocumentI document = 1;
+  Document document = 1;
 }
