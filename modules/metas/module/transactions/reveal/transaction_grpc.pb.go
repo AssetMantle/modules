@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TransactionClient interface {
-	Reveal(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error)
+	Reveal(ctx context.Context, in *Message, opts ...grpc.CallOption) (*TransactionResponse, error)
 }
 
 type transactionClient struct {
@@ -33,7 +33,7 @@ func NewTransactionClient(cc grpc.ClientConnInterface) TransactionClient {
 	return &transactionClient{cc}
 }
 
-func (c *transactionClient) Reveal(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionResponse, error) {
+func (c *transactionClient) Reveal(ctx context.Context, in *Message, opts ...grpc.CallOption) (*TransactionResponse, error) {
 	out := new(TransactionResponse)
 	err := c.cc.Invoke(ctx, "/reveal.Transaction/Reveal", in, out, opts...)
 	if err != nil {
@@ -46,7 +46,7 @@ func (c *transactionClient) Reveal(ctx context.Context, in *TransactionRequest, 
 // All implementations must embed UnimplementedTransactionServer
 // for forward compatibility
 type TransactionServer interface {
-	Reveal(context.Context, *TransactionRequest) (*TransactionResponse, error)
+	Reveal(context.Context, *Message) (*TransactionResponse, error)
 	mustEmbedUnimplementedTransactionServer()
 }
 
@@ -54,7 +54,7 @@ type TransactionServer interface {
 type UnimplementedTransactionServer struct {
 }
 
-func (UnimplementedTransactionServer) Reveal(context.Context, *TransactionRequest) (*TransactionResponse, error) {
+func (UnimplementedTransactionServer) Reveal(context.Context, *Message) (*TransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Reveal not implemented")
 }
 func (UnimplementedTransactionServer) mustEmbedUnimplementedTransactionServer() {}
@@ -71,7 +71,7 @@ func RegisterTransactionServer(s grpc.ServiceRegistrar, srv TransactionServer) {
 }
 
 func _Transaction_Reveal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TransactionRequest)
+	in := new(Message)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func _Transaction_Reveal_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: "/reveal.Transaction/Reveal",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServer).Reveal(ctx, req.(*TransactionRequest))
+		return srv.(TransactionServer).Reveal(ctx, req.(*Message))
 	}
 	return interceptor(ctx, in, info, handler)
 }
