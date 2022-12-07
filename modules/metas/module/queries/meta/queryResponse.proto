@@ -1,10 +1,10 @@
 syntax = "proto3";
 package meta;
 
-import "schema/data/base/dataI.proto";
+import "schema/data/base/data.proto";
 
 message QueryResponse{
   bool success = 1;
   string error = 2;
-  repeated base.DataI list = 3;
+  repeated base.Data list = 3;
 }

@@ -16,28 +16,31 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ data.AccAddressData = (*AccAddressData)(nil)
+var _ data.AccAddressData = (*Data_AccAddressData)(nil)
 
-func (accAddressData *AccAddressData) GetID() ids.DataID {
+func (accAddressData *Data_AccAddressData) String() string {
+	return sdkTypes.AccAddress(accAddressData.AccAddressData.Value).String()
+}
+func (accAddressData *Data_AccAddressData) GetID() ids.ID {
 	return baseIDs.GenerateDataID(accAddressData)
 }
-func (accAddressData *AccAddressData) Compare(listable traits.Listable) int {
+func (accAddressData *Data_AccAddressData) Compare(listable traits.Listable) int {
 	compareAccAddressData, err := accAddressDataFromInterface(listable)
 	if err != nil {
 		panic(err)
 	}
 	return bytes.Compare(accAddressData.Value, compareAccAddressData.Bytes())
 }
-func (accAddressData *AccAddressData) Bytes() []byte {
+func (accAddressData *Data_AccAddressData) Bytes() []byte {
 	return sdkTypes.AccAddress(accAddressData.Value).Bytes()
 }
-func (accAddressData *AccAddressData) GetType() ids.StringID {
+func (accAddressData *Data_AccAddressData) GetType() ids.StringID {
 	return dataConstants.AccAddressDataID
 }
-func (accAddressData *AccAddressData) ZeroValue() data.Data {
+func (accAddressData *Data_AccAddressData) ZeroValue() data.Data {
 	return AccAddressDataPrototype()
 }
-func (accAddressData *AccAddressData) GenerateHashID() ids.HashID {
+func (accAddressData *Data_AccAddressData) GenerateHashID() ids.HashID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
 		// TODO test
 		return baseIDs.GenerateHashID()
@@ -45,7 +48,7 @@ func (accAddressData *AccAddressData) GenerateHashID() ids.HashID {
 
 	return baseIDs.GenerateHashID(accAddressData.Bytes())
 }
-func (accAddressData *AccAddressData) Get() sdkTypes.AccAddress {
+func (accAddressData *Data_AccAddressData) Get() sdkTypes.AccAddress {
 	return accAddressData.Value
 }
 
@@ -66,6 +69,6 @@ func GenerateAccAddressData(value sdkTypes.AccAddress) data.AccAddressData {
 	return NewAccAddressData(value)
 }
 
-func NewAccAddressData(value sdkTypes.AccAddress) data.AccAddressData {
-	return &AccAddressData{Value: value}
+func NewAccAddressData(value sdkTypes.AccAddress) data.Data {
+	return &Data{Impl: &Data_AccAddressData{AccAddressData: &AccAddressData{Value: value.Bytes()}}}
 }

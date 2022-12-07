@@ -34,6 +34,7 @@ func NewAssetID(hashID ids.ID) ids.ID {
 	if hashID.(*ID).GetHashID() == nil {
 		panic(errorConstants.MetaDataError)
 	}
+
 	return &ID{
 		Impl: &ID_AssetID{
 			AssetID: &AssetID{

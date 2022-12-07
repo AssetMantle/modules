@@ -6,23 +6,23 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ data.Data = (*DataI)(nil)
+var _ data.Data = (*Data)(nil)
 
-func (x *DataI) GetID() ids.DataID {
+func (x *Data) GetID() ids.DataID {
 	return x.Impl.(data.Data).GetID()
 }
-func (x *DataI) Bytes() []byte {
+func (x *Data) Bytes() []byte {
 	return x.Impl.(data.Data).Bytes()
 }
-func (x *DataI) GetType() ids.StringID {
+func (x *Data) GetType() ids.StringID {
 	return x.Impl.(data.Data).GetType()
 }
-func (x *DataI) ZeroValue() data.Data {
+func (x *Data) ZeroValue() data.Data {
 	return x.Impl.(data.Data).ZeroValue()
 }
-func (x *DataI) GenerateHashID() ids.HashID {
+func (x *Data) GenerateHashID() ids.HashID {
 	return x.Impl.(data.Data).GenerateHashID()
 }
-func (x *DataI) Compare(listable traits.Listable) int {
+func (x *Data) Compare(listable traits.Listable) int {
 	return x.Impl.(data.Data).Compare(listable)
 }

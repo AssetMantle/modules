@@ -71,20 +71,19 @@ func (x *Document) GetClassificationId() *base.ClassificationID {
 	return nil
 }
 
-//
-//func (x *Document) GetImmutables() *base1.Immutables {
-//	if x != nil {
-//		return x.Immutables
-//	}
-//	return nil
-//}
-//
-//func (x *Document) GetMutables() *base1.Mutables {
-//	if x != nil {
-//		return x.Mutables
-//	}
-//	return nil
-//}
+func (x *Document) GetImmutables() *base1.Immutables {
+	if x != nil {
+		return x.Immutables
+	}
+	return nil
+}
+
+func (x *Document) GetMutables() *base1.Mutables {
+	if x != nil {
+		return x.Mutables
+	}
+	return nil
+}
 
 var File_schema_documents_base_document_proto protoreflect.FileDescriptor
 
