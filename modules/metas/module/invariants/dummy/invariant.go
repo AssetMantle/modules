@@ -5,5 +5,5 @@ import (
 )
 
 var Invariant = func(_ types.Context) (string, bool) {
-	return "", true
+	return "", false
 }

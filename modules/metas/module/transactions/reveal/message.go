@@ -80,7 +80,7 @@ func messagePrototype() helpers.Message {
 }
 
 func newMessage(from []byte, data data.Data) sdkTypes.Msg {
-	return message{
+	return &message{
 		From: from,
 		Data: data,
 	}

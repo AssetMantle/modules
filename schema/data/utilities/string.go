@@ -98,18 +98,18 @@ func ReadData(dataString string) (data.Data, error) {
 
 		var err error
 
-		switch baseIDs.NewStringID(dataTypeString) {
-		case dataConstants.AccAddressDataID:
+		switch baseIDs.NewStringID(dataTypeString).String() {
+		case dataConstants.AccAddressDataID.String():
 			Data, err = readAccAddressData(dataValueString)
-		case dataConstants.BooleanDataID:
+		case dataConstants.BooleanDataID.String():
 			Data, err = readBooleanData(dataValueString)
-		case dataConstants.DecDataID:
+		case dataConstants.DecDataID.String():
 			Data, err = readDecData(dataValueString)
-		case dataConstants.HeightDataID:
+		case dataConstants.HeightDataID.String():
 			Data, err = readHeightData(dataValueString)
-		case dataConstants.IDDataID:
+		case dataConstants.IDDataID.String():
 			Data, err = readIDData(dataValueString)
-		case dataConstants.StringDataID:
+		case dataConstants.StringDataID.String():
 			Data, err = readStringData(dataValueString)
 		default:
 			Data, err = nil, errorConstants.UnsupportedParameter

@@ -21,7 +21,7 @@ func (stringID *StringIDI_StringID) Bytes() []byte {
 	return []byte(stringID.String())
 }
 func (stringID *StringIDI_StringID) Compare(listable traits.Listable) int {
-	return strings.Compare(stringID.String(), stringIDFromInterface(listable).String())
+	return strings.Compare(stringID.String(), stringIDFromInterface(listable).Impl.(ids.StringID).String())
 }
 func stringIDFromInterface(i interface{}) *StringIDI {
 	switch value := i.(type) {
