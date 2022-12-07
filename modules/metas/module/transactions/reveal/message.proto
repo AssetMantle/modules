@@ -1,0 +1,9 @@
+syntax = "proto3";
+package reveal;
+
+import "schema/data/base/data.proto";
+
+message Message {
+  string from = 1;
+  base.Data data = 2;
+}
