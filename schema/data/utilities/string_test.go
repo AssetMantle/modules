@@ -35,11 +35,10 @@ func TestReadData(t *testing.T) {
 		want    data.Data
 		wantErr bool
 	}{
-		// TODO:  fix after issue #50 fix, https://github.com/AssetMantle/modules/issues/50
 		{"String Data", args{"S|newFact"}, base.NewStringData("newFact"), false},
 		{"Unknown Data", args{"SomeRandomData"}, nil, true},
-		{"List Data", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(baseLists.NewDataList(dataList...)), false}, // TODO: stack overflow
-		{"List Data empty list", args{"L|"}, base.NewListData(baseLists.NewDataList()), false},                                                                                                // TODO: stack overflow
+		{"List Data", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(baseLists.NewDataList(dataList...)), false},
+		{"List Data empty list", args{"L|"}, base.NewListData(baseLists.NewDataList()), false},
 		{"Id Data", args{"I|data"}, base.NewIDData(baseIDs.NewStringID("data")), false},
 		{"Height Data", args{"H|100"}, base.NewHeightData(baseTypes.NewHeight(100)), false},
 		{"Dec Data", args{"D|100"}, base.NewDecData(types.NewDec(100)), false},
