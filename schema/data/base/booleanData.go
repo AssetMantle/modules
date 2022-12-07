@@ -12,52 +12,48 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ data.BooleanData = (*BooleanDataI_BooleanData)(nil)
+var _ data.BooleanData = (*BooleanData)(nil)
 
-func (booleanData *BooleanDataI_BooleanData) GetID() ids.DataID {
+func (booleanData *BooleanData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(booleanData)
 }
-func (booleanData *BooleanDataI_BooleanData) Compare(listable traits.Listable) int {
+func (booleanData *BooleanData) Compare(listable traits.Listable) int {
 	compareBooleanData, err := booleanDataFromInterface(listable)
 	if err != nil {
 		panic(err)
 	}
 
-	if booleanData.BooleanData.Value == compareBooleanData.GetBooleanData().Value {
+	if booleanData.Value == compareBooleanData.GetBooleanData().Value {
 		return 0
-	} else if booleanData.BooleanData.Value == true {
+	} else if booleanData.Value == true {
 		return 1
 	}
 
 	return -1
 }
 
-func (booleanData *BooleanDataI_BooleanData) String() string {
-	return booleanData.BooleanData.String()
-}
-
 // TODO test
-func (booleanData *BooleanDataI_BooleanData) Bytes() []byte {
+func (booleanData *BooleanData) Bytes() []byte {
 	if booleanData.Get() {
 		return []byte{0x1}
 	}
 	return []byte{0x0}
 }
-func (booleanData *BooleanDataI_BooleanData) GetType() ids.StringID {
+func (booleanData *BooleanData) GetType() ids.StringID {
 	return dataConstants.BooleanDataID
 }
-func (booleanData *BooleanDataI_BooleanData) ZeroValue() data.Data {
+func (booleanData *BooleanData) ZeroValue() data.Data {
 	return NewBooleanData(false)
 }
-func (booleanData *BooleanDataI_BooleanData) GenerateHashID() ids.HashID {
+func (booleanData *BooleanData) GenerateHashID() ids.HashID {
 	if booleanData.Compare(booleanData.ZeroValue()) == 0 {
 		return baseIDs.GenerateHashID()
 	}
 
 	return baseIDs.GenerateHashID(booleanData.Bytes())
 }
-func (booleanData *BooleanDataI_BooleanData) Get() bool {
-	return booleanData.BooleanData.Value
+func (booleanData *BooleanData) Get() bool {
+	return booleanData.Value
 }
 
 func booleanDataFromInterface(listable traits.Listable) (*BooleanDataI, error) {
@@ -70,15 +66,11 @@ func booleanDataFromInterface(listable traits.Listable) (*BooleanDataI, error) {
 }
 
 func BooleanDataPrototype() data.BooleanData {
-	return (&BooleanDataI_BooleanData{}).ZeroValue().(data.BooleanData)
+	return (&BooleanData{}).ZeroValue().(data.BooleanData)
 }
 
 func NewBooleanData(value bool) data.BooleanData {
-	return &BooleanDataI{
-		Impl: &BooleanDataI_BooleanData{
-			BooleanData: &BooleanData{
-				Value: value,
-			},
-		},
+	return &BooleanData{
+		Value: value,
 	}
 }

@@ -14,12 +14,12 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ data.StringData = (*StringDataI_StringData)(nil)
+var _ data.StringData = (*StringData)(nil)
 
-func (stringData *StringDataI_StringData) GetID() ids.DataID {
+func (stringData *StringData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(stringData)
 }
-func (stringData *StringDataI_StringData) Compare(listable traits.Listable) int {
+func (stringData *StringData) Compare(listable traits.Listable) int {
 	compareStringData, err := stringDataFromInterface(listable)
 	if err != nil {
 		panic(err)
@@ -27,23 +27,20 @@ func (stringData *StringDataI_StringData) Compare(listable traits.Listable) int 
 
 	return strings.Compare(stringData.Get(), compareStringData.Get())
 }
-func (stringData *StringDataI_StringData) String() string {
-	return stringData.StringData.String()
-}
-func (stringData *StringDataI_StringData) Bytes() []byte {
+func (stringData *StringData) Bytes() []byte {
 	return []byte(stringData.String())
 }
-func (stringData *StringDataI_StringData) GetType() ids.StringID {
+func (stringData *StringData) GetType() ids.StringID {
 	return dataConstants.StringDataID
 }
-func (stringData *StringDataI_StringData) ZeroValue() data.Data {
+func (stringData *StringData) ZeroValue() data.Data {
 	return NewStringData("")
 }
-func (stringData *StringDataI_StringData) GenerateHashID() ids.HashID {
+func (stringData *StringData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(stringData.Bytes())
 }
-func (stringData *StringDataI_StringData) Get() string {
-	return stringData.StringData.Value
+func (stringData *StringData) Get() string {
+	return stringData.Value
 }
 
 func stringDataFromInterface(listable traits.Listable) (*StringDataI, error) {
@@ -60,11 +57,7 @@ func StringDataPrototype() data.StringData {
 }
 
 func NewStringData(value string) data.StringData {
-	return &StringDataI{
-		Impl: &StringDataI_StringData{
-			StringData: &StringData{
-				Value: value,
-			},
-		},
+	return &StringData{
+		Value: value,
 	}
 }

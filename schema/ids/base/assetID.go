@@ -12,18 +12,15 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ ids.AssetID = (*AssetIDI_AssetID)(nil)
+var _ ids.AssetID = (*AssetID)(nil)
 
-func (assetID *AssetIDI_AssetID) String() string {
-	return assetID.AssetID.String()
-}
-func (assetID *AssetIDI_AssetID) Compare(listable traits.Listable) int {
+func (assetID *AssetID) Compare(listable traits.Listable) int {
 	return bytes.Compare(assetID.Bytes(), assetIDFromInterface(listable).Bytes())
 
 }
-func (assetID *AssetIDI_AssetID) IsOwnableID() {}
-func (assetID *AssetIDI_AssetID) IsAssetID()   {}
-func (assetID *AssetIDI_AssetID) Bytes() []byte {
+func (assetID *AssetID) IsOwnableID() {}
+func (assetID *AssetID) IsAssetID()   {}
+func (assetID *AssetID) Bytes() []byte {
 	return assetID.AssetID.HashId.GetHashID().IdBytes
 }
 func assetIDFromInterface(i interface{}) *AssetIDI {
@@ -39,12 +36,8 @@ func GenerateAssetID(classificationID ids.ClassificationID, immutables qualified
 }
 
 func NewAssetID(hashID ids.HashID) ids.AssetID {
-	return &AssetIDI{
-		Impl: &AssetIDI_AssetID{
-			AssetID: &AssetID{
-				HashId: hashID.(*HashIDI),
-			},
-		},
+	return &AssetID{
+		HashId: hashID,
 	}
 }
 
