@@ -14,7 +14,7 @@ import (
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
-func readAccAddressData(dataString string) (data.AccAddressData, error) {
+func readAccAddressData(dataString string) (data.Data, error) {
 	if dataString == "" {
 		return base.AccAddressDataPrototype(), nil
 	}
@@ -26,7 +26,7 @@ func readAccAddressData(dataString string) (data.AccAddressData, error) {
 
 	return base.NewAccAddressData(accAddress), nil
 }
-func readBooleanData(dataString string) (data.BooleanData, error) {
+func readBooleanData(dataString string) (data.Data, error) {
 	if dataString == "" {
 		return base.BooleanDataPrototype(), nil
 	}
@@ -38,7 +38,7 @@ func readBooleanData(dataString string) (data.BooleanData, error) {
 
 	return base.NewBooleanData(Bool), nil
 }
-func readDecData(dataString string) (data.DecData, error) {
+func readDecData(dataString string) (data.Data, error) {
 	if dataString == "" {
 		return base.DecDataPrototype(), nil
 	}
@@ -50,7 +50,7 @@ func readDecData(dataString string) (data.DecData, error) {
 
 	return base.NewDecData(dec), nil
 }
-func readHeightData(dataString string) (data.HeightData, error) {
+func readHeightData(dataString string) (data.Data, error) {
 	if dataString == "" {
 		return base.HeightDataPrototype(), nil
 	}
@@ -64,7 +64,7 @@ func readHeightData(dataString string) (data.HeightData, error) {
 }
 
 // TODO read complex IDs than string PropertyID
-func readIDData(dataString string) (data.IDData, error) {
+func readIDData(dataString string) (data.Data, error) {
 	if dataString == "" {
 		return base.IDDataPrototype(), nil
 	}
@@ -72,7 +72,7 @@ func readIDData(dataString string) (data.IDData, error) {
 	return base.NewIDData(baseIDs.NewStringID(dataString)), nil
 }
 
-func readStringData(dataString string) (data.StringData, error) {
+func readStringData(dataString string) (data.Data, error) {
 	if dataString == "" {
 		return base.StringDataPrototype(), nil
 	}
