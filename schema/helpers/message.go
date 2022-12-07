@@ -14,6 +14,6 @@ type Message interface {
 	RegisterCodec(*codec.LegacyAmino)
 	RegisterInterfaces(types.InterfaceRegistry)
 	GenerateOnSuccessEvents() sdkTypes.Events
-	GetType() string
+	Type() string
 	sdkTypes.Msg
 }

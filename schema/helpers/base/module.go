@@ -150,7 +150,7 @@ func (module module) Route() sdkTypes.Route {
 		}
 
 		if message, ok := msg.(helpers.Message); ok {
-			if transaction := module.transactions.Get(message.GetType()); transaction != nil {
+			if transaction := module.transactions.Get(message.Type()); transaction != nil {
 				return transaction.HandleMessage(context.WithEventManager(sdkTypes.NewEventManager()), message)
 			}
 		}

@@ -32,8 +32,8 @@ func (message *Message) RegisterInterfaces(registry types.InterfaceRegistry) {
 func (message *Message) GenerateOnSuccessEvents() sdkTypes.Events {
 	return nil
 }
-func (message *Message) Route() string   { return module.Name }
-func (message *Message) GetType() string { return Transaction.GetName() }
+func (message *Message) Route() string { return module.Name }
+func (message *Message) Type() string  { return Transaction.GetName() }
 func (message *Message) ValidateBasic() error {
 	if _, err := govalidator.ValidateStruct(message); err != nil {
 		return sdkErrors.Wrap(constants.IncorrectMessage, err.Error())
