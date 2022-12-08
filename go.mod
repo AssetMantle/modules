@@ -19,6 +19,9 @@ require (
 )
 
 require (
+	buf.build/gen/go/assetmantle/schema/protocolbuffers/go v1.28.1-20221207142156-1bfd94d01943.4 // indirect
+	buf.build/gen/go/yamnord/gogoproto/protocolbuffers/go v1.28.1-20211009004253-977a8cb0a032.4 // indirect
+	cosmossdk.io/errors v1.0.0-beta.7 // indirect
 	filippo.io/edwards25519 v1.0.0-rc.1 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/99designs/keyring v1.2.1 // indirect
