@@ -1,6 +1,6 @@
 # This Dockerfile is used for proto generation
 # To build, run `make proto-image-build`
-
+#remove this
 FROM bufbuild/buf:1.7.0 as BUILDER
 
 FROM golang:1.19-alpine
