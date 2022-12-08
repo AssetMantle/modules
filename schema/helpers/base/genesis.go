@@ -97,10 +97,10 @@ func (genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper, p
 	return genesis.Initialize(mappableList, parameters.GetList())
 }
 func (genesis genesis) Encode(jsonCodec codec.JSONCodec) []byte {
-	bytes, _ := jsonCodec.MarshalJSON(genesis)
-	//if err != nil {
+	bytes, _ := genesis.codec.MarshalJSON(genesis)
+	// if err != nil {
 	//	panic(err)
-	//}
+	// }
 
 	return bytes
 }

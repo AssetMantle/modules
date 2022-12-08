@@ -6,6 +6,8 @@ package utilities
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
+	"github.com/AssetMantle/modules/schema/data"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -30,8 +32,8 @@ func MakeMessageCodec(messagePrototype func() helpers.Message) *codec.LegacyAmin
 
 func RegisterCodec(codec *codec.LegacyAmino) {
 
-	// data.RegisterCodec(codec)
-	// baseData.RegisterCodec(codec)
+	data.RegisterCodec(codec)
+	baseData.RegisterCodec(codec)
 	//
 	// documents.RegisterCodec(codec)
 	// baseDocuments.RegisterCodec(codec)
