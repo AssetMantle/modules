@@ -1,7 +1,0 @@
-syntax = "proto3";
-package meta;
-
-
-message QueryRequest {
-  string data_i_d = 1;
-}

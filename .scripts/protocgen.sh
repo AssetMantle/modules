@@ -14,21 +14,8 @@ proto_dirs=$(find ./modules -path -prune -o -name '*.proto' -print0 | xargs -0 -
 for dir in $proto_dirs; do
   for file in $(find "${dir}" -name '*.proto'); do
     if grep go_package $file &>/dev/null; then
-      buf generate --template buf.gen.gogo.yaml $file
+      buf generate --template buf.gen.yaml $file
     fi
   done
 done
 
-cd ..
-
-# move proto files to the right places
-#
-# Note: Proto files are suffixed with the current binary version.
-#cp github.com/AssetMantle/modules/* ./
-#rm -rf github.com
-
-go mod tidy -compat=1.18
-
-# TODO: Uncomment once ORM/Pulsar support is needed.
-#
-# Ref: https://github.com/osmosis-labs/osmosis/pull/1589
