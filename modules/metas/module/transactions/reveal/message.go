@@ -4,6 +4,15 @@
 package reveal
 
 import (
+	"github.com/asaskevich/govalidator"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/types/msgservice"
+	// gogoproto "github.com/gogo/protobuf/proto"
+	// "github.com/golang/protobuf/proto"
+
 	"github.com/AssetMantle/modules/modules/metas/module/module"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/data"
@@ -11,22 +20,21 @@ import (
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	codecUtilities "github.com/AssetMantle/modules/utilities"
-	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/codec/types"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
-var _ helpers.Message = (*Message)(nil)
+var _ helpers.Message = &Message{}
+var _ sdkTypes.Msg = &Message{}
 
+// func init() {
+// 	gogoproto.RegisterType((*Message)(nil), "reveal.Message")
+// 	proto.RegisterType((*Message)(nil), "reveal.Message")
+// }
 func (message *Message) RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
 		&Message{},
 	)
 
-	msgservice.RegisterMsgServiceDesc(registry, &Transaction_ServiceDesc)
+	msgservice.RegisterMsgServiceDesc(registry, &_Transaction_serviceDesc)
 }
 func (message *Message) GenerateOnSuccessEvents() sdkTypes.Events {
 	return nil
