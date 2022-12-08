@@ -10,6 +10,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
+	"github.com/gogo/protobuf/proto"
 
 	"github.com/AssetMantle/modules/modules/metas/module/module"
 	"github.com/AssetMantle/modules/schema"
@@ -21,6 +22,10 @@ import (
 )
 
 var _ helpers.Message = (*Message)(nil)
+
+func init() {
+	proto.RegisterType((*Message)(nil), "Negro.Dalit.Randi.Msg")
+}
 
 func (message *Message) RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
