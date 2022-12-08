@@ -129,29 +129,21 @@ func Test_decData_GenerateHashID(t *testing.T) {
 		Value types.Dec
 	}
 	tests := []struct {
-		name      string
-		fields    fields
-		want      ids.HashID
-		wantPanic bool
+		name   string
+		fields fields
+		want   ids.HashID
 	}{
-		// TODO: Update Unit tests after fix
-		{"panic case with nil", fields{types.Dec{}}, baseIDs.GenerateHashID([]byte{}), true}, // TODO: Check if Panic case for nil Dec is expected behaviour
-		{"+ve with zero dec", fields{types.ZeroDec()}, baseIDs.GenerateHashID(), false},
-		{"+ve", fields{types.NewDec(100)}, baseIDs.GenerateHashID(decData{types.NewDec(100)}.Bytes()), false},
-		{"+ve with -ve Dec", fields{types.NewDec(-100)}, baseIDs.GenerateHashID(decData{types.NewDec(-100)}.Bytes()), false},
+		{"+ve with nil", fields{types.Dec{}}, baseIDs.GenerateHashID([]byte{})},
+		{"+ve with zero dec", fields{types.ZeroDec()}, baseIDs.GenerateHashID()},
+		{"+ve", fields{types.NewDec(100)}, baseIDs.GenerateHashID(decData{types.NewDec(100)}.Bytes())},
+		{"+ve with -ve Dec", fields{types.NewDec(-100)}, baseIDs.GenerateHashID(decData{types.NewDec(-100)}.Bytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			decData := decData{
 				Value: tt.fields.Value,
 			}
-			if tt.wantPanic {
-				require.Panics(t, func() {
-					decData.GenerateHashID()
-				})
-			} else {
-				assert.Equalf(t, tt.want, decData.GenerateHashID(), "GenerateHashID()")
-			}
+			assert.Equalf(t, tt.want, decData.GenerateHashID(), "GenerateHashID()")
 
 		})
 	}

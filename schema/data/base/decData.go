@@ -28,6 +28,9 @@ func (decData decData) Compare(listable traits.Listable) int {
 	if err != nil {
 		panic(err)
 	}
+	if decData.Value.Int == nil {
+		decData.Value = sdkTypes.ZeroDec()
+	}
 
 	if decData.Value.GT(compareDecData.Value) {
 		return 1
