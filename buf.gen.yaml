@@ -5,7 +5,8 @@ managed:
     default: github.com/AssetMantle/modules
     except:
       - buf.build/googleapis/googleapis
-      - buf.build/gogo/protobuf
+      - buf.build/cosmos/cosmos-proto
+      - buf.build/cosmos/gogo-proto
 plugins:
   - name: gocosmos
     out: .
