@@ -73,8 +73,8 @@ func Test_dataList_GetList(t *testing.T) {
 		fields fields
 		want   []data.Data
 	}{
-		{"+ve with empty struct", fields{list{}}, []data.Data{}},       // TODO: issue Panic for nil
-		{"+ve with empty struct", fields{list{nil}}, []data.Data{nil}}, // TODO: issue Panic for nil
+		{"+ve with empty struct", fields{list{}}, []data.Data{}},
+		{"+ve with empty struct", fields{list{nil}}, []data.Data{nil}},
 		{"+ve", fields{NewList(dataToListables([]data.Data{NewStringData("Data")}...)...)}, []data.Data{NewStringData("Data")}},
 	}
 	for _, tt := range tests {
