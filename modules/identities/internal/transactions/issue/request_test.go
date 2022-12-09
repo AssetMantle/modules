@@ -176,6 +176,8 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 	_, _, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, testBaseReq := createTestInputForRequest(t)
 	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseReq, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString))
 	require.Equal(t, nil, err)
+	jsonMessage1, err := json.Marshal(newTransactionRequest(testBaseReq, toAddress, "", "", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString))
+	require.Equal(t, nil, err)
 	type fields struct {
 		BaseReq                 rest.BaseReq
 		To                      string
@@ -198,6 +200,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 	}{
 
 		{"+ve", fields{testBaseReq, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{jsonMessage}, transactionRequest{testBaseReq, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, false},
+		{"+ve", fields{testBaseReq, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{jsonMessage1}, transactionRequest{testBaseReq, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -353,6 +356,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	_, _, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, testBaseReq := createTestInputForRequest(t)
+	testBaseReq1 := rest.BaseReq{}
 
 	type fields struct {
 		BaseReq                 rest.BaseReq
@@ -371,7 +375,8 @@ func Test_transactionRequest_Validate(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, false},
-		{"+ve", fields{}, true},
+		{"+ve", fields{testBaseReq1, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, false},
+		{"-ve", fields{ClassificationID: ""}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
