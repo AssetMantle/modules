@@ -29,12 +29,26 @@ func (idData idData) Compare(listable traits.Listable) int {
 		panic(err)
 	}
 
+	if sanitizedIDData, err := idData.Sanitize(); err != nil {
+		idData.Value = sanitizedIDData.(data.IDData).Get()
+	}
+
+	if sanitizedCompareIDData, err := compareIDData.Sanitize(); err != nil {
+		compareIDData.Value = sanitizedCompareIDData.(data.IDData).Get()
+	}
+
 	return bytes.Compare(idData.Value.Bytes(), compareIDData.Value.Bytes())
 }
 func (idData idData) String() string {
+	if sanitizedIDData, err := idData.Sanitize(); err != nil {
+		idData.Value = sanitizedIDData.(data.IDData).Get()
+	}
 	return idData.Value.String()
 }
 func (idData idData) Bytes() []byte {
+	if sanitizedIDData, err := idData.Sanitize(); err != nil {
+		idData.Value = sanitizedIDData.(data.IDData).Get()
+	}
 	return idData.Value.Bytes()
 }
 func (idData idData) GetType() ids.StringID {
@@ -47,12 +61,17 @@ func (idData idData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(idData.Bytes())
 }
 func (idData idData) Get() ids.ID {
+	if sanitizedIDData, err := idData.Sanitize(); err != nil {
+		return sanitizedIDData.(data.IDData).Get()
+	}
 	return idData.Value
 }
 
 func (idData idData) Sanitize() (data.Data, error) {
-	//TODO implement me
-	panic("implement me")
+	if idData.Value == nil {
+		return idData.ZeroValue(), constants.MetaDataError
+	}
+	return idData, nil
 }
 
 func idDataFromInterface(listable traits.Listable) (idData, error) {

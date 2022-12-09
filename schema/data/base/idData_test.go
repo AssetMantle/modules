@@ -71,6 +71,7 @@ func Test_idData_Bytes(t *testing.T) {
 		want   []byte
 	}{
 		// TODO: Add test cases.
+		{"+ve with nil", fields{nil}, []byte{}},
 		{"+ve", fields{NewStringData("")}, []byte{}},
 		{"+ve", fields{NewStringData("Data")}, NewStringData("Data").Bytes()},
 	}
@@ -98,6 +99,7 @@ func Test_idData_Compare(t *testing.T) {
 		want   int
 	}{
 		// TODO: Add test cases.
+		{"+ve with nil", fields{nil}, args{idData{}}, 0},
 		{"+ve", fields{NewStringData("Data")}, args{idData{NewStringData("Data")}}, 0},
 		{"+ve", fields{NewStringData("Data")}, args{idData{NewStringData("0")}}, 1},
 	}
@@ -144,6 +146,7 @@ func Test_idData_Get(t *testing.T) {
 		want   ids.ID
 	}{
 		// TODO: Add test cases.
+		{"+ve with nil", fields{nil}, baseIDs.NewStringID("")},
 		{"+ve", fields{NewStringData("Data")}, NewStringData("Data")},
 		{"+ve", fields{NewStringData("")}, NewStringData("")},
 	}
@@ -211,6 +214,7 @@ func Test_idData_String(t *testing.T) {
 		want   string
 	}{
 		// TODO: Add test cases.
+		{"+ve with nil", fields{nil}, ""},
 		{"+ve", fields{NewStringData("Data")}, "Data"},
 	}
 	for _, tt := range tests {

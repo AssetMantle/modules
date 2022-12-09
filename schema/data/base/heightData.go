@@ -65,7 +65,7 @@ func (heightData heightData) GenerateHashID() ids.HashID {
 }
 func (heightData heightData) Get() types.Height {
 	if sanitizedHeightData, err := heightData.Sanitize(); err != nil {
-		heightData.Value = sanitizedHeightData.(data.HeightData).Get()
+		return sanitizedHeightData.(data.HeightData).Get()
 	}
 	return heightData.Value
 }
