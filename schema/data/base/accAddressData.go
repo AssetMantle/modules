@@ -57,6 +57,11 @@ func (accAddressData accAddressData) Get() sdkTypes.AccAddress {
 	return accAddressData.Value
 }
 
+func (accAddressData accAddressData) Sanitize() (data.Data, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func accAddressDataFromInterface(listable traits.Listable) (accAddressData, error) {
 	switch value := listable.(type) {
 	case accAddressData:

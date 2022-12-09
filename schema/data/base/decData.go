@@ -28,8 +28,12 @@ func (decData decData) Compare(listable traits.Listable) int {
 	if err != nil {
 		panic(err)
 	}
-	if decData.Value.Int == nil {
-		decData.Value = sdkTypes.ZeroDec()
+
+	if sanitizedDecData, err := decData.Sanitize(); err != nil {
+		decData.Value = sanitizedDecData.(data.DecData).Get()
+	}
+	if sanitizedDecData, err := compareDecData.Sanitize(); err != nil {
+		compareDecData.Value = sanitizedDecData.(data.DecData).Get()
 	}
 
 	if decData.Value.GT(compareDecData.Value) {
@@ -44,6 +48,9 @@ func (decData decData) String() string {
 	return decData.Value.String()
 }
 func (decData decData) Bytes() []byte {
+	if sanitizedDecData, err := decData.Sanitize(); err != nil {
+		decData.Value = sanitizedDecData.(data.DecData).Get()
+	}
 	return decData.Value.Bytes()
 }
 func (decData decData) GetType() ids.StringID {
@@ -61,6 +68,13 @@ func (decData decData) GenerateHashID() ids.HashID {
 }
 func (decData decData) Get() sdkTypes.Dec {
 	return decData.Value
+}
+
+func (decData decData) Sanitize() (data.Data, error) {
+	if decData.Value.Int == nil {
+		return decData.ZeroValue(), constants.MetaDataError
+	}
+	return decData, nil
 }
 
 func decDataFromInterface(listable traits.Listable) (decData, error) {

@@ -65,6 +65,11 @@ func (booleanData booleanData) Get() bool {
 	return booleanData.Value
 }
 
+func (booleanData booleanData) Sanitize() (data.Data, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func booleanDataFromInterface(listable traits.Listable) (booleanData, error) {
 	switch value := listable.(type) {
 	case booleanData:

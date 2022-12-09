@@ -84,6 +84,12 @@ func (listData listData) GenerateHashID() ids.HashID {
 
 	return baseIDs.GenerateHashID(listData.Bytes())
 }
+
+func (listData listData) Sanitize() (data.Data, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func listDataFromInterface(listable traits.Listable) (listData, error) {
 	switch value := listable.(type) {
 	case listData:

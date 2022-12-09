@@ -21,5 +21,9 @@ type Data interface {
 	// * Returns ID of empty bytes when the value of Data is that Data type's zero value
 	GenerateHashID() ids.HashID
 
+	// Sanitize returns a sanitized version of the Data with all invalid values replaced with the Data type's zero value and all valid values left unchanged
+	// returns error and data
+	Sanitize() (Data, error)
+
 	traits.Listable
 }

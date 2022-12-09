@@ -79,7 +79,7 @@ func Test_decData_Bytes(t *testing.T) {
 		want   []byte
 	}{
 		// TODO: Add test cases.
-		// {"+ve with nil", fields{}}, []byte{}},
+		{"+ve with nil", fields{}, []byte{}},
 		{"+ve with zero dec", fields{types.ZeroDec()}, decData{types.ZeroDec()}.Value.Bytes()},
 		{"+ve", fields{types.NewDec(100)}, decData{types.NewDec(100)}.Value.Bytes()},
 		{"+ve with -ve Dec", fields{types.NewDec(-100)}, decData{types.NewDec(-100)}.Value.Bytes()},

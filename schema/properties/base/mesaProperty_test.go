@@ -340,6 +340,11 @@ type stringData struct {
 	Value string `json:"value"`
 }
 
+func (stringData stringData) Sanitize() (data.Data, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 var _ data.StringData = (*stringData)(nil)
 
 func (stringData stringData) GetID() ids.DataID {

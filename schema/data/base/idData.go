@@ -50,6 +50,11 @@ func (idData idData) Get() ids.ID {
 	return idData.Value
 }
 
+func (idData idData) Sanitize() (data.Data, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func idDataFromInterface(listable traits.Listable) (idData, error) {
 	switch value := listable.(type) {
 	case idData:

@@ -60,6 +60,11 @@ func (heightData heightData) Get() types.Height {
 	return heightData.Value
 }
 
+func (heightData heightData) Sanitize() (data.Data, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func heightDataFromInterface(listable traits.Listable) (heightData, error) {
 	switch value := listable.(type) {
 	case heightData:

@@ -50,6 +50,11 @@ func (stringData stringData) Get() string {
 	return stringData.Value
 }
 
+func (stringData stringData) Sanitize() (data.Data, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func stringDataFromInterface(listable traits.Listable) (stringData, error) {
 	switch value := listable.(type) {
 	case stringData:
