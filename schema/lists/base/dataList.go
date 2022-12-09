@@ -19,7 +19,9 @@ func (dataList dataList) GetList() []data.Data {
 	DataList := make([]data.Data, dataList.List.Size())
 
 	for i, listable := range dataList.List.Get() {
-		DataList[i] = listable.(data.Data)
+		if listable != nil {
+			DataList[i] = listable.(data.Data)
+		}
 	}
 
 	return DataList
