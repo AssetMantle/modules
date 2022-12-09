@@ -82,21 +82,28 @@ func Test_accAddressData_Compare(t *testing.T) {
 		listable traits.Listable
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   int
+		name        string
+		fields      fields
+		args        args
+		want        int
+		shouldPanic bool
 	}{
 		// TODO: Add test cases.
-		{"-ve empty String", fields{fromAccAddress}, args{accAddressData{}}, 1},
-		{"+ve", fields{fromAccAddress}, args{accAddressData{fromAccAddress}}, 0},
+		{"-ve nil", fields{}, args{nil}, 0, true},
+		{"+ve with nil", fields{types.AccAddress{}}, args{NewAccAddressData(nil)}, 0, false},
+		{"-ve empty String", fields{fromAccAddress}, args{accAddressData{}}, 1, false},
+		{"+ve", fields{fromAccAddress}, args{accAddressData{fromAccAddress}}, 0, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			accAddressData := accAddressData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, accAddressData.Compare(tt.args.listable), "Compare(%v)", tt.args.listable)
+			if tt.shouldPanic {
+				assert.Panicsf(t, func() { accAddressData.Compare(tt.args.listable) }, "Compare(%v)", tt.args.listable)
+			} else {
+				assert.Equalf(t, tt.want, accAddressData.Compare(tt.args.listable), "Compare(%v)", tt.args.listable)
+			}
 		})
 	}
 }

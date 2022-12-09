@@ -30,6 +30,12 @@ func (accAddressData accAddressData) Compare(listable traits.Listable) int {
 	if err != nil {
 		panic(err)
 	}
+	if sanitizedAccAddressData, err := accAddressData.Sanitize(); err != nil {
+		accAddressData.Value = sanitizedAccAddressData.(data.AccAddressData).Get()
+	}
+	if sanitizedCompareAccAddressData, err := compareAccAddressData.Sanitize(); err != nil {
+		compareAccAddressData.Value = sanitizedCompareAccAddressData.(data.AccAddressData).Get()
+	}
 
 	return bytes.Compare(accAddressData.Value.Bytes(), compareAccAddressData.Value.Bytes())
 }
@@ -58,8 +64,10 @@ func (accAddressData accAddressData) Get() sdkTypes.AccAddress {
 }
 
 func (accAddressData accAddressData) Sanitize() (data.Data, error) {
-	//TODO implement me
-	panic("implement me")
+	if accAddressData.Value.Empty() {
+		return accAddressData.ZeroValue(), nil
+	}
+	return accAddressData, nil
 }
 
 func accAddressDataFromInterface(listable traits.Listable) (accAddressData, error) {
