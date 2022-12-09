@@ -8,8 +8,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
 
@@ -179,27 +177,21 @@ func Test_decData_GetID(t *testing.T) {
 		Value types.Dec
 	}
 	tests := []struct {
-		name      string
-		fields    fields
-		want      ids.DataID
-		wantPanic bool
+		name   string
+		fields fields
+		want   ids.DataID
 	}{
-		// TODO: Add test cases.
-		{"panic case with nil", fields{types.Dec{}}, nil, true}, // TODO: Check whether planned panic in NewDataID is expected behaviour
-		{"+ve with zero dec", fields{types.ZeroDec()}, baseIDs.NewDataID(decData{types.ZeroDec()}), false},
-		{"+ve", fields{types.NewDec(100)}, baseIDs.NewDataID(decData{types.NewDec(100)}), false},
-		{"+ve with -ve Dec", fields{types.NewDec(-100)}, baseIDs.NewDataID(decData{types.NewDec(-100)}), false},
+		{"+ve with nil", fields{types.Dec{}}, baseIDs.NewDataID(decData{})},
+		{"+ve with zero dec", fields{types.ZeroDec()}, baseIDs.NewDataID(decData{types.ZeroDec()})},
+		{"+ve", fields{types.NewDec(100)}, baseIDs.NewDataID(decData{types.NewDec(100)})},
+		{"+ve with -ve Dec", fields{types.NewDec(-100)}, baseIDs.NewDataID(decData{types.NewDec(-100)})},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			decData := decData{
 				Value: tt.fields.Value,
 			}
-			if tt.wantPanic {
-				require.Panics(t, func() {
-					decData.GetID()
-				})
-			} else if got := decData.GetID(); !reflect.DeepEqual(got, tt.want) {
+			if got := decData.GetID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetID() = %v, want %v", got, tt.want)
 			}
 		})
