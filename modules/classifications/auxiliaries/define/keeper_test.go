@@ -5,6 +5,7 @@ package define
 
 import (
 	"fmt"
+	"github.com/AssetMantle/modules/schema/properties"
 	"reflect"
 	"testing"
 
@@ -96,6 +97,13 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 		}
 	})
 
+	t.Run("PositiveCase with max Properties", func(t *testing.T) {
+		want := newAuxiliaryResponse(baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList(createTestProperties(12, 0, "immutable")...)), baseQualified.NewMutables(baseLists.NewPropertyList(createTestProperties(0, 10, "mutable")...))), nil)
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList(createTestProperties(12, 0, "immutable")...)), baseQualified.NewMutables(baseLists.NewPropertyList(createTestProperties(0, 10, "mutable")...)))); !reflect.DeepEqual(got, want) {
+			t.Errorf("Transact() = %v, want %v", got, want)
+		}
+	})
+
 	t.Run("NegativeCase-Classification already present", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(testClassificationID, constants.EntityAlreadyExists)
@@ -107,7 +115,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Max Property Count", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(nil, constants.InvalidRequest)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID3"), baseData.NewStringData("Data3")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID4"), baseData.NewStringData("Data4")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID5"), baseData.NewStringData("Data5")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID6"), baseData.NewStringData("Data6")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID7"), baseData.NewStringData("Data7")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID8"), baseData.NewStringData("Data8")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID9"), baseData.NewStringData("Data9")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID10"), baseData.NewStringData("Data10")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID9"), baseData.NewStringData("Data9")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID10"), baseData.NewStringData("Data10")))), baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID3"), baseData.NewStringData("Data3")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID4"), baseData.NewStringData("Data4")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID5"), baseData.NewStringData("Data5")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID6"), baseData.NewStringData("Data6")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID7"), baseData.NewStringData("Data7")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID8"), baseData.NewStringData("Data8")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID9"), baseData.NewStringData("Data9")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID10"), baseData.NewStringData("Data10")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID9"), baseData.NewStringData("Data9")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID10"), baseData.NewStringData("Data10")))))); !reflect.DeepEqual(got, want) {
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList(createTestProperties(10, 5, "immutable")...)), baseQualified.NewMutables(baseLists.NewPropertyList(createTestProperties(5, 5, "mutable")...)))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -115,7 +123,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Duplicate Immutable Property", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(nil, constants.InvalidRequest)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data2")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID3"), baseData.NewStringData("Data3")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID4"), baseData.NewStringData("Data4")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID5"), baseData.NewStringData("Data5")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID6"), baseData.NewStringData("Data6")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID7"), baseData.NewStringData("Data7")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID8"), baseData.NewStringData("Data8")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID9"), baseData.NewStringData("Data9")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID10"), baseData.NewStringData("Data10")))), baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID11"), baseData.NewStringData("Data11")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID12"), baseData.NewStringData("Data12")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID13"), baseData.NewStringData("Data13")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID14"), baseData.NewStringData("Data14")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID15"), baseData.NewStringData("Data15")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID16"), baseData.NewStringData("Data16")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID17"), baseData.NewStringData("Data17")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID18"), baseData.NewStringData("Data18")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID19"), baseData.NewStringData("Data19")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID20"), baseData.NewStringData("Data20")))))); !reflect.DeepEqual(got, want) {
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList(append(createTestProperties(5, 0, "immutable"), createTestProperties(1, 0, "immutable")[0])...)), baseQualified.NewMutables(baseLists.NewPropertyList(createTestProperties(2, 0, "mutable")...)))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -123,7 +131,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	t.Run("NegativeCase-Duplicate Immutable and Mutable Property", func(t *testing.T) {
 		t.Parallel()
 		want := newAuxiliaryResponse(nil, constants.InvalidRequest)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID3"), baseData.NewStringData("Data3")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID4"), baseData.NewStringData("Data4")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID5"), baseData.NewStringData("Data5")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID6"), baseData.NewStringData("Data6")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID7"), baseData.NewStringData("Data7")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID8"), baseData.NewStringData("Data8")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID9"), baseData.NewStringData("Data9")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID10"), baseData.NewStringData("Data10")))), baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data11")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID12"), baseData.NewStringData("Data12")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID13"), baseData.NewStringData("Data13")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID14"), baseData.NewStringData("Data14")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID15"), baseData.NewStringData("Data15")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID16"), baseData.NewStringData("Data16")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID17"), baseData.NewStringData("Data17")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID18"), baseData.NewStringData("Data18")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID19"), baseData.NewStringData("Data19")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID20"), baseData.NewStringData("Data20")))))); !reflect.DeepEqual(got, want) {
+		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList(append(createTestProperties(5, 0, "immutable"), createTestProperties(1, 0, "immutable")[0])...)), baseQualified.NewMutables(baseLists.NewPropertyList(append(createTestProperties(2, 0, "mutable"), createTestProperties(1, 0, "mutable")...)...)))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -173,4 +181,15 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 			}
 		})
 	}
+}
+
+func createTestProperties(noOfMeta int, nOfMesa int, propertyType string) []properties.Property {
+	var propertyLists []properties.Property
+	for i := 0; i < noOfMeta; i++ {
+		propertyLists = append(propertyLists, baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"+propertyType+fmt.Sprint(i)), baseData.NewStringData("DataMeta"+fmt.Sprint(i))))
+	}
+	for i := 0; i < nOfMesa; i++ {
+		propertyLists = append(propertyLists, baseProperties.NewMesaProperty(baseIDs.NewStringID("ID"+propertyType+fmt.Sprint(i)), baseData.NewStringData("DataMesa"+fmt.Sprint(i))))
+	}
+	return propertyLists
 }
