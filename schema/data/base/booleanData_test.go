@@ -36,31 +36,6 @@ func TestNewBooleanData(t *testing.T) {
 	}
 }
 
-func TestBooleanDataFromInterface(t *testing.T) {
-	type args struct {
-		dataString data.Data
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    data.Data
-		wantErr assert.ErrorAssertionFunc
-	}{
-		// TODO: Add test cases.
-		{"-ve", args{NewBooleanData(false)}, booleanData{false}, assert.NoError},
-		{"+ve", args{NewBooleanData(true)}, booleanData{true}, assert.NoError},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := booleanDataFromInterface(tt.args.dataString)
-			if !tt.wantErr(t, err, fmt.Sprintf("booleanDataFromInterface(%v)", tt.args.dataString)) {
-				return
-			}
-			assert.Equalf(t, tt.want, got, "booleanDataFromInterface(%v)", tt.args.dataString)
-		})
-	}
-}
-
 func Test_booleanDataFromInterface(t *testing.T) {
 	type args struct {
 		listable traits.Listable
@@ -101,6 +76,7 @@ func Test_booleanData_Compare(t *testing.T) {
 		want   int
 	}{
 		// TODO: Add test cases.
+		{"+ve with nil", fields{}, args{booleanData{}}, 0},
 		{"+ve", fields{false}, args{booleanData{true}}, -1},
 		{"+ve", fields{true}, args{booleanData{false}}, 1},
 		{"+ve", fields{false}, args{booleanData{false}}, 0},

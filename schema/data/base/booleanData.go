@@ -66,8 +66,7 @@ func (booleanData booleanData) Get() bool {
 }
 
 func (booleanData booleanData) Sanitize() (data.Data, error) {
-	//TODO implement me
-	panic("implement me")
+	return booleanData, nil
 }
 
 func booleanDataFromInterface(listable traits.Listable) (booleanData, error) {
