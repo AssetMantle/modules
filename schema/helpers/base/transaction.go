@@ -105,16 +105,16 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 
 		baseReq := transactionRequest.GetBaseReq()
 
+		baseReq = baseReq.Sanitize()
+		if !baseReq.ValidateBasic(responseWriter) {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
+			return
+		}
+
 		var msg sdkTypes.Msg
 		msg, err = transactionRequest.MakeMsg()
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
-			return
-		}
-
-		baseReq = baseReq.Sanitize()
-		if !baseReq.ValidateBasic(responseWriter) {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
 
