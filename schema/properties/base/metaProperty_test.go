@@ -9,6 +9,7 @@ import (
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/traits"
+	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
 )
@@ -51,16 +52,20 @@ func TestNewMetaProperty(t *testing.T) {
 		data data.Data
 	}
 	tests := []struct {
-		name string
-		args args
-		want properties.MetaProperty
+		name        string
+		args        args
+		want        properties.MetaProperty
+		shouldPanic bool
 	}{
 		// TODO: Add test cases.
-		{"+ve", args{testKey, testData}, metaProperty{testPropertyID, testData}},
+		{"+ve", args{testKey, testData}, metaProperty{testPropertyID, testData}, false},
+		{"+ve", args{nil, nil}, metaProperty{nil, nil}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMetaProperty(tt.args.key, tt.args.data); !reflect.DeepEqual(got, tt.want) {
+			if tt.shouldPanic {
+				assert.Panics(t, func() { NewMetaProperty(tt.args.key, tt.args.data) }, "The code did not panic, but it should panic")
+			} else if got := NewMetaProperty(tt.args.key, tt.args.data); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewMetaProperty() = %v, want %v", got, tt.want)
 			}
 		})
