@@ -4,6 +4,7 @@
 package base
 
 import (
+	"encoding/binary"
 	"reflect"
 	"strconv"
 	"testing"
@@ -92,7 +93,7 @@ func Test_heightData_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-
+		{"+ve with nil", fields{}, args{heightData{}}, 0},
 		{"Test for Equal case", fields{baseTypes.NewHeight(100)}, args{heightData{baseTypes.NewHeight(100)}}, 0},
 		{"Test for LT case", fields{baseTypes.NewHeight(0)}, args{heightData{baseTypes.NewHeight(100)}}, -1},
 		{"Test for GT case", fields{baseTypes.NewHeight(100)}, args{heightData{baseTypes.NewHeight(0)}}, 1},
@@ -118,7 +119,7 @@ func Test_heightData_GenerateHashID(t *testing.T) {
 		fields fields
 		want   ids.HashID
 	}{
-
+		{"+ve with nil", fields{}, baseIDs.GenerateHashID()},
 		{"Test for zero value", fields{baseTypes.NewHeight(-1)}, baseIDs.GenerateHashID()},
 		{"Test for -ve value", fields{baseTypes.NewHeight(-100)}, baseIDs.GenerateHashID()},
 		{"Test for +ve value", fields{baseTypes.NewHeight(100)}, baseIDs.GenerateHashID(heightData{baseTypes.NewHeight(100)}.Bytes())},
@@ -144,7 +145,7 @@ func Test_heightData_Get(t *testing.T) {
 		fields fields
 		want   types.Height
 	}{
-
+		{"+ve with nil", fields{}, baseTypes.NewHeight(-1)},
 		{"Test for zero value", fields{baseTypes.NewHeight(0)}, heightData{baseTypes.NewHeight(0)}.Value},
 		{"Test for +ve value", fields{baseTypes.NewHeight(100)}, heightData{baseTypes.NewHeight(100)}.Value},
 		{"Test for -ve value", fields{baseTypes.NewHeight(-100)}, heightData{baseTypes.NewHeight(-100)}.Value},
@@ -259,6 +260,34 @@ func Test_heightData_ZeroValue(t *testing.T) {
 			if got := heightData.ZeroValue(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ZeroValue() = %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func Test_heightData_Bytes(t *testing.T) {
+	testBytes := make([]byte, 8)
+	binary.LittleEndian.PutUint64(testBytes, uint64(100))
+	testBytes1 := make([]byte, 8)
+	i := int64(-1)
+	binary.LittleEndian.PutUint64(testBytes1, uint64(i))
+	type fields struct {
+		Value types.Height
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   []byte
+	}{
+		{"+ve with nil", fields{nil}, testBytes1},
+		{"Test for +ve Height", fields{baseTypes.NewHeight(-100)}, testBytes1},
+		{"Test for -ve Height", fields{baseTypes.NewHeight(100)}, testBytes},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			heightData := heightData{
+				Value: tt.fields.Value,
+			}
+			assert.Equalf(t, tt.want, heightData.Bytes(), "Bytes()")
 		})
 	}
 }

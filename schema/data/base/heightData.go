@@ -32,6 +32,13 @@ func (heightData heightData) Compare(listable traits.Listable) int {
 		panic(err)
 	}
 
+	if sanitizedHeightData, err := heightData.Sanitize(); err != nil {
+		heightData.Value = sanitizedHeightData.(data.HeightData).Get()
+	}
+	if sanitizedCompareHeightData, err := compareHeightData.Sanitize(); err != nil {
+		compareHeightData.Value = sanitizedCompareHeightData.(data.HeightData).Get()
+	}
+
 	return heightData.Value.Compare(compareHeightData.Value)
 }
 func (heightData heightData) String() string {
@@ -57,12 +64,17 @@ func (heightData heightData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(heightData.Bytes())
 }
 func (heightData heightData) Get() types.Height {
+	if sanitizedHeightData, err := heightData.Sanitize(); err != nil {
+		heightData.Value = sanitizedHeightData.(data.HeightData).Get()
+	}
 	return heightData.Value
 }
 
 func (heightData heightData) Sanitize() (data.Data, error) {
-	//TODO implement me
-	panic("implement me")
+	if heightData.Value == nil {
+		return heightData.ZeroValue(), constants.MetaDataError
+	}
+	return heightData, nil
 }
 
 func heightDataFromInterface(listable traits.Listable) (heightData, error) {
