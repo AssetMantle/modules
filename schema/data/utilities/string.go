@@ -21,7 +21,7 @@ func readAccAddressData(dataString string) (data.AccAddressData, error) {
 		return base.AccAddressDataPrototype(), nil
 	}
 
-	accAddress, err := sdkTypes.AccAddressFromBech32(dataString)
+	accAddress, err := sdkTypes.AccAddressFromBech32(sanitizeDataString(dataString))
 	if err != nil {
 		return base.AccAddressDataPrototype(), err
 	}
@@ -33,7 +33,7 @@ func readBooleanData(dataString string) (data.BooleanData, error) {
 		return base.BooleanDataPrototype(), nil
 	}
 
-	Bool, err := strconv.ParseBool(dataString)
+	Bool, err := strconv.ParseBool(sanitizeDataString(dataString))
 	if err != nil {
 		return base.BooleanDataPrototype(), err
 	}
@@ -45,7 +45,7 @@ func readDecData(dataString string) (data.DecData, error) {
 		return base.DecDataPrototype(), nil
 	}
 
-	dec, err := sdkTypes.NewDecFromStr(dataString)
+	dec, err := sdkTypes.NewDecFromStr(sanitizeDataString(dataString))
 	if err != nil {
 		return base.DecDataPrototype(), err
 	}
@@ -57,7 +57,7 @@ func readHeightData(dataString string) (data.HeightData, error) {
 		return base.HeightDataPrototype(), nil
 	}
 
-	height, err := strconv.ParseInt(dataString, 10, 64)
+	height, err := strconv.ParseInt(sanitizeDataString(dataString), 10, 64)
 	if err != nil {
 		return base.HeightDataPrototype(), err
 	}
@@ -71,14 +71,14 @@ func readIDData(dataString string) (data.IDData, error) {
 		return base.IDDataPrototype(), nil
 	}
 
-	return base.NewIDData(baseIDs.NewStringID(dataString)), nil
+	return base.NewIDData(baseIDs.NewStringID(sanitizeDataString(dataString))), nil
 }
 func readListData(dataString string) (data.ListData, error) {
 	if dataString == "" {
 		return base.ListDataPrototype(), nil
 	}
 
-	dataStringList := stringUtilities.SplitListString(dataString)
+	dataStringList := stringUtilities.SplitListString(sanitizeDataString(dataString))
 	dataList := make([]data.Data, len(dataStringList))
 
 	for i, datumString := range dataStringList {
@@ -96,13 +96,13 @@ func readStringData(dataString string) (data.StringData, error) {
 	if dataString == "" {
 		return base.StringDataPrototype(), nil
 	}
-	return base.NewStringData(dataString), nil
+	return base.NewStringData(sanitizeDataString(dataString)), nil
 }
 func joinDataTypeAndValueStrings(dataType, dataValue string) string {
 	return strings.Join([]string{dataType, dataValue}, dataConstants.DataTypeAndValueSeparator)
 }
 func splitDataTypeAndValueStrings(dataTypeAndValueString string) (dataType, dataValue string) {
-	if dataTypeAndValue := strings.SplitN(dataTypeAndValueString, dataConstants.DataTypeAndValueSeparator, 2); len(dataTypeAndValue) < 2 {
+	if dataTypeAndValue := strings.SplitN(sanitizeDataString(dataTypeAndValueString), dataConstants.DataTypeAndValueSeparator, 2); len(dataTypeAndValue) < 2 {
 		return "", ""
 	} else {
 		return dataTypeAndValue[0], dataTypeAndValue[1]
@@ -112,7 +112,7 @@ func splitDataTypeAndValueStrings(dataTypeAndValueString string) (dataType, data
 // ReadData
 // CHECK-TODO if data type added see if added here
 func ReadData(dataString string) (data.Data, error) {
-	dataTypeString, dataValueString := splitDataTypeAndValueStrings(dataString)
+	dataTypeString, dataValueString := splitDataTypeAndValueStrings(sanitizeDataString(dataString))
 	if dataTypeString != "" {
 		var Data data.Data
 
@@ -145,4 +145,8 @@ func ReadData(dataString string) (data.Data, error) {
 	}
 
 	return nil, errorConstants.IncorrectFormat
+}
+
+func sanitizeDataString(dataString string) string {
+	return strings.ReplaceAll(dataString, " ", "")
 }
