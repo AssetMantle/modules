@@ -24,9 +24,10 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var fromAddress = "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
-
-var accAddress = NewAccAddressData(sdkTypes.AccAddress(fromAddress)).String()
+var (
+	fromAddress = "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
+	accAddress  = NewAccAddressData(sdkTypes.AccAddress(fromAddress)).String()
+)
 
 func TestListDataPrototype(t *testing.T) {
 	type args struct {
@@ -113,6 +114,7 @@ func Test_listData_Add(t *testing.T) {
 		wantFailure bool
 	}{
 		// TODO: Add test cases.
+		{"+ve with nil", fields{nil}, args{[]data.Data{nil}}, listData{baseLists.NewDataList(nil)}, false},
 		{"+ve for multiple ids", fields{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"), NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"), NewStringData("Data"))}, false},
 		{"+ve for multiple ids/nils", fields{baseLists.NewDataList(NewStringData("Data"), NewStringData(""), NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"), NewStringData(""))}, false},
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"))}, false},
@@ -144,6 +146,8 @@ func Test_listData_Bytes(t *testing.T) {
 		want   []byte
 	}{
 		// TODO: Add test cases.
+		{"+ve with nil", fields{nil}, []byte{}},
+		{"+ve with nil data", fields{baseLists.NewDataList()}, []byte{}},
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, NewStringData("Data").Bytes()}, // for a single data no loop iteration is required, so directly it's byte should match
 		{"+ve for multiple ids", fields{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data1"))}, bytes.Join([][]byte{NewStringData("Data").Bytes(), NewStringData("Data1").Bytes()}, nil)},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, []byte(nil)},
@@ -173,6 +177,7 @@ func Test_listData_Compare(t *testing.T) {
 		wantPanic bool
 	}{
 		// TODO: Add test cases.
+		{"+ve with nil", fields{nil}, args{listData{}}, 0, false},
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{listData{baseLists.NewDataList(NewStringData("Data"))}}, 0, false},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{listData{baseLists.NewDataList(NewStringData("Data"))}}, -1, false},
 		{"Test for Equal case", fields{baseLists.NewDataList(NewStringData(fromAddress))}, args{listData{baseLists.NewDataList(NewStringData(fromAddress))}}, 0, false},
@@ -233,6 +238,7 @@ func Test_listData_Get(t *testing.T) {
 		want   []data.Data
 	}{
 		// TODO: Add test cases.
+		{"+ve with nil", fields{nil}, []data.Data{}},
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, listData{baseLists.NewDataList(NewStringData("Data"))}.Value.GetList()},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, listData{baseLists.NewDataList(NewStringData(""))}.Value.GetList()},
 	}
@@ -306,6 +312,7 @@ func Test_listData_Remove(t *testing.T) {
 		want   data.ListData
 	}{
 		// TODO: Add test cases.
+		{"+ve with nil", fields{nil}, args{[]data.Data{NewStringData("Data")}}, listData{baseLists.NewDataList()}},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{[]data.Data{}}, listData{baseLists.NewDataList(NewStringData(""))}},
 		{"+ve for empty String & removing it", fields{baseLists.NewDataList(NewStringData(""))}, args{[]data.Data{NewStringData("")}}, listData{baseLists.NewDataList()}},
 		{"+ve ", fields{baseLists.NewDataList(NewStringData("data"))}, args{[]data.Data{NewStringData("data")}}, listData{baseLists.NewDataList()}},
@@ -328,13 +335,14 @@ func Test_listData_Search(t *testing.T) {
 		data data.Data
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   int
-		want1  bool
+		name      string
+		fields    fields
+		args      args
+		want      int
+		wantError bool
 	}{
 		// TODO: Add test cases.
+		{"+ve with nil", fields{}, args{data.Data(nil)}, 0, false},
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{NewStringData("Data")}, 0, true},
 		{"+ve for empty String", fields{baseLists.NewDataList([]data.Data{NewStringData("Data"), NewStringData("")}...)}, args{NewStringData("")}, 0, true},
 		{"-ve", fields{baseLists.NewDataList([]data.Data{NewStringData("Data"), NewStringData("")}...)}, args{NewStringData("test")}, 2, false},
@@ -346,7 +354,7 @@ func Test_listData_Search(t *testing.T) {
 			}
 			got, got1 := listData.Search(tt.args.data)
 			assert.Equalf(t, tt.want, got, "Search(%v)", tt.args.data)
-			assert.Equalf(t, tt.want1, got1, "Search(%v)", tt.args.data)
+			assert.Equalf(t, tt.wantError, got1, "Search(%v)", tt.args.data)
 		})
 	}
 }

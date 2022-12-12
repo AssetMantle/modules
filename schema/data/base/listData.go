@@ -24,17 +24,29 @@ type listData struct {
 var _ data.ListData = (*listData)(nil)
 
 func (listData listData) Get() []data.Data {
+	if sanitizedData, err := listData.Sanitize(); err != nil {
+		listData.Value = base.NewDataList(sanitizedData.(data.ListData).Get()...)
+	}
 	return listData.Value.GetList()
 }
-func (listData listData) Search(data data.Data) (int, bool) {
-	return listData.Value.Search(data)
+func (listData listData) Search(_data data.Data) (int, bool) {
+	if sanitizedData, err := listData.Sanitize(); err != nil {
+		listData.Value = base.NewDataList(sanitizedData.(data.ListData).Get()...)
+	}
+	return listData.Value.Search(_data)
 }
-func (listData listData) Add(data ...data.Data) data.ListData {
-	listData.Value = listData.Value.Add(data...)
+func (listData listData) Add(_data ...data.Data) data.ListData {
+	if sanitizedData, err := listData.Sanitize(); err != nil {
+		listData.Value = base.NewDataList(sanitizedData.(data.ListData).Get()...)
+	}
+	listData.Value = listData.Value.Add(_data...)
 	return listData
 }
-func (listData listData) Remove(data ...data.Data) data.ListData {
-	listData.Value = listData.Value.Remove(data...)
+func (listData listData) Remove(_data ...data.Data) data.ListData {
+	if sanitizedData, err := listData.Sanitize(); err != nil {
+		listData.Value = base.NewDataList(sanitizedData.(data.ListData).Get()...)
+	}
+	listData.Value = listData.Value.Remove(_data...)
 	return listData
 }
 func (listData listData) GetID() ids.DataID {
@@ -59,6 +71,9 @@ func (listData listData) String() string {
 	return stringUtilities.JoinListStrings(dataStrings...)
 }
 func (listData listData) Bytes() []byte {
+	if sanitizedData, err := listData.Sanitize(); err != nil {
+		listData.Value = base.NewDataList(sanitizedData.(data.ListData).Get()...)
+	}
 	bytesList := make([][]byte, listData.Value.Size())
 
 	for i, datum := range listData.Value.GetList() {
@@ -87,7 +102,10 @@ func (listData listData) GenerateHashID() ids.HashID {
 
 func (listData listData) Sanitize() (data.Data, error) {
 	//TODO implement me
-	panic("implement me")
+	if listData.Value == nil {
+		return listData.ZeroValue(), errorConstants.MetaDataError
+	}
+	return listData, nil
 }
 
 func listDataFromInterface(listable traits.Listable) (listData, error) {
