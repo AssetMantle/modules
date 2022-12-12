@@ -17,6 +17,10 @@ import (
 
 var _ data.DecData = (*Data_DecData)(nil)
 
+func (decData *Data_DecData) Unmarshal(bytes []byte) error {
+	// TODO implement me
+	panic("implement me")
+}
 func (decData *Data_DecData) GetID() ids.ID {
 	return baseIDs.GenerateDataID(decData)
 }

@@ -16,7 +16,6 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/module/module"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/data"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	codecUtilities "github.com/AssetMantle/modules/utilities"
@@ -72,6 +71,6 @@ func messagePrototype() helpers.Message {
 func newMessage(from []byte, data data.Data) sdkTypes.Msg {
 	return &Message{
 		From: from,
-		Data: data.(*baseData.Data),
+		Data: data,
 	}
 }

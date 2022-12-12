@@ -19,6 +19,10 @@ import (
 
 var _ data.HeightData = (*Data_HeightData)(nil)
 
+func (heightData *Data_HeightData) Unmarshal(bytes []byte) error {
+	// TODO implement me
+	panic("implement me")
+}
 func (heightData *Data_HeightData) GetID() ids.ID {
 	return baseIDs.GenerateDataID(heightData)
 }
