@@ -72,6 +72,9 @@ func Test_stringData_Bytes(t *testing.T) {
 		want   []byte
 	}{
 		// TODO: Add test cases.
+		{"+ve data", fields{"data"}, []byte("data")},
+		{"+ve with empty string", fields{""}, []byte("")},
+		{"+ve with nil", fields{}, []byte{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -97,6 +100,7 @@ func Test_stringData_Compare(t *testing.T) {
 		want   int
 	}{
 		// TODO: Add test cases.
+		{"+ve with nil and empty string", fields{}, args{stringData{""}}, 0},
 		{"+ve data", fields{"data"}, args{stringData{"data"}}, 0},
 		{"data with special char", fields{"data"}, args{stringData{"data_!@#$%^&*("}}, -1},
 		{"empty string", fields{"data"}, args{stringData{""}}, 1},
@@ -121,6 +125,7 @@ func Test_stringData_GenerateHashID(t *testing.T) {
 		want   ids.HashID
 	}{
 		// TODO: Add test cases.
+		{"+ve with nil and empty string", fields{}, baseIDs.GenerateHashID(stringData{}.Bytes())},
 		{"+ve data", fields{"data"}, baseIDs.GenerateHashID(stringData{"data"}.Bytes())},
 		{"data with special char", fields{"data_!@#$%^&*("}, baseIDs.GenerateHashID(stringData{"data_!@#$%^&*("}.Bytes())},
 		{"empty string", fields{""}, baseIDs.GenerateHashID(stringData{""}.Bytes())},

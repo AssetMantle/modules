@@ -51,8 +51,7 @@ func (stringData stringData) Get() string {
 }
 
 func (stringData stringData) Sanitize() (data.Data, error) {
-	//TODO implement me
-	panic("implement me")
+	return stringData, nil
 }
 
 func stringDataFromInterface(listable traits.Listable) (stringData, error) {
