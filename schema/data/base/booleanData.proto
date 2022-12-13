@@ -1,6 +1,0 @@
-syntax = "proto3";
-package base;
-
-message BooleanData{
-  bool value = 1;
-}

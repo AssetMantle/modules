@@ -1,63 +1,51 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package ownable
 
 import (
-	"errors"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/common"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+
+	"github.com/AssetMantle/modules/modules/splits/internal/common"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-var _ helpers.QueryResponse = (*QueryResponse)(nil)
+type queryResponse struct {
+	Success bool         `json:"success"`
+	Error   error        `json:"error" swaggertype:"string"`
+	Value   sdkTypes.Dec `json:"value" swaggertype:"string"`
+}
 
-func (queryResponse QueryResponse) IsSuccessful() bool {
+var _ helpers.QueryResponse = (*queryResponse)(nil)
+
+func (queryResponse queryResponse) IsSuccessful() bool {
 	return queryResponse.Success
 }
-func (queryResponse QueryResponse) GetError() error {
-	return errors.New(queryResponse.Error)
+func (queryResponse queryResponse) GetError() error {
+	return queryResponse.Error
 }
-func (queryResponse QueryResponse) LegacyAminoEncode() ([]byte, error) {
-	return common.LegacyAminoCodec.MarshalJSON(queryResponse)
+func (queryResponse queryResponse) Encode() ([]byte, error) {
+	return common.Codec.MarshalJSON(queryResponse)
 }
-func (queryResponse QueryResponse) LegacyAminoDecode(bytes []byte) (helpers.QueryResponse, error) {
-	if Error := common.LegacyAminoCodec.UnmarshalJSON(bytes, &queryResponse); Error != nil {
-		return nil, Error
+func (queryResponse queryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
+	if err := common.Codec.UnmarshalJSON(bytes, &queryResponse); err != nil {
+		return nil, err
 	}
 
-	return &queryResponse, nil
+	return queryResponse, nil
 }
-func (queryResponse QueryResponse) Encode(cdc codec.JSONMarshaler) ([]byte, error) {
-	return cdc.MarshalJSON(&queryResponse)
-}
-
-func (queryResponse QueryResponse) Decode(cdc codec.JSONMarshaler, bytes []byte) (helpers.QueryResponse, error) {
-	if Error := cdc.UnmarshalJSON(bytes, &queryResponse); Error != nil {
-		return nil, Error
-	}
-	return &queryResponse, nil
-}
-
 func responsePrototype() helpers.QueryResponse {
-	return &QueryResponse{}
+	return queryResponse{}
 }
-func newQueryResponse(value sdkTypes.Dec, error error) QueryResponse {
+func newQueryResponse(value sdkTypes.Dec, error error) helpers.QueryResponse {
 	success := true
 	if error != nil {
 		success = false
-		return QueryResponse{
-			Success: success,
-			Error:   "yes",
-			Value:   value,
-		}
 	}
-	return QueryResponse{
+
+	return queryResponse{
 		Success: success,
-		Error:   "no",
+		Error:   error,
 		Value:   value,
 	}
 }

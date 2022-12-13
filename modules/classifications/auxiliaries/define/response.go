@@ -1,20 +1,18 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package define
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants/errors" //nolint:typecheck
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 )
 
 type auxiliaryResponse struct {
-	Success          bool     `json:"success"`
-	Error            error    `json:"error"`
-	ClassificationID types.ID `json:"classificationID"`
+	Success              bool  `json:"success"`
+	Error                error `json:"error"`
+	ids.ClassificationID `json:"classificationID"`
 }
 
 var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
@@ -26,7 +24,7 @@ func (auxiliaryResponse auxiliaryResponse) GetError() error {
 	return auxiliaryResponse.Error
 }
 
-func newAuxiliaryResponse(classificationID types.ID, error error) helpers.AuxiliaryResponse {
+func newAuxiliaryResponse(classificationID ids.ClassificationID, error error) helpers.AuxiliaryResponse {
 	if error != nil {
 		return auxiliaryResponse{
 			Success:          false,
@@ -41,7 +39,7 @@ func newAuxiliaryResponse(classificationID types.ID, error error) helpers.Auxili
 	}
 }
 
-func GetClassificationIDFromResponse(response helpers.AuxiliaryResponse) (types.ID, error) {
+func GetClassificationIDFromResponse(response helpers.AuxiliaryResponse) (ids.ClassificationID, error) {
 	switch value := response.(type) {
 	case auxiliaryResponse:
 		if value.IsSuccessful() {
@@ -50,6 +48,6 @@ func GetClassificationIDFromResponse(response helpers.AuxiliaryResponse) (types.
 
 		return value.ClassificationID, value.GetError()
 	default:
-		return nil, errors.InvalidRequest
+		return nil, constants.InvalidRequest
 	}
 }

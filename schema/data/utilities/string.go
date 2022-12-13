@@ -11,10 +11,12 @@ import (
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
-func readAccAddressData(dataString string) (data.Data, error) {
+func readAccAddressData(dataString string) (data.AccAddressData, error) {
 	if dataString == "" {
 		return base.AccAddressDataPrototype(), nil
 	}
@@ -26,7 +28,7 @@ func readAccAddressData(dataString string) (data.Data, error) {
 
 	return base.NewAccAddressData(accAddress), nil
 }
-func readBooleanData(dataString string) (data.Data, error) {
+func readBooleanData(dataString string) (data.BooleanData, error) {
 	if dataString == "" {
 		return base.BooleanDataPrototype(), nil
 	}
@@ -38,7 +40,7 @@ func readBooleanData(dataString string) (data.Data, error) {
 
 	return base.NewBooleanData(Bool), nil
 }
-func readDecData(dataString string) (data.Data, error) {
+func readDecData(dataString string) (data.DecData, error) {
 	if dataString == "" {
 		return base.DecDataPrototype(), nil
 	}
@@ -50,7 +52,7 @@ func readDecData(dataString string) (data.Data, error) {
 
 	return base.NewDecData(dec), nil
 }
-func readHeightData(dataString string) (data.Data, error) {
+func readHeightData(dataString string) (data.HeightData, error) {
 	if dataString == "" {
 		return base.HeightDataPrototype(), nil
 	}
@@ -63,16 +65,34 @@ func readHeightData(dataString string) (data.Data, error) {
 	return base.NewHeightData(baseTypes.NewHeight(height)), nil
 }
 
-// TODO read complex IDs than string PropertyID
-func readIDData(dataString string) (data.Data, error) {
+// TODO read complex IDs than string ID
+func readIDData(dataString string) (data.IDData, error) {
 	if dataString == "" {
 		return base.IDDataPrototype(), nil
 	}
 
 	return base.NewIDData(baseIDs.NewStringID(dataString)), nil
 }
+func readListData(dataString string) (data.ListData, error) {
+	if dataString == "" {
+		return base.ListDataPrototype(), nil
+	}
 
-func readStringData(dataString string) (data.Data, error) {
+	dataStringList := stringUtilities.SplitListString(dataString)
+	dataList := make([]data.Data, len(dataStringList))
+
+	for i, datumString := range dataStringList {
+		Data, err := ReadData(datumString)
+		if err != nil {
+			return base.ListDataPrototype(), err
+		}
+
+		dataList[i] = Data
+	}
+
+	return base.NewListData(baseLists.NewDataList(dataList...)), nil
+}
+func readStringData(dataString string) (data.StringData, error) {
 	if dataString == "" {
 		return base.StringDataPrototype(), nil
 	}
@@ -98,18 +118,20 @@ func ReadData(dataString string) (data.Data, error) {
 
 		var err error
 
-		switch baseIDs.NewStringID(dataTypeString).String() {
-		case dataConstants.AccAddressDataID.String():
+		switch baseIDs.NewStringID(dataTypeString) {
+		case dataConstants.AccAddressDataID:
 			Data, err = readAccAddressData(dataValueString)
-		case dataConstants.BooleanDataID.String():
+		case dataConstants.BooleanDataID:
 			Data, err = readBooleanData(dataValueString)
-		case dataConstants.DecDataID.String():
+		case dataConstants.DecDataID:
 			Data, err = readDecData(dataValueString)
-		case dataConstants.HeightDataID.String():
+		case dataConstants.HeightDataID:
 			Data, err = readHeightData(dataValueString)
-		case dataConstants.IDDataID.String():
+		case dataConstants.IDDataID:
 			Data, err = readIDData(dataValueString)
-		case dataConstants.StringDataID.String():
+		case dataConstants.ListDataID:
+			Data, err = readListData(dataValueString)
+		case dataConstants.StringDataID:
 			Data, err = readStringData(dataValueString)
 		default:
 			Data, err = nil, errorConstants.UnsupportedParameter

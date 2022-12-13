@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package classification
 
@@ -17,17 +15,17 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/common"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/mapper"
-	"github.com/persistenceOne/persistenceSDK/schema"
+	"github.com/AssetMantle/modules/modules/classifications/internal/common"
+	"github.com/AssetMantle/modules/modules/classifications/internal/mapper"
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {
-	var Codec = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	cryptoCodec.RegisterCrypto(Codec)
+	var Codec = codec.New()
+	schema.RegisterCodec(Codec)
+	sdkTypes.RegisterCodec(Codec)
+	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
@@ -56,21 +54,21 @@ func Test_Classification_Response(t *testing.T) {
 	collection := mapper.Prototype().NewCollection(context)
 
 	testQueryResponse := newQueryResponse(collection, nil)
-	testQueryResponseWithError := newQueryResponse(collection, errors.IncorrectFormat)
+	testQueryResponseWithError := newQueryResponse(collection, constants.IncorrectFormat)
 
 	require.Equal(t, true, testQueryResponse.IsSuccessful())
 	require.Equal(t, false, testQueryResponseWithError.IsSuccessful())
 	require.Equal(t, nil, testQueryResponse.GetError())
-	require.Equal(t, errors.IncorrectFormat, testQueryResponseWithError.GetError())
+	require.Equal(t, constants.IncorrectFormat, testQueryResponseWithError.GetError())
 
-	encodedResponse, _ := testQueryResponse.LegacyAminoEncode()
-	bytes, _ := common.LegacyAminoCodec.MarshalJSON(testQueryResponse)
+	encodedResponse, _ := testQueryResponse.Encode()
+	bytes, _ := common.Codec.MarshalJSON(testQueryResponse)
 	require.Equal(t, bytes, encodedResponse)
 
-	decodedResponse, _ := queryResponse{}.LegacyAminoDecode(bytes)
+	decodedResponse, _ := queryResponse{}.Decode(bytes)
 	require.Equal(t, testQueryResponse, decodedResponse)
 
-	decodedResponse2, _ := queryResponse{}.LegacyAminoDecode([]byte{})
+	decodedResponse2, _ := queryResponse{}.Decode([]byte{})
 	require.Equal(t, nil, decodedResponse2)
 
 	require.Equal(t, queryResponse{}, responsePrototype())

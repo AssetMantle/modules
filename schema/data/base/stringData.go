@@ -4,61 +4,67 @@
 package base
 
 import (
-	"bytes"
+	"strings"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ data.StringData = (*Data_StringData)(nil)
+type stringData struct {
+	Value string `json:"value"`
+}
 
-func (stringData *Data_StringData) Unmarshal(bytes []byte) error {
-	// TODO implement me
-	panic("implement me")
+var _ data.StringData = (*stringData)(nil)
+
+func (stringData stringData) GetID() ids.DataID {
+	return baseIDs.NewDataID(stringData)
 }
-func (stringData *Data_StringData) GetID() ids.ID {
-	return baseIDs.GenerateDataID(stringData)
-}
-func (stringData *Data_StringData) Compare(listable traits.Listable) int {
-	compareStringData, err := dataFromInterface(listable)
+func (stringData stringData) Compare(listable traits.Listable) int {
+	compareStringData, err := stringDataFromInterface(listable)
 	if err != nil {
 		panic(err)
 	}
 
-	return bytes.Compare(stringData.Bytes(), compareStringData.Bytes())
+	return strings.Compare(stringData.Value, compareStringData.Value)
 }
-func (stringData *Data_StringData) String() string {
-	return stringData.StringData.String()
+func (stringData stringData) String() string {
+	return stringData.Value
 }
-func (stringData *Data_StringData) Bytes() []byte {
-	return []byte(stringData.String())
+func (stringData stringData) Bytes() []byte {
+	return []byte(stringData.Value)
 }
-func (stringData *Data_StringData) GetType() ids.ID {
+func (stringData stringData) GetType() ids.StringID {
 	return dataConstants.StringDataID
 }
-func (stringData *Data_StringData) ZeroValue() data.Data {
+func (stringData stringData) ZeroValue() data.Data {
 	return NewStringData("")
 }
-func (stringData *Data_StringData) GenerateHashID() ids.ID {
+func (stringData stringData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(stringData.Bytes())
 }
-func (stringData *Data_StringData) Get() string {
-	return stringData.StringData.Value
+func (stringData stringData) Get() string {
+	return stringData.Value
 }
 
-func StringDataPrototype() data.Data {
-	return NewStringData("")
+func stringDataFromInterface(listable traits.Listable) (stringData, error) {
+	switch value := listable.(type) {
+	case stringData:
+		return value, nil
+	default:
+		return stringData{}, constants.MetaDataError
+	}
 }
 
-func NewStringData(value string) data.Data {
-	return &Data{
-		Impl: &Data_StringData{
-			StringData: &StringData{
-				Value: value,
-			},
-		},
+func StringDataPrototype() data.StringData {
+	return stringData{}.ZeroValue().(data.StringData)
+}
+
+func NewStringData(value string) data.StringData {
+	return stringData{
+		Value: value,
 	}
 }

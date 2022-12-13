@@ -4,8 +4,9 @@
 package helpers
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/kv"
+	"github.com/tendermint/tendermint/libs/kv"
 )
 
 type Mapper interface {
@@ -18,7 +19,7 @@ type Mapper interface {
 	Iterate(sdkTypes.Context, Key, func(Mappable) bool)
 	ReverseIterate(sdkTypes.Context, Key, func(Mappable) bool)
 
-	StoreDecoder(kv.Pair, kv.Pair) string
+	StoreDecoder(*codec.Codec, kv.Pair, kv.Pair) string
 
 	Initialize(*sdkTypes.KVStoreKey) Mapper
 }

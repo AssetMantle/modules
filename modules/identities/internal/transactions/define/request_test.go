@@ -1,104 +1,388 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package define
 
 import (
 	"encoding/json"
+	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
+
+	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	utilitiesProperties "github.com/AssetMantle/modules/schema/properties/utilities"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+
+	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/schema"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
 )
 
-func Test_Define_Request(t *testing.T) {
-
-	var Codec = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	cryptoCodec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.FromID, flags.ImmutableMetaProperties, flags.ImmutableProperties, flags.MutableMetaProperties, flags.MutableProperties})
-	cliContext := context.NewCLIContext().WithCodec(Codec)
+func Test_newTransactionRequest(t *testing.T) {
 
 	immutableMetaPropertiesString := "defaultImmutableMeta1:S|defaultImmutableMeta1"
 	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 
-	immutableMetaProperties, Error := base.ReadMetaProperties(immutableMetaPropertiesString)
-	require.Equal(t, nil, Error)
-	immutableProperties, Error := base.ReadProperties(immutablePropertiesString)
-	require.Equal(t, nil, Error)
-	mutableMetaProperties, Error := base.ReadMetaProperties(mutableMetaPropertiesString)
-	require.Equal(t, nil, Error)
-	mutableProperties, Error := base.ReadProperties(mutablePropertiesString)
-	require.Equal(t, nil, Error)
-
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
-	testTransactionRequest := newTransactionRequest(testBaseReq, "fromID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString)
+	type args struct {
+		baseReq                 rest.BaseReq
+		fromID                  string
+		immutableMetaProperties string
+		immutableProperties     string
+		mutableMetaProperties   string
+		mutableProperties       string
+	}
+	tests := []struct {
+		name string
+		args args
+		want helpers.TransactionRequest
+	}{
 
-	require.Equal(t, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, testTransactionRequest)
-	require.Equal(t, nil, testTransactionRequest.Validate())
+		{"+ve", args{testBaseReq, "fromID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.immutableMetaProperties, tt.args.immutableProperties, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, cliContext)
-	require.Equal(t, nil, Error)
-	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, FromID: "", ImmutableMetaProperties: "", ImmutableProperties: "", MutableMetaProperties: "", MutableProperties: ""}, requestFromCLI)
+func Test_requestPrototype(t *testing.T) {
+	tests := []struct {
+		name string
+		want helpers.TransactionRequest
+	}{
 
-	jsonMessage, _ := json.Marshal(testTransactionRequest)
-	transactionRequestUnmarshalled, Error := transactionRequest{}.FromJSON(jsonMessage)
-	require.Equal(t, nil, Error)
-	require.Equal(t, testTransactionRequest, transactionRequestUnmarshalled)
+		{"+ve", transactionRequest{}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := requestPrototype(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("requestPrototype() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	randomUnmarshall, Error := transactionRequest{}.FromJSON([]byte{})
-	require.Equal(t, nil, randomUnmarshall)
-	require.NotNil(t, Error)
+func Test_transactionRequest_FromCLI(t *testing.T) {
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
+	cliContext := context.NewCLIContext().WithCodec(codec.Cdc)
 
-	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
+	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 
-	msg, Error := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
-	require.Nil(t, Error)
+	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
+	type fields struct {
+		BaseReq                 rest.BaseReq
+		FromID                  string
+		ImmutableMetaProperties string
+		ImmutableProperties     string
+		MutableMetaProperties   string
+		MutableProperties       string
+	}
+	type args struct {
+		cliCommand helpers.CLICommand
+		cliContext context.CLIContext
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    helpers.TransactionRequest
+		wantErr bool
+	}{
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, "fromID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
-	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
+		{"+ve", fields{BaseReq: testBaseReq, FromID: "", ImmutableMetaProperties: "", ImmutableProperties: "", MutableMetaProperties: "", MutableProperties: ""}, args{cliCommand, cliContext}, transactionRequest{cliCommand.ReadBaseReq(cliContext), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.ImmutableMetaProperties), cliCommand.ReadString(constants.ImmutableProperties), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionRequest := transactionRequest{
+				BaseReq:                 tt.fields.BaseReq,
+				FromID:                  tt.fields.FromID,
+				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:     tt.fields.ImmutableProperties,
+				MutableMetaProperties:   tt.fields.MutableMetaProperties,
+				MutableProperties:       tt.fields.MutableProperties,
+			}
+			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.cliContext)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "randomString", immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
-	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
+func Test_transactionRequest_FromJSON(t *testing.T) {
+	var Codec = codec.New()
+	schema.RegisterCodec(Codec)
+	sdkTypes.RegisterCodec(Codec)
+	codec.RegisterCrypto(Codec)
+	codec.RegisterEvidences(Codec)
+	vesting.RegisterCodec(Codec)
+	Codec.Seal()
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", immutableMetaPropertiesString, "randomString", mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
-	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
+	immutableMetaPropertiesString := "defaultImmutableMeta1:S|defaultImmutableMeta1"
+	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
+	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
+	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", immutableMetaPropertiesString, immutablePropertiesString, "randomString", mutablePropertiesString).MakeMsg()
-	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
+	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, "randomString").MakeMsg()
-	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
+	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
+	jsonMessage, _ := json.Marshal(transactionRequest{testBaseReq, "fromID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString})
 
-	require.Equal(t, transactionRequest{}, requestPrototype())
-	require.NotPanics(t, func() {
-		requestPrototype().RegisterLegacyAminoCodec(codec.New())
-	})
+	type fields struct {
+		BaseReq                 rest.BaseReq
+		FromID                  string
+		ImmutableMetaProperties string
+		ImmutableProperties     string
+		MutableMetaProperties   string
+		MutableProperties       string
+	}
+	type args struct {
+		rawMessage json.RawMessage
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    helpers.TransactionRequest
+		wantErr bool
+	}{
+		{"+ve", fields{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, args{jsonMessage}, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionRequest := transactionRequest{
+				BaseReq:                 tt.fields.BaseReq,
+				FromID:                  tt.fields.FromID,
+				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:     tt.fields.ImmutableProperties,
+				MutableMetaProperties:   tt.fields.MutableMetaProperties,
+				MutableProperties:       tt.fields.MutableProperties,
+			}
+			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FromJSON() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FromJSON() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_transactionRequest_GetBaseReq(t *testing.T) {
+	var Codec = codec.New()
+	schema.RegisterCodec(Codec)
+	sdkTypes.RegisterCodec(Codec)
+	codec.RegisterCrypto(Codec)
+	codec.RegisterEvidences(Codec)
+	vesting.RegisterCodec(Codec)
+	Codec.Seal()
+
+	immutableMetaPropertiesString := "defaultImmutableMeta1:S|defaultImmutableMeta1"
+	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
+	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
+	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
+
+	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
+
+	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
+	type fields struct {
+		BaseReq                 rest.BaseReq
+		FromID                  string
+		ImmutableMetaProperties string
+		ImmutableProperties     string
+		MutableMetaProperties   string
+		MutableProperties       string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   rest.BaseReq
+	}{
+		{"+ve", fields{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, testBaseReq},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionRequest := transactionRequest{
+				BaseReq:                 tt.fields.BaseReq,
+				FromID:                  tt.fields.FromID,
+				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:     tt.fields.ImmutableProperties,
+				MutableMetaProperties:   tt.fields.MutableMetaProperties,
+				MutableProperties:       tt.fields.MutableProperties,
+			}
+			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_transactionRequest_MakeMsg(t *testing.T) {
+
+	immutableMetaPropertiesString := "defaultImmutableMeta1:S|defaultImmutableMeta1"
+	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
+	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
+	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
+
+	immutableMetaProperties, err := utilitiesProperties.ReadMetaProperty(immutableMetaPropertiesString)
+	require.Equal(t, nil, err)
+	immutableProperties, err := utilities.ReadMetaPropertyList(immutablePropertiesString)
+	require.Equal(t, nil, err)
+	mutableMetaProperties, err := utilitiesProperties.ReadMetaProperty(mutableMetaPropertiesString)
+	require.Equal(t, nil, err)
+	mutableProperties, err := utilities.ReadMetaPropertyList(mutablePropertiesString)
+	require.Equal(t, nil, err)
+
+	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
+
+	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
+
+	testIdentity := baseIDs.NewIdentityID(baseIDs.NewClassificationID(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties)), baseQualified.NewImmutables(immutableProperties))
+
+	type fields struct {
+		BaseReq                 rest.BaseReq
+		FromID                  string
+		ImmutableMetaProperties string
+		ImmutableProperties     string
+		MutableMetaProperties   string
+		MutableProperties       string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		want    sdkTypes.Msg
+		wantErr bool
+	}{
+		{"+ve", fields{BaseReq: testBaseReq, FromID: testIdentity.String(), ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, newMessage(fromAccAddress, testIdentity, baseLists.NewPropertyList(immutableMetaProperties), immutableProperties.ScrubData(), baseLists.NewPropertyList(mutableMetaProperties), mutableProperties.ScrubData()), false},
+		{"-ve wrong Identity", fields{BaseReq: testBaseReq, FromID: "WrongIdentity", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, nil, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionRequest := transactionRequest{
+				BaseReq:                 tt.fields.BaseReq,
+				FromID:                  tt.fields.FromID,
+				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:     tt.fields.ImmutableProperties,
+				MutableMetaProperties:   tt.fields.MutableMetaProperties,
+				MutableProperties:       tt.fields.MutableProperties,
+			}
+			got, err := transactionRequest.MakeMsg()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("MakeMsg() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("MakeMsg() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_transactionRequest_RegisterCodec(t *testing.T) {
+	immutableMetaPropertiesString := "defaultImmutableMeta1:S|defaultImmutableMeta1"
+	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
+	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
+	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
+
+	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
+
+	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
+	type fields struct {
+		BaseReq                 rest.BaseReq
+		FromID                  string
+		ImmutableMetaProperties string
+		ImmutableProperties     string
+		MutableMetaProperties   string
+		MutableProperties       string
+	}
+	type args struct {
+		codec *codec.Codec
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+	}{
+		{"+ve", fields{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, args{codec.New()}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tr := transactionRequest{
+				BaseReq:                 tt.fields.BaseReq,
+				FromID:                  tt.fields.FromID,
+				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:     tt.fields.ImmutableProperties,
+				MutableMetaProperties:   tt.fields.MutableMetaProperties,
+				MutableProperties:       tt.fields.MutableProperties,
+			}
+			tr.RegisterCodec(tt.args.codec)
+		})
+	}
+}
+
+func Test_transactionRequest_Validate(t *testing.T) {
+	immutableMetaPropertiesString := "defaultImmutableMeta1:S|defaultImmutableMeta1"
+	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
+	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
+	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
+
+	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
+
+	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
+	type fields struct {
+		BaseReq                 rest.BaseReq
+		FromID                  string
+		ImmutableMetaProperties string
+		ImmutableProperties     string
+		MutableMetaProperties   string
+		MutableProperties       string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		wantErr bool
+	}{
+		{"+ve", fields{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionRequest := transactionRequest{
+				BaseReq:                 tt.fields.BaseReq,
+				FromID:                  tt.fields.FromID,
+				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:     tt.fields.ImmutableProperties,
+				MutableMetaProperties:   tt.fields.MutableMetaProperties,
+				MutableProperties:       tt.fields.MutableProperties,
+			}
+			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
+				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
 }

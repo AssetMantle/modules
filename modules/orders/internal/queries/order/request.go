@@ -1,81 +1,74 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package order
 
 import (
 	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/common"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/cosmos/cosmos-sdk/client/context"
+
+	"github.com/AssetMantle/modules/modules/orders/internal/common"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
-var _ helpers.QueryRequest = (*QueryRequest)(nil)
+type queryRequest struct {
+	ids.OrderID `json:"orderID" valid:"required~required field orderID missing"`
+}
 
-// QueryRequest godoc
+var _ helpers.QueryRequest = (*queryRequest)(nil)
+
+// Validate godoc
 // @Summary Query order using order id
-// @Descrption Able to query the order
+// @Description Able to query the order
 // @Accept json
 // @Produce json
 // @Tags Orders
 // @Param orderID path string true "order ID"
-// @Success 200 {object} queryResponse "A successful query response"
-// @Failure default  {object}  queryResponse "An unexpected error response."
+// @Success 200 {object} queryResponse "Message for a successful response"
+// @Failure default  {object}  queryResponse "Message for an unexpected error response."
 // @Router /orders/orders/{orderID} [get]
-func (queryRequest QueryRequest) Validate() error {
-	_, Error := govalidator.ValidateStruct(queryRequest)
-	return Error
+func (queryRequest queryRequest) Validate() error {
+	_, err := govalidator.ValidateStruct(queryRequest)
+	return err
 }
-
-func (queryRequest QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) helpers.QueryRequest {
-	return newQueryRequest(base.NewID(cliCommand.ReadString(flags.OrderID)))
-}
-
-func (queryRequest QueryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(base.NewID(vars[Query.GetName()]))
-}
-func (queryRequest QueryRequest) Encode(cdc codec.JSONMarshaler) ([]byte, error) {
-	return cdc.MarshalJSON(&queryRequest)
-}
-
-func (queryRequest QueryRequest) Decode(cdc codec.JSONMarshaler, bytes []byte) (helpers.QueryRequest, error) {
-	if Error := cdc.UnmarshalJSON(bytes, &queryRequest); Error != nil {
-		return nil, Error
+func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+	if orderID, err := baseIDs.ReadOrderID(cliCommand.ReadString(constants.OrderID)); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(orderID), nil
 	}
-
-	return queryRequest, nil
 }
-
-func (queryRequest QueryRequest) LegacyAminoEncode() ([]byte, error) {
-	return common.LegacyAminoCodec.MarshalJSON(queryRequest)
+func (queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
+	if orderID, err := baseIDs.ReadOrderID(vars[Query.GetName()]); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(orderID), nil
+	}
 }
-
-func (queryRequest QueryRequest) LegacyAminoDecode(bytes []byte) (helpers.QueryRequest, error) {
-	if Error := common.LegacyAminoCodec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
-		return nil, Error
+func (queryRequest queryRequest) Encode() ([]byte, error) {
+	return common.Codec.MarshalJSON(queryRequest)
+}
+func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
+	if err := common.Codec.UnmarshalJSON(bytes, &queryRequest); err != nil {
+		return nil, err
 	}
 
 	return queryRequest, nil
 }
 func requestPrototype() helpers.QueryRequest {
-	return QueryRequest{}
+	return queryRequest{}
 }
-
-func queryRequestFromInterface(request helpers.QueryRequest) QueryRequest {
+func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 	switch value := request.(type) {
-	case QueryRequest:
+	case queryRequest:
 		return value
 	default:
-		return QueryRequest{}
+		return queryRequest{}
 	}
 }
-
-func newQueryRequest(orderID types.ID) helpers.QueryRequest {
-	return QueryRequest{OrderID: *base.NewID(orderID.String())}
+func newQueryRequest(orderID ids.OrderID) helpers.QueryRequest {
+	return queryRequest{OrderID: orderID}
 }

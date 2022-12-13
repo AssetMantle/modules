@@ -1,28 +1,26 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package base
 
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
+
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
-	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
-	simTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/schema"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"math/rand"
+
+	"github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type module struct {
@@ -52,11 +50,11 @@ func (module module) GenerateGenesisState(simulationState *sdkTypesModule.Simula
 	module.simulatorPrototype().RandomizedGenesisState(simulationState)
 }
 
-func (module module) ProposalContents(simState sdkTypesModule.SimulationState) []simTypes.WeightedProposalContent {
+func (module module) ProposalContents(_ sdkTypesModule.SimulationState) []simulation.WeightedProposalContent {
 	return module.simulatorPrototype().WeightedProposalContentList()
 }
 
-func (module module) RandomizedParams(r *rand.Rand) []simTypes.ParamChange {
+func (module module) RandomizedParams(r *rand.Rand) []simulation.ParamChange {
 	return module.simulatorPrototype().ParamChangeList(r)
 }
 
@@ -64,23 +62,26 @@ func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDec
 	storeDecoderRegistry[module.name] = module.mapperPrototype().StoreDecoder
 }
 
-func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simTypes.WeightedOperation {
+func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simulation.WeightedOperation {
 	return nil
 }
 
 func (module module) Name() string {
 	return module.name
 }
-
-func (module module) DefaultGenesis(codec codec.JSONMarshaler) json.RawMessage {
-	return module.genesisPrototype().Default().Encode(codec)
+func (module module) RegisterCodec(codec *codec.Codec) {
+	for _, transaction := range module.transactionsPrototype().GetList() {
+		transaction.RegisterCodec(codec)
+	}
 }
-
-func (module module) ValidateGenesis(codec codec.JSONMarshaler, txConfig client.TxEncodingConfig, rawMessage json.RawMessage) error {
-	genesisState := module.genesisPrototype().Decode(codec, rawMessage)
+func (module module) DefaultGenesis() json.RawMessage {
+	return module.genesisPrototype().Default().Encode()
+}
+func (module module) ValidateGenesis(rawMessage json.RawMessage) error {
+	genesisState := module.genesisPrototype().Decode(rawMessage)
 	return genesisState.Validate()
 }
-func (module module) RegisterRESTRoutes(cliContext client.Context, router *mux.Router) {
+func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
 	for _, query := range module.queriesPrototype().GetList() {
 		router.HandleFunc("/"+module.Name()+"/"+query.GetName()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(cliContext)).Methods("GET")
 	}
@@ -89,15 +90,10 @@ func (module module) RegisterRESTRoutes(cliContext client.Context, router *mux.R
 		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
 	}
 }
-func (module module) RegisterGRPCGatewayRoutes(clientContext client.Context, serveMux *runtime.ServeMux) {
-	for _, query := range module.queriesPrototype().GetList() {
-		query.RegisterGRPCGatewayRoute(clientContext, serveMux)
-	}
-}
-func (module module) GetTxCmd() *cobra.Command {
+func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
 		Use:                        module.name,
-		Short:                      "Get root transaction command.",
+		Short:                      "GetProperty root transaction command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -105,7 +101,7 @@ func (module module) GetTxCmd() *cobra.Command {
 	commandList := make([]*cobra.Command, len(module.transactionsPrototype().GetList()))
 
 	for i, transaction := range module.transactionsPrototype().GetList() {
-		commandList[i] = transaction.Command()
+		commandList[i] = transaction.Command(codec)
 	}
 
 	rootTransactionCommand.AddCommand(
@@ -114,10 +110,10 @@ func (module module) GetTxCmd() *cobra.Command {
 
 	return rootTransactionCommand
 }
-func (module module) GetQueryCmd() *cobra.Command {
+func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 	rootQueryCommand := &cobra.Command{
 		Use:                        module.name,
-		Short:                      "Get root query command.",
+		Short:                      "GetProperty root query command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -125,7 +121,7 @@ func (module module) GetQueryCmd() *cobra.Command {
 	commandList := make([]*cobra.Command, len(module.queriesPrototype().GetList()))
 
 	for i, query := range module.queriesPrototype().GetList() {
-		commandList[i] = query.Command()
+		commandList[i] = query.Command(codec)
 	}
 
 	rootQueryCommand.AddCommand(
@@ -135,20 +131,18 @@ func (module module) GetQueryCmd() *cobra.Command {
 	return rootQueryCommand
 }
 func (module module) RegisterInvariants(_ sdkTypes.InvariantRegistry) {}
-func (module module) Route() sdkTypes.Route {
-	return sdkTypes.NewRoute(module.name, module.NewHandler())
+func (module module) Route() string {
+	return module.name
 }
 func (module module) NewHandler() sdkTypes.Handler {
 	return func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
 		context = context.WithEventManager(sdkTypes.NewEventManager())
 
 		if module.transactions == nil {
-			panic(errors.UninitializedUsage)
+			panic(constants.UninitializedUsage)
 		}
 
-		transaction := module.transactions.Get(msg.Type())
-
-		if transaction != nil {
+		if transaction := module.transactions.Get(msg.Type()); transaction != nil {
 			return transaction.HandleMessage(context, msg)
 		}
 
@@ -158,10 +152,10 @@ func (module module) NewHandler() sdkTypes.Handler {
 func (module module) QuerierRoute() string {
 	return module.name
 }
-func (module module) LegacyQuerierHandler(legacyAmino *codec.LegacyAmino) sdkTypes.Querier {
+func (module module) NewQuerierHandler() sdkTypes.Querier {
 	return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
 		if module.queries == nil {
-			panic(errors.UninitializedUsage)
+			panic(constants.UninitializedUsage)
 		}
 
 		if query := module.queries.Get(path[0]); query != nil {
@@ -171,24 +165,23 @@ func (module module) LegacyQuerierHandler(legacyAmino *codec.LegacyAmino) sdkTyp
 		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())
 	}
 }
-
-func (module module) InitGenesis(context sdkTypes.Context, codec codec.JSONMarshaler, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
-	genesisState := module.genesisPrototype().Decode(codec, rawMessage)
+func (module module) InitGenesis(context sdkTypes.Context, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
+	genesisState := module.genesisPrototype().Decode(rawMessage)
 
 	if module.mapper == nil || module.parameters == nil {
-		panic(errors.UninitializedUsage)
+		panic(constants.UninitializedUsage)
 	}
 
 	genesisState.Import(context, module.mapper, module.parameters)
 
 	return []abciTypes.ValidatorUpdate{}
 }
-func (module module) ExportGenesis(context sdkTypes.Context, codec codec.JSONMarshaler) json.RawMessage {
+func (module module) ExportGenesis(context sdkTypes.Context) json.RawMessage {
 	if module.mapper == nil || module.parameters == nil {
-		panic(errors.UninitializedUsage)
+		panic(constants.UninitializedUsage)
 	}
 
-	return module.genesisPrototype().Export(context, module.mapper, module.parameters).Encode(codec)
+	return module.genesisPrototype().Export(context, module.mapper, module.parameters).Encode()
 }
 func (module module) BeginBlock(context sdkTypes.Context, beginBlockRequest abciTypes.RequestBeginBlock) {
 	module.block.Begin(context, beginBlockRequest)
@@ -213,10 +206,10 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 		return transaction.DecodeTransactionRequest(rawMessage)
 	}
 
-	return nil, errors.IncorrectMessage
+	return nil, constants.IncorrectMessage
 }
 
-func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace paramTypes.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
+func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace params.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
 	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)
 
 	module.genesis = module.genesisPrototype().Initialize(module.genesisPrototype().GetMappableList(), module.genesisPrototype().GetParameterList())
@@ -254,32 +247,6 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 	module.block = module.blockPrototype().Initialize(module.mapper, module.parameters, auxiliaryKeepers...)
 
 	return module
-}
-
-func (module module) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	for _, transaction := range module.transactionsPrototype().GetList() {
-		transaction.RegisterLegacyAminoCodec(codec)
-	}
-
-	// TODO queries codec can be registered here and removed from common
-}
-
-func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
-	schema.RegisterProtoCodec(registry)
-	module.genesisPrototype().RegisterInterface(registry)
-	for _, transaction := range module.transactionsPrototype().GetList() {
-		transaction.RegisterInterface(registry)
-	}
-}
-
-func (module module) RegisterServices(configurator sdkTypesModule.Configurator) {
-	for _, transaction := range module.transactionsPrototype().GetList() {
-		transaction.RegisterService(configurator)
-	}
-	for _, query := range module.queriesPrototype().GetList() {
-		query.RegisterService(configurator)
-	}
-
 }
 
 func NewModule(name string, auxiliariesPrototype func() helpers.Auxiliaries, genesisPrototype func() helpers.Genesis, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.Parameters, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions, blockPrototype func() helpers.Block) helpers.Module {

@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package queuing
 
@@ -27,7 +25,7 @@ func parseGasAdjustment(s string) (float64, error) {
 	return n, nil
 }
 
-func simulationResponse(cdc *codec.LegacyAmino, gas uint64) ([]byte, error) {
+func simulationResponse(cdc *codec.Codec, gas uint64) ([]byte, error) {
 	gasEst := rest.GasEstimateResponse{GasEstimate: gas}
 	resp, err := cdc.MarshalJSON(gasEst)
 

@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package base
 
@@ -10,18 +8,21 @@ import (
 	"math/rand"
 	"testing"
 
-	clientContext "github.com/cosmos/cosmos-sdk/client"
+	clientContext "github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/gorilla/mux"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	helpersTestUtilities "github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers"
-	baseTestUtilities "github.com/persistenceOne/persistenceSDK/utilities/test/schema/helpers/base"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	parameters2 "github.com/AssetMantle/modules/schema/parameters"
+	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	helpersTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers"
+	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 var auxiliariesPrototype = func() helpers.Auxiliaries {
@@ -30,13 +31,13 @@ var auxiliariesPrototype = func() helpers.Auxiliaries {
 var genesisPrototype = func() helpers.Genesis {
 	return NewGenesis(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype,
 		[]helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")},
-		[]types.Parameter{base.NewParameter(base.NewID("testParameter"), base.NewStringData("testData"), func(interface{}) error { return nil })})
+		[]parameters2.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })})
 }
 var mapperPrototype = func() helpers.Mapper {
 	return NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype)
 }
 var parametersPrototype = func() helpers.Parameters {
-	return NewParameters(base.NewParameter(base.NewID("testParameter"), base.NewStringData("testData"), func(interface{}) error { return nil }))
+	return NewParameters(baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil }))
 }
 var queriesPrototype = func() helpers.Queries {
 	return queries{[]helpers.Query{NewQuery("testQuery", "q", "testQuery", "test", baseTestUtilities.TestQueryRequestPrototype,
@@ -52,15 +53,15 @@ var blockPrototype = func() helpers.Block { return helpersTestUtilities.TestBloc
 func TestModule(t *testing.T) {
 	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
 	codec := baseTestUtilities.MakeCodec()
-	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test") //.WithKeyTable(parametersPrototype().GetKeyTable())
-	//subspace.SetParamSet(context, parametersPrototype())
+	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test") // .WithKeyTable(parametersPrototype().GetKeyTable())
+	// subspace.SetParamSet(context, parametersPrototype())
 	Module := NewModule("test", auxiliariesPrototype, genesisPrototype,
 		mapperPrototype, parametersPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype, blockPrototype).Initialize(storeKey, subspace).(module)
 
 	// AppModuleBasic
 	require.Equal(t, "test", Module.Name())
 
-	// RegisterLegacyAminoCodec
+	// RegisterCodec
 	Module.RegisterCodec(codec)
 
 	require.NotPanics(t, func() {
@@ -68,7 +69,6 @@ func TestModule(t *testing.T) {
 	})
 
 	require.NotPanics(t, func() {
-
 	})
 	require.Nil(t, Module.ValidateGenesis(Module.DefaultGenesis()))
 
@@ -83,23 +83,23 @@ func TestModule(t *testing.T) {
 	require.Equal(t, "test", Module.GetTxCmd(codec).Name())
 	require.Equal(t, "test", Module.GetQueryCmd(codec).Name())
 
-	//AppModule
+	// AppModule
 	require.NotPanics(t, func() {
 		Module.RegisterInvariants(nil)
 	})
 	require.Equal(t, "test", Module.Route())
 
-	response, Error := Module.NewHandler()(context, baseTestUtilities.NewTestMessage(sdkTypes.AccAddress("addr"), "id"))
-	require.Nil(t, Error)
+	response, err := Module.NewHandler()(context, baseTestUtilities.NewTestMessage(sdkTypes.AccAddress("addr"), "id"))
+	require.Nil(t, err)
 	require.NotNil(t, response)
 
 	require.Equal(t, "test", Module.QuerierRoute())
 
-	encodedRequest, Error := Module.queries.Get("testQuery").(query).requestPrototype().LegacyAminoEncode()
-	require.Nil(t, Error)
+	encodedRequest, err := Module.queries.Get("testQuery").(query).requestPrototype().Encode()
+	require.Nil(t, err)
 
-	queryResponse, Error := Module.NewQuerierHandler()(context, []string{"testQuery"}, abciTypes.RequestQuery{Data: encodedRequest})
-	require.Nil(t, Error)
+	queryResponse, err := Module.NewQuerierHandler()(context, []string{"testQuery"}, abciTypes.RequestQuery{Data: encodedRequest})
+	require.Nil(t, err)
 	require.NotNil(t, queryResponse)
 
 	require.NotPanics(t, func() {
@@ -122,8 +122,8 @@ func TestModule(t *testing.T) {
 		Module.WeightedOperations(sdkModule.SimulationState{})
 	})
 
-	//types.Module
+	// types.Module
 	require.Equal(t, "testAuxiliary", Module.GetAuxiliary("testAuxiliary").GetName())
-	_, Error = Module.DecodeModuleTransactionRequest("TestMessage", json.RawMessage(`{"BaseReq":{"from":"addr"},"ID":"id"}`))
-	require.Nil(t, Error)
+	_, err = Module.DecodeModuleTransactionRequest("TestMessage", json.RawMessage(`{"BaseReq":{"from":"addr"},"ID":"id"}`))
+	require.Nil(t, err)
 }

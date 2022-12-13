@@ -6,11 +6,11 @@ package base
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/AssetMantle/modules/schema"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-func RegisterCodec(codec *codec.LegacyAmino) {
-	schema.RegisterModuleConcrete(codec, height{})
-	schema.RegisterModuleConcrete(codec, signature{})
-	schema.RegisterModuleConcrete(codec, split{})
+func RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterModuleConcrete(codec, height{})
+	codecUtilities.RegisterModuleConcrete(codec, signature{})
+	codecUtilities.RegisterModuleConcrete(codec, split{})
 }

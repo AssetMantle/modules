@@ -1,7 +1,0 @@
-syntax="proto3";
-package base;
-
-
-message StringID {
-  string id_string = 1;
-}

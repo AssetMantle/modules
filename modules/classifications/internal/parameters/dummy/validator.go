@@ -1,32 +1,29 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package dummy
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/parameters"
 )
 
 func validator(i interface{}) error {
 	switch value := i.(type) {
-	case DummyParameter:
-		data, Error := value.GetData().AsDec()
-		if Error != nil || value.GetID().Compare(ID) != 0 || data.IsNegative() {
-			return errors.InvalidParameter
+	case parameters.Parameter:
+		if value.GetID().Compare(ID) != 0 || value.GetData().(data.DecData).Get().IsNegative() {
+			return constants.InvalidParameter
 		}
 
 		return nil
-	case types.Data:
-		data, Error := value.AsDec()
-		if Error != nil || data.IsNegative() {
-			return errors.InvalidParameter
+	case data.DecData:
+		if value.Get().IsNegative() {
+			return constants.InvalidParameter
 		}
 
 		return nil
 	default:
-		return errors.IncorrectFormat
+		return constants.IncorrectFormat
 	}
 }

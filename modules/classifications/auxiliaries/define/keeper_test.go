@@ -5,9 +5,10 @@ package define
 
 import (
 	"fmt"
-	"github.com/AssetMantle/modules/schema/properties"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/properties"
 
 	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 
@@ -41,9 +42,9 @@ type TestKeepers struct {
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
 	var Codec = codec.New()
-	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	cryptoCodec.RegisterCrypto(Codec)
+	schema.RegisterCodec(Codec)
+	sdkTypes.RegisterCodec(Codec)
+	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()

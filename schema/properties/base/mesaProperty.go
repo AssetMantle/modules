@@ -13,26 +13,26 @@ import (
 )
 
 type mesaProperty struct {
-	PropertyID ids.ID
-	DataID     ids.ID
+	ID     ids.PropertyID
+	DataID ids.DataID
 }
 
 var _ properties.MesaProperty = (*mesaProperty)(nil)
 
-func (mesaProperty mesaProperty) GetID() ids.ID {
-	return mesaProperty.PropertyID
+func (mesaProperty mesaProperty) GetID() ids.PropertyID {
+	return mesaProperty.ID
 }
-func (mesaProperty mesaProperty) GetDataID() ids.ID {
+func (mesaProperty mesaProperty) GetDataID() ids.DataID {
 	return mesaProperty.DataID
 }
-func (mesaProperty mesaProperty) GetKey() ids.ID {
-	return baseIDs.NewStringID(mesaProperty.PropertyID.(*baseIDs.ID).GetPropertyID().KeyID.IdString)
+func (mesaProperty mesaProperty) GetKey() ids.StringID {
+	return mesaProperty.ID.GetKey()
 }
-func (mesaProperty mesaProperty) GetType() ids.ID {
-	return baseIDs.NewStringID(mesaProperty.PropertyID.(*baseIDs.ID).GetPropertyID().TypeID.IdString)
+func (mesaProperty mesaProperty) GetType() ids.StringID {
+	return mesaProperty.ID.GetType()
 }
 func (mesaProperty mesaProperty) GetHash() ids.ID {
-	return baseIDs.NewHashID(mesaProperty.DataID.(*baseIDs.ID).GetDataID().HashId.IdBytes)
+	return mesaProperty.DataID.GetHashID()
 }
 func (mesaProperty mesaProperty) IsMeta() bool {
 	return false
@@ -59,12 +59,12 @@ func propertyFromInterface(listable traits.Listable) (properties.Property, error
 
 func NewEmptyMesaPropertyFromID(propertyID ids.PropertyID) properties.Property {
 	return mesaProperty{
-		PropertyID: propertyID,
+		ID: propertyID,
 	}
 }
-func NewMesaProperty(key ids.ID, data data.Data) properties.MesaProperty {
+func NewMesaProperty(key ids.StringID, data data.Data) properties.MesaProperty {
 	return mesaProperty{
-		PropertyID: baseIDs.GeneratePropertyID(key, data.GetType()),
-		DataID:     data.GetID(),
+		ID:     baseIDs.NewPropertyID(key, data.GetType()),
+		DataID: data.GetID(),
 	}
 }

@@ -1,73 +1,87 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package issue
 
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
-	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/errors"
-	sdkTypesMsgService "github.com/cosmos/cosmos-sdk/types/msgservice"
-	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
-	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
+	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists/base"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
-var _ helpers.Message = &Message{}
+type message struct {
+	From                    sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
+	To                      sdkTypes.AccAddress `json:"to" valid:"required~required field to missing, matches(^[a-z0-9]*$)~invalid field to"`
+	FromID                  ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
+	ids.ClassificationID    `json:"classificationID" valid:"required~required field classificationID missing"`
+	ImmutableMetaProperties lists.PropertyList `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing"`
+	ImmutableProperties     lists.PropertyList `json:"immutableProperties" valid:"required~required field immutableProperties missing"`
+	MutableMetaProperties   lists.PropertyList `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
+	MutableProperties       lists.PropertyList `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
+}
 
-func (message Message) Route() string { return module.Name }
-func (message Message) Type() string  { return Transaction.GetName() }
-func (message Message) ValidateBasic() error {
-	var _, Error = govalidator.ValidateStruct(message)
-	if Error != nil {
-		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
+var _ sdkTypes.Msg = message{}
+
+func (message message) Route() string { return module.Name }
+func (message message) Type() string  { return Transaction.GetName() }
+func (message message) ValidateBasic() error {
+	if _, err := govalidator.ValidateStruct(message); err != nil {
+		return sdkErrors.Wrap(errorConstants.IncorrectMessage, err.Error())
 	}
 
 	return nil
 }
-func (message Message) GetSignBytes() []byte {
-	return sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message))
+func (message message) GetSignBytes() []byte {
+	if len(message.ImmutableMetaProperties.GetList()) == 0 {
+		message.ImmutableMetaProperties = base.NewPropertyList(nil)
+	}
+	if len(message.ImmutableProperties.GetList()) == 0 {
+		message.ImmutableProperties = base.NewPropertyList(nil)
+	}
+	if len(message.MutableMetaProperties.GetList()) == 0 {
+		message.MutableMetaProperties = base.NewPropertyList(nil)
+	}
+	if len(message.MutableProperties.GetList()) == 0 {
+		message.MutableProperties = base.NewPropertyList(nil)
+	}
+	return sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message))
 }
-func (message Message) GetSigners() []sdkTypes.AccAddress {
-	return []sdkTypes.AccAddress{message.From.AsSDKTypesAccAddress()}
+func (message message) GetSigners() []sdkTypes.AccAddress {
+	return []sdkTypes.AccAddress{message.From}
 }
-func (Message) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Message{})
+func (message) RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterModuleConcrete(codec, message{})
 }
-func (Message) RegisterInterface(registry codecTypes.InterfaceRegistry) {
-	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
-		&Message{},
-	)
-	sdkTypesMsgService.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
-}
-func messageFromInterface(msg sdkTypes.Msg) Message {
+func messageFromInterface(msg sdkTypes.Msg) message {
 	switch value := msg.(type) {
-	case *Message:
-		return *value
+	case message:
+		return value
 	default:
-		return Message{}
+		return message{}
 	}
 }
 func messagePrototype() helpers.Message {
-	return &Message{}
+	return message{}
 }
-func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, fromID types.ID, classificationID types.ID, immutableMetaProperties types.MetaProperties, immutableProperties types.Properties, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
-	return &Message{
-		From:                    base.NewAccAddressFromSDKTypesAccAddress(from),
-		To:                      base.NewAccAddressFromSDKTypesAccAddress(to),
-		FromID:                  *base.NewID(fromID.String()),
-		ClassificationID:        *base.NewID(classificationID.String()),
-		ImmutableMetaProperties: *base.NewMetaProperties(immutableMetaProperties.GetList()...),
-		ImmutableProperties:     *base.NewProperties(immutableProperties.GetList()...),
-		MutableMetaProperties:   *base.NewMetaProperties(mutableMetaProperties.GetList()...),
-		MutableProperties:       *base.NewProperties(mutableProperties.GetList()...),
+func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+	return message{
+		From:                    from,
+		To:                      to,
+		FromID:                  fromID,
+		ClassificationID:        classificationID,
+		ImmutableMetaProperties: immutableMetaProperties,
+		ImmutableProperties:     immutableProperties,
+		MutableMetaProperties:   mutableMetaProperties,
+		MutableProperties:       mutableProperties,
 	}
 }

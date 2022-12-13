@@ -1,76 +1,75 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package asset
 
 import (
 	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/assets/internal/common"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/cosmos/cosmos-sdk/client/context"
+
+	"github.com/AssetMantle/modules/modules/assets/internal/common"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
-var _ helpers.QueryRequest = (*QueryRequest)(nil)
+type queryRequest struct {
+	ids.AssetID `json:"assetID" valid:"required~required field assetID missing"`
+}
 
-// QueryRequest godoc
-// @Summary Query asset using asset id
-// @Descrption Able to query the asset
+var _ helpers.QueryRequest = (*queryRequest)(nil)
+
+// Validate godoc
+// @Summary Search for an asset by Asset ID
+// @Description Unique identifier of an asset.
 // @Accept text/plain
 // @Produce json
 // @Tags Assets
 // @Param assetID path string true "Asset ID"
-// @Success 200 {object} queryResponse "A succesful query response"
-// @Failure default  {object}  queryResponse "An unexpected error response."
+// @Success 200 {object} queryResponse "Message for a successful search."
+// @Failure default  {object}  queryResponse "Message for an unexpected error."
 // @Router /assets/assets/{assetID} [get]
-func (queryRequest QueryRequest) Validate() error {
-	_, Error := govalidator.ValidateStruct(queryRequest)
-	return Error
+func (queryRequest queryRequest) Validate() error {
+	_, err := govalidator.ValidateStruct(queryRequest)
+	return err
 }
-func (queryRequest QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) helpers.QueryRequest {
-	return newQueryRequest(base.NewID(cliCommand.ReadString(flags.AssetID)))
-}
-func (queryRequest QueryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(base.NewID(vars[Query.GetName()]))
-}
-func (queryRequest QueryRequest) Encode(cdc codec.JSONMarshaler) ([]byte, error) {
-	return cdc.MarshalJSON(&queryRequest)
-}
-
-func (queryRequest QueryRequest) Decode(cdc codec.JSONMarshaler, bytes []byte) (helpers.QueryRequest, error) {
-	if Error := cdc.UnmarshalJSON(bytes, &queryRequest); Error != nil {
-		return nil, Error
+func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+	if assetID, err := baseIDs.ReadAssetID(cliCommand.ReadString(constants.AssetID)); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(assetID), nil
 	}
-
-	return queryRequest, nil
 }
-func (queryRequest QueryRequest) LegacyAminoEncode() ([]byte, error) {
-	return common.LegacyAminoCodec.MarshalJSON(queryRequest)
+func (queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
+	if assetID, err := baseIDs.ReadAssetID(vars[Query.GetName()]); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(assetID), nil
+	}
+}
+func (queryRequest queryRequest) Encode() ([]byte, error) {
+	return common.Codec.MarshalJSON(queryRequest)
 }
 
-func (queryRequest QueryRequest) LegacyAminoDecode(bytes []byte) (helpers.QueryRequest, error) {
-	if Error := common.LegacyAminoCodec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
-		return nil, Error
+func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
+	if err := common.Codec.UnmarshalJSON(bytes, &queryRequest); err != nil {
+		return nil, err
 	}
 
 	return queryRequest, nil
 }
 func requestPrototype() helpers.QueryRequest {
-	return QueryRequest{}
+	return queryRequest{}
 }
-func queryRequestFromInterface(request helpers.QueryRequest) QueryRequest {
+func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 	switch value := request.(type) {
-	case QueryRequest:
+	case queryRequest:
 		return value
 	default:
-		return QueryRequest{}
+		return queryRequest{}
 	}
 }
-func newQueryRequest(assetID types.ID) helpers.QueryRequest {
-	return QueryRequest{AssetID: *base.NewID(assetID.String())}
+func newQueryRequest(assetID ids.AssetID) helpers.QueryRequest {
+	return queryRequest{AssetID: assetID}
 }

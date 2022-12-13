@@ -1,51 +1,62 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package revoke
 
 import (
+	"fmt"
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/persistenceOne/persistenceSDK/constants/test"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/auxiliaries/verify"
-	"github.com/persistenceOne/persistenceSDK/modules/maintainers/auxiliaries/revoke"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/key"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/parameters"
-	"github.com/persistenceOne/persistenceSDK/schema"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
+
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/revoke"
+	"github.com/AssetMantle/modules/modules/orders/internal/key"
+	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
+	"github.com/AssetMantle/modules/modules/orders/internal/parameters"
+	"github.com/AssetMantle/modules/schema"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+
+	"github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/schema/helpers"
+)
+
+var (
+	authenticateAuxiliary helpers.Auxiliary
+	revokeAuxiliary       helpers.Auxiliary
 )
 
 type TestKeepers struct {
-	OrdersKeeper helpers.TransactionKeeper
+	RevokeKeeper helpers.TransactionKeeper
 }
 
-func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
-
-	var Codec = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	cryptoCodec.RegisterCrypto(Codec)
+func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
+	var Codec = codec.New()
+	schema.RegisterCodec(Codec)
+	types.RegisterCodec(Codec)
+	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()
 
-	storeKey := sdkTypes.NewKVStoreKey("test")
-	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
+	storeKey := types.NewKVStoreKey("test")
+	paramsStoreKey := types.NewKVStoreKey("testParams")
+	paramsTransientStoreKeys := types.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
 	paramsKeeper := params.NewKeeper(
 		Codec,
@@ -56,60 +67,117 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
-	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	Error := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, Error)
+	commitMultiStore.MountStoreWithDB(storeKey, types.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, types.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, types.StoreTypeTransient, memDB)
+	err := commitMultiStore.LoadLatestVersion()
+	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
+	authenticateAuxiliary = authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
+	revokeAuxiliary = revoke.AuxiliaryMock.Initialize(Mapper, Parameters)
+
+	context := types.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	revokeAuxiliary := revoke.AuxiliaryMock.Initialize(Mapper, Parameters)
-	verifyAuxiliary := verify.AuxiliaryMock.Initialize(Mapper, Parameters)
 	keepers := TestKeepers{
-		OrdersKeeper: keeperPrototype().Initialize(Mapper, Parameters,
-			[]interface{}{verifyAuxiliary, revokeAuxiliary}).(helpers.TransactionKeeper),
+		RevokeKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.TransactionKeeper),
 	}
 
-	return context, keepers
+	return context, keepers, Mapper, Parameters
+}
+
+func Test_keeperPrototype(t *testing.T) {
+	tests := []struct {
+		name string
+		want helpers.TransactionKeeper
+	}{
+		{"+ve", transactionKeeper{}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_transactionKeeper_Initialize(t *testing.T) {
+	_, _, Mapper, Parameters := CreateTestInput(t)
+	type fields struct {
+		mapper                helpers.Mapper
+		parameters            helpers.Parameters
+		authenticateAuxiliary helpers.Auxiliary
+		revokeAuxiliary       helpers.Auxiliary
+	}
+	type args struct {
+		mapper      helpers.Mapper
+		parameters  helpers.Parameters
+		auxiliaries []interface{}
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   helpers.Keeper
+	}{
+		{"+ve", fields{Mapper, Parameters, authenticateAuxiliary, revokeAuxiliary}, args{Mapper, Parameters, []interface{}{authenticateAuxiliary, revokeAuxiliary}}, transactionKeeper{Mapper, Parameters, authenticateAuxiliary, revokeAuxiliary}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionKeeper := transactionKeeper{
+				mapper:                tt.fields.mapper,
+				parameters:            tt.fields.parameters,
+				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
+				revokeAuxiliary:       tt.fields.revokeAuxiliary,
+			}
+			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.parameters, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
+				t.Errorf("Initialize() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-
-	context, keepers := CreateTestInput(t)
-
-	_, Error := base.ReadProperties("maintainedProperties:S|maintainedProperties")
-	require.Equal(t, nil, Error)
-	_, Error = base.ReadProperties("conformError:S|mockError")
-	require.Equal(t, nil, Error)
-	defaultAddr := sdkTypes.AccAddress("addr")
-	verifyMockErrorAddress := sdkTypes.AccAddress("verifyError")
-	defaultIdentityID := base.NewID("fromIdentityID")
-	toID := base.NewID("toID")
-	toID2 := base.NewID("toID2")
-	classificationID := base.NewID("ClassificationID")
-	mockErrorClassification := base.NewID("revokeError")
-
-	t.Run("PositiveCase", func(t *testing.T) {
-		want := newTransactionResponse(nil)
-		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID, classificationID)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase - verify identity fail", func(t *testing.T) {
-		want := newTransactionResponse(test.MockError)
-		if got := keepers.OrdersKeeper.Transact(context, newMessage(verifyMockErrorAddress, defaultIdentityID, toID, classificationID)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase - conform mock error", func(t *testing.T) {
-		want := newTransactionResponse(test.MockError)
-		if got := keepers.OrdersKeeper.Transact(context, newMessage(defaultAddr, defaultIdentityID, toID2, mockErrorClassification)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
+	context, keepers, Mapper, Parameters := CreateTestInput(t)
+	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
+	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList())))
+	immutablesMeta := baseQualified.NewImmutables(immutableMetaProperties)
+	mutablesMeta := baseQualified.NewMutables(mutableMetaProperties)
+	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutablesMeta, mutablesMeta)
+	testIdentity.ProvisionAddress([]types.AccAddress{fromAccAddress}...)
+	testOrder := baseDocuments.NewOrder(testClassificationID, immutablesMeta, mutablesMeta)
+	keepers.RevokeKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testOrder))
+	type fields struct {
+		mapper                helpers.Mapper
+		parameters            helpers.Parameters
+		authenticateAuxiliary helpers.Auxiliary
+		revokeAuxiliary       helpers.Auxiliary
+	}
+	type args struct {
+		context types.Context
+		msg     types.Msg
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   helpers.TransactionResponse
+	}{
+		{"+ve", fields{Mapper, Parameters, authenticateAuxiliary, revokeAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testFromID, testClassificationID)}, newTransactionResponse(nil)},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionKeeper := transactionKeeper{
+				mapper:                tt.fields.mapper,
+				parameters:            tt.fields.parameters,
+				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
+				revokeAuxiliary:       tt.fields.revokeAuxiliary,
+			}
+			if got := transactionKeeper.Transact(tt.args.context, tt.args.msg); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Transact() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

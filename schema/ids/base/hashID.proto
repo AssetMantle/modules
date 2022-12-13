@@ -1,8 +1,0 @@
-syntax = "proto3";
-package base;
-
-
-message HashID {
-  bytes id_bytes = 1;
-}
-

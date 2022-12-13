@@ -1,20 +1,18 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package base
 
 import (
 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+	"github.com/AssetMantle/modules/schema/helpers"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type TransactionRequest struct {
@@ -27,7 +25,7 @@ var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
 func (transactionRequest TransactionRequest) Validate() error {
 	return nil
 }
-func (transactionRequest TransactionRequest) FromCLI(_ helpers.CLICommand, _ client.Context) (helpers.TransactionRequest, error) {
+func (transactionRequest TransactionRequest) FromCLI(_ helpers.CLICommand, _ context.CLIContext) (helpers.TransactionRequest, error) {
 	return transactionRequest, nil
 }
 func (transactionRequest TransactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
@@ -43,8 +41,8 @@ func (transactionRequest TransactionRequest) GetBaseReq() rest.BaseReq {
 func (transactionRequest TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	return NewTestMessage(sdkTypes.AccAddress(transactionRequest.BaseReq.From), transactionRequest.ID), nil
 }
-func (TransactionRequest) RegisterCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, "test/TransactionRequest", TransactionRequest{})
+func (TransactionRequest) RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterModuleConcrete(codec, TransactionRequest{})
 }
 func TestTransactionRequestPrototype() helpers.TransactionRequest {
 	return TransactionRequest{}

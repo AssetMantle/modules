@@ -4,13 +4,14 @@
 package base
 
 import (
+	"reflect"
+	"strings"
+	"testing"
+
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
-	"reflect"
-	"strings"
-	"testing"
 )
 
 func Test_idList_Add(t *testing.T) {

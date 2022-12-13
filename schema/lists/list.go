@@ -20,9 +20,8 @@ type List interface {
 	// Search
 	// * returns true and index of element if element is found
 	// * return false and index of insertion if element is not found
-	Search(traits.Listable) (index int, found bool) // ***** TODO prevent compare panic
-	HasRepeats() bool
-	Add(...traits.Listable) List    // ***** TODO prevent compare panic
-	Remove(...traits.Listable) List // ***** TODO prevent compare panic
-	Mutate(...traits.Listable) List // ***** TODO prevent compare panic
+	Search(traits.Listable) (index int, found bool) // TODO prevent compare panic
+	Add(...traits.Listable) List                    // TODO prevent compare panic
+	Remove(...traits.Listable) List                 // TODO prevent compare panic
+	Mutate(...traits.Listable) List                 // TODO prevent compare panic
 }

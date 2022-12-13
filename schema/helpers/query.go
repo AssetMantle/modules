@@ -1,16 +1,13 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package helpers
 
 import (
-	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
@@ -18,10 +15,8 @@ import (
 
 type Query interface {
 	GetName() string
-	Command() *cobra.Command
+	Command(*codec.Codec) *cobra.Command
 	HandleMessage(sdkTypes.Context, abciTypes.RequestQuery) ([]byte, error)
-	RESTQueryHandler(client.Context) http.HandlerFunc
+	RESTQueryHandler(context.CLIContext) http.HandlerFunc
 	Initialize(Mapper, Parameters, ...interface{}) Query
-	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)
-	RegisterService(module.Configurator)
 }

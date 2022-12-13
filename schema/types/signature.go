@@ -18,6 +18,4 @@ type Signature interface {
 	Verify(crypto.PubKey, []byte) bool
 	GetValidityHeight() Height
 	HasExpired(Height) bool
-
-	Proto
 }

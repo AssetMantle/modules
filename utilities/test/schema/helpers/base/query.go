@@ -1,17 +1,15 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package base
 
 import (
 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type TestQueryKeeper struct {
@@ -41,23 +39,23 @@ type testQueryRequest struct {
 
 var _ helpers.QueryRequest = (*testQueryRequest)(nil)
 
-func (t testQueryRequest) Validate() error {
+func (testQueryRequest testQueryRequest) Validate() error {
 	return nil
 }
 
-func (t testQueryRequest) FromCLI(_ helpers.CLICommand, _ client.Context) helpers.QueryRequest {
-	return t
+func (testQueryRequest testQueryRequest) FromCLI(_ helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+	return testQueryRequest, nil
 }
 
-func (t testQueryRequest) FromMap(_ map[string]string) helpers.QueryRequest {
-	return t
+func (testQueryRequest testQueryRequest) FromMap(_ map[string]string) (helpers.QueryRequest, error) {
+	return testQueryRequest, nil
 }
 
-func (t testQueryRequest) LegacyAminoEncode() ([]byte, error) {
-	return json.Marshal(t)
+func (testQueryRequest testQueryRequest) Encode() ([]byte, error) {
+	return json.Marshal(testQueryRequest)
 }
 
-func (t testQueryRequest) LegacyAminoDecode(bytes []byte) (helpers.QueryRequest, error) {
+func (testQueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
 	var queryRequest testQueryRequest
 	err := json.Unmarshal(bytes, &queryRequest)
 
@@ -83,11 +81,11 @@ func (t testQueryResponse) GetError() error {
 	return t.Error
 }
 
-func (t testQueryResponse) LegacyAminoEncode() ([]byte, error) {
+func (t testQueryResponse) Encode() ([]byte, error) {
 	return json.Marshal(t)
 }
 
-func (t testQueryResponse) LegacyAminoDecode(bytes []byte) (helpers.QueryResponse, error) {
+func (t testQueryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
 	var queryResponse testQueryResponse
 	err := json.Unmarshal(bytes, &queryResponse)
 

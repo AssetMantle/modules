@@ -1,16 +1,17 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package genesis
 
 import (
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/mappable"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/parameters/dummy"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
+	"github.com/AssetMantle/modules/modules/identities/internal/parameters"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
+// TODO ***** add module nub IDs
 func Prototype() helpers.Genesis {
-	return NewGenesis([]mappable.Identity{}, []dummy.DummyParameter{})
+	return baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{}, parameters.Prototype().GetList())
 }
