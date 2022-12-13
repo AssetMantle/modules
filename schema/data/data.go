@@ -12,6 +12,9 @@ import (
 type Data interface {
 	GetID() ids.ID
 
+	Size() int
+	Unmarshal([]byte) error
+	MarshalTo([]byte) (int, error)
 	String() string
 	Bytes() []byte
 

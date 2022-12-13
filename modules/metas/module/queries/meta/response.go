@@ -35,6 +35,5 @@ func newQueryResponse(collection helpers.Collection, error error) helpers.QueryR
 	return &QueryResponse{
 		Success: success,
 		Error:   error.Error(),
-		List:    nil,
 	}
 }

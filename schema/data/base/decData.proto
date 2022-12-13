@@ -3,5 +3,5 @@ package base;
 import "gogoproto/gogo.proto";
 
 message DecData{
-  string value = 1 [(gogoproto.customtype) = "Dec", (gogoproto.nullable) = false];
+  string value = 1 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
 }

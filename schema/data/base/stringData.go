@@ -15,6 +15,10 @@ import (
 
 var _ data.StringData = (*Data_StringData)(nil)
 
+func (stringData *Data_StringData) Unmarshal(bytes []byte) error {
+	// TODO implement me
+	panic("implement me")
+}
 func (stringData *Data_StringData) GetID() ids.ID {
 	return baseIDs.GenerateDataID(stringData)
 }

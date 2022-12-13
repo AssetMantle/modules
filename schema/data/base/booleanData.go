@@ -15,6 +15,11 @@ import (
 
 var _ data.BooleanData = (*Data_BooleanData)(nil)
 
+func (booleanData *Data_BooleanData) Unmarshal(bytes []byte) error {
+	// TODO implement me
+	panic("implement me")
+}
+
 func (booleanData *Data_BooleanData) GetID() ids.ID {
 	return baseIDs.GenerateDataID(booleanData)
 }

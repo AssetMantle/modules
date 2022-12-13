@@ -17,6 +17,10 @@ import (
 
 var _ data.DecData = (*Data_DecData)(nil)
 
+func (decData *Data_DecData) Unmarshal(bytes []byte) error {
+	// TODO implement me
+	panic("implement me")
+}
 func (decData *Data_DecData) GetID() ids.ID {
 	return baseIDs.GenerateDataID(decData)
 }
@@ -29,11 +33,10 @@ func (decData *Data_DecData) Compare(listable traits.Listable) int {
 	return bytes.Compare(decData.Bytes(), compareDecData.Bytes())
 }
 func (decData *Data_DecData) String() string {
-	return decData.DecData.Value
+	return decData.DecData.Value.String()
 }
 func (decData *Data_DecData) Bytes() []byte {
-	dec, _ := sdkTypes.NewDecFromStr(decData.DecData.Value)
-	return sdkTypes.SortableDecBytes(dec)
+	return sdkTypes.SortableDecBytes(decData.DecData.Value)
 }
 func (decData *Data_DecData) GetType() ids.ID {
 	return dataConstants.DecDataID
@@ -49,8 +52,7 @@ func (decData *Data_DecData) GenerateHashID() ids.ID {
 	return baseIDs.GenerateHashID(decData.Bytes())
 }
 func (decData *Data_DecData) Get() sdkTypes.Dec {
-	dec, _ := sdkTypes.NewDecFromStr(decData.DecData.Value)
-	return dec
+	return decData.DecData.Value
 }
 
 func DecDataPrototype() data.Data {
@@ -61,7 +63,7 @@ func NewDecData(value sdkTypes.Dec) data.Data {
 	return &Data{
 		Impl: &Data_DecData{
 			DecData: &DecData{
-				Value: value.String(),
+				Value: value,
 			},
 		},
 	}
