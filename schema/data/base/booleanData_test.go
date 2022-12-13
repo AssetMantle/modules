@@ -47,6 +47,7 @@ func TestBooleanDataFromInterface(t *testing.T) {
 	}{
 		{"-ve", args{NewBooleanData(false)}, booleanData{false}, assert.NoError},
 		{"+ve", args{NewBooleanData(true)}, booleanData{true}, assert.NoError},
+		{"-ve", args{NewStringData("test")}, booleanData{false}, assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -71,7 +72,8 @@ func Test_booleanDataFromInterface(t *testing.T) {
 	}{
 		{"+ve with empty string", args{booleanData{}}, booleanData{}, assert.NoError},
 		{"+ve", args{booleanData{true}}, booleanData{true}, assert.NoError},
-		{"-ve", args{booleanData{false}}, booleanData{false}, assert.NoError},
+		{"+ve", args{booleanData{false}}, booleanData{false}, assert.NoError},
+		{"-ve", args{NewStringData("test")}, booleanData{false}, assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

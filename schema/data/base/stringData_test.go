@@ -48,6 +48,7 @@ func Test_stringDataFromInterface(t *testing.T) {
 		{"+ve data", args{stringData{"data"}}, stringData{"data"}, assert.NoError},
 		{"data with special char", args{stringData{"data_!@#$%^&*("}}, stringData{"data_!@#$%^&*("}, assert.NoError},
 		{"empty string", args{stringData{""}}, stringData{""}, assert.NoError},
+		{"-ve with decData", args{decData{}}, stringData{}, assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

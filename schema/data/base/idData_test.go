@@ -47,6 +47,7 @@ func Test_idDataFromInterface(t *testing.T) {
 	}{
 		{"+ve", args{NewIDData(NewStringData("Data"))}, idData{NewStringData("Data")}, assert.NoError},
 		{"+ve", args{NewIDData(NewStringData(""))}, idData{NewStringData("")}, assert.NoError},
+		{"-ve", args{NewStringData("Data")}, idData{}, assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

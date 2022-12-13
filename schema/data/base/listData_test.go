@@ -82,7 +82,8 @@ func Test_listDataFromInterface(t *testing.T) {
 	}{
 		{"+ve for some id", args{listData{baseLists.NewDataList(NewStringData("Data"))}}, listData{baseLists.NewDataList(NewStringData("Data"))}, assert.NoError},
 		{"+ve for empty String", args{listData{baseLists.NewDataList(NewStringData(""))}}, listData{baseLists.NewDataList(NewStringData(""))}, assert.NoError},
-		{"+ve for empty String", args{heightData{}}, listData{}, assert.Error},
+		{"-ve for empty String", args{heightData{}}, listData{}, assert.Error},
+		{"-ve for empty String", args{NewStringData("")}, listData{}, assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
