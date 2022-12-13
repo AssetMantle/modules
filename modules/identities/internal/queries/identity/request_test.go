@@ -4,6 +4,9 @@
 package identity
 
 import (
+	"github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/spf13/viper"
 	"reflect"
 	"testing"
 
@@ -17,8 +20,6 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
@@ -174,9 +175,9 @@ func Test_queryRequest_Encode(t *testing.T) {
 }
 
 func Test_queryRequest_FromCLI(t *testing.T) {
-	testIdentity, emptyTestIdentity := createTestInput()
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.IdentityID})
-	cliContext := context.NewCLIContext().WithCodec(codec.New())
+	testIdentity, _ := createTestInput()
+	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.IdentityID})
+	viper.Set(constants.IdentityID.GetName(), testIdentity.String())
 	type fields struct {
 		IdentityID ids.IdentityID
 	}
@@ -191,9 +192,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-
-		{"+ve", fields{testIdentity}, args{cliCommand, cliContext}, queryRequest{testIdentity}, false}, // Todo: Need help
-		{"+ve with empty Identity", fields{emptyTestIdentity}, args{cliCommand, cliContext}, queryRequest{emptyTestIdentity}, false},
+		{"+ve", fields{testIdentity}, args{cliCommand, context.NewCLIContext()}, newQueryRequest(testIdentity), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -214,11 +213,14 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 }
 
 func Test_queryRequest_FromMap(t *testing.T) {
-	testIdentity, emptyTestIdentity := createTestInput()
 	vars := make(map[string]string)
-	vars["identities"] = "9UNIA3_tulK2vRE0nSmsHKNzhDxoCBHI4z8XXfLO1FM=.pvamJCA8talIpNPu8fekxGhvFtTGtjSRhAaaKQOrHfg="
+	vars["identities"] = "9UNIA3_tulK2vRE0nSmsHKNzhDxoCBHI4z8XXfLO1FM="
 	vars2 := make(map[string]string)
-	vars2["identities"] = "qlFr8g0R-Qe6CxKcU5Ncdj7kAnSEp8Wq6sckkmznGiI=.pvamJCA8talIpNPu8fekxGhvFtTGtjSRhAaaKQOrHfg="
+	vars2["identities"] = "qlFr8g0R-Qe6CxKcU5Ncdj7kAnSEp8Wq6sckkmznGiI="
+	testIdentity, err := baseIDs.ReadIdentityID(vars["identities"])
+	require.NoError(t, err)
+	emptyTestIdentity, err := baseIDs.ReadIdentityID(vars2["identities"])
+	require.NoError(t, err)
 	type fields struct {
 		IdentityID ids.IdentityID
 	}

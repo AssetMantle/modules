@@ -5,6 +5,7 @@ package base
 
 import (
 	"encoding/json"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"log"
 	"net/http"
 	"reflect"
@@ -52,7 +53,9 @@ func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
 		}
 
 		var msg sdkTypes.Msg
-
+		if er := transactionRequest.Validate(); er != nil {
+			return errorConstants.IncorrectFormat
+		}
 		msg, err = transactionRequest.MakeMsg()
 		if err != nil {
 			return err
@@ -101,16 +104,16 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 
 		baseReq := transactionRequest.GetBaseReq()
 
+		baseReq = baseReq.Sanitize()
+		if !baseReq.ValidateBasic(responseWriter) {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
+			return
+		}
+
 		var msg sdkTypes.Msg
 		msg, err = transactionRequest.MakeMsg()
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
-			return
-		}
-
-		baseReq = baseReq.Sanitize()
-		if !baseReq.ValidateBasic(responseWriter) {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
 

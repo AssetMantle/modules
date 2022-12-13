@@ -54,7 +54,6 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testBaseReq, "nubID"}, transactionRequest{testBaseReq, "nubID"}},
 	}
 	for _, tt := range tests {
@@ -71,7 +70,6 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", transactionRequest{}},
 	}
 	for _, tt := range tests {
@@ -101,7 +99,6 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, "nubID"}, args{cliCommand, cliContext}, transactionRequest{cliCommand.ReadBaseReq(cliContext), cliCommand.ReadString(constants.NubID)}, false},
 	}
 	for _, tt := range tests {
@@ -139,7 +136,6 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, "nubID"}, args{sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, baseIds.NewStringID("nubID")}))}, transactionRequest{testBaseReq, "nubID"}, false},
 	}
 	for _, tt := range tests {
@@ -172,7 +168,6 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   rest.BaseReq
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, "nubID"}, testBaseReq},
 	}
 	for _, tt := range tests {
@@ -201,7 +196,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, "nubID"}, message{fromAccAddress, baseIds.NewStringID("nubID")}, false},
 	}
 	for _, tt := range tests {
@@ -237,7 +231,6 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, "nubID"}, args{codec.New()}},
 	}
 	for _, tt := range tests {
@@ -263,7 +256,6 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, "nubID"}, false},
 	}
 	for _, tt := range tests {

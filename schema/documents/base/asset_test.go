@@ -30,7 +30,6 @@ func TestNewAsset(t *testing.T) {
 		args args
 		want documentsSchema.Asset
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{classificationID: classificationID, immutables: immutables, mutables: mutables}, asset{Document: NewDocument(classificationID, immutables, mutables)}},
 	}
 	for _, tt := range tests {
@@ -54,7 +53,6 @@ func Test_asset_GetBurn(t *testing.T) {
 		fields fields
 		want   properties.Property
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{Document: testDocumentWithBurn}, baseProperties.NewMesaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1)))},
 		{"+ve", fields{Document: testDocument}, constants.BurnHeightProperty},
 	}
@@ -81,7 +79,6 @@ func Test_asset_GetLock(t *testing.T) {
 		fields fields
 		want   properties.Property
 	}{
-		// TODO: Add test cases.
 		{"+ve with default lock", fields{testDocument}, constants.LockProperty},
 		{"+ve with mutated", fields{testDocumentWithLock}, baseProperties.NewMesaProperty(constants.LockProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1)))},
 	}
@@ -108,7 +105,6 @@ func Test_asset_GetSupply(t *testing.T) {
 		fields fields
 		want   properties.Property
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testDocument}, constants.SupplyProperty},
 		{"+ve", fields{testDocumentWithSupply}, baseProperties.NewMesaProperty(constants.SupplyProperty.GetKey(), baseData.NewDecData(types.NewDec(1)))},
 	}

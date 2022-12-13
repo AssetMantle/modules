@@ -4,11 +4,13 @@
 package base
 
 import (
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/AssetMantle/modules/schema/data"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -17,7 +19,7 @@ import (
 
 func createTestInputForMesaProperty() (ids.StringID, ids.PropertyID, data.Data, properties.Property) {
 	testKey := base.NewStringID("ID")
-	testData := baseData.NewStringData("Data")
+	testData := NewStringData("Data")
 	testPropertyID := base.NewPropertyID(testKey, testData.GetType())
 	testProperty := NewMesaProperty(testKey, testData)
 	return testKey, testPropertyID, testData, testProperty
@@ -34,7 +36,6 @@ func TestNewEmptyMesaPropertyFromID(t *testing.T) {
 		args args
 		want properties.Property
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testPropertyID}, mesaProperty{ID: testPropertyID}},
 		{"+ve with nil", args{}, mesaProperty{}},
 	}
@@ -59,7 +60,6 @@ func TestNewMesaProperty(t *testing.T) {
 		want      properties.Property
 		wantPanic bool
 	}{
-		// TODO: Add test cases.
 		{"nil", args{}, mesaProperty{}, true},
 		{"+ve", args{testKey, testData}, mesaProperty{testPropertyID, testData.GetID()}, false},
 	}
@@ -89,7 +89,6 @@ func Test_mesaPropertyFromInterface(t *testing.T) {
 		want    mesaProperty
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", args{}, mesaProperty{}, true},
 		{"+ve", args{testMesaProperty}, mesaProperty{testMesaPropertyID, testData.GetID()}, false},
 	}
@@ -122,9 +121,8 @@ func Test_mesaProperty_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		// TODO: Add test cases.
 		{"+ve compare with property with no Data", fields{testMesaPropertyID, testData.GetID()}, args{mesaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S"))}}, 0},
-		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{mesaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")), DataID: baseData.NewStringData("Data2").GetID()}}, 0},
+		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{mesaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")), DataID: NewStringData("Data2").GetID()}}, 0},
 		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{testMesaProperty}, 0},
 	}
 	for _, tt := range tests {
@@ -151,7 +149,6 @@ func Test_mesaProperty_GetDataID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, nil},
 		{"+ve", fields{testMesaPropertyID, testData.GetID()}, testData.GetID()},
 	}
@@ -180,7 +177,6 @@ func Test_mesaProperty_GetHash(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testMesaPropertyID, testData.GetID()}, testData.GetID().GetHashID()},
 	}
 	for _, tt := range tests {
@@ -207,7 +203,6 @@ func Test_mesaProperty_GetID(t *testing.T) {
 		fields fields
 		want   ids.PropertyID
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, nil},
 		{"+ve", fields{testMesaPropertyID, testData.GetID()}, testMesaPropertyID},
 	}
@@ -236,7 +231,6 @@ func Test_mesaProperty_GetKey(t *testing.T) {
 		fields fields
 		want   ids.StringID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testMesaPropertyID, testData.GetID()}, testKey},
 	}
 	for _, tt := range tests {
@@ -263,7 +257,6 @@ func Test_mesaProperty_GetType(t *testing.T) {
 		fields fields
 		want   ids.StringID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testMesaPropertyID, testData.GetID()}, base.NewStringID("S")},
 	}
 	for _, tt := range tests {
@@ -290,7 +283,6 @@ func Test_mesaProperty_IsMesa(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testMesaPropertyID, testData.GetID()}, true},
 	}
 	for _, tt := range tests {
@@ -317,7 +309,6 @@ func Test_mesaProperty_IsMeta(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testMesaPropertyID, testData.GetID()}, false},
 	}
 	for _, tt := range tests {
@@ -330,5 +321,57 @@ func Test_mesaProperty_IsMeta(t *testing.T) {
 				t.Errorf("IsMeta() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+// MOCKS
+type stringData struct {
+	Value string `json:"value"`
+}
+
+var _ data.StringData = (*stringData)(nil)
+
+func (stringData stringData) GetID() ids.DataID {
+	return base.NewDataID(stringData)
+}
+func (stringData stringData) Compare(listable traits.Listable) int {
+	compareStringData, err := stringDataFromInterface(listable)
+	if err != nil {
+		panic(err)
+	}
+
+	return strings.Compare(stringData.Value, compareStringData.Value)
+}
+func (stringData stringData) String() string {
+	return stringData.Value
+}
+func (stringData stringData) Bytes() []byte {
+	return []byte(stringData.Value)
+}
+func (stringData stringData) GetType() ids.StringID {
+	return dataConstants.StringDataID
+}
+func (stringData stringData) ZeroValue() data.Data {
+	return NewStringData("")
+}
+func (stringData stringData) GenerateHashID() ids.HashID {
+	return base.GenerateHashID(stringData.Bytes())
+}
+func (stringData stringData) Get() string {
+	return stringData.Value
+}
+
+func stringDataFromInterface(listable traits.Listable) (stringData, error) {
+	switch value := listable.(type) {
+	case stringData:
+		return value, nil
+	default:
+		return stringData{}, constants.MetaDataError
+	}
+}
+
+func NewStringData(value string) data.StringData {
+	return stringData{
+		Value: value,
 	}
 }

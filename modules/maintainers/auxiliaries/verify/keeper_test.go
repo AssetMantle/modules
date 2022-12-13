@@ -4,6 +4,7 @@
 package verify
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -132,7 +133,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 			au := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(got, tt.want) {
+			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
 			}
 		})
@@ -144,7 +145,6 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.AuxiliaryKeeper
 	}{
-		// TODO: Add test cases.
 		{"+ve", auxiliaryKeeper{}},
 	}
 	for _, tt := range tests {

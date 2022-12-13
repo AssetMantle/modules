@@ -4,17 +4,19 @@
 package base
 
 import (
-	"reflect"
-	"testing"
-
-	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/traits"
+	"github.com/stretchr/testify/assert"
+	"reflect"
+	"testing"
 )
 
 func TestNewList(t *testing.T) {
+	assert.Panics(t, func() {
+		NewList(base.NewPropertyID(NewStringID("ID"), NewStringID("Data")), NewStringID("ID"))
+	})
 	type args struct {
 		listables []traits.Listable
 	}
@@ -23,9 +25,8 @@ func TestNewList(t *testing.T) {
 		args args
 		want lists.List
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{[]traits.Listable{}}, list{}},
-		{"+ve", args{[]traits.Listable{base.NewStringID("ID")}}, list{base.NewStringID("ID")}},
+		{"+ve", args{[]traits.Listable{NewStringID("ID")}}, list{NewStringID("ID")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -46,10 +47,9 @@ func Test_list_Add(t *testing.T) {
 		args args
 		want lists.List
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", list{}, args{[]traits.Listable{}}, list{}},
-		{"+ve", []traits.Listable{}, args{[]traits.Listable{base.NewStringID("ID")}}, list{base.NewStringID("ID")}},
-		{"+ve", list{base.NewStringID("ID")}, args{[]traits.Listable{base.NewStringID("ID1")}}, list{base.NewStringID("ID"), base.NewStringID("ID1")}},
+		{"+ve", []traits.Listable{}, args{[]traits.Listable{NewStringID("ID")}}, list{NewStringID("ID")}},
+		{"+ve", list{NewStringID("ID")}, args{[]traits.Listable{NewStringID("ID1")}}, list{NewStringID("ID"), NewStringID("ID1")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -66,8 +66,7 @@ func Test_list_Get(t *testing.T) {
 		list list
 		want []traits.Listable
 	}{
-		// TODO: Add test cases.
-		{"+ve", []traits.Listable{base.NewStringID("ID")}, list{base.NewStringID("ID")}},
+		{"+ve", []traits.Listable{NewStringID("ID")}, list{NewStringID("ID")}},
 		{"+ve", list{}, list{}},
 	}
 	for _, tt := range tests {
@@ -89,8 +88,7 @@ func Test_list_Mutate(t *testing.T) {
 		args args
 		want lists.List
 	}{
-		// TODO: Add test cases.
-		{"+ve", []traits.Listable{baseProperties.NewMetaProperty(base.NewStringID("ID1"), baseData.NewStringData("Data1"))}, args{[]traits.Listable{baseProperties.NewMetaProperty(base.NewStringID("ID1"), baseData.NewStringData("Data2"))}}, list{baseProperties.NewMetaProperty(base.NewStringID("ID1"), baseData.NewStringData("Data2"))}},
+		{"+ve", []traits.Listable{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("Data1"))}, args{[]traits.Listable{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("Data2"))}}, list{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("Data2"))}},
 		{"+ve with nil", list{}, args{}, list{}},
 	}
 	for _, tt := range tests {
@@ -112,9 +110,8 @@ func Test_list_Remove(t *testing.T) {
 		args args
 		want lists.List
 	}{
-		// TODO: Add test cases.
 		{"+ve for nil", []traits.Listable{}, args{}, list{}},
-		{"+ve", []traits.Listable{base.NewStringID("ID")}, args{[]traits.Listable{base.NewStringID("ID2")}}, list{base.NewStringID("ID")}},
+		{"+ve", []traits.Listable{NewStringID("ID")}, args{[]traits.Listable{NewStringID("ID2")}}, list{NewStringID("ID")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -136,9 +133,8 @@ func Test_list_Search(t *testing.T) {
 		want  int
 		want1 bool
 	}{
-		// TODO: Add test cases.
 		{"+ve for nil", []traits.Listable{}, args{}, 0, false}, // TODO: panics if list is nil
-		{"+ve", []traits.Listable{base.NewStringID("ID")}, args{base.NewStringID("ID")}, 0, true},
+		{"+ve", []traits.Listable{NewStringID("ID")}, args{NewStringID("ID")}, 0, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -159,9 +155,8 @@ func Test_list_Size(t *testing.T) {
 		list list
 		want int
 	}{
-		// TODO: Add test cases.
 		{"+ve", []traits.Listable{}, 0},
-		{"+ve", []traits.Listable{base.NewStringID("ID")}, 1},
+		{"+ve", []traits.Listable{NewStringID("ID")}, 1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

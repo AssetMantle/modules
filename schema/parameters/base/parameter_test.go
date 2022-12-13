@@ -253,7 +253,6 @@ func Test_parameter_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve with stringData", fields{id, testData, dummyValidator}, false},
 		{"+ve with decData", fields{baseIDs.NewStringID("ID"), baseData.NewDecData(sdkTypes.SmallestDec()), dummyValidator}, false},
 	}

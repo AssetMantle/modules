@@ -25,7 +25,6 @@ func TestNewIDData(t *testing.T) {
 		args args
 		want data.Data
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{NewStringData("Data")}, idData{NewStringData("Data")}},
 		{"+ve empty string", args{NewStringData("")}, idData{NewStringData("")}},
 	}
@@ -46,9 +45,9 @@ func Test_idDataFromInterface(t *testing.T) {
 		want    idData
 		wantErr assert.ErrorAssertionFunc
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{NewIDData(NewStringData("Data"))}, idData{NewStringData("Data")}, assert.NoError},
 		{"+ve", args{NewIDData(NewStringData(""))}, idData{NewStringData("")}, assert.NoError},
+		{"-ve", args{NewStringData("Data")}, idData{}, assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -70,7 +69,6 @@ func Test_idData_Bytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{NewStringData("")}, []byte{}},
 		{"+ve", fields{NewStringData("Data")}, NewStringData("Data").Bytes()},
 	}
@@ -97,7 +95,6 @@ func Test_idData_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{NewStringData("Data")}, args{idData{NewStringData("Data")}}, 0},
 		{"+ve", fields{NewStringData("Data")}, args{idData{NewStringData("0")}}, 1},
 	}
@@ -120,7 +117,6 @@ func Test_idData_GenerateHashID(t *testing.T) {
 		fields fields
 		want   ids.HashID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{NewStringData("Data")}, baseIDs.GenerateHashID(idData{NewStringData("Data")}.Bytes())},
 		{"+ve with empty String", fields{NewStringData("")}, baseIDs.GenerateHashID(idData{NewStringData("")}.Bytes())},
 	}
@@ -143,7 +139,6 @@ func Test_idData_Get(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{NewStringData("Data")}, NewStringData("Data")},
 		{"+ve", fields{NewStringData("")}, NewStringData("")},
 	}
@@ -166,7 +161,6 @@ func Test_idData_GetID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{NewStringData("Data")}, baseIDs.NewDataID(idData{NewStringData("Data")})},
 	}
 	for _, tt := range tests {
@@ -188,7 +182,6 @@ func Test_idData_GetType(t *testing.T) {
 		fields fields
 		want   ids.StringID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{NewStringData("Data")}, dataConstants.IDDataID},
 	}
 	for _, tt := range tests {
@@ -210,7 +203,6 @@ func Test_idData_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{NewStringData("Data")}, "Data"},
 	}
 	for _, tt := range tests {
@@ -232,7 +224,6 @@ func Test_idData_ZeroValue(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{NewStringData("Data")}, NewIDData(baseIDs.NewStringID(""))},
 	}
 	for _, tt := range tests {

@@ -5,6 +5,8 @@ package deputize
 
 import (
 	"encoding/json"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -47,7 +49,14 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Router /identities/deputize [post]
 func (transactionRequest transactionRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(transactionRequest)
-	return err
+	if err != nil {
+		return err
+	}
+	inputValidator := base.NewInputValidator(constants.PropertyExpression)
+	if !inputValidator.IsValid(transactionRequest.MaintainedProperties) {
+		return errorConstants.IncorrectFormat
+	}
+	return nil
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
