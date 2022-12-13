@@ -56,6 +56,8 @@ func Test_decDataFromInterface(t *testing.T) {
 		{"+ve with zero dec", args{decData{types.ZeroDec()}}, decData{types.ZeroDec()}, assert.NoError},
 		{"+ve", args{decData{types.NewDec(100)}}, decData{types.NewDec(100)}, assert.NoError},
 		{"+ve with -ve Dec", args{decData{types.NewDec(-100)}}, decData{types.NewDec(-100)}, assert.NoError},
+		{"-ve with nil", args{nil}, decData{}, assert.Error},
+		{"-ve stringData", args{stringData{"testData"}}, decData{}, assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
