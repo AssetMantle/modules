@@ -90,7 +90,9 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		args    args
 		want    helpers.TransactionRequest
 		wantErr bool
-	}{}
+	}{
+		// TODO: Add test cases.
+	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
