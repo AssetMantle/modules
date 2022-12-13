@@ -4,19 +4,23 @@
 package helpers
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/gogo/protobuf/proto"
 
 	"github.com/AssetMantle/modules/schema/parameters"
 )
 
 type Genesis interface {
+	proto.Message
+
 	Default() Genesis
 	Validate() error
 	Import(sdkTypes.Context, Mapper, Parameters)
 	Export(sdkTypes.Context, Mapper, Parameters) Genesis
 
-	Encode() []byte
-	Decode([]byte) Genesis
+	Encode(codec.JSONCodec) []byte
+	Decode(codec.JSONCodec, []byte) Genesis
 
 	Initialize([]Mappable, []parameters.Parameter) Genesis
 

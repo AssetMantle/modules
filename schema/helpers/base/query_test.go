@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	clientContext "github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
@@ -53,7 +53,7 @@ func TestQuery(t *testing.T) {
 	//require.Equal(t, nil, command.ExecuteContext(context.Context()))
 
 	// RESTQueryHandler
-	cliContext := clientContext.NewCLIContext().WithCodec(codec).WithChainID("test")
+	cliContext := client.NewCLIContext().WithCodec(codec).WithChainID("test")
 	Query.RESTQueryHandler(cliContext)
 
 	// RPC ERROR

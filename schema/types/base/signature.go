@@ -20,19 +20,19 @@ type signature struct {
 
 var _ types.Signature = (*signature)(nil)
 
-func (baseSignature signature) String() string {
-	return base64.URLEncoding.EncodeToString(baseSignature.Bytes())
+func (signature signature) String() string {
+	return base64.URLEncoding.EncodeToString(signature.Bytes())
 }
-func (baseSignature signature) Bytes() []byte { return baseSignature.SignatureBytes }
-func (baseSignature signature) GetID() ids.ID { return baseSignature.ID }
-func (baseSignature signature) Verify(pubKey crypto.PubKey, bytes []byte) bool {
-	return pubKey.VerifyBytes(bytes, baseSignature.Bytes())
+func (signature signature) Bytes() []byte { return signature.SignatureBytes }
+func (signature signature) GetID() ids.ID { return signature.ID }
+func (signature signature) Verify(pubKey crypto.PubKey, bytes []byte) bool {
+	return pubKey.VerifySignature(bytes, signature.Bytes())
 }
-func (baseSignature signature) GetValidityHeight() types.Height {
-	return baseSignature.ValidityHeight
+func (signature signature) GetValidityHeight() types.Height {
+	return signature.ValidityHeight
 }
-func (baseSignature signature) HasExpired(height types.Height) bool {
-	return baseSignature.GetValidityHeight().Compare(height) > 0
+func (signature signature) HasExpired(height types.Height) bool {
+	return signature.GetValidityHeight().Compare(height) > 0
 }
 
 func NewSignature(id ids.ID, signatureBytes []byte, validityHeight types.Height) types.Signature {

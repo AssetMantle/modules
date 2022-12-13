@@ -1,0 +1,10 @@
+syntax = "proto3";
+package base;
+
+import "schema/ids/base/hashID.proto";
+import "schema/ids/base/stringID.proto";
+
+message DataID {
+  base.StringID type = 1;
+  base.HashID hash_id = 2;
+}

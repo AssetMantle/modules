@@ -6,13 +6,14 @@ package base
 import (
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"google.golang.org/grpc"
 
 	"github.com/AssetMantle/modules/schema/helpers"
 )
@@ -25,21 +26,39 @@ type query struct {
 	requestPrototype  func() helpers.QueryRequest
 	responsePrototype func() helpers.QueryResponse
 	keeperPrototype   func() helpers.QueryKeeper
+	Configurator      helpers.GRPCConfigurator
 }
 
 var _ helpers.Query = (*query)(nil)
 
-func (query query) GetName() string { return query.name }
-func (query query) Command(codec *codec.Codec) *cobra.Command {
-	runE := func(command *cobra.Command, args []string) error {
-		cliContext := context.NewCLIContext().WithCodec(codec)
+func (query query) GetGRPCConfigurator() helpers.GRPCConfigurator {
+	return query.Configurator
+}
 
-		queryRequest, err := query.requestPrototype().FromCLI(query.cliCommand, cliContext)
+func (query query) GRPCGatewayHandler(context client.Context) (method string, pattern runtime.Pattern, handlerFunc runtime.HandlerFunc) {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (query query) Service() (*grpc.ServiceDesc, interface{}) {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (query query) GetName() string { return query.name }
+func (query query) Command() *cobra.Command {
+	runE := func(command *cobra.Command, args []string) error {
+		context, err := client.GetClientTxContext(command)
 		if err != nil {
 			return err
 		}
 
-		responseBytes, _, err := query.query(queryRequest, cliContext)
+		queryRequest, err := query.requestPrototype().FromCLI(query.cliCommand, context)
+		if err != nil {
+			return err
+		}
+
+		responseBytes, _, err := query.query(queryRequest, context)
 		if err != nil {
 			return err
 		}
@@ -49,7 +68,7 @@ func (query query) Command(codec *codec.Codec) *cobra.Command {
 			return err
 		}
 
-		return cliContext.PrintOutput(response)
+		return context.PrintProto(response)
 	}
 
 	return query.cliCommand.CreateCommand(runE)
@@ -63,11 +82,11 @@ func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciType
 	return query.queryKeeper.Enquire(context, request).Encode()
 }
 
-func (query query) RESTQueryHandler(outerCliContext context.CLIContext) http.HandlerFunc {
+func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		responseWriter.Header().Set("Content-Type", "application/json")
 
-		cliContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, outerCliContext, httpRequest)
+		cliContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, context, httpRequest)
 		if !ok {
 			return
 		}
@@ -93,16 +112,16 @@ func (query query) Initialize(mapper helpers.Mapper, parameters helpers.Paramete
 	return query
 }
 
-func (query query) query(queryRequest helpers.QueryRequest, cliContext context.CLIContext) ([]byte, int64, error) {
+func (query query) query(queryRequest helpers.QueryRequest, context client.Context) ([]byte, int64, error) {
 	bytes, err := queryRequest.Encode()
 	if err != nil {
 		return nil, 0, err
 	}
 
-	return cliContext.QueryWithData("custom"+"/"+query.moduleName+"/"+query.name, bytes)
+	return context.QueryWithData("custom"+"/"+query.moduleName+"/"+query.name, bytes)
 }
 
-func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, flagList ...helpers.CLIFlag) helpers.Query {
+func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, configurator helpers.GRPCConfigurator, flagList ...helpers.CLIFlag) helpers.Query {
 	return query{
 		name:              name,
 		cliCommand:        NewCLICommand(name, short, long, flagList),
@@ -110,5 +129,6 @@ func NewQuery(name string, short string, long string, moduleName string, request
 		requestPrototype:  requestPrototype,
 		responsePrototype: responsePrototype,
 		keeperPrototype:   keeperPrototype,
+		Configurator:      configurator,
 	}
 }
