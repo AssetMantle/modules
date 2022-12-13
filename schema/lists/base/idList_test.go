@@ -51,6 +51,7 @@ func Test_idList_GetList(t *testing.T) {
 		want   []ids.ID
 	}{
 		{"+ve with nil", fields{NewList()}, []ids.ID{}},
+		{"+ve", fields{NewList(idsToListables([]ids.ID{NewStringID("Data")}...)...)}, []ids.ID{NewStringID("Data").(ids.ID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -77,7 +78,7 @@ func Test_idList_Remove(t *testing.T) {
 		args   args
 		want   lists.IDList
 	}{
-		{"+ve with no removal", fields{NewList(idsToListables(NewStringID("ID1"), NewStringID("ID2"), NewStringID("ID3"))...)}, args{}, idList{NewList(idsToListables(NewStringID("ID1"), NewStringID("ID2"), NewStringID("ID3"))...)}},
+		{"-ve with no removal", fields{NewList(idsToListables(NewStringID("ID1"), NewStringID("ID2"), NewStringID("ID3"))...)}, args{}, idList{NewList(idsToListables(NewStringID("ID1"), NewStringID("ID2"), NewStringID("ID3"))...)}},
 		{"+ve with removal", fields{NewList(idsToListables(NewStringID("ID1"), NewStringID("ID2"), NewStringID("ID3"))...)}, args{[]ids.ID{NewStringID("ID3")}}, idList{NewList(idsToListables(NewStringID("ID1"), NewStringID("ID2"))...)}},
 	}
 	for _, tt := range tests {
@@ -108,7 +109,7 @@ func Test_idList_Search(t *testing.T) {
 	}{
 		{"+ve with nil", fields{NewList(idsToListables([]ids.ID{}...)...)}, args{NewStringID("ID")}, 0, false}, // TODO report issue
 		{"+ve", fields{NewList(idsToListables([]ids.ID{NewStringID("ID")}...)...)}, args{NewStringID("ID")}, 0, true},
-		{"+ve with no entry", fields{NewList(idsToListables([]ids.ID{NewStringID("ID")}...)...)}, args{NewStringID("ID1")}, 1, false},
+		{"-ve with no entry", fields{NewList(idsToListables([]ids.ID{NewStringID("ID")}...)...)}, args{NewStringID("ID1")}, 1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
