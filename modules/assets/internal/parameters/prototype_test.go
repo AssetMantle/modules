@@ -4,6 +4,7 @@
 package parameters
 
 import (
+	"github.com/AssetMantle/modules/schema/helpers"
 	"reflect"
 	"testing"
 
@@ -13,17 +14,15 @@ import (
 
 func TestPrototype(t *testing.T) {
 	tests := []struct {
-		name string
-		// want helpers.Parameters
-		want      string
+		name      string
+		want      helpers.Parameters
 		wantError error
 	}{
-		// TODO: Update test case.
-		{"+ve", baseHelpers.NewParameters(dummy.Parameter).String(), nil},
+		{"+ve", baseHelpers.NewParameters(dummy.Parameter), nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype(); tt.wantError != got.Validate() && !reflect.DeepEqual(got.String(), tt.want) {
+			if got := Prototype(); tt.wantError != got.Validate() && !reflect.DeepEqual(got.String(), tt.want.String()) {
 				t.Errorf("Prototype() = %v, want %v", got, tt.want)
 			}
 		})

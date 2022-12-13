@@ -35,7 +35,6 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{splitID}, key{splitID}},
 		{"+ve with nil", args{baseIds.PrototypeSplitID()}, key{baseIds.PrototypeSplitID()}},
 	}
@@ -53,7 +52,6 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		// TODO: Add test cases.
 		{"+ve", key{}},
 	}
 	for _, tt := range tests {
@@ -75,7 +73,6 @@ func Test_keyFromInterface(t *testing.T) {
 		want    key
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{NewKey(splitID)}, key{splitID}, false},
 		{"+ve", args{NewKey(baseIds.PrototypeSplitID())}, key{baseIds.PrototypeSplitID()}, false},
 	}
@@ -106,7 +103,6 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{splitID}, args{NewKey(splitID)}, true},
 		{"+ve", fields{splitID}, args{NewKey(baseIds.PrototypeSplitID())}, false},
 	}
@@ -131,7 +127,6 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{splitID}, module.StoreKeyPrefix.GenerateStoreKey(key{splitID}.Bytes())},
 		{"+ve", fields{baseIds.PrototypeSplitID()}, module.StoreKeyPrefix.GenerateStoreKey(key{baseIds.PrototypeSplitID()}.Bytes())},
 	}
@@ -156,7 +151,6 @@ func Test_key_IsPartial(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{splitID}, false},
 		{"+ve", fields{baseIds.PrototypeSplitID()}, true},
 	}
@@ -184,7 +178,6 @@ func Test_key_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{splitID}, args{codec.New()}},
 	}
 	for _, tt := range tests {

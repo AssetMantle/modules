@@ -90,7 +90,6 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionKeeper
 	}{
-		// TODO: Add test cases.
 		{"+ve", transactionKeeper{}},
 	}
 	for _, tt := range tests {
@@ -121,7 +120,6 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
 		{"+ve", fields{Mapper, Parameters, revokeAuxiliary, authenticateAuxiliary}, args{Mapper, Parameters, []interface{}{}}, transactionKeeper{Mapper, Parameters, revokeAuxiliary, authenticateAuxiliary}},
 	}
@@ -170,7 +168,6 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{Mapper, Parameters, revokeAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testFromID, testClassificationID)}, newTransactionResponse(nil)},
 	}
 	for _, tt := range tests {

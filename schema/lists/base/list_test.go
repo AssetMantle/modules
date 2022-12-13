@@ -4,14 +4,19 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/traits"
+	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
 )
 
 func TestNewList(t *testing.T) {
+	assert.Panics(t, func() {
+		NewList(base.NewPropertyID(NewStringID("ID"), NewStringID("Data")), NewStringID("ID"))
+	})
 	type args struct {
 		listables []traits.Listable
 	}

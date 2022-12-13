@@ -8,6 +8,8 @@ import (
 	"fmt"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
@@ -16,6 +18,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
@@ -72,6 +75,10 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
+	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.Coins, constants.FromID})
+	cliContext := context.NewCLIContext().WithCodec(codec.New()).WithFromAddress(fromAccAddress).WithChainID("test")
+	viper.Set(constants.FromID.GetName(), fromID.String())
+	viper.Set(constants.Coins.GetName(), testRate.String())
 	type fields struct {
 		BaseReq rest.BaseReq
 		FromID  string
@@ -87,7 +94,9 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		args    args
 		want    helpers.TransactionRequest
 		wantErr bool
-	}{}
+	}{
+		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, args{cliCommand, cliContext}, transactionRequest{testBaseRequest, fromID.String(), testRate.String()}, false},
+	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
@@ -100,7 +109,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
 			}
 		})

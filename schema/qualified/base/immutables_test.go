@@ -26,7 +26,6 @@ func TestNewImmutables(t *testing.T) {
 		args args
 		want qualified.Immutables
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{}, immutables{}},
 		{"+ve", args{testImmutablePropertyList}, immutables{testImmutablePropertyList}},
 	}
@@ -52,7 +51,6 @@ func Test_immutables_GenerateHashID(t *testing.T) {
 		fields fields
 		want   ids.HashID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{base.NewPropertyList()}, baseIDs.GenerateHashID([][]byte{}...)},
 		{"+ve", fields{testImmutablePropertyList}, baseIDs.GenerateHashID(metaList2...)},
 	}
@@ -78,7 +76,6 @@ func Test_immutables_GetImmutablePropertyList(t *testing.T) {
 		fields fields
 		want   lists.PropertyList
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{base.NewPropertyList()}, base.NewPropertyList()},
 		{"+ve", fields{testImmutablePropertyList}, immutables{testImmutablePropertyList}.PropertyList},
 	}

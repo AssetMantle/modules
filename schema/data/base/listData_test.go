@@ -37,7 +37,6 @@ func TestListDataPrototype(t *testing.T) {
 		args args
 		want data.Data
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{}, listData{}.ZeroValue()},
 	}
 	for _, tt := range tests {
@@ -56,7 +55,6 @@ func TestNewListData(t *testing.T) {
 		args args
 		want data.Data
 	}{
-		// TODO: Add test cases.
 		{"+ve for some id", args{baseLists.NewDataList(NewStringData("Data"))}, listData{baseLists.NewDataList(NewStringData("Data"))}},
 		{"+ve for empty String", args{baseLists.NewDataList(NewStringData(""))}, listData{baseLists.NewDataList(NewStringData(""))}},
 
@@ -82,10 +80,10 @@ func Test_listDataFromInterface(t *testing.T) {
 		want    listData
 		wantErr assert.ErrorAssertionFunc
 	}{
-		// TODO: Add test cases.
 		{"+ve for some id", args{listData{baseLists.NewDataList(NewStringData("Data"))}}, listData{baseLists.NewDataList(NewStringData("Data"))}, assert.NoError},
 		{"+ve for empty String", args{listData{baseLists.NewDataList(NewStringData(""))}}, listData{baseLists.NewDataList(NewStringData(""))}, assert.NoError},
-		{"+ve for empty String", args{heightData{}}, listData{}, assert.Error},
+		{"-ve for empty String", args{heightData{}}, listData{}, assert.Error},
+		{"-ve for empty String", args{NewStringData("")}, listData{}, assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -112,7 +110,6 @@ func Test_listData_Add(t *testing.T) {
 		want        data.ListData
 		wantFailure bool
 	}{
-		// TODO: Add test cases.
 		{"+ve for multiple ids", fields{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"), NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"), NewStringData("Data"))}, false},
 		{"+ve for multiple ids/nils", fields{baseLists.NewDataList(NewStringData("Data"), NewStringData(""), NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"), NewStringData(""))}, false},
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"))}, false},
@@ -143,7 +140,6 @@ func Test_listData_Bytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, NewStringData("Data").Bytes()}, // for a single data no loop iteration is required, so directly it's byte should match
 		{"+ve for multiple ids", fields{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data1"))}, bytes.Join([][]byte{NewStringData("Data").Bytes(), NewStringData("Data1").Bytes()}, nil)},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, []byte(nil)},
@@ -172,7 +168,6 @@ func Test_listData_Compare(t *testing.T) {
 		want      int
 		wantPanic bool
 	}{
-		// TODO: Add test cases.
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{listData{baseLists.NewDataList(NewStringData("Data"))}}, 0, false},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{listData{baseLists.NewDataList(NewStringData("Data"))}}, -1, false},
 		{"Test for Equal case", fields{baseLists.NewDataList(NewStringData(fromAddress))}, args{listData{baseLists.NewDataList(NewStringData(fromAddress))}}, 0, false},
@@ -204,7 +199,6 @@ func Test_listData_GenerateHashID(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, baseIDs.GenerateHashID(listData{baseLists.NewDataList(NewStringData("Data"))}.Bytes()).String()},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, baseIDs.GenerateHashID(listData{baseLists.NewDataList(NewStringData(""))}.Bytes()).String()},
 		{"empty string", fields{baseLists.NewDataList()}, baseIDs.NewStringID("").String()},
@@ -232,7 +226,6 @@ func Test_listData_Get(t *testing.T) {
 		fields fields
 		want   []data.Data
 	}{
-		// TODO: Add test cases.
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, listData{baseLists.NewDataList(NewStringData("Data"))}.Value.GetList()},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, listData{baseLists.NewDataList(NewStringData(""))}.Value.GetList()},
 	}
@@ -255,7 +248,6 @@ func Test_listData_GetID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		// TODO: Add test cases.
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, baseIDs.NewDataID(listData{baseLists.NewDataList(NewStringData("Data"))})},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, baseIDs.NewDataID(listData{baseLists.NewDataList(NewStringData(""))})},
 	}
@@ -278,7 +270,6 @@ func Test_listData_GetType(t *testing.T) {
 		fields fields
 		want   ids.StringID
 	}{
-		// TODO: Add test cases.
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, dataConstants.ListDataID},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, dataConstants.ListDataID},
 	}
@@ -305,7 +296,6 @@ func Test_listData_Remove(t *testing.T) {
 		args   args
 		want   data.ListData
 	}{
-		// TODO: Add test cases.
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{[]data.Data{}}, listData{baseLists.NewDataList(NewStringData(""))}},
 		{"+ve for empty String & removing it", fields{baseLists.NewDataList(NewStringData(""))}, args{[]data.Data{NewStringData("")}}, listData{baseLists.NewDataList()}},
 		{"+ve ", fields{baseLists.NewDataList(NewStringData("data"))}, args{[]data.Data{NewStringData("data")}}, listData{baseLists.NewDataList()}},
@@ -334,7 +324,6 @@ func Test_listData_Search(t *testing.T) {
 		want   int
 		want1  bool
 	}{
-		// TODO: Add test cases.
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{NewStringData("Data")}, 0, true},
 		{"+ve for empty String", fields{baseLists.NewDataList([]data.Data{NewStringData("Data"), NewStringData("")}...)}, args{NewStringData("")}, 0, true},
 		{"-ve", fields{baseLists.NewDataList([]data.Data{NewStringData("Data"), NewStringData("")}...)}, args{NewStringData("test")}, 2, false},
@@ -360,7 +349,6 @@ func Test_listData_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, "Data"},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, ""},
 	}
@@ -383,7 +371,6 @@ func Test_listData_ZeroValue(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-		// TODO: Add test cases.
 		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, NewListData(baseLists.NewDataList([]data.Data{}...))},
 		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, NewListData(baseLists.NewDataList([]data.Data{}...))},
 	}

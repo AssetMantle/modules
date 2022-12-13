@@ -7,12 +7,15 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIds "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
@@ -36,7 +39,6 @@ func Test_newQueryRequest(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{splitID}, newQueryRequest(splitID)},
 	}
 	for _, tt := range tests {
@@ -57,7 +59,6 @@ func Test_queryRequestFromInterface(t *testing.T) {
 		args args
 		want queryRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{newQueryRequest(splitID)}, newQueryRequest(splitID).(queryRequest)},
 	}
 	for _, tt := range tests {
@@ -87,7 +88,6 @@ func Test_queryRequest_Decode(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{splitID}, args{encodedReq}, newQueryRequest(splitID), false},
 		{"+ve", fields{baseIds.PrototypeSplitID()}, args{encodedReq1}, newQueryRequest(baseIds.PrototypeSplitID()), false},
 	}
@@ -122,7 +122,6 @@ func Test_queryRequest_Encode(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{splitID}, encodedReq, false},
 		{"+ve", fields{baseIds.PrototypeSplitID()}, encodedReq1, false},
 	}
@@ -144,6 +143,8 @@ func Test_queryRequest_Encode(t *testing.T) {
 }
 
 func Test_queryRequest_FromCLI(t *testing.T) {
+	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.SplitID})
+	viper.Set(constants.SplitID.GetName(), splitID.String())
 	type fields struct {
 		SplitID ids.SplitID
 	}
@@ -158,7 +159,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{"+ve", fields{splitID}, args{cliCommand, context.NewCLIContext()}, newQueryRequest(splitID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -193,7 +194,6 @@ func Test_queryRequest_FromMap(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{splitID}, args{vars}, newQueryRequest(splitID), false},
 	}
 	for _, tt := range tests {
@@ -222,7 +222,6 @@ func Test_queryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{splitID}, false},
 	}
 	for _, tt := range tests {
@@ -242,7 +241,6 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", queryRequest{}},
 	}
 	for _, tt := range tests {

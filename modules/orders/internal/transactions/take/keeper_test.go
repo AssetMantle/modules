@@ -126,7 +126,6 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
 		{"+ve", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{Mapper, Parameters, []interface{}{}}, transactionKeeper{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}},
 	}
@@ -196,7 +195,6 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		// TODO: Add test cases.
 		{"+ve Not Authorized", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID2, testRate, testOrderID)}, newTransactionResponse(errorConstants.NotAuthorized)},
 		{"+ve", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testRate, testOrderID)}, newTransactionResponse(nil)},
 		{"+ve Entity Not Found", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testRate, testOrderID2)}, newTransactionResponse(errorConstants.EntityNotFound)},

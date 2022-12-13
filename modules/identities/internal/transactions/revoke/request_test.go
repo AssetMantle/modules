@@ -54,7 +54,6 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", args{}, transactionRequest{}},
 		{"+ve", args{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, transactionRequest{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}},
 	}
@@ -72,7 +71,6 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", transactionRequest{}},
 	}
 	for _, tt := range tests {
@@ -112,7 +110,6 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{cliCommand, cliContext}, transactionRequest{cliCommand.ReadBaseReq(cliContext), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.ToID), cliCommand.ReadString(constants.ClassificationID)}, false},
 	}
 	for _, tt := range tests {
@@ -155,7 +152,6 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{types.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, testFromID, testToID, testClassificationID}))}, transactionRequest{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, false},
 	}
 	for _, tt := range tests {
@@ -191,7 +187,6 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   rest.BaseReq
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, testBaseReq},
 	}
 	for _, tt := range tests {
@@ -225,7 +220,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		// TODO: Type & Data same but Not matching
 		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, message{testFromAccAddress, testFromID, testToID, testClassificationID}, false},
 	}
@@ -265,7 +259,6 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, args{codec.New()}},
 		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{codec.New()}},
 	}
@@ -295,7 +288,6 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, true},
 		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, false},
 	}

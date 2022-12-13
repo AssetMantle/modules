@@ -19,7 +19,6 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Transactions
 	}{
-		// TODO: Add test cases.
 		{"+ve", baseHelpers.NewTransactions(
 			send.Transaction,
 			unwrap.Transaction,
