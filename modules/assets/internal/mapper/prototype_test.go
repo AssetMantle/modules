@@ -4,9 +4,9 @@
 package mapper
 
 import (
+	"github.com/AssetMantle/modules/schema/helpers"
+	"reflect"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
@@ -14,7 +14,18 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Panics(t, func() {
-		require.Equal(t, Prototype(), baseHelpers.NewMapper(key.Prototype, mappable.Prototype))
-	})
+	tests := []struct {
+		name string
+		want helpers.Mapper
+	}{
+		// TODO: it should pass, but possibly due to a bug in the code, it fails
+		{"+ve", baseHelpers.NewMapper(key.Prototype, mappable.Prototype)},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Prototype() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
