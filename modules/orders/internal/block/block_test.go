@@ -4,6 +4,7 @@
 package block
 
 import (
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -26,7 +27,7 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
-func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Auxiliary, helpers.Auxiliary) {
+func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Auxiliary, helpers.Auxiliary, helpers.Auxiliary) {
 	var Codec = codec.New()
 	schema.RegisterCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
@@ -55,18 +56,19 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Au
 	Parameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
 	transferAuxiliary := transfer.AuxiliaryMock.Initialize(Mapper, Parameters)
 	supplementAuxiliary := supplement.AuxiliaryMock.Initialize(Mapper, Parameters)
+	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(Mapper, Parameters)
 
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
 		Height:  1000,
 	}, false, log.NewNopLogger())
 
-	return context, Mapper, transferAuxiliary, supplementAuxiliary
+	return context, Mapper, transferAuxiliary, supplementAuxiliary, scrubAuxiliary
 }
 
 func Test_Block_Methods(t *testing.T) {
 	block := Prototype()
-	context, mapper, transferAuxiliary, supplementAuxiliary := CreateTestInput(t)
+	context, mapper, transferAuxiliary, supplementAuxiliary, _ := CreateTestInput(t)
 	block = block.Initialize(mapper, parameters.Prototype(), transferAuxiliary, supplementAuxiliary)
 	block.Begin(context, abciTypes.RequestBeginBlock{})
 
@@ -74,6 +76,7 @@ func Test_Block_Methods(t *testing.T) {
 }
 
 func Test_block_End(t *testing.T) {
+	context, mapper, transferAuxiliary, supplementAuxiliary, scrubAuxiliary := CreateTestInput(t)
 	type fields struct {
 		mapper              helpers.Mapper
 		parameters          helpers.Parameters
@@ -90,7 +93,7 @@ func Test_block_End(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test for Blockend.
+		{"+ve", fields{mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{context, abciTypes.RequestEndBlock{}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
