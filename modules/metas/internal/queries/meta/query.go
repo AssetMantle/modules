@@ -1,21 +1,15 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package meta
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/metas/internal/module"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
-var _ helpers.QueryRequest = (*QueryRequest)(nil)
-var _ helpers.QueryResponse = (*QueryResponse)(nil)
-
-var Query = base.NewQuery(
+var Query = baseHelpers.NewQuery(
 	"metas",
 	"",
 	"",
@@ -25,5 +19,6 @@ var Query = base.NewQuery(
 	requestPrototype,
 	responsePrototype,
 	keeperPrototype,
-	flags.MetaID,
+
+	constants.DataID,
 )

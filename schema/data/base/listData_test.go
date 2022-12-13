@@ -61,7 +61,7 @@ func TestNewListData(t *testing.T) {
 		{"+ve empty datalist", args{baseLists.NewDataList([]data.Data{}...)}, listData{}.ZeroValue()},
 		{"+ve address string", args{baseLists.NewDataList(NewStringData(fromAddress))}, listData{baseLists.NewDataList(NewStringData(fromAddress))}},
 		// TODO: Check address format
-		//{"-ve wrong address string format", args{baseLists.NewDataList(NewStringData(fromAddress))}, listData{}.ZeroValue()},
+		// {"-ve wrong address string format", args{baseLists.NewDataList(NewStringData(fromAddress))}, listData{}.ZeroValue()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

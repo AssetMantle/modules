@@ -1,14 +1,15 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package helpers
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/cosmos/cosmos-sdk/x/params/subspace"
+
+	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/parameters"
 )
 
 type Parameters interface {
@@ -17,14 +18,14 @@ type Parameters interface {
 	Validate() error
 	Equal(Parameters) bool
 
-	Get(types.ID) types.Parameter
-	GetList() []types.Parameter
+	Get(ids.ID) parameters.Parameter
+	GetList() []parameters.Parameter
 
-	Fetch(sdkTypes.Context, types.ID) Parameters
-	Mutate(sdkTypes.Context, types.Parameter) Parameters
+	Fetch(sdkTypes.Context, ids.ID) Parameters
+	Mutate(sdkTypes.Context, parameters.Parameter) Parameters
 
-	GetKeyTable() paramTypes.KeyTable
-	paramTypes.ParamSet
+	GetKeyTable() subspace.KeyTable
+	subspace.ParamSet
 
-	Initialize(paramTypes.Subspace) Parameters
+	Initialize(params.Subspace) Parameters
 }

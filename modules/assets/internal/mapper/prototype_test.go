@@ -4,9 +4,10 @@
 package mapper
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/helpers"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"

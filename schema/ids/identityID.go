@@ -2,6 +2,6 @@ package ids
 
 type IdentityID interface {
 	ID
-	GetHashID() ID
+	GetHashID() HashID
 	IsIdentityID()
 }

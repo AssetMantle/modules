@@ -1,54 +1,53 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package reveal
 
 import (
 	"encoding/json"
+
 	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/metas/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+
+	"github.com/AssetMantle/modules/schema/data/utilities"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type transactionRequest struct {
-	BaseReq  rest.BaseReq `json:"baseReq"`
-	MetaFact string       `json:"metaFact" valid:"required~required field metaFact missing, matches(^[DHIS]{1}[|]{1}.*$)"`
+	BaseReq rest.BaseReq `json:"baseReq"`
+	Data    string       `json:"data" valid:"required~required field data missing, matches(^[DHIS]{1}[|]{1}.*$)"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
-// Transaction Request godoc
-// @Summary reveal metas transaction
-// @Descrption reveal metas transaction
+// Validate godoc
+// @Summary Reveal metas transaction
+// @Description Reveal metas transaction
 // @Accept text/plain
 // @Produce json
 // @Tags Metas
-// @Param body body  transactionRequest true "request body"
-// @Success 200 {object} transactionResponse   "A successful response."
-// @Failure default  {object}  transactionResponse "An unexpected error response."
+// @Param body  transactionRequest true "Request body to reveal meta transaction"
+// @Success 200 {object} transactionResponse   "Message for a successful response."
+// @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /metas/reveal [post]
 func (transactionRequest transactionRequest) Validate() error {
-	_, Error := govalidator.ValidateStruct(transactionRequest)
-	return Error
+	_, err := govalidator.ValidateStruct(transactionRequest)
+	return err
 }
-func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext client.Context) (helpers.TransactionRequest, error) {
+func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
-		cliCommand.ReadString(flags.MetaFact),
+		cliCommand.ReadString(constants.Data),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
-	if Error := json.Unmarshal(rawMessage, &transactionRequest); Error != nil {
-		return nil, Error
+	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
+		return nil, err
 	}
 
 	return transactionRequest, nil
@@ -57,30 +56,30 @@ func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
-	if Error != nil {
-		return nil, Error
+	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	if err != nil {
+		return nil, err
 	}
 
-	metaFact, Error := base.ReadMetaFact(transactionRequest.MetaFact)
-	if Error != nil {
-		return nil, Error
+	data, err := utilities.ReadData(transactionRequest.Data)
+	if err != nil {
+		return nil, err
 	}
 
 	return newMessage(
 		from,
-		metaFact,
+		data,
 	), nil
 }
-func (transactionRequest) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, transactionRequest{})
+func (transactionRequest) RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterModuleConcrete(codec, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, metaFact string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, data string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:  baseReq,
-		MetaFact: metaFact,
+		BaseReq: baseReq,
+		Data:    data,
 	}
 }

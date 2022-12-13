@@ -1,82 +1,92 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package modify
 
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
-	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/errors"
-	sdkTypesMsgService "github.com/cosmos/cosmos-sdk/types/msgservice"
-	xprtErrors "github.com/persistenceOne/persistenceSDK/constants/errors"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
-	"github.com/persistenceOne/persistenceSDK/utilities/transaction"
+	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/types"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
-var _ helpers.Message = &Message{}
+type message struct {
+	From                  sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
+	FromID                ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
+	ids.OrderID           `json:"orderID" valid:"required~required field orderID missing"`
+	MakerOwnableSplit     sdkTypes.Dec       `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing"`
+	TakerOwnableSplit     sdkTypes.Dec       `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
+	ExpiresIn             types.Height       `json:"expiresIn" valid:"required~required field expiresIn missing"`
+	MutableMetaProperties lists.PropertyList `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
+	MutableProperties     lists.PropertyList `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
+}
 
-func (message Message) Route() string { return module.Name }
-func (message Message) Type() string  { return Transaction.GetName() }
-func (message Message) ValidateBasic() error {
-	var _, Error = govalidator.ValidateStruct(message)
-	if Error != nil {
-		return errors.Wrap(xprtErrors.IncorrectMessage, Error.Error())
+var _ sdkTypes.Msg = message{}
+
+func (message message) Route() string { return module.Name }
+func (message message) Type() string  { return Transaction.GetName() }
+func (message message) ValidateBasic() error {
+	if _, err := govalidator.ValidateStruct(message); err != nil {
+		return sdkErrors.Wrap(errorConstants.IncorrectMessage, err.Error())
 	}
 
 	if message.TakerOwnableSplit.LTE(sdkTypes.ZeroDec()) || message.MakerOwnableSplit.LTE(sdkTypes.ZeroDec()) {
-		return errors.Wrap(xprtErrors.IncorrectMessage, "")
+		return sdkErrors.Wrap(errorConstants.IncorrectMessage, "")
 	}
 
-	if message.ExpiresIn.Compare(base.NewHeight(0)) <= 0 {
-		return errors.Wrap(xprtErrors.IncorrectMessage, "")
+	if message.ExpiresIn.Compare(baseTypes.NewHeight(0)) <= 0 {
+		return sdkErrors.Wrap(errorConstants.IncorrectMessage, "")
 	}
 
 	return nil
 }
-func (message Message) GetSignBytes() []byte {
-	return sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message))
+func (message message) GetSignBytes() []byte {
+	if len(message.MutableMetaProperties.GetList()) == 0 {
+		message.MutableMetaProperties = base.NewPropertyList(nil)
+	}
+	if len(message.MutableProperties.GetList()) == 0 {
+		message.MutableProperties = base.NewPropertyList(nil)
+	}
+	return sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message))
 }
-func (message Message) GetSigners() []sdkTypes.AccAddress {
-	return []sdkTypes.AccAddress{message.From.AsSDKTypesAccAddress()}
+func (message message) GetSigners() []sdkTypes.AccAddress {
+	return []sdkTypes.AccAddress{message.From}
 }
-func (Message) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, Message{})
+func (message) RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterModuleConcrete(codec, message{})
 }
-func (Message) RegisterInterface(registry codecTypes.InterfaceRegistry) {
-	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
-		&Message{},
-	)
-	sdkTypesMsgService.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
-}
-func messageFromInterface(msg sdkTypes.Msg) Message {
+func messageFromInterface(msg sdkTypes.Msg) message {
 	switch value := msg.(type) {
-	case *Message:
-		return *value
+	case message:
+		return value
 	default:
-		return Message{}
+		return message{}
 	}
 }
 func messagePrototype() helpers.Message {
-	return &Message{}
+	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID types.ID, orderID types.ID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn types.Height, mutableMetaProperties types.MetaProperties, mutableProperties types.Properties) sdkTypes.Msg {
-	return &Message{
-		From:                  base.NewAccAddressFromSDKTypesAccAddress(from),
-		FromID:                *base.NewID(fromID.String()),
-		OrderID:               *base.NewID(orderID.String()),
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, orderID ids.OrderID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn types.Height, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+	return message{
+		From:                  from,
+		FromID:                fromID,
+		OrderID:               orderID,
 		TakerOwnableSplit:     takerOwnableSplit,
 		MakerOwnableSplit:     makerOwnableSplit,
-		ExpiresIn:             *base.NewHeight(expiresIn.Get()),
-		MutableMetaProperties: *base.NewMetaProperties(mutableMetaProperties.GetList()...),
-		MutableProperties:     *base.NewProperties(mutableProperties.GetList()...),
+		ExpiresIn:             expiresIn,
+		MutableMetaProperties: mutableMetaProperties,
+		MutableProperties:     mutableProperties,
 	}
 }

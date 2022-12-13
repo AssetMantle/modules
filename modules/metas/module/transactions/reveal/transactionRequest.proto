@@ -1,7 +1,0 @@
-syntax = "proto3";
-package reveal;
-
-message TransactionRequest{
-  string from = 1;
-  string data = 2;
-}

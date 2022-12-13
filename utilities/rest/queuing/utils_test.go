@@ -1,7 +1,5 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package queuing
 
@@ -15,7 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 
-	"github.com/persistenceOne/persistenceSDK/schema"
+	"github.com/AssetMantle/modules/schema"
 )
 
 func Test_Rest_Utils(t *testing.T) {
@@ -31,10 +29,10 @@ func Test_Rest_Utils(t *testing.T) {
 	require.Equal(t, 0.3, value3)
 	require.Equal(t, nil, error3)
 
-	var Codec = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	cryptoCodec.RegisterCrypto(Codec)
+	var Codec = codec.New()
+	schema.RegisterCodec(Codec)
+	sdkTypes.RegisterCodec(Codec)
+	codec.RegisterCrypto(Codec)
 	codec.RegisterEvidences(Codec)
 	vesting.RegisterCodec(Codec)
 	Codec.Seal()

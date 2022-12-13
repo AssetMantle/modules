@@ -4,14 +4,15 @@
 package metas
 
 import (
-	"github.com/AssetMantle/modules/modules/metas/module/block"
-	"github.com/AssetMantle/modules/modules/metas/module/genesis"
-	"github.com/AssetMantle/modules/modules/metas/module/invariants"
-	"github.com/AssetMantle/modules/modules/metas/module/mapper"
-	"github.com/AssetMantle/modules/modules/metas/module/module"
-	"github.com/AssetMantle/modules/modules/metas/module/parameters"
-	"github.com/AssetMantle/modules/modules/metas/module/queries"
-	"github.com/AssetMantle/modules/modules/metas/module/transactions"
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries"
+	"github.com/AssetMantle/modules/modules/metas/internal/block"
+	"github.com/AssetMantle/modules/modules/metas/internal/genesis"
+	"github.com/AssetMantle/modules/modules/metas/internal/mapper"
+	"github.com/AssetMantle/modules/modules/metas/internal/module"
+	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
+	"github.com/AssetMantle/modules/modules/metas/internal/queries"
+	"github.com/AssetMantle/modules/modules/metas/internal/simulator"
+	"github.com/AssetMantle/modules/modules/metas/internal/transactions"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
@@ -19,19 +20,13 @@ import (
 func Prototype() helpers.Module {
 	return baseHelpers.NewModule(
 		module.Name,
-		1,
-		Prototypee,
-		block.Prototype,
+		auxiliaries.Prototype,
 		genesis.Prototype,
-		invariants.Prototype,
 		mapper.Prototype,
-		nil,
 		parameters.Prototype,
 		queries.Prototype,
-		nil,
+		simulator.Prototype,
 		transactions.Prototype,
+		block.Prototype,
 	)
-}
-func Prototypee() helpers.Auxiliaries {
-	return baseHelpers.NewAuxiliaries()
 }

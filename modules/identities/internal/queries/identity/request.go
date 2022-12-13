@@ -1,80 +1,74 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package identity
 
 import (
 	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/common"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/cosmos/cosmos-sdk/client/context"
+
+	"github.com/AssetMantle/modules/modules/identities/internal/common"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
-var _ helpers.QueryRequest = (*QueryRequest)(nil)
+type queryRequest struct {
+	ids.IdentityID `json:"identityID" valid:"required~required field identityID missing"`
+}
 
-// QueryRequest godoc
-// @Summary Query identities using identity id
-// @Descrption Able to query the asset
+var _ helpers.QueryRequest = (*queryRequest)(nil)
+
+// Validate godoc
+// @Summary Search for an identity by identity ID
+// @Description Able to query the asset
 // @Accept json
 // @Produce json
 // @Tags Identities
-// @Param identityID path string true "identity ID"
-// @Success 200 {object} queryResponse "Sucessful query response"
-// @Failure default  {object}  queryResponse "An unexpected error response."
+// @Param identityID path string true "Query identity using identityID"
+// @Success 200 {object} queryResponse "Message for a successful response."
+// @Failure default  {object}  queryResponse "Message for an unexpected error response."
 // @Router /identities/identities/{identityID} [get]
-func (queryRequest QueryRequest) Validate() error {
-	_, Error := govalidator.ValidateStruct(queryRequest)
-	return Error
+func (queryRequest queryRequest) Validate() error {
+	_, err := govalidator.ValidateStruct(queryRequest)
+	return err
 }
-
-func (queryRequest QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) helpers.QueryRequest {
-	return newQueryRequest(base.NewID(cliCommand.ReadString(flags.IdentityID)))
-}
-
-func (queryRequest QueryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(base.NewID(vars[Query.GetName()]))
-}
-func (queryRequest QueryRequest) Encode(cdc codec.JSONMarshaler) ([]byte, error) {
-	return cdc.MarshalJSON(&queryRequest)
-}
-
-func (queryRequest QueryRequest) Decode(cdc codec.JSONMarshaler, bytes []byte) (helpers.QueryRequest, error) {
-	if Error := cdc.UnmarshalJSON(bytes, &queryRequest); Error != nil {
-		return nil, Error
+func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+	if identityID, err := baseIDs.ReadIdentityID(cliCommand.ReadString(constants.IdentityID)); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(identityID), nil
 	}
-
-	return queryRequest, nil
 }
-func (queryRequest QueryRequest) LegacyAminoEncode() ([]byte, error) {
-	return common.LegacyAminoCodec.MarshalJSON(queryRequest)
+func (queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
+	if identityID, err := baseIDs.ReadIdentityID(vars[Query.GetName()]); err != nil {
+		return queryRequest{}, err
+	} else {
+		return newQueryRequest(identityID), nil
+	}
 }
-
-func (queryRequest QueryRequest) LegacyAminoDecode(bytes []byte) (helpers.QueryRequest, error) {
-	if Error := common.LegacyAminoCodec.UnmarshalJSON(bytes, &queryRequest); Error != nil {
-		return nil, Error
+func (queryRequest queryRequest) Encode() ([]byte, error) {
+	return common.Codec.MarshalJSON(queryRequest)
+}
+func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
+	if err := common.Codec.UnmarshalJSON(bytes, &queryRequest); err != nil {
+		return nil, err
 	}
 
 	return queryRequest, nil
 }
 func requestPrototype() helpers.QueryRequest {
-	return QueryRequest{}
+	return queryRequest{}
 }
-
-func queryRequestFromInterface(request helpers.QueryRequest) QueryRequest {
+func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 	switch value := request.(type) {
-	case QueryRequest:
+	case queryRequest:
 		return value
 	default:
-		return QueryRequest{}
+		return queryRequest{}
 	}
 }
-
-func newQueryRequest(identityID types.ID) helpers.QueryRequest {
-	return QueryRequest{IdentityID: *base.NewID(identityID.String())}
+func newQueryRequest(identityID ids.IdentityID) helpers.QueryRequest {
+	return queryRequest{IdentityID: identityID}
 }

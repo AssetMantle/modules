@@ -1,20 +1,18 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package simulator
 
 import (
+	"math/rand"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/simulation"
-	sdkModuleSimulation "github.com/cosmos/cosmos-sdk/x/simulation"
-	"math/rand"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
-func (simulator) WeightedOperations(appParams simulation.AppParams, codec codec.JSONMarshaler) simulation.WeightedOperation {
+func (simulator) WeightedOperations(appParams simulation.AppParams, codec *codec.Codec) simulation.WeightedOperations {
 	var weightMsg int
 
 	appParams.GetOrGenerate(codec, OpWeightMsg, &weightMsg, nil,
@@ -23,10 +21,12 @@ func (simulator) WeightedOperations(appParams simulation.AppParams, codec codec.
 		},
 	)
 
-	return sdkModuleSimulation.NewWeightedOperation(
-		weightMsg,
-		simulateMsg(),
-	)
+	return simulation.WeightedOperations{
+		simulation.NewWeightedOperation(
+			weightMsg,
+			simulateMsg(),
+		),
+	}
 }
 
 func simulateMsg() simulation.Operation {

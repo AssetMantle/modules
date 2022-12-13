@@ -5,13 +5,14 @@ package transactions
 
 import (
 	"fmt"
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/modules/splits/internal/transactions/send"
 	"github.com/AssetMantle/modules/modules/splits/internal/transactions/unwrap"
 	"github.com/AssetMantle/modules/modules/splits/internal/transactions/wrap"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"reflect"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {

@@ -13,8 +13,8 @@ import (
 )
 
 type metaProperty struct {
-	PropertyID ids.ID
-	data.Data
+	ID   ids.PropertyID `json:"id"`
+	Data data.Data      `json:"data"`
 }
 
 var _ properties.MetaProperty = (*metaProperty)(nil)
@@ -25,16 +25,16 @@ func (metaProperty metaProperty) GetData() data.Data {
 func (metaProperty metaProperty) ScrubData() properties.MesaProperty {
 	return NewMesaProperty(metaProperty.GetKey(), metaProperty.GetData())
 }
-func (metaProperty metaProperty) GetID() ids.ID {
-	return metaProperty.PropertyID
+func (metaProperty metaProperty) GetID() ids.PropertyID {
+	return metaProperty.ID
 }
-func (metaProperty metaProperty) GetDataID() ids.ID {
+func (metaProperty metaProperty) GetDataID() ids.DataID {
 	return metaProperty.Data.GetID()
 }
-func (metaProperty metaProperty) GetKey() ids.ID {
-	return baseIDs.NewStringID(metaProperty.PropertyID.(*baseIDs.ID).GetPropertyID().KeyID.IdString)
+func (metaProperty metaProperty) GetKey() ids.StringID {
+	return metaProperty.ID.GetKey()
 }
-func (metaProperty metaProperty) GetType() ids.ID {
+func (metaProperty metaProperty) GetType() ids.StringID {
 	return metaProperty.Data.GetType()
 }
 func (metaProperty metaProperty) IsMeta() bool {
@@ -51,15 +51,15 @@ func (metaProperty metaProperty) Compare(listable traits.Listable) int {
 
 func NewEmptyMetaPropertyFromID(propertyID ids.PropertyID) properties.MetaProperty {
 	return metaProperty{
-		PropertyID: propertyID,
+		ID: propertyID,
 	}
 }
-func NewMetaProperty(key ids.ID, data data.Data) properties.MetaProperty {
+func NewMetaProperty(key ids.StringID, data data.Data) properties.MetaProperty {
 	if data == nil || key == nil {
 		panic(errorConstants.MetaDataError)
 	}
 	return metaProperty{
-		PropertyID: baseIDs.GeneratePropertyID(key, data.GetType()),
-		Data:       data,
+		ID:   baseIDs.NewPropertyID(key, data.GetType()),
+		Data: data,
 	}
 }

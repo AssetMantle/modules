@@ -4,6 +4,12 @@
 package mappable
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
@@ -13,10 +19,6 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
 var (
@@ -24,7 +26,7 @@ var (
 	mutables         = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID = baseIds.NewClassificationID(immutables, mutables)
 	testOrder        = baseDocuments.NewOrder(classificationID, immutables, mutables)
-	//testIdentity     = baseDocuments.NewIdentity(classificationID, immutables, mutables)
+	// testIdentity     = baseDocuments.NewIdentity(classificationID, immutables, mutables)
 )
 
 func TestNewMappable(t *testing.T) {

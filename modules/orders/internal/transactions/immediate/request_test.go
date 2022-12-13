@@ -1,110 +1,425 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package immediate
 
 import (
 	"encoding/json"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/schema"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	"github.com/stretchr/testify/require"
+	"fmt"
+	"reflect"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/spf13/viper"
+	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
-func Test_Define_Request(t *testing.T) {
+var (
+	fromAddress                   = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
+	fromAccAddress, _             = types.AccAddressFromBech32(fromAddress)
+	immutableMetaPropertiesString = "defaultImmutableMeta1:S|defaultImmutableMeta1"
+	immutablePropertiesString     = "defaultMutableMeta1:S|defaultMutableMeta1"
+	mutableMetaPropertiesString   = "defaultMutableMeta1:S|defaultMutableMeta1"
+	mutablePropertiesString       = "defaultMutable1:S|defaultMutable1"
+	immutableMetaProperties, _    = utilities.ReadMetaPropertyList(immutableMetaPropertiesString)
+	immutableProperties, _        = utilities.ReadMetaPropertyList(immutablePropertiesString)
+	mutableMetaProperties, _      = utilities.ReadMetaPropertyList(mutableMetaPropertiesString)
+	mutableProperties, _          = utilities.ReadMetaPropertyList(mutablePropertiesString)
+	immutables                    = baseQualified.NewImmutables(immutableProperties)
+	mutables                      = baseQualified.NewMutables(mutableProperties)
+	testClassificationID          = baseIDs.NewClassificationID(immutables, mutables)
+	testFromID                    = baseIDs.NewIdentityID(testClassificationID, immutables)
+	makerOwnableID                = baseIDs.NewOwnableID(baseIDs.NewStringID("makerownableid"))
+	takerOwnableID                = baseIDs.NewOwnableID(baseIDs.NewStringID("takerownableid"))
+	testBaseRequest               = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
+	expiresIn                     = int64(60)
+	makerOwnableSplit             = types.NewDec(60)
+	takerOwnableSplit             = types.NewDec(60)
+)
 
-	var Codec = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(Codec)
-	sdkTypes.RegisterLegacyAminoCodec(Codec)
-	cryptoCodec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.FromID, flags.ClassificationID, flags.MakerOwnableSplit, flags.MakerOwnableID, flags.TakerOwnableID, flags.ExpiresIn, flags.TakerOwnableSplit, flags.ImmutableMetaProperties, flags.ImmutableProperties, flags.MutableMetaProperties, flags.MutableProperties})
-	cliContext := context.NewCLIContext().WithCodec(Codec)
+func Test_newTransactionRequest(t *testing.T) {
+	type args struct {
+		baseReq                 rest.BaseReq
+		fromID                  string
+		classificationID        string
+		takerID                 string
+		makerOwnableID          string
+		takerOwnableID          string
+		expiresIn               int64
+		makerOwnableSplit       string
+		takerOwnableSplit       string
+		immutableMetaProperties string
+		immutableProperties     string
+		mutableMetaProperties   string
+		mutableProperties       string
+	}
+	tests := []struct {
+		name string
+		args args
+		want helpers.TransactionRequest
+	}{
 
-	immutableMetaPropertiesString := "defaultImmutableMeta1:S|defaultImmutableMeta1"
-	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
-	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
-	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
+		{"+ve", args{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, newTransactionRequest(testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString)},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.classificationID, tt.args.takerID, tt.args.makerOwnableID, tt.args.takerOwnableID, tt.args.expiresIn, tt.args.makerOwnableSplit, tt.args.takerOwnableSplit, tt.args.immutableMetaProperties, tt.args.immutableProperties, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	immutableMetaProperties, Error := base.ReadMetaProperties(immutableMetaPropertiesString)
-	require.Equal(t, nil, Error)
-	immutableProperties, Error := base.ReadProperties(immutablePropertiesString)
-	require.Equal(t, nil, Error)
-	mutableMetaProperties, Error := base.ReadMetaProperties(mutableMetaPropertiesString)
-	require.Equal(t, nil, Error)
-	mutableProperties, Error := base.ReadProperties(mutablePropertiesString)
-	require.Equal(t, nil, Error)
+func Test_requestPrototype(t *testing.T) {
+	tests := []struct {
+		name string
+		want helpers.TransactionRequest
+	}{
 
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, Error)
+		{"+ve", transactionRequest{}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := requestPrototype(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("requestPrototype() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
-	testTransactionRequest := newTransactionRequest(testBaseReq, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", sdkTypes.OneDec().String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString)
+func Test_transactionRequest_FromCLI(t *testing.T) {
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ClassificationID, constants.TakerID, constants.MakerOwnableID, constants.TakerOwnableID, constants.ExpiresIn, constants.MakerOwnableSplit, constants.TakerOwnableSplit, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
+	cliContext := context.NewCLIContext().WithCodec(codec.New()).WithFromAddress(fromAccAddress).WithChainID("test")
+	viper.Set(constants.FromID.GetName(), testFromID.String())
+	viper.Set(constants.ClassificationID.GetName(), testClassificationID.String())
+	viper.Set(constants.TakerID.GetName(), testFromID.String())
+	viper.Set(constants.MakerOwnableID.GetName(), makerOwnableID.String())
+	viper.Set(constants.TakerOwnableID.GetName(), takerOwnableID.String())
+	viper.Set(constants.ExpiresIn.GetName(), expiresIn)
+	viper.Set(constants.MakerOwnableSplit.GetName(), makerOwnableSplit.String())
+	viper.Set(constants.TakerOwnableSplit.GetName(), takerOwnableSplit.String())
+	viper.Set(constants.ImmutableMetaProperties.GetName(), immutableMetaPropertiesString)
+	viper.Set(constants.ImmutableProperties.GetName(), immutablePropertiesString)
+	viper.Set(constants.MutableMetaProperties.GetName(), mutableMetaPropertiesString)
+	viper.Set(constants.MutableProperties.GetName(), mutablePropertiesString)
+	type fields struct {
+		BaseReq                 rest.BaseReq
+		FromID                  string
+		ClassificationID        string
+		TakerID                 string
+		MakerOwnableID          string
+		TakerOwnableID          string
+		ExpiresIn               int64
+		MakerOwnableSplit       string
+		TakerOwnableSplit       string
+		ImmutableMetaProperties string
+		ImmutableProperties     string
+		MutableMetaProperties   string
+		MutableProperties       string
+	}
+	type args struct {
+		cliCommand helpers.CLICommand
+		cliContext context.CLIContext
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    helpers.TransactionRequest
+		wantErr bool
+	}{
+		{"+ve", fields{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, cliContext}, newTransactionRequest(testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString), false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionRequest := transactionRequest{
+				BaseReq:                 tt.fields.BaseReq,
+				FromID:                  tt.fields.FromID,
+				ClassificationID:        tt.fields.ClassificationID,
+				TakerID:                 tt.fields.TakerID,
+				MakerOwnableID:          tt.fields.MakerOwnableID,
+				TakerOwnableID:          tt.fields.TakerOwnableID,
+				ExpiresIn:               tt.fields.ExpiresIn,
+				MakerOwnableSplit:       tt.fields.MakerOwnableSplit,
+				TakerOwnableSplit:       tt.fields.TakerOwnableSplit,
+				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:     tt.fields.ImmutableProperties,
+				MutableMetaProperties:   tt.fields.MutableMetaProperties,
+				MutableProperties:       tt.fields.MutableProperties,
+			}
+			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.cliContext)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
+				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	require.Equal(t, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", ClassificationID: "classificationID", MakerOwnableID: "makerOwnableID", TakerOwnableID: "takerOwnableID", ExpiresIn: 123, MakerOwnableSplit: "2", TakerOwnableSplit: sdkTypes.OneDec().String(), ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, testTransactionRequest)
-	require.Equal(t, nil, testTransactionRequest.Validate())
+func Test_transactionRequest_FromJSON(t *testing.T) {
+	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString))
+	require.NoError(t, err)
+	type fields struct {
+		BaseReq                 rest.BaseReq
+		FromID                  string
+		ClassificationID        string
+		TakerID                 string
+		MakerOwnableID          string
+		TakerOwnableID          string
+		ExpiresIn               int64
+		MakerOwnableSplit       string
+		TakerOwnableSplit       string
+		ImmutableMetaProperties string
+		ImmutableProperties     string
+		MutableMetaProperties   string
+		MutableProperties       string
+	}
+	type args struct {
+		rawMessage json.RawMessage
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    helpers.TransactionRequest
+		wantErr bool
+	}{
+		{"+ve", fields{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{jsonMessage}, newTransactionRequest(testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString), false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionRequest := transactionRequest{
+				BaseReq:                 tt.fields.BaseReq,
+				FromID:                  tt.fields.FromID,
+				ClassificationID:        tt.fields.ClassificationID,
+				TakerID:                 tt.fields.TakerID,
+				MakerOwnableID:          tt.fields.MakerOwnableID,
+				TakerOwnableID:          tt.fields.TakerOwnableID,
+				ExpiresIn:               tt.fields.ExpiresIn,
+				MakerOwnableSplit:       tt.fields.MakerOwnableSplit,
+				TakerOwnableSplit:       tt.fields.TakerOwnableSplit,
+				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:     tt.fields.ImmutableProperties,
+				MutableMetaProperties:   tt.fields.MutableMetaProperties,
+				MutableProperties:       tt.fields.MutableProperties,
+			}
+			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FromJSON() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FromJSON() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, cliContext)
-	require.Equal(t, nil, Error)
-	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, FromID: "", ImmutableMetaProperties: "", ImmutableProperties: "", MutableMetaProperties: "", MutableProperties: ""}, requestFromCLI)
+func Test_transactionRequest_GetBaseReq(t *testing.T) {
+	type fields struct {
+		BaseReq                 rest.BaseReq
+		FromID                  string
+		ClassificationID        string
+		TakerID                 string
+		MakerOwnableID          string
+		TakerOwnableID          string
+		ExpiresIn               int64
+		MakerOwnableSplit       string
+		TakerOwnableSplit       string
+		ImmutableMetaProperties string
+		ImmutableProperties     string
+		MutableMetaProperties   string
+		MutableProperties       string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   rest.BaseReq
+	}{
+		{"+ve", fields{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, testBaseRequest},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionRequest := transactionRequest{
+				BaseReq:                 tt.fields.BaseReq,
+				FromID:                  tt.fields.FromID,
+				ClassificationID:        tt.fields.ClassificationID,
+				TakerID:                 tt.fields.TakerID,
+				MakerOwnableID:          tt.fields.MakerOwnableID,
+				TakerOwnableID:          tt.fields.TakerOwnableID,
+				ExpiresIn:               tt.fields.ExpiresIn,
+				MakerOwnableSplit:       tt.fields.MakerOwnableSplit,
+				TakerOwnableSplit:       tt.fields.TakerOwnableSplit,
+				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:     tt.fields.ImmutableProperties,
+				MutableMetaProperties:   tt.fields.MutableMetaProperties,
+				MutableProperties:       tt.fields.MutableProperties,
+			}
+			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	jsonMessage, _ := json.Marshal(testTransactionRequest)
-	transactionRequestUnmarshalled, error3 := transactionRequest{}.FromJSON(jsonMessage)
-	require.Equal(t, nil, error3)
-	require.Equal(t, testTransactionRequest, transactionRequestUnmarshalled)
+func Test_transactionRequest_MakeMsg(t *testing.T) {
+	type fields struct {
+		BaseReq                 rest.BaseReq
+		FromID                  string
+		ClassificationID        string
+		TakerID                 string
+		MakerOwnableID          string
+		TakerOwnableID          string
+		ExpiresIn               int64
+		MakerOwnableSplit       string
+		TakerOwnableSplit       string
+		ImmutableMetaProperties string
+		ImmutableProperties     string
+		MutableMetaProperties   string
+		MutableProperties       string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		want    types.Msg
+		wantErr bool
+	}{
+		{"+ve", fields{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, newMessage(fromAccAddress, testFromID, testClassificationID, testFromID, makerOwnableID, takerOwnableID, base.NewHeight(60), makerOwnableSplit, takerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionRequest := transactionRequest{
+				BaseReq:                 tt.fields.BaseReq,
+				FromID:                  tt.fields.FromID,
+				ClassificationID:        tt.fields.ClassificationID,
+				TakerID:                 tt.fields.TakerID,
+				MakerOwnableID:          tt.fields.MakerOwnableID,
+				TakerOwnableID:          tt.fields.TakerOwnableID,
+				ExpiresIn:               tt.fields.ExpiresIn,
+				MakerOwnableSplit:       tt.fields.MakerOwnableSplit,
+				TakerOwnableSplit:       tt.fields.TakerOwnableSplit,
+				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:     tt.fields.ImmutableProperties,
+				MutableMetaProperties:   tt.fields.MutableMetaProperties,
+				MutableProperties:       tt.fields.MutableProperties,
+			}
+			got, err := transactionRequest.MakeMsg()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("MakeMsg() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
+				t.Errorf("MakeMsg() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	randomUnmarshall, Error := transactionRequest{}.FromJSON([]byte{})
-	require.Equal(t, nil, randomUnmarshall)
-	require.NotNil(t, Error)
+func Test_transactionRequest_RegisterCodec(t *testing.T) {
+	type fields struct {
+		BaseReq                 rest.BaseReq
+		FromID                  string
+		ClassificationID        string
+		TakerID                 string
+		MakerOwnableID          string
+		TakerOwnableID          string
+		ExpiresIn               int64
+		MakerOwnableSplit       string
+		TakerOwnableSplit       string
+		ImmutableMetaProperties string
+		ImmutableProperties     string
+		MutableMetaProperties   string
+		MutableProperties       string
+	}
+	type args struct {
+		codec *codec.Codec
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+	}{
+		{"+ve", fields{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{codec.New()}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tr := transactionRequest{
+				BaseReq:                 tt.fields.BaseReq,
+				FromID:                  tt.fields.FromID,
+				ClassificationID:        tt.fields.ClassificationID,
+				TakerID:                 tt.fields.TakerID,
+				MakerOwnableID:          tt.fields.MakerOwnableID,
+				TakerOwnableID:          tt.fields.TakerOwnableID,
+				ExpiresIn:               tt.fields.ExpiresIn,
+				MakerOwnableSplit:       tt.fields.MakerOwnableSplit,
+				TakerOwnableSplit:       tt.fields.TakerOwnableSplit,
+				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:     tt.fields.ImmutableProperties,
+				MutableMetaProperties:   tt.fields.MutableMetaProperties,
+				MutableProperties:       tt.fields.MutableProperties,
+			}
+			tr.RegisterCodec(tt.args.codec)
+		})
+	}
+}
 
-	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
-
-	msg, Error := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), base.NewID("classificationID"), base.NewID("makerOwnableID"), base.NewID("takerOwnableID"), base.NewHeight(123), sdkTypes.NewDec(2), sdkTypes.OneDec(), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), msg)
-	require.Nil(t, Error)
-
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", sdkTypes.OneDec().String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
-	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
-
-	msg, Error = newTransactionRequest(rest.BaseReq{From: fromAddress, ChainID: "test"}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "randomInput", sdkTypes.OneDec().String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
-	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
-
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", sdkTypes.OneDec().String(), "randomString", immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
-	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
-
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", sdkTypes.OneDec().String(), immutableMetaPropertiesString, "randomString", mutableMetaPropertiesString, mutablePropertiesString).MakeMsg()
-	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
-
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", sdkTypes.OneDec().String(), immutableMetaPropertiesString, immutablePropertiesString, "randomString", mutablePropertiesString).MakeMsg()
-	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
-
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", sdkTypes.OneDec().String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, "randomString").MakeMsg()
-	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
-
-	msg, Error = newTransactionRequest(rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}, "fromID", "classificationID", "makerOwnableID", "takerOwnableID", 123, "2", "test", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, "randomString").MakeMsg()
-	require.Equal(t, nil, msg)
-	require.NotNil(t, Error)
-
-	require.Equal(t, transactionRequest{}, requestPrototype())
-	require.NotPanics(t, func() {
-		requestPrototype().RegisterLegacyAminoCodec(codec.New())
-	})
+func Test_transactionRequest_Validate(t *testing.T) {
+	type fields struct {
+		BaseReq                 rest.BaseReq
+		FromID                  string
+		ClassificationID        string
+		TakerID                 string
+		MakerOwnableID          string
+		TakerOwnableID          string
+		ExpiresIn               int64
+		MakerOwnableSplit       string
+		TakerOwnableSplit       string
+		ImmutableMetaProperties string
+		ImmutableProperties     string
+		MutableMetaProperties   string
+		MutableProperties       string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		wantErr bool
+	}{
+		{"+ve", fields{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionRequest := transactionRequest{
+				BaseReq:                 tt.fields.BaseReq,
+				FromID:                  tt.fields.FromID,
+				ClassificationID:        tt.fields.ClassificationID,
+				TakerID:                 tt.fields.TakerID,
+				MakerOwnableID:          tt.fields.MakerOwnableID,
+				TakerOwnableID:          tt.fields.TakerOwnableID,
+				ExpiresIn:               tt.fields.ExpiresIn,
+				MakerOwnableSplit:       tt.fields.MakerOwnableSplit,
+				TakerOwnableSplit:       tt.fields.TakerOwnableSplit,
+				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:     tt.fields.ImmutableProperties,
+				MutableMetaProperties:   tt.fields.MutableMetaProperties,
+				MutableProperties:       tt.fields.MutableProperties,
+			}
+			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
+				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
 }

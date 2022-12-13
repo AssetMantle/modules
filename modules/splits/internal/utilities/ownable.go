@@ -1,30 +1,28 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package utilities
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/modules/splits/internal/key"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/mappables" //nolint:typecheck
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/modules/splits/internal/key"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/types"
 )
 
-func GetOwnableTotalSplitsValue(collection helpers.Collection, ownableID types.ID) sdkTypes.Dec {
+func GetOwnableTotalSplitsValue(collection helpers.Collection, ownableID ids.ID) sdkTypes.Dec {
 	value := sdkTypes.ZeroDec()
 	accumulator := func(mappable helpers.Mappable) bool {
-		if key.ReadOwnableID(key.ToID(mappable.GetKey())).Compare(ownableID) == 0 {
-			value = value.Add(mappable.(mappables.Split).GetValue())
+		if mappable.(types.Split).GetOwnableID().Compare(ownableID) == 0 {
+			value = value.Add(mappable.(types.Split).GetValue())
 		}
 
 		return false
 	}
-	collection.Iterate(key.FromID(base.NewID("")), accumulator)
+	collection.Iterate(key.NewKey(baseIDs.PrototypeSplitID()), accumulator)
 
 	return value
 }

@@ -8,33 +8,12 @@ LEDGER_ENABLED ?= true
 BINDIR ?= $(HOME)/go/bin
 SIMAPP = ./simulation/make
 
-GOLANG_PROTOBUF_VERSION=1.28.0
-GOGO_PROTOBUF_VERSION=1.3.2
-GRPC_GATEWAY_VERSION=1.16.0
-
-#install all dependencies for buf
-install-buf-dependencies:
-	@go install github.com/cosmos/cosmos-proto/cmd/protoc-gen-go-pulsar@latest
-	@go install google.golang.org/protobuf/cmd/protoc-gen-go@v${GOLANG_PROTOBUF_VERSION}
-	@go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway@v${GRPC_GATEWAY_VERSION}
-	@go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger@v${GRPC_GATEWAY_VERSION}
-	git clone https://github.com/regen-network/protobuf.git; \
-        cd protobuf; \
-        go mod download; \
-        make install
-	git clone https://github.com/regen-network/cosmos-proto.git; \
-        cd cosmos-proto/protoc-gen-gocosmos; \
-        go install .
-	go install github.com/regen-network/cosmos-proto/protoc-gen-gocosmos
-	go get github.com/cosmos/cosmos-sdk@v0.45.9
-	rm -rf cosmos-proto protobuf
-
 export GO111MODULE = on
 
 all: build test lintci
 
 # The below include contains the tools and runsim targets.
-#include simulation/make/Makefile
+include simulation/make/Makefile
 
 ########################################
 ### Build

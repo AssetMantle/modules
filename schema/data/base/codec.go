@@ -6,22 +6,15 @@ package base
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/AssetMantle/modules/schema"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-func RegisterCodec(codec *codec.LegacyAmino) {
-	schema.RegisterModuleConcrete(codec, AccAddressData{})
-	schema.RegisterModuleConcrete(codec, BooleanData{})
-	schema.RegisterModuleConcrete(codec, DecData{})
-	schema.RegisterModuleConcrete(codec, HeightData{})
-	schema.RegisterModuleConcrete(codec, IDData{})
-	schema.RegisterModuleConcrete(codec, StringData{})
-	schema.RegisterModuleConcrete(codec, Data_AccAddressData{})
-	schema.RegisterModuleConcrete(codec, Data_BooleanData{})
-	schema.RegisterModuleConcrete(codec, Data_DecData{})
-	schema.RegisterModuleConcrete(codec, Data_HeightData{})
-	schema.RegisterModuleConcrete(codec, Data_IdData{})
-	schema.RegisterModuleConcrete(codec, Data_StringData{})
-	schema.RegisterModuleConcrete(codec, Data{})
-	codec.RegisterInterface((*isData_Impl)(nil), nil)
+func RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterModuleConcrete(codec, accAddressData{})
+	codecUtilities.RegisterModuleConcrete(codec, booleanData{})
+	codecUtilities.RegisterModuleConcrete(codec, decData{})
+	codecUtilities.RegisterModuleConcrete(codec, heightData{})
+	codecUtilities.RegisterModuleConcrete(codec, idData{})
+	codecUtilities.RegisterModuleConcrete(codec, listData{})
+	codecUtilities.RegisterModuleConcrete(codec, stringData{})
 }

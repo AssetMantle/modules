@@ -1,28 +1,23 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package base
 
 import (
 	"bytes"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/types/kv"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/libs/kv"
 
-	"github.com/persistenceOne/persistenceSDK/schema"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type mapper struct {
 	kvStoreKey        *sdkTypes.KVStoreKey
-	legacyAminoCodec  *codec.LegacyAmino
-	codec             codec.Marshaler
+	codec             *codec.Codec
 	keyPrototype      func() helpers.Key
 	mappablePrototype func() helpers.Mappable
 }
@@ -49,10 +44,11 @@ func (mapper mapper) Read(context sdkTypes.Context, key helpers.Key) helpers.Map
 		return nil
 	}
 
-	mappable := mapper.mappablePrototype().GetStructReference()
+	var mappable helpers.Mappable
 
-	mapper.codec.MustUnmarshalBinaryBare(Bytes, mappable)
-	return mappable.(helpers.Mappable)
+	mapper.codec.MustUnmarshalBinaryBare(Bytes, &mappable)
+
+	return mappable
 }
 func (mapper mapper) Update(context sdkTypes.Context, mappable helpers.Mappable) {
 	Bytes := mapper.codec.MustMarshalBinaryBare(mappable)
@@ -71,11 +67,11 @@ func (mapper mapper) Iterate(context sdkTypes.Context, partialKey helpers.Key, a
 	defer kvStorePrefixIterator.Close()
 
 	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {
-		mappable := mapper.mappablePrototype().GetStructReference()
+		var mappable helpers.Mappable
 
-		mapper.codec.MustUnmarshalBinaryBare(kvStorePrefixIterator.Value(), mappable)
+		mapper.codec.MustUnmarshalBinaryBare(kvStorePrefixIterator.Value(), &mappable)
 
-		if accumulator(mappable.(helpers.Mappable)) {
+		if accumulator(mappable) {
 			break
 		}
 	}
@@ -89,22 +85,22 @@ func (mapper mapper) ReverseIterate(context sdkTypes.Context, partialKey helpers
 	for ; kvStoreReversePrefixIterator.Valid(); kvStoreReversePrefixIterator.Next() {
 		var mappable helpers.Mappable
 
-		mapper.codec.MustUnmarshalBinaryBare(kvStoreReversePrefixIterator.Value(), mappable)
+		mapper.codec.MustUnmarshalBinaryBare(kvStoreReversePrefixIterator.Value(), &mappable)
 
 		if accumulator(mappable) {
 			break
 		}
 	}
 }
-func (mapper mapper) StoreDecoder(kvA kv.Pair, kvB kv.Pair) string {
+func (mapper mapper) StoreDecoder(_ *codec.Codec, kvA kv.Pair, kvB kv.Pair) string {
 	if bytes.Equal(kvA.Key[:1], mapper.keyPrototype().GenerateStoreKeyBytes()) {
 		var mappableA helpers.Mappable
 
-		mapper.codec.MustUnmarshalBinaryBare(kvA.Value, mappableA)
+		mapper.codec.MustUnmarshalBinaryBare(kvA.Value, &mappableA)
 
 		var mappableB helpers.Mappable
 
-		mapper.codec.MustUnmarshalBinaryBare(kvB.Value, mappableB)
+		mapper.codec.MustUnmarshalBinaryBare(kvB.Value, &mappableB)
 
 		return fmt.Sprintf("%v\n%v", mappableA, mappableB)
 	}
@@ -116,17 +112,14 @@ func (mapper mapper) Initialize(kvStoreKey *sdkTypes.KVStoreKey) helpers.Mapper 
 	return mapper
 }
 func NewMapper(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) helpers.Mapper {
-	registry := codectypes.NewInterfaceRegistry()
-	Codec := codec.NewProtoCodec(registry)
-	LegacyAminoCodec := codec.NewLegacyAmino()
-	keyPrototype().RegisterLegacyAminoCodec(LegacyAminoCodec)
-	mappablePrototype().RegisterLegacyAminoCodec(LegacyAminoCodec)
-	schema.RegisterLegacyAminoCodec(LegacyAminoCodec)
-	LegacyAminoCodec.Seal()
+	Codec := codec.New()
+	keyPrototype().RegisterCodec(Codec)
+	mappablePrototype().RegisterCodec(Codec)
+	schema.RegisterCodec(Codec)
+	Codec.Seal()
 
 	return mapper{
 		codec:             Codec,
-		legacyAminoCodec:  LegacyAminoCodec,
 		keyPrototype:      keyPrototype,
 		mappablePrototype: mappablePrototype,
 	}

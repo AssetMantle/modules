@@ -8,17 +8,17 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
-	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/cosmos/cosmos-sdk/x/params"
 )
 
 type Module interface {
-	sdkTypesModule.EndBlockAppModule
-	sdkTypesModule.BeginBlockAppModule
+	sdkTypesModule.AppModuleBasic
+	sdkTypesModule.AppModule
 	sdkTypesModule.AppModuleSimulation
 
 	GetAuxiliary(string) Auxiliary
 
 	DecodeModuleTransactionRequest(string, json.RawMessage) (sdkTypes.Msg, error)
 
-	Initialize(*sdkTypes.KVStoreKey, paramTypes.Subspace, ...interface{}) Module
+	Initialize(*sdkTypes.KVStoreKey, params.Subspace, ...interface{}) Module
 }

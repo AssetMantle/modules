@@ -4,9 +4,10 @@
 package parameters
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/helpers"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/parameters/dummy"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"

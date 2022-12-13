@@ -1,6 +1,0 @@
-syntax = "proto3";
-package base;
-
-message AccAddressData{
-  bytes value = 1;
-}

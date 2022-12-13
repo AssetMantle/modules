@@ -1,29 +1,29 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package simulator
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	simTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/common"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/parameters/dummy"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
 	"math/rand"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/cosmos/cosmos-sdk/x/simulation"
+
+	"github.com/AssetMantle/modules/modules/orders/internal/common"
+	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	"github.com/AssetMantle/modules/modules/orders/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/schema/data/base"
 )
 
-func (simulator) ParamChangeList(_ *rand.Rand) []simTypes.ParamChange {
-	return []simTypes.ParamChange{
+func (simulator) ParamChangeList(_ *rand.Rand) []simulation.ParamChange {
+	return []simulation.ParamChange{
 		simulation.NewSimParamChange(module.Name,
 			dummy.ID.String(),
 			func(r *rand.Rand) string {
-				bytes, Error := common.LegacyAminoCodec.MarshalJSON(dummy.Parameter.Mutate(base.NewDecData(sdkTypes.NewDecWithPrec(int64(r.Intn(99)), 2))).GetData())
-				if Error != nil {
-					panic(Error)
+				bytes, err := common.Codec.MarshalJSON(dummy.Parameter.Mutate(base.NewDecData(sdk.NewDecWithPrec(int64(r.Intn(99)), 2))).GetData())
+				if err != nil {
+					panic(err)
 				}
 				return string(bytes)
 			}),

@@ -4,7 +4,7 @@
 package helpers
 
 import (
-	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/cobra"
 )
@@ -14,8 +14,7 @@ type CLICommand interface {
 	ReadInt(CLIFlag) int
 	ReadBool(CLIFlag) bool
 	ReadString(CLIFlag) string
-	ReadBaseReq(client.Context) rest.BaseReq
+	ReadBaseReq(context.CLIContext) rest.BaseReq
 
 	CreateCommand(func(command *cobra.Command, args []string) error) *cobra.Command
-	CreateQueryCommand() *cobra.Command
 }

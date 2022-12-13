@@ -1,22 +1,23 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package base
 
 import (
-	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"strings"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
+	"github.com/cosmos/cosmos-sdk/x/params"
+
+	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
+	parameters2 "github.com/AssetMantle/modules/schema/parameters"
 )
 
 type parameters struct {
-	parameterList  []types.Parameter
-	paramsSubspace paramTypes.Subspace
+	parameterList  []parameters2.Parameter
+	paramsSubspace params.Subspace
 }
 
 var _ helpers.Parameters = (*parameters)(nil)
@@ -31,8 +32,8 @@ func (parameters parameters) String() string {
 }
 func (parameters parameters) Validate() error {
 	for _, parameter := range parameters.parameterList {
-		if Error := parameter.Validate(); Error != nil {
-			return Error
+		if err := parameter.Validate(); err != nil {
+			return err
 		}
 	}
 
@@ -47,7 +48,7 @@ func (parameters parameters) Equal(compareParameters helpers.Parameters) bool {
 
 	return true
 }
-func (parameters parameters) Get(id types.ID) types.Parameter {
+func (parameters parameters) Get(id ids.ID) parameters2.Parameter {
 	for _, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(id) == 0 {
 			return parameter
@@ -56,23 +57,23 @@ func (parameters parameters) Get(id types.ID) types.Parameter {
 
 	return nil
 }
-func (parameters parameters) GetList() []types.Parameter {
+func (parameters parameters) GetList() []parameters2.Parameter {
 	return parameters.parameterList
 }
-func (parameters parameters) Fetch(context sdkTypes.Context, id types.ID) helpers.Parameters {
-	var data types.Data
+func (parameters parameters) Fetch(context sdkTypes.Context, id ids.ID) helpers.Parameters {
+	var Data data.Data
 
-	parameters.paramsSubspace.Get(context, id.Bytes(), &data)
+	parameters.paramsSubspace.Get(context, id.Bytes(), &Data)
 
 	for i, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(id) == 0 {
-			parameters.parameterList[i] = parameter.Mutate(data)
+			parameters.parameterList[i] = parameter.Mutate(Data)
 		}
 	}
 
 	return parameters
 }
-func (parameters parameters) Mutate(context sdkTypes.Context, newParameter types.Parameter) helpers.Parameters {
+func (parameters parameters) Mutate(context sdkTypes.Context, newParameter parameters2.Parameter) helpers.Parameters {
 	for i, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(newParameter.GetID()) == 0 {
 			parameters.parameterList[i] = newParameter
@@ -84,24 +85,24 @@ func (parameters parameters) Mutate(context sdkTypes.Context, newParameter types
 
 	return parameters
 }
-func (parameters parameters) ParamSetPairs() paramTypes.ParamSetPairs {
-	paramSetPairList := make([]paramTypes.ParamSetPair, len(parameters.parameterList))
+func (parameters parameters) ParamSetPairs() params.ParamSetPairs {
+	paramSetPairList := make([]params.ParamSetPair, len(parameters.parameterList))
 
 	for i, parameter := range parameters.parameterList {
-		paramSetPairList[i] = paramTypes.NewParamSetPair(parameter.GetID().Bytes(), parameter.GetData(), parameter.GetValidator())
+		paramSetPairList[i] = params.NewParamSetPair(parameter.GetID().Bytes(), parameter.GetData(), parameter.GetValidator())
 	}
 
 	return paramSetPairList
 }
-func (parameters parameters) GetKeyTable() paramTypes.KeyTable {
-	return paramTypes.NewKeyTable().RegisterParamSet(parameters)
+func (parameters parameters) GetKeyTable() params.KeyTable {
+	return params.NewKeyTable().RegisterParamSet(parameters)
 }
-func (parameters parameters) Initialize(paramsSubspace paramTypes.Subspace) helpers.Parameters {
+func (parameters parameters) Initialize(paramsSubspace params.Subspace) helpers.Parameters {
 	parameters.paramsSubspace = paramsSubspace
 	return parameters
 }
 
-func NewParameters(parameterList ...types.Parameter) helpers.Parameters {
+func NewParameters(parameterList ...parameters2.Parameter) helpers.Parameters {
 	return parameters{
 		parameterList: parameterList,
 	}

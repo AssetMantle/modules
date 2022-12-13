@@ -1,28 +1,30 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package make
 
 import (
 	"encoding/json"
+
 	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/orders/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
-	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
+
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type transactionRequest struct {
 	BaseReq                 rest.BaseReq `json:"baseReq"`
 	FromID                  string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
 	ClassificationID        string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^[A-Za-z0-9-_=.]+$)~invalid field classificationID"`
+	TakerID                 string       `json:"takerID" valid:"required~required field takerID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field takerID"`
 	MakerOwnableID          string       `json:"makerOwnableID" valid:"required~required field makerOwnableID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field makerOwnableID"`
 	TakerOwnableID          string       `json:"takerOwnableID" valid:"required~required field takerOwnableID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field takerOwnableID"`
 	ExpiresIn               int64        `json:"expiresIn" valid:"required~required field expiresIn missing, matches(^[0-9]+$)~invalid field expiresIn"`
@@ -36,39 +38,40 @@ type transactionRequest struct {
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
-// Transaction Request godoc
-// @Summary make order transaction
-// @Descrption make order transaction
+// Validate godoc
+// @Summary Make order transaction
+// @Description Make order transaction
 // @Accept text/plain
 // @Produce json
 // @Tags Orders
-// @Param body body  transactionRequest true "request body"
-// @Success 200 {object} transactionResponse   "A successful response."
-// @Failure default  {object}  transactionResponse "An unexpected error response."
+// @Param body  transactionRequest true "Request body to make order"
+// @Success 200 {object} transactionResponse   "Message for a successful response."
+// @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /orders/make [post]
 func (transactionRequest transactionRequest) Validate() error {
-	_, Error := govalidator.ValidateStruct(transactionRequest)
-	return Error
+	_, err := govalidator.ValidateStruct(transactionRequest)
+	return err
 }
-func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext client.Context) (helpers.TransactionRequest, error) {
+func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(cliContext),
-		cliCommand.ReadString(flags.FromID),
-		cliCommand.ReadString(flags.ClassificationID),
-		cliCommand.ReadString(flags.MakerOwnableID),
-		cliCommand.ReadString(flags.TakerOwnableID),
-		cliCommand.ReadInt64(flags.ExpiresIn),
-		cliCommand.ReadString(flags.MakerOwnableSplit),
-		cliCommand.ReadString(flags.TakerOwnableSplit),
-		cliCommand.ReadString(flags.ImmutableMetaProperties),
-		cliCommand.ReadString(flags.ImmutableProperties),
-		cliCommand.ReadString(flags.MutableMetaProperties),
-		cliCommand.ReadString(flags.MutableProperties),
+		cliCommand.ReadString(constants.FromID),
+		cliCommand.ReadString(constants.ClassificationID),
+		cliCommand.ReadString(constants.TakerID),
+		cliCommand.ReadString(constants.MakerOwnableID),
+		cliCommand.ReadString(constants.TakerOwnableID),
+		cliCommand.ReadInt64(constants.ExpiresIn),
+		cliCommand.ReadString(constants.MakerOwnableSplit),
+		cliCommand.ReadString(constants.TakerOwnableSplit),
+		cliCommand.ReadString(constants.ImmutableMetaProperties),
+		cliCommand.ReadString(constants.ImmutableProperties),
+		cliCommand.ReadString(constants.MutableMetaProperties),
+		cliCommand.ReadString(constants.MutableProperties),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
-	if Error := json.Unmarshal(rawMessage, &transactionRequest); Error != nil {
-		return nil, Error
+	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
+		return nil, err
 	}
 
 	return transactionRequest, nil
@@ -78,48 +81,76 @@ func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 }
 
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
-	if Error != nil {
-		return nil, Error
+	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	if err != nil {
+		return nil, err
 	}
 
-	makerOwnableSplit, Error := sdkTypes.NewDecFromStr(transactionRequest.MakerOwnableSplit)
-	if Error != nil {
-		return nil, Error
+	makerOwnableSplit, err := sdkTypes.NewDecFromStr(transactionRequest.MakerOwnableSplit)
+	if err != nil {
+		return nil, err
 	}
 
-	takerOwnableSplit, Error := sdkTypes.NewDecFromStr(transactionRequest.TakerOwnableSplit)
-	if Error != nil {
-		return nil, Error
+	takerOwnableSplit, err := sdkTypes.NewDecFromStr(transactionRequest.TakerOwnableSplit)
+	if err != nil {
+		return nil, err
 	}
 
-	immutableMetaProperties, Error := base.ReadMetaProperties(transactionRequest.ImmutableMetaProperties)
-	if Error != nil {
-		return nil, Error
+	immutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.ImmutableMetaProperties)
+	if err != nil {
+		return nil, err
 	}
 
-	immutableProperties, Error := base.ReadProperties(transactionRequest.ImmutableProperties)
-	if Error != nil {
-		return nil, Error
+	immutableProperties, err := utilities.ReadMetaPropertyList(transactionRequest.ImmutableProperties)
+	if err != nil {
+		return nil, err
+	}
+	immutableProperties = immutableProperties.ScrubData()
+
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableMetaProperties)
+	if err != nil {
+		return nil, err
 	}
 
-	mutableMetaProperties, Error := base.ReadMetaProperties(transactionRequest.MutableMetaProperties)
-	if Error != nil {
-		return nil, Error
+	mutableProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableProperties)
+	if err != nil {
+		return nil, err
+	}
+	mutableProperties = mutableProperties.ScrubData()
+
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	if err != nil {
+		return nil, err
 	}
 
-	mutableProperties, Error := base.ReadProperties(transactionRequest.MutableProperties)
-	if Error != nil {
-		return nil, Error
+	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationID)
+	if err != nil {
+		return nil, err
+	}
+
+	takerID, err := baseIDs.ReadIdentityID(transactionRequest.TakerID)
+	if err != nil {
+		return nil, err
+	}
+
+	makerOwnableID, err := baseIDs.ReadOwnableID(transactionRequest.MakerOwnableID)
+	if err != nil {
+		return nil, err
+	}
+
+	takerOwnableID, err := baseIDs.ReadOwnableID(transactionRequest.TakerOwnableID)
+	if err != nil {
+		return nil, err
 	}
 
 	return newMessage(
 		from,
-		base.NewID(transactionRequest.FromID),
-		base.NewID(transactionRequest.ClassificationID),
-		base.NewID(transactionRequest.MakerOwnableID),
-		base.NewID(transactionRequest.TakerOwnableID),
-		base.NewHeight(transactionRequest.ExpiresIn),
+		fromID,
+		classificationID,
+		takerID,
+		makerOwnableID,
+		takerOwnableID,
+		baseTypes.NewHeight(transactionRequest.ExpiresIn),
 		makerOwnableSplit,
 		takerOwnableSplit,
 		immutableMetaProperties,
@@ -128,18 +159,19 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		mutableProperties,
 	), nil
 }
-func (transactionRequest) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, transactionRequest{})
+func (transactionRequest) RegisterCodec(codec *codec.Codec) {
+	codecUtilities.RegisterModuleConcrete(codec, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, classificationID string, makerOwnableID string, takerOwnableID string, expiresIn int64, makerOwnableSplit, takerOwnableSplit string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, classificationID string, takerID string, makerOwnableID string, takerOwnableID string, expiresIn int64, makerOwnableSplit, takerOwnableSplit string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:                 baseReq,
 		FromID:                  fromID,
 		ClassificationID:        classificationID,
+		TakerID:                 takerID,
 		MakerOwnableID:          makerOwnableID,
 		TakerOwnableID:          takerOwnableID,
 		ExpiresIn:               expiresIn,

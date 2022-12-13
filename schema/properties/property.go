@@ -9,10 +9,10 @@ import (
 )
 
 type Property interface {
-	GetID() ids.ID
-	GetDataID() ids.ID
-	GetKey() ids.ID
-	GetType() ids.ID
+	GetID() ids.PropertyID
+	GetDataID() ids.DataID
+	GetKey() ids.StringID
+	GetType() ids.StringID
 
 	IsMeta() bool
 

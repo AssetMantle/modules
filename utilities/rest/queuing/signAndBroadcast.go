@@ -1,14 +1,12 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package queuing
 
 import (
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
@@ -20,7 +18,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, cliContext client.Context) ([]byte, error) {
+func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, cliContext context.CLIContext) ([]byte, error) {
 	var stdTxs types.StdTx
 
 	var txBytes []byte

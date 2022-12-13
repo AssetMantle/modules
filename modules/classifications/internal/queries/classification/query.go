@@ -1,25 +1,24 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package classification
 
 import (
-	"github.com/persistenceOne/persistenceSDK/constants/flags"
-	"github.com/persistenceOne/persistenceSDK/modules/classifications/internal/module"
-	"github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/AssetMantle/modules/modules/classifications/internal/module"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
-var Query = base.NewQuery(
+var Query = baseHelpers.NewQuery(
 	"classifications",
 	"",
 	"",
 
 	module.Name,
+
 	requestPrototype,
 	responsePrototype,
 	keeperPrototype,
 
-	flags.ClassificationID,
+	constants.ClassificationID,
 )

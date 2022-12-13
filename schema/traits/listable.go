@@ -6,14 +6,7 @@ package traits
 type Listable interface {
 	// Compare
 	// * panic if compared with Listable of different type
-	// ***** TODO remove panic on compare with different type
+	// TODO remove panic on compare with different type
+	// TODO optimize compare for all impls
 	Compare(Listable) int
 }
-
-// type listable traits.Listable
-//
-// var _ Listable = (*listable)(nil)
-//
-// func (l listable) Compare(l2 Listable) int {
-// 	return l.Impl.(Listable).Compare(l2)
-// }

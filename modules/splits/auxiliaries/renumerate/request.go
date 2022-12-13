@@ -1,24 +1,20 @@
-/*
- Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
- SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
 
 package renumerate
 
 import (
-	"fmt"
 	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/persistenceOne/persistenceSDK/schema/helpers"
-	"github.com/persistenceOne/persistenceSDK/schema/types"
-	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 )
 
 type auxiliaryRequest struct {
-	OwnerID   types.ID     `json:"ownerID" valid:"required~required field ownerID missing"`
-	OwnableID types.ID     `json:"ownableID" valid:"required~required field ownableID missing"`
-	Value     sdkTypes.Dec `json:"value" valid:"required~required field value missing"`
+	OwnerID       ids.IdentityID `json:"ownerID" valid:"required~required field ownerID missing"`
+	ids.OwnableID `json:"ownableID" valid:"required~required field ownableID missing"`
+	Value         sdkTypes.Dec `json:"value" valid:"required~required field value missing"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -37,10 +33,10 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(ownerID fmt.Stringer, ownableID fmt.Stringer, value sdkTypes.Dec) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		OwnerID:   base.NewID(ownerID.String()),
-		OwnableID: base.NewID(ownableID.String()),
+		OwnerID:   ownerID,
+		OwnableID: ownableID,
 		Value:     value,
 	}
 }

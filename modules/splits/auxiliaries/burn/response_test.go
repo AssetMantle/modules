@@ -4,10 +4,11 @@
 package burn
 
 import (
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
 	"reflect"
 	"testing"
+
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func Test_auxiliaryResponse_GetError(t *testing.T) {

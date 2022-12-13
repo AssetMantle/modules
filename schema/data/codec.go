@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
-func RegisterCodec(codec *codec.LegacyAmino) {
+func RegisterCodec(codec *codec.Codec) {
 	codec.RegisterInterface((*AccAddressData)(nil), nil)
 	codec.RegisterInterface((*BooleanData)(nil), nil)
 	codec.RegisterInterface((*Data)(nil), nil)

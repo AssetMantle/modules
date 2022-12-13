@@ -4,8 +4,9 @@
 package block
 
 import (
-	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"testing"
+
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"

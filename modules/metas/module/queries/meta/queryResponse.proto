@@ -1,8 +1,0 @@
-syntax = "proto3";
-package meta;
-
-
-message QueryResponse{
-  bool success = 1;
-  string error = 2;
-}
