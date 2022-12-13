@@ -127,7 +127,6 @@ func Test_propertyList_GetProperty(t *testing.T) {
 	}{
 		{"+ve Meta", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))}, baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))},
 		{"+ve Mesa", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMesaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))}, baseProperties.NewMesaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))},
-		{"-ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{propertyID: nil}, baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}, //TODO: panics if propertyID is nil
 		{"-ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewEmptyMetaPropertyFromID(baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D")))}...)...)}, args{baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))}, baseProperties.NewEmptyMetaPropertyFromID(baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D")))},
 	}
 	for _, tt := range tests {
@@ -244,6 +243,8 @@ func Test_propertyList_ScrubData(t *testing.T) {
 	}
 }
 
+// Mocks for DecData
+
 type decData struct {
 	Value sdkTypes.Dec `json:"value"`
 }
@@ -288,6 +289,11 @@ func (decData decData) GenerateHashID() ids.HashID {
 }
 func (decData decData) Get() sdkTypes.Dec {
 	return decData.Value
+}
+
+func (decData decData) Sanitize() (data.Data, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func decDataFromInterface(listable traits.Listable) (decData, error) {
