@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package modules.identities.internal.transactions.provision;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/id.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/identities/internal/transactions/provision";
+
+message Message {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = false;
+
+  string from = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types/base.AccAddress", (gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field From missing\""];
+  string to = 2 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types/base.AccAddress", (gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field To missing\""] ;
+  persistence_sdk.schema.types.base.ID identity_i_d = 3 [(gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required IdentityID missing\""];
+}
+
+message TransactionResponse{}
+
+service Msg{
+  rpc Provision(Message) returns (TransactionResponse);
+}

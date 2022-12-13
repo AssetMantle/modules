@@ -1,22 +1,23 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
 
 package nub
 
 import (
 	"encoding/json"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers/base"
+
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	"github.com/persistenceOne/persistenceSDK/constants/flags"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type transactionRequest struct {
@@ -26,36 +27,29 @@ type transactionRequest struct {
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
-// Validate godoc
-// @Summary Nub an identity
-// @Description A transaction to nub an identity.
+// Transaction Request godoc
+// @Summary nub identities transaction
+// @Descrption nub transaction
 // @Accept text/plain
 // @Produce json
 // @Tags Identities
-// @Param body  transactionRequest true "A transaction to nub a base identity."
-// @Success 200 {object} transactionResponse   "Message for a successful response."
-// @Failure default  {object}  transactionResponse "Message for an unexpected error response."
+// @Param body body  transactionRequest true "request body"
+// @Success 200 {object} transactionResponse   "A successful response."
+// @Failure default  {object}  transactionResponse "An unexpected error response."
 // @Router /identities/nub [post]
 func (transactionRequest transactionRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(transactionRequest)
-	if err != nil {
-		return err
-	}
-	inputValidator := base.NewInputValidator(constants.NubIDExpression)
-	if !inputValidator.IsValid(transactionRequest.NubID) {
-		return errorConstants.IncorrectFormat
-	}
-	return nil
+	_, Error := govalidator.ValidateStruct(transactionRequest)
+	return Error
 }
-func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
+func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
-		cliCommand.ReadBaseReq(context),
-		cliCommand.ReadString(constants.NubID),
+		cliCommand.ReadBaseReq(cliContext),
+		cliCommand.ReadString(flags.NubID),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
-	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
-		return nil, err
+	if Error := json.Unmarshal(rawMessage, &transactionRequest); Error != nil {
+		return nil, Error
 	}
 
 	return transactionRequest, nil
@@ -64,22 +58,23 @@ func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
-	if err != nil {
-		return nil, err
+	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	if Error != nil {
+		return nil, Error
 	}
 
 	return newMessage(
 		from,
-		baseIDs.NewStringID(transactionRequest.NubID),
+		base.NewID(transactionRequest.NubID),
 	), nil
 }
-func (transactionRequest) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, transactionRequest{})
+func (transactionRequest) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
+
 func newTransactionRequest(baseReq rest.BaseReq, nubID string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq: baseReq,

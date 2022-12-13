@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package persistence_sdk.modules.splits.internal.genesis;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/modules/splits/internal/parameters/dummy/parameter.proto";
+import "persistence_sdk/modules/splits/internal/mappable/split.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/splits/internal/genesis";
+
+message Genesis {
+  option (gogoproto.goproto_getters) = false;
+  repeated persistence_sdk.modules.splits.internal.mappable.Split defaultMappableList = 1 [(gogoproto.nullable) = false];
+  repeated persistence_sdk.modules.splits.internal.parameters.dummy.DummyParameter defaultParameterList = 2 [(gogoproto.nullable) = false];
+
+  repeated persistence_sdk.modules.splits.internal.mappable.Split MappableList = 3 [(gogoproto.nullable) = false];
+  repeated persistence_sdk.modules.splits.internal.parameters.dummy.DummyParameter ParameterList = 4 [(gogoproto.nullable) = false];
+
+}

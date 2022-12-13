@@ -1,43 +1,41 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
 
 package base
 
 import (
 	"encoding/json"
 	"fmt"
-	"math/rand"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/codec/types"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	simTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/persistenceOne/persistenceSDK/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
-
-	"github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
+	"math/rand"
 )
 
 type module struct {
-	name             string
-	consensusVersion uint64
+	name string
 
 	auxiliariesPrototype  func() helpers.Auxiliaries
-	blockPrototype        func() helpers.Block
 	genesisPrototype      func() helpers.Genesis
-	invariantsPrototype   func() helpers.Invariants
 	mapperPrototype       func() helpers.Mapper
-	migrationsPrototype   func() helpers.Migrations
 	parametersPrototype   func() helpers.Parameters
 	queriesPrototype      func() helpers.Queries
 	simulatorPrototype    func() helpers.Simulator
 	transactionsPrototype func() helpers.Transactions
+	blockPrototype        func() helpers.Block
 
 	auxiliaries  helpers.Auxiliaries
 	genesis      helpers.Genesis
@@ -50,45 +48,56 @@ type module struct {
 
 var _ helpers.Module = (*module)(nil)
 
+func (module module) GenerateGenesisState(simulationState *sdkTypesModule.SimulationState) {
+	module.simulatorPrototype().RandomizedGenesisState(simulationState)
+}
+
+func (module module) ProposalContents(simState sdkTypesModule.SimulationState) []simTypes.WeightedProposalContent {
+	return module.simulatorPrototype().WeightedProposalContentList()
+}
+
+func (module module) RandomizedParams(r *rand.Rand) []simTypes.ParamChange {
+	return module.simulatorPrototype().ParamChangeList(r)
+}
+
+func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDecoderRegistry) {
+	storeDecoderRegistry[module.name] = module.mapperPrototype().StoreDecoder
+}
+
+func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simTypes.WeightedOperation {
+	return nil
+}
+
 func (module module) Name() string {
 	return module.name
 }
-func (module module) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
-	for _, transaction := range module.transactionsPrototype().GetList() {
-		transaction.RegisterCodec(codec)
-	}
+
+func (module module) DefaultGenesis(codec codec.JSONMarshaler) json.RawMessage {
+	return module.genesisPrototype().Default().Encode(codec)
 }
-func (module module) RegisterInterfaces(interfaceRegistry types.InterfaceRegistry) {
-	for _, transaction := range module.transactionsPrototype().GetList() {
-		transaction.RegisterInterfaces(interfaceRegistry)
-	}
-}
-func (module module) DefaultGenesis(jsonCodec codec.JSONCodec) json.RawMessage {
-	return module.genesisPrototype().Default().Encode(jsonCodec)
-}
-func (module module) ValidateGenesis(jsonCodec codec.JSONCodec, _ client.TxEncodingConfig, rawMessage json.RawMessage) error {
-	genesisState := module.genesisPrototype().Decode(jsonCodec, rawMessage)
+
+func (module module) ValidateGenesis(codec codec.JSONMarshaler, txConfig client.TxEncodingConfig, rawMessage json.RawMessage) error {
+	genesisState := module.genesisPrototype().Decode(codec, rawMessage)
 	return genesisState.Validate()
 }
-func (module module) RegisterRESTRoutes(context client.Context, router *mux.Router) {
+func (module module) RegisterRESTRoutes(cliContext client.Context, router *mux.Router) {
 	for _, query := range module.queriesPrototype().GetList() {
-		router.HandleFunc("/"+module.Name()+"/"+query.GetName()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(context)).Methods("GET")
+		router.HandleFunc("/"+module.Name()+"/"+query.GetName()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(cliContext)).Methods("GET")
 	}
 
 	for _, transaction := range module.transactionsPrototype().GetList() {
-		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(context)).Methods("POST")
+		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
 	}
 }
-func (module module) RegisterGRPCGatewayRoutes(context client.Context, serveMux *runtime.ServeMux) {
+func (module module) RegisterGRPCGatewayRoutes(clientContext client.Context, serveMux *runtime.ServeMux) {
 	for _, query := range module.queriesPrototype().GetList() {
-		// serveMux.Handle(query.GRPCGatewayHandler(context))
-		query.GetGRPCConfigurator().ConfigureGRPCGatewayHandler(context, serveMux)
+		query.RegisterGRPCGatewayRoute(clientContext, serveMux)
 	}
 }
 func (module module) GetTxCmd() *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
 		Use:                        module.name,
-		Short:                      "GetProperty root transaction command.",
+		Short:                      "Get root transaction command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -108,7 +117,7 @@ func (module module) GetTxCmd() *cobra.Command {
 func (module module) GetQueryCmd() *cobra.Command {
 	rootQueryCommand := &cobra.Command{
 		Use:                        module.name,
-		Short:                      "GetProperty root query command.",
+		Short:                      "Get root query command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -125,46 +134,34 @@ func (module module) GetQueryCmd() *cobra.Command {
 
 	return rootQueryCommand
 }
-func (module module) GenerateGenesisState(simulationState *sdkModuleTypes.SimulationState) {
-	module.simulatorPrototype().RandomizedGenesisState(simulationState)
-}
-func (module module) ProposalContents(simulationState sdkModuleTypes.SimulationState) []simulationTypes.WeightedProposalContent {
-	return module.simulatorPrototype().WeightedProposalContentList(simulationState)
-}
-func (module module) RandomizedParams(r *rand.Rand) []simulationTypes.ParamChange {
-	return module.simulatorPrototype().ParamChangeList(r)
-}
-func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDecoderRegistry) {
-	storeDecoderRegistry[module.name] = module.mapperPrototype().StoreDecoder
-}
-func (module module) WeightedOperations(simulationState sdkModuleTypes.SimulationState) []simulationTypes.WeightedOperation {
-	return module.simulatorPrototype().WeightedOperations(simulationState)
-}
-func (module module) RegisterInvariants(invariantRegistry sdkTypes.InvariantRegistry) {
-	module.invariantsPrototype().RegisterInvariants(invariantRegistry)
-}
+func (module module) RegisterInvariants(_ sdkTypes.InvariantRegistry) {}
 func (module module) Route() sdkTypes.Route {
-	return sdkTypes.NewRoute(module.Name(), func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
+	return sdkTypes.NewRoute(module.name, module.NewHandler())
+}
+func (module module) NewHandler() sdkTypes.Handler {
+	return func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
+		context = context.WithEventManager(sdkTypes.NewEventManager())
+
 		if module.transactions == nil {
-			panic(constants.UninitializedUsage)
+			panic(errors.UninitializedUsage)
 		}
 
-		if message, ok := msg.(helpers.Message); ok {
-			if transaction := module.transactions.Get(message.Type()); transaction != nil {
-				return transaction.HandleMessage(context.WithEventManager(sdkTypes.NewEventManager()), message)
-			}
+		transaction := module.transactions.Get(msg.Type())
+
+		if transaction != nil {
+			return transaction.HandleMessage(context, msg)
 		}
 
-		return nil, constants.IncorrectMessage
-	})
+		return nil, fmt.Errorf("unknown message type, %v for module %v", msg.Type(), module.Name())
+	}
 }
 func (module module) QuerierRoute() string {
 	return module.name
 }
-func (module module) LegacyQuerierHandler(_ *codec.LegacyAmino) sdkTypes.Querier {
+func (module module) LegacyQuerierHandler(legacyAmino *codec.LegacyAmino) sdkTypes.Querier {
 	return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
 		if module.queries == nil {
-			panic(constants.UninitializedUsage)
+			panic(errors.UninitializedUsage)
 		}
 
 		if query := module.queries.Get(path[0]); query != nil {
@@ -174,42 +171,32 @@ func (module module) LegacyQuerierHandler(_ *codec.LegacyAmino) sdkTypes.Querier
 		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())
 	}
 }
-func (module module) RegisterServices(configurator sdkModuleTypes.Configurator) {
-	for _, query := range module.queriesPrototype().GetList() {
-		// configurator.QueryServer().RegisterService(query.Service())
-		query.GetGRPCConfigurator().ConfigureGRPCServer(configurator)
-	}
 
-	// for _, transaction := range module.transactionsPrototype().GetList() {
-	//	configurator.MsgServer().RegisterService(transaction.Service())
-	// }
-}
-func (module module) ConsensusVersion() uint64 {
-	return module.consensusVersion
-}
-func (module module) InitGenesis(context sdkTypes.Context, jsonCodec codec.JSONCodec, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
-	genesisState := module.genesisPrototype().Decode(jsonCodec, rawMessage)
+func (module module) InitGenesis(context sdkTypes.Context, codec codec.JSONMarshaler, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
+	genesisState := module.genesisPrototype().Decode(codec, rawMessage)
 
 	if module.mapper == nil || module.parameters == nil {
-		panic(constants.UninitializedUsage)
+		panic(errors.UninitializedUsage)
 	}
 
 	genesisState.Import(context, module.mapper, module.parameters)
 
 	return []abciTypes.ValidatorUpdate{}
 }
-func (module module) ExportGenesis(context sdkTypes.Context, jsonCodec codec.JSONCodec) json.RawMessage {
+func (module module) ExportGenesis(context sdkTypes.Context, codec codec.JSONMarshaler) json.RawMessage {
 	if module.mapper == nil || module.parameters == nil {
-		panic(constants.UninitializedUsage)
+		panic(errors.UninitializedUsage)
 	}
 
-	return module.genesisPrototype().Export(context, module.mapper, module.parameters).Encode(jsonCodec)
+	return module.genesisPrototype().Export(context, module.mapper, module.parameters).Encode(codec)
 }
 func (module module) BeginBlock(context sdkTypes.Context, beginBlockRequest abciTypes.RequestBeginBlock) {
 	module.block.Begin(context, beginBlockRequest)
 }
+
 func (module module) EndBlock(context sdkTypes.Context, endBlockRequest abciTypes.RequestEndBlock) []abciTypes.ValidatorUpdate {
-	return module.block.End(context, endBlockRequest)
+	module.block.End(context, endBlockRequest)
+	return []abciTypes.ValidatorUpdate{}
 }
 func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
 	if module.auxiliaries != nil {
@@ -220,13 +207,15 @@ func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
 
 	panic(fmt.Errorf("auxiliary %v not found/initialized", auxiliaryName))
 }
+
 func (module module) DecodeModuleTransactionRequest(transactionName string, rawMessage json.RawMessage) (sdkTypes.Msg, error) {
 	if transaction := module.transactionsPrototype().Get(transactionName); transaction != nil {
 		return transaction.DecodeTransactionRequest(rawMessage)
 	}
 
-	return nil, constants.IncorrectMessage
+	return nil, errors.IncorrectMessage
 }
+
 func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace paramTypes.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
 	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)
 
@@ -267,19 +256,42 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 	return module
 }
 
-func NewModule(name string, consensusVersion uint64, auxiliariesPrototype func() helpers.Auxiliaries, blockPrototype func() helpers.Block, genesisPrototype func() helpers.Genesis, invariantsPrototype func() helpers.Invariants, mapperPrototype func() helpers.Mapper, migrationsPrototype func() helpers.Migrations, parametersPrototype func() helpers.Parameters, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions) helpers.Module {
+func (module module) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	for _, transaction := range module.transactionsPrototype().GetList() {
+		transaction.RegisterLegacyAminoCodec(codec)
+	}
+
+	// TODO queries codec can be registered here and removed from common
+}
+
+func (module module) RegisterInterfaces(registry codecTypes.InterfaceRegistry) {
+	schema.RegisterProtoCodec(registry)
+	module.genesisPrototype().RegisterInterface(registry)
+	for _, transaction := range module.transactionsPrototype().GetList() {
+		transaction.RegisterInterface(registry)
+	}
+}
+
+func (module module) RegisterServices(configurator sdkTypesModule.Configurator) {
+	for _, transaction := range module.transactionsPrototype().GetList() {
+		transaction.RegisterService(configurator)
+	}
+	for _, query := range module.queriesPrototype().GetList() {
+		query.RegisterService(configurator)
+	}
+
+}
+
+func NewModule(name string, auxiliariesPrototype func() helpers.Auxiliaries, genesisPrototype func() helpers.Genesis, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.Parameters, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions, blockPrototype func() helpers.Block) helpers.Module {
 	return module{
 		name:                  name,
-		consensusVersion:      consensusVersion,
 		auxiliariesPrototype:  auxiliariesPrototype,
-		blockPrototype:        blockPrototype,
 		genesisPrototype:      genesisPrototype,
-		invariantsPrototype:   invariantsPrototype,
 		mapperPrototype:       mapperPrototype,
-		migrationsPrototype:   migrationsPrototype,
 		parametersPrototype:   parametersPrototype,
 		queriesPrototype:      queriesPrototype,
 		simulatorPrototype:    simulatorPrototype,
 		transactionsPrototype: transactionsPrototype,
+		blockPrototype:        blockPrototype,
 	}
 }

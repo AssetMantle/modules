@@ -1,22 +1,21 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
 
 package base
 
 import (
+	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"strings"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
-
-	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
-	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types"
 )
 
 type parameters struct {
-	parameterList  []parametersSchema.Parameter
+	parameterList  []types.Parameter
 	paramsSubspace paramTypes.Subspace
 }
 
@@ -32,8 +31,8 @@ func (parameters parameters) String() string {
 }
 func (parameters parameters) Validate() error {
 	for _, parameter := range parameters.parameterList {
-		if err := parameter.Validate(); err != nil {
-			return err
+		if Error := parameter.Validate(); Error != nil {
+			return Error
 		}
 	}
 
@@ -48,7 +47,7 @@ func (parameters parameters) Equal(compareParameters helpers.Parameters) bool {
 
 	return true
 }
-func (parameters parameters) Get(id ids.ID) parametersSchema.Parameter {
+func (parameters parameters) Get(id types.ID) types.Parameter {
 	for _, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(id) == 0 {
 			return parameter
@@ -57,23 +56,23 @@ func (parameters parameters) Get(id ids.ID) parametersSchema.Parameter {
 
 	return nil
 }
-func (parameters parameters) GetList() []parametersSchema.Parameter {
+func (parameters parameters) GetList() []types.Parameter {
 	return parameters.parameterList
 }
-func (parameters parameters) Fetch(context sdkTypes.Context, id ids.ID) helpers.Parameters {
-	var Data data.Data
+func (parameters parameters) Fetch(context sdkTypes.Context, id types.ID) helpers.Parameters {
+	var data types.Data
 
-	parameters.paramsSubspace.Get(context, id.Bytes(), &Data)
+	parameters.paramsSubspace.Get(context, id.Bytes(), &data)
 
 	for i, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(id) == 0 {
-			parameters.parameterList[i] = parameter.Mutate(Data)
+			parameters.parameterList[i] = parameter.Mutate(data)
 		}
 	}
 
 	return parameters
 }
-func (parameters parameters) Mutate(context sdkTypes.Context, newParameter parametersSchema.Parameter) helpers.Parameters {
+func (parameters parameters) Mutate(context sdkTypes.Context, newParameter types.Parameter) helpers.Parameters {
 	for i, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(newParameter.GetID()) == 0 {
 			parameters.parameterList[i] = newParameter
@@ -102,7 +101,7 @@ func (parameters parameters) Initialize(paramsSubspace paramTypes.Subspace) help
 	return parameters
 }
 
-func NewParameters(parameterList ...parametersSchema.Parameter) helpers.Parameters {
+func NewParameters(parameterList ...types.Parameter) helpers.Parameters {
 	return parameters{
 		parameterList: parameterList,
 	}

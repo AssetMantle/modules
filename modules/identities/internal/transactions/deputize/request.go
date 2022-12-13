@@ -1,24 +1,23 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
 
 package deputize
 
 import (
 	"encoding/json"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers/base"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	"github.com/persistenceOne/persistenceSDK/constants/flags"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type transactionRequest struct {
@@ -27,55 +26,42 @@ type transactionRequest struct {
 	ToID                 string       `json:"toID" valid:"required~required field toID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field toID"`
 	ClassificationID     string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^[A-Za-z0-9-_=.]+$)~invalid field classificationID"`
 	MaintainedProperties string       `json:"maintainedProperties" valid:"required~required field maintainedProperties missing, matches(^.*$)~invalid field maintainedProperties"`
-	CanMintAsset         bool         `json:"canMintAsset"`
-	CanBurnAsset         bool         `json:"canBurnAsset"`
-	CanRenumerateAsset   bool         `json:"canRenumerateAsset"`
-	CanAddMaintainer     bool         `json:"canAddMaintainer"`
-	CanRemoveMaintainer  bool         `json:"canRemoveMaintainer"`
-	CanMutateMaintainer  bool         `json:"canMutateMaintainer"`
+	AddMaintainer        bool         `json:"addMaintainer"`
+	RemoveMaintainer     bool         `json:"removeMaintainer"`
+	MutateMaintainer     bool         `json:"mutateMaintainer"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
-// Validate  godoc
-// @Summary Deputize an identity
-// @Description A transaction to deputize a maintainer for an identity classification.
+// Transaction Request godoc
+// @Summary deputize identities transaction
+// @Descrption deputize transaction
 // @Accept text/plain
 // @Produce json
 // @Tags Identities
-// @Param body  transactionRequest true "Request body to deputize identity"
-// @Success 200 {object} transactionResponse   "Message for a successful response."
-// @Failure default  {object}  transactionResponse "Message for an unexpected error response."
+// @Param body body  transactionRequest true "request body"
+// @Success 200 {object} transactionResponse   "A successful response."
+// @Failure default  {object}  transactionResponse "An unexpected error response."
 // @Router /identities/deputize [post]
 func (transactionRequest transactionRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(transactionRequest)
-	if err != nil {
-		return err
-	}
-	inputValidator := base.NewInputValidator(constants.PropertyExpression)
-	if !inputValidator.IsValid(transactionRequest.MaintainedProperties) {
-		return errorConstants.IncorrectFormat
-	}
-	return nil
+	_, Error := govalidator.ValidateStruct(transactionRequest)
+	return Error
 }
-func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
+func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
-		cliCommand.ReadBaseReq(context),
-		cliCommand.ReadString(constants.FromID),
-		cliCommand.ReadString(constants.ToID),
-		cliCommand.ReadString(constants.ClassificationID),
-		cliCommand.ReadString(constants.MaintainedProperties),
-		cliCommand.ReadBool(constants.CanMintAsset),
-		cliCommand.ReadBool(constants.CanBurnAsset),
-		cliCommand.ReadBool(constants.CanRenumerateAsset),
-		cliCommand.ReadBool(constants.CanAddMaintainer),
-		cliCommand.ReadBool(constants.CanRemoveMaintainer),
-		cliCommand.ReadBool(constants.CanMutateMaintainer),
+		cliCommand.ReadBaseReq(cliContext),
+		cliCommand.ReadString(flags.FromID),
+		cliCommand.ReadString(flags.ToID),
+		cliCommand.ReadString(flags.ClassificationID),
+		cliCommand.ReadString(flags.MaintainedProperties),
+		cliCommand.ReadBool(flags.AddMaintainer),
+		cliCommand.ReadBool(flags.RemoveMaintainer),
+		cliCommand.ReadBool(flags.MutateMaintainer),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
-	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
-		return nil, err
+	if Error := json.Unmarshal(rawMessage, &transactionRequest); Error != nil {
+		return nil, Error
 	}
 
 	return transactionRequest, nil
@@ -84,63 +70,43 @@ func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
-	if err != nil {
-		return nil, err
+	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	if Error != nil {
+		return nil, Error
 	}
 
-	maintainedProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MaintainedProperties)
-	if err != nil {
-		return nil, err
-	}
-
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
-	if err != nil {
-		return nil, err
-	}
-
-	toID, err := baseIDs.ReadIdentityID(transactionRequest.ToID)
-	if err != nil {
-		return nil, err
-	}
-
-	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationID)
-	if err != nil {
-		return nil, err
+	maintainedProperties, Error := base.ReadProperties(transactionRequest.MaintainedProperties)
+	if Error != nil {
+		return nil, Error
 	}
 
 	return newMessage(
 		from,
-		fromID,
-		toID,
-		classificationID,
+		base.NewID(transactionRequest.FromID),
+		base.NewID(transactionRequest.ToID),
+		base.NewID(transactionRequest.ClassificationID),
 		maintainedProperties,
-		transactionRequest.CanMintAsset,
-		transactionRequest.CanBurnAsset,
-		transactionRequest.CanRenumerateAsset,
-		transactionRequest.CanAddMaintainer,
-		transactionRequest.CanRemoveMaintainer,
-		transactionRequest.CanMutateMaintainer,
+		transactionRequest.AddMaintainer,
+		transactionRequest.RemoveMaintainer,
+		transactionRequest.MutateMaintainer,
 	), nil
 }
-func (transactionRequest) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, transactionRequest{})
+func (transactionRequest) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainedProperties string, canMintAsset bool, canBurnAsset bool, canRenumerateAsset bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) helpers.TransactionRequest {
+
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainedProperties string, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:              baseReq,
 		FromID:               fromID,
 		ToID:                 toID,
 		ClassificationID:     classificationID,
 		MaintainedProperties: maintainedProperties,
-		CanMintAsset:         canMintAsset,
-		CanBurnAsset:         canBurnAsset,
-		CanRenumerateAsset:   canRenumerateAsset,
-		CanAddMaintainer:     canAddMaintainer,
-		CanRemoveMaintainer:  canRemoveMaintainer,
-		CanMutateMaintainer:  canMutateMaintainer,
+		AddMaintainer:        addMaintainer,
+		RemoveMaintainer:     removeMaintainer,
+		MutateMaintainer:     mutateMaintainer,
 	}
 }

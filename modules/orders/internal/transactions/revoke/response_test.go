@@ -1,84 +1,25 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
 
 package revoke
 
 import (
-	"reflect"
+	"github.com/persistenceOne/persistenceSDK/constants/errors"
+	"github.com/stretchr/testify/require"
 	"testing"
-
-	"github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-func Test_newTransactionResponse(t *testing.T) {
-	type args struct {
-		error error
-	}
-	tests := []struct {
-		name string
-		args args
-		want helpers.TransactionResponse
-	}{
-		{"+ve", args{nil}, transactionResponse{true, nil}},
-		{"-ve", args{constants.IncorrectFormat}, transactionResponse{false, constants.IncorrectFormat}}}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionResponse(tt.args.error); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newTransactionResponse() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+func Test_Revoke_Response(t *testing.T) {
 
-func Test_transactionResponse_GetError(t *testing.T) {
-	type fields struct {
-		Success bool
-		Error   error
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		wantErr bool
-	}{
-		{"+ve", fields{Success: true, Error: nil}, false},
-		{"-ve", fields{Success: false, Error: constants.IncorrectFormat}, true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionResponse := transactionResponse{
-				Success: tt.fields.Success,
-				Error:   tt.fields.Error,
-			}
-			if err := transactionResponse.GetError(); (err != nil) != tt.wantErr {
-				t.Errorf("GetError() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
+	testTransactionResponse := newTransactionResponse(errors.IncorrectFormat)
+	testTransactionResponse2 := newTransactionResponse(nil)
 
-func Test_transactionResponse_IsSuccessful(t *testing.T) {
-	type fields struct {
-		Success bool
-		Error   error
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   bool
-	}{
-		{"+ve", fields{Success: true, Error: nil}, true},
-		{"-ve", fields{Success: false, Error: constants.IncorrectFormat}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionResponse := transactionResponse{
-				Success: tt.fields.Success,
-				Error:   tt.fields.Error,
-			}
-			if got := transactionResponse.IsSuccessful(); got != tt.want {
-				t.Errorf("IsSuccessful() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	require.Equal(t, transactionResponse{Success: false, Error: errors.IncorrectFormat}, testTransactionResponse)
+	require.Equal(t, false, testTransactionResponse.IsSuccessful())
+	require.Equal(t, true, testTransactionResponse2.IsSuccessful())
+
+	require.Equal(t, errors.IncorrectFormat, testTransactionResponse.GetError())
+	require.Equal(t, nil, testTransactionResponse2.GetError())
 }

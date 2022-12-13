@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package modules.assets.internal.transactions.mint;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/properties.proto";
+import "persistence_sdk/schema/types/base/metaProperties.proto";
+import "persistence_sdk/schema/types/base/id.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/assets/internal/transactions/mint";
+
+message Message {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string from = 1 [(gogoproto.customtype) = "github.com/persistenceOne/persistenceSDK/schema/types/base.AccAddress", (gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field From missing\""] ;
+  persistence_sdk.schema.types.base.ID from_i_d = 2 [(gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field FromID missing\""] ;
+  persistence_sdk.schema.types.base.ID to_i_d = 3 [(gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field ToID missing\""] ;
+  persistence_sdk.schema.types.base.ID classification_i_d = 4 [(gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field ClassificationID missing\""] ;
+  persistence_sdk.schema.types.base.MetaProperties immutable_meta_properties = 5 [(gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field ImmutableMetaProperties missing\""];
+  persistence_sdk.schema.types.base.Properties immutable_properties = 6 [(gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field ImmutableProperties missing\""];
+  persistence_sdk.schema.types.base.MetaProperties mutable_meta_properties = 7 [(gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field MutableMetaProperties missing\""];
+  persistence_sdk.schema.types.base.Properties mutable_properties = 8 [(gogoproto.nullable) = false, (gogoproto.moretags) = "valid:\"required~required field MutableProperties missing\""];
+}
+
+message TransactionResponse{}
+
+service Msg{
+  rpc Mint(Message) returns (TransactionResponse);
+}

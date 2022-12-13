@@ -1,24 +1,23 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
 
 package issue
 
 import (
 	"encoding/json"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers/base"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	"github.com/persistenceOne/persistenceSDK/constants/flags"
+	"github.com/persistenceOne/persistenceSDK/modules/identities/internal/module"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	codecUtilities "github.com/persistenceOne/persistenceSDK/utilities/codec"
 )
 
 type transactionRequest struct {
@@ -34,42 +33,35 @@ type transactionRequest struct {
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
-// Validate godoc
-// @Summary Issue an identity
-// @Description Issue identities with mutable immutable properties
+// Transaction Request godoc
+// @Summary issue identities transaction
+// @Descrption issue identities with mutable immutable properties
 // @Accept text/plain
 // @Produce json
 // @Tags Identities
-// @Param body body  transactionRequest true "A transaction to issue an identity."
-// @Success 200 {object} transactionResponse   "Message for a successful response."
-// @Failure default  {object}  transactionResponse "Message for an unexpected error response."
+// @Param body body  transactionRequest true "request body"
+// @Success 200 {object} transactionResponse   "A successful response."
+// @Failure default  {object}  transactionResponse "An unexpected error response."
 // @Router /identities/issue [post]
 func (transactionRequest transactionRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(transactionRequest)
-	if err != nil {
-		return err
-	}
-	inputValidator := base.NewInputValidator(constants.PropertyExpression)
-	if !inputValidator.IsValid(transactionRequest.ImmutableProperties, transactionRequest.ImmutableMetaProperties, transactionRequest.MutableProperties, transactionRequest.MutableMetaProperties) {
-		return errorConstants.IncorrectFormat
-	}
-	return nil
+	_, Error := govalidator.ValidateStruct(transactionRequest)
+	return Error
 }
-func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
+func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
-		cliCommand.ReadBaseReq(context),
-		cliCommand.ReadString(constants.To),
-		cliCommand.ReadString(constants.FromID),
-		cliCommand.ReadString(constants.ClassificationID),
-		cliCommand.ReadString(constants.ImmutableMetaProperties),
-		cliCommand.ReadString(constants.ImmutableProperties),
-		cliCommand.ReadString(constants.MutableMetaProperties),
-		cliCommand.ReadString(constants.MutableProperties),
+		cliCommand.ReadBaseReq(cliContext),
+		cliCommand.ReadString(flags.To),
+		cliCommand.ReadString(flags.FromID),
+		cliCommand.ReadString(flags.ClassificationID),
+		cliCommand.ReadString(flags.ImmutableMetaProperties),
+		cliCommand.ReadString(flags.ImmutableProperties),
+		cliCommand.ReadString(flags.MutableMetaProperties),
+		cliCommand.ReadString(flags.MutableProperties),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
-	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
-		return nil, err
+	if Error := json.Unmarshal(rawMessage, &transactionRequest); Error != nil {
+		return nil, Error
 	}
 
 	return transactionRequest, nil
@@ -78,64 +70,54 @@ func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 	return transactionRequest.BaseReq
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
-	if err != nil {
-		return nil, err
+	from, Error := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	if Error != nil {
+		return nil, Error
 	}
 
-	to, err := sdkTypes.AccAddressFromBech32(transactionRequest.To)
-	if err != nil {
-		return nil, err
+	to, Error := sdkTypes.AccAddressFromBech32(transactionRequest.To)
+	if Error != nil {
+		return nil, Error
 	}
 
-	immutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.ImmutableMetaProperties)
-	if err != nil {
-		return nil, err
+	immutableMetaProperties, Error := base.ReadMetaProperties(transactionRequest.ImmutableMetaProperties)
+	if Error != nil {
+		return nil, Error
 	}
 
-	immutableProperties, err := utilities.ReadMetaPropertyList(transactionRequest.ImmutableProperties)
-	if err != nil {
-		return nil, err
-	}
-	immutableProperties = immutableProperties.ScrubData()
-
-	mutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableMetaProperties)
-	if err != nil {
-		return nil, err
+	immutableProperties, Error := base.ReadProperties(transactionRequest.ImmutableProperties)
+	if Error != nil {
+		return nil, Error
 	}
 
-	mutableProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableProperties)
-	if err != nil {
-		return nil, err
-	}
-	mutableProperties = mutableProperties.ScrubData()
-
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
-	if err != nil {
-		return nil, err
+	mutableMetaProperties, Error := base.ReadMetaProperties(transactionRequest.MutableMetaProperties)
+	if Error != nil {
+		return nil, Error
 	}
 
-	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationID)
-	if err != nil {
-		return nil, err
+	mutableProperties, Error := base.ReadProperties(transactionRequest.MutableProperties)
+	if Error != nil {
+		return nil, Error
 	}
+
 	return newMessage(
 		from,
 		to,
-		fromID,
-		classificationID,
+		base.NewID(transactionRequest.FromID),
+		base.NewID(transactionRequest.ClassificationID),
 		immutableMetaProperties,
 		immutableProperties,
 		mutableMetaProperties,
 		mutableProperties,
 	), nil
 }
-func (transactionRequest) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, transactionRequest{})
+func (transactionRequest) RegisterLegacyAminoCodec(codec *codec.LegacyAmino) {
+	codecUtilities.RegisterLegacyAminoXPRTConcrete(codec, module.Name, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
+
 func newTransactionRequest(baseReq rest.BaseReq, to string, fromID string, classificationID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:                 baseReq,

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package persistence_sdk.schema.types.base;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/id.proto";
+import "persistence_sdk/schema/types/base/metaFact.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
+
+message MetaProperty {
+  option (gogoproto.goproto_getters) = false;
+  persistence_sdk.schema.types.base.ID id = 1 [(gogoproto.nullable) = false];
+  persistence_sdk.schema.types.base.MetaFact metaFact = 2 [(gogoproto.nullable) = false];
+}

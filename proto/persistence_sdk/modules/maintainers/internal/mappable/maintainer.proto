@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package persistence_sdk.modules.maintainers.internal.mappable;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/traits/base/hasImmutables.proto";
+import "persistence_sdk/schema/traits/base/hasMutables.proto";
+import "persistence_sdk/schema/types/base/id.proto";
+import "persistence_sdk/schema/types/base/properties.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/maintainers/internal/mappable";
+
+message Maintainer {
+  option (gogoproto.goproto_getters) = false;
+  persistence_sdk.schema.types.base.ID i_d = 1 [(gogoproto.nullable) = false];
+  persistence_sdk.schema.types.base.Properties  maintained_properties = 2 [(gogoproto.nullable) = false];
+  bool  add_maintainer = 3;
+  bool  remove_maintainer = 4;
+  bool  mutate_maintainer = 5;
+}

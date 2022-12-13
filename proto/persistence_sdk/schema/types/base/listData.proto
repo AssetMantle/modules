@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package persistence_sdk.schema.types.base;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/data.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/schema/types/base";
+
+message ListData {
+  option (gogoproto.goproto_stringer) = false;
+  repeated persistence_sdk.schema.types.base.Data value = 1 [(gogoproto.nullable) = false];
+}
