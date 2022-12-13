@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package persistence_sdk.modules.metas.internal.key;
+
+import "gogoproto/gogo.proto";
+import "persistence_sdk/schema/types/base/id.proto";
+
+option go_package = "github.com/persistenceOne/persistenceSDK/modules/metas/internal/key";
+
+message MetaID {
+  option (gogoproto.goproto_stringer) = false;
+
+  persistence_sdk.schema.types.base.ID type_i_d = 1 [(gogoproto.nullable) = false];
+  persistence_sdk.schema.types.base.ID hash_i_d = 2 [(gogoproto.nullable) = false];
+}

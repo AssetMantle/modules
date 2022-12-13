@@ -1,257 +1,72 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
 
 package burn
 
 import (
 	"encoding/json"
-	"fmt"
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
-	"github.com/AssetMantle/modules/utilities/transaction"
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/spf13/viper"
-	"reflect"
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/persistenceOne/persistenceSDK/constants/flags"
+	"github.com/persistenceOne/persistenceSDK/schema"
+	"github.com/persistenceOne/persistenceSDK/schema/helpers"
+	baseHelpers "github.com/persistenceOne/persistenceSDK/schema/helpers/base"
+	"github.com/persistenceOne/persistenceSDK/schema/types/base"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
-var (
-	testBaseRequest = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
-)
+func Test_Burn_Request(t *testing.T) {
+	var Codec = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
+	sdkTypes.RegisterLegacyAminoCodec(Codec)
+	cryptoCodec.RegisterCrypto(Codec)
+	codec.RegisterEvidences(Codec)
+	vesting.RegisterCodec(Codec)
+	Codec.Seal()
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{flags.FromID, flags.AssetID})
+	cliContext := context.NewCLIContext().WithCodec(Codec)
 
-func Test_newTransactionRequest(t *testing.T) {
-	type args struct {
-		baseReq rest.BaseReq
-		fromID  string
-		assetID string
-	}
-	tests := []struct {
-		name string
-		args args
-		want helpers.TransactionRequest
-	}{
-		{"+ve", args{testBaseRequest, fromID.String(), testAssetID.String()}, transactionRequest{testBaseRequest, fromID.String(), testAssetID.String()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.assetID); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
+	fromAccAddress, Error := sdkTypes.AccAddressFromBech32(fromAddress)
+	require.Nil(t, Error)
+	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
+	testTransactionRequest := newTransactionRequest(testBaseReq, "fromID", "assetID")
 
-func Test_requestPrototype(t *testing.T) {
-	tests := []struct {
-		name string
-		want helpers.TransactionRequest
-	}{
-		{"+ve", transactionRequest{}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := requestPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("requestPrototype() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+	require.Equal(t, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", AssetID: "assetID"}, testTransactionRequest)
+	require.Equal(t, nil, testTransactionRequest.Validate())
 
-func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID, constants.FromID})
-	cliContext := context.NewCLIContext().WithCodec(codec.New()).WithFromAddress(fromAccAddress).WithChainID("test")
-	viper.Set(constants.AssetID.GetName(), testAssetID.String())
-	viper.Set(constants.FromID.GetName(), fromID.String())
-	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
-		AssetID string
-	}
-	type args struct {
-		cliCommand helpers.CLICommand
-		cliContext context.CLIContext
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionRequest
-		wantErr bool
-	}{
-		{"+ve", fields{BaseReq: testBaseRequest, FromID: fromID.String(), AssetID: testAssetID.String()}, args{cliCommand, cliContext}, newTransactionRequest(testBaseRequest, fromID.String(), testAssetID.String()), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
-			}
-			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.cliContext)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+	requestFromCLI, Error := transactionRequest{}.FromCLI(cliCommand, cliContext)
+	require.Equal(t, nil, Error)
+	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}, FromID: "", AssetID: ""}, requestFromCLI)
 
-func Test_transactionRequest_FromJSON(t *testing.T) {
-	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
-		AssetID string
-	}
-	type args struct {
-		rawMessage json.RawMessage
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionRequest
-		wantErr bool
-	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String()}, args{types.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, fromID, testAssetID}))}, newTransactionRequest(testBaseRequest, fromID.String(), testAssetID.String()), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
-			}
-			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromJSON() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromJSON() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+	jsonMessage, _ := json.Marshal(testTransactionRequest)
+	transactionRequestUnmarshalled, Error := transactionRequest{}.FromJSON(jsonMessage)
+	require.Equal(t, nil, Error)
+	require.Equal(t, testTransactionRequest, transactionRequestUnmarshalled)
 
-func Test_transactionRequest_GetBaseReq(t *testing.T) {
-	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
-		AssetID string
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   rest.BaseReq
-	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String()}, testBaseRequest},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
-			}
-			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+	randomUnmarshall, Error := transactionRequest{}.FromJSON([]byte{})
+	require.Equal(t, nil, randomUnmarshall)
+	require.NotNil(t, Error)
 
-func Test_transactionRequest_MakeMsg(t *testing.T) {
-	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
-		AssetID string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		want    types.Msg
-		wantErr bool
-	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String()}, newMessage(fromAccAddress, fromID, testAssetID), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
-			}
-			got, err := transactionRequest.MakeMsg()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("MakeMsg() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("MakeMsg() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
-func Test_transactionRequest_RegisterCodec(t *testing.T) {
-	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
-		AssetID string
-	}
-	type args struct {
-		codec *codec.Codec
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String()}, args{codec.New()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
-			}
-			tr.RegisterCodec(tt.args.codec)
-		})
-	}
-}
+	msg, Error := testTransactionRequest.MakeMsg()
+	require.Equal(t, newMessage(fromAccAddress, base.NewID("fromID"), base.NewID("assetID")), msg)
+	require.Nil(t, Error)
 
-func Test_transactionRequest_Validate(t *testing.T) {
-	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
-		AssetID string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		wantErr bool
-	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String()}, false},
-		//{"+ve", fields{}, true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
-			}
-			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
-				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+	msg2, Error := newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, "fromID", "assetID").MakeMsg()
+	require.NotNil(t, Error)
+	require.Nil(t, msg2)
+
+	require.Equal(t, transactionRequest{}, requestPrototype())
+
+	require.NotPanics(t, func() {
+		requestPrototype().RegisterLegacyAminoCodec(codec.New())
+	})
 }

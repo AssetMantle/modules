@@ -1,19 +1,22 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
+/*
+ Copyright [2019] - [2021], PERSISTENCE TECHNOLOGIES PTE. LTD. and the persistenceSDK contributors
+ SPDX-License-Identifier: Apache-2.0
+*/
 
 package helpers
 
 import (
+	"github.com/cosmos/cosmos-sdk/types/simulation"
 	"math/rand"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	simTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 )
 
 type Simulator interface {
 	RandomizedGenesisState(*module.SimulationState)
-	WeightedOperations(sdkModuleTypes.SimulationState) []simulationTypes.WeightedOperation
-	WeightedProposalContentList(sdkModuleTypes.SimulationState) []simulationTypes.WeightedProposalContent
-	ParamChangeList(*rand.Rand) []simulationTypes.ParamChange
+	WeightedOperations(simTypes.AppParams, codec.JSONMarshaler) simulation.WeightedOperation
+	WeightedProposalContentList() []simTypes.WeightedProposalContent
+	ParamChangeList(*rand.Rand) []simTypes.ParamChange
 }

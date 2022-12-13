@@ -12,4 +12,6 @@ type Height interface {
 	Get() int64
 
 	Compare(Height) int
+
+	Proto
 }
