@@ -5,6 +5,8 @@ package meta
 
 import (
 	"github.com/AssetMantle/modules/modules/metas/module/common"
+	"github.com/AssetMantle/modules/modules/metas/module/mappable"
+	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -27,13 +29,24 @@ func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
 func newQueryResponse(collection helpers.Collection, error error) helpers.QueryResponse {
-	success := true
-	if error != nil {
-		success = false
+	mappables := []helpers.Mappable{&mappable.Mappable{Data: base.NewStringData("first one")}, &mappable.Mappable{base.NewStringData("second one")}}
+
+	list := []*mappable.Mappable{}
+
+	for _, i := range mappables {
+		list = append(list, mappable.NewMappable(i.(*mappable.Mappable).Data).(*mappable.Mappable))
 	}
 
+	if error != nil {
+		return &QueryResponse{
+			Success: false,
+			Error:   error.Error(),
+			List:    list,
+		}
+	}
 	return &QueryResponse{
-		Success: success,
-		Error:   error.Error(),
+		Success: true,
+		Error:   "",
+		List:    list,
 	}
 }

@@ -8,6 +8,9 @@ import (
 )
 
 type Mappable interface {
+	//Size() int
+	//Unmarshal([]byte) error
+	//MarshalTo([]byte) (int, error)
 	GetKey() Key
 	RegisterCodec(*codec.LegacyAmino)
 }
