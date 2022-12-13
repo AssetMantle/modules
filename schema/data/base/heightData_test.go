@@ -4,7 +4,6 @@
 package base
 
 import (
-	"encoding/binary"
 	"reflect"
 	"strconv"
 	"testing"
