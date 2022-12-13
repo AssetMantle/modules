@@ -39,7 +39,6 @@ func TestNewMappable(t *testing.T) {
 		args args
 		want helpers.Mappable
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{split}, mappable{split}},
 	}
 	for _, tt := range tests {
@@ -56,7 +55,6 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		// TODO: Add test cases.
 		{"+ve", mappable{}},
 	}
 	for _, tt := range tests {
@@ -77,7 +75,6 @@ func Test_mappable_GetKey(t *testing.T) {
 		fields fields
 		want   helpers.Key
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{split}, key.NewKey(splitID)},
 	}
 	for _, tt := range tests {
@@ -104,7 +101,6 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{split}, args{codec.New()}},
 	}
 	for _, tt := range tests {

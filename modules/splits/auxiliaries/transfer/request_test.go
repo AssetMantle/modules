@@ -39,7 +39,6 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 		args args
 		want helpers.AuxiliaryRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testOwnerID, testOwnerID, testOwnableID, testValue}, NewAuxiliaryRequest(testOwnerID, testOwnerID, testOwnableID, testValue)},
 		{"+ve with nil", args{testOwnerID, baseIds.PrototypeIdentityID(), baseIds.PrototypeOwnableID(), testValue}, NewAuxiliaryRequest(testOwnerID, baseIds.PrototypeIdentityID(), baseIds.PrototypeOwnableID(), testValue)},
 	}
@@ -62,7 +61,6 @@ func Test_auxiliaryRequestFromInterface(t *testing.T) {
 		args args
 		want auxiliaryRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{NewAuxiliaryRequest(testOwnerID, testOwnerID, testOwnableID, testValue)}, auxiliaryRequest{testOwnerID, testOwnerID, testOwnableID, testValue}},
 	}
 	for _, tt := range tests {
@@ -87,7 +85,6 @@ func Test_auxiliaryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testOwnerID, testOwnerID, testOwnableID, testValue}, false},
 	}
 	for _, tt := range tests {

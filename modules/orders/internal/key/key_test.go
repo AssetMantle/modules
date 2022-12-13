@@ -33,7 +33,6 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testOrderID}, key{OrderID: testOrderID}},
 	}
 	for _, tt := range tests {
@@ -50,7 +49,6 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		// TODO: Add test cases.
 		{"+ve", key{}},
 	}
 	for _, tt := range tests {
@@ -72,7 +70,6 @@ func Test_keyFromInterface(t *testing.T) {
 		want    key
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{}, key{}, true},
 		{"+ve", args{NewKey(testOrderID)}, key{testOrderID}, false},
 		{"-ve", args{baseIds.NewStringID("StringID")}, key{}, true},
@@ -104,7 +101,6 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testOrderID}, args{key{testOrderID}}, true},
 	}
 	for _, tt := range tests {
@@ -128,7 +124,6 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testOrderID}, module.StoreKeyPrefix.GenerateStoreKey(key{testOrderID}.Bytes())},
 	}
 	for _, tt := range tests {
@@ -152,7 +147,6 @@ func Test_key_IsPartial(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testOrderID}, false},
 	}
 	for _, tt := range tests {
@@ -179,7 +173,6 @@ func Test_key_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testOrderID}, args{codec.New()}},
 	}
 	for _, tt := range tests {

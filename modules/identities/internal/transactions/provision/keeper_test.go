@@ -86,7 +86,6 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionKeeper
 	}{
-		// TODO: Add test cases.
 		{"+ve", transactionKeeper{}},
 	}
 	for _, tt := range tests {
@@ -115,7 +114,6 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
 		{"+ve", fields{mapper}, args{mapper, _parameters, []interface{}{supplementAuxiliary}}, transactionKeeper{mapper, supplementAuxiliary}},
 	}
@@ -158,7 +156,6 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		// TODO: Add test cases.
 		{"+ve Not Authorized", fields{mapper}, args{context, newMessage(fromAccAddress, fromAccAddress, testFromID)}, newTransactionResponse(errorConstants.NotAuthorized)},
 		{"+ve already Exists", fields{mapper}, args{context, newMessage(toAccAddress, fromAccAddress, testFromID)}, newTransactionResponse(nil)},
 		{"+ve", fields{mapper}, args{context, newMessage(toAccAddress, toAccAddress, testFromID)}, newTransactionResponse(errorConstants.EntityAlreadyExists)},

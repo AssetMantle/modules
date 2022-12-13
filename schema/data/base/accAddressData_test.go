@@ -33,7 +33,6 @@ func TestNewAccAddressData(t *testing.T) {
 		args args
 		want data.Data
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{_fromAddress}, accAddressData{_fromAddress}},
 		{"-ve with empty string", args{_fromAddress1}, accAddressData{_fromAddress1}},
 		{"-ve", args{nil}, accAddressData{}},
@@ -56,7 +55,6 @@ func Test_accAddressDataFromInterface(t *testing.T) {
 		want    accAddressData
 		wantErr assert.ErrorAssertionFunc
 	}{
-		// TODO: Add test cases.
 		{"-ve nil", args{nil}, accAddressData{}, assert.Error},
 		{"-ve empty String", args{accAddressData{}}, accAddressData{}, assert.NoError},
 		{"-ve wrong Address", args{stringData{}}, accAddressData{}, assert.Error},
@@ -88,7 +86,6 @@ func Test_accAddressData_Compare(t *testing.T) {
 		want        int
 		shouldPanic bool
 	}{
-		// TODO: Add test cases.
 		{"-ve nil", fields{}, args{nil}, 0, true},
 		{"+ve with nil", fields{types.AccAddress{}}, args{NewAccAddressData(nil)}, 0, false},
 		{"-ve empty String", fields{fromAccAddress}, args{accAddressData{}}, 1, false},
@@ -118,7 +115,6 @@ func Test_accAddressData_GenerateHashID(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
 		{"-ve empty String", fields{}, baseIDs.GenerateHashID()},
 		{"+ve", fields{fromAccAddress}, baseIDs.GenerateHashID(accAddressData{fromAccAddress}.Bytes())},
 	}
@@ -142,7 +138,6 @@ func Test_accAddressData_Get(t *testing.T) {
 		fields fields
 		want   types.AccAddress
 	}{
-		// TODO: Add test cases.
 		{"-ve empty String", fields{}, accAddressData{}.Value},
 		{"+ve", fields{fromAccAddress}, accAddressData{fromAccAddress}.Value},
 	}
@@ -166,7 +161,6 @@ func Test_accAddressData_GetID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, baseIDs.NewDataID(accAddressData{})},
 		{"+ve", fields{fromAccAddress}, baseIDs.NewDataID(accAddressData{fromAccAddress})},
 	}
@@ -190,7 +184,6 @@ func Test_accAddressData_GetType(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, idsConstants.AccAddressDataID},
 		{"+ve", fields{fromAccAddress}, idsConstants.AccAddressDataID},
 	}
@@ -214,7 +207,6 @@ func Test_accAddressData_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, accAddressData{}.Value.String()},
 		{"+ve", fields{fromAccAddress}, accAddressData{fromAccAddress}.Value.String()},
 	}
@@ -239,7 +231,6 @@ func Test_accAddressData_ZeroValue(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, NewAccAddressData(sdkTypes.AccAddress{})},
 		{"+ve", fields{fromAccAddress}, NewAccAddressData(sdkTypes.AccAddress{})},
 	}
@@ -264,7 +255,6 @@ func Test_accAddressData_Bytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, accAddressData{}.Value.Bytes()},
 		{"+ve", fields{_fromAddress}, accAddressData{_fromAddress}.Value.Bytes()},
 	}

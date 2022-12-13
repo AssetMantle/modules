@@ -7,6 +7,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
@@ -15,6 +17,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
@@ -64,7 +67,6 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, newTransactionRequest(testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString)},
 	}
 	for _, tt := range tests {
@@ -81,7 +83,6 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		// TODO: Add test cases.
 		{"+ve", transactionRequest{}},
 	}
 	for _, tt := range tests {
@@ -94,6 +95,20 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ClassificationID, constants.TakerID, constants.MakerOwnableID, constants.TakerOwnableID, constants.ExpiresIn, constants.MakerOwnableSplit, constants.TakerOwnableSplit, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
+	cliContext := context.NewCLIContext().WithCodec(codec.New()).WithFromAddress(fromAccAddress).WithChainID("test")
+	viper.Set(constants.FromID.GetName(), testFromID.String())
+	viper.Set(constants.ClassificationID.GetName(), testClassificationID.String())
+	viper.Set(constants.TakerID.GetName(), testFromID.String())
+	viper.Set(constants.MakerOwnableID.GetName(), makerOwnableID.String())
+	viper.Set(constants.TakerOwnableID.GetName(), takerOwnableID.String())
+	viper.Set(constants.ExpiresIn.GetName(), expiresIn)
+	viper.Set(constants.MakerOwnableSplit.GetName(), makerOwnableSplit.String())
+	viper.Set(constants.TakerOwnableSplit.GetName(), takerOwnableSplit.String())
+	viper.Set(constants.ImmutableMetaProperties.GetName(), immutableMetaPropertiesString)
+	viper.Set(constants.ImmutableProperties.GetName(), immutablePropertiesString)
+	viper.Set(constants.MutableMetaProperties.GetName(), mutableMetaPropertiesString)
+	viper.Set(constants.MutableProperties.GetName(), mutablePropertiesString)
 	type fields struct {
 		BaseReq                 rest.BaseReq
 		FromID                  string
@@ -120,7 +135,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{"+ve", fields{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, cliContext}, newTransactionRequest(testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -144,7 +159,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
 			}
 		})
@@ -179,7 +194,6 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{jsonMessage}, newTransactionRequest(testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString), false},
 	}
 	for _, tt := range tests {
@@ -232,7 +246,6 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   rest.BaseReq
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, testBaseRequest},
 	}
 	for _, tt := range tests {
@@ -281,7 +294,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, newMessage(fromAccAddress, testFromID, testClassificationID, testFromID, makerOwnableID, takerOwnableID, base.NewHeight(60), makerOwnableSplit, takerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), false},
 	}
 	for _, tt := range tests {
@@ -337,7 +349,6 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{codec.New()}},
 	}
 	for _, tt := range tests {
@@ -383,7 +394,6 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, false},
 	}
 	for _, tt := range tests {

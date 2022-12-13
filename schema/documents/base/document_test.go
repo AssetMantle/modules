@@ -40,7 +40,6 @@ func TestNewDocument(t *testing.T) {
 		args args
 		want documents.Document
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{classificationID: classificationID, immutables: testImmutables, mutables: testMutables}, document{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}},
 		{"+ve with nil classificationID", args{classificationID: nil, immutables: testImmutables, mutables: testMutables}, document{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}},
 		{"+ve with nil immutables", args{classificationID: classificationID, immutables: nil, mutables: testMutables}, document{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}},
@@ -68,7 +67,6 @@ func Test_document_GetClassificationID(t *testing.T) {
 		fields fields
 		want   ids.ClassificationID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, classificationID},
 		{"+ve with nil classificationID", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, nil},
 		{"+ve with nil immutables", fields{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}, classificationID},
@@ -101,7 +99,6 @@ func Test_document_GetImmutables(t *testing.T) {
 		fields fields
 		want   qualified.Immutables
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, testImmutables},
 		{"+ve with nil classificationID", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, testImmutables},
 		{"+ve with nil immutables", fields{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}, nil},
@@ -134,7 +131,6 @@ func Test_document_GetMutables(t *testing.T) {
 		fields fields
 		want   qualified.Mutables
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: testMutables}, testMutables},
 		{"+ve with nil classificationID", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, testMutables},
 		{"+ve with nil immutables", fields{ClassificationID: classificationID, Immutables: nil, Mutables: testMutables}, testMutables},

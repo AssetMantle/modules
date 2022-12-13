@@ -26,7 +26,6 @@ func TestNewMutables(t *testing.T) {
 		args args
 		want qualified.Mutables
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{}, mutables{}},
 		{"+ve", args{base.NewPropertyList(testMutableProperties)}, mutables{base.NewPropertyList(testMutableProperties)}},
 	}
@@ -49,7 +48,6 @@ func Test_mutables_GetMutablePropertyList(t *testing.T) {
 		fields fields
 		want   lists.PropertyList
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{}, base.NewPropertyList()},
 		{"+ve", fields{base.NewPropertyList(testMutableProperties)}, mutables{base.NewPropertyList(testMutableProperties)}.PropertyList},
 	}
@@ -81,7 +79,6 @@ func Test_mutables_Mutate(t *testing.T) {
 		args   args
 		want   qualified.Mutables
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{}, args{}, mutables{}},
 		{"+ve mutate", fields{base.NewPropertyList(testMutableProperties)}, args{[]properties.Property{testMutableProperties1}}, mutables{base.NewPropertyList(testMutableProperties).Mutate(testMutableProperties1)}}, // TODO: it seems incorrect, not failing for wrong check
 		{"+ve nil mutate", fields{base.NewPropertyList(testMutableProperties)}, args{}, mutables{base.NewPropertyList(testMutableProperties)}},

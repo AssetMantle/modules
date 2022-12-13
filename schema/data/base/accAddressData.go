@@ -53,7 +53,6 @@ func (accAddressData accAddressData) ZeroValue() data.Data {
 }
 func (accAddressData accAddressData) GenerateHashID() ids.HashID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
-		// TODO test
 		return baseIDs.GenerateHashID()
 	}
 

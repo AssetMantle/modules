@@ -370,7 +370,6 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want sdkTypes.Msg
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, message{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}},
 	}
 	for _, tt := range tests {

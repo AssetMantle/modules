@@ -32,7 +32,7 @@ func TestNewHeightData(t *testing.T) {
 		args args
 		want data.Data
 	}{
-
+		{"+ve with nil", args{nil}, heightData{nil}},
 		{"Test for +ve int", args{baseTypes.NewHeight(100)}, heightData{baseTypes.NewHeight(100)}},
 		{"Test for +ve int", args{baseTypes.NewHeight(-100)}, heightData{baseTypes.NewHeight(-100)}},
 	}
@@ -60,7 +60,7 @@ func Test_heightDataFromInterface(t *testing.T) {
 		{"Test for empty height data", args{heightData{}}, heightData{}, false, ""},
 		{"Test for +ve int height data", args{heightData{baseTypes.NewHeight(100)}}, heightData{baseTypes.NewHeight(100)}, false, ""},
 		{"Test for -ve int height data", args{heightData{baseTypes.NewHeight(-100)}}, heightData{baseTypes.NewHeight(-100)}, false, ""},
-		{"Test for Other listable Type", args{decData{typesCosmosSdk.ZeroDec()}.ZeroValue()}, heightData{}, true, constants.MetaDataError.Error()},
+		{"-ve Test for Other listable Type", args{decData{typesCosmosSdk.ZeroDec()}.ZeroValue()}, heightData{}, true, constants.MetaDataError.Error()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -265,11 +265,6 @@ func Test_heightData_ZeroValue(t *testing.T) {
 }
 
 func Test_heightData_Bytes(t *testing.T) {
-	testBytes := make([]byte, 8)
-	binary.LittleEndian.PutUint64(testBytes, uint64(100))
-	testBytes1 := make([]byte, 8)
-	i := int64(-1)
-	binary.LittleEndian.PutUint64(testBytes1, uint64(i))
 	type fields struct {
 		Value types.Height
 	}
@@ -278,9 +273,10 @@ func Test_heightData_Bytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve with nil", fields{nil}, testBytes1},
-		{"Test for +ve Height", fields{baseTypes.NewHeight(-100)}, testBytes1},
-		{"Test for -ve Height", fields{baseTypes.NewHeight(100)}, testBytes},
+		{"+ve with ZeroHeight", fields{baseTypes.NewHeight(-1)}, baseTypes.NewHeight(-1).Bytes()},
+		{"+ve with nil", fields{nil}, []byte{}},
+		{"+ve", fields{baseTypes.NewHeight(100)}, baseTypes.NewHeight(100).Bytes()},
+		{"+ve with max int", fields{baseTypes.NewHeight(int64(^uint(0) >> 1))}, baseTypes.NewHeight(int64(^uint(0) >> 1)).Bytes()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

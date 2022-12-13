@@ -41,7 +41,6 @@ func (booleanData booleanData) String() string {
 	return strconv.FormatBool(booleanData.Value)
 }
 
-// TODO test
 func (booleanData booleanData) Bytes() []byte {
 	if booleanData.Get() {
 		return []byte{0x1}

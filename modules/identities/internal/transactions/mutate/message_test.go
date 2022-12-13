@@ -50,7 +50,6 @@ func Test_messageFromInterface(t *testing.T) {
 		args args
 		want message
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", args{}, message{}},
 		{"+ve", args{message{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}}, message{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}},
 	}
@@ -68,7 +67,6 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		// TODO: Add test cases.
 		{"+ve", message{}},
 	}
 	for _, tt := range tests {
@@ -94,7 +92,6 @@ func Test_message_GetSignBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, types.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}))},
 	}
 	for _, tt := range tests {
@@ -127,7 +124,6 @@ func Test_message_GetSigners(t *testing.T) {
 		fields fields
 		want   []types.AccAddress
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, []types.AccAddress{nil}},
 		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, []types.AccAddress{testFrom}},
 	}
@@ -164,7 +160,6 @@ func Test_message_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, args{codec.New()}},
 		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, args{codec.New()}},
 	}
@@ -196,7 +191,6 @@ func Test_message_Route(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, module.Name},
 		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, module.Name},
 	}
@@ -230,7 +224,6 @@ func Test_message_Type(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, Transaction.GetName()},
 		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, Transaction.GetName()},
 	}
@@ -264,7 +257,6 @@ func Test_message_ValidateBasic(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, true},
 		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, false},
 	}
@@ -298,7 +290,6 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want types.Msg
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", args{}, message{}},
 		{"+ve", args{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, message{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}},
 	}

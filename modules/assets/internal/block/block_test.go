@@ -4,6 +4,7 @@
 package block
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -109,7 +110,9 @@ func Test_block_End(t *testing.T) {
 }
 
 func Test_block_Initialize(t *testing.T) {
-	// testBlock := block{mapper.Prototype(), parameters.Prototype()}
+	testMapper := mapper.Prototype()
+	testParameter := parameters.Prototype()
+	testBlock := block{testMapper, testParameter}
 	type fields struct {
 		mapper     helpers.Mapper
 		parameters helpers.Parameters
@@ -125,8 +128,7 @@ func Test_block_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Block
 	}{
-		// TODO: Add test cases.
-		// {"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{mapper.Prototype(), parameters.Prototype(), []helpers.Auxiliary{}}, Prototype()},
+		{"+ve", fields{testMapper, testParameter}, args{testMapper, testParameter, []interface{}{}}, testBlock},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -134,7 +136,7 @@ func Test_block_Initialize(t *testing.T) {
 				mapper:     tt.fields.mapper,
 				parameters: tt.fields.parameters,
 			}
-			if got := block.Initialize(tt.args.mapper, tt.args.parameters, tt.args.in2...); !reflect.DeepEqual(got, tt.want) {
+			if got := block.Initialize(tt.args.mapper, tt.args.parameters, tt.args.in2...); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
 			}
 		})

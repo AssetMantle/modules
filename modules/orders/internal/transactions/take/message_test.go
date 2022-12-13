@@ -27,7 +27,6 @@ func Test_messageFromInterface(t *testing.T) {
 		args args
 		want message
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testMessage}, message{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}},
 	}
 	for _, tt := range tests {
@@ -44,7 +43,6 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		// TODO: Add test cases.
 		{"+ve", message{}},
 	}
 	for _, tt := range tests {
@@ -68,7 +66,6 @@ func Test_message_GetSignBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, types.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(testMessage))},
 	}
 	for _, tt := range tests {
@@ -98,7 +95,6 @@ func Test_message_GetSigners(t *testing.T) {
 		fields fields
 		want   []types.AccAddress
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, []types.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
@@ -131,7 +127,6 @@ func Test_message_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, args{codec.New()}},
 	}
 	for _, tt := range tests {
@@ -159,7 +154,6 @@ func Test_message_Route(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, module.Name},
 	}
 	for _, tt := range tests {
@@ -189,7 +183,6 @@ func Test_message_Type(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
@@ -219,7 +212,6 @@ func Test_message_ValidateBasic(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"-ve with nil", fields{}, true},
 		{"+ve", fields{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, false},
 	}
@@ -250,7 +242,6 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want types.Msg
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, message{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}},
 	}
 	for _, tt := range tests {

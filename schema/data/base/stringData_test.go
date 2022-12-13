@@ -25,7 +25,6 @@ func TestNewStringData(t *testing.T) {
 		args args
 		want data.Data
 	}{
-		// TODO: Add test cases.
 		{"+ve data", args{"data"}, stringData{"data"}},
 		{"special char data", args{"data%/@1!"}, stringData{"data%/@1!"}},
 	}
@@ -46,10 +45,10 @@ func Test_stringDataFromInterface(t *testing.T) {
 		want    stringData
 		wantErr assert.ErrorAssertionFunc
 	}{
-		// TODO: Add test cases.
 		{"+ve data", args{stringData{"data"}}, stringData{"data"}, assert.NoError},
 		{"data with special char", args{stringData{"data_!@#$%^&*("}}, stringData{"data_!@#$%^&*("}, assert.NoError},
 		{"empty string", args{stringData{""}}, stringData{""}, assert.NoError},
+		{"-ve with decData", args{decData{}}, stringData{}, assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -71,7 +70,6 @@ func Test_stringData_Bytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		// TODO: Add test cases.
 		{"+ve data", fields{"data"}, []byte("data")},
 		{"+ve with empty string", fields{""}, []byte("")},
 		{"+ve with nil", fields{}, []byte{}},
@@ -99,7 +97,6 @@ func Test_stringData_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil and empty string", fields{}, args{stringData{""}}, 0},
 		{"+ve data", fields{"data"}, args{stringData{"data"}}, 0},
 		{"data with special char", fields{"data"}, args{stringData{"data_!@#$%^&*("}}, -1},
@@ -124,7 +121,6 @@ func Test_stringData_GenerateHashID(t *testing.T) {
 		fields fields
 		want   ids.HashID
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil and empty string", fields{}, baseIDs.GenerateHashID(stringData{}.Bytes())},
 		{"+ve data", fields{"data"}, baseIDs.GenerateHashID(stringData{"data"}.Bytes())},
 		{"data with special char", fields{"data_!@#$%^&*("}, baseIDs.GenerateHashID(stringData{"data_!@#$%^&*("}.Bytes())},
@@ -149,7 +145,6 @@ func Test_stringData_Get(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
 		{"+ve data", fields{"data"}, "data"},
 		{"data with special char", fields{"data_!@#$%^&*("}, "data_!@#$%^&*("},
 		{"empty string", fields{""}, ""},
@@ -173,7 +168,6 @@ func Test_stringData_GetID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		// TODO: Add test cases.
 		{"+ve data", fields{"data"}, baseIDs.NewDataID(stringData{"data"})},
 		{"data with special char", fields{"data_!@#$%^&*("}, baseIDs.NewDataID(stringData{"data_!@#$%^&*("})},
 		{"empty string", fields{""}, baseIDs.NewDataID(stringData{""})},
@@ -197,7 +191,6 @@ func Test_stringData_GetType(t *testing.T) {
 		fields fields
 		want   ids.StringID
 	}{
-		// TODO: Add test cases.
 		{"+ve data", fields{"data"}, idsConstants.StringDataID},
 		{"data with special char", fields{"data_!@#$%^&*("}, idsConstants.StringDataID},
 		{"empty string", fields{""}, idsConstants.StringDataID},
@@ -221,7 +214,6 @@ func Test_stringData_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		// TODO: Add test cases.
 		{"+ve data", fields{"data"}, "data"},
 		{"data with special char", fields{"data_!@#$%^&*("}, "data_!@#$%^&*("},
 		{"empty string", fields{""}, ""},
@@ -245,7 +237,6 @@ func Test_stringData_ZeroValue(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-		// TODO: Add test cases.
 		{"+ve data", fields{"data"}, stringData{""}},
 		{"data with special char", fields{"data_!@#$%^&*("}, stringData{""}},
 	}
