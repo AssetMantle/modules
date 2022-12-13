@@ -7,9 +7,12 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/common"
 	base2 "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
@@ -133,6 +136,8 @@ func Test_queryRequest_Encode(t *testing.T) {
 }
 
 func Test_queryRequest_FromCLI(t *testing.T) {
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.DataID})
+	viper.Set(constants.DataID.GetName(), testDataID.String())
 	type fields struct {
 		DataID ids.DataID
 	}
@@ -147,7 +152,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{"+ve", fields{testDataID}, args{cliCommand, context.CLIContext{}}, newQueryRequest(testDataID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

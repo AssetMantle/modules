@@ -7,12 +7,15 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/common"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	base2 "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
@@ -143,6 +146,8 @@ func Test_queryRequest_Encode(t *testing.T) {
 }
 
 func Test_queryRequest_FromCLI(t *testing.T) {
+	cliCommand := base2.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OrderID})
+	viper.Set(constants.OrderID.GetName(), testOrderID.String())
 	type fields struct {
 		OrderID ids.OrderID
 	}
@@ -157,7 +162,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{"+ve", fields{testOrderID}, args{cliCommand, context.NewCLIContext()}, newQueryRequest(testOrderID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

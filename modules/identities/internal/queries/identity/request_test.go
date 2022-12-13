@@ -4,6 +4,9 @@
 package identity
 
 import (
+	"github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/spf13/viper"
 	"reflect"
 	"testing"
 
@@ -172,6 +175,9 @@ func Test_queryRequest_Encode(t *testing.T) {
 }
 
 func Test_queryRequest_FromCLI(t *testing.T) {
+	testIdentity, _ := createTestInput()
+	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.IdentityID})
+	viper.Set(constants.IdentityID.GetName(), testIdentity.String())
 	type fields struct {
 		IdentityID ids.IdentityID
 	}
@@ -186,7 +192,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{"+ve", fields{testIdentity}, args{cliCommand, context.NewCLIContext()}, newQueryRequest(testIdentity), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

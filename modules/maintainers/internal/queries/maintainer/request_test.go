@@ -4,6 +4,9 @@
 package maintainer
 
 import (
+	"github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/spf13/viper"
 	"reflect"
 	"testing"
 
@@ -136,6 +139,8 @@ func Test_queryRequest_Encode(t *testing.T) {
 }
 
 func Test_queryRequest_FromCLI(t *testing.T) {
+	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.MaintainerID})
+	viper.Set(constants.MaintainerID.GetName(), testMaintainerID.String())
 	type fields struct {
 		MaintainerID ids.MaintainerID
 	}
@@ -150,7 +155,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{"+ve", fields{testMaintainerID}, args{cliCommand, context.NewCLIContext()}, queryRequest{testMaintainerID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
