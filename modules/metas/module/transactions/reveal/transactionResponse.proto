@@ -1,0 +1,8 @@
+syntax = "proto3";
+package reveal;
+
+message TransactionResponse{
+  bool success = 1;
+  // TODO define error object
+  string error = 2;
+}

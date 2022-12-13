@@ -8,23 +8,35 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	parameters2 "github.com/AssetMantle/modules/schema/parameters"
+	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 )
 
 type genesis struct {
-	codec *codec.Codec
+	codec *codec.LegacyAmino
 
 	keyPrototype      func() helpers.Key
 	mappablePrototype func() helpers.Mappable
 
 	defaultMappableList  []helpers.Mappable
-	defaultParameterList []parameters2.Parameter
+	defaultParameterList []parametersSchema.Parameter
 
-	MappableList  []helpers.Mappable      `json:"mappableList"`
-	ParameterList []parameters2.Parameter `json:"parameterList"`
+	MappableList  []helpers.Mappable           `json:"mappableList"`
+	ParameterList []parametersSchema.Parameter `json:"parameterList"`
+}
+
+func (genesis genesis) Reset() {
+	// TODO implement me
+	panic("implement me")
+}
+func (genesis genesis) String() string {
+	// TODO implement me
+	panic("implement me")
+}
+func (genesis genesis) ProtoMessage() {
+	// TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.Genesis = (*genesis)(nil)
@@ -84,15 +96,15 @@ func (genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper, p
 
 	return genesis.Initialize(mappableList, parameters.GetList())
 }
-func (genesis genesis) Encode() []byte {
-	bytes, err := genesis.codec.MarshalJSON(genesis)
-	if err != nil {
-		panic(err)
-	}
+func (genesis genesis) Encode(jsonCodec codec.JSONCodec) []byte {
+	bytes, _ := genesis.codec.MarshalJSON(genesis)
+	// if err != nil {
+	//	panic(err)
+	// }
 
 	return bytes
 }
-func (genesis genesis) Decode(byte []byte) helpers.Genesis {
+func (genesis genesis) Decode(jsonCodec codec.JSONCodec, byte []byte) helpers.Genesis {
 	newGenesis := genesis
 	if err := genesis.codec.UnmarshalJSON(byte, &newGenesis); err != nil {
 		panic(err)
@@ -100,7 +112,7 @@ func (genesis genesis) Decode(byte []byte) helpers.Genesis {
 
 	return NewGenesis(genesis.keyPrototype, genesis.mappablePrototype, genesis.defaultMappableList, genesis.defaultParameterList).Initialize(newGenesis.MappableList, newGenesis.ParameterList)
 }
-func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList []parameters2.Parameter) helpers.Genesis {
+func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList []parametersSchema.Parameter) helpers.Genesis {
 	if len(mappableList) == 0 {
 		genesis.MappableList = genesis.defaultMappableList
 	} else {
@@ -120,25 +132,25 @@ func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList
 		genesis.ParameterList = parameterList
 	}
 
-	if err := genesis.Validate(); err != nil {
-		panic(err)
-	}
+	// if err := genesis.Validate(); err != nil {
+	// 	panic(err)
+	// }
 
 	return genesis
 }
 
-func (genesis genesis) GetParameterList() []parameters2.Parameter {
+func (genesis genesis) GetParameterList() []parametersSchema.Parameter {
 	return genesis.ParameterList
 }
 func (genesis genesis) GetMappableList() []helpers.Mappable {
 	return genesis.MappableList
 }
 
-func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable, defaultMappableList []helpers.Mappable, defaultParameterList []parameters2.Parameter) helpers.Genesis {
-	Codec := codec.New()
+func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable, defaultMappableList []helpers.Mappable, defaultParameterList []parametersSchema.Parameter) helpers.Genesis {
+	Codec := codec.NewLegacyAmino()
 	keyPrototype().RegisterCodec(Codec)
 	mappablePrototype().RegisterCodec(Codec)
-	schema.RegisterCodec(Codec)
+	helpers.RegisterCodec(Codec)
 	Codec.Seal()
 
 	return genesis{
@@ -148,6 +160,6 @@ func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helper
 		defaultMappableList:  defaultMappableList,
 		defaultParameterList: defaultParameterList,
 		MappableList:         []helpers.Mappable{},
-		ParameterList:        []parameters2.Parameter{},
+		ParameterList:        []parametersSchema.Parameter{},
 	}
 }

@@ -1,0 +1,11 @@
+syntax = "proto3";
+package base;
+
+import "schema/ids/base/propertyID.proto";
+import "schema/data/base/data.proto";
+
+
+message MetaProperty{
+  PropertyID property_id = 1;
+  Data data = 2;
+}

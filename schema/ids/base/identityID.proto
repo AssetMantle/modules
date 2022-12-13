@@ -1,0 +1,8 @@
+syntax = "proto3";
+package base;
+
+import "schema/ids/base/hashID.proto";
+
+message IdentityID{
+  base.HashID hash_id = 1;
+}
