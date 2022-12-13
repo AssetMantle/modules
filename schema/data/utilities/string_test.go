@@ -36,7 +36,7 @@ func TestReadData(t *testing.T) {
 		wantErr bool
 	}{
 		{"String Data", args{"S|newFact"}, base.NewStringData("newFact"), false},
-		{"Unknown Data", args{"SomeRandomData"}, nil, true},
+		{"-ve Unknown Data", args{"SomeRandomData"}, nil, true},
 		{"List Data", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(baseLists.NewDataList(dataList...)), false},
 		{"List Data empty list", args{"L|"}, base.NewListData(baseLists.NewDataList()), false},
 		{"Id Data", args{"I|data"}, base.NewIDData(baseIDs.NewStringID("data")), false},
@@ -44,8 +44,8 @@ func TestReadData(t *testing.T) {
 		{"Dec Data", args{"D|100"}, base.NewDecData(types.NewDec(100)), false},
 		{"Bool Data", args{"B|true"}, base.NewBooleanData(true), false},
 		{"AccAddress data", args{"A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"}, base.NewAccAddressData(fromAccAddress), false},
-		{"String Data", args{"S|S,|newFact"}, base.NewStringData("S,|newFact"), true},
-		{"List Data String", args{"L|S|,TestData,S|,Test"}, base.NewListData(baseLists.NewDataList([]data.Data{base.NewStringData("S|,TestData"), base.NewStringData("S|,Test")}...)), true},
+		{"-ve String Data", args{"S|S,|newFact"}, base.NewStringData("S,|newFact"), true},
+		{"-ve List Data String", args{"L|S|,TestData,S|,Test"}, base.NewListData(baseLists.NewDataList([]data.Data{base.NewStringData("S|,TestData"), base.NewStringData("S|,Test")}...)), true},
 	}
 
 	for _, tt := range tests {
@@ -73,6 +73,7 @@ func Test_joinDataTypeAndValueStrings(t *testing.T) {
 	}{
 		{"+ve string", args{"S", "Data"}, "S|Data"},
 		{"+ve Id Data", args{"I", "Data"}, "I|Data"},
+		{"-ve", args{"F", "SFw"}, "F|SFw"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -96,6 +97,7 @@ func Test_readAccAddressData(t *testing.T) {
 	}{
 		{"+ve nil", args{}, base.AccAddressDataPrototype(), false},
 		{"+ve string", args{"cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"}, base.NewAccAddressData(fromAccAddress), false},
+		{"-ve", args{"testData"}, base.AccAddressDataPrototype(), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -124,6 +126,7 @@ func Test_readBooleanData(t *testing.T) {
 		{"+ve nil", args{}, base.BooleanDataPrototype(), false},
 		{"+ve string", args{"true"}, base.NewBooleanData(true), false},
 		{"+ve string", args{"false"}, base.NewBooleanData(false), false},
+		{"-ve", args{"testData"}, base.BooleanDataPrototype(), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -152,6 +155,7 @@ func Test_readDecData(t *testing.T) {
 		{"+ve nil", args{}, base.DecDataPrototype(), false},
 		{"+ve string", args{"100"}, base.NewDecData(types.NewDec(100)), false},
 		{"+ve with nil", args{"-100"}, base.NewDecData(types.NewDec(-100)), false},
+		{"-ve", args{"testData"}, base.DecDataPrototype(), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -180,6 +184,7 @@ func Test_readHeightData(t *testing.T) {
 		{"+ve nil", args{}, base.HeightDataPrototype(), false},
 		{"+ve string", args{"100"}, base.NewHeightData(baseTypes.NewHeight(100)), false},
 		{"+ve with nil", args{"-100"}, base.NewHeightData(baseTypes.NewHeight(-100)), false},
+		{"-ve", args{"testData"}, base.HeightDataPrototype(), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -206,8 +211,9 @@ func Test_readIDData(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve nil", args{}, base.IDDataPrototype(), false},
-		{"+", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewIDData(baseIDs.NewStringID("L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")), false},
+		{"+ve", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewIDData(baseIDs.NewStringID("L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")), false},
 		{"-ve string with special char", args{"testDataString|,"}, base.NewIDData(baseIDs.NewStringID("testDataString|,")), false},
+		{"-ve", args{"testData"}, base.NewIDData(baseIDs.NewStringID("testData")), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -235,6 +241,7 @@ func Test_readListData(t *testing.T) {
 	}{
 		{"+ve nil", args{}, base.ListDataPrototype(), false},
 		{"+ve string", args{"S|1,S|2,S|3"}, base.NewListData(baseLists.NewDataList([]data.Data{base.NewStringData("1"), base.NewStringData("2"), base.NewStringData("3")}...)), false},
+		{"-ve", args{"testData"}, base.ListDataPrototype(), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -262,6 +269,7 @@ func Test_readStringData(t *testing.T) {
 	}{
 		{"+ve nil", args{}, base.StringDataPrototype(), false},
 		{"+ve string", args{"testDataString"}, base.NewStringData("testDataString"), false},
+		{"-ve", args{"testData"}, base.NewStringData("testData"), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
