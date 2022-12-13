@@ -77,6 +77,8 @@ func Test_Block_Methods(t *testing.T) {
 
 func Test_block_End(t *testing.T) {
 	context, mapper, transferAuxiliary, supplementAuxiliary, scrubAuxiliary := CreateTestInput(t)
+	testContext := context.WithBlockHeight(1)
+	testContext1 := context.WithBlockHeight(-1)
 	type fields struct {
 		mapper              helpers.Mapper
 		parameters          helpers.Parameters
@@ -93,7 +95,9 @@ func Test_block_End(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{context, abciTypes.RequestEndBlock{}}},
+		{"+ve with block height", fields{mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{testContext, abciTypes.RequestEndBlock{Height: int64(1)}}},
+		{"-ve without block height", fields{mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{context, abciTypes.RequestEndBlock{}}},
+		{"-ve with -ve block height", fields{mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{testContext1, abciTypes.RequestEndBlock{Height: int64(-1)}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
