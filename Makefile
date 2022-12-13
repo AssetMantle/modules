@@ -8,12 +8,33 @@ LEDGER_ENABLED ?= true
 BINDIR ?= $(HOME)/go/bin
 SIMAPP = ./simulation/make
 
+GOLANG_PROTOBUF_VERSION=1.28.0
+GOGO_PROTOBUF_VERSION=1.3.2
+GRPC_GATEWAY_VERSION=1.16.0
+
+#install all dependencies for buf
+install-buf-dependencies:
+	@go install github.com/cosmos/cosmos-proto/cmd/protoc-gen-go-pulsar@latest
+	@go install google.golang.org/protobuf/cmd/protoc-gen-go@v${GOLANG_PROTOBUF_VERSION}
+	@go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway@v${GRPC_GATEWAY_VERSION}
+	@go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger@v${GRPC_GATEWAY_VERSION}
+	git clone https://github.com/regen-network/protobuf.git; \
+        cd protobuf; \
+        go mod download; \
+        make install
+	git clone https://github.com/regen-network/cosmos-proto.git; \
+        cd cosmos-proto/protoc-gen-gocosmos; \
+        go install .
+	go install github.com/regen-network/cosmos-proto/protoc-gen-gocosmos
+	go get github.com/cosmos/cosmos-sdk@v0.45.9
+	rm -rf cosmos-proto protobuf
+
 export GO111MODULE = on
 
 all: build test lintci
 
 # The below include contains the tools and runsim targets.
-include simulation/make/Makefile
+#include simulation/make/Makefile
 
 ########################################
 ### Build
@@ -64,20 +85,28 @@ test-race:
 
 .PHONY: test test-all test-ledger-mock test-ledger test-unit test-race
 
+run-simulations: test-sim-custom-genesis-fast test-sim-nondeterminism test-sim-import-export test-sim-after-import test-sim-custom-genesis-multi-seed test-sim-multi-seed-long test-sim-multi-seed-short test-sim-benchmark-invariants
+
 test-sim-nondeterminism:
 	@echo "Running non-determinism test..."
-	@go test -mod=readonly $(SIMAPP) -run TestAppStateDeterminism -Enabled=true \
+	@go test -mod=readonly $(SIMAPP) -run=TestAppStateDeterminism -Enabled=true \
 		-NumBlocks=100 -BlockSize=200 -Commit=true -Period=0 -v -timeout 24h
 
 test-sim-custom-genesis-fast:
 	@echo "Running custom genesis simulation..."
 	@echo "By default, ${HOME}/.assetNode/config/genesis.json will be used."
-	@go test -mod=readonly $(SIMAPP) -run TestFullAppSimulation -Genesis=${HOME}/.assetNode/config/genesis.json \
+	@go test -mod=readonly $(SIMAPP) -run=TestFullAppSimulation -Genesis=${HOME}/.assetNode/config/genesis.json \
+		-Enabled=true -NumBlocks=100 -BlockSize=200 -Commit=true -Seed=99 -Period=5 -v -timeout 24h
+
+test-sim-full-application:
+	@echo "Running full app..."
+	@go test -mod=readonly $(SIMAPP) -run=TestFullAppSimulation \
 		-Enabled=true -NumBlocks=100 -BlockSize=200 -Commit=true -Seed=99 -Period=5 -v -timeout 24h
 
 test-sim-import-export: runsim
 	@echo "Running application import/export simulation. This may take several minutes..."
 	@$(BINDIR)/runsim -Jobs=4 -SimAppPkg=$(SIMAPP) 50 5 TestAppImportExport
+
 
 test-sim-after-import: runsim
 	@echo "Running application simulation-after-import. This may take several minutes..."
@@ -103,6 +132,7 @@ test-sim-benchmark-invariants:
 	-Period=1 -Commit=true -Seed=57 -v -timeout 24h
 
 .PHONY: \
+test-sim-full-application \
 test-sim-nondeterminism \
 test-sim-custom-genesis-fast \
 test-sim-import-export \

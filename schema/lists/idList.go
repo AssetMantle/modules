@@ -9,6 +9,7 @@ import (
 
 type IDList interface {
 	Size() int
+	HasRepeats() bool
 	GetList() []ids.ID
 	Search(ids.ID) (index int, found bool)
 	Add(...ids.ID) IDList

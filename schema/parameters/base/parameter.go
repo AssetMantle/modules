@@ -4,28 +4,21 @@
 package base
 
 import (
-	"encoding/json"
-
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/parameters"
 )
 
 type parameter struct {
-	ID        ids.StringID `json:"id"`
-	Data      data.Data    `json:"data"`
+	ID        ids.ID    `json:"id"`
+	Data      data.Data `json:"data"`
 	validator func(interface{}) error
 }
 
 var _ parameters.Parameter = (*parameter)(nil)
 
 func (parameter parameter) String() string {
-	bytes, err := json.Marshal(parameter)
-	if err != nil {
-		return err.Error()
-	}
-
-	return string(bytes)
+	return parameter.ID.String()
 }
 func (parameter parameter) Equal(compareParameter parameters.Parameter) bool {
 	if compareParameter != nil && parameter.ID.Compare(compareParameter.GetID()) == 0 && parameter.Data.GetType().Compare(compareParameter.GetData().GetType()) == 0 && parameter.Data.Compare(compareParameter.GetData()) == 0 {
@@ -51,7 +44,7 @@ func (parameter parameter) Mutate(data data.Data) parameters.Parameter {
 	return parameter
 }
 
-func NewParameter(id ids.StringID, data data.Data, validator func(interface{}) error) parameters.Parameter {
+func NewParameter(id ids.ID, data data.Data, validator func(interface{}) error) parameters.Parameter {
 	return parameter{
 		ID:        id,
 		Data:      data,
