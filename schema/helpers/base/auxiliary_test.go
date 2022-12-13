@@ -4,6 +4,7 @@
 package base
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -115,8 +116,7 @@ func Test_auxiliary_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Auxiliary
 	}{
-		// TODO find fix
-		// {"+ve", fields{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, args{mapper: Mapper, parameters: nil, auxiliaryKeepers: nil}, Auxiliary},
+		{"+ve", fields{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, args{mapper: Mapper, parameters: nil, auxiliaryKeepers: nil}, Auxiliary},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -125,7 +125,7 @@ func Test_auxiliary_Initialize(t *testing.T) {
 				auxiliaryKeeper: tt.fields.auxiliaryKeeper,
 				keeperPrototype: tt.fields.keeperPrototype,
 			}
-			if got := auxiliary.Initialize(tt.args.mapper, tt.args.parameters, tt.args.auxiliaryKeepers...); !reflect.DeepEqual(got, tt.want) {
+			if got := auxiliary.Initialize(tt.args.mapper, tt.args.parameters, tt.args.auxiliaryKeepers...); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
 			}
 		})
