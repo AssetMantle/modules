@@ -10,6 +10,6 @@ import (
 
 type Block interface {
 	Begin(sdkTypes.Context, abciTypes.RequestBeginBlock)
-	End(sdkTypes.Context, abciTypes.RequestEndBlock)
+	End(sdkTypes.Context, abciTypes.RequestEndBlock) []abciTypes.ValidatorUpdate
 	Initialize(Mapper, Parameters, ...interface{}) Block
 }

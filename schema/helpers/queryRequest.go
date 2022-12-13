@@ -4,12 +4,12 @@
 package helpers
 
 import (
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 )
 
 type QueryRequest interface {
 	Request
-	FromCLI(CLICommand, context.CLIContext) (QueryRequest, error)
+	FromCLI(CLICommand, client.Context) (QueryRequest, error)
 	FromMap(map[string]string) (QueryRequest, error)
 	Encode() ([]byte, error)
 	Decode([]byte) (QueryRequest, error)

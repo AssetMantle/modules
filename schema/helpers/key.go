@@ -10,7 +10,7 @@ type Key interface {
 	String() string
 	GenerateStoreKeyBytes() []byte
 	// TODO Check is register codec is still required
-	RegisterCodec(*codec.Codec)
+	RegisterCodec(*codec.LegacyAmino)
 	IsPartial() bool
 	// TODO ** check all key impls
 	Equals(Key) bool

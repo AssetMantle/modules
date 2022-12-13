@@ -1,0 +1,7 @@
+syntax = "proto3";
+package meta;
+
+import "schema/ids/base/dataID.proto";
+message QueryRequest {
+  base.DataID data_i_d = 1;
+}
