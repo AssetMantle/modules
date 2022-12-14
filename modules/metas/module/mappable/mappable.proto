@@ -5,8 +5,5 @@ import "gogoproto/gogo.proto";
 import "schema/data/base/data.proto";
 
 message Mappable {
-  base.Data data = 1 [
-    (gogoproto.customtype) = "github.com/AssetMantle/modules/schema/data.Data",
-    (gogoproto.nullable) = false
-  ];
+  base.Data data = 1;
 }
