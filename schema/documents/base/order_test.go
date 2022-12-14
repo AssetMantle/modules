@@ -4,12 +4,12 @@
 package base
 
 import (
-	base2 "github.com/AssetMantle/modules/schema/data/base"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	constants2 "github.com/AssetMantle/modules/schema/properties/constants"
+	constanstsProperties "github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
@@ -118,7 +118,7 @@ func Test_order_GetExpiryHeight(t *testing.T) {
 }
 
 func Test_order_GetMakerID(t *testing.T) {
-	testOrder.Mutate(baseProperties.NewMetaProperty(constants2.MakerIDProperty.GetKey(), base2.NewIDData(testIdentityID)))
+	testOrder.Mutate(baseProperties.NewMetaProperty(constanstsProperties.MakerIDProperty.GetKey(), baseData.NewIDData(testIdentityID)))
 	type fields struct {
 		Document documents.Document
 	}
@@ -188,7 +188,7 @@ func Test_order_GetMakerOwnableSplit(t *testing.T) {
 }
 
 func Test_order_GetTakerID(t *testing.T) {
-	testOrder.Mutate(baseProperties.NewMetaProperty(constants2.TakerIDProperty.GetKey(), base2.NewIDData(testIdentityID)))
+	testOrder.Mutate(baseProperties.NewMetaProperty(constanstsProperties.TakerIDProperty.GetKey(), baseData.NewIDData(testIdentityID)))
 	type fields struct {
 		Document documents.Document
 	}
