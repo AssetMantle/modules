@@ -16,13 +16,15 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
 )
 
 var (
-	testImmutables       = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	testMutables         = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	testImmutables       = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")), baseProperties.NewMetaProperty(constants.CreationHeightProperty.GetKey(), baseData.NewHeightData(base.NewHeight(1))), baseProperties.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(sdkTypes.NewDec(int64(10)))), baseProperties.NewMetaProperty(constants.MakerOwnableIDProperty.GetKey(), baseData.NewIDData(baseIDs.NewOwnableID(baseIDs.NewStringID("MakerOwnableID")))), baseProperties.NewMetaProperty(constants.TakerOwnableIDProperty.GetKey(), baseData.NewIDData(baseIDs.NewOwnableID(baseIDs.NewStringID("TakerOwnableID")))), baseProperties.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(base.NewHeight(100))), baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(sdkTypes.NewDec(int64(10))))))
+	testMutables         = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData")), baseProperties.NewMetaProperty(constants.TakerIDProperty.GetKey(), baseData.NewIDData(baseIDs.PrototypeIdentityID())), baseProperties.NewMetaProperty(constants.MakerIDProperty.GetKey(), baseData.NewIDData(baseIDs.PrototypeIdentityID()))))
 	testPermissionsList  = baseLists.NewIDList([]ids.ID{constansts.Mint, constansts.Add, constansts.Remove, constansts.Mutate, constansts.Renumerate, constansts.Burn}...)
 	testClassificationID = baseIDs.NewClassificationID(immutables, mutables)
 	testIdentityID       = baseIDs.NewIdentityID(testClassificationID, testImmutables)
