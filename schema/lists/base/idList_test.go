@@ -51,7 +51,8 @@ func Test_idList_GetList(t *testing.T) {
 		fields fields
 		want   []ids.ID
 	}{
-		{"+ve with nil", fields{NewList()}, []ids.ID{}},
+		{"+ve with empty List", fields{NewList()}, []ids.ID{}},
+		{"+ve with nil List", fields{nil}, []ids.ID{}},
 		{"+ve", fields{NewList(idsToListables([]ids.ID{NewStringID("Data")}...)...)}, []ids.ID{NewStringID("Data").(ids.ID)}},
 	}
 	for _, tt := range tests {
