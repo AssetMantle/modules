@@ -5,13 +5,9 @@ package order
 
 import (
 	"fmt"
-	"github.com/AssetMantle/modules/modules/orders/internal/key"
-	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
-	"github.com/AssetMantle/modules/modules/orders/internal/parameters"
-	"github.com/AssetMantle/modules/schema"
-	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/types"
@@ -21,8 +17,14 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
+
+	"github.com/AssetMantle/modules/modules/orders/internal/key"
+	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
+	"github.com/AssetMantle/modules/modules/orders/internal/parameters"
+	"github.com/AssetMantle/modules/schema"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 type TestKeepers struct {

@@ -5,6 +5,7 @@ package deputize
 
 import (
 	"encoding/json"
+
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers/base"
 

@@ -4,6 +4,13 @@
 package meta
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/spf13/viper"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/metas/internal/common"
 	base2 "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -11,11 +18,6 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/spf13/viper"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
 var (

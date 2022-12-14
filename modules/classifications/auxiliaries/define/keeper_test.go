@@ -5,9 +5,10 @@ package define
 
 import (
 	"fmt"
-	"github.com/AssetMantle/modules/schema/properties"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/properties"
 
 	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 

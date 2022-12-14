@@ -6,11 +6,12 @@ package base
 import (
 	"bufio"
 	"encoding/json"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"log"
 	"net/http"
 	"reflect"
 	"strings"
+
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"

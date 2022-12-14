@@ -4,11 +4,13 @@
 package maintainer
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
-	"github.com/spf13/viper"
 	"reflect"
 	"testing"
+
+	"github.com/spf13/viper"
+
+	"github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/stretchr/testify/require"

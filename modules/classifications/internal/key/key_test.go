@@ -4,6 +4,11 @@
 package key
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -13,9 +18,6 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseHelpers "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"reflect"
-	"testing"
 )
 
 func createTestInput() ids.ClassificationID {

@@ -4,14 +4,16 @@
 package key
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
 	base2 "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"reflect"
-	"testing"
 )
 
 var (

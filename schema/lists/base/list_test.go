@@ -4,13 +4,15 @@
 package base
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	"github.com/stretchr/testify/assert"
-	"reflect"
-	"testing"
 )
 
 func TestNewList(t *testing.T) {

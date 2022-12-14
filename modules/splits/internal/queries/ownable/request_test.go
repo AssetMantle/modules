@@ -4,17 +4,19 @@
 package ownable
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/spf13/viper"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIds "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/spf13/viper"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
 var (

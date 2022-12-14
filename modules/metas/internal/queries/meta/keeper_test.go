@@ -5,14 +5,9 @@ package meta
 
 import (
 	"fmt"
-	"github.com/AssetMantle/modules/modules/metas/internal/key"
-	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
-	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
-	"github.com/AssetMantle/modules/schema"
-	base2 "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/ids/base"
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -22,8 +17,15 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
+
+	"github.com/AssetMantle/modules/modules/metas/internal/key"
+	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
+	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
+	"github.com/AssetMantle/modules/schema"
+	base2 "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type TestKeepers struct {

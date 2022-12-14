@@ -4,10 +4,11 @@
 package mappable
 
 import (
-	"github.com/AssetMantle/modules/schema/ids/constansts"
-	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/ids/constansts"
+	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 

@@ -4,6 +4,10 @@
 package base
 
 import (
+	"reflect"
+	"strings"
+	"testing"
+
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -11,9 +15,6 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
-	"reflect"
-	"strings"
-	"testing"
 )
 
 func TestNewDataList(t *testing.T) {
@@ -171,7 +172,7 @@ func Test_dataToListables(t *testing.T) {
 	}
 }
 
-//mocks
+// mocks
 type stringData struct {
 	Value string `json:"value"`
 }

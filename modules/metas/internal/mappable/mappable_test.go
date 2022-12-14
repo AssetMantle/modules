@@ -4,14 +4,16 @@
 package mappable
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	base2 "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"reflect"
-	"testing"
 )
 
 func TestNewMappable(t *testing.T) {

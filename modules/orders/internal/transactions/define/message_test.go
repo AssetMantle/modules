@@ -4,16 +4,18 @@
 package define
 
 import (
-	"github.com/AssetMantle/modules/utilities/transaction"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/utilities/transaction"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 var (

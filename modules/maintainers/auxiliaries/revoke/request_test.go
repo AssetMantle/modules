@@ -4,10 +4,11 @@
 package revoke
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 )
 
 func TestNewAuxiliaryRequest(t *testing.T) {

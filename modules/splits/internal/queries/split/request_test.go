@@ -4,6 +4,13 @@
 package split
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/spf13/viper"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -14,11 +21,6 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/spf13/viper"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
 var (
