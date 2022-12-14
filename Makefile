@@ -8,6 +8,10 @@ LEDGER_ENABLED ?= true
 BINDIR ?= $(HOME)/go/bin
 SIMAPP = ./simulation/make
 
+GOLANG_PROTOBUF_VERSION=1.28.0
+GOGO_PROTOBUF_VERSION=1.3.2
+GRPC_GATEWAY_VERSION=1.16.0
+
 #install all dependencies for buf
 install-buf-dependencies:
 	@go install github.com/cosmos/cosmos-proto/cmd/protoc-gen-go-pulsar@latest
