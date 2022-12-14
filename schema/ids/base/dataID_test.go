@@ -190,6 +190,11 @@ type booleanData struct {
 	Value bool `json:"value"`
 }
 
+func (booleanData booleanData) Sanitize() (data.Data, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 var _ data.BooleanData = (*booleanData)(nil)
 
 func (booleanData booleanData) GetID() ids.DataID {
