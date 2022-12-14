@@ -13,11 +13,13 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-func Test_new_Classification(t *testing.T) {
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+var (
+	immutables         = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables           = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	testClassification = NewClassification(immutables, mutables)
+)
 
-	testClassification := NewClassification(immutables, mutables)
+func Test_new_Classification(t *testing.T) {
 	type fields struct {
 		immutables qualified.Immutables
 		mutables   qualified.Mutables
