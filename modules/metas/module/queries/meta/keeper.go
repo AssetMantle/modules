@@ -21,8 +21,10 @@ var _ helpers.QueryKeeper = (*queryKeeper)(nil)
 var _ QueryServer = &queryKeeper{}
 
 func (queryKeeper queryKeeper) Meta(ctx context.Context, request *QueryRequest) (*QueryResponse, error) {
-	// TODO implement me
-	panic("implement me")
+	sdkCtx := sdkTypes.UnwrapSDKContext(ctx)
+	response := queryKeeper.Enquire(sdkCtx, request)
+	//TODO: QueryResponse already contains error, no need to add separately
+	return response.(*QueryResponse), nil
 }
 
 func (queryKeeper queryKeeper) mustEmbedUnimplementedQueryServer() {
