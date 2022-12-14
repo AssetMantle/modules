@@ -273,7 +273,7 @@ func Test_heightData_Bytes(t *testing.T) {
 		want   []byte
 	}{
 		{"+ve with ZeroHeight", fields{baseTypes.NewHeight(-1)}, baseTypes.NewHeight(-1).Bytes()},
-		{"+ve with nil", fields{nil}, []byte{}},
+		{"+ve with nil", fields{nil}, baseTypes.NewHeight(-1).Bytes()},
 		{"+ve", fields{baseTypes.NewHeight(100)}, baseTypes.NewHeight(100).Bytes()},
 		{"+ve with max int", fields{baseTypes.NewHeight(int64(^uint(0) >> 1))}, baseTypes.NewHeight(int64(^uint(0) >> 1)).Bytes()},
 	}
