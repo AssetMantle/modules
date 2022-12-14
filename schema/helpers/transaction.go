@@ -25,4 +25,5 @@ type Transaction interface {
 	RegisterInterfaces(types.InterfaceRegistry)
 	DecodeTransactionRequest(json.RawMessage) (sdkTypes.Msg, error)
 	InitializeKeeper(Mapper, Parameters, ...interface{}) Transaction
+	GetGRPCConfigurator() GRPCConfigurator
 }

@@ -29,9 +29,9 @@ var Transaction = baseHelpers.NewTransaction(
 	"reveal",
 	"",
 	"",
-
 	requestPrototype,
 	messagePrototype,
 	keeperPrototype,
+	Configurator{},
 	constants.Data,
 )

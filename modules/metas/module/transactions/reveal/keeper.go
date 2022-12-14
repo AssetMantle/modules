@@ -19,12 +19,13 @@ type transactionKeeper struct {
 	parameters helpers.Parameters
 }
 
+var _ TransactionServer = &transactionKeeper{}
+var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
+
 func (transactionKeeper transactionKeeper) Reveal(ctx context.Context, message *Message) (*TransactionResponse, error) {
 	sdkCtx := sdkTypes.UnwrapSDKContext(ctx)
 	return transactionKeeper.Transact(sdkCtx, message).(*TransactionResponse), nil
 }
-
-var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)

@@ -28,6 +28,7 @@ type transaction struct {
 	requestPrototype func() helpers.TransactionRequest
 	messagePrototype func() helpers.Message
 	keeperPrototype  func() helpers.TransactionKeeper
+	Configurator     helpers.GRPCConfigurator
 }
 
 func (transaction transaction) Service() (*grpc.ServiceDesc, interface{}) {
@@ -37,6 +38,9 @@ func (transaction transaction) Service() (*grpc.ServiceDesc, interface{}) {
 
 var _ helpers.Transaction = (*transaction)(nil)
 
+func (transaction transaction) GetGRPCConfigurator() helpers.GRPCConfigurator {
+	return transaction.Configurator
+}
 func (transaction transaction) RegisterInterfaces(interfaceRegistry types.InterfaceRegistry) {
 	transaction.messagePrototype().RegisterInterfaces(interfaceRegistry)
 }
@@ -125,12 +129,13 @@ func (transaction transaction) InitializeKeeper(mapper helpers.Mapper, parameter
 	return transaction
 }
 
-func NewTransaction(name string, short string, long string, requestPrototype func() helpers.TransactionRequest, messagePrototype func() helpers.Message, keeperPrototype func() helpers.TransactionKeeper, flagList ...helpers.CLIFlag) helpers.Transaction {
+func NewTransaction(name string, short string, long string, requestPrototype func() helpers.TransactionRequest, messagePrototype func() helpers.Message, keeperPrototype func() helpers.TransactionKeeper, configurator helpers.GRPCConfigurator, flagList ...helpers.CLIFlag) helpers.Transaction {
 	return transaction{
 		name:             name,
 		cliCommand:       NewCLICommand(name, short, long, flagList),
 		requestPrototype: requestPrototype,
 		messagePrototype: messagePrototype,
 		keeperPrototype:  keeperPrototype,
+		Configurator:     configurator,
 	}
 }
