@@ -52,6 +52,7 @@ func Test_dataList_Add(t *testing.T) {
 		want   lists.DataList
 	}{
 		{"+ve with no dataList", fields{List: NewList(dataToListables([]data.Data{}...)...)}, args{}, dataList{List: NewList(dataToListables([]data.Data{}...)...)}},
+		{"+ve  with DataList", fields{List: NewList(dataToListables([]data.Data{NewStringData("Data")}...)...)}, args{[]data.Data{NewStringData("Data1")}}, dataList{List: NewList(dataToListables([]data.Data{NewStringData("Data"), NewStringData("Data1")}...)...)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -105,6 +106,7 @@ func Test_dataList_Remove(t *testing.T) {
 	}{
 		{"+ve with empty struct", fields{NewList(dataToListables([]data.Data{}...)...)}, args{}, dataList{List: NewList(dataToListables([]data.Data{}...)...)}},
 		{"+ve", fields{NewList(dataToListables([]data.Data{NewStringData("Data")}...)...)}, args{[]data.Data{NewStringData("Data")}}, dataList{List: NewList(dataToListables([]data.Data{}...)...)}},
+		{"+ve with nil", fields{nil}, args{[]data.Data{NewStringData("Data")}}, dataList{List: NewList(dataToListables([]data.Data{}...)...)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -134,6 +136,7 @@ func Test_dataList_Search(t *testing.T) {
 	}{
 		{"+ve with empty struct", fields{NewList(dataToListables([]data.Data{}...)...)}, args{NewStringData("Data")}, 0, false}, // TODO: fix this
 		{"+ve", fields{NewList(dataToListables([]data.Data{NewStringData("Data")}...)...)}, args{NewStringData("Data")}, 0, true},
+		{"+ve with nil", fields{nil}, args{NewStringData("Data")}, 0, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
