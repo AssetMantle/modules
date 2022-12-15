@@ -13,4 +13,7 @@ type IDList interface {
 	Search(ids.ID) (index int, found bool)
 	Add(...ids.ID) IDList
 	Remove(...ids.ID) IDList
+
+	// Sanitize idList
+	Sanitize() (IDList, error)
 }

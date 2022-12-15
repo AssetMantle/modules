@@ -27,8 +27,9 @@ func Test_idList_Add(t *testing.T) {
 		args   args
 		want   lists.IDList
 	}{
-		{"+ve for nil", fields{NewList()}, args{[]ids.ID{NewStringID("ID")}}, idList{NewList(idsToListables([]ids.ID{NewStringID("ID")}...)...)}},                                                               // TODO: panic for nil
-		{"+ve", fields{NewList(idsToListables([]ids.ID{NewStringID("ID")}...)...)}, args{[]ids.ID{NewStringID("ID1")}}, idList{NewList(idsToListables([]ids.ID{NewStringID("ID"), NewStringID("ID1")}...)...)}}, // TODO: report
+		{"+ve for nil", fields{nil}, args{[]ids.ID{NewStringID("ID")}}, idList{NewList(idsToListables([]ids.ID{NewStringID("ID")}...)...)}},
+		{"+ve for empty", fields{NewList()}, args{[]ids.ID{NewStringID("ID")}}, idList{NewList(idsToListables([]ids.ID{NewStringID("ID")}...)...)}},
+		{"+ve", fields{NewList(idsToListables([]ids.ID{NewStringID("ID")}...)...)}, args{[]ids.ID{NewStringID("ID1")}}, idList{NewList(idsToListables([]ids.ID{NewStringID("ID"), NewStringID("ID1")}...)...)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -81,6 +82,7 @@ func Test_idList_Remove(t *testing.T) {
 	}{
 		{"-ve with no removal", fields{NewList(idsToListables(NewStringID("ID1"), NewStringID("ID2"), NewStringID("ID3"))...)}, args{}, idList{NewList(idsToListables(NewStringID("ID1"), NewStringID("ID2"), NewStringID("ID3"))...)}},
 		{"+ve with removal", fields{NewList(idsToListables(NewStringID("ID1"), NewStringID("ID2"), NewStringID("ID3"))...)}, args{[]ids.ID{NewStringID("ID3")}}, idList{NewList(idsToListables(NewStringID("ID1"), NewStringID("ID2"))...)}},
+		{"+ve with nil", fields{nil}, args{[]ids.ID{NewStringID("ID")}}, idList{NewList(idsToListables([]ids.ID{}...)...)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -108,7 +110,8 @@ func Test_idList_Search(t *testing.T) {
 		wantIndex int
 		wantFound bool
 	}{
-		{"+ve with nil", fields{NewList(idsToListables([]ids.ID{}...)...)}, args{NewStringID("ID")}, 0, false}, // TODO report issue
+		{"+ve with Empty List", fields{NewList(idsToListables([]ids.ID{}...)...)}, args{NewStringID("ID")}, 0, false},
+		{"+ve with nil", fields{nil}, args{NewStringID("ID")}, 0, false},
 		{"+ve", fields{NewList(idsToListables([]ids.ID{NewStringID("ID")}...)...)}, args{NewStringID("ID")}, 0, true},
 		{"-ve with no entry", fields{NewList(idsToListables([]ids.ID{NewStringID("ID")}...)...)}, args{NewStringID("ID1")}, 1, false},
 	}
