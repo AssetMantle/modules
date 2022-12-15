@@ -98,7 +98,7 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ClassificationID, constants.TakerID, constants.MakerOwnableID, constants.TakerOwnableID, constants.ExpiresIn, constants.MakerOwnableSplit, constants.TakerOwnableSplit, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
-	cliContext := context.NewCLIContext().WithCodec(codec.New()).WithFromAddress(fromAccAddress).WithChainID("test")
+	cliContext := context.NewCLIContext().WithCodec(codec.NewLegacyAmino()).WithFromAddress(fromAccAddress).WithChainID("test")
 	viper.Set(constants.FromID.GetName(), testFromID.String())
 	viper.Set(constants.ClassificationID.GetName(), testClassificationID.String())
 	viper.Set(constants.TakerID.GetName(), testFromID.String())
@@ -344,14 +344,14 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		MutableProperties       string
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{codec.New()}},
+		{"+ve", fields{testBaseRequest, testFromID.String(), testClassificationID.String(), testFromID.String(), makerOwnableID.String(), takerOwnableID.String(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -370,7 +370,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 				MutableMetaProperties:   tt.fields.MutableMetaProperties,
 				MutableProperties:       tt.fields.MutableProperties,
 			}
-			tr.RegisterCodec(tt.args.codec)
+			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

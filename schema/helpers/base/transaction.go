@@ -43,11 +43,11 @@ type transaction struct {
 var _ helpers.Transaction = (*transaction)(nil)
 
 func (transaction transaction) GetName() string { return transaction.name }
-func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
+func (transaction transaction) Command(legacyAmino *codec.LegacyAmino) *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
 		bufioReader := bufio.NewReader(command.InOrStdin())
-		transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(authClient.GetTxEncoder(codec))
-		cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
+		transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(authClient.GetTxEncoder(legacyAmino))
+		cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(legacyAmino)
 
 		transactionRequest, err := transaction.requestPrototype().FromCLI(transaction.cliCommand, cliContext)
 		if err != nil {
@@ -240,9 +240,9 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 	}
 }
 
-func (transaction transaction) RegisterCodec(codec *codec.Codec) {
-	transaction.messagePrototype().RegisterCodec(codec)
-	transaction.requestPrototype().RegisterCodec(codec)
+func (transaction transaction) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	transaction.messagePrototype().RegisterLegacyAminoCodec(legacyAmino)
+	transaction.requestPrototype().RegisterLegacyAminoCodec(legacyAmino)
 }
 func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessage) (sdkTypes.Msg, error) {
 	transactionRequest, err := transaction.requestPrototype().FromJSON(rawMessage)

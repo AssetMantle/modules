@@ -80,7 +80,7 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.ToID, constants.FromID, constants.OwnableID, constants.Value})
-	cliContext := context.NewCLIContext().WithCodec(codec.New()).WithFromAddress(fromAccAddress).WithChainID("test")
+	cliContext := context.NewCLIContext().WithCodec(codec.NewLegacyAmino()).WithFromAddress(fromAccAddress).WithChainID("test")
 	viper.Set(constants.FromID.GetName(), fromID.String())
 	viper.Set(constants.ToID.GetName(), fromID.String())
 	viper.Set(constants.OwnableID.GetName(), ownableID.String())
@@ -246,14 +246,14 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		Value     string
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), fromID.String(), ownableID.String(), testRate.String()}, args{codec.New()}},
+		{"+ve", fields{testBaseRequest, fromID.String(), fromID.String(), ownableID.String(), testRate.String()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -264,7 +264,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 				OwnableID: tt.fields.OwnableID,
 				Value:     tt.fields.Value,
 			}
-			tr.RegisterCodec(tt.args.codec)
+			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

@@ -7,10 +7,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
-func RegisterCodec(codec *codec.Codec) {
-	codec.RegisterInterface((*DataList)(nil), nil)
-	codec.RegisterInterface((*IDList)(nil), nil)
-	codec.RegisterInterface((*List)(nil), nil)
-	codec.RegisterInterface((*PropertyList)(nil), nil)
-	codec.RegisterInterface((*SignatureList)(nil), nil)
+func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	legacyAmino.RegisterInterface((*DataList)(nil), nil)
+	legacyAmino.RegisterInterface((*IDList)(nil), nil)
+	legacyAmino.RegisterInterface((*List)(nil), nil)
+	legacyAmino.RegisterInterface((*PropertyList)(nil), nil)
+	legacyAmino.RegisterInterface((*SignatureList)(nil), nil)
 }

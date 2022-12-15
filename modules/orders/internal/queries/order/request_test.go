@@ -76,9 +76,9 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedReq, err := common.Codec.MarshalJSON(newQueryRequest(testOrderID))
+	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testOrderID))
 	require.NoError(t, err)
-	encodedReq1, err1 := common.Codec.MarshalJSON(newQueryRequest(testOrderID1))
+	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(testOrderID1))
 	require.NoError(t, err1)
 	type fields struct {
 		OrderID ids.OrderID
@@ -114,9 +114,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedReq, err := common.Codec.MarshalJSON(newQueryRequest(testOrderID))
+	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testOrderID))
 	require.NoError(t, err)
-	encodedReq1, err1 := common.Codec.MarshalJSON(newQueryRequest(testOrderID1))
+	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(testOrderID1))
 	require.NoError(t, err1)
 	type fields struct {
 		OrderID ids.OrderID

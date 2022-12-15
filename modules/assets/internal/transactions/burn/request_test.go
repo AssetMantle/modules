@@ -65,7 +65,7 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID, constants.FromID})
-	cliContext := context.NewCLIContext().WithCodec(codec.New()).WithFromAddress(fromAccAddress).WithChainID("test")
+	cliContext := context.NewCLIContext().WithCodec(codec.NewLegacyAmino()).WithFromAddress(fromAccAddress).WithChainID("test")
 	viper.Set(constants.AssetID.GetName(), testAssetID.String())
 	viper.Set(constants.FromID.GetName(), fromID.String())
 	type fields struct {
@@ -121,7 +121,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String()}, args{types.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, fromID, testAssetID}))}, newTransactionRequest(testBaseRequest, fromID.String(), testAssetID.String()), false},
+		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, fromID, testAssetID}))}, newTransactionRequest(testBaseRequest, fromID.String(), testAssetID.String()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -209,14 +209,14 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		AssetID string
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String()}, args{codec.New()}},
+		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -225,7 +225,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 				FromID:  tt.fields.FromID,
 				AssetID: tt.fields.AssetID,
 			}
-			tr.RegisterCodec(tt.args.codec)
+			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

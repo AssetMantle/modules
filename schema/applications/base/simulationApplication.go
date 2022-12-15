@@ -73,7 +73,7 @@ type SimulationApplication struct {
 
 var _ applications.SimulationApplication = (*SimulationApplication)(nil)
 
-func (simulationApplication SimulationApplication) Codec() *codec.Codec {
+func (simulationApplication SimulationApplication) Codec() *codec.LegacyAmino {
 	return simulationApplication.codec
 }
 

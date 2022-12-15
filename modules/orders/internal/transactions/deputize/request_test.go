@@ -88,7 +88,7 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ToID, constants.ClassificationID, constants.MaintainedProperties, constants.CanMintAsset, constants.CanBurnAsset, constants.CanRenumerateAsset, constants.CanAddMaintainer, constants.CanRemoveMaintainer, constants.CanMutateMaintainer})
-	cliContext := context.NewCLIContext().WithCodec(codec.New()).WithFromAddress(fromAccAddress).WithChainID("test")
+	cliContext := context.NewCLIContext().WithCodec(codec.NewLegacyAmino()).WithFromAddress(fromAccAddress).WithChainID("test")
 	viper.Set(constants.FromID.GetName(), testFromID.String())
 	viper.Set(constants.ToID.GetName(), testFromID.String())
 	viper.Set(constants.ClassificationID.GetName(), testClassificationID.String())
@@ -314,14 +314,14 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		CanMutateMaintainer  bool
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.String(), testFromID.String(), testClassificationID.String(), maintainedPropertyString, true, true, true, true, true, true}, args{codec.New()}},
+		{"+ve", fields{testBaseRequest, testFromID.String(), testFromID.String(), testClassificationID.String(), maintainedPropertyString, true, true, true, true, true, true}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -338,7 +338,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
 				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
 			}
-			tr.RegisterCodec(tt.args.codec)
+			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

@@ -61,8 +61,8 @@ func TestModule(t *testing.T) {
 	// AppModuleBasic
 	require.Equal(t, "test", Module.Name())
 
-	// RegisterCodec
-	Module.RegisterCodec(codec)
+	// RegisterLegacyAminoCodec
+	Module.RegisterLegacyAminoCodec(codec)
 
 	require.NotPanics(t, func() {
 		Module.DefaultGenesis()

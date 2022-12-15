@@ -15,7 +15,7 @@ import (
 )
 
 type genesis struct {
-	codec *codec.Codec
+	legacyAmino *codec.LegacyAmino
 
 	keyPrototype      func() helpers.Key
 	mappablePrototype func() helpers.Mappable
@@ -85,7 +85,7 @@ func (genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper, p
 	return genesis.Initialize(mappableList, parameters.GetList())
 }
 func (genesis genesis) Encode() []byte {
-	bytes, err := genesis.codec.MarshalJSON(genesis)
+	bytes, err := genesis.legacyAmino.MarshalJSON(genesis)
 	if err != nil {
 		panic(err)
 	}
@@ -94,7 +94,7 @@ func (genesis genesis) Encode() []byte {
 }
 func (genesis genesis) Decode(byte []byte) helpers.Genesis {
 	newGenesis := genesis
-	if err := genesis.codec.UnmarshalJSON(byte, &newGenesis); err != nil {
+	if err := genesis.legacyAmino.UnmarshalJSON(byte, &newGenesis); err != nil {
 		panic(err)
 	}
 
@@ -135,14 +135,14 @@ func (genesis genesis) GetMappableList() []helpers.Mappable {
 }
 
 func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable, defaultMappableList []helpers.Mappable, defaultParameterList []parameters2.Parameter) helpers.Genesis {
-	Codec := codec.New()
-	keyPrototype().RegisterCodec(Codec)
-	mappablePrototype().RegisterCodec(Codec)
-	schema.RegisterCodec(Codec)
+	Codec := codec.NewLegacyAmino()
+	keyPrototype().RegisterLegacyAminoCodec(Codec)
+	mappablePrototype().RegisterLegacyAminoCodec(Codec)
+	schema.RegisterLegacyAminoCodec(Codec)
 	Codec.Seal()
 
 	return genesis{
-		codec:                Codec,
+		legacyAmino:          Codec,
 		keyPrototype:         keyPrototype,
 		mappablePrototype:    mappablePrototype,
 		defaultMappableList:  defaultMappableList,

@@ -107,7 +107,7 @@ func Test_message_GetSignBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, true, true, true, true, true, true}, sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(testMessage))},
+		{"+ve", fields{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, true, true, true, true, true, true}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(testMessage))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -193,14 +193,14 @@ func Test_message_RegisterCodec(t *testing.T) {
 		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, true, true, true, true, true, true}, args{codec.New()}},
+		{"+ve", fields{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, true, true, true, true, true, true}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -217,7 +217,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
 				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
 			}
-			me.RegisterCodec(tt.args.codec)
+			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

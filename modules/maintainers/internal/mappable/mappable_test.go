@@ -103,21 +103,21 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 		Maintainer documents.Maintainer
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testMaintainer}, args{codec.New()}},
+		{"+ve", fields{testMaintainer}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ma := mappable{
 				Maintainer: tt.fields.Maintainer,
 			}
-			ma.RegisterCodec(tt.args.codec)
+			ma.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

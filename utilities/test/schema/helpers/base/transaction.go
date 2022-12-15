@@ -41,8 +41,8 @@ func (transactionRequest TransactionRequest) GetBaseReq() rest.BaseReq {
 func (transactionRequest TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	return NewTestMessage(sdkTypes.AccAddress(transactionRequest.BaseReq.From), transactionRequest.ID), nil
 }
-func (TransactionRequest) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, TransactionRequest{})
+func (TransactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, TransactionRequest{})
 }
 func TestTransactionRequestPrototype() helpers.TransactionRequest {
 	return TransactionRequest{}

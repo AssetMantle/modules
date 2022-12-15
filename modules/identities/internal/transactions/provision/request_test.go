@@ -10,9 +10,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema"
@@ -80,15 +80,13 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	types.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
+
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.To, constants.IdentityID})
-	cliContext := context.NewCLIContext().WithCodec(Codec)
+	cliContext := context.NewCLIContext().WithCodec(legacyAmino)
 	testBaseReq, testToAddress, testFromID := createTestInput(t)
 	type fields struct {
 		BaseReq    rest.BaseReq
@@ -144,7 +142,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testToAddress, testFromID.String()}, args{types.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"), types.AccAddress(testToAddress), testFromID}))}, transactionRequest{testBaseReq, testToAddress, testFromID.String()}, false},
+		{"+ve", fields{testBaseReq, testToAddress, testFromID.String()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"), types.AccAddress(testToAddress), testFromID}))}, transactionRequest{testBaseReq, testToAddress, testFromID.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -240,15 +238,15 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		IdentityID string
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve with nil", fields{}, args{codec.New()}},
-		{"+ve", fields{testBaseReq, testToAddress, testFromID.String()}, args{codec.New()}},
+		{"+ve with nil", fields{}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testBaseReq, testToAddress, testFromID.String()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -257,7 +255,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 				To:         tt.fields.To,
 				IdentityID: tt.fields.IdentityID,
 			}
-			tr.RegisterCodec(tt.args.codec)
+			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

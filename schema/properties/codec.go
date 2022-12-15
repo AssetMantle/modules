@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
-func RegisterCodec(codec *codec.Codec) {
-	codec.RegisterInterface((*MetaProperty)(nil), nil)
-	codec.RegisterInterface((*Property)(nil), nil)
+func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	legacyAmino.RegisterInterface((*MetaProperty)(nil), nil)
+	legacyAmino.RegisterInterface((*Property)(nil), nil)
 }

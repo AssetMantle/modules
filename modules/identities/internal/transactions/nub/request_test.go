@@ -10,9 +10,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema"
@@ -23,16 +23,14 @@ import (
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
-func CreateTestInputForRequest(t *testing.T) (*codec.Codec, helpers.CLICommand, context.CLIContext, string, sdkTypes.AccAddress, rest.BaseReq) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
+func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, context.CLIContext, string, sdkTypes.AccAddress, rest.BaseReq) {
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
+
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.NubID})
-	cliContext := context.NewCLIContext().WithCodec(Codec)
+	cliContext := context.NewCLIContext().WithCodec(legacyAmino)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -40,7 +38,7 @@ func CreateTestInputForRequest(t *testing.T) (*codec.Codec, helpers.CLICommand, 
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 
-	return Codec, cliCommand, cliContext, fromAddress, fromAccAddress, testBaseReq
+	return legacyAmino, cliCommand, cliContext, fromAddress, fromAccAddress, testBaseReq
 }
 
 func Test_newTransactionRequest(t *testing.T) {
@@ -136,7 +134,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, args{sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, baseIds.NewStringID("nubID")}))}, transactionRequest{testBaseReq, "nubID"}, false},
+		{"+ve", fields{testBaseReq, "nubID"}, args{sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, baseIds.NewStringID("nubID")}))}, transactionRequest{testBaseReq, "nubID"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -224,14 +222,14 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		NubID   string
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, args{codec.New()}},
+		{"+ve", fields{testBaseReq, "nubID"}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -239,7 +237,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 				BaseReq: tt.fields.BaseReq,
 				NubID:   tt.fields.NubID,
 			}
-			tr.RegisterCodec(tt.args.codec)
+			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

@@ -54,19 +54,19 @@ type TestKeepers struct {
 }
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters, supply.Keeper) {
-	var Codec = codec.New()
-	bank.RegisterCodec(Codec)
-	staking.RegisterCodec(Codec)
-	auth.RegisterCodec(Codec)
-	supply.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
+	var legacyAmino = codec.NewLegacyAmino()
+	bank.RegisterCodec(legacyAmino)
+	staking.RegisterCodec(legacyAmino)
+	auth.RegisterCodec(legacyAmino)
+	supply.RegisterCodec(legacyAmino)
+	sdkTypes.RegisterCodec(legacyAmino)
+	codec.RegisterCrypto(legacyAmino)
 
-	types.RegisterCodec(Codec) // distr
-	schema.RegisterCodec(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
+	types.RegisterCodec(legacyAmino) // distr
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	codec.RegisterEvidences(legacyAmino)
+	vesting.RegisterCodec(legacyAmino)
+	legacyAmino.Seal()
 
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
@@ -76,7 +76,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
 	paramsKeeper := params.NewKeeper(
-		Codec,
+		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
@@ -112,7 +112,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	blacklistedAddrs[distrAcc.GetAddress().String()] = true
 	blacklistedAddrs[splitAcc.GetAddress().String()] = true
 
-	accountKeeper := auth.NewAccountKeeper(Codec, keyAcc, paramsKeeper.Subspace(auth.DefaultParamspace), auth.ProtoBaseAccount)
+	accountKeeper := auth.NewAccountKeeper(legacyAmino, keyAcc, paramsKeeper.Subspace(auth.DefaultParamspace), auth.ProtoBaseAccount)
 	bankKeeper := bank.NewBaseKeeper(accountKeeper, paramsKeeper.Subspace(bank.DefaultParamspace), blacklistedAddrs)
 
 	maccPerms := map[string][]string{
@@ -123,9 +123,9 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		staking.BondedPoolName:    {supply.Burner, supply.Staking},
 	}
 
-	supplyKeeper := supply.NewKeeper(Codec, storeKey, accountKeeper, bankKeeper, maccPerms)
+	supplyKeeper := supply.NewKeeper(legacyAmino, storeKey, accountKeeper, bankKeeper, maccPerms)
 
-	sk := staking.NewKeeper(Codec, keyStaking, supplyKeeper, paramsKeeper.Subspace(staking.DefaultParamspace))
+	sk := staking.NewKeeper(legacyAmino, keyStaking, supplyKeeper, paramsKeeper.Subspace(staking.DefaultParamspace))
 	sk.SetParams(context, staking.DefaultParams())
 	intToken := sdkTypes.TokensFromConsensusPower(100000000)
 	initCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(sk.BondDenom(context), intToken))

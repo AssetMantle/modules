@@ -69,9 +69,9 @@ func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simu
 func (module module) Name() string {
 	return module.name
 }
-func (module module) RegisterCodec(codec *codec.Codec) {
+func (module module) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	for _, transaction := range module.transactionsPrototype().GetList() {
-		transaction.RegisterCodec(codec)
+		transaction.RegisterLegacyAminoCodec(legacyAmino)
 	}
 }
 func (module module) DefaultGenesis() json.RawMessage {
@@ -90,7 +90,7 @@ func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *m
 		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
 	}
 }
-func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
+func (module module) GetTxCmd(legacyAmino *codec.LegacyAmino) *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
 		Use:                        module.name,
 		Short:                      "GetProperty root transaction command.",
@@ -101,7 +101,7 @@ func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 	commandList := make([]*cobra.Command, len(module.transactionsPrototype().GetList()))
 
 	for i, transaction := range module.transactionsPrototype().GetList() {
-		commandList[i] = transaction.Command(codec)
+		commandList[i] = transaction.Command(legacyAmino)
 	}
 
 	rootTransactionCommand.AddCommand(
@@ -110,7 +110,7 @@ func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 
 	return rootTransactionCommand
 }
-func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
+func (module module) GetQueryCmd(legacyAmino *codec.LegacyAmino) *cobra.Command {
 	rootQueryCommand := &cobra.Command{
 		Use:                        module.name,
 		Short:                      "GetProperty root query command.",
@@ -121,7 +121,7 @@ func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 	commandList := make([]*cobra.Command, len(module.queriesPrototype().GetList()))
 
 	for i, query := range module.queriesPrototype().GetList() {
-		commandList[i] = query.Command(codec)
+		commandList[i] = query.Command(legacyAmino)
 	}
 
 	rootQueryCommand.AddCommand(

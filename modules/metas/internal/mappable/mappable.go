@@ -22,8 +22,8 @@ var _ helpers.Mappable = (*mappable)(nil)
 func (mappable mappable) GetKey() helpers.Key {
 	return key.NewKey(base.NewDataID(mappable.Data))
 }
-func (mappable) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, mappable{})
+func (mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, mappable{})
 }
 
 func NewMappable(data data.Data) helpers.Mappable {

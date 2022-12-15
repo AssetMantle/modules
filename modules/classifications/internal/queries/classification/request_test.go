@@ -111,9 +111,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedQuery, err := common.Codec.MarshalJSON(queryRequest{baseIDs.PrototypeClassificationID()})
+	encodedQuery, err := common.LegacyAmino.MarshalJSON(queryRequest{baseIDs.PrototypeClassificationID()})
 	require.NoError(t, err)
-	encodedQuery1, err := common.Codec.MarshalJSON(queryRequest{createTestInput()})
+	encodedQuery1, err := common.LegacyAmino.MarshalJSON(queryRequest{createTestInput()})
 	require.NoError(t, err)
 	type fields struct {
 		ClassificationID ids.ClassificationID
@@ -146,7 +146,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.ClassificationID})
-	cliContext := context.NewCLIContext().WithCodec(codec.New())
+	cliContext := context.NewCLIContext().WithCodec(codec.NewLegacyAmino())
 	type fields struct {
 		ClassificationID ids.ClassificationID
 	}

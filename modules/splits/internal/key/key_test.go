@@ -173,21 +173,21 @@ func Test_key_RegisterCodec(t *testing.T) {
 		SplitID ids.SplitID
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{splitID}, args{codec.New()}},
+		{"+ve", fields{splitID}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ke := key{
 				SplitID: tt.fields.SplitID,
 			}
-			ke.RegisterCodec(tt.args.codec)
+			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

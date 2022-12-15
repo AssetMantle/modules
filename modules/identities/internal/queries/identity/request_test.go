@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/spf13/viper"
 
 	"github.com/AssetMantle/modules/schema/helpers/base"
@@ -14,8 +15,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/identities/internal/common"
@@ -44,17 +43,11 @@ func createTestInput() (ids.IdentityID, ids.IdentityID) {
 }
 
 func Test_newQueryRequest(t *testing.T) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
-	// vars := make(map[string]string)
-	// vars["identities"] = "randomString"
-	// cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.IdentityID})
-	// cliContext := context.NewCLIContext().WithCodec(Codec)
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
+
 	testIdentity, emptyTestIdentity := createTestInput()
 
 	type args struct {
@@ -143,8 +136,8 @@ func Test_queryRequest_Decode(t *testing.T) {
 
 func Test_queryRequest_Encode(t *testing.T) {
 	testIdentity, emptyTestIdentity := createTestInput()
-	byteArr, _ := common.Codec.MarshalJSON(newQueryRequest(testIdentity))
-	byteArr2, _ := common.Codec.MarshalJSON(newQueryRequest(emptyTestIdentity))
+	byteArr, _ := common.LegacyAmino.MarshalJSON(newQueryRequest(testIdentity))
+	byteArr2, _ := common.LegacyAmino.MarshalJSON(newQueryRequest(emptyTestIdentity))
 
 	type fields struct {
 		IdentityID ids.IdentityID

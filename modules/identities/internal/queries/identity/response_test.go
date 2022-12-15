@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -24,13 +24,10 @@ import (
 )
 
 func CreateTestInputContext(t *testing.T) sdkTypes.Context {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
 
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
@@ -121,8 +118,8 @@ func Test_queryResponse_Decode(t *testing.T) {
 func Test_queryResponse_Encode(t *testing.T) {
 	context := CreateTestInputContext(t)
 	collection := mapper.Prototype().NewCollection(context)
-	encodedByte, err := common.Codec.MarshalJSON(queryResponse{Success: true, Error: nil, List: collection.GetList()})
-	encodedByteWithError, _err := common.Codec.MarshalJSON(queryResponse{Success: false, Error: constants.IncorrectFormat, List: collection.GetList()})
+	encodedByte, err := common.LegacyAmino.MarshalJSON(queryResponse{Success: true, Error: nil, List: collection.GetList()})
+	encodedByteWithError, _err := common.LegacyAmino.MarshalJSON(queryResponse{Success: false, Error: constants.IncorrectFormat, List: collection.GetList()})
 	require.Nil(t, err)
 	type fields struct {
 		Success bool

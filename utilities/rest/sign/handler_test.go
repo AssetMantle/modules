@@ -28,12 +28,12 @@ import (
 )
 
 func TestHandler(t *testing.T) {
-	Codec := codec.New()
-	schema.RegisterCodec(Codec)
+	Codec := codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
 	sdkTypes.RegisterCodec(Codec)
 	Codec.RegisterConcrete(request{}, "request", nil)
 	Codec.RegisterConcrete(response{}, "response", nil)
-	base.TestMessagePrototype().RegisterCodec(Codec)
+	base.TestMessagePrototype().RegisterLegacyAminoCodec(Codec)
 
 	clientContext := context.NewCLIContext().WithCodec(Codec)
 

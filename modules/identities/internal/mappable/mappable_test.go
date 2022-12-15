@@ -110,22 +110,22 @@ func Test_identity_RegisterCodec(t *testing.T) {
 		Document documents.Identity
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testIdentity}, args{codec.New()}},
-		{"+ve nil", fields{nil}, args{codec.New()}},
+		{"+ve", fields{testIdentity}, args{codec.NewLegacyAmino()}},
+		{"+ve nil", fields{nil}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			id := mappable{
 				Identity: tt.fields.Document,
 			}
-			id.RegisterCodec(tt.args.codec)
+			id.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

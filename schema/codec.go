@@ -28,36 +28,36 @@ import (
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
-func RegisterCodec(codec *codec.Codec) {
+func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 
-	data.RegisterCodec(codec)
-	baseData.RegisterCodec(codec)
+	data.RegisterLegacyAminoCodec(legacyAmino)
+	baseData.RegisterLegacyAminoCodec(legacyAmino)
 
-	documents.RegisterCodec(codec)
-	baseDocuments.RegisterCodec(codec)
+	documents.RegisterLegacyAminoCodec(legacyAmino)
+	baseDocuments.RegisterLegacyAminoCodec(legacyAmino)
 
-	errors.RegisterCodec(codec)
-	baseErrors.RegisterCodec(codec)
+	errors.RegisterLegacyAminoCodec(legacyAmino)
+	baseErrors.RegisterLegacyAminoCodec(legacyAmino)
 
-	helpers.RegisterCodec(codec)
+	helpers.RegisterLegacyAminoCodec(legacyAmino)
 
-	ids.RegisterCodec(codec)
-	baseIDs.RegisterCodec(codec)
+	ids.RegisterLegacyAminoCodec(legacyAmino)
+	baseIDs.RegisterLegacyAminoCodec(legacyAmino)
 
-	lists.RegisterCodec(codec)
-	baseLists.RegisterCodec(codec)
+	lists.RegisterLegacyAminoCodec(legacyAmino)
+	baseLists.RegisterLegacyAminoCodec(legacyAmino)
 
-	parameters.RegisterCodec(codec)
-	baseParameters.RegisterCodec(codec)
+	parameters.RegisterLegacyAminoCodec(legacyAmino)
+	baseParameters.RegisterLegacyAminoCodec(legacyAmino)
 
-	properties.RegisterCodec(codec)
-	baseProperties.RegisterCodec(codec)
+	properties.RegisterLegacyAminoCodec(legacyAmino)
+	baseProperties.RegisterLegacyAminoCodec(legacyAmino)
 
-	qualified.RegisterCodec(codec)
-	baseQualified.RegisterCodec(codec)
+	qualified.RegisterLegacyAminoCodec(legacyAmino)
+	baseQualified.RegisterLegacyAminoCodec(legacyAmino)
 
-	traits.RegisterCodec(codec)
+	traits.RegisterLegacyAminoCodec(legacyAmino)
 
-	typesSchema.RegisterCodec(codec)
-	baseTypes.RegisterCodec(codec)
+	typesSchema.RegisterLegacyAminoCodec(legacyAmino)
+	baseTypes.RegisterLegacyAminoCodec(legacyAmino)
 }

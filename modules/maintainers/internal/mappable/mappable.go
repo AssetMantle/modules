@@ -32,8 +32,8 @@ func (mappable mappable) GetKey() helpers.Key {
 			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(mappable.Maintainer.GetIdentityID())),
 		))))
 }
-func (mappable) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, mappable{})
+func (mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, mappable{})
 }
 
 func NewMappable(maintainer documents.Maintainer) helpers.Mappable {

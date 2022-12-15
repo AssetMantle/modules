@@ -72,9 +72,9 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedQuery, err := common.Codec.MarshalJSON(newQueryRequest(testAssetID))
+	encodedQuery, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testAssetID))
 	require.NoError(t, err)
-	encodedQuery1, err := common.Codec.MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID()))
+	encodedQuery1, err := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID()))
 	require.NoError(t, err)
 	type fields struct {
 		AssetID ids.AssetID
@@ -110,9 +110,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedQuery, err := common.Codec.MarshalJSON(newQueryRequest(testAssetID))
+	encodedQuery, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testAssetID))
 	require.NoError(t, err)
-	encodedQuery1, err := common.Codec.MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID()))
+	encodedQuery1, err := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID()))
 	require.NoError(t, err)
 	type fields struct {
 		AssetID ids.AssetID

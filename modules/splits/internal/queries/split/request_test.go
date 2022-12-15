@@ -73,9 +73,9 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedReq, err := common.Codec.MarshalJSON(newQueryRequest(splitID))
+	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(splitID))
 	require.NoError(t, err)
-	encodedReq1, err1 := common.Codec.MarshalJSON(newQueryRequest(baseIds.PrototypeSplitID()))
+	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeSplitID()))
 	require.NoError(t, err1)
 	type fields struct {
 		SplitID ids.SplitID
@@ -111,9 +111,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedReq, err := common.Codec.MarshalJSON(newQueryRequest(splitID))
+	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(splitID))
 	require.NoError(t, err)
-	encodedReq1, err1 := common.Codec.MarshalJSON(newQueryRequest(baseIds.PrototypeSplitID()))
+	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeSplitID()))
 	require.NoError(t, err1)
 	type fields struct {
 		SplitID ids.SplitID

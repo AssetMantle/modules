@@ -49,11 +49,11 @@ func (queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error
 	}
 }
 func (queryRequest queryRequest) Encode() ([]byte, error) {
-	return common.Codec.MarshalJSON(queryRequest)
+	return common.LegacyAmino.MarshalJSON(queryRequest)
 }
 
 func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
-	if err := common.Codec.UnmarshalJSON(bytes, &queryRequest); err != nil {
+	if err := common.LegacyAmino.UnmarshalJSON(bytes, &queryRequest); err != nil {
 		return nil, err
 	}
 

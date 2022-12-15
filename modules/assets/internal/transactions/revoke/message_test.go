@@ -80,7 +80,7 @@ func Test_message_GetSignBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{fromAccAddress, fromID, fromID, classificationID}, sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(newMessage(fromAccAddress, fromID, fromID, classificationID)))},
+		{"+ve", fields{fromAccAddress, fromID, fromID, classificationID}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(newMessage(fromAccAddress, fromID, fromID, classificationID)))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -134,14 +134,14 @@ func Test_message_RegisterCodec(t *testing.T) {
 		ClassificationID ids.ClassificationID
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress, fromID, fromID, classificationID}, args{codec.New()}},
+		{"+ve", fields{fromAccAddress, fromID, fromID, classificationID}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -151,7 +151,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 				ToID:             tt.fields.ToID,
 				ClassificationID: tt.fields.ClassificationID,
 			}
-			me.RegisterCodec(tt.args.codec)
+			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

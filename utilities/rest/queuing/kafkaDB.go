@@ -13,8 +13,8 @@ import (
 )
 
 // setTicketIDtoDB : initiates TicketID in Database
-func setTicketIDtoDB(ticket TicketID, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec, msg []byte) {
-	ticketID, err := cdc.MarshalJSON(ticket)
+func setTicketIDtoDB(ticket TicketID, kafkaDB *dbm.GoLevelDB, legacyAmino *codec.LegacyAmino, msg []byte) {
+	ticketID, err := legacyAmino.MarshalJSON(ticket)
 	if err != nil {
 		panic(err)
 	}
@@ -25,8 +25,8 @@ func setTicketIDtoDB(ticket TicketID, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec, 
 }
 
 // addResponseToDB : Updates response to DB
-func addResponseToDB(ticket TicketID, response []byte, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec) {
-	ticketID, err := cdc.MarshalJSON(ticket)
+func addResponseToDB(ticket TicketID, response []byte, kafkaDB *dbm.GoLevelDB, legacyAmino *codec.LegacyAmino) {
+	ticketID, err := legacyAmino.MarshalJSON(ticket)
 	if err != nil {
 		panic(err)
 	}
@@ -38,8 +38,8 @@ func addResponseToDB(ticket TicketID, response []byte, kafkaDB *dbm.GoLevelDB, c
 }
 
 // getResponseFromDB : gives the response from DB
-func getResponseFromDB(ticket TicketID, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec) []byte {
-	ticketID, err := cdc.MarshalJSON(ticket)
+func getResponseFromDB(ticket TicketID, kafkaDB *dbm.GoLevelDB, legacyAmino *codec.LegacyAmino) []byte {
+	ticketID, err := legacyAmino.MarshalJSON(ticket)
 	if err != nil {
 		panic(err)
 	}
@@ -50,13 +50,13 @@ func getResponseFromDB(ticket TicketID, kafkaDB *dbm.GoLevelDB, cdc *codec.Codec
 }
 
 // queryDB : REST outputs info from DB
-func queryDB(cdc *codec.Codec) http.HandlerFunc {
+func queryDB(legacyAmino *codec.LegacyAmino) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
 		vars := mux.Vars(r)
 
-		ticketIDBytes, err := cdc.MarshalJSON(vars["TicketID"])
+		ticketIDBytes, err := legacyAmino.MarshalJSON(vars["TicketID"])
 		if err != nil {
 			panic(err)
 		}
@@ -65,9 +65,9 @@ func queryDB(cdc *codec.Codec) http.HandlerFunc {
 
 		check, _ := KafkaState.KafkaDB.Has(ticketIDBytes)
 		if check {
-			response = getResponseFromDB(TicketID(vars["TicketID"]), KafkaState.KafkaDB, cdc)
+			response = getResponseFromDB(TicketID(vars["TicketID"]), KafkaState.KafkaDB, legacyAmino)
 		} else {
-			output, err := cdc.MarshalJSON("The ticket ID does not exist, it must have been deleted, Query the chain to know")
+			output, err := legacyAmino.MarshalJSON("The ticket ID does not exist, it must have been deleted, Query the chain to know")
 			if err != nil {
 				w.WriteHeader(http.StatusNotFound)
 				_, _ = w.Write([]byte(fmt.Sprintf("ticket ID does not exist. Error: %s", err.Error())))

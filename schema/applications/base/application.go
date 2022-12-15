@@ -20,6 +20,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 	serverTypes "github.com/cosmos/cosmos-sdk/server/types"
+	"github.com/cosmos/cosmos-sdk/std"
 	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -820,14 +821,11 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 
 	return &application
 }
-func makeCodec(moduleBasicManager module.BasicManager) *codec.Codec {
-	Codec := codec.New()
-	moduleBasicManager.RegisterCodec(Codec)
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
+func makeCodec(moduleBasicManager module.BasicManager) *codec.LegacyAmino {
+	Codec := codec.NewLegacyAmino()
+	moduleBasicManager.RegisterLegacyAminoCodec(Codec)
+	schema.RegisterLegacyAminoCodec(Codec)
+	std.RegisterLegacyAminoCodec(Codec)
 	Codec.Seal()
 
 	return Codec

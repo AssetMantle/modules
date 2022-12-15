@@ -169,22 +169,22 @@ func Test_key_RegisterCodec(t *testing.T) {
 		AssetID ids.AssetID
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testAssetID}, args{codec.New()}},
-		{"+ve", fields{baseIDs.PrototypeAssetID()}, args{codec.New()}},
+		{"+ve", fields{testAssetID}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{baseIDs.PrototypeAssetID()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ke := key{
 				AssetID: tt.fields.AssetID,
 			}
-			ke.RegisterCodec(tt.args.codec)
+			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

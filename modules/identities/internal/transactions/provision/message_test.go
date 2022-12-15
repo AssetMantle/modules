@@ -90,7 +90,7 @@ func Test_message_GetSignBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{fromAccAddress, toAccAddress, testIdentityID}, sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(testMessage))},
+		{"+ve", fields{fromAccAddress, toAccAddress, testIdentityID}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(testMessage))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -144,14 +144,14 @@ func Test_message_RegisterCodec(t *testing.T) {
 		IdentityID ids.IdentityID
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress, toAccAddress, testIdentityID}, args{codec.New()}},
+		{"+ve", fields{fromAccAddress, toAccAddress, testIdentityID}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -160,7 +160,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 				To:         tt.fields.To,
 				IdentityID: tt.fields.IdentityID,
 			}
-			me.RegisterCodec(tt.args.codec)
+			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

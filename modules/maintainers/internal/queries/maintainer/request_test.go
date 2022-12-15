@@ -107,9 +107,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedQuery, err := common.Codec.MarshalJSON(queryRequest{testMaintainerID})
+	encodedQuery, err := common.LegacyAmino.MarshalJSON(queryRequest{testMaintainerID})
 	require.NoError(t, err)
-	encodedQuery1, err := common.Codec.MarshalJSON(queryRequest{testMaintainerID1})
+	encodedQuery1, err := common.LegacyAmino.MarshalJSON(queryRequest{testMaintainerID1})
 	require.NoError(t, err)
 	type fields struct {
 		MaintainerID ids.MaintainerID

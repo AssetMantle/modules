@@ -40,8 +40,8 @@ func (message TestMessage) ValidateBasic() error { return nil }
 func (message TestMessage) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
-func (message TestMessage) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(TestMessage{}, "test/TestMessage", nil)
+func (message TestMessage) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	legacyAmino.RegisterConcrete(TestMessage{}, "test/TestMessage", nil)
 }
 
 func TestMessagePrototype() helpers.Message {

@@ -22,8 +22,8 @@ var _ helpers.Key = (*key)(nil)
 func (key key) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(key.Bytes())
 }
-func (key) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, key{})
+func (key) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, key{})
 }
 func (key key) IsPartial() bool {
 	return len(key.ClassificationID.Bytes()) == 0
