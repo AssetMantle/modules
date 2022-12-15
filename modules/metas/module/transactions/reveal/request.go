@@ -57,7 +57,7 @@ func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	}
 
 	return newMessage(
-		sdkTypes.MustAccAddressFromBech32(from),
+		from,
 		data,
 	), nil
 }
