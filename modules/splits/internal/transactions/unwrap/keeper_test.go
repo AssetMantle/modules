@@ -9,15 +9,23 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/bank"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/cosmos/cosmos-sdk/x/distribution/types"
-	"github.com/cosmos/cosmos-sdk/x/params"
+	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/cosmos/cosmos-sdk/x/staking"
+	stakingTypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/stretchr/testify/require"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto/ed25519"
+	"github.com/tendermint/tendermint/libs/log"
+	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
@@ -29,13 +37,6 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIds "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-
-	// "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	"github.com/cosmos/cosmos-sdk/x/supply"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintDB "github.com/tendermint/tm-db"
 )
 
 var (
@@ -53,29 +54,20 @@ type TestKeepers struct {
 	UnwrapKeeper helpers.TransactionKeeper
 }
 
-func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters, supply.Keeper) {
+func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters, bankKeeper.Keeper) {
 	var legacyAmino = codec.NewLegacyAmino()
-	bank.RegisterCodec(legacyAmino)
-	staking.RegisterCodec(legacyAmino)
-	auth.RegisterCodec(legacyAmino)
-	supply.RegisterCodec(legacyAmino)
-	sdkTypes.RegisterCodec(legacyAmino)
-	codec.RegisterCrypto(legacyAmino)
-
-	types.RegisterCodec(legacyAmino) // distr
 	schema.RegisterLegacyAminoCodec(legacyAmino)
-	codec.RegisterEvidences(legacyAmino)
-	vesting.RegisterCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
-	keyAcc := sdkTypes.NewKVStoreKey(auth.StoreKey)
+	keyAcc := sdkTypes.NewKVStoreKey(authTypes.StoreKey)
 	keyDistr := sdkTypes.NewKVStoreKey(types.StoreKey)
-	keyStaking := sdkTypes.NewKVStoreKey(staking.StoreKey)
+	keyStaking := sdkTypes.NewKVStoreKey(stakingTypes.StoreKey)
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
-	paramsKeeper := params.NewKeeper(
+	paramsKeeper := paramsKeeper.NewKeeper(
 		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,
@@ -99,11 +91,11 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	feeCollectorAcc := supply.NewEmptyModuleAccount(auth.FeeCollectorName)
-	notBondedPool := supply.NewEmptyModuleAccount(staking.NotBondedPoolName, supply.Burner, supply.Staking)
-	bondPool := supply.NewEmptyModuleAccount(staking.BondedPoolName, supply.Burner, supply.Staking)
-	distrAcc := supply.NewEmptyModuleAccount(types.ModuleName)
-	splitAcc := supply.NewEmptyModuleAccount(module.Name)
+	feeCollectorAcc := authTypes.NewEmptyModuleAccount(authTypes.FeeCollectorName)
+	notBondedPool := authTypes.NewEmptyModuleAccount(stakingTypes.NotBondedPoolName, authTypes.Burner, authTypes.Staking)
+	bondPool := authTypes.NewEmptyModuleAccount(stakingTypes.BondedPoolName, authTypes.Burner, authTypes.Staking)
+	distrAcc := authTypes.NewEmptyModuleAccount(types.ModuleName)
+	splitAcc := authTypes.NewEmptyModuleAccount(module.Name)
 
 	blacklistedAddrs := make(map[string]bool)
 	blacklistedAddrs[feeCollectorAcc.GetAddress().String()] = true
@@ -112,18 +104,16 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	blacklistedAddrs[distrAcc.GetAddress().String()] = true
 	blacklistedAddrs[splitAcc.GetAddress().String()] = true
 
-	accountKeeper := auth.NewAccountKeeper(legacyAmino, keyAcc, paramsKeeper.Subspace(auth.DefaultParamspace), auth.ProtoBaseAccount)
-	bankKeeper := bank.NewBaseKeeper(accountKeeper, paramsKeeper.Subspace(bank.DefaultParamspace), blacklistedAddrs)
+	accountKeeper := keeper.NewAccountKeeper(legacyAmino, keyAcc, paramsKeeper.Subspace(auth.DefaultParamspace), auth.ProtoBaseAccount)
+	bankKeeper := bankKeeper.NewBaseKeeper(accountKeeper, paramsKeeper.Subspace(bank.DefaultParamspace), blacklistedAddrs)
 
 	maccPerms := map[string][]string{
-		auth.FeeCollectorName:     nil,
-		types.ModuleName:          nil,
-		module.Name:               nil,
-		staking.NotBondedPoolName: {supply.Burner, supply.Staking},
-		staking.BondedPoolName:    {supply.Burner, supply.Staking},
+		authTypes.FeeCollectorName:     nil,
+		types.ModuleName:               nil,
+		module.Name:                    nil,
+		stakingTypes.NotBondedPoolName: {authTypes.Burner, authTypes.Staking},
+		stakingTypes.BondedPoolName:    {authTypes.Burner, authTypes.Staking},
 	}
-
-	supplyKeeper := supply.NewKeeper(legacyAmino, storeKey, accountKeeper, bankKeeper, maccPerms)
 
 	sk := staking.NewKeeper(legacyAmino, keyStaking, supplyKeeper, paramsKeeper.Subspace(staking.DefaultParamspace))
 	sk.SetParams(context, staking.DefaultParams())
@@ -197,7 +187,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
 				parameters:            tt.fields.parameters,
-				supplyKeeper:          tt.fields.supplyKeeper,
+				bankKeeper:            tt.fields.supplyKeeper,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
 			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.parameters, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
@@ -237,7 +227,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
 				parameters:            tt.fields.parameters,
-				supplyKeeper:          tt.fields.supplyKeeper,
+				bankKeeper:            tt.fields.supplyKeeper,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
 			if got := transactionKeeper.Transact(tt.args.context, tt.args.msg); !reflect.DeepEqual(got, tt.want) {

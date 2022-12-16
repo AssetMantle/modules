@@ -19,7 +19,6 @@ import (
 	paramsClient "github.com/cosmos/cosmos-sdk/x/params/client"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeClient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
@@ -46,7 +45,6 @@ var moduleBasicManager = module.NewBasicManager(
 	crisis.AppModuleBasic{},
 	wasm.AppModuleBasic{},
 	slashing.AppModuleBasic{},
-	supply.AppModuleBasic{},
 	upgrade.AppModuleBasic{},
 	evidence.AppModuleBasic{},
 
