@@ -8,17 +8,22 @@ import (
 	wasmClient "github.com/CosmWasm/wasmd/x/wasm/client"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
+	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	"github.com/cosmos/cosmos-sdk/x/distribution"
+	distributionTypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/cosmos/cosmos-sdk/x/gov"
+	govTypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/cosmos/cosmos-sdk/x/mint"
+	mintTypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	paramsClient "github.com/cosmos/cosmos-sdk/x/params/client"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
+	stakingTypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeClient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
@@ -57,14 +62,14 @@ var moduleBasicManager = module.NewBasicManager(
 	splits.Prototype(),
 )
 var moduleAccountPermissions = map[string][]string{
-	auth.FeeCollectorName:     nil,
-	distribution.ModuleName:   nil,
-	mint.ModuleName:           {supply.Minter},
-	staking.BondedPoolName:    {supply.Burner, supply.Staking},
-	staking.NotBondedPoolName: {supply.Burner, supply.Staking},
-	gov.ModuleName:            {supply.Burner},
-	splits.Prototype().Name(): nil,
+	authTypes.FeeCollectorName:     nil,
+	distributionTypes.ModuleName:   nil,
+	mintTypes.ModuleName:           {authTypes.Minter},
+	stakingTypes.BondedPoolName:    {authTypes.Burner, authTypes.Staking},
+	stakingTypes.NotBondedPoolName: {authTypes.Burner, authTypes.Staking},
+	govTypes.ModuleName:            {authTypes.Burner},
+	splits.Prototype().Name():      nil,
 }
 var tokenReceiveAllowedModules = map[string]bool{
-	distribution.ModuleName: true,
+	distributionTypes.ModuleName: true,
 }
