@@ -4,14 +4,14 @@
 package key
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-
 	"github.com/AssetMantle/modules/modules/metas/module/module"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 )
 
 type key struct {
@@ -19,6 +19,10 @@ type key struct {
 }
 
 var _ helpers.Key = (*key)(nil)
+
+func (key key) RegisterInterfaces(registry types.InterfaceRegistry) {
+	registry.RegisterInterface("KeyName", (*helpers.Key)(nil))
+}
 
 func (key key) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(key.Bytes())

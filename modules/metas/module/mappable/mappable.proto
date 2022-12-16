@@ -5,5 +5,7 @@ import "gogoproto/gogo.proto";
 import "schema/data/base/data.proto";
 
 message Mappable {
-  base.Data data = 1;
+  oneof Impl {
+    base.Data data = 1;
+  }
 }

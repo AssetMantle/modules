@@ -4,21 +4,19 @@
 package reveal
 
 import (
+	"github.com/AssetMantle/modules/modules/metas/module/module"
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
+	codecUtilities "github.com/AssetMantle/modules/utilities"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
-	// gogoproto "github.com/gogo/protobuf/proto"
-	// "github.com/golang/protobuf/proto"
-
-	"github.com/AssetMantle/modules/modules/metas/module/module"
-	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
-	codecUtilities "github.com/AssetMantle/modules/utilities"
 )
 
 var _ helpers.Message = &Message{}
@@ -28,6 +26,7 @@ func (message *Message) RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
 		&Message{},
 	)
+	registry.RegisterInterface("lolname", (*data.Data)(nil), &base.Data{})
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Transaction_serviceDesc)
 }
@@ -67,6 +66,6 @@ func messagePrototype() helpers.Message {
 func newMessage(from string, data data.Data) sdkTypes.Msg {
 	return &Message{
 		From: from,
-		Data: data,
+		Data: data.(*base.Data),
 	}
 }

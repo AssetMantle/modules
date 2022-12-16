@@ -29,9 +29,9 @@ func responsePrototype() helpers.QueryResponse {
 }
 func newQueryResponse(collection helpers.Collection, error error) helpers.QueryResponse {
 	var list []*mappable.Mappable
-	for _, i := range collection.GetList() {
-		list = append(list, mappable.NewMappable(i.(*mappable.Mappable).Data).(*mappable.Mappable))
-	}
+	//for _, i := range collection.GetList() {
+	//	list = append(list, mappable.NewMappable(i.(*mappable.Mappable).Data).(*mappable.Mappable))
+	//}
 
 	if error != nil {
 		return &QueryResponse{

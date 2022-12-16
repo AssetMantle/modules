@@ -3,7 +3,10 @@
 
 package helpers
 
-import "github.com/cosmos/cosmos-sdk/codec"
+import (
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
+)
 
 // Key SHOULD be derivable from the object it is referencing and SHOULD not be totally arbitrary or sequential
 type Key interface {
@@ -14,4 +17,6 @@ type Key interface {
 	IsPartial() bool
 	// TODO ** check all key impls
 	Equals(Key) bool
+
+	RegisterInterfaces(registry types.InterfaceRegistry)
 }

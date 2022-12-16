@@ -5,10 +5,10 @@ package reveal
 
 import (
 	"context"
+	"github.com/AssetMantle/modules/modules/metas/module/mappable"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/metas/module/key"
-	"github.com/AssetMantle/modules/modules/metas/module/mappable"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -31,7 +31,6 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	message := messageFromInterface(msg)
 	dataID := baseIDs.GenerateDataID(message.Data)
 	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(dataID))
-
 	data := metas.Get(key.NewKey(dataID))
 	if data != nil {
 		return newTransactionResponse(constants.EntityAlreadyExists)

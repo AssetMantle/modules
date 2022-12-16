@@ -5,6 +5,7 @@ package helpers
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 )
 
 type Mappable interface {
@@ -13,4 +14,5 @@ type Mappable interface {
 	//MarshalTo([]byte) (int, error)
 	GetKey() Key
 	RegisterCodec(*codec.LegacyAmino)
+	RegisterInterfaces(registry types.InterfaceRegistry)
 }

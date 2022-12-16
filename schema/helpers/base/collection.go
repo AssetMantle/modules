@@ -57,7 +57,7 @@ func (collection collection) Fetch(key helpers.Key) helpers.Collection {
 }
 func (collection collection) Add(mappable helpers.Mappable) helpers.Collection {
 	collection.Key = nil
-	collection.mapper.Create(collection.context, mappable)
+	collection.mapper.Create(collection.context, mappable.(*Mappable))
 	collection.List = append(collection.List, mappable)
 
 	return collection
