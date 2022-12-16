@@ -24,4 +24,7 @@ type List interface {
 	Add(...traits.Listable) List                    // TODO prevent compare panic
 	Remove(...traits.Listable) List                 // TODO prevent compare panic
 	Mutate(...traits.Listable) List                 // TODO prevent compare panic
+
+	// Sanitize List
+	Sanitize() (List, error)
 }
