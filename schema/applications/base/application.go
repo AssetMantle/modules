@@ -16,7 +16,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 	serverTypes "github.com/cosmos/cosmos-sdk/server/types"
@@ -121,6 +120,8 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/applications"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 type application struct {
@@ -128,7 +129,7 @@ type application struct {
 
 	moduleBasicManager module.BasicManager
 
-	codec.Codec
+	codec helpers.Codec
 
 	enabledWasmProposalTypeList []wasm.ProposalType
 	moduleAccountPermissions    map[string][]string
@@ -157,8 +158,8 @@ func (application application) GetDefaultClientHome() string {
 func (application application) GetModuleBasicManager() module.BasicManager {
 	return application.moduleBasicManager
 }
-func (application application) GetCodec() codec.Codec {
-	return application.Codec
+func (application application) GetCodec() helpers.Codec {
+	return application.codec
 }
 func (application application) LoadHeight(height int64) error {
 	return application.BaseApp.LoadVersion(height)
@@ -331,11 +332,11 @@ func (application application) RegisterTxService(context client.Context) {
 func (application application) RegisterTendermintService(context client.Context) {
 	tmservice.RegisterTendermintService(application.BaseApp.GRPCQueryRouter(), context, context.InterfaceRegistry)
 }
-func (application application) Initialize(logger tendermintLog.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, txConfig client.TxConfig, interfaceRegistry types.InterfaceRegistry, legacyAmino *codec.LegacyAmino, appOptions serverTypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
-	application.BaseApp = *baseapp.NewBaseApp(application.name, logger, db, txConfig.TxDecoder(), baseAppOptions...)
+func (application application) Initialize(logger tendermintLog.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, appOptions serverTypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
+	application.BaseApp = *baseapp.NewBaseApp(application.name, logger, db, application.GetCodec().TxDecoder(), baseAppOptions...)
 	application.BaseApp.SetCommitMultiStoreTracer(traceStore)
 	application.BaseApp.SetVersion(version.Version)
-	application.BaseApp.SetInterfaceRegistry(interfaceRegistry)
+	application.BaseApp.SetInterfaceRegistry(application.GetCodec())
 
 	application.keys = sdkTypes.NewKVStoreKeys(
 		authTypes.StoreKey,
@@ -370,7 +371,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 
 	ParamsKeeper := paramsKeeper.NewKeeper(
 		application.GetCodec(),
-		legacyAmino,
+		application.GetCodec().GetLegacyAmino(),
 		application.keys[paramsTypes.StoreKey],
 		transientStoreKeys[paramsTypes.TStoreKey],
 	)
@@ -560,7 +561,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 	splitsModule := splits.Prototype().Initialize(
 		application.keys[splits.Prototype().Name()],
 		ParamsKeeper.Subspace(splits.Prototype().Name()),
-		supplyKeeper,
+		BankKeeper,
 		identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
 	)
 	assetsModule := assets.Prototype().Initialize(
@@ -594,7 +595,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 	)
 
 	application.moduleManager = module.NewManager(
-		genutil.NewAppModule(AccountKeeper, application.stakingKeeper, application.BaseApp.DeliverTx, txConfig),
+		genutil.NewAppModule(AccountKeeper, application.stakingKeeper, application.BaseApp.DeliverTx, application.GetCodec()),
 		auth.NewAppModule(application.GetCodec(), AccountKeeper, nil),
 		vesting.NewAppModule(AccountKeeper, BankKeeper),
 		bank.NewAppModule(application.GetCodec(), BankKeeper, AccountKeeper),
@@ -607,8 +608,8 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		staking.NewAppModule(application.GetCodec(), application.stakingKeeper, AccountKeeper, BankKeeper),
 		upgrade.NewAppModule(UpgradeKeeper),
 		evidence.NewAppModule(EvidenceKeeper),
-		feeGrantModule.NewAppModule(application.GetCodec(), AccountKeeper, BankKeeper, FeeGrantKeeper, interfaceRegistry),
-		authzModule.NewAppModule(application.GetCodec(), AuthzKeeper, AccountKeeper, BankKeeper, interfaceRegistry),
+		feeGrantModule.NewAppModule(application.GetCodec(), AccountKeeper, BankKeeper, FeeGrantKeeper, application.GetCodec()),
+		authzModule.NewAppModule(application.GetCodec(), AuthzKeeper, AccountKeeper, BankKeeper, application.GetCodec()),
 		ibc.NewAppModule(IBCKeeper),
 		params.NewAppModule(ParamsKeeper),
 		ibcTransfer.NewAppModule(IBCTransferKeeper),
@@ -696,7 +697,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		splits.Prototype().Name(),
 	)
 	application.moduleManager.RegisterInvariants(&application.crisisKeeper)
-	application.moduleManager.RegisterRoutes(application.BaseApp.Router(), application.BaseApp.QueryRouter(), legacyAmino)
+	application.moduleManager.RegisterRoutes(application.BaseApp.Router(), application.BaseApp.QueryRouter(), application.GetCodec().GetLegacyAmino())
 
 	configurator := module.NewConfigurator(application.GetCodec(), application.MsgServiceRouter(), application.GRPCQueryRouter())
 	application.moduleManager.RegisterServices(configurator)
@@ -705,8 +706,8 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		auth.NewAppModule(application.GetCodec(), AccountKeeper, authSimulation.RandomGenesisAccounts),
 		bank.NewAppModule(application.GetCodec(), BankKeeper, AccountKeeper),
 		capability.NewAppModule(application.GetCodec(), *CapabilityKeeper),
-		feeGrantModule.NewAppModule(application.GetCodec(), AccountKeeper, BankKeeper, FeeGrantKeeper, interfaceRegistry),
-		authzModule.NewAppModule(application.GetCodec(), AuthzKeeper, AccountKeeper, BankKeeper, interfaceRegistry),
+		feeGrantModule.NewAppModule(application.GetCodec(), AccountKeeper, BankKeeper, FeeGrantKeeper, application.GetCodec()),
+		authzModule.NewAppModule(application.GetCodec(), AuthzKeeper, AccountKeeper, BankKeeper, application.GetCodec()),
 		gov.NewAppModule(application.GetCodec(), GovKeeper, AccountKeeper, BankKeeper),
 		mint.NewAppModule(application.GetCodec(), MintKeeper, AccountKeeper),
 		staking.NewAppModule(application.GetCodec(), application.stakingKeeper, AccountKeeper, BankKeeper),
@@ -740,7 +741,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		ante.NewSetPubKeyDecorator(AccountKeeper),
 		ante.NewValidateSigCountDecorator(AccountKeeper),
 		ante.NewSigGasConsumeDecorator(AccountKeeper, ante.DefaultSigVerificationGasConsumer),
-		ante.NewSigVerificationDecorator(AccountKeeper, txConfig.SignModeHandler()),
+		ante.NewSigVerificationDecorator(AccountKeeper, application.GetCodec().SignModeHandler()),
 		ante.NewIncrementSequenceDecorator(AccountKeeper),
 		ibcAnte.NewAnteDecorator(IBCKeeper),
 	))
@@ -835,13 +836,14 @@ func NewApplication(name string, moduleBasicManager module.BasicManager, enabled
 	return &application{
 		name:                        name,
 		moduleBasicManager:          moduleBasicManager,
-		codec:                       makeCodec(moduleBasicManager),
+		codec:                       base.NewCodec(),
 		enabledWasmProposalTypeList: enabledWasmProposalTypeList,
 		moduleAccountPermissions:    moduleAccountPermissions,
 		tokenReceiveAllowedModules:  tokenReceiveAllowedModules,
 	}
 }
 
+// TODO move upgrade configuration input to method parameter input
 const (
 	upgradeName = "v0.4.0"
 
