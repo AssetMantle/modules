@@ -10,7 +10,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys"
@@ -30,9 +29,7 @@ func TestHandler(t *testing.T) {
 	Codec.RegisterConcrete(request{}, "request", nil)
 	Codec.RegisterConcrete(response{}, "response", nil)
 
-	clientContext := context.NewCLIContext().WithCodec(Codec)
-
-	handler := handler(clientContext)
+	handler := handler(context)
 
 	viper.Set(flags.FlagKeyringBackend, keys.BackendTest)
 	viper.Set(flags.FlagHome, t.TempDir())
@@ -41,7 +38,7 @@ func TestHandler(t *testing.T) {
 	require.NoError(t, err)
 
 	router := mux.NewRouter()
-	RegisterRESTRoutes(clientContext, router)
+	RegisterRESTRoutes(context, router)
 
 	t.Cleanup(func() {
 		_ = keyring.Delete("keyName1", "", true)

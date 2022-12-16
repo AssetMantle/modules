@@ -5,7 +5,7 @@ package classification
 
 import (
 	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -34,7 +34,7 @@ func (queryRequest queryRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(queryRequest)
 	return err
 }
-func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
 	if classificationID, err := baseIDs.ReadClassificationID(cliCommand.ReadString(constants.ClassificationID)); err != nil {
 		return queryRequest{}, err
 	} else {

@@ -8,9 +8,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
+	"github.com/cosmos/go-bip39"
 
 	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -19,10 +20,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-func handler(cliContext context.CLIContext) http.HandlerFunc {
+func handler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		var request request
-		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &request) {
+		if !rest.ReadRESTReq(responseWriter, httpRequest, context.Codec, &request) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
@@ -83,10 +84,10 @@ func handler(cliContext context.CLIContext) http.HandlerFunc {
 		}
 
 		keyOutput.Mnemonic = request.Mnemonic
-		rest.PostProcessResponse(responseWriter, cliContext, newResponse(keyOutput, nil))
+		rest.PostProcessResponse(responseWriter, context, newResponse(keyOutput, nil))
 	}
 }
 
-func RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
-	router.HandleFunc("/keys/add", handler(cliContext)).Methods("POST")
+func RegisterRESTRoutes(context client.Context, router *mux.Router) {
+	router.HandleFunc("/keys/add", handler(context)).Methods("POST")
 }

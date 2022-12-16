@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -28,14 +28,13 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, context.CLIContext, string, string, lists.PropertyList, lists.PropertyList, string, sdkTypes.AccAddress, rest.BaseReq) {
+func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, string, lists.PropertyList, lists.PropertyList, string, sdkTypes.AccAddress, rest.BaseReq) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.IdentityID, constants.MutableMetaProperties, constants.MutableProperties})
-	cliContext := context.NewCLIContext().WithCodec(legacyAmino)
 
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
@@ -51,7 +50,7 @@ func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, cont
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 
-	return legacyAmino, cliCommand, cliContext, mutableMetaPropertiesString, mutablePropertiesString, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, testBaseReq
+	return legacyAmino, cliCommand, context, mutableMetaPropertiesString, mutablePropertiesString, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, testBaseReq
 }
 
 func Test_newTransactionRequest(t *testing.T) {
@@ -97,7 +96,7 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	_, cliCommand, cliContext, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, testBaseReq := createTestInput(t)
+	_, cliCommand, context, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, testBaseReq := createTestInput(t)
 	type fields struct {
 		BaseReq               rest.BaseReq
 		FromID                string
@@ -107,7 +106,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
-		cliContext context.CLIContext
+		context    client.Context
 	}
 	tests := []struct {
 		name    string
@@ -116,7 +115,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand: cliCommand, cliContext: cliContext}, transactionRequest{cliCommand.ReadBaseReq(cliContext), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.IdentityID), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
+		{"+ve", fields{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand: cliCommand, context: context}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.IdentityID), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -127,7 +126,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				MutableMetaProperties: tt.fields.MutableMetaProperties,
 				MutableProperties:     tt.fields.MutableProperties,
 			}
-			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.cliContext)
+			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -184,7 +183,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 }
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
-	_, _, cliContext, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, testBaseReq := createTestInput(t)
+	_, _, context, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, testBaseReq := createTestInput(t)
 
 	type fields struct {
 		BaseReq               rest.BaseReq
@@ -198,7 +197,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   rest.BaseReq
 	}{
-		{"+ve", fields{}, rest.BaseReq{From: cliContext.GetFromAddress().String(), ChainID: cliContext.ChainID, Simulate: cliContext.Simulate}},
+		{"+ve", fields{}, rest.BaseReq{From: context.GetFromAddress().String(), ChainID: context.ChainID, Simulate: context.Simulate}},
 		{"+ve", fields{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, testBaseReq},
 	}
 	for _, tt := range tests {

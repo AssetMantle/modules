@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -88,7 +88,6 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ToID, constants.ClassificationID, constants.MaintainedProperties, constants.CanMintAsset, constants.CanBurnAsset, constants.CanRenumerateAsset, constants.CanAddMaintainer, constants.CanRemoveMaintainer, constants.CanMutateMaintainer})
-	cliContext := context.NewCLIContext().WithCodec(codec.NewLegacyAmino()).WithFromAddress(fromAccAddress).WithChainID("test")
 	viper.Set(constants.FromID.GetName(), testFromID.String())
 	viper.Set(constants.ToID.GetName(), testFromID.String())
 	viper.Set(constants.ClassificationID.GetName(), testClassificationID.String())
@@ -114,7 +113,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
-		cliContext context.CLIContext
+		context    client.Context
 	}
 	tests := []struct {
 		name    string
@@ -123,7 +122,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.String(), testFromID.String(), testClassificationID.String(), maintainedPropertyString, true, true, true, true, true, true}, args{cliCommand, cliContext}, newTransactionRequest(testBaseRequest, testFromID.String(), testFromID.String(), testClassificationID.String(), maintainedPropertyString, true, true, true, true, true, true), false},
+		{"+ve", fields{testBaseRequest, testFromID.String(), testFromID.String(), testClassificationID.String(), maintainedPropertyString, true, true, true, true, true, true}, args{cliCommand, context}, newTransactionRequest(testBaseRequest, testFromID.String(), testFromID.String(), testClassificationID.String(), maintainedPropertyString, true, true, true, true, true, true), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -140,7 +139,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
 				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
 			}
-			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.cliContext)
+			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return

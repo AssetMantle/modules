@@ -5,7 +5,7 @@ package queuing
 
 import (
 	"github.com/Shopify/sarama"
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	dbm "github.com/tendermint/tm-db"
@@ -23,23 +23,23 @@ type kafkaMsg struct {
 }
 
 // NewKafkaMsgFromRest : makes a msg to send to kafka queue
-func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseReq, cliCtx context.CLIContext) kafkaMsg {
+func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseReq, context client.Context) kafkaMsg {
 	kafkaCtx := kafkaCliCtx{
-		OutputFormat:  cliCtx.OutputFormat,
-		ChainID:       cliCtx.ChainID,
-		Height:        cliCtx.Height,
-		HomeDir:       cliCtx.HomeDir,
-		NodeURI:       cliCtx.NodeURI,
-		From:          cliCtx.From,
-		TrustNode:     cliCtx.TrustNode,
-		UseLedger:     cliCtx.UseLedger,
-		BroadcastMode: cliCtx.BroadcastMode,
-		Simulate:      cliCtx.Simulate,
-		GenerateOnly:  cliCtx.GenerateOnly,
-		FromAddress:   cliCtx.FromAddress,
-		FromName:      cliCtx.FromName,
-		Indent:        cliCtx.Indent,
-		SkipConfirm:   cliCtx.SkipConfirm,
+		OutputFormat:  context.OutputFormat,
+		ChainID:       context.ChainID,
+		Height:        context.Height,
+		HomeDir:       context.HomeDir,
+		NodeURI:       context.NodeURI,
+		From:          context.From,
+		TrustNode:     context.TrustNode,
+		UseLedger:     context.UseLedger,
+		BroadcastMode: context.BroadcastMode,
+		Simulate:      context.Simulate,
+		GenerateOnly:  context.GenerateOnly,
+		FromAddress:   context.FromAddress,
+		FromName:      context.FromName,
+		Indent:        context.Indent,
+		SkipConfirm:   context.SkipConfirm,
 	}
 
 	// TODO return pointer
@@ -52,24 +52,24 @@ func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseRe
 }
 
 // cliCtxFromKafkaMsg : sets the transaction and cli contexts again to consume
-func cliCtxFromKafkaMsg(kafkaMsg kafkaMsg, cliContext context.CLIContext) context.CLIContext {
-	cliContext.OutputFormat = kafkaMsg.KafkaCliCtx.OutputFormat
-	cliContext.ChainID = kafkaMsg.KafkaCliCtx.ChainID
-	cliContext.Height = kafkaMsg.KafkaCliCtx.Height
-	cliContext.HomeDir = kafkaMsg.KafkaCliCtx.HomeDir
-	cliContext.NodeURI = kafkaMsg.KafkaCliCtx.NodeURI
-	cliContext.From = kafkaMsg.KafkaCliCtx.From
-	cliContext.TrustNode = kafkaMsg.KafkaCliCtx.TrustNode
-	cliContext.UseLedger = kafkaMsg.KafkaCliCtx.UseLedger
-	cliContext.BroadcastMode = kafkaMsg.KafkaCliCtx.BroadcastMode
-	cliContext.Simulate = kafkaMsg.KafkaCliCtx.Simulate
-	cliContext.GenerateOnly = kafkaMsg.KafkaCliCtx.GenerateOnly
-	cliContext.FromAddress = kafkaMsg.KafkaCliCtx.FromAddress
-	cliContext.FromName = kafkaMsg.KafkaCliCtx.FromName
-	cliContext.Indent = kafkaMsg.KafkaCliCtx.Indent
-	cliContext.SkipConfirm = kafkaMsg.KafkaCliCtx.SkipConfirm
+func cliCtxFromKafkaMsg(kafkaMsg kafkaMsg, context client.Context) client.Context {
+	context.OutputFormat = kafkaMsg.KafkaCliCtx.OutputFormat
+	context.ChainID = kafkaMsg.KafkaCliCtx.ChainID
+	context.Height = kafkaMsg.KafkaCliCtx.Height
+	context.HomeDir = kafkaMsg.KafkaCliCtx.HomeDir
+	context.NodeURI = kafkaMsg.KafkaCliCtx.NodeURI
+	context.From = kafkaMsg.KafkaCliCtx.From
+	context.TrustNode = kafkaMsg.KafkaCliCtx.TrustNode
+	context.UseLedger = kafkaMsg.KafkaCliCtx.UseLedger
+	context.BroadcastMode = kafkaMsg.KafkaCliCtx.BroadcastMode
+	context.Simulate = kafkaMsg.KafkaCliCtx.Simulate
+	context.GenerateOnly = kafkaMsg.KafkaCliCtx.GenerateOnly
+	context.FromAddress = kafkaMsg.KafkaCliCtx.FromAddress
+	context.FromName = kafkaMsg.KafkaCliCtx.FromName
+	context.Indent = kafkaMsg.KafkaCliCtx.Indent
+	context.SkipConfirm = kafkaMsg.KafkaCliCtx.SkipConfirm
 
-	return cliContext
+	return context
 }
 
 // kafkaCliCtx : client tx without codec

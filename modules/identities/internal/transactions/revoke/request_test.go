@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types"
@@ -89,7 +89,6 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	legacyAmino.Seal()
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ToID, constants.ClassificationID})
-	cliContext := context.NewCLIContext().WithCodec(legacyAmino)
 	testBaseReq, _, testFromID, testToID, testClassificationID := createTestInput(t)
 	type fields struct {
 		BaseReq          rest.BaseReq
@@ -99,7 +98,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
-		cliContext context.CLIContext
+		context    client.Context
 	}
 	tests := []struct {
 		name    string
@@ -108,7 +107,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{cliCommand, cliContext}, transactionRequest{cliCommand.ReadBaseReq(cliContext), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.ToID), cliCommand.ReadString(constants.ClassificationID)}, false},
+		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{cliCommand, context}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.ToID), cliCommand.ReadString(constants.ClassificationID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -118,7 +117,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				ToID:             tt.fields.ToID,
 				ClassificationID: tt.fields.ClassificationID,
 			}
-			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.cliContext)
+			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return

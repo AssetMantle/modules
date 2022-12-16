@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -24,9 +24,6 @@ func initialize() (helpers.CLICommand, []helpers.CLIFlag) {
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
-
-	cliContext := context.NewCLIContext().WithCodec(legacyAmino)
-	cliContext = cliContext.WithChainID("chainID")
 
 	testCliFlag := NewCLIFlag("name", "value", ",usage")
 	testCliFlag2 := NewCLIFlag("name2", int64(-1), ",usage")
@@ -107,7 +104,7 @@ func Test_cliCommand_ReadBaseReq(t *testing.T) {
 		cliFlagList []helpers.CLIFlag
 	}
 	type args struct {
-		cliContext context.CLIContext
+		context client.Context
 	}
 	tests := []struct {
 		name   string
@@ -116,8 +113,8 @@ func Test_cliCommand_ReadBaseReq(t *testing.T) {
 		want   rest.BaseReq
 	}{
 
-		{"+ve", fields{"", "", "", testCliFlagList}, args{context.CLIContext{ChainID: "chainID"}}, rest.BaseReq{ChainID: "chainID"}},
-		{"-ve for nil", fields{"", "", "", nil}, args{context.CLIContext{ChainID: ""}}, rest.BaseReq{ChainID: ""}},
+		{"+ve", fields{"", "", "", testCliFlagList}, args{client.Context{ChainID: "chainID"}}, rest.BaseReq{ChainID: "chainID"}},
+		{"-ve for nil", fields{"", "", "", nil}, args{client.Context{ChainID: ""}}, rest.BaseReq{ChainID: ""}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -127,7 +124,7 @@ func Test_cliCommand_ReadBaseReq(t *testing.T) {
 				long:        tt.fields.long,
 				cliFlagList: tt.fields.cliFlagList,
 			}
-			if got := cliCommand.ReadBaseReq(tt.args.cliContext); !reflect.DeepEqual(got, tt.want) {
+			if got := cliCommand.ReadBaseReq(tt.args.context); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ReadBaseReq() = %v, want %v", got, tt.want)
 			}
 		})

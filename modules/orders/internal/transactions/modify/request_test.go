@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -93,7 +93,6 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.OrderID, constants.TakerOwnableSplit, constants.MakerOwnableSplit, constants.ExpiresIn, constants.MutableMetaProperties, constants.MutableProperties})
-	cliContext := context.NewCLIContext().WithCodec(codec.NewLegacyAmino()).WithFromAddress(fromAccAddress).WithChainID("test")
 	viper.Set(constants.FromID.GetName(), testFromID.String())
 	viper.Set(constants.OrderID.GetName(), testOrderID.String())
 	viper.Set(constants.TakerOwnableSplit.GetName(), takerOwnableSplit.String())
@@ -113,7 +112,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
-		cliContext context.CLIContext
+		context    client.Context
 	}
 	tests := []struct {
 		name    string
@@ -122,7 +121,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.String(), testOrderID.String(), takerOwnableSplit.String(), makerOwnableSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, cliContext}, transactionRequest{testBaseRequest, testFromID.String(), testOrderID.String(), takerOwnableSplit.String(), makerOwnableSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, false},
+		{"+ve", fields{testBaseRequest, testFromID.String(), testOrderID.String(), takerOwnableSplit.String(), makerOwnableSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, context}, transactionRequest{testBaseRequest, testFromID.String(), testOrderID.String(), takerOwnableSplit.String(), makerOwnableSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -136,7 +135,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				MutableMetaProperties: tt.fields.MutableMetaProperties,
 				MutableProperties:     tt.fields.MutableProperties,
 			}
-			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.cliContext)
+			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return

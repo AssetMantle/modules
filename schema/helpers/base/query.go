@@ -6,8 +6,7 @@ package base
 import (
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
@@ -30,16 +29,19 @@ type query struct {
 var _ helpers.Query = (*query)(nil)
 
 func (query query) GetName() string { return query.name }
-func (query query) Command(legacyAmino *codec.LegacyAmino) *cobra.Command {
+func (query query) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
-		cliContext := context.NewCLIContext().WithCodec(legacyAmino)
-
-		queryRequest, err := query.requestPrototype().FromCLI(query.cliCommand, cliContext)
+		context, err := client.GetClientTxContext(command)
 		if err != nil {
 			return err
 		}
 
-		responseBytes, _, err := query.query(queryRequest, cliContext)
+		queryRequest, err := query.requestPrototype().FromCLI(query.cliCommand, context)
+		if err != nil {
+			return err
+		}
+
+		responseBytes, _, err := query.query(queryRequest, context)
 		if err != nil {
 			return err
 		}
@@ -49,7 +51,7 @@ func (query query) Command(legacyAmino *codec.LegacyAmino) *cobra.Command {
 			return err
 		}
 
-		return cliContext.PrintOutput(response)
+		return context.PrintProto(response)
 	}
 
 	return query.cliCommand.CreateCommand(runE)
@@ -63,11 +65,11 @@ func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciType
 	return query.queryKeeper.Enquire(context, request).Encode()
 }
 
-func (query query) RESTQueryHandler(outerCliContext context.CLIContext) http.HandlerFunc {
+func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		responseWriter.Header().Set("Content-Type", "application/json")
 
-		cliContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, outerCliContext, httpRequest)
+		context, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, context, httpRequest)
 		if !ok {
 			return
 		}
@@ -78,14 +80,14 @@ func (query query) RESTQueryHandler(outerCliContext context.CLIContext) http.Han
 			return
 		}
 
-		response, height, err := query.query(queryRequest, cliContext)
+		response, height, err := query.query(queryRequest, context)
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		cliContext = cliContext.WithHeight(height)
-		rest.PostProcessResponse(responseWriter, cliContext, response)
+		context = context.WithHeight(height)
+		rest.PostProcessResponse(responseWriter, context, response)
 	}
 }
 func (query query) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Query {
@@ -93,13 +95,13 @@ func (query query) Initialize(mapper helpers.Mapper, parameters helpers.Paramete
 	return query
 }
 
-func (query query) query(queryRequest helpers.QueryRequest, cliContext context.CLIContext) ([]byte, int64, error) {
+func (query query) query(queryRequest helpers.QueryRequest, context client.Context) ([]byte, int64, error) {
 	bytes, err := queryRequest.Encode()
 	if err != nil {
 		return nil, 0, err
 	}
 
-	return cliContext.QueryWithData("custom"+"/"+query.moduleName+"/"+query.name, bytes)
+	return context.QueryWithData("custom"+"/"+query.moduleName+"/"+query.name, bytes)
 }
 
 func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, flagList ...helpers.CLIFlag) helpers.Query {

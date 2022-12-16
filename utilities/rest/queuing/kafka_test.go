@@ -6,7 +6,6 @@ package queuing
 import (
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -57,9 +56,8 @@ func Test_Kafka(t *testing.T) {
 		testKafkaState := NewKafkaState(kafkaPorts)
 		bank.RegisterCodec(legacyAmino)
 		message := bank.NewMsgSend(fromAccAddress, fromAccAddress, sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(123))))
-		cliContext := context.NewCLIContext().WithCodec(legacyAmino)
 
-		testKafkaMsg := NewKafkaMsgFromRest(message, ticketID, testBaseReq, cliContext)
+		testKafkaMsg := NewKafkaMsgFromRest(message, ticketID, testBaseReq, context)
 		SendToKafka(testKafkaMsg, legacyAmino)
 
 		kafkaMsg := kafkaTopicConsumer("Topic", testKafkaState.Consumers, legacyAmino)

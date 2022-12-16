@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
@@ -151,7 +151,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
-		in1        context.CLIContext
+		context    client.Context
 	}
 	tests := []struct {
 		name    string
@@ -160,14 +160,14 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testAssetID}, args{cliCommand, context.NewCLIContext()}, newQueryRequest(testAssetID), false},
+		{"+ve", fields{testAssetID}, args{cliCommand, context}, newQueryRequest(testAssetID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			qu := queryRequest{
 				AssetID: tt.fields.AssetID,
 			}
-			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.in1)
+			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return
