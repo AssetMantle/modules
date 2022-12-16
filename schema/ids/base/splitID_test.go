@@ -16,7 +16,6 @@ var (
 	testIdentityIDPrototype = PrototypeIdentityID()
 	testOwnableIDPrototype  = PrototypeOwnableID()
 	testIdentityID, _       = ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
-	testOwnableID           = NewOwnableID(NewStringID("ownableID"))
 )
 
 func TestNewSplitID(t *testing.T) {
