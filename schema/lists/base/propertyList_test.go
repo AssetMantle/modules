@@ -4,6 +4,7 @@
 package base
 
 import (
+	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
 
@@ -76,8 +77,9 @@ func Test_propertyList_Add(t *testing.T) {
 		want   lists.PropertyList
 	}{
 		{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData"))}...)...)}, args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData")), baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)},
-		{"-ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData"))}...)...)}, args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewDecData(sdkTypes.NewDec(1)))}}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData")), baseProperties.NewMetaProperty(NewStringID("ID1"), NewDecData(sdkTypes.NewDec(1)))}...)}, // TODO: Should fail as add method should not be able to mutate/add property with existing key
-		{"+ve with nil", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData"))}...)...)}, args{nil}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData"))}...)},                                                                                                                                                                                  // TODO: Should fail as add method should not be able to mutate/add property with existing key
+		{"+ve with nil", fields{nil}, args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)},
+		{"-ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData"))}...)...)}, args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewDecData(sdkTypes.NewDec(1)))}}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData")), baseProperties.NewMetaProperty(NewStringID("ID1"), NewDecData(sdkTypes.NewDec(1)))}...)},
+		{"+ve with nil data to add", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData"))}...)...)}, args{nil}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("ID1"), NewStringData("ImmutableData"))}...)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -101,6 +103,7 @@ func Test_propertyList_GetList(t *testing.T) {
 		want   []properties.Property
 	}{
 		{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, []properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}},
+		{"+ve with nil", fields{nil}, []properties.Property{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -122,22 +125,26 @@ func Test_propertyList_GetProperty(t *testing.T) {
 		propertyID ids.PropertyID
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   properties.Property
+		name        string
+		fields      fields
+		args        args
+		want        properties.Property
+		shouldPanic bool
 	}{
-		{"+ve Meta", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))}, baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))},
-		{"+ve Mesa", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMesaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))}, baseProperties.NewMesaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))},
-		{"-ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{propertyID: nil}, baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}, // TODO: panics if propertyID is nil
-		{"-ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewEmptyMetaPropertyFromID(baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D")))}...)...)}, args{baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))}, baseProperties.NewEmptyMetaPropertyFromID(baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D")))},
+		{"+ve Meta", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))}, baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1))), false},
+		{"+ve Mesa", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMesaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))}, baseProperties.NewMesaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1))), false},
+		{"-ve with nil arg", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{propertyID: nil}, baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1))), true}, // TODO: panics if propertyID is nil
+		{"-ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewEmptyMetaPropertyFromID(baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D")))}...)...)}, args{baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))}, baseProperties.NewEmptyMetaPropertyFromID(baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))), false},
+		{"+ve with nil", fields{nil}, args{baseIDs.NewPropertyID(NewStringID("supply"), NewStringID("D"))}, nil, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			propertyList := propertyList{
 				List: tt.fields.List,
 			}
-			if got := propertyList.GetProperty(tt.args.propertyID); !reflect.DeepEqual(got, tt.want) {
+			if tt.shouldPanic {
+				assert.Panics(t, func() { propertyList.GetProperty(tt.args.propertyID) })
+			} else if got := propertyList.GetProperty(tt.args.propertyID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetProperty() = %v, want %v", got, tt.want)
 			}
 		})
@@ -154,6 +161,7 @@ func Test_propertyList_GetPropertyIDList(t *testing.T) {
 		want   lists.IDList
 	}{
 		{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, NewIDList().Add(baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1))).GetID())},
+		{"+ve with nil list", fields{nil}, NewIDList()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -181,7 +189,8 @@ func Test_propertyList_Mutate(t *testing.T) {
 		want   lists.PropertyList
 	}{
 		{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(2)))}}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(2)))}...)},
-		// {"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewStringData("test"))}}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewStringData("test"))}...)}, //TODO: Should handle error if different property data is tried to mutate
+		{"+ve with nil", fields{nil}, args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(2)))}}, NewPropertyList([]properties.Property{}...)},
+		{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewStringData("test"))}}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)}, //TODO: Should handle error if different property data is tried to mutate
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -208,6 +217,7 @@ func Test_propertyList_Remove(t *testing.T) {
 		args   args
 		want   lists.PropertyList
 	}{
+		{"+ve with nil", fields{nil}, args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}}, NewPropertyList([]properties.Property{}...)},
 		{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1))), baseProperties.NewMetaProperty(NewStringID("supply1"), NewDecData(sdkTypes.NewDec(2)))}...)...)}, args{[]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply1"), NewDecData(sdkTypes.NewDec(2)))}}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)},
 	}
 	for _, tt := range tests {
@@ -233,6 +243,7 @@ func Test_propertyList_ScrubData(t *testing.T) {
 	}{
 		{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1)))}...)...)}, NewPropertyList([]properties.Property{baseProperties.NewMetaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1))).ScrubData()}...)},
 		{"+ve", fields{NewList(propertiesToListables([]properties.Property{baseProperties.NewMesaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1))), baseProperties.NewMetaProperty(NewStringID("ID"), NewStringData("Test"))}...)...)}, NewPropertyList([]properties.Property{baseProperties.NewMesaProperty(NewStringID("supply"), NewDecData(sdkTypes.NewDec(1))), baseProperties.NewMetaProperty(NewStringID("ID"), NewStringData("Test")).ScrubData()}...)},
+		{"+ve with nil", fields{nil}, NewPropertyList([]properties.Property{}...)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -246,6 +257,7 @@ func Test_propertyList_ScrubData(t *testing.T) {
 	}
 }
 
+// decData Mocks
 type decData struct {
 	Value sdkTypes.Dec `json:"value"`
 }
