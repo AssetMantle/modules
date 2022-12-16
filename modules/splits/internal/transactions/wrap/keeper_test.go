@@ -221,7 +221,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
 				parameters:            tt.fields.parameters,
-				supplyKeeper:          tt.fields.supplyKeeper,
+				bankKeeper:            tt.fields.supplyKeeper,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
 			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.parameters, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
@@ -260,7 +260,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
 				parameters:            tt.fields.parameters,
-				supplyKeeper:          tt.fields.supplyKeeper,
+				bankKeeper:            tt.fields.supplyKeeper,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
 			if got := transactionKeeper.Transact(tt.args.context, tt.args.msg); !reflect.DeepEqual(got, tt.want) {
