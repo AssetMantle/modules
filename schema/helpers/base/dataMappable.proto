@@ -1,0 +1,8 @@
+syntax="proto3";
+
+import "schema/data/base/data.proto";
+package base;
+
+message DataMappable {
+    base.Data data = 1;
+}
