@@ -68,6 +68,7 @@ func (transaction transaction) Command() *cobra.Command {
 	return transaction.cliCommand.CreateCommand(runE)
 }
 
+//TODO: Replace EmitEvent with EmitTypedEvent
 func (transaction transaction) HandleMessage(context sdkTypes.Context, message sdkTypes.Msg) (*sdkTypes.Result, error) {
 	if transactionResponse := transaction.keeper.Transact(context, message); !transactionResponse.IsSuccessful() {
 		return nil, transactionResponse.GetError()
