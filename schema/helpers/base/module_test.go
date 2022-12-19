@@ -23,7 +23,6 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	parameters2 "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
-	helpersTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers"
 	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
@@ -50,7 +49,7 @@ var transactionsPrototype = func() helpers.Transactions {
 	return transactions{[]helpers.Transaction{NewTransaction("TestMessage", "", "", baseTestUtilities.TestTransactionRequestPrototype, baseTestUtilities.TestMessagePrototype,
 		baseTestUtilities.TestTransactionKeeperPrototype)}}
 }
-var blockPrototype = func() helpers.Block { return helpersTestUtilities.TestBlockPrototype() }
+var blockPrototype = func() helpers.Block { return baseTestUtilities.TestBlockPrototype() }
 
 func TestModule(t *testing.T) {
 	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
