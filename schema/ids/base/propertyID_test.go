@@ -4,12 +4,11 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/traits"
 	"reflect"
 	"strings"
 	"testing"
-
-	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/traits"
 )
 
 func createTestInputForPropertyID() (ids.StringID, ids.StringID, ids.PropertyID) {

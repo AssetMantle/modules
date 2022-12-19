@@ -4,6 +4,7 @@
 package block
 
 import (
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/std"
@@ -58,7 +59,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Au
 	supplementAuxiliary := supplement.AuxiliaryMock.Initialize(Mapper, Parameters)
 	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(Mapper, Parameters)
 
-	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
+	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 		Height:  1000,
 	}, false, log.NewNopLogger())

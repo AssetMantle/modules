@@ -5,6 +5,7 @@ package maintain
 
 import (
 	"fmt"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"reflect"
 	"testing"
 
@@ -72,7 +73,7 @@ func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := types.NewContext(commitMultiStore, abciTypes.Header{
+	context := types.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 

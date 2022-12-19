@@ -5,6 +5,7 @@ package verify
 
 import (
 	"fmt"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"reflect"
 	"testing"
 
@@ -55,7 +56,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	identityID := baseIDs.NewIdentityID(classificationID, immutables)
 	permissions := utilities.SetPermissions(true, true, true, true, true, true)
 
-	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
+	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 

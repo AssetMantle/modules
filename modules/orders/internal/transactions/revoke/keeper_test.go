@@ -5,6 +5,7 @@ package revoke
 
 import (
 	"fmt"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"reflect"
 	"testing"
 
@@ -73,7 +74,7 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 	authenticateAuxiliary = authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
 	revokeAuxiliary = revoke.AuxiliaryMock.Initialize(Mapper, Parameters)
 
-	context := types.NewContext(commitMultiStore, abciTypes.Header{
+	context := types.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 

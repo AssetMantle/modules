@@ -1,9 +1,6 @@
 package base
 
 import (
-	"reflect"
-	"testing"
-
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -11,6 +8,8 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"reflect"
+	"testing"
 )
 
 func Test_new_Classification(t *testing.T) {

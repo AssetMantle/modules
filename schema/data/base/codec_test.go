@@ -4,9 +4,8 @@
 package base
 
 import (
-	"testing"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	"testing"
 )
 
 func TestRegisterCodec(t *testing.T) {

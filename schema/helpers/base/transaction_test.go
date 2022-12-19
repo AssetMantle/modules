@@ -6,17 +6,15 @@ package base
 import (
 	"bytes"
 	"encoding/json"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-
+	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 )
 
 func TestTransaction(t *testing.T) {

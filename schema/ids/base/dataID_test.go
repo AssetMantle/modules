@@ -4,17 +4,14 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/ids"
+	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
+	"github.com/AssetMantle/modules/schema/traits"
 	"reflect"
 	"strconv"
 	"testing"
-
-	"github.com/AssetMantle/modules/schema/errors/constants"
-	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
-
-	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/traits"
-
-	"github.com/AssetMantle/modules/schema/ids"
 )
 
 func TestNewDataID(t *testing.T) {
