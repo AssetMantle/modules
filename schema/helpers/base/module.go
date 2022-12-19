@@ -12,7 +12,6 @@ import (
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -208,7 +207,7 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 	return nil, constants.IncorrectMessage
 }
 
-func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace params.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
+func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace paramsTypes.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
 	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)
 
 	module.genesis = module.genesisPrototype().Initialize(module.genesisPrototype().GetMappableList(), module.genesisPrototype().GetParameterList())
