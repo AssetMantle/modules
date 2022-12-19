@@ -93,8 +93,9 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	maintainerCdc := codec.NewLegacyAmino()
 	paramsKeeper := params.NewKeeper(
-		codec.Cdc,
+		maintainerCdc,
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
