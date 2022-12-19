@@ -11,17 +11,23 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
+	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestTransaction(t *testing.T) {
-	codec := base.MakeCodec()
 	context, storeKey, _ := base.SetupTest(t)
+	var legacyAmino = sdkCodec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 	Transaction := NewTransaction("test", "", "", base.TestTransactionRequestPrototype, base.TestMessagePrototype,
 		base.TestTransactionKeeperPrototype).InitializeKeeper(Mapper, parametersPrototype()).(transaction)
@@ -38,7 +44,7 @@ func TestTransaction(t *testing.T) {
 	require.Equal(t, sdkTypes.AccAddress("addr"), message.GetSigners()[0])
 
 	// RegisterLegacyAminoCodec : No Panics
-	require.NotPanics(t, func() { Transaction.RegisterLegacyAminoCodec(codec) })
+	require.NotPanics(t, func() { Transaction.RegisterLegacyAminoCodec(legacyAmino) })
 
 	// Command : No Panics
 	command := Transaction.Command()
@@ -51,7 +57,7 @@ func TestTransaction(t *testing.T) {
 	require.Nil(t, err)
 
 	// RPC ERROR
-	request1 := codec.MustMarshalJSON(base.TransactionRequest{
+	request1 := legacyAmino.MustMarshalJSON(base.TransactionRequest{
 		BaseReq: rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test"},
 		ID:      "ID",
 	})
@@ -63,7 +69,7 @@ func TestTransaction(t *testing.T) {
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 
 	// invalid request
-	request2 := codec.MustMarshalJSON(struct{}{})
+	request2 := legacyAmino.MustMarshalJSON(struct{}{})
 	testRequest2, err := http.NewRequest("GET", "/test", bytes.NewBuffer(request2))
 	require.Nil(t, err)
 	responseRecorder = httptest.NewRecorder()
@@ -72,7 +78,7 @@ func TestTransaction(t *testing.T) {
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 
 	// validate fail
-	request3 := codec.MustMarshalJSON(base.TransactionRequest{
+	request3 := legacyAmino.MustMarshalJSON(base.TransactionRequest{
 		BaseReq: rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"},
 		ID:      "ID",
 	})
@@ -84,7 +90,7 @@ func TestTransaction(t *testing.T) {
 	require.Equal(t, http.StatusUnauthorized, responseRecorder.Code)
 
 	// Simulate RPC error
-	request4 := codec.MustMarshalJSON(base.TransactionRequest{
+	request4 := legacyAmino.MustMarshalJSON(base.TransactionRequest{
 		BaseReq: rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Simulate: true},
 		ID:      "ID",
 	})
@@ -97,7 +103,7 @@ func TestTransaction(t *testing.T) {
 
 	viper.Set(flags.FlagGenerateOnly, true)
 	// Generate Only
-	request5 := codec.MustMarshalJSON(base.TransactionRequest{
+	request5 := legacyAmino.MustMarshalJSON(base.TransactionRequest{
 		BaseReq: rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test"},
 		ID:      "ID",
 	})

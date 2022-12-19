@@ -6,9 +6,12 @@ package base
 import (
 	"testing"
 
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
+	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	parameters2 "github.com/AssetMantle/modules/schema/parameters"
@@ -18,11 +21,14 @@ import (
 
 func TestParameters(t *testing.T) {
 	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
-	codec := baseTestUtilities.MakeCodec()
+	var legacyAmino = sdkCodec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
 	Parameter := baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
 	ParameterList := []parameters2.Parameter{Parameter}
 	Parameters := NewParameters(ParameterList...)
-	subspace := paramsTypes.NewSubspace(codec, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
+	subspace := paramsTypes.NewSubspace(legacyAmino, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
 	subspace.SetParamSet(context, Parameters)
 	Parameters = Parameters.Initialize(subspace).(parameters)
 

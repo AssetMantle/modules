@@ -10,14 +10,12 @@ import (
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -39,13 +37,6 @@ func SetupTest(t *testing.T) (sdkTypes.Context, *sdkTypes.KVStoreKey, *sdkTypes.
 	}, false, log.NewNopLogger())
 
 	return context, storeKey, paramsTransientStoreKeys
-}
-
-func MakeCodec() *codec.LegacyAmino {
-	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
-	std.RegisterLegacyAminoCodec(legacyAmino)
-	return legacyAmino
 }
 
 // key struct, implements helpers.Key

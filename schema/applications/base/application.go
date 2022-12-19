@@ -836,7 +836,7 @@ func NewApplication(name string, moduleBasicManager module.BasicManager, enabled
 	return &application{
 		name:                        name,
 		moduleBasicManager:          moduleBasicManager,
-		codec:                       base.NewCodec(),
+		codec:                       base.CodecPrototype().InitializeAndSeal(),
 		enabledWasmProposalTypeList: enabledWasmProposalTypeList,
 		moduleAccountPermissions:    moduleAccountPermissions,
 		tokenReceiveAllowedModules:  tokenReceiveAllowedModules,
