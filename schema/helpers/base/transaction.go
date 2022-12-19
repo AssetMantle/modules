@@ -5,28 +5,23 @@ package base
 
 import (
 	"encoding/json"
-	"log"
-	"net/http"
-	"reflect"
-	"strings"
-
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/utilities/random"
+	"github.com/AssetMantle/modules/utilities/rest/queuing"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/utilities/random"
-	"github.com/AssetMantle/modules/utilities/rest/queuing"
+	"log"
+	"net/http"
+	"reflect"
 )
 
 type transaction struct {
@@ -124,7 +119,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 		}
 
 		if viper.GetBool(flags.FlagGenerateOnly) {
-			authClient.WriteGenerateStdTxResponse(responseWriter, context, baseReq, []sdkTypes.Msg{msg})
+			tx.WriteGeneratedTxResponse(context, responseWriter, baseReq, []sdkTypes.Msg{msg}...)
 			return
 		}
 
@@ -133,35 +128,46 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 			return
 		}
 
-		var simAndExec bool
-		var gas uint64
-
-		simAndExec, gas, err = flags.ParseGas(baseReq.Gas)
-		if err != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+		gasSetting, err := flags.ParseGasSetting(baseReq.Gas)
+		if rest.CheckBadRequestError(responseWriter, err) {
 			return
 		}
 
-		txBuilder := types.NewTxBuilder(
-			authClient.GetTxEncoder(context.LegacyAmino), baseReq.AccountNumber, baseReq.Sequence, gas, gasAdj,
-			baseReq.Simulate, baseReq.ChainID, baseReq.Memo, baseReq.Fees, baseReq.GasPrices,
-		)
+		transactionFactory := tx.Factory{}.
+			WithFees(baseReq.Fees.String()).
+			WithGasPrices(baseReq.GasPrices.String()).
+			WithAccountNumber(baseReq.AccountNumber).
+			WithSequence(baseReq.Sequence).
+			WithGas(gasSetting.Gas).
+			WithGasAdjustment(gasAdj).
+			WithMemo(baseReq.Memo).
+			WithChainID(baseReq.ChainID).
+			WithSimulateAndExecute(baseReq.Simulate).
+			WithTxConfig(context.TxConfig).
+			WithTimeoutHeight(baseReq.TimeoutHeight)
+
 		msgList := []sdkTypes.Msg{msg}
 
-		if baseReq.Simulate || simAndExec {
+		if baseReq.Simulate || gasSetting.Simulate {
 			if gasAdj < 0 {
 				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, errors.ErrOutOfGas.Error())
 				return
 			}
 
-			txBuilder, err = authClient.EnrichWithGas(txBuilder, context, msgList)
+			_, adjusted, err := tx.CalculateGas(context, transactionFactory, msgList...)
+			if rest.CheckInternalServerError(responseWriter, err) {
+				return
+			}
+
+			transactionFactory = transactionFactory.WithGas(adjusted)
+
 			if err != nil {
 				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 				return
 			}
 
 			if baseReq.Simulate {
-				rest.WriteSimulationResponse(responseWriter, context.Codec, txBuilder.Gas())
+				rest.WriteSimulationResponse(responseWriter, context.LegacyAmino, transactionFactory.Gas())
 				return
 			}
 		}
@@ -169,7 +175,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 		var fromAddress sdkTypes.AccAddress
 		var fromName string
 
-		fromAddress, fromName, err = context.GetFromFields(strings.NewReader(keys.DefaultKeyPass), baseReq.From, viper.GetBool(flags.FlagGenerateOnly))
+		fromAddress, fromName, _, err = client.GetFromFields(context.Keyring, baseReq.From, viper.GetBool(flags.FlagGenerateOnly))
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 			return
@@ -197,27 +203,45 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 			var accountNumber uint64
 			var sequence uint64
 
-			accountNumber, sequence, err = types.NewAccountRetriever(context).GetAccountNumberSequence(fromAddress)
+			accountNumber, sequence, err = types.AccountRetriever{}.GetAccountNumberSequence(context, fromAddress)
 			if err != nil {
 				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 				return
 			}
 
-			txBuilder = txBuilder.WithAccountNumber(accountNumber)
-			txBuilder = txBuilder.WithSequence(sequence)
+			transactionFactory = transactionFactory.WithAccountNumber(accountNumber).WithSequence(sequence)
 
-			var stdMsg []byte
+			var transactionBuilder client.TxBuilder
 
-			stdMsg, err = txBuilder.BuildAndSign(fromName, keys.DefaultKeyPass, msgList)
+			transactionBuilder, err = transactionFactory.BuildUnsignedTx(msgList...)
+
+			if err != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+				return
+			}
+
+			err = tx.Sign(transactionFactory, fromName, transactionBuilder, true)
+
+			if err != nil {
+				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+				return
+			}
+
+			var response *sdkTypes.TxResponse
+
+			var transactionBytes []byte
+
+			transactionBytes, err = context.TxConfig.TxEncoder()(transactionBuilder.GetTx())
+
 			if err != nil {
 				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 				return
 			}
 
 			// broadcast to a node
-			var response sdkTypes.TxResponse
 
-			response, err = context.BroadcastTx(stdMsg)
+			response, err = context.BroadcastTx(transactionBytes)
+
 			if err != nil {
 				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 				return
