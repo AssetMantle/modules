@@ -1,0 +1,8 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/hashID.v1.proto";
+
+message ClassificationID {
+  HashID hash_id = 1;
+}

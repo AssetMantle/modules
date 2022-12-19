@@ -1,0 +1,10 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/identityID.v1.proto";
+import "schema/ids/base/ownableID.v1.proto";
+
+message SplitID {
+  IdentityID owner_id = 1;
+  OwnableID ownable_id = 2;
+}
