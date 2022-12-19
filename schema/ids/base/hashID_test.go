@@ -1,9 +1,10 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/ids"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/ids"
 )
 
 func TestReadHashID(t *testing.T) {

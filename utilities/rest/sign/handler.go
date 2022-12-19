@@ -13,7 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
+	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
@@ -22,7 +22,7 @@ import (
 func handler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		var request request
-		if !rest.ReadRESTReq(responseWriter, httpRequest, context.Codec, &request) {
+		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &request) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
@@ -42,7 +42,7 @@ func handler(context client.Context) http.HandlerFunc {
 		}
 
 		txBuilder := types.NewTxBuilder(
-			authClient.GetTxEncoder(context.Codec), request.BaseRequest.AccountNumber, request.BaseRequest.Sequence, 0, 0,
+			authClient.GetTxEncoder(context.LegacyAmino), request.BaseRequest.AccountNumber, request.BaseRequest.Sequence, 0, 0,
 			request.BaseRequest.Simulate, request.BaseRequest.ChainID, request.BaseRequest.Memo, request.BaseRequest.Fees, request.BaseRequest.GasPrices,
 		)
 

@@ -31,14 +31,12 @@ func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseRe
 		HomeDir:       context.HomeDir,
 		NodeURI:       context.NodeURI,
 		From:          context.From,
-		TrustNode:     context.TrustNode,
 		UseLedger:     context.UseLedger,
 		BroadcastMode: context.BroadcastMode,
 		Simulate:      context.Simulate,
 		GenerateOnly:  context.GenerateOnly,
 		FromAddress:   context.FromAddress,
 		FromName:      context.FromName,
-		Indent:        context.Indent,
 		SkipConfirm:   context.SkipConfirm,
 	}
 
@@ -59,14 +57,12 @@ func cliCtxFromKafkaMsg(kafkaMsg kafkaMsg, context client.Context) client.Contex
 	context.HomeDir = kafkaMsg.KafkaCliCtx.HomeDir
 	context.NodeURI = kafkaMsg.KafkaCliCtx.NodeURI
 	context.From = kafkaMsg.KafkaCliCtx.From
-	context.TrustNode = kafkaMsg.KafkaCliCtx.TrustNode
 	context.UseLedger = kafkaMsg.KafkaCliCtx.UseLedger
 	context.BroadcastMode = kafkaMsg.KafkaCliCtx.BroadcastMode
 	context.Simulate = kafkaMsg.KafkaCliCtx.Simulate
 	context.GenerateOnly = kafkaMsg.KafkaCliCtx.GenerateOnly
 	context.FromAddress = kafkaMsg.KafkaCliCtx.FromAddress
 	context.FromName = kafkaMsg.KafkaCliCtx.FromName
-	context.Indent = kafkaMsg.KafkaCliCtx.Indent
 	context.SkipConfirm = kafkaMsg.KafkaCliCtx.SkipConfirm
 
 	return context
@@ -83,7 +79,6 @@ type kafkaCliCtx struct {
 	BroadcastMode string
 	FromName      string
 	Height        int64
-	TrustNode     bool
 	UseLedger     bool
 	Simulate      bool
 	GenerateOnly  bool

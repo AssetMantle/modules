@@ -4,10 +4,11 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestNewAuxiliary(t *testing.T) {
