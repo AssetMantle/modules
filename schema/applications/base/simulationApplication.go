@@ -89,12 +89,8 @@ import (
 )
 
 var (
-	// DefaultNodeHome default home directories for the application daemon
 	DefaultNodeHome string
 
-	// ModuleBasics defines the module BasicManager is in charge of setting up basic,
-	// non-dependant module elements, such as codec registration
-	// and genesis verification.
 	ModuleBasics = module.NewBasicManager(
 		auth.AppModuleBasic{},
 		genutil.AppModuleBasic{},
@@ -116,7 +112,6 @@ var (
 		vesting.AppModuleBasic{},
 	)
 
-	// module account permissions
 	moduleAccountPermissions = map[string][]string{
 		authTypes.FeeCollectorName:     nil,
 		distributionTypes.ModuleName:   nil,
@@ -141,12 +136,10 @@ type SimulationApplication struct {
 
 	invCheckPeriod uint
 
-	// keys to access the substores
 	keys          map[string]*sdkTypes.KVStoreKey
 	transientKeys map[string]*sdkTypes.TransientStoreKey
 	memoryKeys    map[string]*sdkTypes.MemoryStoreKey
 
-	// Keepers
 	AccountKeeper      authKeeper.AccountKeeper
 	BankKeeper         bankKeeper.Keeper
 	CapabilityKeeper   *capabilityKeeper.Keeper
@@ -237,7 +230,6 @@ func (app *SimulationApplication) prepForZeroHeightGenesis(ctx sdkTypes.Context,
 	ctx = ctx.WithBlockHeight(0)
 
 	app.StakingKeeper.IterateValidators(ctx, func(_ int64, val stakingTypes.ValidatorI) (stop bool) {
-		// donate any unwithdrawn outstanding reward fraction tokens to the community pool
 		scraps := app.DistributionKeeper.GetValidatorOutstandingRewardsCoins(ctx, val.GetOperator())
 		feePool := app.DistributionKeeper.GetFeePool(ctx)
 		feePool.CommunityPool = feePool.CommunityPool.Add(scraps...)
@@ -247,7 +239,6 @@ func (app *SimulationApplication) prepForZeroHeightGenesis(ctx sdkTypes.Context,
 		return false
 	})
 
-	// reinitialize all delegations
 	for _, del := range dels {
 		valAddr, err := sdkTypes.ValAddressFromBech32(del.ValidatorAddress)
 		if err != nil {
@@ -258,12 +249,8 @@ func (app *SimulationApplication) prepForZeroHeightGenesis(ctx sdkTypes.Context,
 		app.DistributionKeeper.Hooks().AfterDelegationModified(ctx, delAddr, valAddr)
 	}
 
-	// reset context height
 	ctx = ctx.WithBlockHeight(height)
 
-	/* Handle staking state. */
-
-	// iterate through redelegations, reset creation height
 	app.StakingKeeper.IterateRedelegations(ctx, func(_ int64, red stakingTypes.Redelegation) (stop bool) {
 		for i := range red.Entries {
 			red.Entries[i].CreationHeight = 0
@@ -272,7 +259,6 @@ func (app *SimulationApplication) prepForZeroHeightGenesis(ctx sdkTypes.Context,
 		return false
 	})
 
-	// iterate through unbonding delegations, reset creation height
 	app.StakingKeeper.IterateUnbondingDelegations(ctx, func(_ int64, ubd stakingTypes.UnbondingDelegation) (stop bool) {
 		for i := range ubd.Entries {
 			ubd.Entries[i].CreationHeight = 0
@@ -358,7 +344,6 @@ func (app *SimulationApplication) AppCodec() codec.Codec {
 	return app.appCodec
 }
 
-// InterfaceRegistry returns SimulationApplication's InterfaceRegistry
 func (app *SimulationApplication) InterfaceRegistry() types.InterfaceRegistry {
 	return app.interfaceRegistry
 }
@@ -465,11 +450,8 @@ func (simulationApplication SimulationApplication) NewSimulationApplication(logg
 	bApp.SetParamStore(app.ParamsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(paramsKeeper.ConsensusParamsKeyTable()))
 
 	app.CapabilityKeeper = capabilityKeeper.NewKeeper(appCodec, keys[capabilityTypes.StoreKey], memKeys[capabilityTypes.MemStoreKey])
-	// Applications that wish to enforce statically created ScopedKeepers should call `Seal` after creating
-	// their scoped modules in `NewApp` with `ScopeToModule`
 	app.CapabilityKeeper.Seal()
 
-	// add Keepers
 	app.AccountKeeper = authKeeper.NewAccountKeeper(
 		appCodec, keys[authTypes.StoreKey], app.GetSubspace(authTypes.ModuleName), authTypes.ProtoBaseAccount, moduleAccountPermissions,
 	)
@@ -497,15 +479,12 @@ func (simulationApplication SimulationApplication) NewSimulationApplication(logg
 	app.FeeGrantKeeper = feeGrantKeeper.NewKeeper(appCodec, keys[feegrant.StoreKey], app.AccountKeeper)
 	app.UpgradeKeeper = upgradeKeeper.NewKeeper(skipUpgradeHeights, keys[upgradeTypes.StoreKey], appCodec, homePath, app.BaseApp)
 
-	// register the staking hooks
-	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.StakingKeeper = *stakingKeeper.SetHooks(
 		stakingTypes.NewMultiStakingHooks(app.DistributionKeeper.Hooks(), app.SlashingKeeper.Hooks()),
 	)
 
 	app.AuthzKeeper = authzKeeper.NewKeeper(keys[authzKeeper.StoreKey], appCodec, app.BaseApp.MsgServiceRouter())
 
-	// register the proposal Types
 	govRouter := govTypes.NewRouter()
 	govRouter.AddRoute(govTypes.RouterKey, govTypes.ProposalHandler).
 		AddRoute(paramsProposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
@@ -517,9 +496,7 @@ func (simulationApplication SimulationApplication) NewSimulationApplication(logg
 	)
 
 	app.GovKeeper = *govKeeper.SetHooks(
-		govTypes.NewMultiGovHooks(
-		// register the governance hooks
-		),
+		govTypes.NewMultiGovHooks(),
 	)
 
 	evidenceKeeper := evidenceKeeper.NewKeeper(
@@ -567,11 +544,6 @@ func (simulationApplication SimulationApplication) NewSimulationApplication(logg
 		paramsTypes.ModuleName, upgradeTypes.ModuleName, vestingTypes.ModuleName,
 	)
 
-	// NOTE: The genutils module must occur after staking so that pools are
-	// properly initialized with tokens from genesis accounts.
-	// NOTE: Capability module must occur first so that it can initialize any capabilities
-	// so that other modules that want to create or claim capabilities afterwards in InitChain
-	// can do so safely.
 	app.moduleManager.SetOrderInitGenesis(
 		capabilityTypes.ModuleName, authTypes.ModuleName, bankTypes.ModuleName, distributionTypes.ModuleName, stakingTypes.ModuleName,
 		slashingTypes.ModuleName, govTypes.ModuleName, mintTypes.ModuleName, crisisTypes.ModuleName,
@@ -580,34 +552,23 @@ func (simulationApplication SimulationApplication) NewSimulationApplication(logg
 		paramsTypes.ModuleName, upgradeTypes.ModuleName, vestingTypes.ModuleName,
 	)
 
-	// Uncomment if you want to set a custom migration order here.
-	// app.moduleManager.SetOrderMigrations(custom order)
-
 	app.moduleManager.RegisterInvariants(&app.CrisisKeeper)
 	app.moduleManager.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
 	app.moduleManager.RegisterServices(app.configurator)
 
-	// add test gRPC service for testing gRPC queries in isolation
 	testdata.RegisterQueryServer(app.GRPCQueryRouter(), testdata.QueryImpl{})
 
-	// create the simulation manager and define the order of the modules for deterministic simulations
-	//
-	// NOTE: this is not required apps that don't use the simulator for fuzz testing
-	// transactions
 	overrideModules := map[string]module.AppModuleSimulation{
 		authTypes.ModuleName: auth.NewAppModule(app.appCodec, app.AccountKeeper, authSimulation.RandomGenesisAccounts),
 	}
 	app.simulationManager = module.NewSimulationManagerFromAppModules(app.moduleManager.Modules, overrideModules)
 
 	app.simulationManager.RegisterStoreDecoders()
-
-	// initialize stores
 	app.MountKVStores(keys)
 	app.MountTransientStores(tkeys)
 	app.MountMemoryStores(memKeys)
 
-	// initialize BaseApp
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 
