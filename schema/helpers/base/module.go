@@ -12,6 +12,7 @@ import (
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -88,7 +89,7 @@ func (module module) RegisterRESTRoutes(context client.Context, router *mux.Rout
 		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(context)).Methods("POST")
 	}
 }
-func (module module) GetTxCmd(legacyAmino *codec.LegacyAmino) *cobra.Command {
+func (module module) GetTxCmd(legacyAmino *sdkCodec.LegacyAmino) *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
 		Use:                        module.name,
 		Short:                      "GetProperty root transaction command.",
@@ -99,7 +100,7 @@ func (module module) GetTxCmd(legacyAmino *codec.LegacyAmino) *cobra.Command {
 	commandList := make([]*cobra.Command, len(module.transactionsPrototype().GetList()))
 
 	for i, transaction := range module.transactionsPrototype().GetList() {
-		commandList[i] = transaction.Command(legacyAmino)
+		commandList[i] = transaction.Command()
 	}
 
 	rootTransactionCommand.AddCommand(
@@ -108,7 +109,7 @@ func (module module) GetTxCmd(legacyAmino *codec.LegacyAmino) *cobra.Command {
 
 	return rootTransactionCommand
 }
-func (module module) GetQueryCmd(legacyAmino *codec.LegacyAmino) *cobra.Command {
+func (module module) GetQueryCmd(legacyAmino *sdkCodec.LegacyAmino) *cobra.Command {
 	rootQueryCommand := &cobra.Command{
 		Use:                        module.name,
 		Short:                      "GetProperty root query command.",
@@ -119,7 +120,7 @@ func (module module) GetQueryCmd(legacyAmino *codec.LegacyAmino) *cobra.Command 
 	commandList := make([]*cobra.Command, len(module.queriesPrototype().GetList()))
 
 	for i, query := range module.queriesPrototype().GetList() {
-		commandList[i] = query.Command(legacyAmino)
+		commandList[i] = query.Command()
 	}
 
 	rootQueryCommand.AddCommand(
