@@ -13,10 +13,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
+	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/gogo/protobuf/grpc"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -27,12 +31,14 @@ import (
 )
 
 type transaction struct {
-	name             string
-	cliCommand       helpers.CLICommand
-	keeper           helpers.TransactionKeeper
-	requestPrototype func() helpers.TransactionRequest
-	messagePrototype func() helpers.Message
-	keeperPrototype  func() helpers.TransactionKeeper
+	name                 string
+	cliCommand           helpers.CLICommand
+	keeper               helpers.TransactionKeeper
+	requestPrototype     func() helpers.TransactionRequest
+	messagePrototype     func() helpers.Message
+	keeperPrototype      func() helpers.TransactionKeeper
+	serviceRegistrar     func(grpc.Server, helpers.TransactionKeeper)
+	grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error
 }
 
 var _ helpers.Transaction = (*transaction)(nil)
@@ -68,7 +74,6 @@ func (transaction transaction) Command() *cobra.Command {
 
 	return transaction.cliCommand.CreateCommand(runE)
 }
-
 func (transaction transaction) HandleMessage(context sdkTypes.Context, message helpers.Message) (*sdkTypes.Result, error) {
 	if transactionResponse := transaction.keeper.Transact(context, message); !transactionResponse.IsSuccessful() {
 		return nil, transactionResponse.GetError()
@@ -76,7 +81,6 @@ func (transaction transaction) HandleMessage(context sdkTypes.Context, message h
 
 	return &sdkTypes.Result{Events: message.GenerateOnSuccessEvents().ToABCIEvents()}, nil
 }
-
 func (transaction transaction) RESTRequestHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		transactionRequest := transaction.requestPrototype()
@@ -224,10 +228,24 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 		}
 	}
 }
-
 func (transaction transaction) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.LegacyAmino) {
 	transaction.messagePrototype().RegisterLegacyAminoCodec(legacyAmino)
 	transaction.requestPrototype().RegisterLegacyAminoCodec(legacyAmino)
+}
+func (transaction transaction) RegisterInterfaces(interfaceRegistry codecTypes.InterfaceRegistry) {
+	transaction.messagePrototype().RegisterInterface(interfaceRegistry)
+	transaction.requestPrototype().RegisterInterface(interfaceRegistry)
+}
+func (transaction transaction) RegisterService(configurator sdkTypesModule.Configurator) {
+	if transaction.keeper == nil {
+		panic(errorConstants.UninitializedUsage)
+	}
+	transaction.serviceRegistrar(configurator.MsgServer(), transaction.keeper)
+}
+func (transaction transaction) RegisterGRPCGatewayRoute(context client.Context, serveMux *runtime.ServeMux) {
+	if err := transaction.grpcGatewayRegistrar(context, serveMux); err != nil {
+		panic(err)
+	}
 }
 func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessage) (sdkTypes.Msg, error) {
 	transactionRequest, err := transaction.requestPrototype().FromJSON(rawMessage)
@@ -237,18 +255,19 @@ func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessa
 
 	return transactionRequest.MakeMsg()
 }
-
 func (transaction transaction) InitializeKeeper(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Transaction {
 	transaction.keeper = transaction.keeperPrototype().Initialize(mapper, parameters, auxiliaryKeepers).(helpers.TransactionKeeper)
 	return transaction
 }
 
-func NewTransaction(name string, short string, long string, requestPrototype func() helpers.TransactionRequest, messagePrototype func() helpers.Message, keeperPrototype func() helpers.TransactionKeeper, flagList ...helpers.CLIFlag) helpers.Transaction {
+func NewTransaction(name string, short string, long string, requestPrototype func() helpers.TransactionRequest, messagePrototype func() helpers.Message, keeperPrototype func() helpers.TransactionKeeper, serviceRegistrar func(grpc.Server, helpers.TransactionKeeper), grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error, flagList ...helpers.CLIFlag) helpers.Transaction {
 	return transaction{
-		name:             name,
-		cliCommand:       NewCLICommand(name, short, long, flagList),
-		requestPrototype: requestPrototype,
-		messagePrototype: messagePrototype,
-		keeperPrototype:  keeperPrototype,
+		name:                 name,
+		cliCommand:           NewCLICommand(name, short, long, flagList),
+		requestPrototype:     requestPrototype,
+		messagePrototype:     messagePrototype,
+		keeperPrototype:      keeperPrototype,
+		serviceRegistrar:     serviceRegistrar,
+		grpcGatewayRegistrar: grpcGatewayRegistrar,
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries"
 	"github.com/AssetMantle/modules/modules/identities/internal/block"
 	"github.com/AssetMantle/modules/modules/identities/internal/genesis"
+	"github.com/AssetMantle/modules/modules/identities/internal/invariants"
 	"github.com/AssetMantle/modules/modules/identities/internal/mapper"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters"
@@ -20,13 +21,15 @@ import (
 func Prototype() helpers.Module {
 	return baseHelpers.NewModule(
 		module.Name,
+		module.ConsensusVersion,
 		auxiliaries.Prototype,
+		block.Prototype,
 		genesis.Prototype,
+		invariants.Prototype,
 		mapper.Prototype,
 		parameters.Prototype,
 		queries.Prototype,
 		simulator.Prototype,
 		transactions.Prototype,
-		block.Prototype,
 	)
 }

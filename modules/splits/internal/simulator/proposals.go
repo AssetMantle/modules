@@ -7,12 +7,13 @@ import (
 	"math/rand"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
-func (simulator) WeightedProposalContentList() []simulationTypes.WeightedProposalContent {
+func (simulator) WeightedProposalContentList(module.SimulationState) []simulationTypes.WeightedProposalContent {
 	return []simulationTypes.WeightedProposalContent{
 		simulation.NewWeightedProposalContent(
 			OpWeightSubmitTextProposal,

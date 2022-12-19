@@ -8,5 +8,6 @@ import (
 )
 
 const Name = "splits"
+const ConsensusVersion = 1
 
 var StoreKeyPrefix = constants.SplitsStoreKeyPrefix

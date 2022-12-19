@@ -9,7 +9,10 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 )
 
@@ -19,6 +22,9 @@ type Transaction interface {
 	HandleMessage(sdkTypes.Context, Message) (*sdkTypes.Result, error)
 	RESTRequestHandler(client.Context) http.HandlerFunc
 	RegisterLegacyAminoCodec(amino *codec.LegacyAmino)
+	RegisterInterfaces(types.InterfaceRegistry)
+	RegisterService(module.Configurator)
+	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)
 	DecodeTransactionRequest(json.RawMessage) (sdkTypes.Msg, error)
 	InitializeKeeper(Mapper, Parameters, ...interface{}) Transaction
 }
