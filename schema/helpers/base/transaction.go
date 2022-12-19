@@ -5,6 +5,10 @@ package base
 
 import (
 	"encoding/json"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/utilities/random"
+	"github.com/AssetMantle/modules/utilities/rest/queuing"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -18,11 +22,6 @@ import (
 	"log"
 	"net/http"
 	"reflect"
-
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/utilities/random"
-	"github.com/AssetMantle/modules/utilities/rest/queuing"
 )
 
 type transaction struct {
@@ -156,7 +155,6 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 				return
 			}
 
-			//txBuilder, err = authClient.EnrichWithGas(txBuilder, context, msgList)
 			_, adjusted, err := tx.CalculateGas(context, transactionFactory, msgList...)
 			if rest.CheckInternalServerError(responseWriter, err) {
 				return
