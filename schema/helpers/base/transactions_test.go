@@ -4,9 +4,11 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func TestNewTransactions(t *testing.T) {

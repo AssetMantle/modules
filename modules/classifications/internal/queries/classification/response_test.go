@@ -4,8 +4,9 @@
 package classification
 
 import (
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"testing"
+
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"

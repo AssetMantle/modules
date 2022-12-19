@@ -63,7 +63,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	coins, err := sdkTypes.ParseCoins(transactionRequest.Coins)
+	coins, err := sdkTypes.ParseCoinsNormalized(transactionRequest.Coins)
 	if err != nil {
 		return nil, err
 	}

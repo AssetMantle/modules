@@ -4,8 +4,9 @@
 package block
 
 import (
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"testing"
+
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/std"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
