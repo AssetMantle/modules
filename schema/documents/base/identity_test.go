@@ -2,12 +2,6 @@ package base
 
 import (
 	"fmt"
-	"reflect"
-	"testing"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
@@ -18,6 +12,10 @@ import (
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+	"reflect"
+	"testing"
 )
 
 func TestNewIdentity(t *testing.T) {

@@ -1,11 +1,6 @@
 package base
 
 import (
-	"reflect"
-	"testing"
-
-	"github.com/cosmos/cosmos-sdk/types"
-
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	documentsSchema "github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -16,6 +11,9 @@ import (
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/cosmos/cosmos-sdk/types"
+	"reflect"
+	"testing"
 )
 
 func TestNewAsset(t *testing.T) {

@@ -5,12 +5,15 @@ package base
 
 import (
 	"encoding/json"
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-	"io"
-	"os"
-	"path/filepath"
-	"testing"
-
+	"github.com/AssetMantle/modules/modules/assets"
+	"github.com/AssetMantle/modules/modules/classifications"
+	"github.com/AssetMantle/modules/modules/identities"
+	"github.com/AssetMantle/modules/modules/maintainers"
+	"github.com/AssetMantle/modules/modules/metas"
+	"github.com/AssetMantle/modules/modules/orders"
+	"github.com/AssetMantle/modules/modules/splits"
+	"github.com/AssetMantle/modules/schema/applications"
+	wasmUtilities "github.com/AssetMantle/modules/utilities/wasm"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -37,19 +40,13 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintTypes "github.com/tendermint/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
-
-	"github.com/AssetMantle/modules/modules/assets"
-	"github.com/AssetMantle/modules/modules/classifications"
-	"github.com/AssetMantle/modules/modules/identities"
-	"github.com/AssetMantle/modules/modules/maintainers"
-	"github.com/AssetMantle/modules/modules/metas"
-	"github.com/AssetMantle/modules/modules/orders"
-	"github.com/AssetMantle/modules/modules/splits"
-	wasmUtilities "github.com/AssetMantle/modules/utilities/wasm"
-
-	"github.com/AssetMantle/modules/schema/applications"
+	"io"
+	"os"
+	"path/filepath"
+	"testing"
 )
 
 type SimulationApplication struct {
