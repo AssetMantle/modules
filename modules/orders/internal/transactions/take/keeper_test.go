@@ -5,6 +5,7 @@ package take
 
 import (
 	"fmt"
+	typesTendermint "github.com/tendermint/tendermint/proto/tendermint/types"
 	"reflect"
 	"testing"
 
@@ -14,7 +15,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
@@ -76,7 +76,7 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 	supplementAuxiliary = supplement.AuxiliaryMock.Initialize(Mapper, Parameters)
 	transferAuxiliary = transfer.AuxiliaryMock.Initialize(Mapper, Parameters)
 
-	context := types.NewContext(commitMultiStore, abciTypes.Header{
+	context := types.NewContext(commitMultiStore, typesTendermint.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 

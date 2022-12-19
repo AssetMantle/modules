@@ -5,6 +5,7 @@ package base
 
 import (
 	"bytes"
+	typesTendermint "github.com/tendermint/tendermint/proto/tendermint/types"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -12,7 +13,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
@@ -33,7 +33,7 @@ func SetupTest(t *testing.T) (sdkTypes.Context, *sdkTypes.KVStoreKey, *sdkTypes.
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
+	context := sdkTypes.NewContext(commitMultiStore, typesTendermint.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
