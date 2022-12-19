@@ -58,7 +58,7 @@ func TestAppStateDeterminism(t *testing.T) {
 				config.Seed, i+1, numSeeds, j+1, numTimesToRunPerSeed,
 			)
 
-			_, _, err := simulation.SimulateFromSeed(t, os.Stdout, simulationApplication.GetBaseApp(), simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()), simapp.SimulationOperations(simulationApplication, simulationApplication.Codec(), config), simulationApplication.ModuleAccountAddrs(), config)
+			_, _, err := simulation.SimulateFromSeed(t, os.Stdout, simulationApplication.GetBaseApp(), simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()), simapp.SimulationOperations(simulationApplication, simulationApplication.Codec(), config), simulationApplication.ModuleAccountAddresses(), config)
 			require.NoError(t, err)
 
 			if config.Commit {

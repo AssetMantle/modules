@@ -36,7 +36,7 @@ func TestFullAppSimulation(t *testing.T) {
 		simulationApplication.GetBaseApp(),
 		simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()),
 		simapp.SimulationOperations(simulationApplication, simulationApplication.Codec(), config),
-		simulationApplication.ModuleAccountAddrs(), config,
+		simulationApplication.ModuleAccountAddresses(), config,
 	)
 
 	// export state and simParams before the simulation error is checked

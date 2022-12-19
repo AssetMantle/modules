@@ -77,7 +77,7 @@ func TestAppImportExport(t *testing.T) {
 	_, simParams, simErr := simulation.SimulateFromSeed(
 		t, os.Stdout, simulationApplication.GetBaseApp(), simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()),
 		simapp.SimulationOperations(simulationApplication, simulationApplication.Codec(), config),
-		simulationApplication.ModuleAccountAddrs(), config,
+		simulationApplication.ModuleAccountAddresses(), config,
 	)
 
 	// export state and simParams before the simulation error is checked

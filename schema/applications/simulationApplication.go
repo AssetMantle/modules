@@ -4,37 +4,36 @@
 package applications
 
 import (
-	"io"
-	"testing"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/server/api"
+	"github.com/cosmos/cosmos-sdk/server/config"
+	serverTypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	simAppParams "github.com/cosmos/cosmos-sdk/simapp/params"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
+	"io"
 )
 
 type SimulationApplication interface {
-	Application
 	simapp.App
 
-	GetBaseApp() *baseapp.BaseApp
-	GetKey(storeKey string) *sdk.KVStoreKey
-	GetTKey(storeKey string) *sdk.TransientStoreKey
+	AppCodec() codec.Codec
+	InterfaceRegistry() codecTypes.InterfaceRegistry
+	GetKey(storeKey string) *sdkTypes.KVStoreKey
+	GetTKey(storeKey string) *sdkTypes.TransientStoreKey
+	GetMemKey(storeKey string) *sdkTypes.MemoryStoreKey
 	GetSubspace(moduleName string) paramsTypes.Subspace
-	GetModuleAccountPermissions() map[string][]string
-	GetBlackListedAddresses() map[string]bool
-	ModuleManager() *module.Manager
+	SimulationManager() *module.SimulationManager
+	RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig)
+	RegisterTxService(clientCtx client.Context)
+	RegisterTendermintService(clientCtx client.Context)
 
-	CheckBalance(*testing.T, sdk.AccAddress, sdk.Coins)
-
-	AddTestAddresses(sdk.Context, int, sdk.Int) []sdk.AccAddress
-
-	Setup(bool) SimulationApplication
-	SetupWithGenesisAccounts([]types.GenesisAccount) SimulationApplication
-	NewTestApplication(bool) (SimulationApplication, sdk.Context)
-	InitializeSimulationApplication(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) SimulationApplication
+	NewSimulationApplication(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, skipUpgradeHeights map[int64]bool, homePath string, invCheckPeriod uint, encodingConfig simAppParams.EncodingConfig, appOpts serverTypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp)) SimulationApplication
 }
