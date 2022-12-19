@@ -6,15 +6,6 @@ package base
 import (
 	"bytes"
 	"fmt"
-	"testing"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-
-	"github.com/stretchr/testify/assert"
-
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -22,6 +13,11 @@ import (
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/traits"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 var fromAddress = "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"

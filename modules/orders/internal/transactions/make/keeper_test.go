@@ -5,6 +5,7 @@ package make
 
 import (
 	"fmt"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"reflect"
 	"testing"
 
@@ -14,7 +15,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
@@ -81,7 +81,7 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 	conformAuxiliary = conform.AuxiliaryMock.Initialize(Mapper, Parameters)
 	maintainersVerifyAuxiliary = verify.AuxiliaryMock.Initialize(Mapper, Parameters)
 
-	context := types.NewContext(commitMultiStore, abciTypes.Header{
+	context := types.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 

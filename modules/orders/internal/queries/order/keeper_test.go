@@ -5,6 +5,7 @@ package order
 
 import (
 	"fmt"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"reflect"
 	"testing"
 
@@ -56,7 +57,7 @@ func CreateTestInputForQueries(t *testing.T) (types.Context, TestKeepers, helper
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := types.NewContext(commitMultiStore, abciTypes.Header{
+	context := types.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 

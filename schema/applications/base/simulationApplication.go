@@ -5,11 +5,15 @@ package base
 
 import (
 	"encoding/json"
-	"io"
-	"os"
-	"path/filepath"
-	"testing"
-
+	"github.com/AssetMantle/modules/modules/assets"
+	"github.com/AssetMantle/modules/modules/classifications"
+	"github.com/AssetMantle/modules/modules/identities"
+	"github.com/AssetMantle/modules/modules/maintainers"
+	"github.com/AssetMantle/modules/modules/metas"
+	"github.com/AssetMantle/modules/modules/orders"
+	"github.com/AssetMantle/modules/modules/splits"
+	"github.com/AssetMantle/modules/schema/applications"
+	wasmUtilities "github.com/AssetMantle/modules/utilities/wasm"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -36,19 +40,13 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintTypes "github.com/tendermint/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
-
-	"github.com/AssetMantle/modules/modules/assets"
-	"github.com/AssetMantle/modules/modules/classifications"
-	"github.com/AssetMantle/modules/modules/identities"
-	"github.com/AssetMantle/modules/modules/maintainers"
-	"github.com/AssetMantle/modules/modules/metas"
-	"github.com/AssetMantle/modules/modules/orders"
-	"github.com/AssetMantle/modules/modules/splits"
-	wasmUtilities "github.com/AssetMantle/modules/utilities/wasm"
-
-	"github.com/AssetMantle/modules/schema/applications"
+	"io"
+	"os"
+	"path/filepath"
+	"testing"
 )
 
 type SimulationApplication struct {
@@ -126,7 +124,7 @@ func (simulationApplication SimulationApplication) GetBlackListedAddresses() map
 	return blacklistedAddrs
 }
 func (simulationApplication SimulationApplication) CheckBalance(t *testing.T, address sdkTypes.AccAddress, coins sdkTypes.Coins) {
-	ctxCheck := simulationApplication.BaseApp.NewContext(true, abciTypes.Header{})
+	ctxCheck := simulationApplication.BaseApp.NewContext(true, protoTendermintTypes.Header{})
 	res := simulationApplication.AccountKeeper.GetAccount(ctxCheck, address)
 
 	require.True(t, coins.IsEqual(res.GetCoins()))
@@ -203,13 +201,13 @@ func (simulationApplication SimulationApplication) SetupWithGenesisAccounts(acco
 	)
 
 	newSimulationApplication.Commit()
-	newSimulationApplication.BeginBlock(abciTypes.RequestBeginBlock{Header: abciTypes.Header{Height: simulationApplication.application.BaseApp.LastBlockHeight() + 1}})
+	newSimulationApplication.BeginBlock(abciTypes.RequestBeginBlock{Header: protoTendermintTypes.Header{Height: simulationApplication.application.BaseApp.LastBlockHeight() + 1}})
 
 	return newSimulationApplication
 }
 func (simulationApplication SimulationApplication) NewTestApplication(isCheckTx bool) (applications.SimulationApplication, sdkTypes.Context) {
 	app := simulationApplication.Setup(isCheckTx)
-	ctx := simulationApplication.GetBaseApp().NewContext(isCheckTx, abciTypes.Header{})
+	ctx := simulationApplication.GetBaseApp().NewContext(isCheckTx, protoTendermintTypes.Header{})
 
 	return app, ctx
 }

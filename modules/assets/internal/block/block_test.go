@@ -5,6 +5,7 @@ package block
 
 import (
 	"fmt"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"reflect"
 	"testing"
 
@@ -13,8 +14,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/mapper"
@@ -41,7 +42,7 @@ func CreateAssetsTestInput(t *testing.T) sdkTypes.Context {
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
+	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 

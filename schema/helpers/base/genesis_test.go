@@ -4,17 +4,15 @@
 package base
 
 import (
-	"testing"
-
-	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/stretchr/testify/require"
-
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	parameters2 "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func TestGenesis(t *testing.T) {

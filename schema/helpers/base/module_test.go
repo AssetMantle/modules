@@ -5,16 +5,6 @@ package base
 
 import (
 	"encoding/json"
-	"math/rand"
-	"testing"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
-	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/gorilla/mux"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -22,6 +12,14 @@ import (
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 	helpersTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers"
 	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/gorilla/mux"
+	"github.com/stretchr/testify/require"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"math/rand"
+	"testing"
 )
 
 var auxiliariesPrototype = func() helpers.Auxiliaries {

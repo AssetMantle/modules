@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/cosmos/cosmos-sdk/std"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"reflect"
 	"testing"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -18,7 +18,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
@@ -57,7 +56,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	identityID := baseIDs.NewIdentityID(classificationID, immutables)
 	permissions := utilities.SetPermissions(true, true, true, true, true, true)
 
-	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
+	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 	Mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewMaintainer(identityID, classificationID, baseLists.NewPropertyList(mutableProperty).GetPropertyIDList(), permissions)))

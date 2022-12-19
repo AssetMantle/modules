@@ -4,13 +4,11 @@
 package base
 
 import (
-	"reflect"
-	"testing"
-
-	"github.com/stretchr/testify/require"
-
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
+	"github.com/stretchr/testify/require"
+	"reflect"
+	"testing"
 )
 
 func TestCollection(t *testing.T) {

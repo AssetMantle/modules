@@ -4,11 +4,6 @@
 package base
 
 import (
-	"reflect"
-	"testing"
-
-	"github.com/stretchr/testify/require"
-
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -18,6 +13,9 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/stretchr/testify/require"
+	"reflect"
+	"testing"
 )
 
 func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, documents.Document) {
