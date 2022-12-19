@@ -9,10 +9,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
-	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
+	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -41,7 +41,7 @@ func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, context client.Context) (
 			return nil, err
 		}
 
-		keyBase, err := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
+		keyBase, err := keyring.New(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
 		if err != nil {
 			return nil, err
 		}
@@ -63,7 +63,7 @@ func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, context client.Context) (
 
 		sequence += count
 		txBuilder := types.NewTxBuilder(
-			authClient.GetTxEncoder(context.Codec), accountNumber, sequence, gas, gasAdj,
+			authClient.GetTxEncoder(context.LegacyAmino), accountNumber, sequence, gas, gasAdj,
 			kafkaMsg.BaseRequest.Simulate, kafkaMsg.BaseRequest.ChainID, kafkaMsg.BaseRequest.Memo, kafkaMsg.BaseRequest.Fees, kafkaMsg.BaseRequest.GasPrices,
 		)
 

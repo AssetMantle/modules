@@ -4,13 +4,15 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
-	"github.com/stretchr/testify/require"
-	"github.com/tendermint/tendermint/libs/kv"
 	"reflect"
 	"testing"
+
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/types/kv"
+	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestMapper(t *testing.T) {
