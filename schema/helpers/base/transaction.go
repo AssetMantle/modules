@@ -176,7 +176,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 		var fromAddress sdkTypes.AccAddress
 		var fromName string
 
-		fromAddress, fromName, _, err = client.GetFromFields(nil, baseReq.From, viper.GetBool(flags.FlagGenerateOnly))
+		fromAddress, fromName, _, err = client.GetFromFields(context.Keyring, baseReq.From, viper.GetBool(flags.FlagGenerateOnly))
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 			return
@@ -232,12 +232,12 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 
 			var transactionBytes []byte
 
+			transactionBytes, err = context.TxConfig.TxEncoder()(transactionBuilder.GetTx())
+
 			if err != nil {
 				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 				return
 			}
-
-			transactionBytes, err = context.TxConfig.TxEncoder()(transactionBuilder.GetTx())
 
 			// broadcast to a node
 
