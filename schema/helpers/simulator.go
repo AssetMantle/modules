@@ -8,12 +8,13 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
 type Simulator interface {
 	RandomizedGenesisState(*module.SimulationState)
-	WeightedOperations(simulation.AppParams, *codec.LegacyAmino) simulation.WeightedOperations
+	WeightedOperations(simulationTypes.AppParams, *codec.LegacyAmino) simulation.WeightedOperations
 	WeightedProposalContentList() []simulation.WeightedProposalContent
 	ParamChangeList(*rand.Rand) []simulation.ParamChange
 }
