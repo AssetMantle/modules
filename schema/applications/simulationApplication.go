@@ -17,7 +17,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/params"
 )
 
 type SimulationApplication interface {
@@ -27,7 +26,7 @@ type SimulationApplication interface {
 	GetBaseApp() *baseapp.BaseApp
 	GetKey(storeKey string) *sdk.KVStoreKey
 	GetTKey(storeKey string) *sdk.TransientStoreKey
-	GetSubspace(moduleName string) params.Subspace
+	GetSubspace(moduleName string) paramsTypes.Subspace
 	GetModuleAccountPermissions() map[string][]string
 	GetBlackListedAddresses() map[string]bool
 	ModuleManager() *module.Manager

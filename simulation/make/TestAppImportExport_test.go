@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/cosmos/cosmos-sdk/store"
 
@@ -124,7 +125,7 @@ func TestAppImportExport(t *testing.T) {
 		{simulationApplication.GetKey(mint.StoreKey), newSimulationApplication.GetKey(mint.StoreKey), [][]byte{}},
 		{simulationApplication.GetKey(distribution.StoreKey), newSimulationApplication.GetKey(distribution.StoreKey), [][]byte{}},
 		{simulationApplication.GetKey(supply.StoreKey), newSimulationApplication.GetKey(supply.StoreKey), [][]byte{}},
-		{simulationApplication.GetKey(params.StoreKey), newSimulationApplication.GetKey(params.StoreKey), [][]byte{}},
+		{simulationApplication.GetKey(paramsTypes.StoreKey), newSimulationApplication.GetKey(params.StoreKey), [][]byte{}},
 		{simulationApplication.GetKey(gov.StoreKey), newSimulationApplication.GetKey(gov.StoreKey), [][]byte{}},
 		{simulationApplication.GetKey(wasm.StoreKey), newSimulationApplication.GetKey(wasm.StoreKey), [][]byte{}},
 		{simulationApplication.GetKey(assets.Prototype().Name()), newSimulationApplication.GetKey(assets.Prototype().Name()), [][]byte{}},

@@ -11,12 +11,10 @@ import (
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/tx"
-
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
+	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -25,6 +23,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/utilities/rest/queuing"
@@ -240,7 +239,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 	}
 }
 
-func (transaction transaction) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+func (transaction transaction) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.LegacyAmino) {
 	transaction.messagePrototype().RegisterLegacyAminoCodec(legacyAmino)
 	transaction.requestPrototype().RegisterLegacyAminoCodec(legacyAmino)
 }
