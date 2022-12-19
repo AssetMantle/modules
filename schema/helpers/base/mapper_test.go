@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/tendermint/libs/kv"
 
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
