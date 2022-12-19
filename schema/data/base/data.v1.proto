@@ -1,5 +1,5 @@
 syntax = "proto3";
-package data.base;
+package data;
 import "schema/data/base/accAddressData.v1.proto";
 import "schema/data/base/booleanData.v1.proto";
 import "schema/data/base/decData.v1.proto";

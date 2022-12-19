@@ -1,5 +1,5 @@
 syntax = "proto3";
-package data.base;
+package data;
 
 message AccAddressData{
   bytes value = 1;
