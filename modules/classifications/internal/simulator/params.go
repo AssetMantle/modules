@@ -6,6 +6,8 @@ package simulator
 import (
 	"math/rand"
 
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
 	"github.com/AssetMantle/modules/modules/classifications/internal/common"
 	"github.com/AssetMantle/modules/schema/data/base"
 
@@ -17,8 +19,8 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/parameters/dummy"
 )
 
-func (simulator) ParamChangeList(_ *rand.Rand) []simulation.ParamChange {
-	return []simulation.ParamChange{
+func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
+	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(module.Name,
 			dummy.ID.String(),
 			func(r *rand.Rand) string {
