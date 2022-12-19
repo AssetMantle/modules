@@ -1,0 +1,10 @@
+syntax = "proto3";
+package properties;
+
+import "schema/ids/base/id.v1.proto";
+import "schema/data/base/data.v1.proto";
+
+message MetaProperty {
+  ids.ID i_d = 1;
+  data.Data data = 2;
+}

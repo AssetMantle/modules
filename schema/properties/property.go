@@ -9,12 +9,13 @@ import (
 )
 
 type Property interface {
-	GetID() ids.PropertyID
-	GetDataID() ids.DataID
-	GetKey() ids.StringID
-	GetType() ids.StringID
+	GetID() ids.ID
+	GetDataID() ids.ID
+	GetKey() ids.ID
+	GetType() ids.ID
 
 	IsMeta() bool
+	ScrubData() Property
 
 	traits.Listable
 }

@@ -5,45 +5,72 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/traits"
+	"sort"
 )
 
-type idList struct {
-	lists.List
-}
+var _ lists.IDList = (*List_IdList)(nil)
 
-var _ lists.IDList = (*idList)(nil)
+func (idList *List_IdList) GetList() []ids.ID {
+	returnIDList := make([]ids.ID, len(idList.IdList.List))
 
-func (idList idList) GetList() []ids.ID {
-	returnIDList := make([]ids.ID, idList.List.Size())
-
-	for i, listable := range idList.List.Get() {
-		returnIDList[i] = listable.(ids.ID)
+	for i, listable := range idList.IdList.List {
+		returnIDList[i] = listable
 	}
 
 	return returnIDList
 }
-func (idList idList) Search(id ids.ID) (index int, found bool) {
-	return idList.List.Search(id)
-}
-func (idList idList) Add(ids ...ids.ID) lists.IDList {
-	idList.List = idList.List.Add(idsToListables(ids...)...)
-	return idList
-}
-func (idList idList) Remove(ids ...ids.ID) lists.IDList {
-	idList.List = idList.List.Remove(idsToListables(ids...)...)
-	return idList
-}
-func idsToListables(ids ...ids.ID) []traits.Listable {
-	listables := make([]traits.Listable, len(ids))
-	for i, id := range ids {
-		listables[i] = id
+func (idList *List_IdList) Search(id ids.ID) (index int, found bool) {
+	index = sort.Search(
+		len(idList.IdList.List),
+		func(i int) bool {
+			return idList.IdList.List[i].Compare(id) >= 0
+		},
+	)
+
+	if index < len(idList.IdList.List) && idList.IdList.List[index].Compare(id) == 0 {
+		return index, true
 	}
-	return listables
+
+	return index, false
 }
-func NewIDList(ids ...ids.ID) lists.IDList {
-	return &idList{
-		List: NewList(idsToListables(ids...)...),
+func (idList *List_IdList) Add(ids ...ids.ID) lists.List {
+	updatedList := idList
+	for _, listable := range ids {
+		if index, found := updatedList.Search(listable); !found {
+			updatedList.IdList.List = append(updatedList.IdList.List, listable.(*baseIDs.ID))
+			copy(updatedList.IdList.List[index+1:], updatedList.IdList.List[index:])
+			updatedList.IdList.List[index] = listable.(*baseIDs.ID)
+		}
+	}
+	return &List{
+		Impl: updatedList,
+	}
+}
+func (idList *List_IdList) Remove(ids ...ids.ID) lists.List {
+	updatedList := idList
+
+	for _, listable := range ids {
+		if index, found := updatedList.Search(listable); found {
+			updatedList.IdList.List = append(updatedList.IdList.List[:index], updatedList.IdList.List[index+1:]...)
+		}
+	}
+
+	return &List{
+		Impl: updatedList,
+	}
+}
+func NewIDList(ids ...ids.ID) lists.List {
+	var idList []*baseIDs.ID
+	for _, dataVal := range ids {
+		idList = append(idList, dataVal.(*baseIDs.ID))
+	}
+	return &List{
+		Impl: &List_IdList{
+			IdList: &IDList{
+				List: idList,
+			},
+		},
 	}
 }

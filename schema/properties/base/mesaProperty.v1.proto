@@ -1,0 +1,9 @@
+syntax = "proto3";
+package properties;
+
+import "schema/ids/base/id.v1.proto";
+
+message MesaProperty {
+  ids.ID i_d = 1;
+  ids.ID data_i_d = 2;
+}

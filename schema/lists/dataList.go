@@ -11,6 +11,6 @@ type DataList interface {
 	Size() int
 	GetList() []data.Data
 	Search(data.Data) (int, bool)
-	Add(...data.Data) DataList
-	Remove(...data.Data) DataList
+	Add(...data.Data) List
+	Remove(...data.Data) List
 }
