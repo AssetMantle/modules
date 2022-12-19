@@ -1,0 +1,20 @@
+syntax = "proto3";
+package data.base;
+import "schema/data/base/accAddressData.v1.proto";
+import "schema/data/base/booleanData.v1.proto";
+import "schema/data/base/decData.v1.proto";
+import "schema/data/base/heightData.v1.proto";
+import "schema/data/base/idData.v1.proto";
+import "schema/data/base/stringData.v1.proto";
+
+
+message Data{
+  oneof impl{
+    AccAddressData accAddressData = 1;
+    BooleanData booleanData = 2;
+    DecData decData = 3;
+    HeightData heightData = 4;
+    IDData idData = 5;
+    StringData stringData = 6;
+  }
+}

@@ -1,0 +1,6 @@
+syntax = "proto3";
+package data.base;
+
+message HeightData{
+  int64 value = 1;
+}
