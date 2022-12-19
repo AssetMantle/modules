@@ -12,5 +12,6 @@ type Message interface {
 	// TODO check if register message code is required
 	RegisterLegacyAminoCodec(*codec.LegacyAmino)
 	GenerateOnSuccessEvents() sdkTypes.Events
+	Type() string
 	sdkTypes.Msg
 }
