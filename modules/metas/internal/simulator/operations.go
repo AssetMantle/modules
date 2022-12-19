@@ -7,16 +7,16 @@ import (
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
-func (simulator) WeightedOperations(appParams simulationTypes.AppParams, legacyAmino *codec.LegacyAmino) simulation.WeightedOperations {
+func (simulator) WeightedOperations(simulationState module.SimulationState) simulation.WeightedOperations {
 	var weightMsg int
 
-	appParams.GetOrGenerate(legacyAmino, OpWeightMsg, &weightMsg, nil,
+	simulationState.AppParams.GetOrGenerate(nil, OpWeightMsg, &weightMsg, nil,
 		func(_ *rand.Rand) {
 			weightMsg = DefaultWeightMsg
 		},

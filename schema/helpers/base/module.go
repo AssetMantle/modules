@@ -61,8 +61,8 @@ func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDec
 	storeDecoderRegistry[module.name] = module.mapperPrototype().StoreDecoder
 }
 
-func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simulationTypes.WeightedOperation {
-	return nil
+func (module module) WeightedOperations(simulationState sdkTypesModule.SimulationState) []simulationTypes.WeightedOperation {
+	return module.simulatorPrototype().WeightedOperations(simulationState)
 }
 
 func (module module) Name() string {
