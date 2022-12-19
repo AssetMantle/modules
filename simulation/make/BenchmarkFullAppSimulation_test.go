@@ -4,6 +4,7 @@
 package make
 
 import (
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"os"
 	"testing"
 
@@ -31,11 +32,12 @@ func BenchmarkFullAppSimulation(b *testing.B) {
 		b,
 		os.Stdout,
 		simulationApplication.GetBaseApp(),
-		simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()),
-		simapp.SimulationOperations(simulationApplication,
-			simulationApplication.Codec(), config),
+		simapp.AppStateFn(simulationApplication.GetCodec(), simulationApplication.SimulationManager()),
+		simulationTypes.RandomAccounts,
+		simapp.SimulationOperations(simulationApplication, simulationApplication.GetCodec(), config),
 		simulationApplication.ModuleAccountAddrs(),
 		config,
+		simulationApplication.GetCodec(),
 	)
 
 	// export state and simParams before the simulation error is checked
