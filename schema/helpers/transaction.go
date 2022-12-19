@@ -16,7 +16,7 @@ import (
 type Transaction interface {
 	GetName() string
 	Command() *cobra.Command
-	HandleMessage(sdkTypes.Context, sdkTypes.Msg) (*sdkTypes.Result, error)
+	HandleMessage(sdkTypes.Context, Message) (*sdkTypes.Result, error)
 	RESTRequestHandler(client.Context) http.HandlerFunc
 	RegisterLegacyAminoCodec(amino *codec.LegacyAmino)
 	DecodeTransactionRequest(json.RawMessage) (sdkTypes.Msg, error)

@@ -12,17 +12,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
-func (simulator) WeightedProposalContentList() []simulation.WeightedProposalContent {
-	return []simulation.WeightedProposalContent{
-		{
-			AppParamsKey:       OpWeightSubmitTextProposal,
-			DefaultWeight:      DefaultWeightTextProposal,
-			ContentSimulatorFn: simulateTextProposalContent,
-		},
+func (simulator) WeightedProposalContentList() []simulationTypes.WeightedProposalContent {
+	return []simulationTypes.WeightedProposalContent{
+		simulation.NewWeightedProposalContent(
+			OpWeightSubmitTextProposal,
+			DefaultWeightTextProposal,
+			simulateTextProposalContent,
+		),
 	}
 }
 
-func simulateTextProposalContent(r *rand.Rand, _ sdk.Context, _ []simulationTypes.Account) types.Content {
+func simulateTextProposalContent(r *rand.Rand, _ sdk.Context, _ []simulationTypes.Account) simulationTypes.Content {
 	return types.NewTextProposal(
 		simulationTypes.RandStringOfLength(r, 140),
 		simulationTypes.RandStringOfLength(r, 5000),

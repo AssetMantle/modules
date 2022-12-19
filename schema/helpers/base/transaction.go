@@ -5,10 +5,10 @@ package base
 
 import (
 	"encoding/json"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/utilities/random"
-	"github.com/AssetMantle/modules/utilities/rest/queuing"
+	"log"
+	"net/http"
+	"reflect"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -19,9 +19,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"log"
-	"net/http"
-	"reflect"
+
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/utilities/random"
+	"github.com/AssetMantle/modules/utilities/rest/queuing"
 )
 
 type transaction struct {
@@ -48,11 +50,11 @@ func (transaction transaction) Command() *cobra.Command {
 			return err
 		}
 
-		var msg sdkTypes.Msg
-		if er := transactionRequest.Validate(); er != nil {
-			return errorConstants.IncorrectFormat
+		if err = transactionRequest.Validate(); err != nil {
+			return err
 		}
-		msg, err = transactionRequest.MakeMsg()
+
+		msg, err := transactionRequest.MakeMsg()
 		if err != nil {
 			return err
 		}
@@ -67,19 +69,12 @@ func (transaction transaction) Command() *cobra.Command {
 	return transaction.cliCommand.CreateCommand(runE)
 }
 
-func (transaction transaction) HandleMessage(context sdkTypes.Context, message sdkTypes.Msg) (*sdkTypes.Result, error) {
+func (transaction transaction) HandleMessage(context sdkTypes.Context, message helpers.Message) (*sdkTypes.Result, error) {
 	if transactionResponse := transaction.keeper.Transact(context, message); !transactionResponse.IsSuccessful() {
 		return nil, transactionResponse.GetError()
 	}
 
-	context.EventManager().EmitEvent(
-		sdkTypes.NewEvent(
-			sdkTypes.EventTypeMessage,
-			sdkTypes.NewAttribute(sdkTypes.AttributeKeyModule, message.Route()),
-		),
-	)
-
-	return &sdkTypes.Result{Events: context.EventManager().Events()}, nil
+	return &sdkTypes.Result{Events: message.GenerateOnSuccessEvents().ToABCIEvents()}, nil
 }
 
 func (transaction transaction) RESTRequestHandler(context client.Context) http.HandlerFunc {
@@ -88,33 +83,27 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
 			return
 		} else if reflect.TypeOf(transaction.requestPrototype()) != reflect.TypeOf(transactionRequest) {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
+			rest.CheckBadRequestError(responseWriter, errorConstants.InvalidRequest)
 			return
 		}
 
-		err := transactionRequest.Validate()
-		if err != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+		if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
 			return
 		}
 
 		baseReq := transactionRequest.GetBaseReq()
-
 		baseReq = baseReq.Sanitize()
 		if !baseReq.ValidateBasic(responseWriter) {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
-			return
+
 		}
 
-		var msg sdkTypes.Msg
-		msg, err = transactionRequest.MakeMsg()
+		msg, err := transactionRequest.MakeMsg()
 		if err != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+			rest.CheckBadRequestError(responseWriter, err)
 			return
 		}
 
-		if err = msg.ValidateBasic(); err != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+		if rest.CheckBadRequestError(responseWriter, msg.ValidateBasic()) {
 			return
 		}
 
@@ -150,7 +139,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 
 		if baseReq.Simulate || gasSetting.Simulate {
 			if gasAdj < 0 {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, errors.ErrOutOfGas.Error())
+				rest.CheckBadRequestError(responseWriter, errors.ErrOutOfGas)
 				return
 			}
 
@@ -161,23 +150,15 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 
 			transactionFactory = transactionFactory.WithGas(adjusted)
 
-			if err != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
-				return
-			}
-
 			if baseReq.Simulate {
 				rest.WriteSimulationResponse(responseWriter, context.LegacyAmino, transactionFactory.Gas())
 				return
 			}
 		}
 
-		var fromAddress sdkTypes.AccAddress
-		var fromName string
-
-		fromAddress, fromName, _, err = client.GetFromFields(context.Keyring, baseReq.From, viper.GetBool(flags.FlagGenerateOnly))
+		fromAddress, fromName, _, err := client.GetFromFields(context.Keyring, baseReq.From, viper.GetBool(flags.FlagGenerateOnly))
 		if err != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+			rest.CheckBadRequestError(responseWriter, err)
 			return
 		}
 
@@ -200,58 +181,39 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 				log.Printf("could not write response: %v", err)
 			}
 		} else {
-			var accountNumber uint64
-			var sequence uint64
 
-			accountNumber, sequence, err = types.AccountRetriever{}.GetAccountNumberSequence(context, fromAddress)
+			accountNumber, sequence, err := types.AccountRetriever{}.GetAccountNumberSequence(context, fromAddress)
 			if err != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+				rest.CheckBadRequestError(responseWriter, err)
 				return
 			}
 
 			transactionFactory = transactionFactory.WithAccountNumber(accountNumber).WithSequence(sequence)
-
-			var transactionBuilder client.TxBuilder
-
-			transactionBuilder, err = transactionFactory.BuildUnsignedTx(msgList...)
-
+			transactionBuilder, err := transactionFactory.BuildUnsignedTx(msgList...)
 			if err != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+				rest.CheckBadRequestError(responseWriter, err)
 				return
 			}
 
-			err = tx.Sign(transactionFactory, fromName, transactionBuilder, true)
-
-			if err != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+			if rest.CheckBadRequestError(responseWriter, tx.Sign(transactionFactory, fromName, transactionBuilder, true)) {
 				return
 			}
 
-			var response *sdkTypes.TxResponse
-
-			var transactionBytes []byte
-
-			transactionBytes, err = context.TxConfig.TxEncoder()(transactionBuilder.GetTx())
-
+			transactionBytes, err := context.TxConfig.TxEncoder()(transactionBuilder.GetTx())
 			if err != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+				rest.CheckBadRequestError(responseWriter, err)
 				return
 			}
 
-			// broadcast to a node
-
-			response, err = context.BroadcastTx(transactionBytes)
-
+			response, err := context.BroadcastTx(transactionBytes)
 			if err != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+				rest.CheckBadRequestError(responseWriter, err)
 				return
 			}
 
-			var output []byte
-
-			output, err = context.Codec.MarshalJSON(response)
+			output, err := context.Codec.MarshalJSON(response)
 			if err != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+				rest.CheckBadRequestError(responseWriter, err)
 				return
 			}
 
