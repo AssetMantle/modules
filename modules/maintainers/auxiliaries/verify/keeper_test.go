@@ -5,6 +5,8 @@ package verify
 
 import (
 	"fmt"
+	"github.com/AssetMantle/modules/schema"
+	"github.com/cosmos/cosmos-sdk/std"
 	"reflect"
 	"testing"
 
@@ -93,9 +95,12 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
-	maintainerCdc := codec.NewLegacyAmino()
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
 	paramsKeeper := params.NewKeeper(
-		maintainerCdc,
+		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
