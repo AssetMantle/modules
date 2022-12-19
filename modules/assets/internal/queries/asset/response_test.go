@@ -6,20 +6,18 @@ package asset
 import (
 	"testing"
 
+	"github.com/AssetMantle/modules/modules/assets/internal/common"
+	"github.com/AssetMantle/modules/modules/assets/internal/mapper"
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
-	typesTendermint "github.com/tendermint/tendermint/proto/tendermint/types"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
-
-	"github.com/AssetMantle/modules/modules/assets/internal/common"
-	"github.com/AssetMantle/modules/modules/assets/internal/mapper"
-	"github.com/AssetMantle/modules/schema/errors/constants"
-
-	"github.com/AssetMantle/modules/schema"
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {
@@ -41,7 +39,7 @@ func CreateTestInput(t *testing.T) sdkTypes.Context {
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, typesTendermint.Header{
+	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 

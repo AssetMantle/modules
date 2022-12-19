@@ -5,7 +5,7 @@ package base
 
 import (
 	"encoding/json"
-	typesTendermint "github.com/tendermint/tendermint/proto/tendermint/types"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"io"
 	"os"
 	"path/filepath"
@@ -127,7 +127,7 @@ func (simulationApplication SimulationApplication) GetBlackListedAddresses() map
 	return blacklistedAddrs
 }
 func (simulationApplication SimulationApplication) CheckBalance(t *testing.T, address sdkTypes.AccAddress, coins sdkTypes.Coins) {
-	ctxCheck := simulationApplication.BaseApp.NewContext(true, typesTendermint.Header{})
+	ctxCheck := simulationApplication.BaseApp.NewContext(true, protoTendermintTypes.Header{})
 	res := simulationApplication.AccountKeeper.GetAccount(ctxCheck, address)
 
 	require.True(t, coins.IsEqual(res.GetCoins()))
@@ -204,13 +204,13 @@ func (simulationApplication SimulationApplication) SetupWithGenesisAccounts(acco
 	)
 
 	newSimulationApplication.Commit()
-	newSimulationApplication.BeginBlock(abciTypes.RequestBeginBlock{Header: typesTendermint.Header{Height: simulationApplication.application.BaseApp.LastBlockHeight() + 1}})
+	newSimulationApplication.BeginBlock(abciTypes.RequestBeginBlock{Header: protoTendermintTypes.Header{Height: simulationApplication.application.BaseApp.LastBlockHeight() + 1}})
 
 	return newSimulationApplication
 }
 func (simulationApplication SimulationApplication) NewTestApplication(isCheckTx bool) (applications.SimulationApplication, sdkTypes.Context) {
 	app := simulationApplication.Setup(isCheckTx)
-	ctx := simulationApplication.GetBaseApp().NewContext(isCheckTx, typesTendermint.Header{})
+	ctx := simulationApplication.GetBaseApp().NewContext(isCheckTx, protoTendermintTypes.Header{})
 
 	return app, ctx
 }

@@ -74,7 +74,7 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 	defineAuxiliary = define.AuxiliaryMock.Initialize(Mapper, Parameters)
 	superAuxiliary = super.AuxiliaryMock.Initialize(Mapper, Parameters)
 
-	context := types.NewContext(commitMultiStore, typesTendermint.Header{
+	context := types.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 

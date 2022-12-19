@@ -4,13 +4,13 @@
 package asset
 
 import (
-	"github.com/cosmos/cosmos-sdk/client"
-
 	"github.com/AssetMantle/modules/modules/assets/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/asaskevich/govalidator"
+	"github.com/cosmos/cosmos-sdk/client"
 )
 
 type queryRequest struct {
