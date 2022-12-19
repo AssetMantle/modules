@@ -12,8 +12,8 @@ import (
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
@@ -49,11 +49,11 @@ func (module module) GenerateGenesisState(simulationState *sdkTypesModule.Simula
 	module.simulatorPrototype().RandomizedGenesisState(simulationState)
 }
 
-func (module module) ProposalContents(_ sdkTypesModule.SimulationState) []simulation.WeightedProposalContent {
+func (module module) ProposalContents(_ sdkTypesModule.SimulationState) []simulationTypes.WeightedProposalContent {
 	return module.simulatorPrototype().WeightedProposalContentList()
 }
 
-func (module module) RandomizedParams(r *rand.Rand) []simulation.ParamChange {
+func (module module) RandomizedParams(r *rand.Rand) []simulationTypes.ParamChange {
 	return module.simulatorPrototype().ParamChangeList(r)
 }
 
@@ -61,7 +61,7 @@ func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDec
 	storeDecoderRegistry[module.name] = module.mapperPrototype().StoreDecoder
 }
 
-func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simulation.WeightedOperation {
+func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simulationTypes.WeightedOperation {
 	return nil
 }
 
