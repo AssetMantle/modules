@@ -40,7 +40,7 @@ func kafkaConsumerMessages(context client.Context) {
 
 	output, err := signAndBroadcastMultiple(kafkaMsgList, context)
 	if err != nil {
-		jsonError, e := context.Codec.MarshalJSON(struct {
+		jsonError, e := context.LegacyAmino.MarshalJSON(struct {
 			Error string `json:"error"`
 		}{Error: err.Error()})
 		if e != nil {

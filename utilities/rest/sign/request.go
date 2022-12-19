@@ -6,15 +6,15 @@ package sign
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+	"github.com/cosmos/cosmos-sdk/x/auth/signing"
 
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type request struct {
-	BaseRequest rest.BaseReq   `json:"baseReq"`
-	Type        string         `json:"type" valid:"required~required field to missing, matches(^.*$)~invalid field type"`
-	StdTx       legacytx.StdTx `json:"value"`
+	BaseRequest rest.BaseReq `json:"baseReq"`
+	Type        string       `json:"type" valid:"required~required field to missing, matches(^.*$)~invalid field type"`
+	StdTx       signing.Tx   `json:"value"`
 }
 
 var _ helpers.Request = request{}
