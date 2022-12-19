@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/require"
 
@@ -55,7 +54,7 @@ func TestMapper(t *testing.T) {
 	testMapper.Iterate(context, base.NewKey("test3"), func(mappable helpers.Mappable) bool { return false })
 
 	// Store Decoder
-	require.Equal(t, "{test1 value1}\n{test1 value1}", testMapper.StoreDecoder(sdkCodec.NewLegacyAmino(), kv.Pair{
+	require.Equal(t, "{test1 value1}\n{test1 value1}", testMapper.StoreDecoder(kv.Pair{
 		Key: append([]byte{0x11}, []byte("test1")...), Value: testMapper.legacyAmino.MustMarshalBinaryBare(base.NewMappable("test1", "value1"))}, kv.Pair{
 		Key: append([]byte{0x11}, []byte("test1")...), Value: testMapper.legacyAmino.MustMarshalBinaryBare(base.NewMappable("test1", "value1"))}),
 	)
