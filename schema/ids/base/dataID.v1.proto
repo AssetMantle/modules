@@ -6,5 +6,5 @@ import "schema/ids/base/stringID.v1.proto";
 
 message DataID {
   StringID type = 1;
-  HashID hash_id = 2;
+  HashID hash_i_d = 2;
 }
