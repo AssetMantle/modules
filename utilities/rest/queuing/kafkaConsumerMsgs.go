@@ -23,7 +23,7 @@ func kafkaConsumerMessages(context client.Context) {
 			case <-quit:
 				return
 			default:
-				msg = kafkaTopicConsumer("Topic", KafkaState.Consumers, context.Codec)
+				msg = kafkaTopicConsumer("Topic", KafkaState.Consumers, context.LegacyAmino)
 				if msg.Msg != nil {
 					kafkaMsgList = append(kafkaMsgList, msg)
 				}
@@ -48,13 +48,13 @@ func kafkaConsumerMessages(context client.Context) {
 		}
 
 		for _, kafkaMsg := range kafkaMsgList {
-			addResponseToDB(kafkaMsg.TicketID, jsonError, KafkaState.KafkaDB, context.Codec)
+			addResponseToDB(kafkaMsg.TicketID, jsonError, KafkaState.KafkaDB, context.LegacyAmino)
 		}
 
 		return
 	}
 
 	for _, kafkaMsg := range kafkaMsgList {
-		addResponseToDB(kafkaMsg.TicketID, output, KafkaState.KafkaDB, context.Codec)
+		addResponseToDB(kafkaMsg.TicketID, output, KafkaState.KafkaDB, context.LegacyAmino)
 	}
 }

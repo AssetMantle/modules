@@ -12,14 +12,13 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/simapp"
-
-	"github.com/AssetMantle/modules/schema/applications/base"
-
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/schema/applications/base"
 )
 
 func TestAppStateDeterminism(t *testing.T) {

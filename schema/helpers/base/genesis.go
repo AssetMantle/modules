@@ -5,7 +5,7 @@ package base
 
 import (
 	"github.com/asaskevich/govalidator"
-	sdkTypesCodec "github.com/cosmos/cosmos-sdk/codec"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema"
@@ -15,7 +15,7 @@ import (
 )
 
 type genesis struct {
-	legacyAmino *sdkTypesCodec.LegacyAmino
+	legacyAmino *sdkCodec.LegacyAmino
 
 	keyPrototype      func() helpers.Key
 	mappablePrototype func() helpers.Mappable
@@ -135,7 +135,7 @@ func (genesis genesis) GetMappableList() []helpers.Mappable {
 }
 
 func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable, defaultMappableList []helpers.Mappable, defaultParameterList []parameters2.Parameter) helpers.Genesis {
-	Codec := sdkTypesCodec.NewLegacyAmino()
+	Codec := sdkCodec.NewLegacyAmino()
 	keyPrototype().RegisterLegacyAminoCodec(Codec)
 	mappablePrototype().RegisterLegacyAminoCodec(Codec)
 	schema.RegisterLegacyAminoCodec(Codec)

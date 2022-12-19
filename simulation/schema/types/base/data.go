@@ -4,11 +4,12 @@
 package base
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"math"
 	"math/rand"

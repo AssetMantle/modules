@@ -7,17 +7,14 @@ import (
 	"io"
 	"testing"
 
-	tendermintDB "github.com/tendermint/tm-db"
-
-	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/auth/exported"
-	"github.com/tendermint/tendermint/libs/log"
-
-	"github.com/cosmos/cosmos-sdk/simapp"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tendermintDB "github.com/tendermint/tm-db"
 )
 
 type SimulationApplication interface {
@@ -27,7 +24,7 @@ type SimulationApplication interface {
 	GetBaseApp() *baseapp.BaseApp
 	GetKey(storeKey string) *sdk.KVStoreKey
 	GetTKey(storeKey string) *sdk.TransientStoreKey
-	GetSubspace(moduleName string) params.Subspace
+	GetSubspace(moduleName string) paramsTypes.Subspace
 	GetModuleAccountPermissions() map[string][]string
 	GetBlackListedAddresses() map[string]bool
 	ModuleManager() *module.Manager
@@ -37,7 +34,7 @@ type SimulationApplication interface {
 	AddTestAddresses(sdk.Context, int, sdk.Int) []sdk.AccAddress
 
 	Setup(bool) SimulationApplication
-	SetupWithGenesisAccounts([]exported.GenesisAccount) SimulationApplication
+	SetupWithGenesisAccounts([]types.GenesisAccount) SimulationApplication
 	NewTestApplication(bool) (SimulationApplication, sdk.Context)
 	InitializeSimulationApplication(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) SimulationApplication
 }

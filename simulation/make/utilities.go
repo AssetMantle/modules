@@ -4,10 +4,10 @@
 package make
 
 import (
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"os"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
 )

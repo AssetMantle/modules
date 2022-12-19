@@ -4,6 +4,7 @@
 package asset
 
 import (
+	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/common"

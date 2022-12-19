@@ -4,11 +4,11 @@
 package base
 
 import (
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"math/rand"
 	"strconv"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"

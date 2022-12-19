@@ -6,6 +6,7 @@ package base
 import (
 	"testing"
 
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
@@ -14,18 +15,17 @@ import (
 	parameters2 "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
-	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
 func TestGenesis(t *testing.T) {
 	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
-	legacyAminoCodec := baseTestUtilities.MakeCodec()
+	codec := baseTestUtilities.MakeCodec()
 	Mapper := NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype).Initialize(storeKey)
 
 	mappableList := []helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")}
 	ParameterList := []parameters2.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })}
 	Parameters := NewParameters(ParameterList...)
-	subspace := paramsTypes.NewSubspace(legacyAminoCodec, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
+	subspace := paramsTypes.NewSubspace(codec, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
 	Parameters = Parameters.Initialize(subspace)
 
 	Genesis := NewGenesis(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype, mappableList, ParameterList).Initialize(mappableList, ParameterList).(genesis)

@@ -11,20 +11,19 @@ import (
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/tx"
-
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
+	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
+	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/utilities/rest/queuing"
@@ -91,7 +90,7 @@ func (transaction transaction) HandleMessage(context sdkTypes.Context, message s
 func (transaction transaction) RESTRequestHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		transactionRequest := transaction.requestPrototype()
-		if !rest.ReadRESTReq(responseWriter, httpRequest, context.Codec, &transactionRequest) {
+		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
 			return
 		} else if reflect.TypeOf(transaction.requestPrototype()) != reflect.TypeOf(transactionRequest) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
@@ -144,7 +143,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 		}
 
 		txBuilder := types.NewTxBuilder(
-			authClient.GetTxEncoder(context.Codec), baseReq.AccountNumber, baseReq.Sequence, gas, gasAdj,
+			authClient.GetTxEncoder(context.LegacyAmino), baseReq.AccountNumber, baseReq.Sequence, gas, gasAdj,
 			baseReq.Simulate, baseReq.ChainID, baseReq.Memo, baseReq.Fees, baseReq.GasPrices,
 		)
 		msgList := []sdkTypes.Msg{msg}
@@ -188,7 +187,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 				queuing.TicketID(random.GenerateUniqueIdentifier(transaction.name)),
 				baseReq,
 				context),
-				context.Codec,
+				context.LegacyAmino,
 			)
 
 			if _, err = responseWriter.Write(output); err != nil {
@@ -240,7 +239,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 	}
 }
 
-func (transaction transaction) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+func (transaction transaction) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.LegacyAmino) {
 	transaction.messagePrototype().RegisterLegacyAminoCodec(legacyAmino)
 	transaction.requestPrototype().RegisterLegacyAminoCodec(legacyAmino)
 }
