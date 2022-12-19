@@ -12,11 +12,12 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/utilities/test"
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestMapper(t *testing.T) {
-	context, storeKey, _ := base.SetupTest(t)
+	context, storeKey, _ := test.SetupTest(t)
 
 	// NewMapper
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
