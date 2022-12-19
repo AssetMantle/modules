@@ -5,10 +5,11 @@ package verify
 
 import (
 	"fmt"
+	"github.com/AssetMantle/modules/schema"
+	"github.com/cosmos/cosmos-sdk/std"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"reflect"
 	"testing"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -17,7 +18,6 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
@@ -59,6 +59,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
+	Mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewMaintainer(identityID, classificationID, baseLists.NewPropertyList(mutableProperty).GetPropertyIDList(), permissions)))
 
 	type fields struct {
 		mapper helpers.Mapper
@@ -81,7 +82,6 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			auxiliaryKeeper := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			auxiliaryKeeper.mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewMaintainer(identityID, classificationID, baseLists.NewPropertyList(mutableProperty).GetPropertyIDList(), permissions)))
 			if got := auxiliaryKeeper.Help(tt.args.context, tt.args.request); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Help() = %v, want %v", got, tt.want)
 			}
@@ -94,8 +94,12 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
 	ParamsKeeper := paramsKeeper.NewKeeper(
-		codec.Cdc,
+		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)

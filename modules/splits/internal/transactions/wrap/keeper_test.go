@@ -190,7 +190,11 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		staking.NotBondedPoolName: {supply.Burner, supply.Staking},
 		staking.BondedPoolName:    {supply.Burner, supply.Staking},
 	}
-	supplyKeeper := supply.NewKeeper(codec.Cdc, sdkTypes.NewKVStoreKey(supply.StoreKey), accountKeeper, bankKeeper, maccPerms)
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
+	supplyKeeper := supply.NewKeeper(legacyAmino, sdkTypes.NewKVStoreKey(supply.StoreKey), accountKeeper, bankKeeper, maccPerms)
 	type fields struct {
 		mapper                helpers.Mapper
 		parameters            helpers.Parameters
