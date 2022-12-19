@@ -35,7 +35,7 @@ func BenchmarkFullAppSimulation(b *testing.B) {
 		simapp.AppStateFn(simulationApplication.GetCodec(), simulationApplication.SimulationManager()),
 		simulationTypes.RandomAccounts,
 		simapp.SimulationOperations(simulationApplication, simulationApplication.GetCodec(), config),
-		simulationApplication.ModuleAccountAddrs(),
+		simulationApplication.ModuleAccountAddresses(),
 		config,
 		simulationApplication.GetCodec(),
 	)

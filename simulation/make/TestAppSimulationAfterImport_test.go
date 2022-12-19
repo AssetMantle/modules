@@ -35,7 +35,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 	stopEarly, simParams, simErr := simulation.SimulateFromSeed(
 		t, os.Stdout, simulationApplication.GetBaseApp(), simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()),
 		simapp.SimulationOperations(simulationApplication, simulationApplication.Codec(), config),
-		simulationApplication.ModuleAccountAddrs(), config,
+		simulationApplication.ModuleAccountAddresses(), config,
 	)
 
 	// export state and simParams before the simulation error is checked
@@ -74,7 +74,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 	_, _, err = simulation.SimulateFromSeed(
 		t, os.Stdout, newSimulationApplication.GetBaseApp(), simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()),
 		simapp.SimulationOperations(newSimulationApplication, newSimulationApplication.Codec(), config),
-		newSimulationApplication.ModuleAccountAddrs(), config,
+		newSimulationApplication.ModuleAccountAddresses(), config,
 	)
 	require.NoError(t, err)
 }
