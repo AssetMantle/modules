@@ -5,14 +5,14 @@ package make
 
 import (
 	"fmt"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"os"
 	"testing"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/AssetMantle/modules/schema/applications/base"
 )
@@ -25,16 +25,20 @@ func BenchmarkInvariants(b *testing.B) {
 
 	config.AllInvariants = false
 
-	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, moduleAccountPermissions, tokenReceiveAllowedModules).(*base.SimulationApplication)
-	simulationApplication := prototype.InitializeSimulationApplication(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), interBlockCacheOpt()).(*base.SimulationApplication)
+	simulationApplication := base.NewSimulationApplication(logger, db, nil, true, map[int64]bool{}, DefaultNodeHome, simapp.FlagPeriodValue, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, interBlockCacheOpt())
 
 	// run randomized simulation
 	_, simParams, simErr := simulation.SimulateFromSeed(
-		b, os.Stdout, simulationApplication.GetBaseApp(), simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()),
-		simapp.SimulationOperations(simulationApplication, simulationApplication.Codec(), config),
-		simulationApplication.ModuleAccountAddresses(), config,
+		b,
+		os.Stdout,
+		simulationApplication.GetBaseApp(),
+		simapp.AppStateFn(simulationApplication.GetAppCodec(), simulationApplication.SimulationManager()),
+		simulationTypes.RandomAccounts,
+		simapp.SimulationOperations(simulationApplication, simulationApplication.GetAppCodec(), config),
+		simulationApplication.ModuleAccountAddrs(),
+		config,
+		simulationApplication.GetAppCodec(),
 	)
-
 	// export state and simParams before the simulation error is checked
 	if err = simapp.CheckExportSimulation(simulationApplication, config, simParams); err != nil {
 		b.Fatal(err)
@@ -48,13 +52,13 @@ func BenchmarkInvariants(b *testing.B) {
 		simapp.PrintStats(db)
 	}
 
-	ctx := simulationApplication.GetBaseApp().NewContext(true, abci.Header{Height: simulationApplication.GetBaseApp().LastBlockHeight() + 1})
+	ctx := simulationApplication.GetBaseApp().NewContext(true, tmproto.Header{Height: simulationApplication.GetBaseApp().LastBlockHeight() + 1})
 
 	// 3. Benchmark each invariant separately
 	//
 	// NOTE: We use the crisis keeper as it has all the invariants registered with
 	// their respective metadata which makes it useful for testing/benchmarking.
-	for _, cr := range simulationApplication.CrisisKeeper.Routes() {
+	for _, cr := range simulationApplication.GetCrisisKeeper().Routes() {
 		cr := cr
 
 		b.Run(fmt.Sprintf("%s/%s", cr.ModuleName, cr.Route), func(b *testing.B) {

@@ -6,6 +6,7 @@ package base
 import (
 	"encoding/json"
 	"github.com/AssetMantle/modules/schema/applications"
+	simulationMake "github.com/AssetMantle/modules/simulation/make"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
@@ -42,7 +43,6 @@ import (
 	crisisKeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
 	crisisTypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	"github.com/cosmos/cosmos-sdk/x/distribution"
-	distributionClient "github.com/cosmos/cosmos-sdk/x/distribution/client"
 	distributionKeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distributionTypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/cosmos/cosmos-sdk/x/evidence"
@@ -60,7 +60,6 @@ import (
 	mintKeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	mintTypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	paramsClient "github.com/cosmos/cosmos-sdk/x/params/client"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	paramsProposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
@@ -71,7 +70,6 @@ import (
 	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingTypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
-	upgradeClient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradeKeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradeTypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/gorilla/mux"
@@ -88,44 +86,10 @@ import (
 	tmProto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
-var (
-	DefaultNodeHome string
-
-	ModuleBasics = module.NewBasicManager(
-		auth.AppModuleBasic{},
-		genutil.AppModuleBasic{},
-		bank.AppModuleBasic{},
-		capability.AppModuleBasic{},
-		staking.AppModuleBasic{},
-		mint.AppModuleBasic{},
-		distribution.AppModuleBasic{},
-		gov.NewAppModuleBasic(
-			paramsClient.ProposalHandler, distributionClient.ProposalHandler, upgradeClient.ProposalHandler, upgradeClient.CancelProposalHandler,
-		),
-		params.AppModuleBasic{},
-		crisis.AppModuleBasic{},
-		slashing.AppModuleBasic{},
-		feeGrantModule.AppModuleBasic{},
-		upgrade.AppModuleBasic{},
-		evidence.AppModuleBasic{},
-		authzModule.AppModuleBasic{},
-		vesting.AppModuleBasic{},
-	)
-
-	moduleAccountPermissions = map[string][]string{
-		authTypes.FeeCollectorName:     nil,
-		distributionTypes.ModuleName:   nil,
-		mintTypes.ModuleName:           {authTypes.Minter},
-		stakingTypes.BondedPoolName:    {authTypes.Burner, authTypes.Staking},
-		stakingTypes.NotBondedPoolName: {authTypes.Burner, authTypes.Staking},
-		govTypes.ModuleName:            {authTypes.Burner},
-	}
-)
-
 type GenesisState map[string]json.RawMessage
 
 func NewDefaultGenesisState(cdc codec.JSONCodec) GenesisState {
-	return ModuleBasics.DefaultGenesis(cdc)
+	return simulationMake.ModuleBasicManagers.DefaultGenesis(cdc)
 }
 
 type SimulationApplication struct {
@@ -184,6 +148,14 @@ func (app *SimulationApplication) ExportAppStateAndValidators(forZeroHeight bool
 		Height:          height,
 		ConsensusParams: app.BaseApp.GetConsensusParams(ctx),
 	}, err
+}
+
+func (app *SimulationApplication) GetBaseApp() *baseapp.BaseApp {
+	return app.BaseApp
+}
+
+func (app *SimulationApplication) GetCrisisKeeper() crisisKeeper.Keeper {
+	return app.CrisisKeeper
 }
 
 func (app *SimulationApplication) prepForZeroHeightGenesis(ctx sdkTypes.Context, jailAllowedAddrs []string) {
@@ -329,7 +301,7 @@ func (app *SimulationApplication) LoadHeight(height int64) error {
 
 func (app *SimulationApplication) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
-	for acc := range moduleAccountPermissions {
+	for acc := range simulationMake.ModuleAccountPermissions {
 		modAccAddrs[authTypes.NewModuleAddress(acc).String()] = true
 	}
 
@@ -340,7 +312,7 @@ func (app *SimulationApplication) LegacyAmino() *codec.LegacyAmino {
 	return app.legacyAmino
 }
 
-func (app *SimulationApplication) AppCodec() codec.Codec {
+func (app *SimulationApplication) GetAppCodec() codec.Codec {
 	return app.appCodec
 }
 
@@ -375,8 +347,8 @@ func (app *SimulationApplication) RegisterAPIRoutes(apiSvr *api.Server, apiConfi
 	authRest.RegisterTxRoutes(clientCtx, apiSvr.Router)
 	authTx.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 	tmservice.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
-	ModuleBasics.RegisterRESTRoutes(clientCtx, apiSvr.Router)
-	ModuleBasics.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
+	simulationMake.ModuleBasicManagers.RegisterRESTRoutes(clientCtx, apiSvr.Router)
+	simulationMake.ModuleBasicManagers.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
 	if apiConfig.Swagger {
 		RegisterSwaggerAPI(clientCtx, apiSvr.Router)
@@ -403,12 +375,12 @@ func RegisterSwaggerAPI(ctx client.Context, rtr *mux.Router) {
 
 func GetModuleAccountPermissions() map[string][]string {
 	dupMaccPerms := make(map[string][]string)
-	for k, v := range moduleAccountPermissions {
+	for k, v := range simulationMake.ModuleAccountPermissions {
 		dupMaccPerms[k] = v
 	}
 	return dupMaccPerms
 }
-func (simulationApplication SimulationApplication) NewSimulationApplication(logger tmLog.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool, skipUpgradeHeights map[int64]bool,
+func NewSimulationApplication(logger tmLog.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool, skipUpgradeHeights map[int64]bool,
 	homePath string, invCheckPeriod uint, encodingConfig simAppParams.EncodingConfig,
 	appOpts serverTypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp),
 ) applications.SimulationApplication {
@@ -453,7 +425,7 @@ func (simulationApplication SimulationApplication) NewSimulationApplication(logg
 	app.CapabilityKeeper.Seal()
 
 	app.AccountKeeper = authKeeper.NewAccountKeeper(
-		appCodec, keys[authTypes.StoreKey], app.GetSubspace(authTypes.ModuleName), authTypes.ProtoBaseAccount, moduleAccountPermissions,
+		appCodec, keys[authTypes.StoreKey], app.GetSubspace(authTypes.ModuleName), authTypes.ProtoBaseAccount, simulationMake.ModuleAccountPermissions,
 	)
 	app.BankKeeper = bankKeeper.NewBaseKeeper(
 		appCodec, keys[bankTypes.StoreKey], app.AccountKeeper, app.GetSubspace(bankTypes.ModuleName), app.ModuleAccountAddrs(),
