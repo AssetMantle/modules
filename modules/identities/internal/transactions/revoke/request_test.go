@@ -9,11 +9,11 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema"
@@ -83,15 +83,12 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	types.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
+
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ToID, constants.ClassificationID})
-	cliContext := context.NewCLIContext().WithCodec(Codec)
 	testBaseReq, _, testFromID, testToID, testClassificationID := createTestInput(t)
 	type fields struct {
 		BaseReq          rest.BaseReq
@@ -101,7 +98,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
-		cliContext context.CLIContext
+		context    client.Context
 	}
 	tests := []struct {
 		name    string
@@ -110,7 +107,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{cliCommand, cliContext}, transactionRequest{cliCommand.ReadBaseReq(cliContext), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.ToID), cliCommand.ReadString(constants.ClassificationID)}, false},
+		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{cliCommand, context}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.ToID), cliCommand.ReadString(constants.ClassificationID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -120,7 +117,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				ToID:             tt.fields.ToID,
 				ClassificationID: tt.fields.ClassificationID,
 			}
-			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.cliContext)
+			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -152,7 +149,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{types.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, testFromID, testToID, testClassificationID}))}, transactionRequest{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, false},
+		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, testFromID, testToID, testClassificationID}))}, transactionRequest{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -252,15 +249,15 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		ClassificationID string
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve with nil", fields{}, args{codec.New()}},
-		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{codec.New()}},
+		{"+ve with nil", fields{}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -270,7 +267,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 				ToID:             tt.fields.ToID,
 				ClassificationID: tt.fields.ClassificationID,
 			}
-			tr.RegisterCodec(tt.args.codec)
+			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

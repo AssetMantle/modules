@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -40,16 +40,11 @@ func SetupTest(t *testing.T) (sdkTypes.Context, *sdkTypes.KVStoreKey, *sdkTypes.
 	return context, storeKey, paramsTransientStoreKeys
 }
 
-func MakeCodec() *codec.Codec {
-	var Codec = codec.New()
-
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-
-	return Codec
+func MakeCodec() *codec.LegacyAmino {
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	return legacyAmino
 }
 
 // key struct, implements helpers.Key
@@ -67,8 +62,8 @@ func (t testKey) GenerateStoreKeyBytes() []byte {
 	return append([]byte{0x11}, []byte(t.ID)...)
 }
 
-func (t testKey) RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(testKey{}, "test/testKey", nil)
+func (t testKey) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	legacyAmino.RegisterConcrete(testKey{}, "test/testKey", nil)
 }
 
 func (t testKey) IsPartial() bool {
@@ -99,7 +94,7 @@ func (t testMappable) GetKey() helpers.Key {
 	return NewKey(t.ID)
 }
 
-func (t testMappable) RegisterCodec(c *codec.Codec) {
+func (t testMappable) RegisterLegacyAminoCodec(c *codec.LegacyAmino) {
 	c.RegisterConcrete(testMappable{}, "test/testMappable", nil)
 }
 

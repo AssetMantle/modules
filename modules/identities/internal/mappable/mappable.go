@@ -22,8 +22,8 @@ var _ documents.Identity = (*mappable)(nil)
 func (identity mappable) GetKey() helpers.Key {
 	return key.NewKey(baseIDs.NewIdentityID(identity.GetClassificationID(), identity.GetImmutables()))
 }
-func (mappable) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, mappable{})
+func (mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, mappable{})
 }
 
 func NewMappable(identity documents.Identity) helpers.Mappable {

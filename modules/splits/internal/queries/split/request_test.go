@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
@@ -73,9 +73,9 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedReq, err := common.Codec.MarshalJSON(newQueryRequest(splitID))
+	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(splitID))
 	require.NoError(t, err)
-	encodedReq1, err1 := common.Codec.MarshalJSON(newQueryRequest(baseIds.PrototypeSplitID()))
+	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeSplitID()))
 	require.NoError(t, err1)
 	type fields struct {
 		SplitID ids.SplitID
@@ -111,9 +111,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedReq, err := common.Codec.MarshalJSON(newQueryRequest(splitID))
+	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(splitID))
 	require.NoError(t, err)
-	encodedReq1, err1 := common.Codec.MarshalJSON(newQueryRequest(baseIds.PrototypeSplitID()))
+	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeSplitID()))
 	require.NoError(t, err1)
 	type fields struct {
 		SplitID ids.SplitID
@@ -152,7 +152,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
-		in1        context.CLIContext
+		context    client.Context
 	}
 	tests := []struct {
 		name    string
@@ -161,14 +161,14 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{splitID}, args{cliCommand, context.NewCLIContext()}, newQueryRequest(splitID), false},
+		{"+ve", fields{splitID}, args{cliCommand, context}, newQueryRequest(splitID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			qu := queryRequest{
 				SplitID: tt.fields.SplitID,
 			}
-			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.in1)
+			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return

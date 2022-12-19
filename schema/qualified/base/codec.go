@@ -9,7 +9,7 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-func RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, immutables{})
-	codecUtilities.RegisterModuleConcrete(codec, mutables{})
+func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, immutables{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, mutables{})
 }

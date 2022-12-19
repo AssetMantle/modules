@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -22,13 +22,10 @@ import (
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
 
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
@@ -62,7 +59,7 @@ func Test_Classification_Response(t *testing.T) {
 	require.Equal(t, constants.IncorrectFormat, testQueryResponseWithError.GetError())
 
 	encodedResponse, _ := testQueryResponse.Encode()
-	bytes, _ := common.Codec.MarshalJSON(testQueryResponse)
+	bytes, _ := common.LegacyAmino.MarshalJSON(testQueryResponse)
 	require.Equal(t, bytes, encodedResponse)
 
 	decodedResponse, _ := queryResponse{}.Decode(bytes)

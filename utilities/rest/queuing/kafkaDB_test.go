@@ -19,17 +19,17 @@ import (
 
 func Test_Kafka_DB(t *testing.T) {
 	require.Panics(t, func() {
-		var Codec = codec.New()
-		schema.RegisterCodec(Codec)
-		sdkTypes.RegisterCodec(Codec)
-		codec.RegisterCrypto(Codec)
-		codec.RegisterEvidences(Codec)
-		vesting.RegisterCodec(Codec)
-		Codec.Seal()
+		var legacyAmino = codec.NewLegacyAmino()
+		schema.RegisterLegacyAminoCodec(legacyAmino)
+		sdkTypes.RegisterCodec(legacyAmino)
+		codec.RegisterCrypto(legacyAmino)
+		codec.RegisterEvidences(legacyAmino)
+		vesting.RegisterCodec(legacyAmino)
+		legacyAmino.Seal()
 		ticketID := TicketID(random.GenerateUniqueIdentifier("name"))
 		kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", defaultCLIHome)
-		setTicketIDtoDB(ticketID, kafkaDB, Codec, []byte{})
-		addResponseToDB(ticketID, baseIDs.NewStringID("").Bytes(), kafkaDB, Codec)
-		require.Equal(t, baseIDs.NewStringID("").Bytes(), getResponseFromDB(ticketID, kafkaDB, Codec))
+		setTicketIDtoDB(ticketID, kafkaDB, legacyAmino, []byte{})
+		addResponseToDB(ticketID, baseIDs.NewStringID("").Bytes(), kafkaDB, legacyAmino)
+		require.Equal(t, baseIDs.NewStringID("").Bytes(), getResponseFromDB(ticketID, kafkaDB, legacyAmino))
 	})
 }

@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -80,7 +80,6 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.ToID, constants.FromID, constants.OwnableID, constants.Value})
-	cliContext := context.NewCLIContext().WithCodec(codec.New()).WithFromAddress(fromAccAddress).WithChainID("test")
 	viper.Set(constants.FromID.GetName(), fromID.String())
 	viper.Set(constants.ToID.GetName(), fromID.String())
 	viper.Set(constants.OwnableID.GetName(), ownableID.String())
@@ -94,7 +93,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
-		cliContext context.CLIContext
+		context    client.Context
 	}
 	tests := []struct {
 		name    string
@@ -103,7 +102,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), fromID.String(), ownableID.String(), testRate.String()}, args{cliCommand, cliContext}, transactionRequest{testBaseRequest, fromID.String(), fromID.String(), ownableID.String(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.String(), fromID.String(), ownableID.String(), testRate.String()}, args{cliCommand, context}, transactionRequest{testBaseRequest, fromID.String(), fromID.String(), ownableID.String(), testRate.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -114,7 +113,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				OwnableID: tt.fields.OwnableID,
 				Value:     tt.fields.Value,
 			}
-			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.cliContext)
+			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -246,14 +245,14 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		Value     string
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), fromID.String(), ownableID.String(), testRate.String()}, args{codec.New()}},
+		{"+ve", fields{testBaseRequest, fromID.String(), fromID.String(), ownableID.String(), testRate.String()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -264,7 +263,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 				OwnableID: tt.fields.OwnableID,
 				Value:     tt.fields.Value,
 			}
-			tr.RegisterCodec(tt.args.codec)
+			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

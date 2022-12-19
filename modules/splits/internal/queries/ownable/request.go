@@ -5,7 +5,7 @@ package ownable
 
 import (
 	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -35,7 +35,7 @@ func (queryRequest queryRequest) Validate() error {
 	return err
 }
 
-func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
 	if ownableID, err := baseIDs.ReadOwnableID(cliCommand.ReadString(constants.OwnableID)); err != nil {
 		return queryRequest{}, err
 	} else {
@@ -50,10 +50,10 @@ func (queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error
 	}
 }
 func (queryRequest queryRequest) Encode() ([]byte, error) {
-	return common.Codec.MarshalJSON(queryRequest)
+	return common.LegacyAmino.MarshalJSON(queryRequest)
 }
 func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
-	if err := common.Codec.UnmarshalJSON(bytes, &queryRequest); err != nil {
+	if err := common.LegacyAmino.UnmarshalJSON(bytes, &queryRequest); err != nil {
 		return nil, err
 	}
 

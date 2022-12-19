@@ -7,6 +7,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
-func RegisterCodec(codec *codec.Codec) {
-	codec.RegisterInterface((*Listable)(nil), nil)
+func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	legacyAmino.RegisterInterface((*Listable)(nil), nil)
 }

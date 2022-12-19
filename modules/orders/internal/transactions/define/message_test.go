@@ -72,7 +72,7 @@ func Test_message_GetSignBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(testMessage))},
+		{"+ve", fields{fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(testMessage))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -134,14 +134,14 @@ func Test_message_RegisterCodec(t *testing.T) {
 		MutableProperties       lists.PropertyList
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, args{codec.New()}},
+		{"+ve", fields{fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -153,7 +153,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 				MutableMetaProperties:   tt.fields.MutableMetaProperties,
 				MutableProperties:       tt.fields.MutableProperties,
 			}
-			me.RegisterCodec(tt.args.codec)
+			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

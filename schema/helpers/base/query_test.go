@@ -8,7 +8,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	clientContext "github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
@@ -42,7 +41,7 @@ func TestQuery(t *testing.T) {
 	_, err = Query.HandleMessage(context, abciTypes.RequestQuery{Data: encodedRequest})
 	require.Nil(t, err)
 
-	command := Query.Command(codec)
+	command := Query.Command()
 	command.SetArgs([]string{
 		"test"})
 	err = command.ParseFlags([]string{"--node", "tcp://localhost:26657"})
@@ -53,14 +52,13 @@ func TestQuery(t *testing.T) {
 	// require.Equal(t, nil, command.ExecuteContext(context.Context()))
 
 	// RESTQueryHandler
-	cliContext := clientContext.NewCLIContext().WithCodec(codec).WithChainID("test")
-	Query.RESTQueryHandler(cliContext)
+	Query.RESTQueryHandler(context)
 
 	// RPC ERROR
 	testRequest1, err := http.NewRequest("GET", "/test", nil)
 	require.Nil(t, err)
 	responseRecorder := httptest.NewRecorder()
-	Query.RESTQueryHandler(cliContext).ServeHTTP(responseRecorder, testRequest1)
+	Query.RESTQueryHandler(context).ServeHTTP(responseRecorder, testRequest1)
 	require.Equal(t, responseRecorder.Code, http.StatusInternalServerError)
 
 }

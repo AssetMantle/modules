@@ -10,11 +10,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
+	"github.com/cosmos/cosmos-sdk/std"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -28,23 +28,21 @@ import (
 )
 
 func TestHandler(t *testing.T) {
-	Codec := codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
+	Codec := codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(Codec)
+	std.RegisterLegacyAminoCodec(Codec)
 	Codec.RegisterConcrete(request{}, "request", nil)
 	Codec.RegisterConcrete(response{}, "response", nil)
-	base.TestMessagePrototype().RegisterCodec(Codec)
+	base.TestMessagePrototype().RegisterLegacyAminoCodec(Codec)
 
-	clientContext := context.NewCLIContext().WithCodec(Codec)
-
-	handler := handler(clientContext)
+	handler := handler(context)
 	viper.Set(flags.FlagKeyringBackend, cryptoKeys.BackendTest)
 
 	keyring, err := cryptoKeys.NewKeyring(sdk.KeyringServiceName(), cryptoKeys.BackendTest, viper.GetString(flags.FlagHome), strings.NewReader(""))
 	require.NoError(t, err)
 
 	router := mux.NewRouter()
-	RegisterRESTRoutes(clientContext, router)
+	RegisterRESTRoutes(context, router)
 
 	t.Cleanup(func() {
 		_ = keyring.Delete("keyName1", "", true)

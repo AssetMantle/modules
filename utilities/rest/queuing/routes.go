@@ -4,10 +4,10 @@
 package queuing
 
 import (
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/gorilla/mux"
 )
 
-func RegisterRoutes(cliContext context.CLIContext, router *mux.Router) {
-	router.HandleFunc("/response/{TicketID}", queryDB(cliContext.Codec)).Methods("GET")
+func RegisterRoutes(context client.Context, router *mux.Router) {
+	router.HandleFunc("/response/{TicketID}", queryDB(context.Codec)).Methods("GET")
 }

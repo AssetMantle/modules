@@ -6,11 +6,11 @@ package queuing
 import (
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 )
 
 // kafkaConsumerMessages : messages to consume 5-second delay
-func kafkaConsumerMessages(cliCtx context.CLIContext) {
+func kafkaConsumerMessages(context client.Context) {
 	quit := make(chan bool)
 
 	var kafkaMsgList []kafkaMsg
@@ -23,7 +23,7 @@ func kafkaConsumerMessages(cliCtx context.CLIContext) {
 			case <-quit:
 				return
 			default:
-				msg = kafkaTopicConsumer("Topic", KafkaState.Consumers, cliCtx.Codec)
+				msg = kafkaTopicConsumer("Topic", KafkaState.Consumers, context.Codec)
 				if msg.Msg != nil {
 					kafkaMsgList = append(kafkaMsgList, msg)
 				}
@@ -38,9 +38,9 @@ func kafkaConsumerMessages(cliCtx context.CLIContext) {
 		return
 	}
 
-	output, err := signAndBroadcastMultiple(kafkaMsgList, cliCtx)
+	output, err := signAndBroadcastMultiple(kafkaMsgList, context)
 	if err != nil {
-		jsonError, e := cliCtx.Codec.MarshalJSON(struct {
+		jsonError, e := context.Codec.MarshalJSON(struct {
 			Error string `json:"error"`
 		}{Error: err.Error()})
 		if e != nil {
@@ -48,13 +48,13 @@ func kafkaConsumerMessages(cliCtx context.CLIContext) {
 		}
 
 		for _, kafkaMsg := range kafkaMsgList {
-			addResponseToDB(kafkaMsg.TicketID, jsonError, KafkaState.KafkaDB, cliCtx.Codec)
+			addResponseToDB(kafkaMsg.TicketID, jsonError, KafkaState.KafkaDB, context.Codec)
 		}
 
 		return
 	}
 
 	for _, kafkaMsg := range kafkaMsgList {
-		addResponseToDB(kafkaMsg.TicketID, output, KafkaState.KafkaDB, cliCtx.Codec)
+		addResponseToDB(kafkaMsg.TicketID, output, KafkaState.KafkaDB, context.Codec)
 	}
 }

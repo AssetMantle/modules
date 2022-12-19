@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -78,7 +78,6 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.Coins, constants.FromID})
-	cliContext := context.NewCLIContext().WithCodec(codec.New()).WithFromAddress(fromAccAddress).WithChainID("test")
 	viper.Set(constants.FromID.GetName(), fromID.String())
 	viper.Set(constants.Coins.GetName(), testRate.String())
 	type fields struct {
@@ -88,7 +87,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
-		cliContext context.CLIContext
+		context    client.Context
 	}
 	tests := []struct {
 		name    string
@@ -97,7 +96,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, args{cliCommand, cliContext}, transactionRequest{testBaseRequest, fromID.String(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, args{cliCommand, context}, transactionRequest{testBaseRequest, fromID.String(), testRate.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -106,7 +105,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				FromID:  tt.fields.FromID,
 				Coins:   tt.fields.Coins,
 			}
-			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.cliContext)
+			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -224,14 +223,14 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		Coins   string
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, args{codec.New()}},
+		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -240,7 +239,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 				FromID:  tt.fields.FromID,
 				Coins:   tt.fields.Coins,
 			}
-			tr.RegisterCodec(tt.args.codec)
+			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

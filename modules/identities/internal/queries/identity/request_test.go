@@ -7,21 +7,18 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/spf13/viper"
-
-	"github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
-
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/std"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/identities/internal/common"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
@@ -44,17 +41,11 @@ func createTestInput() (ids.IdentityID, ids.IdentityID) {
 }
 
 func Test_newQueryRequest(t *testing.T) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
-	// vars := make(map[string]string)
-	// vars["identities"] = "randomString"
-	// cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.IdentityID})
-	// cliContext := context.NewCLIContext().WithCodec(Codec)
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
+
 	testIdentity, emptyTestIdentity := createTestInput()
 
 	type args struct {
@@ -143,8 +134,8 @@ func Test_queryRequest_Decode(t *testing.T) {
 
 func Test_queryRequest_Encode(t *testing.T) {
 	testIdentity, emptyTestIdentity := createTestInput()
-	byteArr, _ := common.Codec.MarshalJSON(newQueryRequest(testIdentity))
-	byteArr2, _ := common.Codec.MarshalJSON(newQueryRequest(emptyTestIdentity))
+	byteArr, _ := common.LegacyAmino.MarshalJSON(newQueryRequest(testIdentity))
+	byteArr2, _ := common.LegacyAmino.MarshalJSON(newQueryRequest(emptyTestIdentity))
 
 	type fields struct {
 		IdentityID ids.IdentityID
@@ -185,7 +176,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
-		in1        context.CLIContext
+		context    client.Context
 	}
 	tests := []struct {
 		name    string
@@ -194,14 +185,14 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testIdentity}, args{cliCommand, context.NewCLIContext()}, newQueryRequest(testIdentity), false},
+		{"+ve", fields{testIdentity}, args{cliCommand, context}, newQueryRequest(testIdentity), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := queryRequest{
 				IdentityID: tt.fields.IdentityID,
 			}
-			if got, err := queryRequest.FromCLI(tt.args.cliCommand, tt.args.in1); !reflect.DeepEqual(got, tt.want) {
+			if got, err := queryRequest.FromCLI(tt.args.cliCommand, tt.args.context); !reflect.DeepEqual(got, tt.want) {
 				if (err != nil) != tt.wantErr {
 					t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 					return

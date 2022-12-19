@@ -8,9 +8,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema"
@@ -29,18 +28,15 @@ func Test_Rest_Utils(t *testing.T) {
 	require.Equal(t, 0.3, value3)
 	require.Equal(t, nil, error3)
 
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
 
 	gas := uint64(123)
-	response, err := simulationResponse(Codec, gas)
+	response, err := simulationResponse(legacyAmino, gas)
 	gasEst := rest.GasEstimateResponse{GasEstimate: gas}
-	resp, _ := Codec.MarshalJSON(gasEst)
+	resp, _ := legacyAmino.MarshalJSON(gasEst)
 	require.Equal(t, resp, response)
 	require.Equal(t, nil, err)
 

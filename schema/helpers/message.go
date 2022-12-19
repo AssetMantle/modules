@@ -10,6 +10,6 @@ import (
 
 type Message interface {
 	// TODO check if register message code is required
-	RegisterCodec(*codec.Codec)
+	RegisterLegacyAminoCodec(*codec.LegacyAmino)
 	sdkTypes.Msg
 }

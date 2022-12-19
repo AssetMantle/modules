@@ -9,8 +9,8 @@ import "github.com/cosmos/cosmos-sdk/codec"
 type Key interface {
 	String() string
 	GenerateStoreKeyBytes() []byte
-	// TODO Check is register codec is still required
-	RegisterCodec(*codec.Codec)
+	// TODO Check is register legacyAmino is still required
+	RegisterLegacyAminoCodec(*codec.LegacyAmino)
 	IsPartial() bool
 	// TODO ** check all key impls
 	Equals(Key) bool

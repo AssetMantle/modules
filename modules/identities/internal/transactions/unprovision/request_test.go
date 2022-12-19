@@ -8,11 +8,11 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema"
@@ -90,15 +90,12 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	types.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
+
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.To, constants.IdentityID})
-	cliContext := context.NewCLIContext().WithCodec(Codec)
 	testIdentityID, toAddress, _, _, testBaseReq := createInputForMessage(t)
 	type fields struct {
 		BaseReq    rest.BaseReq
@@ -107,7 +104,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
-		cliContext context.CLIContext
+		context    client.Context
 	}
 	tests := []struct {
 		name    string
@@ -116,7 +113,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.String()}, args{cliCommand, cliContext}, transactionRequest{cliCommand.ReadBaseReq(cliContext), cliCommand.ReadString(constants.To), cliCommand.ReadString(constants.IdentityID)}, false},
+		{"+ve", fields{testBaseReq, toAddress, testIdentityID.String()}, args{cliCommand, context}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.To), cliCommand.ReadString(constants.IdentityID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -125,7 +122,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				To:         tt.fields.To,
 				IdentityID: tt.fields.IdentityID,
 			}
-			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.cliContext)
+			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -154,7 +151,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.String()}, args{types.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"), toAccAddress, testIdentityID}))}, transactionRequest{testBaseReq, toAddress, testIdentityID.String()}, false},
+		{"+ve", fields{testBaseReq, toAddress, testIdentityID.String()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"), toAccAddress, testIdentityID}))}, transactionRequest{testBaseReq, toAddress, testIdentityID.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -248,15 +245,15 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		IdentityID string
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve wit nil", fields{}, args{codec.New()}},
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.String()}, args{codec.New()}},
+		{"+ve wit nil", fields{}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testBaseReq, toAddress, testIdentityID.String()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -265,7 +262,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 				To:         tt.fields.To,
 				IdentityID: tt.fields.IdentityID,
 			}
-			tr.RegisterCodec(tt.args.codec)
+			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

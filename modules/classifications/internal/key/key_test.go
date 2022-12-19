@@ -170,21 +170,21 @@ func Test_key_RegisterCodec(t *testing.T) {
 		ClassificationID ids.ClassificationID
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{createTestInput()}, args{codec.New()}},
+		{"+ve", fields{createTestInput()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ke := key{
 				ClassificationID: tt.fields.ClassificationID,
 			}
-			ke.RegisterCodec(tt.args.codec)
+			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

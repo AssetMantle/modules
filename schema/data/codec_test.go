@@ -10,20 +10,19 @@ import (
 )
 
 func TestRegisterCodec(t *testing.T) {
-	// var Codec = codec.New()
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name string
 		args args
 	}{
 
-		{"+ve Codec", args{codec.New()}},
+		{"+ve Codec", args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			RegisterCodec(tt.args.codec)
+			RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

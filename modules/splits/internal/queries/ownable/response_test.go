@@ -25,7 +25,7 @@ func Test_Split_Response(t *testing.T) {
 	require.Equal(t, constants.IncorrectFormat, testQueryResponseWithError.GetError())
 
 	encodedResponse, _ := testQueryResponse.Encode()
-	bytes, _ := common.Codec.MarshalJSON(testQueryResponse)
+	bytes, _ := common.LegacyAmino.MarshalJSON(testQueryResponse)
 	require.Equal(t, bytes, encodedResponse)
 
 	decodedResponse, _ := queryResponse{}.Decode(bytes)

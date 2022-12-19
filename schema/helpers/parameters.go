@@ -25,7 +25,8 @@ type Parameters interface {
 	Mutate(sdkTypes.Context, parameters.Parameter) Parameters
 
 	GetKeyTable() subspace.KeyTable
-	subspace.ParamSet
+	// / TODO
+	// subspace.ParamSet
 
 	Initialize(params.Subspace) Parameters
 }

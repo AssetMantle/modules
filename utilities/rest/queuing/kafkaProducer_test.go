@@ -8,8 +8,7 @@ import (
 
 	"github.com/Shopify/sarama"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema"
@@ -17,13 +16,10 @@ import (
 
 func TestKafkaProducerDeliverMessage(t *testing.T) {
 	testProducer := []string{"testProducer"}
-	var Codec = codec.New()
+	var legacyAmino = codec.NewLegacyAmino()
 	require.Panics(t, func() {
-		schema.RegisterCodec(Codec)
-		sdkTypes.RegisterCodec(Codec)
-		codec.RegisterCrypto(Codec)
-		codec.RegisterEvidences(Codec)
-		vesting.RegisterCodec(Codec)
+		schema.RegisterLegacyAminoCodec(legacyAmino)
+		std.RegisterLegacyAminoCodec(legacyAmino)
 
 		testKafkaMessage := kafkaMsg{Msg: nil}
 
@@ -31,7 +27,7 @@ func TestKafkaProducerDeliverMessage(t *testing.T) {
 		// TODO: Add test cases.
 		// require.Nil(t, err)
 
-		require.Equal(t, kafkaProducerDeliverMessage(testKafkaMessage, "Topic", producer, Codec), nil)
+		require.Equal(t, kafkaProducerDeliverMessage(testKafkaMessage, "Topic", producer, legacyAmino), nil)
 	})
 
 }

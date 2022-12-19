@@ -8,7 +8,6 @@ import (
 	"math/rand"
 	"testing"
 
-	clientContext "github.com/cosmos/cosmos-sdk/client/context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/params"
@@ -61,8 +60,8 @@ func TestModule(t *testing.T) {
 	// AppModuleBasic
 	require.Equal(t, "test", Module.Name())
 
-	// RegisterCodec
-	Module.RegisterCodec(codec)
+	// RegisterLegacyAminoCodec
+	Module.RegisterLegacyAminoCodec(codec)
 
 	require.NotPanics(t, func() {
 		Module.DefaultGenesis()
@@ -72,11 +71,9 @@ func TestModule(t *testing.T) {
 	})
 	require.Nil(t, Module.ValidateGenesis(Module.DefaultGenesis()))
 
-	// RegisterRESTRoutes
-	cliContext := clientContext.NewCLIContext().WithCodec(codec).WithChainID("test")
 	router := mux.NewRouter()
 	require.NotPanics(t, func() {
-		Module.RegisterRESTRoutes(cliContext, router)
+		Module.RegisterRESTRoutes(context, router)
 	})
 
 	// GetTxCmd

@@ -8,8 +8,8 @@ import (
 
 func TestRegisterModuleConcrete(t *testing.T) {
 	type args struct {
-		codec *codec.Codec
-		o     interface{}
+		legacyAmino *codec.LegacyAmino
+		o           interface{}
 	}
 	tests := []struct {
 		name string
@@ -18,14 +18,14 @@ func TestRegisterModuleConcrete(t *testing.T) {
 		{
 			name: "positive",
 			args: args{
-				codec: codec.New(),
-				o:     args{},
+				legacyAmino: codec.NewLegacyAmino(),
+				o:           args{},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			RegisterModuleConcrete(tt.args.codec, tt.args.o)
+			RegisterModuleConcrete(tt.args.legacyAmino, tt.args.o)
 		})
 	}
 }

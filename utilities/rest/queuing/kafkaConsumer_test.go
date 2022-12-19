@@ -8,8 +8,7 @@ import (
 
 	"github.com/Shopify/sarama"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema"
@@ -18,13 +17,10 @@ import (
 func TestKafkaTopicConsumer(t *testing.T) {
 	testConsumers := []string{"testConsumers"}
 
-	var Codec = codec.New()
+	var legacyAmino = codec.NewLegacyAmino()
 
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
 
 	require.Panics(t, func() {
 		testKafkaState := NewKafkaState(testConsumers)
@@ -37,12 +33,12 @@ func TestKafkaTopicConsumer(t *testing.T) {
 
 		kafkaMsg := <-partitionConsumer.Messages()
 
-		err := Codec.UnmarshalJSON(kafkaMsg.Value, &kafkaStore)
+		err := legacyAmino.UnmarshalJSON(kafkaMsg.Value, &kafkaStore)
 		if err != nil {
 			panic(err)
 		}
 
-		require.Equal(t, kafkaTopicConsumer("Topic", testKafkaState.Consumers, Codec), kafkaStore)
+		require.Equal(t, kafkaTopicConsumer("Topic", testKafkaState.Consumers, legacyAmino), kafkaStore)
 	})
 }
 

@@ -9,8 +9,7 @@ import (
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/codec"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/params"
@@ -69,9 +68,9 @@ func (module module) WeightedOperations(_ sdkTypesModule.SimulationState) []simu
 func (module module) Name() string {
 	return module.name
 }
-func (module module) RegisterCodec(codec *codec.Codec) {
+func (module module) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.LegacyAmino) {
 	for _, transaction := range module.transactionsPrototype().GetList() {
-		transaction.RegisterCodec(codec)
+		transaction.RegisterLegacyAminoCodec(legacyAmino)
 	}
 }
 func (module module) DefaultGenesis() json.RawMessage {
@@ -81,16 +80,16 @@ func (module module) ValidateGenesis(rawMessage json.RawMessage) error {
 	genesisState := module.genesisPrototype().Decode(rawMessage)
 	return genesisState.Validate()
 }
-func (module module) RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
+func (module module) RegisterRESTRoutes(context client.Context, router *mux.Router) {
 	for _, query := range module.queriesPrototype().GetList() {
-		router.HandleFunc("/"+module.Name()+"/"+query.GetName()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(cliContext)).Methods("GET")
+		router.HandleFunc("/"+module.Name()+"/"+query.GetName()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(context)).Methods("GET")
 	}
 
 	for _, transaction := range module.transactionsPrototype().GetList() {
-		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(cliContext)).Methods("POST")
+		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(context)).Methods("POST")
 	}
 }
-func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
+func (module module) GetTxCmd(legacyAmino *codec.LegacyAmino) *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
 		Use:                        module.name,
 		Short:                      "GetProperty root transaction command.",
@@ -101,7 +100,7 @@ func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 	commandList := make([]*cobra.Command, len(module.transactionsPrototype().GetList()))
 
 	for i, transaction := range module.transactionsPrototype().GetList() {
-		commandList[i] = transaction.Command(codec)
+		commandList[i] = transaction.Command(legacyAmino)
 	}
 
 	rootTransactionCommand.AddCommand(
@@ -110,7 +109,7 @@ func (module module) GetTxCmd(codec *codec.Codec) *cobra.Command {
 
 	return rootTransactionCommand
 }
-func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
+func (module module) GetQueryCmd(legacyAmino *codec.LegacyAmino) *cobra.Command {
 	rootQueryCommand := &cobra.Command{
 		Use:                        module.name,
 		Short:                      "GetProperty root query command.",
@@ -121,7 +120,7 @@ func (module module) GetQueryCmd(codec *codec.Codec) *cobra.Command {
 	commandList := make([]*cobra.Command, len(module.queriesPrototype().GetList()))
 
 	for i, query := range module.queriesPrototype().GetList() {
-		commandList[i] = query.Command(codec)
+		commandList[i] = query.Command(legacyAmino)
 	}
 
 	rootQueryCommand.AddCommand(

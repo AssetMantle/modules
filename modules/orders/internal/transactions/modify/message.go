@@ -58,13 +58,13 @@ func (message message) GetSignBytes() []byte {
 	if len(message.MutableProperties.GetList()) == 0 {
 		message.MutableProperties = base.NewPropertyList(nil)
 	}
-	return sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message))
+	return sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message))
 }
 func (message message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
-func (message) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, message{})
+func (message) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, message{})
 }
 func messageFromInterface(msg sdkTypes.Msg) message {
 	switch value := msg.(type) {

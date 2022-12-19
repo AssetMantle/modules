@@ -32,7 +32,7 @@ func partitionConsumers(consumer sarama.Consumer, topic string) sarama.Partition
 }
 
 // kafkaTopicConsumer : Takes a consumer and makes it consume a topic message at a time
-func kafkaTopicConsumer(topic string, consumers map[string]sarama.PartitionConsumer, cdc *codec.Codec) kafkaMsg {
+func kafkaTopicConsumer(topic string, consumers map[string]sarama.PartitionConsumer, legacyAmino *codec.LegacyAmino) kafkaMsg {
 	partitionConsumer := consumers[topic]
 
 	if len(partitionConsumer.Messages()) == 0 {
@@ -40,7 +40,7 @@ func kafkaTopicConsumer(topic string, consumers map[string]sarama.PartitionConsu
 	}
 
 	var consumedKafkaMsg kafkaMsg
-	err := cdc.UnmarshalJSON((<-partitionConsumer.Messages()).Value, &consumedKafkaMsg)
+	err := legacyAmino.UnmarshalJSON((<-partitionConsumer.Messages()).Value, &consumedKafkaMsg)
 	if err != nil {
 		panic(err)
 	}

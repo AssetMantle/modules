@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
@@ -64,9 +64,9 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedReq, err := common.Codec.MarshalJSON(newQueryRequest(testOwnableID))
+	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testOwnableID))
 	require.NoError(t, err)
-	encodedReq1, err1 := common.Codec.MarshalJSON(newQueryRequest(baseIds.PrototypeOwnableID()))
+	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeOwnableID()))
 	require.NoError(t, err1)
 	type fields struct {
 		OwnableID ids.OwnableID
@@ -102,9 +102,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedReq, err := common.Codec.MarshalJSON(newQueryRequest(testOwnableID))
+	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testOwnableID))
 	require.NoError(t, err)
-	encodedReq1, err1 := common.Codec.MarshalJSON(newQueryRequest(baseIds.PrototypeOwnableID()))
+	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeOwnableID()))
 	require.NoError(t, err1)
 	type fields struct {
 		OwnableID ids.OwnableID
@@ -143,7 +143,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
-		in1        context.CLIContext
+		context    client.Context
 	}
 	tests := []struct {
 		name    string
@@ -152,14 +152,14 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testOwnableID}, args{cliCommand, context.NewCLIContext()}, newQueryRequest(testOwnableID), false},
+		{"+ve", fields{testOwnableID}, args{cliCommand, context}, newQueryRequest(testOwnableID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			qu := queryRequest{
 				OwnableID: tt.fields.OwnableID,
 			}
-			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.in1)
+			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return

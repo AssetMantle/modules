@@ -6,7 +6,7 @@ package base
 import (
 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -43,7 +43,7 @@ func (testQueryRequest testQueryRequest) Validate() error {
 	return nil
 }
 
-func (testQueryRequest testQueryRequest) FromCLI(_ helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
+func (testQueryRequest testQueryRequest) FromCLI(_ helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
 	return testQueryRequest, nil
 }
 

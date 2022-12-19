@@ -9,16 +9,16 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-func RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, assetID{})
-	codecUtilities.RegisterModuleConcrete(codec, classificationID{})
-	codecUtilities.RegisterModuleConcrete(codec, dataID{})
-	codecUtilities.RegisterModuleConcrete(codec, hashID{})
-	codecUtilities.RegisterModuleConcrete(codec, identityID{})
-	codecUtilities.RegisterModuleConcrete(codec, maintainerID{})
-	codecUtilities.RegisterModuleConcrete(codec, orderID{})
-	codecUtilities.RegisterModuleConcrete(codec, ownableID{})
-	codecUtilities.RegisterModuleConcrete(codec, propertyID{})
-	codecUtilities.RegisterModuleConcrete(codec, splitID{})
-	codecUtilities.RegisterModuleConcrete(codec, stringID{})
+func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, assetID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, classificationID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, dataID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, hashID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, identityID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, maintainerID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, orderID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, ownableID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, propertyID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, splitID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, stringID{})
 }

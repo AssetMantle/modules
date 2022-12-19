@@ -21,7 +21,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulation.ParamChange {
 		simulation.NewSimParamChange(module.Name,
 			dummy.ID.String(),
 			func(r *rand.Rand) string {
-				bytes, err := common.Codec.MarshalJSON(dummy.Parameter.Mutate(base.NewDecData(sdk.NewDecWithPrec(int64(r.Intn(99)), 2))).GetData())
+				bytes, err := common.LegacyAmino.MarshalJSON(dummy.Parameter.Mutate(base.NewDecData(sdk.NewDecWithPrec(int64(r.Intn(99)), 2))).GetData())
 				if err != nil {
 					panic(err)
 				}

@@ -12,10 +12,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
-func (simulator) WeightedOperations(appParams simulation.AppParams, codec *codec.Codec) simulation.WeightedOperations {
+func (simulator) WeightedOperations(appParams simulation.AppParams, legacyAmino *codec.LegacyAmino) simulation.WeightedOperations {
 	var weightMsg int
 
-	appParams.GetOrGenerate(codec, OpWeightMsg, &weightMsg, nil,
+	appParams.GetOrGenerate(legacyAmino, OpWeightMsg, &weightMsg, nil,
 		func(_ *rand.Rand) {
 			weightMsg = DefaultWeightMsg
 		},

@@ -25,9 +25,9 @@ func parseGasAdjustment(s string) (float64, error) {
 	return n, nil
 }
 
-func simulationResponse(cdc *codec.Codec, gas uint64) ([]byte, error) {
+func simulationResponse(legacyAmino *codec.LegacyAmino, gas uint64) ([]byte, error) {
 	gasEst := rest.GasEstimateResponse{GasEstimate: gas}
-	resp, err := cdc.MarshalJSON(gasEst)
+	resp, err := legacyAmino.MarshalJSON(gasEst)
 
 	if err != nil {
 		return nil, errors.New(err.Error())

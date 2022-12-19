@@ -47,5 +47,5 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []parametersSchema.Parameter{dummy.Parameter.Mutate(Data)})
 
-	simulationState.GenState[ordersModule.Name] = common.Codec.MustMarshalJSON(genesisState)
+	simulationState.GenState[ordersModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
 }

@@ -10,7 +10,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	clientContext "github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -38,11 +37,11 @@ func TestTransaction(t *testing.T) {
 	require.Equal(t, nil, err)
 	require.Equal(t, sdkTypes.AccAddress("addr"), message.GetSigners()[0])
 
-	// RegisterCodec : No Panics
-	require.NotPanics(t, func() { Transaction.RegisterCodec(codec) })
+	// RegisterLegacyAminoCodec : No Panics
+	require.NotPanics(t, func() { Transaction.RegisterLegacyAminoCodec(codec) })
 
 	// Command : No Panics
-	command := Transaction.Command(codec)
+	command := Transaction.Command()
 	err = command.ParseFlags([]string{"--node", "tcp://localhost:26657"})
 	require.Nil(t, err)
 	require.Equal(t, `ABCIQuery: Post failed: Post "http://localhost:26657": dial tcp 127.0.0.1:26657: connect: connection refused`,
@@ -50,9 +49,6 @@ func TestTransaction(t *testing.T) {
 	// HandleMessage
 	_, err = Transaction.HandleMessage(context, message)
 	require.Nil(t, err)
-
-	// RESTRequestHandler : No Panics
-	cliContext := clientContext.NewCLIContext().WithCodec(codec).WithChainID("test")
 
 	// RPC ERROR
 	request1 := codec.MustMarshalJSON(base.TransactionRequest{
@@ -62,7 +58,7 @@ func TestTransaction(t *testing.T) {
 	testRequest1, err := http.NewRequest("GET", "/test", bytes.NewBuffer(request1))
 	require.Nil(t, err)
 	responseRecorder := httptest.NewRecorder()
-	Transaction.RESTRequestHandler(cliContext).ServeHTTP(responseRecorder, testRequest1)
+	Transaction.RESTRequestHandler(context).ServeHTTP(responseRecorder, testRequest1)
 	require.Equal(t, `{"error":"ABCIQuery: Post failed: Post \"http://localhost:26657\": dial tcp 127.0.0.1:26657: connect: connection refused"}`, responseRecorder.Body.String())
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 
@@ -71,7 +67,7 @@ func TestTransaction(t *testing.T) {
 	testRequest2, err := http.NewRequest("GET", "/test", bytes.NewBuffer(request2))
 	require.Nil(t, err)
 	responseRecorder = httptest.NewRecorder()
-	Transaction.RESTRequestHandler(cliContext).ServeHTTP(responseRecorder, testRequest2)
+	Transaction.RESTRequestHandler(context).ServeHTTP(responseRecorder, testRequest2)
 	require.Equal(t, `{"error":"failed to decode JSON payload: JSON encoding of interfaces require non-empty type field."}`, responseRecorder.Body.String())
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 
@@ -83,7 +79,7 @@ func TestTransaction(t *testing.T) {
 	testRequest3, err := http.NewRequest("GET", "/test", bytes.NewBuffer(request3))
 	require.Nil(t, err)
 	responseRecorder = httptest.NewRecorder()
-	Transaction.RESTRequestHandler(cliContext).ServeHTTP(responseRecorder, testRequest3)
+	Transaction.RESTRequestHandler(context).ServeHTTP(responseRecorder, testRequest3)
 	require.Equal(t, `{"error":"chain-id required but not specified"}{"error":""}`, responseRecorder.Body.String())
 	require.Equal(t, http.StatusUnauthorized, responseRecorder.Code)
 
@@ -95,7 +91,7 @@ func TestTransaction(t *testing.T) {
 	testRequest4, err := http.NewRequest("GET", "/test", bytes.NewBuffer(request4))
 	require.Nil(t, err)
 	responseRecorder = httptest.NewRecorder()
-	Transaction.RESTRequestHandler(cliContext).ServeHTTP(responseRecorder, testRequest4)
+	Transaction.RESTRequestHandler(context).ServeHTTP(responseRecorder, testRequest4)
 	require.Equal(t, `{"error":"ABCIQuery: Post failed: Post \"http://localhost:26657\": dial tcp 127.0.0.1:26657: connect: connection refused"}`, responseRecorder.Body.String())
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 
@@ -108,7 +104,7 @@ func TestTransaction(t *testing.T) {
 	testRequest5, err := http.NewRequest("GET", "/test", bytes.NewBuffer(request5))
 	require.Nil(t, err)
 	responseRecorder = httptest.NewRecorder()
-	Transaction.RESTRequestHandler(cliContext).ServeHTTP(responseRecorder, testRequest5)
+	Transaction.RESTRequestHandler(context).ServeHTTP(responseRecorder, testRequest5)
 	require.Equal(t, http.StatusOK, responseRecorder.Code)
 
 }
