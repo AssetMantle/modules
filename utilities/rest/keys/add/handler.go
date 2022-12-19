@@ -5,25 +5,21 @@ package add
 
 import (
 	"fmt"
-	"net/http"
-	"strings"
-
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/client/keys"
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/go-bip39"
+	"net/http"
 
-	cryptoKeys "github.com/cosmos/cosmos-sdk/crypto/keys"
+	cryptoKeyRing "github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
-	"github.com/spf13/viper"
 )
 
 func handler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		var request request
-		if !rest.ReadRESTReq(responseWriter, httpRequest, context.Codec, &request) {
+		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &request) {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
 			return
 		}
@@ -34,13 +30,8 @@ func handler(context client.Context) http.HandlerFunc {
 			return
 		}
 
-		keyring, err := cryptoKeys.NewKeyring(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
-		if err != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
-			return
-		}
-
-		_, err = keyring.Get(request.Name)
+		kb := context.Keyring
+		_, err = kb.Key(request.Name)
 		if err == nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, fmt.Sprintf("Account for keyname %v already exists", request.Name))
 			return
@@ -68,16 +59,16 @@ func handler(context client.Context) http.HandlerFunc {
 			}
 		}
 
-		var info cryptoKeys.Info
+		var info cryptoKeyRing.Info
 
-		info, err = keyring.CreateAccount(request.Name, request.Mnemonic, cryptoKeys.DefaultBIP39Passphrase, keys.DefaultKeyPass, sdkTypes.FullFundraiserPath, cryptoKeys.Secp256k1)
+		info, err = kb.NewAccount(request.Name, request.Mnemonic, cryptoKeyRing.DefaultBIP39Passphrase, sdkTypes.FullFundraiserPath, hd.Secp256k1)
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		var keyOutput cryptoKeys.KeyOutput
-		keyOutput, err = cryptoKeys.Bech32KeyOutput(info)
+		var keyOutput cryptoKeyRing.KeyOutput
+		keyOutput, err = cryptoKeyRing.NewKeyOutput(request.Name, info.GetType(), info.GetAddress(), info.GetPubKey())
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return

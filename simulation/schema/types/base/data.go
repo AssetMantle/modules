@@ -4,12 +4,11 @@
 package base
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
-
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"math"
 	"math/rand"
@@ -22,9 +21,9 @@ func GenerateRandomData(r *rand.Rand) data.Data {
 	case 0:
 		return baseData.NewIDData(GenerateRandomID(r))
 	case 1:
-		return baseData.NewStringData(simulation.RandStringOfLength(r, r.Intn(99)))
+		return baseData.NewStringData(simulationTypes.RandStringOfLength(r, r.Intn(99)))
 	case 2:
-		return baseData.NewDecData(simulation.RandomDecAmount(r, sdkTypes.NewDec(99)))
+		return baseData.NewDecData(simulationTypes.RandomDecAmount(r, sdkTypes.NewDec(99)))
 	case 3:
 		return baseData.NewHeightData(baseTypes.NewHeight(r.Int63()))
 	default:
