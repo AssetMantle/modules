@@ -7,16 +7,16 @@ import (
 	"reflect"
 	"testing"
 
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/utilities/test"
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestMapper(t *testing.T) {
-	context, storeKey, _ := base.SetupTest(t)
+	context, storeKey, _ := test.SetupTest(t)
 
 	// NewMapper
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
@@ -54,7 +54,7 @@ func TestMapper(t *testing.T) {
 	testMapper.Iterate(context, base.NewKey("test3"), func(mappable helpers.Mappable) bool { return false })
 
 	// Store Decoder
-	require.Equal(t, "{test1 value1}\n{test1 value1}", testMapper.StoreDecoder(sdkCodec.NewLegacyAmino(), kv.Pair{
+	require.Equal(t, "{test1 value1}\n{test1 value1}", testMapper.StoreDecoder(kv.Pair{
 		Key: append([]byte{0x11}, []byte("test1")...), Value: testMapper.legacyAmino.MustMarshalBinaryBare(base.NewMappable("test1", "value1"))}, kv.Pair{
 		Key: append([]byte{0x11}, []byte("test1")...), Value: testMapper.legacyAmino.MustMarshalBinaryBare(base.NewMappable("test1", "value1"))}),
 	)
