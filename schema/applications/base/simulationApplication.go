@@ -26,6 +26,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/mint"
 	"github.com/cosmos/cosmos-sdk/x/params"
+	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
@@ -53,7 +55,7 @@ type SimulationApplication struct {
 	application
 
 	transientStoreKeys map[string]*sdkTypes.TransientStoreKey
-	subspaces          map[string]params.Subspace
+	subspaces          map[string]paramsTypes.Subspace
 	simulationManager  *module.SimulationManager
 
 	AccountKeeper      auth.AccountKeeper
@@ -109,7 +111,7 @@ func (simulationApplication SimulationApplication) GetKey(storeKey string) *sdkT
 func (simulationApplication SimulationApplication) GetTKey(storeKey string) *sdkTypes.TransientStoreKey {
 	return simulationApplication.transientStoreKeys[storeKey]
 }
-func (simulationApplication SimulationApplication) GetSubspace(moduleName string) params.Subspace {
+func (simulationApplication SimulationApplication) GetSubspace(moduleName string) paramsTypes.Subspace {
 	return simulationApplication.subspaces[moduleName]
 }
 func (simulationApplication SimulationApplication) GetModuleAccountPermissions() map[string][]string {
@@ -218,7 +220,7 @@ func (simulationApplication SimulationApplication) InitializeSimulationApplicati
 
 	simulationApplication.transientStoreKeys = sdkTypes.NewTransientStoreKeys(params.TStoreKey)
 
-	simulationApplication.ParamsKeeper = params.NewKeeper(
+	simulationApplication.ParamsKeeper = paramsKeeper.NewKeeper(
 		simulationApplication.codec,
 		simulationApplication.keys[params.StoreKey],
 		simulationApplication.transientStoreKeys[params.TStoreKey],
