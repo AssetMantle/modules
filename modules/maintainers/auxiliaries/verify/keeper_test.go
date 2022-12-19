@@ -58,6 +58,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
+	Mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewMaintainer(identityID, classificationID, baseLists.NewPropertyList(mutableProperty).GetPropertyIDList(), permissions)))
 
 	type fields struct {
 		mapper helpers.Mapper
@@ -80,7 +81,6 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			auxiliaryKeeper := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			auxiliaryKeeper.mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewMaintainer(identityID, classificationID, baseLists.NewPropertyList(mutableProperty).GetPropertyIDList(), permissions)))
 			if got := auxiliaryKeeper.Help(tt.args.context, tt.args.request); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Help() = %v, want %v", got, tt.want)
 			}
