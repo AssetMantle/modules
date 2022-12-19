@@ -8,6 +8,8 @@ import (
 	"math/rand"
 	"testing"
 
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -15,6 +17,7 @@ import (
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
+	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -51,8 +54,12 @@ var blockPrototype = func() helpers.Block { return helpersTestUtilities.TestBloc
 
 func TestModule(t *testing.T) {
 	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
-	codec := baseTestUtilities.MakeCodec()
-	subspace := paramsTypes.NewSubspace(codec, storeKey, transientStoreKey, "test") // .WithKeyTable(parametersPrototype().GetKeyTable())
+	var legacyAmino = sdkCodec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
+
+	subspace := paramsTypes.NewSubspace(legacyAmino, storeKey, transientStoreKey, "test") // .WithKeyTable(parametersPrototype().GetKeyTable())
 	// subspace.SetParamSet(context, parametersPrototype())
 	Module := NewModule("test", auxiliariesPrototype, genesisPrototype,
 		mapperPrototype, parametersPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype, blockPrototype).Initialize(storeKey, subspace).(module)
@@ -61,7 +68,7 @@ func TestModule(t *testing.T) {
 	require.Equal(t, "test", Module.Name())
 
 	// RegisterLegacyAminoCodec
-	Module.RegisterLegacyAminoCodec(codec)
+	Module.RegisterLegacyAminoCodec(legacyAmino)
 
 	require.NotPanics(t, func() {
 		Module.DefaultGenesis()
@@ -77,8 +84,8 @@ func TestModule(t *testing.T) {
 	})
 
 	// GetTxCmd
-	require.Equal(t, "test", Module.GetTxCmd(codec).Name())
-	require.Equal(t, "test", Module.GetQueryCmd(codec).Name())
+	require.Equal(t, "test", Module.GetTxCmd(legacyAmino).Name())
+	require.Equal(t, "test", Module.GetQueryCmd(legacyAmino).Name())
 
 	// AppModule
 	require.NotPanics(t, func() {

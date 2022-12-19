@@ -10,5 +10,6 @@ type Codec interface {
 	types.InterfaceRegistry
 	codec.Codec
 	client.TxConfig
-	LegacyAmino
+	GetLegacyAmino() *codec.LegacyAmino
+	InitializeAndSeal() Codec
 }
