@@ -6,7 +6,10 @@ package make
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/schema/applications/base"
+	"math/rand"
+	"os"
+	"testing"
+
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
@@ -14,9 +17,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
-	"math/rand"
-	"os"
-	"testing"
+
+	"github.com/AssetMantle/modules/schema/applications/base"
 )
 
 func TestAppStateDeterminism(t *testing.T) {

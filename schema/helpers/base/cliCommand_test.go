@@ -4,8 +4,9 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/helpers"
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
@@ -13,8 +14,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
+
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func initialize() (helpers.CLICommand, []helpers.CLIFlag) {

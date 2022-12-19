@@ -8,6 +8,7 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
 type Module interface {

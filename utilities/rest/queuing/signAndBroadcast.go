@@ -11,15 +11,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	authClient "github.com/cosmos/cosmos-sdk/x/auth/client"
+	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
 func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, context client.Context) ([]byte, error) {
-	var stdTxs types.StdTx
+	var stdTxs legacytx.StdTx
 
 	var txBytes []byte
 
@@ -80,7 +80,7 @@ func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, context client.Context) (
 			}
 
 			if kafkaMsg.BaseRequest.Simulate {
-				val, _ := simulationResponse(context.Codec, txBuilder.Gas())
+				val, _ := simulationResponse(context.LegacyAmino, txBuilder.Gas())
 				return val, nil
 			}
 		}
@@ -90,7 +90,7 @@ func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, context client.Context) (
 			return nil, err
 		}
 
-		stdTx := auth.NewStdTx(stdMsg.Msgs, stdMsg.Fee, nil, stdMsg.Memo)
+		stdTx := legacytx.NewStdTx(stdMsg.Msgs, stdMsg.Fee, nil, stdMsg.Memo)
 
 		stdTx, err = txBuilder.SignStdTx(context.FromName, keys.DefaultKeyPass, stdTx, true)
 		if err != nil {

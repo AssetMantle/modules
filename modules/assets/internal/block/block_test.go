@@ -5,9 +5,10 @@ package block
 
 import (
 	"fmt"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"reflect"
 	"testing"
+
+	abciTypes "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
