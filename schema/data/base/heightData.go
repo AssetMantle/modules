@@ -6,7 +6,6 @@ package base
 import (
 	"bytes"
 	"encoding/binary"
-	"strconv"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
@@ -17,16 +16,12 @@ import (
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
-var _ data.HeightData = (*Data_HeightData)(nil)
+var _ data.HeightData = (*HeightData)(nil)
 
-func (heightData *Data_HeightData) Unmarshal(bytes []byte) error {
-	// TODO implement me
-	panic("implement me")
-}
-func (heightData *Data_HeightData) GetID() ids.ID {
+func (heightData *HeightData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(heightData)
 }
-func (heightData *Data_HeightData) Compare(listable traits.Listable) int {
+func (heightData *HeightData) Compare(listable traits.Listable) int {
 	compareHeightData, err := dataFromInterface(listable)
 	if err != nil {
 		panic(err)
@@ -34,28 +29,25 @@ func (heightData *Data_HeightData) Compare(listable traits.Listable) int {
 
 	return bytes.Compare(heightData.Bytes(), compareHeightData.Bytes())
 }
-func (heightData *Data_HeightData) String() string {
-	return strconv.FormatInt(heightData.Get().Get(), 10)
+func (heightData *HeightData) Bytes() []byte {
+	Bytes := make([]byte, 8)
+	binary.LittleEndian.PutUint64(Bytes, uint64(heightData.Get().Get()))
+	return Bytes
 }
-func (heightData *Data_HeightData) Bytes() []byte {
-	bytes := make([]byte, 8)
-	binary.LittleEndian.PutUint64(bytes, uint64(heightData.Get().Get()))
-	return bytes
-}
-func (heightData *Data_HeightData) GetType() ids.ID {
+func (heightData *HeightData) GetType() ids.StringID {
 	return dataConstants.HeightDataID
 }
-func (heightData *Data_HeightData) ZeroValue() data.Data {
+func (heightData *HeightData) ZeroValue() data.Data {
 	return NewHeightData(baseTypes.NewHeight(-1))
 }
-func (heightData *Data_HeightData) GenerateHashID() ids.ID {
+func (heightData *HeightData) GenerateHashID() ids.HashID {
 	if heightData.Compare(heightData.ZeroValue()) == 0 {
 		return baseIDs.GenerateHashID()
 	}
 	return baseIDs.GenerateHashID(heightData.Bytes())
 }
-func (heightData *Data_HeightData) Get() types.Height {
-	return baseTypes.NewHeight(heightData.HeightData.Value)
+func (heightData *HeightData) Get() types.Height {
+	return heightData.Value
 }
 
 func HeightDataPrototype() data.HeightData {
@@ -63,10 +55,10 @@ func HeightDataPrototype() data.HeightData {
 }
 
 func NewHeightData(value types.Height) data.Data {
-	return &Data{
-		Impl: &Data_HeightData{
+	return &AnyData{
+		Impl: &AnyData_HeightData{
 			HeightData: &HeightData{
-				Value: value.Get(),
+				Value: value,
 			},
 		},
 	}

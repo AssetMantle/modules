@@ -8,9 +8,9 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-// TODO URI and PropertyID data type
+// TODO URI and PropertyID Data type
 type Data interface {
-	GetID() ids.ID
+	GetID() ids.DataID
 
 	Size() int
 	Unmarshal([]byte) error
@@ -18,11 +18,10 @@ type Data interface {
 	String() string
 	Bytes() []byte
 
-	GetType() ids.ID
+	GetType() ids.StringID
 	ZeroValue() Data
 	// GenerateHash returns the hash of the Data as an PropertyID
 	// * Returns PropertyID of empty bytes when the value of Data is that Data type's zero value
-	GenerateHashID() ids.ID
-
+	GenerateHashID() ids.HashID
 	traits.Listable
 }

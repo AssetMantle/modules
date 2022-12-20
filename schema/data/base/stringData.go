@@ -13,16 +13,12 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ data.StringData = (*Data_StringData)(nil)
+var _ data.StringData = (*StringData)(nil)
 
-func (stringData *Data_StringData) Unmarshal(bytes []byte) error {
-	// TODO implement me
-	panic("implement me")
-}
-func (stringData *Data_StringData) GetID() ids.ID {
+func (stringData *StringData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(stringData)
 }
-func (stringData *Data_StringData) Compare(listable traits.Listable) int {
+func (stringData *StringData) Compare(listable traits.Listable) int {
 	compareStringData, err := dataFromInterface(listable)
 	if err != nil {
 		panic(err)
@@ -30,23 +26,20 @@ func (stringData *Data_StringData) Compare(listable traits.Listable) int {
 
 	return bytes.Compare(stringData.Bytes(), compareStringData.Bytes())
 }
-func (stringData *Data_StringData) String() string {
-	return stringData.StringData.String()
-}
-func (stringData *Data_StringData) Bytes() []byte {
+func (stringData *StringData) Bytes() []byte {
 	return []byte(stringData.String())
 }
-func (stringData *Data_StringData) GetType() ids.ID {
+func (stringData *StringData) GetType() ids.StringID {
 	return dataConstants.StringDataID
 }
-func (stringData *Data_StringData) ZeroValue() data.Data {
+func (stringData *StringData) ZeroValue() data.Data {
 	return NewStringData("")
 }
-func (stringData *Data_StringData) GenerateHashID() ids.ID {
+func (stringData *StringData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(stringData.Bytes())
 }
-func (stringData *Data_StringData) Get() string {
-	return stringData.StringData.Value
+func (stringData *StringData) Get() string {
+	return stringData.Value
 }
 
 func StringDataPrototype() data.Data {
@@ -54,8 +47,8 @@ func StringDataPrototype() data.Data {
 }
 
 func NewStringData(value string) data.Data {
-	return &Data{
-		Impl: &Data_StringData{
+	return &AnyData{
+		Impl: &AnyData_StringData{
 			StringData: &StringData{
 				Value: value,
 			},

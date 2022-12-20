@@ -1,13 +1,13 @@
 syntax = "proto3";
 package lists;
 
-import "schema/lists/base/dataList.v1.proto";
+import "schema/lists/base/anyDataList.proto";
 import "schema/lists/base/idList.v1.proto";
 import "schema/lists/base/propertyList.v1.proto";
 
 message List {
   oneof Impl {
-    lists.DataList data_list = 1;
+    lists.AnyDataList data_list = 1;
     lists.IDList id_list = 2;
     lists.PropertyList property_list = 3;
   }
