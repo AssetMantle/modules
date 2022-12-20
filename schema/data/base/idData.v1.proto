@@ -1,8 +1,8 @@
 syntax = "proto3";
 package data;
 
-import "schema/ids/base/id.v1.proto";
+import "schema/ids/base/anyID.v1.proto";
 
 message IDData {
-  ids.ID value = 1;
+  ids.AnyID value = 1;
 }

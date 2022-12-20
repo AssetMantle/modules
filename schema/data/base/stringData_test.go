@@ -164,9 +164,9 @@ func Test_stringData_GetID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		{"+ve data", fields{"data"}, baseIDs.NewDataID(stringData{"data"})},
-		{"data with special char", fields{"data_!@#$%^&*("}, baseIDs.NewDataID(stringData{"data_!@#$%^&*("})},
-		{"empty string", fields{""}, baseIDs.NewDataID(stringData{""})},
+		{"+ve data", fields{"data"}, baseIDs.GenerateDataID(stringData{"data"})},
+		{"data with special char", fields{"data_!@#$%^&*("}, baseIDs.GenerateDataID(stringData{"data_!@#$%^&*("})},
+		{"empty string", fields{""}, baseIDs.GenerateDataID(stringData{""})},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

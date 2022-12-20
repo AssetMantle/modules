@@ -37,7 +37,7 @@ func (listData *ListData) Remove(data ...data.AnyData) data.ListData {
 	return listData
 }
 func (listData *ListData) GetID() ids.DataID {
-	return baseIDs.NewDataID(listData)
+	return baseIDs.GenerateDataID(listData)
 }
 func (listData *ListData) Compare(listable traits.Listable) int {
 	compareListData, err := listDataFromInterface(listable)

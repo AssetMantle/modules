@@ -9,8 +9,6 @@ import (
 	io "io"
 	math "math"
 	math_bits "math/bits"
-
-	"github.com/AssetMantle/modules/schema/data"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

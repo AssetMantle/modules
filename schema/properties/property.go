@@ -10,14 +10,15 @@ import (
 )
 
 type Property interface {
-	GetID() ids.ID
-	GetDataID() ids.ID
-	GetKey() ids.ID
-	GetType() ids.ID
-	GetData() data.Data
+	GetID() ids.PropertyID
+	GetDataID() ids.DataID
+	GetKey() ids.StringID
+	GetType() ids.StringID
+	GetData() data.AnyData
 
 	IsMeta() bool
 	ScrubData() Property
 
+	ToAnyProperty() AnyProperty
 	traits.Listable
 }

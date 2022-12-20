@@ -5,7 +5,6 @@ package base
 
 import (
 	fmt "fmt"
-	"github.com/AssetMantle/modules/schema/data"
 	base "github.com/AssetMantle/modules/schema/types/base"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"

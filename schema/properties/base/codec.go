@@ -7,6 +7,7 @@ import (
 )
 
 func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, metaProperty{})
-	codecUtilities.RegisterModuleConcrete(legacyAmino, mesaProperty{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyProperty{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, MetaProperty{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, MesaProperty{})
 }

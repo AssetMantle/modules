@@ -62,7 +62,7 @@ func Test_mappable_GetKey(t *testing.T) {
 		fields fields
 		want   helpers.Key
 	}{
-		{"+ve", fields{base.NewStringData("Data")}, key.NewKey(base2.NewDataID(base.NewStringData("Data")))},
+		{"+ve", fields{base.NewStringData("Data")}, key.NewKey(base2.GenerateDataID(base.NewStringData("Data")))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

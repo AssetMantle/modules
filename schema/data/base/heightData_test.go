@@ -171,9 +171,9 @@ func Test_heightData_GetID(t *testing.T) {
 		want   ids.DataID
 	}{
 
-		{"Test for zero value", fields{baseTypes.NewHeight(0)}, baseIDs.NewDataID(heightData{baseTypes.NewHeight(0)})},
-		{"Test for +ve value", fields{baseTypes.NewHeight(100)}, baseIDs.NewDataID(heightData{baseTypes.NewHeight(100)})},
-		{"Test for -ve value", fields{baseTypes.NewHeight(-100)}, baseIDs.NewDataID(heightData{baseTypes.NewHeight(-100)})},
+		{"Test for zero value", fields{baseTypes.NewHeight(0)}, baseIDs.GenerateDataID(heightData{baseTypes.NewHeight(0)})},
+		{"Test for +ve value", fields{baseTypes.NewHeight(100)}, baseIDs.GenerateDataID(heightData{baseTypes.NewHeight(100)})},
+		{"Test for -ve value", fields{baseTypes.NewHeight(-100)}, baseIDs.GenerateDataID(heightData{baseTypes.NewHeight(-100)})},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
