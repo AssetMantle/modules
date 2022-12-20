@@ -41,6 +41,13 @@ func (stringData *StringData) GenerateHashID() ids.HashID {
 func (stringData *StringData) Get() string {
 	return stringData.Value
 }
+func (stringData *StringData) ToAnyData() data.AnyData {
+	return &AnyData{
+		Impl: &AnyData_StringData{
+			StringData: stringData,
+		},
+	}
+}
 
 func StringDataPrototype() data.Data {
 	return NewStringData("")

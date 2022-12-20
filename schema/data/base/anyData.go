@@ -24,6 +24,9 @@ func (x *AnyData) ZeroValue() data.Data {
 func (x *AnyData) GenerateHashID() ids.HashID {
 	return x.Impl.(data.Data).GenerateHashID()
 }
+func (x *AnyData) ToAnyData() data.AnyData {
+	return x.Impl.(data.Data).ToAnyData()
+}
 func (x *AnyData) Compare(listable traits.Listable) int {
 	return x.Impl.(data.Data).Compare(listable)
 }

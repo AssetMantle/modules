@@ -23,5 +23,6 @@ type Data interface {
 	// GenerateHash returns the hash of the Data as an PropertyID
 	// * Returns PropertyID of empty bytes when the value of Data is that Data type's zero value
 	GenerateHashID() ids.HashID
+	ToAnyData() AnyData
 	traits.Listable
 }

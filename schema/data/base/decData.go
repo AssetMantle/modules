@@ -47,6 +47,12 @@ func (decData *DecData) GenerateHashID() ids.HashID {
 func (decData *DecData) Get() sdkTypes.Dec {
 	return decData.Value
 }
+func (decData *DecData) ToAnyData() data.AnyData {
+	return &AnyData{
+		Impl: &AnyData_DecData{
+			DecData: decData,
+		}}
+}
 
 func DecDataPrototype() data.Data {
 	return NewDecData(sdkTypes.ZeroDec()).ZeroValue().(data.DecData)

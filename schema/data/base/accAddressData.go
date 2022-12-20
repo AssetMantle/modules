@@ -47,6 +47,12 @@ func (accAddressData *AccAddressData) GenerateHashID() ids.HashID {
 func (accAddressData *AccAddressData) Get() sdkTypes.AccAddress {
 	return accAddressData.Value
 }
+func (accAddressData *AccAddressData) ToAnyData() data.AnyData {
+	return &AnyData{
+		Impl: &AnyData_AccAddressData{
+			AccAddressData: accAddressData,
+		}}
+}
 
 func AccAddressDataPrototype() data.Data {
 	return NewAccAddressData(sdkTypes.AccAddress{})

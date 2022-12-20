@@ -49,6 +49,13 @@ func (heightData *HeightData) GenerateHashID() ids.HashID {
 func (heightData *HeightData) Get() types.Height {
 	return heightData.Value
 }
+func (heightData *HeightData) ToAnyData() data.AnyData {
+	return &AnyData{
+		Impl: &AnyData_HeightData{
+			HeightData: heightData,
+		},
+	}
+}
 
 func HeightDataPrototype() data.HeightData {
 	return NewHeightData(baseTypes.NewHeight(0)).ZeroValue().(data.HeightData)

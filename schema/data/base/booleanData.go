@@ -54,6 +54,13 @@ func (booleanData *BooleanData) GenerateHashID() ids.HashID {
 func (booleanData *BooleanData) Get() bool {
 	return booleanData.Value
 }
+func (booleanData *BooleanData) ToAnyData() data.AnyData {
+	return &AnyData{
+		Impl: &AnyData_BooleanData{
+			BooleanData: booleanData,
+		},
+	}
+}
 
 func BooleanDataPrototype() data.Data {
 	return &BooleanData{}
