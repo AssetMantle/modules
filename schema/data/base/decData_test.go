@@ -79,9 +79,9 @@ func Test_decData_Bytes(t *testing.T) {
 		want   []byte
 	}{
 		{"+ve with nil", fields{}, []byte{0x1}}, // TODO: Update test after fixing the bug
-		{"+ve with zero dec", fields{types.ZeroDec()}, decData{types.ZeroDec()}.Value.Bytes()},
-		{"+ve", fields{types.NewDec(100)}, decData{types.NewDec(100)}.Value.Bytes()},
-		{"+ve with -ve Dec", fields{types.NewDec(-100)}, decData{types.NewDec(-100)}.Value.Bytes()},
+		{"+ve with zero dec", fields{types.ZeroDec()}, decData{types.ZeroDec()}.Bytes()},
+		{"+ve", fields{types.NewDec(100)}, decData{types.NewDec(100)}.Bytes()},
+		{"+ve with -ve Dec", fields{types.NewDec(-100)}, decData{types.NewDec(-100)}.Bytes()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
