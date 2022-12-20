@@ -8,4 +8,5 @@ type PropertyID interface {
 	GetType() ID
 	ID
 	IsPropertyID()
+	PropertyIDString() string
 }
