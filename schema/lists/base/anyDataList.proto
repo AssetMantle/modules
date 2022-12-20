@@ -1,0 +1,8 @@
+syntax = "proto3";
+package lists;
+
+import "schema/data/base/anyData.v1.proto";
+
+message AnyDataList {
+  repeated data.AnyData list = 1;
+}

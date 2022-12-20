@@ -10,11 +10,12 @@ import (
 )
 
 func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, accAddressData{})
-	codecUtilities.RegisterModuleConcrete(legacyAmino, booleanData{})
-	codecUtilities.RegisterModuleConcrete(legacyAmino, decData{})
-	codecUtilities.RegisterModuleConcrete(legacyAmino, heightData{})
-	codecUtilities.RegisterModuleConcrete(legacyAmino, idData{})
-	codecUtilities.RegisterModuleConcrete(legacyAmino, listData{})
-	codecUtilities.RegisterModuleConcrete(legacyAmino, stringData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AccAddressData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, BooleanData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, DecData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, HeightData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, IDData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, ListData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, StringData{})
 }

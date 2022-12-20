@@ -1,5 +1,6 @@
 syntax = "proto3";
 package data;
+
 import "schema/data/base/accAddressData.v1.proto";
 import "schema/data/base/booleanData.v1.proto";
 import "schema/data/base/decData.v1.proto";
@@ -7,14 +8,13 @@ import "schema/data/base/heightData.v1.proto";
 import "schema/data/base/idData.v1.proto";
 import "schema/data/base/stringData.v1.proto";
 
-
-message Data{
-  oneof impl{
-    AccAddressData accAddressData = 1;
-    BooleanData booleanData = 2;
-    DecData decData = 3;
-    HeightData heightData = 4;
-    IDData idData = 5;
-    StringData stringData = 6;
+message AnyData {
+  oneof impl {
+    AccAddressData acc_address_data = 1;
+    BooleanData boolean_data = 2;
+    DecData dec_data = 3;
+    HeightData height_data = 4;
+    IDData i_d_data = 5;
+    StringData string_data = 6;
   }
 }

@@ -9,6 +9,7 @@ import (
 
 func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	legacyAmino.RegisterInterface((*AccAddressData)(nil), nil)
+	legacyAmino.RegisterInterface((*AnyData)(nil), nil)
 	legacyAmino.RegisterInterface((*BooleanData)(nil), nil)
 	legacyAmino.RegisterInterface((*Data)(nil), nil)
 	legacyAmino.RegisterInterface((*DecData)(nil), nil)

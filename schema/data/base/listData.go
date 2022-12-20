@@ -14,33 +14,32 @@ import (
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
-type listData struct {
-	Value lists.DataList `json:"value"`
-}
+var _ data.ListData = (*ListData)(nil)
 
-var _ data.ListData = (*listData)(nil)
-
-func (listData listData) Get() []data.Data {
-	return listData.Value.GetList()
+func (listData *ListData) Get() []data.AnyData {
+	anyDataList := make([]data.AnyData, listData.Size())
+	for i, anyData := range listData.Value {
+		anyDataList[i] = anyData
+	}
+	return anyDataList
 }
-func (listData listData) Search(data data.Data) (int, bool) {
+func (listData *ListData) Search(data data.AnyData) (int, bool) {
 	return listData.Value.Search(data)
 }
-func (listData listData) Add(data ...data.Data) data.ListData {
+func (listData *ListData) Add(data ...data.AnyData) data.ListData {
 	listData.Value = listData.Value.Add(data...)
 	return listData
 }
-func (listData listData) Remove(data ...data.Data) data.ListData {
+func (listData *ListData) Remove(data ...data.AnyData) data.ListData {
 	listData.Value = listData.Value.Remove(data...)
 	return listData
 }
-func (listData listData) GetID() ids.DataID {
+func (listData *ListData) GetID() ids.DataID {
 	return baseIDs.NewDataID(listData)
 }
-func (listData listData) Compare(listable traits.Listable) int {
+func (listData *ListData) Compare(listable traits.Listable) int {
 	compareListData, err := listDataFromInterface(listable)
 	if err != nil {
 		panic(err)
@@ -49,16 +48,7 @@ func (listData listData) Compare(listable traits.Listable) int {
 	// TODO check for optimization
 	return bytes.Compare(listData.Bytes(), compareListData.Bytes())
 }
-func (listData listData) String() string {
-	dataStrings := make([]string, listData.Value.Size())
-
-	for i, datum := range listData.Value.GetList() {
-		dataStrings[i] = datum.String()
-	}
-
-	return stringUtilities.JoinListStrings(dataStrings...)
-}
-func (listData listData) Bytes() []byte {
+func (listData *ListData) Bytes() []byte {
 	bytesList := make([][]byte, listData.Value.Size())
 
 	for i, datum := range listData.Value.GetList() {
@@ -69,14 +59,13 @@ func (listData listData) Bytes() []byte {
 	// TODO see if separator required
 	return bytes.Join(bytesList, nil)
 }
-func (listData listData) GetType() ids.StringID {
+func (listData *ListData) GetType() ids.StringID {
 	return dataConstants.ListDataID
 }
-func (listData listData) ZeroValue() data.Data {
+func (listData *ListData) ZeroValue() data.Data {
 	return NewListData(base.NewDataList([]data.Data{}...))
 }
-
-func (listData listData) GenerateHashID() ids.HashID {
+func (listData *ListData) GenerateHashID() ids.HashID {
 	if listData.Compare(listData.ZeroValue()) == 0 {
 		return baseIDs.GenerateHashID()
 	}
