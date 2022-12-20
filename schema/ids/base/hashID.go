@@ -31,8 +31,8 @@ func (hashID *HashID) Compare(listable traits.Listable) int {
 }
 func (hashID *HashID) ToAnyID() *AnyID {
 	return &AnyID{
-		Impl: &AnyID_HashID{
-			HashID: hashID,
+		Impl: &AnyID_HashId{
+			HashId: hashID,
 		},
 	}
 }
