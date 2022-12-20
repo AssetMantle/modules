@@ -20,6 +20,14 @@ func (maintainerID *MaintainerID) IsMaintainerID() {}
 func (maintainerID *MaintainerID) Compare(listable traits.Listable) int {
 	return maintainerID.HashID.Compare(maintainerIDFromInterface(listable).HashID)
 }
+func (maintainerID *MaintainerID) ToAnyID() *AnyID {
+	return &AnyID{
+		Impl: &AnyID_MaintainerID{
+			MaintainerID: maintainerID,
+		},
+	}
+}
+
 func maintainerIDFromInterface(i interface{}) *MaintainerID {
 	switch value := i.(type) {
 	case *MaintainerID:

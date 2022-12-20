@@ -20,6 +20,14 @@ func (classificationID *ClassificationID) IsClassificationID() {}
 func (classificationID *ClassificationID) Compare(listable traits.Listable) int {
 	return classificationID.HashID.Compare(classificationIDFromInterface(listable).HashID)
 }
+func (classificationID *ClassificationID) ToAnyID() *AnyID {
+	return &AnyID{
+		Impl: &AnyID_ClassificationID{
+			ClassificationID: classificationID,
+		},
+	}
+}
+
 func classificationIDFromInterface(i interface{}) *ClassificationID {
 	switch value := i.(type) {
 	case *ClassificationID:

@@ -21,9 +21,17 @@ func (ownableID *OwnableID) Bytes() []byte {
 }
 func (ownableID *OwnableID) IsOwnableID() {}
 func (ownableID *OwnableID) Compare(listable traits.Listable) int {
-	// TODO devise a better strategy to compare assetID and ownableID
+	// TODO devise a better strategy to compare ownableID and ownableID
 	return bytes.Compare(ownableID.Bytes(), ownableIDFromInterface(listable).Bytes())
 }
+func (ownableID *OwnableID) ToAnyID() *AnyID {
+	return &AnyID{
+		Impl: &AnyID_OwnableID{
+			OwnableID: ownableID,
+		},
+	}
+}
+
 func ownableIDFromInterface(i interface{}) ids.OwnableID {
 	switch value := i.(type) {
 	case ids.OwnableID:
@@ -46,8 +54,8 @@ func PrototypeOwnableID() ids.OwnableID {
 
 func ReadOwnableID(ownableIDString string) (ids.OwnableID, error) {
 	// TODO ***** never allow ownable ID to be valid hash string
-	if assetID, err := ReadAssetID(ownableIDString); err == nil {
-		return assetID, nil
+	if ownableID, err := ReadOwnableID(ownableIDString); err == nil {
+		return ownableID, nil
 	}
 
 	return &OwnableID{

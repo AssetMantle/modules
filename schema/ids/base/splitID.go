@@ -28,6 +28,14 @@ func (splitID *SplitID) SplitIDString() string {
 func (splitID *SplitID) Compare(listable traits.Listable) int {
 	return bytes.Compare(splitID.Bytes(), splitIDFromInterface(listable).Bytes())
 }
+func (splitID *SplitID) ToAnyID() *AnyID {
+	return &AnyID{
+		Impl: &AnyID_SplitID{
+			SplitID: splitID,
+		},
+	}
+}
+
 func splitIDFromInterface(i interface{}) *SplitID {
 	switch value := i.(type) {
 	case *SplitID:

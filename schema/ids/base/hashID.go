@@ -29,6 +29,14 @@ func (hashID *HashID) Bytes() []byte {
 func (hashID *HashID) Compare(listable traits.Listable) int {
 	return bytes.Compare(hashID.Bytes(), hashIDFromInterface(listable).Bytes())
 }
+func (hashID *HashID) ToAnyID() *AnyID {
+	return &AnyID{
+		Impl: &AnyID_HashID{
+			HashID: hashID,
+		},
+	}
+}
+
 func hashIDFromInterface(i interface{}) *HashID {
 	switch value := i.(type) {
 	case *HashID:

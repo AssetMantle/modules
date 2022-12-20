@@ -27,6 +27,13 @@ func (assetID *AssetID) Compare(listable traits.Listable) int {
 	// TODO devise a better strategy to compare assetID and ownableID
 	return bytes.Compare(assetID.Bytes(), ownableIDFromInterface(listable).Bytes())
 }
+func (assetID *AssetID) ToAnyID() *AnyID {
+	return &AnyID{
+		Impl: &AnyID_AssetID{
+			AssetID: assetID,
+		},
+	}
+}
 func assetIDFromInterface(i interface{}) *AssetID {
 	switch value := i.(type) {
 	case *AssetID:

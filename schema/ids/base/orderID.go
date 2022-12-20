@@ -20,6 +20,14 @@ func (orderID *OrderID) IsOrderID() {}
 func (orderID *OrderID) Compare(listable traits.Listable) int {
 	return orderID.OrderID.Compare(orderIDFromInterface(listable).OrderID)
 }
+func (orderID *OrderID) ToAnyID() *AnyID {
+	return &AnyID{
+		Impl: &AnyID_OrderID{
+			OrderID: orderID,
+		},
+	}
+}
+
 func orderIDFromInterface(i interface{}) *OrderID {
 	switch value := i.(type) {
 	case *OrderID:
