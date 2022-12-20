@@ -12,36 +12,36 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type propertyID struct {
-	Key  ids.StringID
-	Type ids.StringID
-}
+//type propertyID struct {
+//	Key  ids.StringID
+//	Type ids.StringID
+//}
 
-var _ ids.PropertyID = (*propertyID)(nil)
+var _ ids.PropertyID = (*PropertyID)(nil)
 
-func (propertyID propertyID) IsPropertyID() {}
-func (propertyID propertyID) GetKey() ids.StringID {
-	return propertyID.Key
+func (propertyID *PropertyID) IsPropertyID() {}
+func (propertyID *PropertyID) GetKey() ids.StringID {
+	return propertyID.KeyID
 }
-func (propertyID propertyID) GetType() ids.StringID {
-	return propertyID.Type
+func (propertyID *PropertyID) GetType() ids.StringID {
+	return propertyID.TypeID
 }
-func (propertyID propertyID) String() string {
-	return stringUtilities.JoinIDStrings(propertyID.Key.String(), propertyID.Type.String())
+func (propertyID *PropertyID) PropertyIDString() string {
+	return stringUtilities.JoinIDStrings(propertyID.KeyID.String(), propertyID.TypeID.String())
 }
-func (propertyID propertyID) Bytes() []byte {
+func (propertyID *PropertyID) Bytes() []byte {
 	var Bytes []byte
-	Bytes = append(Bytes, propertyID.Key.Bytes()...)
-	Bytes = append(Bytes, propertyID.Type.Bytes()...)
+	Bytes = append(Bytes, propertyID.KeyID.Bytes()...)
+	Bytes = append(Bytes, propertyID.TypeID.Bytes()...)
 
 	return Bytes
 }
-func (propertyID propertyID) Compare(listable traits.Listable) int {
+func (propertyID *PropertyID) Compare(listable traits.Listable) int {
 	return bytes.Compare(propertyID.Bytes(), propertyIDFromInterface(listable).Bytes())
 }
-func propertyIDFromInterface(listable traits.Listable) propertyID {
+func propertyIDFromInterface(listable traits.Listable) *PropertyID {
 	switch value := listable.(type) {
-	case propertyID:
+	case *PropertyID:
 		return value
 	default:
 		panic(errorConstants.MetaDataError)
@@ -49,8 +49,8 @@ func propertyIDFromInterface(listable traits.Listable) propertyID {
 }
 
 func NewPropertyID(key, Type ids.StringID) ids.PropertyID {
-	return propertyID{
-		Key:  key,
-		Type: Type,
+	return &PropertyID{
+		KeyID:  key.(*StringID),
+		TypeID: Type.(*StringID),
 	}
 }

@@ -9,14 +9,18 @@ import (
 )
 
 // TODO rename to something more appropriate
-type ownableID struct {
-	ids.StringID
+//type ownableID struct {
+//	ids.StringID
+//}
+
+var _ ids.OwnableID = (*OwnableID)(nil)
+
+//TODO: Verify
+func (ownableID *OwnableID) Bytes() []byte {
+	return []byte(ownableID.StringID.IdString)
 }
-
-var _ ids.OwnableID = (*ownableID)(nil)
-
-func (ownableID ownableID) IsOwnableID() {}
-func (ownableID ownableID) Compare(listable traits.Listable) int {
+func (ownableID *OwnableID) IsOwnableID() {}
+func (ownableID *OwnableID) Compare(listable traits.Listable) int {
 	// TODO devise a better strategy to compare assetID and ownableID
 	return bytes.Compare(ownableID.Bytes(), ownableIDFromInterface(listable).Bytes())
 }
@@ -29,14 +33,14 @@ func ownableIDFromInterface(i interface{}) ids.OwnableID {
 	}
 }
 func NewOwnableID(stringID ids.StringID) ids.OwnableID {
-	return ownableID{
-		StringID: stringID,
+	return &OwnableID{
+		StringID: stringID.(*StringID),
 	}
 }
 
 func PrototypeOwnableID() ids.OwnableID {
-	return ownableID{
-		StringID: PrototypeStringID(),
+	return &OwnableID{
+		StringID: PrototypeStringID().(*StringID),
 	}
 }
 
@@ -46,7 +50,7 @@ func ReadOwnableID(ownableIDString string) (ids.OwnableID, error) {
 		return assetID, nil
 	}
 
-	return ownableID{
-		StringID: NewStringID(ownableIDString),
+	return &OwnableID{
+		StringID: NewStringID(ownableIDString).(*StringID),
 	}, nil
 }

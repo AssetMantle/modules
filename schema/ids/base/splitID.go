@@ -9,31 +9,28 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type splitID struct {
-	OwnerID   ids.IdentityID
-	OwnableID ids.OwnableID
-}
+//type splitID struct {
+//	OwnerID   ids.IdentityID
+//	OwnableID ids.OwnableID
+//}
 
-var _ ids.SplitID = (*splitID)(nil)
+var _ ids.SplitID = (*SplitID)(nil)
 
-func (splitID splitID) IsSplitID() {}
-func (splitID splitID) Bytes() []byte {
+func (splitID *SplitID) IsSplitID() {}
+func (splitID *SplitID) Bytes() []byte {
 	return append(
 		splitID.OwnerID.Bytes(),
 		splitID.OwnableID.Bytes()...)
 }
-func (splitID splitID) String() string {
+func (splitID *SplitID) SplitIDString() string {
 	return stringUtilities.JoinIDStrings(splitID.OwnerID.String(), splitID.OwnableID.String())
 }
-func (splitID splitID) Compare(listable traits.Listable) int {
+func (splitID *SplitID) Compare(listable traits.Listable) int {
 	return bytes.Compare(splitID.Bytes(), splitIDFromInterface(listable).Bytes())
 }
-func (splitID splitID) GetOwnableID() ids.ID {
-	return splitID.OwnableID
-}
-func splitIDFromInterface(i interface{}) splitID {
+func splitIDFromInterface(i interface{}) *SplitID {
 	switch value := i.(type) {
-	case splitID:
+	case *SplitID:
 		return value
 	default:
 		panic(i)
@@ -41,16 +38,16 @@ func splitIDFromInterface(i interface{}) splitID {
 }
 
 func NewSplitID(ownerID ids.IdentityID, ownableID ids.OwnableID) ids.SplitID {
-	return splitID{
-		OwnerID:   ownerID,
-		OwnableID: ownableID,
+	return &SplitID{
+		OwnerID:   ownerID.(*IdentityID),
+		OwnableID: ownableID.(*OwnableID),
 	}
 }
 
 func PrototypeSplitID() ids.SplitID {
-	return splitID{
-		OwnerID:   PrototypeIdentityID(),
-		OwnableID: PrototypeOwnableID(),
+	return &SplitID{
+		OwnerID:   PrototypeIdentityID().(*IdentityID),
+		OwnableID: PrototypeOwnableID().(*OwnableID),
 	}
 }
 
@@ -58,9 +55,9 @@ func ReadSplitID(splitIDString string) (ids.SplitID, error) {
 	if splitIDStringSplit := stringUtilities.SplitCompositeIDString(splitIDString); len(splitIDStringSplit) == 2 {
 		if ownerID, err := ReadIdentityID(splitIDStringSplit[0]); err == nil {
 			if ownableID, err := ReadOwnableID(splitIDStringSplit[1]); err == nil {
-				return splitID{
-					OwnerID:   ownerID,
-					OwnableID: ownableID,
+				return &SplitID{
+					OwnerID:   ownerID.(*IdentityID),
+					OwnableID: ownableID.(*OwnableID),
 				}, nil
 			}
 		}
@@ -70,5 +67,5 @@ func ReadSplitID(splitIDString string) (ids.SplitID, error) {
 		return PrototypeSplitID(), nil
 	}
 
-	return splitID{}, constants.MetaDataError
+	return &SplitID{}, constants.MetaDataError
 }

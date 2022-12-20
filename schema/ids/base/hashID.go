@@ -11,27 +11,27 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type hashID struct {
-	HashBytes []byte
-}
+//type hashID struct {
+//	HashBytes []byte
+//}
 
-var _ ids.HashID = (*hashID)(nil)
+var _ ids.HashID = (*HashID)(nil)
 
-func (hashID hashID) IsHashID() {}
+func (hashID *HashID) IsHashID() {}
 
 // TODO test if nil and empty result in ""
-func (hashID hashID) String() string {
-	return base64.URLEncoding.EncodeToString(hashID.HashBytes)
+func (hashID *HashID) EncodedString() string {
+	return base64.URLEncoding.EncodeToString(hashID.IdBytes)
 }
-func (hashID hashID) Bytes() []byte {
-	return hashID.HashBytes
+func (hashID *HashID) Bytes() []byte {
+	return hashID.IdBytes
 }
-func (hashID hashID) Compare(listable traits.Listable) int {
+func (hashID *HashID) Compare(listable traits.Listable) int {
 	return bytes.Compare(hashID.Bytes(), hashIDFromInterface(listable).Bytes())
 }
-func hashIDFromInterface(i interface{}) hashID {
+func hashIDFromInterface(i interface{}) *HashID {
 	switch value := i.(type) {
-	case hashID:
+	case *HashID:
 		return value
 	default:
 		panic(constants.MetaDataError)
@@ -49,7 +49,7 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 	}
 
 	if len(nonEmptyByteList) == 0 {
-		return hashID{HashBytes: nil}
+		return &HashID{IdBytes: nil}
 	}
 
 	sort.Slice(nonEmptyByteList, func(i, j int) bool { return bytes.Compare(nonEmptyByteList[i], nonEmptyByteList[j]) == -1 })
@@ -61,7 +61,7 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 		panic(err)
 	}
 
-	return hashID{HashBytes: hash.Sum(nil)}
+	return &HashID{IdBytes: hash.Sum(nil)}
 }
 
 func PrototypeHashID() ids.HashID {
@@ -70,12 +70,12 @@ func PrototypeHashID() ids.HashID {
 
 func ReadHashID(hashIDString string) (ids.HashID, error) {
 	if hashBytes, err := base64.URLEncoding.DecodeString(hashIDString); err == nil {
-		return hashID{HashBytes: hashBytes}, nil
+		return &HashID{IdBytes: hashBytes}, nil
 	}
 
 	if hashIDString == "" {
 		return nil, nil
 	}
 
-	return hashID{}, constants.IncorrectFormat
+	return &HashID{}, constants.IncorrectFormat
 }

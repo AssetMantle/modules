@@ -1,0 +1,7 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/hashID.v1.proto";
+message AssetID{
+  HashID hash_i_d = 1;
+}
