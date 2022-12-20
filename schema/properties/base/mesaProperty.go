@@ -12,35 +12,40 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type mesaProperty struct {
-	ID     ids.PropertyID
-	DataID ids.DataID
+//
+//type mesaProperty struct {
+//	ID     ids.PropertyID
+//	DataID ids.DataID
+//}
+
+var _ properties.MesaProperty = (*Property_MesaProperty)(nil)
+
+func (mesaProperty *Property_MesaProperty) ScrubData() properties.Property {
+	panic("this method should never be called")
 }
 
-var _ properties.MesaProperty = (*mesaProperty)(nil)
-
-func (mesaProperty mesaProperty) GetID() ids.PropertyID {
-	return mesaProperty.ID
+func (mesaProperty *Property_MesaProperty) GetID() ids.ID {
+	return mesaProperty.MesaProperty.ID
 }
-func (mesaProperty mesaProperty) GetDataID() ids.DataID {
-	return mesaProperty.DataID
+func (mesaProperty *Property_MesaProperty) GetDataID() ids.ID {
+	return mesaProperty.MesaProperty.DataID
 }
-func (mesaProperty mesaProperty) GetKey() ids.StringID {
-	return mesaProperty.ID.GetKey()
+func (mesaProperty *Property_MesaProperty) GetKey() ids.ID {
+	return mesaProperty.MesaProperty.ID.Impl.(ids.PropertyID).GetKey()
 }
-func (mesaProperty mesaProperty) GetType() ids.StringID {
-	return mesaProperty.ID.GetType()
+func (mesaProperty *Property_MesaProperty) GetType() ids.ID {
+	return mesaProperty.MesaProperty.ID.Impl.(ids.PropertyID).GetType()
 }
-func (mesaProperty mesaProperty) GetHash() ids.ID {
-	return mesaProperty.DataID.GetHashID()
+func (mesaProperty *Property_MesaProperty) GetHash() ids.ID {
+	return mesaProperty.MesaProperty.DataID.Impl.(ids.DataID).GetHashID()
 }
-func (mesaProperty mesaProperty) IsMeta() bool {
+func (mesaProperty *Property_MesaProperty) IsMeta() bool {
 	return false
 }
-func (mesaProperty mesaProperty) IsMesa() bool {
+func (mesaProperty *Property_MesaProperty) IsMesa() bool {
 	return true
 }
-func (mesaProperty mesaProperty) Compare(listable traits.Listable) int {
+func (mesaProperty *Property_MesaProperty) Compare(listable traits.Listable) int {
 	// NOTE: compare property can be meta or mesa, so listable must only be cast to Property Interface and not MesaProperty
 	if compareProperty, err := propertyFromInterface(listable); err != nil {
 		panic(err)
@@ -53,18 +58,26 @@ func propertyFromInterface(listable traits.Listable) (properties.Property, error
 	case properties.Property:
 		return value, nil
 	default:
-		return mesaProperty{}, constants.MetaDataError
+		return nil, constants.MetaDataError
 	}
 }
 
-func NewEmptyMesaPropertyFromID(propertyID ids.PropertyID) properties.Property {
-	return mesaProperty{
-		ID: propertyID,
+func NewEmptyMesaPropertyFromID(propertyID ids.ID) properties.Property {
+	return &Property{
+		Impl: &Property_MesaProperty{
+			MesaProperty: &MesaProperty{
+				ID: propertyID.(*baseIDs.ID),
+			},
+		},
 	}
 }
-func NewMesaProperty(key ids.StringID, data data.Data) properties.MesaProperty {
-	return mesaProperty{
-		ID:     baseIDs.NewPropertyID(key, data.GetType()),
-		DataID: data.GetID(),
+func NewMesaProperty(key ids.ID, data data.Data) properties.Property {
+	return &Property{
+		Impl: &Property_MesaProperty{
+			MesaProperty: &MesaProperty{
+				ID:     baseIDs.NewPropertyID(key, data.GetType()).(*baseIDs.ID),
+				DataID: data.GetID().(*baseIDs.ID),
+			},
+		},
 	}
 }
