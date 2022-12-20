@@ -72,6 +72,8 @@ func (listData *ListData) GenerateHashID() ids.HashID {
 
 	return baseIDs.GenerateHashID(listData.Bytes())
 }
+func (listData *ListData) ToAnyData() data.AnyData {
+}
 func listDataFromInterface(listable traits.Listable) (listData, error) {
 	switch value := listable.(type) {
 	case listData:

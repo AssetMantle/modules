@@ -41,6 +41,13 @@ func (idData *IDData) GenerateHashID() ids.HashID {
 func (idData *IDData) Get() ids.ID {
 	return idData.Value
 }
+func (idData *IDData) ToAnyData() data.AnyData {
+	return &AnyData{
+		Impl: &AnyData_IDData{
+			IDData: idData,
+		},
+	}
+}
 
 func IDDataPrototype() data.Data {
 	return NewIDData(baseIDs.NewStringID(""))
