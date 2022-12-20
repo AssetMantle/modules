@@ -16,18 +16,21 @@ var _ ids.IdentityID = (*IdentityID)(nil)
 // TODO deprecate
 func (identityID *IdentityID) IsIdentityID() {}
 func (identityID *IdentityID) IDString() string {
-	return identityID.HashID.EncodedString()
+	return identityID.HashId.EncodedString()
+}
+func (identityID *IdentityID) GetHashID() ids.HashID {
+	return identityID.HashId
 }
 func (identityID *IdentityID) Bytes() []byte {
-	return identityID.HashID.Bytes()
+	return identityID.HashId.Bytes()
 }
 func (identityID *IdentityID) Compare(listable traits.Listable) int {
-	return identityID.HashID.Compare(identityIDFromInterface(listable).HashID)
+	return identityID.HashId.Compare(identityIDFromInterface(listable).HashId)
 }
 func (identityID *IdentityID) ToAnyID() *AnyID {
 	return &AnyID{
-		Impl: &AnyID_IdentityID{
-			IdentityID: identityID,
+		Impl: &AnyID_IdentityId{
+			IdentityId: identityID,
 		},
 	}
 }
@@ -43,13 +46,13 @@ func identityIDFromInterface(i interface{}) *IdentityID {
 
 func NewIdentityID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.IdentityID {
 	return &IdentityID{
-		HashID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
+		HashId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
 	}
 }
 
 func PrototypeIdentityID() ids.IdentityID {
 	return &IdentityID{
-		HashID: PrototypeHashID().(*HashID),
+		HashId: PrototypeHashID().(*HashID),
 	}
 }
 
@@ -57,7 +60,7 @@ func ReadIdentityID(identityIDString string) (ids.IdentityID, error) {
 
 	if hashID, err := ReadHashID(identityIDString); err == nil {
 		return &IdentityID{
-			HashID: hashID.(*HashID),
+			HashId: hashID.(*HashID),
 		}, nil
 	}
 

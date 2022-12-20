@@ -20,15 +20,18 @@ import (
 
 var _ ids.DataID = (*DataID)(nil)
 
+func (dataID *DataID) GetHashID() ids.HashID {
+	return dataID.HashId
+}
 func (dataID *DataID) IsDataID() {
 }
 func (dataID *DataID) DataIDString() string {
-	return stringUtilities.JoinIDStrings(dataID.TypeID.String(), dataID.HashID.String())
+	return stringUtilities.JoinIDStrings(dataID.TypeId.String(), dataID.HashId.String())
 }
 func (dataID *DataID) Bytes() []byte {
 	var Bytes []byte
-	Bytes = append(Bytes, dataID.TypeID.Bytes()...)
-	Bytes = append(Bytes, dataID.HashID.Bytes()...)
+	Bytes = append(Bytes, dataID.TypeId.Bytes()...)
+	Bytes = append(Bytes, dataID.HashId.Bytes()...)
 
 	return Bytes
 }
@@ -37,8 +40,8 @@ func (dataID *DataID) Compare(listable traits.Listable) int {
 }
 func (dataID *DataID) ToAnyID() *AnyID {
 	return &AnyID{
-		Impl: &AnyID_DataID{
-			DataID: dataID,
+		Impl: &AnyID_DataId{
+			DataId: dataID,
 		},
 	}
 }
@@ -58,25 +61,25 @@ func GenerateDataID(data data.Data) ids.DataID {
 	}
 
 	return &DataID{
-		TypeID: data.GetType().(*StringID),
-		HashID: data.GenerateHashID().(*HashID),
+		TypeId: data.GetType().(*StringID),
+		HashId: data.GenerateHashID().(*HashID),
 	}
 }
 
 func PrototypeDataID() ids.DataID {
 	return &DataID{
-		TypeID: PrototypeStringID().(*StringID),
-		HashID: PrototypeHashID().(*HashID),
+		TypeId: PrototypeStringID().(*StringID),
+		HashId: PrototypeHashID().(*HashID),
 	}
 }
 
 func ReadDataID(dataIDString string) (ids.DataID, error) {
-	if typeAndHashIDString := stringUtilities.SplitCompositeIDString(dataIDString); len(typeAndHashIDString) == 2 {
-		Type := NewStringID(typeAndHashIDString[0])
-		if hashID, err := ReadHashID(typeAndHashIDString[1]); err == nil {
+	if typeAndHashIdString := stringUtilities.SplitCompositeIDString(dataIDString); len(typeAndHashIdString) == 2 {
+		Type := NewStringID(typeAndHashIdString[0])
+		if hashID, err := ReadHashID(typeAndHashIdString[1]); err == nil {
 			return &DataID{
-				TypeID: Type.(*StringID),
-				HashID: hashID.(*HashID),
+				TypeId: Type.(*StringID),
+				HashId: hashID.(*HashID),
 			}, nil
 		}
 	}
