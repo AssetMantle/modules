@@ -11,10 +11,6 @@ import (
 	"github.com/AssetMantle/modules/schema/qualified"
 )
 
-type mutables struct {
-	lists.PropertyList
-}
-
 var _ qualified.Mutables = (*Mutables)(nil)
 
 func (mutables *Mutables) GetMutablePropertyList() lists.PropertyList {

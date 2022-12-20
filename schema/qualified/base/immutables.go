@@ -12,10 +12,6 @@ import (
 	"github.com/AssetMantle/modules/schema/qualified"
 )
 
-//type immutables struct {
-//	lists.PropertyList
-//}
-
 var _ qualified.Immutables = (*Immutables)(nil)
 
 // TODO write test case
