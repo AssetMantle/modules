@@ -8,85 +8,72 @@ import (
 	"sort"
 )
 
-var _ lists.PropertyList = (*List_PropertyList)(nil)
+var _ lists.PropertyList = (*PropertyList)(nil)
 
-func (propertyList *List_PropertyList) GetProperty(propertyID ids.PropertyID) properties.Property {
+func (propertyList *PropertyList) GetProperty(propertyID ids.PropertyID) properties.Property {
 	if i, found := propertyList.Search(base.NewEmptyMesaPropertyFromID(propertyID)); found {
 		return propertyList.GetList()[i]
 	}
 
 	return nil
 }
-func (propertyList *List_PropertyList) Search(property properties.Property) (index int, found bool) {
+func (propertyList *PropertyList) Search(property properties.Property) (index int, found bool) {
 	index = sort.Search(
-		len(propertyList.PropertyList.List),
+		len(propertyList.List),
 		func(i int) bool {
-			return propertyList.PropertyList.List[i].Compare(property) >= 0
+			return propertyList.List[i].Compare(property) >= 0
 		},
 	)
 
-	if index < len(propertyList.PropertyList.List) && propertyList.PropertyList.List[index].Compare(property) == 0 {
+	if index < len(propertyList.List) && propertyList.List[index].Compare(property) == 0 {
 		return index, true
 	}
 
 	return index, false
 }
-func (propertyList *List_PropertyList) GetList() []properties.Property {
-	Properties := make([]properties.Property, len(propertyList.PropertyList.List))
-	for i, listable := range propertyList.PropertyList.List {
-		Properties[i] = listable
-	}
-	return Properties
-}
-func (propertyList *List_PropertyList) GetPropertyIDList() lists.List {
+func (propertyList *PropertyList) GetPropertyIDList() lists.IDList {
 	propertyIDList := NewIDList()
 	for _, property := range propertyList.GetList() {
 		propertyIDList = propertyIDList.Add(property.GetID())
 	}
 	return propertyIDList
 }
-func (propertyList *List_PropertyList) Add(properties ...properties.Property) lists.List {
+func (propertyList *PropertyList) Add(properties ...properties.Property) lists.PropertyList {
 	updatedList := propertyList
 	for _, listable := range properties {
 		if index, found := updatedList.Search(listable); !found {
-			updatedList.PropertyList.List = append(updatedList.PropertyList.List, listable.(*base.Property))
-			copy(updatedList.PropertyList.List[index+1:], updatedList.PropertyList.List[index:])
-			updatedList.PropertyList.List[index] = listable.(*base.Property)
+			updatedList.List = append(updatedList.List, listable.(*base.Property))
+			copy(updatedList.List[index+1:], updatedList.List[index:])
+			updatedList.List[index] = listable.(*base.Property)
 		}
 	}
-	return &List{
-		Impl: updatedList,
-	}
+	return updatedList
 }
-func (propertyList *List_PropertyList) Remove(properties ...properties.Property) lists.List {
+func (propertyList *PropertyList) Remove(properties ...properties.Property) lists.PropertyList {
 	updatedList := propertyList
 
 	for _, listable := range properties {
 		if index, found := updatedList.Search(listable); found {
-			updatedList.PropertyList.List = append(updatedList.PropertyList.List[:index], updatedList.PropertyList.List[index+1:]...)
+			updatedList.List = append(updatedList.List[:index], updatedList.List[index+1:]...)
 		}
 	}
 
-	return &List{
-		Impl: updatedList,
-	}
+	return updatedList
 }
-func (propertyList *List_PropertyList) Mutate(properties ...properties.Property) lists.List {
+func (propertyList *PropertyList) Mutate(properties ...properties.Property) lists.PropertyList {
 	updatedList := propertyList
 
 	for _, listable := range properties {
 		if index, found := updatedList.Search(listable); found {
-			updatedList.PropertyList.List[index] = listable.(*base.Property)
+			updatedList.List[index] = listable.(*base.Property)
 		}
 	}
 
-	return &List{
-		Impl: updatedList,
-	}
+	return updatedList
 }
-func (propertyList *List_PropertyList) ScrubData() lists.List {
+func (propertyList *PropertyList) ScrubData() lists.PropertyList {
 	newPropertyList := NewPropertyList()
-	for _, listable := range propertyList.PropertyList.List {
+	for _, listable := range propertyList.List {
 		if property := listable; property.IsMeta() {
 			newPropertyList = newPropertyList.Add(property.Impl.(properties.Property).ScrubData())
 		} else {
@@ -96,17 +83,11 @@ func (propertyList *List_PropertyList) ScrubData() lists.List {
 	return newPropertyList
 }
 
-func NewPropertyList(properties ...properties.Property) lists.List {
+func NewPropertyList(properties ...properties.Property) lists.PropertyList {
 	var propertyList []*base.Property
 
 	for _, dataVal := range properties {
 		propertyList = append(propertyList, dataVal.(*base.Property))
 	}
-	return &List{
-		Impl: &List_PropertyList{
-			PropertyList: &PropertyList{
-				List: propertyList,
-			},
-		},
-	}
+	return &PropertyList{List: propertyList}
 }
