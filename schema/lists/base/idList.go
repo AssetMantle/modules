@@ -66,6 +66,9 @@ func NewIDList(ids ...ids.ID) lists.List {
 	for _, dataVal := range ids {
 		idList = append(idList, dataVal.(*baseIDs.ID))
 	}
+	sort.Slice(idList, func(i, j int) bool {
+		return idList[i].Compare(idList[j]) <= 0
+	})
 	return &List{
 		Impl: &List_IdList{
 			IdList: &IDList{

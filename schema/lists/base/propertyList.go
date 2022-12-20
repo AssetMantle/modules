@@ -10,7 +10,7 @@ import (
 
 var _ lists.PropertyList = (*List_PropertyList)(nil)
 
-func (propertyList *List_PropertyList) GetProperty(propertyID ids.PropertyID) properties.Property {
+func (propertyList *List_PropertyList) GetProperty(propertyID ids.ID) properties.Property {
 	if i, found := propertyList.Search(base.NewEmptyMesaPropertyFromID(propertyID)); found {
 		return propertyList.GetList()[i]
 	}
@@ -102,6 +102,9 @@ func NewPropertyList(properties ...properties.Property) lists.List {
 	for _, dataVal := range properties {
 		propertyList = append(propertyList, dataVal.(*base.Property))
 	}
+	sort.Slice(propertyList, func(i, j int) bool {
+		return propertyList[i].Compare(propertyList[j]) <= 0
+	})
 	return &List{
 		Impl: &List_PropertyList{
 			PropertyList: &PropertyList{

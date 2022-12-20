@@ -6,7 +6,7 @@ import (
 )
 
 type PropertyList interface {
-	GetProperty(ids.PropertyID) properties.Property
+	GetProperty(ids.ID) properties.Property
 	GetList() []properties.Property
 	GetPropertyIDList() List
 

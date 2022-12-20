@@ -70,6 +70,9 @@ func NewDataList(data ...data.Data) lists.List {
 	for _, dataVal := range data {
 		dataList = append(dataList, dataVal.(*baseData.Data))
 	}
+	sort.Slice(dataList, func(i, j int) bool {
+		return dataList[i].Compare(dataList[j]) <= 0
+	})
 	return &List{
 		Impl: &List_DataList{
 			DataList: &DataList{

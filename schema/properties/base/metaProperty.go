@@ -59,7 +59,7 @@ func NewEmptyMetaPropertyFromID(propertyID ids.ID) properties.Property {
 		},
 	}
 }
-func NewMetaProperty(key ids.StringID, data data.Data) properties.Property {
+func NewMetaProperty(key ids.ID, data data.Data) properties.Property {
 	if data == nil || key == nil {
 		panic(errorConstants.MetaDataError)
 	}

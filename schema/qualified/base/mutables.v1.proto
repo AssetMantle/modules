@@ -1,0 +1,8 @@
+syntax = "proto3";
+package qualified;
+
+import "schema/lists/base/List.v1.proto";
+
+message Mutables {
+  lists.List property_list = 1;
+}

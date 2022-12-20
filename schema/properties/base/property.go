@@ -1,6 +1,7 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -21,6 +22,10 @@ func (m *Property) GetDataID() ids.ID {
 
 func (m *Property) GetKey() ids.ID {
 	return m.Impl.(properties.Property).GetKey()
+}
+
+func (m *Property) GetData() data.Data {
+	return m.Impl.(properties.Property).GetData()
 }
 
 func (m *Property) GetType() ids.ID {
