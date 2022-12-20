@@ -17,7 +17,7 @@ var _ ids.OwnableID = (*OwnableID)(nil)
 
 //TODO: Verify
 func (ownableID *OwnableID) Bytes() []byte {
-	return []byte(ownableID.StringID.IdString)
+	return []byte(ownableID.StringId.IdString)
 }
 func (ownableID *OwnableID) IsOwnableID() {}
 func (ownableID *OwnableID) Compare(listable traits.Listable) int {
@@ -26,8 +26,8 @@ func (ownableID *OwnableID) Compare(listable traits.Listable) int {
 }
 func (ownableID *OwnableID) ToAnyID() *AnyID {
 	return &AnyID{
-		Impl: &AnyID_OwnableID{
-			OwnableID: ownableID,
+		Impl: &AnyID_OwnableId{
+			OwnableId: ownableID,
 		},
 	}
 }
@@ -42,13 +42,13 @@ func ownableIDFromInterface(i interface{}) ids.OwnableID {
 }
 func NewOwnableID(stringID ids.StringID) ids.OwnableID {
 	return &OwnableID{
-		StringID: stringID.(*StringID),
+		StringId: stringID.(*StringID),
 	}
 }
 
 func PrototypeOwnableID() ids.OwnableID {
 	return &OwnableID{
-		StringID: PrototypeStringID().(*StringID),
+		StringId: PrototypeStringID().(*StringID),
 	}
 }
 
@@ -59,6 +59,6 @@ func ReadOwnableID(ownableIDString string) (ids.OwnableID, error) {
 	}
 
 	return &OwnableID{
-		StringID: NewStringID(ownableIDString).(*StringID),
+		StringId: NewStringID(ownableIDString).(*StringID),
 	}, nil
 }

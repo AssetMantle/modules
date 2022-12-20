@@ -1,0 +1,12 @@
+syntax = "proto3";
+package types;
+
+import "schema/ids/base/identityID.v1.proto";
+import "schema/ids/base/ownableID.v1.proto";
+import "gogoproto/gogo.proto";
+
+message Split {
+  ids.IdentityID owner_id = 1;
+  ids.OwnableID ownable_id = 2;
+  string value = 3 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+}

@@ -27,8 +27,8 @@ func (stringID *StringID) Compare(listable traits.Listable) int {
 }
 func (stringID *StringID) ToAnyID() *AnyID {
 	return &AnyID{
-		Impl: &AnyID_StringID{
-			StringID: stringID,
+		Impl: &AnyID_StringId{
+			StringId: stringID,
 		},
 	}
 }

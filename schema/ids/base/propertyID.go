@@ -21,18 +21,18 @@ var _ ids.PropertyID = (*PropertyID)(nil)
 
 func (propertyID *PropertyID) IsPropertyID() {}
 func (propertyID *PropertyID) GetKey() ids.StringID {
-	return propertyID.KeyID
+	return propertyID.KeyId
 }
 func (propertyID *PropertyID) GetType() ids.StringID {
-	return propertyID.TypeID
+	return propertyID.TypeId
 }
 func (propertyID *PropertyID) PropertyIDString() string {
-	return stringUtilities.JoinIDStrings(propertyID.KeyID.String(), propertyID.TypeID.String())
+	return stringUtilities.JoinIDStrings(propertyID.KeyId.String(), propertyID.TypeId.String())
 }
 func (propertyID *PropertyID) Bytes() []byte {
 	var Bytes []byte
-	Bytes = append(Bytes, propertyID.KeyID.Bytes()...)
-	Bytes = append(Bytes, propertyID.TypeID.Bytes()...)
+	Bytes = append(Bytes, propertyID.KeyId.Bytes()...)
+	Bytes = append(Bytes, propertyID.TypeId.Bytes()...)
 
 	return Bytes
 }
@@ -41,8 +41,8 @@ func (propertyID *PropertyID) Compare(listable traits.Listable) int {
 }
 func (propertyID *PropertyID) ToAnyID() *AnyID {
 	return &AnyID{
-		Impl: &AnyID_PropertyID{
-			PropertyID: propertyID,
+		Impl: &AnyID_PropertyId{
+			PropertyId: propertyID,
 		},
 	}
 }
@@ -58,7 +58,7 @@ func propertyIDFromInterface(listable traits.Listable) *PropertyID {
 
 func NewPropertyID(key, Type ids.StringID) ids.PropertyID {
 	return &PropertyID{
-		KeyID:  key.(*StringID),
-		TypeID: Type.(*StringID),
+		KeyId:  key.(*StringID),
+		TypeId: Type.(*StringID),
 	}
 }
