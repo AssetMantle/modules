@@ -11,6 +11,7 @@ package qualified
 import (
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/properties"
 )
 
 type Immutables interface {
@@ -18,5 +19,7 @@ type Immutables interface {
 	// does not return nil
 	GetImmutablePropertyList() lists.PropertyList
 
-	GenerateHashID() ids.HashID
+	GetProperty(id ids.ID) properties.Property
+
+	GenerateHashID() ids.ID
 }

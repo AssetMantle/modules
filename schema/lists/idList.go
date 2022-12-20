@@ -5,12 +5,13 @@ package lists
 
 import (
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type IDList interface {
 	Size() int
-	GetList() []ids.ID
+	GetList() []*base.ID
 	Search(ids.ID) (index int, found bool)
-	Add(...ids.ID) List
-	Remove(...ids.ID) List
+	Add(...ids.ID) IDList
+	Remove(...ids.ID) IDList
 }

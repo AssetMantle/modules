@@ -6,51 +6,43 @@ package base
 import (
 	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/qualified"
+	"github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-type document struct {
-	ids.ClassificationID
-	qualified.Immutables
-	qualified.Mutables
-}
+//type document struct {
+//	ids.ClassificationID
+//	qualified.Immutables
+//	qualified.Mutables
+//}
 
-var _ documents.Document = (*document)(nil)
+var _ documents.Document = (*Document)(nil)
 
-func (document document) GenerateHashID() ids.HashID {
-	return base.GenerateHashID(document.GetClassificationID().Bytes(), document.GetImmutables().GenerateHashID().Bytes())
+func (document *Document) GenerateHashID() ids.ID {
+	return baseIDs.GenerateHashID(document.GetClassificationID().Bytes(), document.GetImmutables().GenerateHashID().Bytes())
 }
-func (document document) GetClassificationID() ids.ClassificationID {
-	return document.ClassificationID
-}
-func (document document) GetProperty(propertyID ids.PropertyID) properties.Property {
-	if property := document.Immutables.GetImmutablePropertyList().GetProperty(propertyID); property != nil {
+func (document *Document) GetProperty(propertyID ids.ID) properties.Property {
+	if property := document.Immutables.GetProperty(propertyID); property != nil {
 		return property
-	} else if property := document.Mutables.GetMutablePropertyList().GetProperty(propertyID); property != nil {
+	} else if property := document.Mutables.GetProperty(propertyID); property != nil {
 		return property
 	} else {
 		return nil
 	}
 }
-func (document document) GetImmutables() qualified.Immutables {
-	return document.Immutables
-}
-func (document document) GetMutables() qualified.Mutables {
-	return document.Mutables
-}
 
 // TODO write test case
-func (document document) Mutate(propertyList ...properties.Property) documents.Document {
-	document.Mutables = document.Mutables.Mutate(propertyList...)
+func (document *Document) Mutate(propertyList ...properties.Property) documents.Document {
+	document.Mutables = document.Mutables.Mutate(propertyList...).(*base.Mutables)
 	return document
 }
 
-func NewDocument(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) documents.Document {
-	return document{
-		ClassificationID: classificationID,
-		Immutables:       immutables,
-		Mutables:         mutables,
+func NewDocument(classificationID ids.ID, immutables qualified.Immutables, mutables qualified.Mutables) documents.Document {
+	return &Document{
+		ClassificationID: classificationID.(*baseIDs.ID),
+		Immutables:       immutables.(*base.Immutables),
+		Mutables:         mutables.(*base.Mutables),
 	}
 }

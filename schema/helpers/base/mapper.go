@@ -45,7 +45,6 @@ func (mapper mapper) Read(context sdkTypes.Context, key helpers.Key) helpers.Map
 	}
 
 	var mappable helpers.Mappable
-
 	mapper.codec.MustUnmarshal(Bytes, mappable)
 
 	return mappable
