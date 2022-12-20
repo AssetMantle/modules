@@ -34,7 +34,7 @@ func (idData *Data_IdData) String() string {
 	return idData.IdData.String()
 }
 func (idData *Data_IdData) Bytes() []byte {
-	return idData.Bytes()
+	return idData.IdData.Value.Bytes()
 }
 func (idData *Data_IdData) GetType() ids.ID {
 	return dataConstants.IDDataID
