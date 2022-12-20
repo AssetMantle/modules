@@ -11,35 +11,23 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type hashID struct {
-	HashBytes []byte
+var _ ids.HashID = (*ID_HashID)(nil)
+
+func (hashID *ID_HashID) String() string {
+	return (hashID).String()
 }
 
-var _ ids.HashID = (*hashID)(nil)
+func (hashID *ID_HashID) IsHashID() {}
 
-func (hashID hashID) IsHashID() {}
-
-// TODO test if nil and empty result in ""
-func (hashID hashID) String() string {
-	return base64.URLEncoding.EncodeToString(hashID.HashBytes)
+func (hashID *ID_HashID) Bytes() []byte {
+	return hashID.HashID.IdBytes
 }
-func (hashID hashID) Bytes() []byte {
-	return hashID.HashBytes
-}
-func (hashID hashID) Compare(listable traits.Listable) int {
-	return bytes.Compare(hashID.Bytes(), hashIDFromInterface(listable).Bytes())
-}
-func hashIDFromInterface(i interface{}) hashID {
-	switch value := i.(type) {
-	case hashID:
-		return value
-	default:
-		panic(constants.MetaDataError)
-	}
+func (hashID *ID_HashID) Compare(listable traits.Listable) int {
+	return bytes.Compare(hashID.Bytes(), idFromInterface(listable).Bytes())
 }
 
 // TODO test
-func GenerateHashID(toHashList ...[]byte) ids.HashID {
+func GenerateHashID(toHashList ...[]byte) ids.ID {
 	var nonEmptyByteList [][]byte
 
 	for _, value := range toHashList {
@@ -49,7 +37,7 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 	}
 
 	if len(nonEmptyByteList) == 0 {
-		return hashID{HashBytes: nil}
+		return NewHashID(nil)
 	}
 
 	sort.Slice(nonEmptyByteList, func(i, j int) bool { return bytes.Compare(nonEmptyByteList[i], nonEmptyByteList[j]) == -1 })
@@ -61,21 +49,29 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 		panic(err)
 	}
 
-	return hashID{HashBytes: hash.Sum(nil)}
+	return NewHashID(hash.Sum(nil))
 }
-
-func PrototypeHashID() ids.HashID {
+func NewHashID(idBytes []byte) ids.ID {
+	return &ID{
+		Impl: &ID_HashID{
+			HashID: &HashID{
+				IdBytes: idBytes,
+			},
+		},
+	}
+}
+func PrototypeHashID() ids.ID {
 	return GenerateHashID()
 }
 
-func ReadHashID(hashIDString string) (ids.HashID, error) {
+func ReadHashID(hashIDString string) (ids.ID, error) {
 	if hashBytes, err := base64.URLEncoding.DecodeString(hashIDString); err == nil {
-		return hashID{HashBytes: hashBytes}, nil
+		return NewHashID(hashBytes), nil
 	}
 
 	if hashIDString == "" {
 		return nil, nil
 	}
 
-	return hashID{}, constants.IncorrectFormat
+	return PrototypeHashID(), constants.IncorrectFormat
 }
