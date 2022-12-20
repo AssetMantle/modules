@@ -87,7 +87,7 @@ func Test_keeperPrototype(t *testing.T) {
 
 func Test_queryKeeper_Enquire(t *testing.T) {
 	context, keepers, Mapper, _ := createTestInput(t)
-	testDataID := base.NewDataID(base2.NewStringData("Data"))
+	testDataID := base.GenerateDataID(base2.NewStringData("Data"))
 	keepers.MetaKeeper.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(base2.NewStringData("Data")))
 	type fields struct {
 		mapper helpers.Mapper

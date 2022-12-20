@@ -180,7 +180,7 @@ type stringData struct {
 var _ data.StringData = (*stringData)(nil)
 
 func (stringData stringData) GetID() ids.DataID {
-	return baseIDs.NewDataID(stringData)
+	return baseIDs.GenerateDataID(stringData)
 }
 func (stringData stringData) Compare(listable traits.Listable) int {
 	compareStringData, err := stringDataFromInterface(listable)

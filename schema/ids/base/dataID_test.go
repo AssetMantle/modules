@@ -35,11 +35,11 @@ func TestNewDataID(t *testing.T) {
 				r := recover()
 
 				if (r != nil) != tt.wantError {
-					t.Errorf("NewDataID() error = %v wantError = %v", r, tt.wantError)
+					t.Errorf("GenerateDataID() error = %v wantError = %v", r, tt.wantError)
 				}
 			}()
-			if got := NewDataID(tt.args.data); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewDataID() = %v, want %v", got, tt.want)
+			if got := GenerateDataID(tt.args.data); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GenerateDataID() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -191,7 +191,7 @@ type booleanData struct {
 var _ data.BooleanData = (*booleanData)(nil)
 
 func (booleanData booleanData) GetID() ids.DataID {
-	return NewDataID(booleanData)
+	return GenerateDataID(booleanData)
 }
 func (booleanData booleanData) Compare(listable traits.Listable) int {
 	compareBooleanData, err := booleanDataFromInterface(listable)
@@ -264,7 +264,7 @@ func TestReadDataID(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		{"+ve", args{stringUtilities.JoinIDStrings(NewStringID("B").String(), NewBooleanData(true).GenerateHashID().String())}, NewDataID(NewBooleanData(true)), false},
+		{"+ve", args{stringUtilities.JoinIDStrings(NewStringID("B").String(), NewBooleanData(true).GenerateHashID().String())}, GenerateDataID(NewBooleanData(true)), false},
 		{"+ve with empty string", args{""}, PrototypeDataID(), false},
 		{"+ve with nil", args{}, PrototypeDataID(), false},
 		{"-ve", args{stringUtilities.JoinIDStrings(NewStringID("j").String(), "0")}, dataID{}, true},

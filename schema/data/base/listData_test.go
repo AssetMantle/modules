@@ -246,8 +246,8 @@ func Test_listData_GetID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, baseIDs.NewDataID(listData{baseLists.NewDataList(NewStringData("Data"))})},
-		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, baseIDs.NewDataID(listData{baseLists.NewDataList(NewStringData(""))})},
+		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, baseIDs.GenerateDataID(listData{baseLists.NewDataList(NewStringData("Data"))})},
+		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, baseIDs.GenerateDataID(listData{baseLists.NewDataList(NewStringData(""))})},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

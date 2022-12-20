@@ -161,7 +161,7 @@ func Test_idData_GetID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		{"+ve", fields{NewStringData("Data")}, baseIDs.NewDataID(idData{NewStringData("Data")})},
+		{"+ve", fields{NewStringData("Data")}, baseIDs.GenerateDataID(idData{NewStringData("Data")})},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

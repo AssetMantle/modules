@@ -7,35 +7,32 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ properties.Property = (*Property)(nil)
+var _ properties.Property = (*AnyProperty)(nil)
 
-func (m *Property) GetID() ids.ID {
+func (m *AnyProperty) GetID() ids.PropertyID {
 	return m.Impl.(properties.Property).GetID()
 }
-
-func (m *Property) ScrubData() properties.Property {
+func (m *AnyProperty) ScrubData() properties.Property {
 	return m.Impl.(properties.Property).ScrubData()
 }
-func (m *Property) GetDataID() ids.ID {
+func (m *AnyProperty) GetDataID() ids.DataID {
 	return m.Impl.(properties.Property).GetDataID()
 }
-
-func (m *Property) GetKey() ids.ID {
+func (m *AnyProperty) GetKey() ids.StringID {
 	return m.Impl.(properties.Property).GetKey()
 }
-
-func (m *Property) GetData() data.Data {
+func (m *AnyProperty) GetData() data.AnyData {
 	return m.Impl.(properties.Property).GetData()
 }
-
-func (m *Property) GetType() ids.ID {
+func (m *AnyProperty) GetType() ids.StringID {
 	return m.Impl.(properties.Property).GetType()
 }
-
-func (m *Property) IsMeta() bool {
+func (m *AnyProperty) IsMeta() bool {
 	return m.Impl.(properties.Property).IsMeta()
 }
-
-func (m *Property) Compare(listable traits.Listable) int {
+func (m *AnyProperty) ToAnyProperty() properties.AnyProperty {
+	return m.Impl.(properties.Property).ToAnyProperty()
+}
+func (m *AnyProperty) Compare(listable traits.Listable) int {
 	return m.Impl.(properties.Property).Compare(listable)
 }

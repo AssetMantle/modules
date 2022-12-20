@@ -20,7 +20,7 @@ type mappable struct {
 var _ helpers.Mappable = (*mappable)(nil)
 
 func (mappable mappable) GetKey() helpers.Key {
-	return key.NewKey(base.NewDataID(mappable.Data))
+	return key.NewKey(base.GenerateDataID(mappable.Data))
 }
 func (mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, mappable{})

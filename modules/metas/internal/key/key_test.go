@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	testDataID  = base.NewDataID(base2.NewStringData("Data"))
+	testDataID  = base.GenerateDataID(base2.NewStringData("Data"))
 	testDataID1 = base.PrototypeDataID()
 )
 

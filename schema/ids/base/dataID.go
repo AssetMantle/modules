@@ -13,10 +13,10 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//type dataID struct {
+// type dataID struct {
 //	Type ids.StringID
 //	ids.HashID
-//}
+// }
 
 var _ ids.DataID = (*DataID)(nil)
 
@@ -52,7 +52,7 @@ func dataIDFromInterface(i interface{}) *DataID {
 	}
 }
 
-func NewDataID(data data.Data) ids.DataID {
+func GenerateDataID(data data.Data) ids.DataID {
 	if data == nil {
 		panic(errorConstants.MetaDataError)
 	}

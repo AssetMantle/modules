@@ -253,7 +253,7 @@ type decData struct {
 var _ data.DecData = (*decData)(nil)
 
 func (decData decData) GetID() ids.DataID {
-	return baseIDs.NewDataID(decData)
+	return baseIDs.GenerateDataID(decData)
 }
 func (decData decData) Compare(listable traits.Listable) int {
 	compareDecData, err := decDataFromInterface(listable)

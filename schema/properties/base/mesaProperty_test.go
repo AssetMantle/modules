@@ -333,7 +333,7 @@ type stringData struct {
 var _ data.StringData = (*stringData)(nil)
 
 func (stringData stringData) GetID() ids.DataID {
-	return base.NewDataID(stringData)
+	return base.GenerateDataID(stringData)
 }
 func (stringData stringData) Compare(listable traits.Listable) int {
 	compareStringData, err := stringDataFromInterface(listable)

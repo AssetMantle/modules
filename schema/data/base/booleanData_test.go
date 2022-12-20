@@ -168,9 +168,9 @@ func Test_booleanData_GetID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		{"+ve", fields{}, baseIDs.NewDataID(booleanData{})},
-		{"+ve", fields{true}, baseIDs.NewDataID(booleanData{true})},
-		{"+ve", fields{false}, baseIDs.NewDataID(booleanData{false})},
+		{"+ve", fields{}, baseIDs.GenerateDataID(booleanData{})},
+		{"+ve", fields{true}, baseIDs.GenerateDataID(booleanData{true})},
+		{"+ve", fields{false}, baseIDs.GenerateDataID(booleanData{false})},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

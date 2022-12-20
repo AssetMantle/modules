@@ -154,8 +154,8 @@ func Test_accAddressData_GetID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		{"+ve with nil", fields{}, baseIDs.NewDataID(accAddressData{})},
-		{"+ve", fields{fromAccAddress}, baseIDs.NewDataID(accAddressData{fromAccAddress})},
+		{"+ve with nil", fields{}, baseIDs.GenerateDataID(accAddressData{})},
+		{"+ve", fields{fromAccAddress}, baseIDs.GenerateDataID(accAddressData{fromAccAddress})},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -1,10 +1,10 @@
 syntax = "proto3";
 package properties;
 
-import "schema/ids/base/id.v1.proto";
+import "schema/ids/base/propertyID.v1.proto";
 import "schema/data/base/anyData.v1.proto";
 
 message MetaProperty {
-  ids.ID i_d = 1;
-  data.AnyData data = 2;
+  ids.PropertyID id = 1;
+  data.AnyData any_data = 2;
 }
