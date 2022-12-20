@@ -1,14 +1,10 @@
 name: SonarCloud analysis
 
 on:
-  push:
-    branches: [ "master", */master, v*.*.* ]
-    paths:
-      - "**.go"
-      - "**.mod"
-      - "**.sum"
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - master
+      - main
     paths:
       - "**.go"
       - "**.mod"
