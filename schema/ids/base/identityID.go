@@ -1,54 +1,65 @@
 package base
 
 import (
-	"bytes"
-
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ ids.IdentityID = (*ID_IdentityID)(nil)
+//type identityID struct {
+//	ids.HashID
+//}
 
-func (identityID *ID_IdentityID) String() string {
-	return identityID.IdentityID.HashID.String()
-}
+var _ ids.IdentityID = (*IdentityID)(nil)
 
 // TODO deprecate
-func (identityID *ID_IdentityID) IsIdentityID() {}
-
-func (identityID *ID_IdentityID) Bytes() []byte {
-	return identityID.IdentityID.HashID.IdBytes
+func (identityID *IdentityID) IsIdentityID() {}
+func (identityID *IdentityID) IDString() string {
+	return identityID.HashID.EncodedString()
 }
-func (identityID *ID_IdentityID) Compare(listable traits.Listable) int {
-	return bytes.Compare(identityID.Bytes(), idFromInterface(listable).Bytes())
+func (identityID *IdentityID) Bytes() []byte {
+	return identityID.HashID.Bytes()
 }
-func (identityID *ID_IdentityID) GetHashID() ids.ID {
-	return &ID{Impl: &ID_HashID{HashID: identityID.IdentityID.HashID}}
+func (identityID *IdentityID) Compare(listable traits.Listable) int {
+	return identityID.HashID.Compare(identityIDFromInterface(listable).HashID)
 }
-
-func NewIdentityID(hashID ids.ID) ids.ID {
-	if hashID.(*ID).GetHashID() == nil {
-		panic(errorConstants.MetaDataError)
-	}
-	return &ID{
-		Impl: &ID_IdentityID{
-			IdentityID: &IdentityID{
-				HashID: hashID.(*ID).GetHashID(),
-			},
+func (identityID *IdentityID) ToAnyID() *AnyID {
+	return &AnyID{
+		Impl: &AnyID_IdentityID{
+			IdentityID: identityID,
 		},
 	}
 }
 
-func PrototypeIdentityID() ids.ID {
-	return NewIdentityID(PrototypeHashID())
+func identityIDFromInterface(i interface{}) *IdentityID {
+	switch value := i.(type) {
+	case *IdentityID:
+		return value
+	default:
+		panic(errorConstants.MetaDataError)
+	}
 }
 
-func ReadIdentityID(identityIDString string) (ids.ID, error) {
+func NewIdentityID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.IdentityID {
+	return &IdentityID{
+		HashID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
+	}
+}
+
+func PrototypeIdentityID() ids.IdentityID {
+	return &IdentityID{
+		HashID: PrototypeHashID().(*HashID),
+	}
+}
+
+func ReadIdentityID(identityIDString string) (ids.IdentityID, error) {
 
 	if hashID, err := ReadHashID(identityIDString); err == nil {
-		return NewIdentityID(hashID), nil
+		return &IdentityID{
+			HashID: hashID.(*HashID),
+		}, nil
 	}
 
-	return PrototypeIdentityID(), errorConstants.IncorrectFormat
+	return &IdentityID{}, errorConstants.IncorrectFormat
 }

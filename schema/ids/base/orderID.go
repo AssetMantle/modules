@@ -1,51 +1,64 @@
 package base
 
 import (
-	"bytes"
-
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ ids.OrderID = (*ID_OrderID)(nil)
+//type orderID struct {
+//	ids.HashID
+//}
 
-func (orderID *ID_OrderID) String() string {
-	return orderID.OrderID.String()
-}
-func (orderID *ID_OrderID) Compare(listable traits.Listable) int {
-	return bytes.Compare(orderID.Bytes(), idFromInterface(listable).Bytes())
-}
-func (orderID *ID_OrderID) Bytes() []byte {
-	return orderID.OrderID.OrderID.IdBytes
-}
-func (orderID *ID_OrderID) IsOrderID() {}
+var _ ids.OrderID = (*OrderID)(nil)
 
-func NewOrderID(hashID ids.ID) ids.ID {
-	if hashID.(*ID).GetHashID() == nil {
-		panic(constants.MetaDataError)
-	}
-	return &ID{
-		Impl: &ID_OrderID{
-			OrderID: &OrderID{
-				OrderID: hashID.(*ID).GetHashID(),
-			},
+func (orderID *OrderID) Bytes() []byte {
+	return orderID.OrderID.IdBytes
+}
+func (orderID *OrderID) IsOrderID() {}
+func (orderID *OrderID) Compare(listable traits.Listable) int {
+	return orderID.OrderID.Compare(orderIDFromInterface(listable).OrderID)
+}
+func (orderID *OrderID) ToAnyID() *AnyID {
+	return &AnyID{
+		Impl: &AnyID_OrderID{
+			OrderID: orderID,
 		},
 	}
 }
 
-func PrototypeOrderID() ids.ID {
-	return NewOrderID(PrototypeHashID())
+func orderIDFromInterface(i interface{}) *OrderID {
+	switch value := i.(type) {
+	case *OrderID:
+		return value
+	default:
+		panic(constants.MetaDataError)
+	}
 }
 
-func ReadOrderID(orderIDString string) (ids.ID, error) {
+func NewOrderID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.OrderID {
+	return &OrderID{
+		OrderID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
+	}
+}
+
+func PrototypeOrderID() ids.OrderID {
+	return &OrderID{
+		OrderID: PrototypeHashID().(*HashID),
+	}
+}
+
+func ReadOrderID(orderIDString string) (ids.OrderID, error) {
 	if hashID, err := ReadHashID(orderIDString); err == nil {
-		return NewOrderID(hashID), nil
+		return &OrderID{
+			OrderID: hashID.(*HashID),
+		}, nil
 	}
 
 	if orderIDString == "" {
 		return PrototypeOrderID(), nil
 	}
 
-	return PrototypeOrderID(), nil
+	return &OrderID{}, nil
 }

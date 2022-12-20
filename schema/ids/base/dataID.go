@@ -5,6 +5,7 @@ package base
 
 import (
 	"bytes"
+
 	"github.com/AssetMantle/modules/schema/data"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -12,52 +13,71 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ ids.DataID = (*ID_DataID)(nil)
+//type dataID struct {
+//	Type ids.StringID
+//	ids.HashID
+//}
 
-func (dataID *ID_DataID) IsDataID() {
-}
-func (dataID *ID_DataID) String() string {
-	return stringUtilities.JoinIDStrings(dataID.DataID.Type.String(), dataID.DataID.HashID.String())
-}
-func (dataID *ID_DataID) Bytes() []byte {
-	return append([]byte(dataID.DataID.Type.IdString), dataID.DataID.HashID.IdBytes...)
-}
-func (dataID *ID_DataID) Compare(listable traits.Listable) int {
-	return bytes.Compare(dataID.Bytes(), idFromInterface(listable).Bytes())
-}
-func (dataID *ID_DataID) GetHashID() ids.ID {
-	return &ID{Impl: &ID_HashID{HashID: dataID.DataID.HashID}}
-}
+var _ ids.DataID = (*DataID)(nil)
 
-func GenerateDataID(data data.Data) ids.ID {
-	if data == nil {
-		panic(errorConstants.MetaDataError)
-	}
-	return NewDataID(data.GetType(), data.GenerateHashID())
+func (dataID *DataID) IsDataID() {
 }
-func NewDataID(Type ids.ID, hashID ids.ID) ids.ID {
-	if Type.(*ID).GetStringID() == nil || hashID.(*ID).GetHashID() == nil {
-		panic(errorConstants.MetaDataError)
-	}
-	return &ID{
-		Impl: &ID_DataID{
-			DataID: &DataID{
-				Type:   Type.(*ID).GetStringID(),
-				HashID: hashID.(*ID).GetHashID(),
-			},
+func (dataID *DataID) DataIDString() string {
+	return stringUtilities.JoinIDStrings(dataID.TypeID.String(), dataID.HashID.String())
+}
+func (dataID *DataID) Bytes() []byte {
+	var Bytes []byte
+	Bytes = append(Bytes, dataID.TypeID.Bytes()...)
+	Bytes = append(Bytes, dataID.HashID.Bytes()...)
+
+	return Bytes
+}
+func (dataID *DataID) Compare(listable traits.Listable) int {
+	return bytes.Compare(dataID.Bytes(), dataIDFromInterface(listable).Bytes())
+}
+func (dataID *DataID) ToAnyID() *AnyID {
+	return &AnyID{
+		Impl: &AnyID_DataID{
+			DataID: dataID,
 		},
 	}
 }
 
-func PrototypeDataID() ids.ID {
-	return NewDataID(PrototypeStringID(), PrototypeHashID())
+func dataIDFromInterface(i interface{}) *DataID {
+	switch value := i.(type) {
+	case *DataID:
+		return value
+	default:
+		panic(errorConstants.MetaDataError)
+	}
 }
 
-func ReadDataID(dataIDString string) (ids.ID, error) {
+func NewDataID(data data.Data) ids.DataID {
+	if data == nil {
+		panic(errorConstants.MetaDataError)
+	}
+
+	return &DataID{
+		TypeID: data.GetType().(*StringID),
+		HashID: data.GenerateHashID().(*HashID),
+	}
+}
+
+func PrototypeDataID() ids.DataID {
+	return &DataID{
+		TypeID: PrototypeStringID().(*StringID),
+		HashID: PrototypeHashID().(*HashID),
+	}
+}
+
+func ReadDataID(dataIDString string) (ids.DataID, error) {
 	if typeAndHashIDString := stringUtilities.SplitCompositeIDString(dataIDString); len(typeAndHashIDString) == 2 {
 		Type := NewStringID(typeAndHashIDString[0])
 		if hashID, err := ReadHashID(typeAndHashIDString[1]); err == nil {
-			return NewDataID(Type, hashID), nil
+			return &DataID{
+				TypeID: Type.(*StringID),
+				HashID: hashID.(*HashID),
+			}, nil
 		}
 	}
 
@@ -65,5 +85,5 @@ func ReadDataID(dataIDString string) (ids.ID, error) {
 		return PrototypeDataID(), nil
 	}
 
-	return PrototypeDataID(), errorConstants.MetaDataError
+	return &DataID{}, errorConstants.MetaDataError
 }
