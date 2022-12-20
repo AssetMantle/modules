@@ -53,6 +53,9 @@ func (mesaProperty *Property_MesaProperty) Compare(listable traits.Listable) int
 		return mesaProperty.GetID().Compare(compareProperty.GetID())
 	}
 }
+func (mesaProperty *Property_MesaProperty) GetData() data.Data {
+	panic("This is meant to be unreachable")
+}
 func propertyFromInterface(listable traits.Listable) (properties.Property, error) {
 	switch value := listable.(type) {
 	case properties.Property:
@@ -61,7 +64,6 @@ func propertyFromInterface(listable traits.Listable) (properties.Property, error
 		return nil, constants.MetaDataError
 	}
 }
-
 func NewEmptyMesaPropertyFromID(propertyID ids.ID) properties.Property {
 	return &Property{
 		Impl: &Property_MesaProperty{

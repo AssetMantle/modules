@@ -5,18 +5,19 @@ package documents
 
 import (
 	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
-	"github.com/AssetMantle/modules/schema/qualified"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type Document interface {
-	GenerateHashID() ids.HashID
-	GetClassificationID() ids.ClassificationID
+	GenerateHashID() ids.ID
+	GetClassificationID() *baseIDs.ID
 	// GetProperty returns property from a document searching in both Mutables and Immutables
 	// * Returns nil if property is not found
-	GetProperty(ids.PropertyID) properties.Property
-	GetImmutables() qualified.Immutables
-	GetMutables() qualified.Mutables
+	GetProperty(ids.ID) properties.Property
+	GetImmutables() *baseQualified.Immutables
+	GetMutables() *baseQualified.Mutables
 
 	Mutate(...properties.Property) Document
 }

@@ -5,12 +5,13 @@ package lists
 
 import (
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/data/base"
 )
 
 type DataList interface {
 	Size() int
-	GetList() []data.Data
+	GetList() []*base.Data
 	Search(data.Data) (int, bool)
-	Add(...data.Data) List
-	Remove(...data.Data) List
+	Add(...data.Data) DataList
+	Remove(...data.Data) DataList
 }

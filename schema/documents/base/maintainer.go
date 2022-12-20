@@ -76,7 +76,7 @@ func (maintainer maintainer) MaintainsProperty(propertyID ids.PropertyID) bool {
 }
 
 // TODO: Move to a common package
-func idListToDataList(idList lists.IDList) lists.DataList {
+func idListToDataList(idList lists.IDList) lists.List {
 	dataList := baseLists.NewDataList()
 	for _, id := range idList.GetList() {
 		dataList = dataList.Add(baseData.NewIDData(id))
