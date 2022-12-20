@@ -8,6 +8,7 @@ import (
 )
 
 const Name = "classifications"
+const ConsensusVersion = 1
 
 var StoreKeyPrefix = constants.ClassificationsStoreKeyPrefix
 

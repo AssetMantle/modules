@@ -17,11 +17,12 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	"github.com/AssetMantle/modules/utilities/test"
 	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestGenesis(t *testing.T) {
-	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
+	context, storeKey, transientStoreKey := test.SetupTest(t)
 	var legacyAmino = sdkCodec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)

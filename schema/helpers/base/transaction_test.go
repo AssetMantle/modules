@@ -19,11 +19,12 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/utilities/test"
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestTransaction(t *testing.T) {
-	context, storeKey, _ := base.SetupTest(t)
+	context, storeKey, _ := test.SetupTest(t)
 	var legacyAmino = sdkCodec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)

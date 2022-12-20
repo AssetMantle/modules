@@ -8,5 +8,6 @@ import (
 )
 
 const Name = "assets"
+const ConsensusVersion = 1
 
 var StoreKeyPrefix = constants.AssetsStoreKeyPrefix
