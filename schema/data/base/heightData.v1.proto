@@ -1,6 +1,8 @@
 syntax = "proto3";
 package data;
 
+import "schema/types/base/height.v1.proto";
+
 message HeightData{
-  int64 value = 1;
+  types.Height value = 1;
 }
