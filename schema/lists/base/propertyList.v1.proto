@@ -1,0 +1,8 @@
+syntax = "proto3";
+package lists;
+
+import "schema/properties/base/property.v1.proto";
+
+message PropertyList {
+  repeated properties.Property list = 1;
+}

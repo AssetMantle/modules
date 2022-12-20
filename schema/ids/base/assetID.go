@@ -8,52 +8,50 @@ import (
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type assetID struct {
-	ids.HashID
+var _ ids.AssetID = (*ID_AssetID)(nil)
+
+func (assetID *ID_AssetID) String() string {
+	return assetID.AssetID.String()
+}
+func (assetID *ID_AssetID) Compare(listable traits.Listable) int {
+	return bytes.Compare(assetID.Bytes(), idFromInterface(listable).Bytes())
+
+}
+func (assetID *ID_AssetID) IsOwnableID() {}
+func (assetID *ID_AssetID) IsAssetID()   {}
+func (assetID *ID_AssetID) Bytes() []byte {
+	return assetID.AssetID.HashID.IdBytes
 }
 
-var _ ids.AssetID = (*assetID)(nil)
-
-func (assetID assetID) IsOwnableID() {}
-func (assetID assetID) IsAssetID()   {}
-func (assetID assetID) Compare(listable traits.Listable) int {
-	// TODO devise a better strategy to compare assetID and ownableID
-	return bytes.Compare(assetID.Bytes(), ownableIDFromInterface(listable).Bytes())
-}
-func assetIDFromInterface(i interface{}) assetID {
-	switch value := i.(type) {
-	case assetID:
-		return value
-	default:
+func NewAssetID(hashID ids.ID) ids.ID {
+	if hashID.(*ID).GetHashID() == nil {
 		panic(errorConstants.MetaDataError)
 	}
-}
-func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
-	return assetID{
-		HashID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()),
+
+	return &ID{
+		Impl: &ID_AssetID{
+			AssetID: &AssetID{
+				HashID: hashID.(*ID).GetHashID(),
+			},
+		},
 	}
 }
 
-func PrototypeAssetID() ids.AssetID {
-	return assetID{
-		HashID: PrototypeHashID(),
-	}
+func PrototypeAssetID() ids.ID {
+	return NewAssetID(PrototypeHashID())
 }
 
-func ReadAssetID(assetIDString string) (ids.AssetID, error) {
+func ReadAssetID(assetIDString string) (ids.ID, error) {
 	if hashID, err := ReadHashID(assetIDString); err == nil {
-		return assetID{
-			HashID: hashID,
-		}, nil
+		return NewAssetID(hashID), nil
 	}
 
 	if assetIDString == "" {
 		return PrototypeAssetID(), nil
 	}
 
-	return assetID{}, errorConstants.MetaDataError
+	return PrototypeAssetID(), errorConstants.MetaDataError
 }

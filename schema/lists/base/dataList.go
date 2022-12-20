@@ -5,48 +5,76 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/schema/data"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/traits"
+	"sort"
 )
 
-type dataList struct {
-	lists.List
-}
+var _ lists.DataList = (*List_DataList)(nil)
 
-var _ lists.DataList = (*dataList)(nil)
+func (dataList *List_DataList) GetList() []data.Data {
+	DataList := make([]data.Data, len(dataList.DataList.List))
 
-func (dataList dataList) GetList() []data.Data {
-	DataList := make([]data.Data, dataList.List.Size())
-
-	for i, listable := range dataList.List.Get() {
+	for i, listable := range dataList.DataList.List {
 		if listable != nil {
-			DataList[i] = listable.(data.Data)
+			DataList[i] = listable
 		}
 	}
 
 	return DataList
 }
-func (dataList dataList) Search(data data.Data) (int, bool) {
-	return dataList.List.Search(data)
-}
-func (dataList dataList) Add(data ...data.Data) lists.DataList {
-	dataList.List = dataList.List.Add(dataToListables(data...)...)
-	return dataList
-}
-func (dataList dataList) Remove(data ...data.Data) lists.DataList {
-	dataList.List = dataList.List.Remove(dataToListables(data...)...)
-	return dataList
-}
-func dataToListables(data ...data.Data) []traits.Listable {
-	listables := make([]traits.Listable, len(data))
+func (dataList *List_DataList) Search(data data.Data) (int, bool) {
+	index := sort.Search(
+		len(dataList.DataList.List),
+		func(i int) bool {
+			return dataList.DataList.List[i].Compare(data) >= 0
+		},
+	)
 
-	for i, datum := range data {
-		listables[i] = datum
+	if index < len(dataList.DataList.List) && dataList.DataList.List[index].Compare(data) == 0 {
+		return index, true
 	}
 
-	return listables
+	return index, false
+}
+func (dataList *List_DataList) Add(data ...data.Data) lists.List {
+	updatedList := dataList
+	for _, listable := range data {
+		if index, found := updatedList.Search(listable); !found {
+			updatedList.DataList.List = append(updatedList.DataList.List, listable.(*baseData.Data))
+			copy(updatedList.DataList.List[index+1:], updatedList.DataList.List[index:])
+			updatedList.DataList.List[index] = listable.(*baseData.Data)
+		}
+	}
+	return &List{
+		Impl: updatedList,
+	}
 }
 
-func NewDataList(data ...data.Data) lists.DataList {
-	return dataList{List: NewList(dataToListables(data...)...)}
+func (dataList *List_DataList) Remove(data ...data.Data) lists.List {
+	updatedList := dataList
+
+	for _, listable := range data {
+		if index, found := updatedList.Search(listable); found {
+			updatedList.DataList.List = append(updatedList.DataList.List[:index], updatedList.DataList.List[index+1:]...)
+		}
+	}
+
+	return &List{
+		Impl: updatedList,
+	}
+}
+
+func NewDataList(data ...data.Data) lists.List {
+	var dataList []*baseData.Data
+	for _, dataVal := range data {
+		dataList = append(dataList, dataVal.(*baseData.Data))
+	}
+	return &List{
+		Impl: &List_DataList{
+			DataList: &DataList{
+				List: dataList,
+			},
+		},
+	}
 }
