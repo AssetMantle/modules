@@ -8,5 +8,6 @@ import (
 )
 
 const Name = "identities"
+const ConsensusVersion = 1
 
 var StoreKeyPrefix = constants.IdentitiesStoreKeyPrefix

@@ -11,11 +11,12 @@ import (
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
+	"github.com/AssetMantle/modules/utilities/test"
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestQuery(t *testing.T) {
-	context, storeKey, _ := base.SetupTest(t)
+	context, storeKey, _ := test.SetupTest(t)
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 	Query := NewQuery("test", "t", "testQuery", "test", base.TestQueryRequestPrototype,
 		base.TestQueryResponsePrototype, base.TestQueryKeeperPrototype).Initialize(Mapper, parametersPrototype()).(query)

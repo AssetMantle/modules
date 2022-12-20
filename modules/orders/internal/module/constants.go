@@ -15,6 +15,7 @@ import (
 )
 
 const Name = "orders"
+const ConsensusVersion = 1
 
 var StoreKeyPrefix = constants.OrdersStoreKeyPrefix
 

@@ -13,10 +13,14 @@ type codec struct {
 	sdkCodec.Codec
 	sdkClient.TxConfig
 	legacyAmino *sdkCodec.LegacyAmino
+	protoCodec  *sdkCodec.ProtoCodec
 }
 
 var _ helpers.Codec = (*codec)(nil)
 
+func (codec codec) GetProtoCodec() *sdkCodec.ProtoCodec {
+	return codec.protoCodec
+}
 func (codec codec) GetLegacyAmino() *sdkCodec.LegacyAmino {
 	return codec.legacyAmino
 }

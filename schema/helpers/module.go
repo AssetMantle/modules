@@ -12,8 +12,8 @@ import (
 )
 
 type Module interface {
-	sdkTypesModule.AppModuleBasic
-	sdkTypesModule.AppModule
+	sdkTypesModule.EndBlockAppModule
+	sdkTypesModule.BeginBlockAppModule
 	sdkTypesModule.AppModuleSimulation
 
 	GetAuxiliary(string) Auxiliary

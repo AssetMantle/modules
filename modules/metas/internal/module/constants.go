@@ -8,5 +8,6 @@ import (
 )
 
 const Name = "metas"
+const ConsensusVersion = 1
 
 var StoreKeyPrefix = constants.MetasStoreKeyPrefix
