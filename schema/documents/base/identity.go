@@ -29,7 +29,7 @@ func (identity identity) GetExpiry() types.Height {
 
 	return constants.ExpiryHeightProperty.GetData().(data.HeightData).Get()
 }
-func (identity identity) GetAuthentication() lists.DataList {
+func (identity identity) GetAuthentication() lists.List {
 	if property := identity.Document.GetProperty(constants.AuthenticationProperty.GetID()); property != nil && property.IsMeta() {
 		return base.NewDataList(property.(properties.MetaProperty).GetData().(data.ListData).Get()...)
 	}

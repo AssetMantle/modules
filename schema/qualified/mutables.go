@@ -9,6 +9,7 @@
 package qualified
 
 import (
+	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/properties"
 )
@@ -17,6 +18,8 @@ type Mutables interface {
 	// GetMutablePropertyList return the mutable properties object
 	// does not return nil
 	GetMutablePropertyList() lists.PropertyList
+
+	GetProperty(id ids.ID) properties.Property
 
 	Mutate(propertyList ...properties.Property) Mutables
 }

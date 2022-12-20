@@ -10,7 +10,7 @@ import (
 
 var _ lists.PropertyList = (*PropertyList)(nil)
 
-func (propertyList *PropertyList) GetProperty(propertyID ids.PropertyID) properties.Property {
+func (propertyList *PropertyList) GetProperty(propertyID ids.ID) properties.Property {
 	if i, found := propertyList.Search(base.NewEmptyMesaPropertyFromID(propertyID)); found {
 		return propertyList.GetList()[i]
 	}
