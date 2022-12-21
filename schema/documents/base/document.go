@@ -78,7 +78,6 @@ func (document document) Sanitize() (documents.Document, error) {
 	if document.Mutables == nil {
 		document.Mutables = baseQualified.NewMutables(baseLists.NewPropertyList())
 	}
-	//panic("implement me")
 	return document, nil
 }
 
