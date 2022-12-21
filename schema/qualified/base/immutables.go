@@ -22,7 +22,7 @@ func (immutables Immutables) GetImmutablePropertyList() lists.PropertyList {
 
 	return immutables.PropertyList
 }
-func (immutables Immutables) GetProperty(id ids.ID) properties.Property {
+func (immutables Immutables) GetProperty(id ids.PropertyID) properties.Property {
 	return immutables.GetImmutablePropertyList().GetProperty(id)
 }
 func (immutables Immutables) GenerateHashID() ids.ID {

@@ -4,5 +4,5 @@ package lists;
 import "schema/properties/base/anyProperty.v1.proto";
 
 message PropertyList {
-  repeated properties.AnyProperty list = 1;
+  repeated properties.AnyProperty property_list = 1;
 }

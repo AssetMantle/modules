@@ -10,9 +10,9 @@ import (
 	"sort"
 )
 
-var _ lists.DataList = (*DataList)(nil)
+var _ lists.DataList = (*AnyDataList)(nil)
 
-func (dataList *DataList) Search(data data.Data) (int, bool) {
+func (dataList *AnyDataList) Search(data data.Data) (int, bool) {
 	index := sort.Search(
 		len(dataList.List),
 		func(i int) bool {
@@ -26,19 +26,19 @@ func (dataList *DataList) Search(data data.Data) (int, bool) {
 
 	return index, false
 }
-func (dataList *DataList) Add(data ...data.Data) lists.DataList {
+func (dataList *AnyDataList) Add(data ...data.Data) lists.DataList {
 	updatedList := dataList
 	for _, listable := range data {
 		if index, found := updatedList.Search(listable); !found {
-			updatedList.List = append(updatedList.List, listable.(*baseData.Data))
+			updatedList.List = append(updatedList.List, listable.(*baseData.AnyData))
 			copy(updatedList.List[index+1:], updatedList.List[index:])
-			updatedList.List[index] = listable.(*baseData.Data)
+			updatedList.List[index] = listable.(*baseData.AnyData)
 		}
 	}
 	return updatedList
 }
 
-func (dataList *DataList) Remove(data ...data.Data) lists.DataList {
+func (dataList *AnyDataList) Remove(data ...data.Data) lists.DataList {
 	updatedList := dataList
 
 	for _, listable := range data {
@@ -51,9 +51,9 @@ func (dataList *DataList) Remove(data ...data.Data) lists.DataList {
 }
 
 func NewDataList(data ...data.Data) lists.DataList {
-	var dataList []*baseData.Data
+	var dataList []*baseData.AnyData
 	for _, dataVal := range data {
-		dataList = append(dataList, dataVal.(*baseData.Data))
+		dataList = append(dataList, dataVal.(*baseData.AnyData))
 	}
-	return &DataList{List: dataList}
+	return &AnyDataList{List: dataList}
 }

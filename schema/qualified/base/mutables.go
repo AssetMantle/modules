@@ -20,7 +20,7 @@ func (mutables *Mutables) GetMutablePropertyList() lists.PropertyList {
 
 	return mutables.PropertyList
 }
-func (mutables *Mutables) GetProperty(id ids.ID) properties.Property {
+func (mutables *Mutables) GetProperty(id ids.PropertyID) properties.Property {
 	return mutables.GetMutablePropertyList().GetProperty(id)
 }
 func (mutables *Mutables) Mutate(propertyList ...properties.Property) qualified.Mutables {

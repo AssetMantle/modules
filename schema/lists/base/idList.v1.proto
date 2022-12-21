@@ -4,5 +4,5 @@ package lists;
 import "schema/ids/base/anyID.v1.proto";
 
 message IDList {
-  repeated ids.AnyID list = 1;
+  repeated ids.AnyID id_list = 1;
 }
