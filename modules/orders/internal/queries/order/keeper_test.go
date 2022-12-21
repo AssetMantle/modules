@@ -5,6 +5,7 @@ package order
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"reflect"
 	"testing"
 
@@ -42,7 +43,10 @@ func CreateTestInputForQueries(t *testing.T) (types.Context, TestKeepers, helper
 	paramsStoreKey := types.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := types.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	encodingConfig := simapp.MakeTestEncodingConfig()
+	appCodec := encodingConfig.Marshaler
 	ParamsKeeper := paramsKeeper.NewKeeper(
+		appCodec,
 		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,
