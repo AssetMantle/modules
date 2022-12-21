@@ -1,0 +1,8 @@
+syntax = "proto3";
+package split;
+
+import "schema/ids/base/splitID.v1.proto";
+
+message QueryRequest {
+  ids.SplitID split_id = 1;
+}
