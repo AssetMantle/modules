@@ -10,42 +10,43 @@ import (
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 var _ helpers.Key = (*Key)(nil)
 
 func (key *Key) GenerateStoreKeyBytes() []byte {
-	return module.StoreKeyPrefix.GenerateStoreKey(key.Bytes())
+	return module.StoreKeyPrefix.GenerateStoreKey(key.SplitId.Bytes())
 }
 func (*Key) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, key{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, &Key{})
 }
 func (key *Key) IsPartial() bool {
-	return len(key.SplitID.GetOwnableID().Bytes()) == 0
+	return len(key.SplitId.GetOwnableID().Bytes()) == 0
 }
 func (key *Key) Equals(compareKey helpers.Key) bool {
 	if compareKey, err := keyFromInterface(compareKey); err != nil {
 		return false
 	} else {
-		return key.SplitID.Compare(compareKey.SplitID) == 0
+		return key.SplitId.Compare(compareKey.SplitId) == 0
 	}
 }
-func keyFromInterface(i interface{}) (key, error) {
+func keyFromInterface(i interface{}) (*Key, error) {
 	switch value := i.(type) {
-	case key:
+	case *Key:
 		return value, nil
 	default:
-		return key{}, constants.MetaDataError
+		return &Key{}, constants.MetaDataError
 	}
 }
 
 func NewKey(splitID ids.SplitID) helpers.Key {
-	return key{
-		SplitID: splitID,
+	return &Key{
+		SplitId: splitID.(*base.SplitID),
 	}
 }
 
 func Prototype() helpers.Key {
-	return key{}
+	return &Key{}
 }
