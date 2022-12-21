@@ -24,7 +24,7 @@ func (ownableID *OwnableID) Compare(listable traits.Listable) int {
 	// TODO devise a better strategy to compare ownableID and ownableID
 	return bytes.Compare(ownableID.Bytes(), ownableIDFromInterface(listable).Bytes())
 }
-func (ownableID *OwnableID) ToAnyID() *AnyID {
+func (ownableID *OwnableID) ToAnyID() ids.AnyID {
 	return &AnyID{
 		Impl: &AnyID_OwnableId{
 			OwnableId: ownableID,

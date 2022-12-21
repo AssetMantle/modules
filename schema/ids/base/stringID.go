@@ -25,7 +25,7 @@ func (stringID *StringID) Bytes() []byte {
 func (stringID *StringID) Compare(listable traits.Listable) int {
 	return strings.Compare(stringID.String(), stringIDFromInterface(listable).String())
 }
-func (stringID *StringID) ToAnyID() *AnyID {
+func (stringID *StringID) ToAnyID() ids.AnyID {
 	return &AnyID{
 		Impl: &AnyID_StringId{
 			StringId: stringID,

@@ -14,3 +14,7 @@ func (m *AnyID) Compare(listable traits.Listable) int {
 func (m *AnyID) Bytes() []byte {
 	return m.Impl.(ids.ID).Bytes()
 }
+
+func (m *AnyID) ToAnyID() ids.AnyID {
+	return m.Impl.(ids.ID).ToAnyID()
+}

@@ -20,7 +20,7 @@ func (orderID *OrderID) IsOrderID() {}
 func (orderID *OrderID) Compare(listable traits.Listable) int {
 	return orderID.OrderId.Compare(orderIDFromInterface(listable).OrderId)
 }
-func (orderID *OrderID) ToAnyID() *AnyID {
+func (orderID *OrderID) ToAnyID() ids.AnyID {
 	return &AnyID{
 		Impl: &AnyID_OrderId{
 			OrderId: orderID,

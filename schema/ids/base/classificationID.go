@@ -20,7 +20,7 @@ func (classificationID *ClassificationID) IsClassificationID() {}
 func (classificationID *ClassificationID) Compare(listable traits.Listable) int {
 	return classificationID.HashId.Compare(classificationIDFromInterface(listable).HashId)
 }
-func (classificationID *ClassificationID) ToAnyID() *AnyID {
+func (classificationID *ClassificationID) ToAnyID() ids.AnyID {
 	return &AnyID{
 		Impl: &AnyID_ClassificationId{
 			ClassificationId: classificationID,

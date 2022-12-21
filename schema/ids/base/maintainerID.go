@@ -20,7 +20,7 @@ func (maintainerID *MaintainerID) IsMaintainerID() {}
 func (maintainerID *MaintainerID) Compare(listable traits.Listable) int {
 	return maintainerID.HashId.Compare(maintainerIDFromInterface(listable).HashId)
 }
-func (maintainerID *MaintainerID) ToAnyID() *AnyID {
+func (maintainerID *MaintainerID) ToAnyID() ids.AnyID {
 	return &AnyID{
 		Impl: &AnyID_MaintainerId{
 			MaintainerId: maintainerID,

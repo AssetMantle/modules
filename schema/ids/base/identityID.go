@@ -27,7 +27,7 @@ func (identityID *IdentityID) Bytes() []byte {
 func (identityID *IdentityID) Compare(listable traits.Listable) int {
 	return identityID.HashId.Compare(identityIDFromInterface(listable).HashId)
 }
-func (identityID *IdentityID) ToAnyID() *AnyID {
+func (identityID *IdentityID) ToAnyID() ids.AnyID {
 	return &AnyID{
 		Impl: &AnyID_IdentityId{
 			IdentityId: identityID,

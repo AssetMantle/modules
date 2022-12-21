@@ -29,7 +29,7 @@ func (hashID *HashID) Bytes() []byte {
 func (hashID *HashID) Compare(listable traits.Listable) int {
 	return bytes.Compare(hashID.Bytes(), hashIDFromInterface(listable).Bytes())
 }
-func (hashID *HashID) ToAnyID() *AnyID {
+func (hashID *HashID) ToAnyID() ids.AnyID {
 	return &AnyID{
 		Impl: &AnyID_HashId{
 			HashId: hashID,
