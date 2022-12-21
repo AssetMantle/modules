@@ -1,0 +1,8 @@
+syntax = "proto3";
+package maintainers;
+
+import "schema/documents/base/document.v1.proto";
+
+message Mappable {
+  documents.Document maintainer = 1;
+}

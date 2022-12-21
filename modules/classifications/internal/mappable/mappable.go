@@ -8,29 +8,26 @@ import (
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/schema/documents"
+	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-type mappable struct {
-	documents.Classification
-}
+var _ helpers.Mappable = (*Mappable)(nil)
 
-var _ helpers.Mappable = (*mappable)(nil)
-
-func (mappable mappable) GetKey() helpers.Key {
-	return key.NewKey(mappable.GetClassificationID())
+func (mappable *Mappable) GetKey() helpers.Key {
+	return key.NewKey(mappable.Classification.GetClassificationID())
 }
-func (mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, mappable{})
+func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Mappable{})
 }
 
 func NewMappable(classification documents.Classification) helpers.Mappable {
-	return mappable{
-		Classification: classification,
+	return &Mappable{
+		Classification: classification.Get().(*base.Document),
 	}
 }
 
 func Prototype() helpers.Mappable {
-	return mappable{}
+	return &Mappable{}
 }

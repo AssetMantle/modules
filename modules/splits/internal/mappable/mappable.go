@@ -13,23 +13,19 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-type mappable struct {
-	types.Split
-}
+var _ helpers.Mappable = (*Mappable)(nil)
 
-var _ helpers.Mappable = (*mappable)(nil)
-
-func (mappable mappable) GetKey() helpers.Key {
+func (mappable *Mappable) GetKey() helpers.Key {
 	return key.NewKey(base.NewSplitID(mappable.Split.GetOwnerID(), mappable.Split.GetOwnableID()))
 }
-func (mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, mappable{})
+func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Mappable{})
 }
 
 func NewMappable(split types.Split) helpers.Mappable {
-	return mappable{Split: split}
+	return &Mappable{Split: split.(*types.Split)}
 }
 
 func Prototype() helpers.Mappable {
-	return mappable{}
+	return &Mappable{}
 }

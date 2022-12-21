@@ -8,30 +8,27 @@ import (
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/schema/documents"
+	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-type mappable struct {
-	documents.Asset
-}
+var _ helpers.Mappable = (*Mappable)(nil)
 
-var _ helpers.Mappable = (*mappable)(nil)
-
-func (asset mappable) GetKey() helpers.Key {
-	return key.NewKey(baseIDs.NewAssetID(asset.GetClassificationID(), asset.GetImmutables()))
+func (mappable *Mappable) GetKey() helpers.Key {
+	return key.NewKey(baseIDs.NewAssetID(mappable.Asset.GetClassificationID(), mappable.Asset.GetImmutables()))
 }
-func (mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, mappable{})
+func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Mappable{})
 }
 
 func Prototype() helpers.Mappable {
-	return mappable{}
+	return &Mappable{}
 }
 
 func NewMappable(asset documents.Asset) helpers.Mappable {
-	return mappable{
-		Asset: asset,
+	return &Mappable{
+		Asset: asset.GetDocument().(*base.Document),
 	}
 }
