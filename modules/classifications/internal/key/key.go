@@ -13,22 +13,18 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-type key struct {
-	ids.ClassificationID
-}
+var _ helpers.Key = (*Key)(nil)
 
-var _ helpers.Key = (*key)(nil)
-
-func (key key) GenerateStoreKeyBytes() []byte {
+func (key *Key) GenerateStoreKeyBytes() []byte {
 	return module.StoreKeyPrefix.GenerateStoreKey(key.Bytes())
 }
-func (key) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+func (*Key) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, key{})
 }
-func (key key) IsPartial() bool {
+func (key *Key) IsPartial() bool {
 	return len(key.ClassificationID.Bytes()) == 0
 }
-func (key key) Equals(compareKey helpers.Key) bool {
+func (key *Key) Equals(compareKey helpers.Key) bool {
 	if CompareKey, err := keyFromInterface(compareKey); err != nil {
 		return false
 	} else {

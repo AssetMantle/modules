@@ -29,6 +29,6 @@ func Prototype() helpers.Mappable {
 
 func NewMappable(asset documents.Asset) helpers.Mappable {
 	return &Mappable{
-		Asset: asset.GetDocument().(*base.Document),
+		Asset: asset.Get().(*base.Document),
 	}
 }
