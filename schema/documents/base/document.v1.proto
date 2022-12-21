@@ -1,12 +1,12 @@
 syntax = "proto3";
 package documents;
 
-import "schema/ids/base/anyID.v1.proto";
+import "schema/ids/base/classificationID.v1.proto";
 import "schema/qualified/base/immutables.v1.proto";
 import "schema/qualified/base/mutables.v1.proto";
 
 message Document {
-  ids.AnyID classification_id = 1;
+  ids.ClassificationID classification_id = 1;
   qualified.Immutables immutable_list = 2;
   qualified.Mutables mutable_list = 3;
 }

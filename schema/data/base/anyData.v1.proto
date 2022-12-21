@@ -7,6 +7,7 @@ import "schema/data/base/decData.v1.proto";
 import "schema/data/base/heightData.v1.proto";
 import "schema/data/base/idData.v1.proto";
 import "schema/data/base/stringData.v1.proto";
+import "gogoproto/gogo.proto";
 
 message AnyData {
   oneof impl {
@@ -16,5 +17,6 @@ message AnyData {
     HeightData height_data = 4;
     IDData i_d_data = 5;
     StringData string_data = 6;
+    string list_data = 7 [(gogoproto.customtype) = "github.com/AssetMantle/modules/schema/data/base.ListData"];
   }
 }

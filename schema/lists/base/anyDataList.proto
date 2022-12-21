@@ -4,5 +4,5 @@ package lists;
 import "schema/data/base/anyData.v1.proto";
 
 message AnyDataList {
-  repeated data.AnyData list = 1;
+  repeated data.AnyData data_list = 1;
 }
