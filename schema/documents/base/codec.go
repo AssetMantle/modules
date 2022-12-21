@@ -12,7 +12,7 @@ import (
 func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, asset{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, classification{})
-	codecUtilities.RegisterModuleConcrete(legacyAmino, document{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Document{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, identity{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, maintainer{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, order{})

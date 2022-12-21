@@ -19,7 +19,7 @@ type Identity interface {
 
 	// GetAuthentication returns the authentication property of an Identity
 	// * If the property is not found, it returns a default value and not nil
-	GetAuthentication() lists.DataList
+	GetAuthentication() lists.AnyDataList
 
 	IsProvisioned(sdkTypes.AccAddress) bool
 	ProvisionAddress(...sdkTypes.AccAddress) Identity
