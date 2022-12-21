@@ -13,4 +13,7 @@ type DataList interface {
 	Search(data.Data) (int, bool)
 	Add(...data.Data) DataList
 	Remove(...data.Data) DataList
+
+	// Sanitize dataList
+	Sanitize() (DataList, error)
 }

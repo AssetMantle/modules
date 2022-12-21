@@ -27,16 +27,33 @@ func (dataList dataList) GetList() []data.Data {
 	return DataList
 }
 func (dataList dataList) Search(data data.Data) (int, bool) {
+	if sanitizedList, err := dataList.Sanitize(); err == nil {
+		dataList.List = NewList(dataToListables(sanitizedList.(lists.DataList).GetList()...)...)
+	}
 	return dataList.List.Search(data)
 }
 func (dataList dataList) Add(data ...data.Data) lists.DataList {
+	if sanitizedList, err := dataList.Sanitize(); err == nil {
+		dataList.List = NewList(dataToListables(sanitizedList.(lists.DataList).GetList()...)...)
+	}
 	dataList.List = dataList.List.Add(dataToListables(data...)...)
 	return dataList
 }
 func (dataList dataList) Remove(data ...data.Data) lists.DataList {
+	if sanitizedList, err := dataList.Sanitize(); err == nil {
+		dataList.List = NewList(dataToListables(sanitizedList.(lists.DataList).GetList()...)...)
+	}
 	dataList.List = dataList.List.Remove(dataToListables(data...)...)
 	return dataList
 }
+
+func (dataList dataList) Sanitize() (lists.DataList, error) {
+	if dataList.List == nil {
+		dataList.List = NewList()
+	}
+	return dataList, nil
+}
+
 func dataToListables(data ...data.Data) []traits.Listable {
 	listables := make([]traits.Listable, len(data))
 

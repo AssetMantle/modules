@@ -19,4 +19,7 @@ type Document interface {
 	GetMutables() qualified.Mutables
 
 	Mutate(...properties.Property) Document
+
+	// Sanitize() Document returns a sanitized document
+	Sanitize() (Document, error)
 }

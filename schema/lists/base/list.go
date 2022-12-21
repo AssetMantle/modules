@@ -4,6 +4,7 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"sort"
 
 	"github.com/AssetMantle/modules/schema/lists"
@@ -49,6 +50,9 @@ func (list list) Add(listables ...traits.Listable) lists.List {
 	return updatedList
 }
 func (list list) Remove(listables ...traits.Listable) lists.List {
+	if sanitizedList, err := list.Sanitize(); err != nil {
+		return sanitizedList
+	}
 	updatedList := list
 
 	for _, listable := range listables {
@@ -60,6 +64,9 @@ func (list list) Remove(listables ...traits.Listable) lists.List {
 	return updatedList
 }
 func (list list) Mutate(listables ...traits.Listable) lists.List {
+	if sanitizedList, err := list.Sanitize(); err != nil {
+		return sanitizedList
+	}
 	// TODO write test
 	updatedList := list
 
@@ -70,6 +77,13 @@ func (list list) Mutate(listables ...traits.Listable) lists.List {
 	}
 
 	return updatedList
+}
+
+func (list list) Sanitize() (lists.List, error) {
+	if list == nil {
+		return NewList([]traits.Listable{}...), constants.MetaDataError
+	}
+	return list, nil
 }
 
 func NewList(listables ...traits.Listable) lists.List {

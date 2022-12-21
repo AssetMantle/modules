@@ -15,4 +15,7 @@ type PropertyList interface {
 	Mutate(...properties.Property) PropertyList
 
 	ScrubData() PropertyList
+
+	// Sanitize propertyList
+	Sanitize() (PropertyList, error)
 }

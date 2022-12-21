@@ -25,16 +25,33 @@ func (idList idList) GetList() []ids.ID {
 	return returnIDList
 }
 func (idList idList) Search(id ids.ID) (index int, found bool) {
+	if sanitizedList, err := idList.Sanitize(); err == nil {
+		idList.List = NewList(idsToListables(sanitizedList.(lists.IDList).GetList()...)...)
+	}
 	return idList.List.Search(id)
 }
 func (idList idList) Add(ids ...ids.ID) lists.IDList {
+	if sanitizedList, err := idList.Sanitize(); err == nil {
+		idList.List = NewList(idsToListables(sanitizedList.(lists.IDList).GetList()...)...)
+	}
 	idList.List = idList.List.Add(idsToListables(ids...)...)
 	return idList
 }
 func (idList idList) Remove(ids ...ids.ID) lists.IDList {
+	if sanitizedList, err := idList.Sanitize(); err == nil {
+		idList.List = NewList(idsToListables(sanitizedList.(lists.IDList).GetList()...)...)
+	}
 	idList.List = idList.List.Remove(idsToListables(ids...)...)
 	return idList
 }
+
+func (idList idList) Sanitize() (lists.IDList, error) {
+	if idList.List == nil {
+		idList.List = NewList()
+	}
+	return idList, nil
+}
+
 func idsToListables(ids ...ids.ID) []traits.Listable {
 	listables := make([]traits.Listable, len(ids))
 	for i, id := range ids {
