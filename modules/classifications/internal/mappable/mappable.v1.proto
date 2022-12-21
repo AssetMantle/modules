@@ -1,0 +1,7 @@
+syntax = "proto3";
+package classifications;
+
+import "schema/documents/base/document.v1.proto";
+message Mappable {
+  documents.Document classification = 1;
+}
