@@ -12,7 +12,18 @@ type auxiliaryResponse struct {
 
 var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
 
-func (auxiliaryResponse auxiliaryResponse) IsSuccessful() bool {
+func (auxiliaryResponse auxiliaryResponse) Reset() {
+	//TODO implement me
+	panic("implement me")
+}
+func (auxiliaryResponse auxiliaryResponse) String() string {
+	//TODO implement me
+	panic("implement me")
+}
+func (auxiliaryResponse auxiliaryResponse) ProtoMessage() {
+	//TODO implement me
+	panic("implement me")
+}func (auxiliaryResponse auxiliaryResponse) IsSuccessful() bool {
 	return auxiliaryResponse.Success
 }
 func (auxiliaryResponse auxiliaryResponse) GetError() error {
