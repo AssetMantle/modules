@@ -3,12 +3,11 @@ package lists
 import (
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/properties"
-	"github.com/AssetMantle/modules/schema/properties/base"
 )
 
 type PropertyList interface {
-	GetProperty(ids.ID) properties.Property
-	GetList() []*base.Property
+	GetProperty(ids.PropertyID) properties.Property
+	GetList() []properties.Property
 	GetPropertyIDList() IDList
 
 	Add(...properties.Property) PropertyList

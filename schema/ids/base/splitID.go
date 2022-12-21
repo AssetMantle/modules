@@ -31,7 +31,7 @@ func (splitID *SplitID) SplitIDString() string {
 func (splitID *SplitID) Compare(listable traits.Listable) int {
 	return bytes.Compare(splitID.Bytes(), splitIDFromInterface(listable).Bytes())
 }
-func (splitID *SplitID) ToAnyID() *AnyID {
+func (splitID *SplitID) ToAnyID() ids.AnyID {
 	return &AnyID{
 		Impl: &AnyID_SplitId{
 			SplitId: splitID,

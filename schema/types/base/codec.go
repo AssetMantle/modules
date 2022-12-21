@@ -10,7 +10,7 @@ import (
 )
 
 func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, height{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Height{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, signature{})
-	codecUtilities.RegisterModuleConcrete(legacyAmino, split{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Split{})
 }

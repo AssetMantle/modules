@@ -65,7 +65,7 @@ func NewHeightData(value types.Height) data.Data {
 	return &AnyData{
 		Impl: &AnyData_HeightData{
 			HeightData: &HeightData{
-				Value: value,
+				Value: value.(*baseTypes.Height),
 			},
 		},
 	}

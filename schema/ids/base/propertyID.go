@@ -39,7 +39,7 @@ func (propertyID *PropertyID) Bytes() []byte {
 func (propertyID *PropertyID) Compare(listable traits.Listable) int {
 	return bytes.Compare(propertyID.Bytes(), propertyIDFromInterface(listable).Bytes())
 }
-func (propertyID *PropertyID) ToAnyID() *AnyID {
+func (propertyID *PropertyID) ToAnyID() ids.AnyID {
 	return &AnyID{
 		Impl: &AnyID_PropertyId{
 			PropertyId: propertyID,

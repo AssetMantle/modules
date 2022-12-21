@@ -57,7 +57,7 @@ func NewIDData(value ids.ID) data.Data {
 	return &AnyData{
 		Impl: &AnyData_IDData{
 			IDData: &IDData{
-				Value: value.(*baseIDs.ID),
+				Value: value.(*baseIDs.AnyID),
 			},
 		},
 	}

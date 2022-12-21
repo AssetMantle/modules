@@ -19,7 +19,7 @@ type Mutables interface {
 	// does not return nil
 	GetMutablePropertyList() lists.PropertyList
 
-	GetProperty(id ids.ID) properties.Property
+	GetProperty(id ids.PropertyID) properties.Property
 
 	Mutate(propertyList ...properties.Property) Mutables
 }

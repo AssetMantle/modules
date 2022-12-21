@@ -38,7 +38,7 @@ func (dataID *DataID) Bytes() []byte {
 func (dataID *DataID) Compare(listable traits.Listable) int {
 	return bytes.Compare(dataID.Bytes(), dataIDFromInterface(listable).Bytes())
 }
-func (dataID *DataID) ToAnyID() *AnyID {
+func (dataID *DataID) ToAnyID() ids.AnyID {
 	return &AnyID{
 		Impl: &AnyID_DataId{
 			DataId: dataID,
