@@ -10,40 +10,41 @@ import (
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 var _ helpers.Key = (*Key)(nil)
 
 func (key *Key) GenerateStoreKeyBytes() []byte {
-	return module.StoreKeyPrefix.GenerateStoreKey(key.Bytes())
+	return module.StoreKeyPrefix.GenerateStoreKey(key.DataId.Bytes())
 }
 func (*Key) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, key{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Key{})
 }
 func (key *Key) IsPartial() bool {
-	return len(key.DataID.GetHashID().Bytes()) == 0
+	return len(key.DataId.GetHashID().Bytes()) == 0
 }
 func (key *Key) Equals(compareKey helpers.Key) bool {
 	if CompareKey, err := keyFromInterface(compareKey); err != nil {
 		return false
 	} else {
-		return key.DataID.Compare(CompareKey.DataID) == 0
+		return key.DataId.Compare(CompareKey.DataId) == 0
 	}
 }
-func keyFromInterface(i interface{}) (key, error) {
+func keyFromInterface(i interface{}) (*Key, error) {
 	switch value := i.(type) {
-	case key:
+	case *Key:
 		return value, nil
 	default:
-		return key{}, constants.MetaDataError
+		return &Key{}, constants.MetaDataError
 	}
 }
 
 func NewKey(dataID ids.DataID) helpers.Key {
-	return key{
-		DataID: dataID,
+	return &Key{
+		DataId: dataID.(*base.DataID),
 	}
 }
 
-func Prototype() helpers.Key { return key{} }
+func Prototype() helpers.Key { return &Key{} }
