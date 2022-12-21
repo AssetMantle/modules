@@ -7,6 +7,6 @@ import "schema/qualified/base/mutables.v1.proto";
 
 message Document {
   ids.AnyID classification_id = 1;
-  qualified.Immutables immutables_list = 2;
-  qualified.Mutables mutables_list = 3;
+  qualified.Immutables immutable_list = 2;
+  qualified.Mutables mutable_list = 3;
 }
