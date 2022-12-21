@@ -1,0 +1,8 @@
+syntax = "proto3";
+package maintainer;
+
+import "schema/ids/base/maintainerID.v1.proto";
+
+message QueryRequest {
+  ids.MaintainerID maintainer_id = 1;
+}

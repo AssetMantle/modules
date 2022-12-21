@@ -14,11 +14,11 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
-type queryRequest struct {
-	ids.AssetID `json:"assetID" valid:"required~required field assetID missing"`
-}
+//type queryRequest struct {
+//	ids.AssetID `json:"assetID" valid:"required~required field assetID missing"`
+//}
 
-var _ helpers.QueryRequest = (*queryRequest)(nil)
+var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
 // Validate godoc
 // @Summary Search for an asset by Asset ID
@@ -30,29 +30,29 @@ var _ helpers.QueryRequest = (*queryRequest)(nil)
 // @Success 200 {object} queryResponse "Message for a successful search."
 // @Failure default  {object}  queryResponse "Message for an unexpected error."
 // @Router /assets/assets/{assetID} [get]
-func (queryRequest queryRequest) Validate() error {
+func (queryRequest *QueryRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(queryRequest)
 	return err
 }
-func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
+func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
 	if assetID, err := baseIDs.ReadAssetID(cliCommand.ReadString(constants.AssetID)); err != nil {
-		return queryRequest{}, err
+		return &QueryRequest{}, err
 	} else {
 		return newQueryRequest(assetID), nil
 	}
 }
-func (queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
+func (*QueryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
 	if assetID, err := baseIDs.ReadAssetID(vars[Query.GetName()]); err != nil {
-		return queryRequest{}, err
+		return &QueryRequest{}, err
 	} else {
 		return newQueryRequest(assetID), nil
 	}
 }
-func (queryRequest queryRequest) Encode() ([]byte, error) {
+func (queryRequest *QueryRequest) Encode() ([]byte, error) {
 	return common.LegacyAmino.MarshalJSON(queryRequest)
 }
 
-func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
+func (queryRequest *QueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
 	if err := common.LegacyAmino.UnmarshalJSON(bytes, &queryRequest); err != nil {
 		return nil, err
 	}
@@ -60,16 +60,16 @@ func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, err
 	return queryRequest, nil
 }
 func requestPrototype() helpers.QueryRequest {
-	return queryRequest{}
+	return &QueryRequest{}
 }
-func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
+func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	switch value := request.(type) {
-	case queryRequest:
+	case *QueryRequest:
 		return value
 	default:
-		return queryRequest{}
+		return &QueryRequest{}
 	}
 }
 func newQueryRequest(assetID ids.AssetID) helpers.QueryRequest {
-	return queryRequest{AssetID: assetID}
+	return &QueryRequest{AssetId: assetID.(*baseIDs.AssetID)}
 }
