@@ -35,12 +35,16 @@ func TestReadData(t *testing.T) {
 		want    data.Data
 		wantErr bool
 	}{
+		{"+ve with space in dataString", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c, A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(baseLists.NewDataList(dataList...)), false},
+		{"+ve with space in dataString", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A| cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(baseLists.NewDataList(dataList...)), false},
 		{"String Data", args{"S|newFact"}, base.NewStringData("newFact"), false},
 		{"-ve Unknown Data", args{"SomeRandomData"}, nil, true},
 		{"List Data", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(baseLists.NewDataList(dataList...)), false},
 		{"List Data empty list", args{"L|"}, base.NewListData(baseLists.NewDataList()), false},
 		{"Id Data", args{"I|data"}, base.NewIDData(baseIDs.NewStringID("data")), false},
 		{"Height Data", args{"H|100"}, base.NewHeightData(baseTypes.NewHeight(100)), false},
+		{"Height Data with space", args{" H| 100"}, base.NewHeightData(baseTypes.NewHeight(100)), false},
+		{"Height Data with space", args{"H |100"}, base.NewHeightData(baseTypes.NewHeight(100)), false},
 		{"Dec Data", args{"D|100"}, base.NewDecData(types.NewDec(100)), false},
 		{"Bool Data", args{"B|true"}, base.NewBooleanData(true), false},
 		{"AccAddress data", args{"A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"}, base.NewAccAddressData(fromAccAddress), false},
