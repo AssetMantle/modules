@@ -12,7 +12,6 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
 	baseIds "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
@@ -30,15 +29,15 @@ var (
 
 func TestNewKey(t *testing.T) {
 	type args struct {
-		splitID ids.SplitID
+		splitID *baseIds.SplitID
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.Key
 	}{
-		{"+ve", args{splitID}, key{splitID}},
-		{"+ve with nil", args{baseIds.PrototypeSplitID()}, key{baseIds.PrototypeSplitID()}},
+		{"+ve", args{splitID.(*baseIds.SplitID)}, &Key{splitID.(*baseIds.SplitID)}},
+		{"+ve with nil", args{baseIds.PrototypeSplitID().(*baseIds.SplitID)}, &Key{baseIds.PrototypeSplitID().(*baseIds.SplitID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -54,7 +53,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", key{}},
+		{"+ve", &Key{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -72,11 +71,11 @@ func Test_keyFromInterface(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    key
+		want    Key
 		wantErr bool
 	}{
-		{"+ve", args{NewKey(splitID)}, key{splitID}, false},
-		{"+ve", args{NewKey(baseIds.PrototypeSplitID())}, key{baseIds.PrototypeSplitID()}, false},
+		{"+ve", args{NewKey(splitID)}, Key{splitID.(*baseIds.SplitID)}, false},
+		{"+ve", args{NewKey(baseIds.PrototypeSplitID())}, Key{baseIds.PrototypeSplitID().(*baseIds.SplitID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -94,7 +93,7 @@ func Test_keyFromInterface(t *testing.T) {
 
 func Test_key_Equals(t *testing.T) {
 	type fields struct {
-		SplitID ids.SplitID
+		SplitID *baseIds.SplitID
 	}
 	type args struct {
 		compareKey helpers.Key
@@ -105,13 +104,13 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"+ve", fields{splitID}, args{NewKey(splitID)}, true},
-		{"+ve", fields{splitID}, args{NewKey(baseIds.PrototypeSplitID())}, false},
+		{"+ve", fields{splitID.(*baseIds.SplitID)}, args{NewKey(splitID)}, true},
+		{"+ve", fields{splitID.(*baseIds.SplitID)}, args{NewKey(baseIds.PrototypeSplitID())}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				SplitID: tt.fields.SplitID,
+			key := Key{
+				SplitId: tt.fields.SplitID,
 			}
 			if got := key.Equals(tt.args.compareKey); got != tt.want {
 				t.Errorf("Equals() = %v, want %v", got, tt.want)
@@ -122,20 +121,20 @@ func Test_key_Equals(t *testing.T) {
 
 func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 	type fields struct {
-		SplitID ids.SplitID
+		SplitID *baseIds.SplitID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{splitID}, module.StoreKeyPrefix.GenerateStoreKey(key{splitID}.Bytes())},
-		{"+ve", fields{baseIds.PrototypeSplitID()}, module.StoreKeyPrefix.GenerateStoreKey(key{baseIds.PrototypeSplitID()}.Bytes())},
+		{"+ve", fields{splitID.(*baseIds.SplitID)}, module.StoreKeyPrefix.GenerateStoreKey(splitID.(*baseIds.SplitID).Bytes())},
+		{"+ve", fields{baseIds.PrototypeSplitID().(*baseIds.SplitID)}, module.StoreKeyPrefix.GenerateStoreKey(baseIds.PrototypeSplitID().Bytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				SplitID: tt.fields.SplitID,
+			key := Key{
+				SplitId: tt.fields.SplitID,
 			}
 			if got := key.GenerateStoreKeyBytes(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GenerateStoreKeyBytes() = %v, want %v", got, tt.want)
@@ -146,20 +145,20 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 
 func Test_key_IsPartial(t *testing.T) {
 	type fields struct {
-		SplitID ids.SplitID
+		SplitID *baseIds.SplitID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   bool
 	}{
-		{"+ve", fields{splitID}, false},
-		{"+ve", fields{baseIds.PrototypeSplitID()}, true},
+		{"+ve", fields{splitID.(*baseIds.SplitID)}, false},
+		{"+ve", fields{baseIds.PrototypeSplitID().(*baseIds.SplitID)}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				SplitID: tt.fields.SplitID,
+			key := Key{
+				SplitId: tt.fields.SplitID,
 			}
 			if got := key.IsPartial(); got != tt.want {
 				t.Errorf("IsPartial() = %v, want %v", got, tt.want)
@@ -170,7 +169,7 @@ func Test_key_IsPartial(t *testing.T) {
 
 func Test_key_RegisterCodec(t *testing.T) {
 	type fields struct {
-		SplitID ids.SplitID
+		SplitID *baseIds.SplitID
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -180,14 +179,14 @@ func Test_key_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{splitID}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{splitID.(*baseIds.SplitID)}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ke := key{
-				SplitID: tt.fields.SplitID,
+			key := Key{
+				SplitId: tt.fields.SplitID,
 			}
-			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
+			key.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }
