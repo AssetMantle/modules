@@ -1,0 +1,11 @@
+syntax = "proto3";
+package meta;
+
+import "gogoproto/gogo.proto";
+
+message QueryResponse {
+  option (gogoproto.goproto_getters) = false;
+  bool success = 1;
+  string error = 2;
+  repeated string list = 3 [(gogoproto.customtype) = "github.com/AssetMantle/modules/schema/helpers.Mappable"];
+}
