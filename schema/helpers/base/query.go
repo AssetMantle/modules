@@ -4,10 +4,12 @@
 package base
 
 import (
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	cosmosTypesModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -24,6 +26,16 @@ type query struct {
 	requestPrototype  func() helpers.QueryRequest
 	responsePrototype func() helpers.QueryResponse
 	keeperPrototype   func() helpers.QueryKeeper
+}
+
+func (query query) RegisterService(configurator cosmosTypesModule.Configurator) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (query query) RegisterGRPCGatewayRoute(context client.Context, serveMux *runtime.ServeMux) {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.Query = (*query)(nil)

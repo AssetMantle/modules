@@ -1,0 +1,7 @@
+syntax = "proto3";
+package assets;
+
+import "schema/documents/base/document.v1.proto";
+message Mappable {
+  documents.Document asset = 1;
+}

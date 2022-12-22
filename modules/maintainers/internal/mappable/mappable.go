@@ -9,6 +9,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/ids/constansts"
@@ -19,27 +20,23 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-type mappable struct {
-	documents.Maintainer
-}
+var _ helpers.Mappable = (*Mappable)(nil)
 
-var _ helpers.Mappable = (*mappable)(nil)
-
-func (mappable mappable) GetKey() helpers.Key {
+func (mappable *Mappable) GetKey() helpers.Key {
 	return key.NewKey(base.NewMaintainerID(constansts.MaintainerClassificationID,
 		baseQualified.NewImmutables(baseLists.NewPropertyList(
 			baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(mappable.Maintainer.GetMaintainedClassificationID())),
 			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(mappable.Maintainer.GetIdentityID())),
 		))))
 }
-func (mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, mappable{})
+func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Mappable{})
 }
 
 func NewMappable(maintainer documents.Maintainer) helpers.Mappable {
-	return mappable{Maintainer: maintainer}
+	return &Mappable{Maintainer: maintainer.Get().(*baseDocuments.Document)}
 }
 
 func Prototype() helpers.Mappable {
-	return mappable{}
+	return &Mappable{}
 }

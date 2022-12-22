@@ -11,6 +11,5 @@ type Asset interface {
 	capabilities.Burnable
 	capabilities.Lockable
 	capabilities.Splittable
-
 	Document
 }

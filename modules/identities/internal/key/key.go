@@ -10,45 +10,42 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-type key struct {
-	ids.IdentityID
-}
+var _ helpers.Key = (*Key)(nil)
 
-var _ helpers.Key = (*key)(nil)
-
-func (key key) GenerateStoreKeyBytes() []byte {
-	return module.StoreKeyPrefix.GenerateStoreKey(key.Bytes())
+func (key *Key) GenerateStoreKeyBytes() []byte {
+	return module.StoreKeyPrefix.GenerateStoreKey(key.IdentityId.Bytes())
 }
-func (key) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, key{})
+func (*Key) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Key{})
 }
-func (key key) IsPartial() bool {
-	return len(key.IdentityID.GetHashID().Bytes()) == 0
+func (key *Key) IsPartial() bool {
+	return len(key.IdentityId.GetHashID().Bytes()) == 0
 }
-func (key key) Equals(compareKey helpers.Key) bool {
+func (key *Key) Equals(compareKey helpers.Key) bool {
 	if CompareKey, err := keyFromInterface(compareKey); err != nil {
 		return false
 	} else {
 		// TODO test nil IdentityID case
-		return key.IdentityID.Compare(CompareKey.IdentityID) == 0
+		return key.IdentityId.Compare(CompareKey.IdentityId) == 0
 	}
 }
-func keyFromInterface(i interface{}) (key, error) {
+func keyFromInterface(i interface{}) (*Key, error) {
 	switch value := i.(type) {
-	case key:
+	case *Key:
 		return value, nil
 	default:
-		return key{}, errorConstants.MetaDataError
+		return &Key{}, errorConstants.MetaDataError
 	}
 }
 
 func NewKey(identityID ids.IdentityID) helpers.Key {
-	return key{IdentityID: identityID}
+	return &Key{IdentityId: identityID.(*base.IdentityID)}
 }
 
 func Prototype() helpers.Key {
-	return key{}
+	return &Key{}
 }

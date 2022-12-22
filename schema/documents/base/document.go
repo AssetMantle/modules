@@ -12,14 +12,17 @@ import (
 	"github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-//type document struct {
+// type document struct {
 //	ids.ClassificationID
 //	qualified.ImmutableList
 //	qualified.Mutables
-//}
+// }
 
 var _ documents.Document = (*Document)(nil)
 
+func (document *Document) Get() documents.Document {
+	return document
+}
 func (document *Document) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(document.GetClassificationID().Bytes(), document.GetImmutables().GenerateHashID().Bytes())
 }
@@ -48,9 +51,9 @@ func (document *Document) Mutate(propertyList ...properties.Property) documents.
 	return document
 }
 
-func NewDocument(classificationID ids.ID, immutables qualified.Immutables, mutables qualified.Mutables) documents.Document {
+func NewDocument(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) documents.Document {
 	return &Document{
-		ClassificationId: classificationID.(*baseIDs.AnyID),
+		ClassificationId: classificationID.(*baseIDs.ClassificationID),
 		ImmutableList:    immutables.(*base.Immutables),
 		MutableList:      mutables.(*base.Mutables),
 	}

@@ -10,6 +10,6 @@ import (
 )
 
 func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, immutables{})
-	codecUtilities.RegisterModuleConcrete(legacyAmino, mutables{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Immutables{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Mutables{})
 }

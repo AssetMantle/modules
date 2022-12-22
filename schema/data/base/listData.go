@@ -20,7 +20,7 @@ var _ data.ListData = (*ListData)(nil)
 
 func (listData *ListData) Get() []data.AnyData {
 	anyDataList := make([]data.AnyData, listData.Size())
-	for i, anyData := range listData.Value {
+	for i, anyData := range listData.Value.DataList {
 		anyDataList[i] = anyData
 	}
 	return anyDataList
@@ -29,11 +29,11 @@ func (listData *ListData) Search(data data.AnyData) (int, bool) {
 	return listData.Value.Search(data)
 }
 func (listData *ListData) Add(data ...data.AnyData) data.ListData {
-	listData.Value = listData.Value.Add(data...)
+	listData.Value = listData.Value.Add(data...).(*base.AnyDataList)
 	return listData
 }
 func (listData *ListData) Remove(data ...data.AnyData) data.ListData {
-	listData.Value = listData.Value.Remove(data...)
+	listData.Value = listData.Value.Remove(data...).(*base.AnyDataList)
 	return listData
 }
 func (listData *ListData) GetID() ids.DataID {
@@ -73,22 +73,27 @@ func (listData *ListData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(listData.Bytes())
 }
 func (listData *ListData) ToAnyData() data.AnyData {
+	return &AnyData{
+		Impl: &AnyData_ListData{
+			ListData: *listData,
+		},
+	}
 }
-func listDataFromInterface(listable traits.Listable) (listData, error) {
+func listDataFromInterface(listable traits.Listable) (*ListData, error) {
 	switch value := listable.(type) {
-	case listData:
+	case *ListData:
 		return value, nil
 	default:
-		return listData{}, errorConstants.MetaDataError
+		return &ListData{}, errorConstants.MetaDataError
 	}
 }
 
 func ListDataPrototype() data.ListData {
-	return listData{}.ZeroValue().(data.ListData)
+	return (&ListData{}).ZeroValue().(data.ListData)
 }
 
 // NewListData
 // * onus of ensuring all Data are of the same type is on DataList
-func NewListData(value lists.DataList) data.ListData {
-	return listData{Value: value}
+func NewListData(value lists.AnyDataList) data.ListData {
+	return &ListData{Value: value.(*base.AnyDataList)}
 }

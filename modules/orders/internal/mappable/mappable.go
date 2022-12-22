@@ -8,28 +8,25 @@ import (
 
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	"github.com/AssetMantle/modules/schema/documents"
+	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-type mappable struct {
-	documents.Order
-}
+var _ helpers.Mappable = (*Mappable)(nil)
 
-var _ helpers.Mappable = (*mappable)(nil)
-
-func (mappable mappable) GetKey() helpers.Key {
-	return key.NewKey(baseIDs.NewOrderID(mappable.GetClassificationID(), mappable.GetImmutables()))
+func (mappable *Mappable) GetKey() helpers.Key {
+	return key.NewKey(baseIDs.NewOrderID(mappable.Order.GetClassificationID(), mappable.Order.GetImmutables()))
 }
-func (mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, mappable{})
+func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Mappable{})
 }
 
 func NewMappable(order documents.Order) helpers.Mappable {
-	return mappable{Order: order}
+	return &Mappable{Order: order.Get().(*base.Document)}
 }
 
 func Prototype() helpers.Mappable {
-	return mappable{}
+	return &Mappable{}
 }
