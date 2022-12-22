@@ -7,7 +7,7 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ data.Data = (*AnyData)(nil)
+var _ data.AnyData = (*AnyData)(nil)
 
 func (x *AnyData) GetID() ids.DataID {
 	return x.Impl.(data.Data).GetID()

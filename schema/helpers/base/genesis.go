@@ -26,6 +26,21 @@ type genesis struct {
 
 var _ helpers.Genesis = (*genesis)(nil)
 
+func (genesis genesis) Reset() {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (genesis genesis) String() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (genesis genesis) ProtoMessage() {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (genesis genesis) Default() helpers.Genesis {
 	return genesis.Initialize(genesis.defaultMappableList, genesis.defaultParameterList)
 }

@@ -10,6 +10,7 @@ import (
 )
 
 type Document interface {
+	Get() Document
 	GenerateHashID() ids.HashID
 	GetClassificationID() ids.ClassificationID
 	// GetProperty returns property from a document searching in both Mutables and Immutables
