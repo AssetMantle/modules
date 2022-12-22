@@ -35,8 +35,8 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		{"+ve", args{testAssetID}, key{testAssetID}},
-		{"+ve with nil", args{}, key{}},
+		{"+ve", args{testAssetID.(*baseIDs.AssetID)}, &Key{testAssetID.(*baseIDs.AssetID)}},
+		{"+ve with nil", args{}, &Key{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -52,7 +52,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", key{}},
+		{"+ve", &Key{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -70,11 +70,11 @@ func Test_keyFromInterface(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    key
+		want    Key
 		wantErr bool
 	}{
-		{"+ve", args{key{testAssetID}}, key{testAssetID}, false},
-		{"+ve with nil", args{key{}}, key{}, false},
+		{"+ve", args{Key{testAssetID.(*baseIDs.AssetID)}}, Key{testAssetID.(*baseIDs.AssetID)}, false},
+		{"+ve with nil", args{Key{}}, Key{}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -92,7 +92,7 @@ func Test_keyFromInterface(t *testing.T) {
 
 func Test_key_Equals(t *testing.T) {
 	type fields struct {
-		AssetID ids.AssetID
+		AssetID *baseIDs.AssetID
 	}
 	type args struct {
 		compareKey helpers.Key
@@ -103,12 +103,12 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"+ve", fields{testAssetID}, args{key{testAssetID}}, true},
+		{"+ve", fields{testAssetID.(*baseIDs.AssetID)}, args{&Key{testAssetID.(*baseIDs.AssetID)}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				AssetID: tt.fields.AssetID,
+			key := Key{
+				AssetId: tt.fields.AssetID,
 			}
 			if got := key.Equals(tt.args.compareKey); got != tt.want {
 				t.Errorf("Equals() = %v, want %v", got, tt.want)
@@ -119,19 +119,19 @@ func Test_key_Equals(t *testing.T) {
 
 func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 	type fields struct {
-		AssetID ids.AssetID
+		AssetID *baseIDs.AssetID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{testAssetID}, module.StoreKeyPrefix.GenerateStoreKey(key{testAssetID}.Bytes())},
+		{"+ve", fields{testAssetID.(*baseIDs.AssetID)}, module.StoreKeyPrefix.GenerateStoreKey(testAssetID.(*baseIDs.AssetID).Bytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				AssetID: tt.fields.AssetID,
+			key := Key{
+				AssetId: tt.fields.AssetID,
 			}
 			if got := key.GenerateStoreKeyBytes(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GenerateStoreKeyBytes() = %v, want %v", got, tt.want)
@@ -142,20 +142,20 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 
 func Test_key_IsPartial(t *testing.T) {
 	type fields struct {
-		AssetID ids.AssetID
+		AssetID *baseIDs.AssetID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   bool
 	}{
-		{"+ve", fields{key{testAssetID}}, false},
-		{"+ve", fields{key{baseIDs.PrototypeAssetID()}}, true},
+		{"+ve", fields{testAssetID.(*baseIDs.AssetID)}, false},
+		{"+ve", fields{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				AssetID: tt.fields.AssetID,
+			key := Key{
+				AssetId: tt.fields.AssetID,
 			}
 			if got := key.IsPartial(); got != tt.want {
 				t.Errorf("IsPartial() = %v, want %v", got, tt.want)
@@ -166,7 +166,7 @@ func Test_key_IsPartial(t *testing.T) {
 
 func Test_key_RegisterCodec(t *testing.T) {
 	type fields struct {
-		AssetID ids.AssetID
+		AssetID *baseIDs.AssetID
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -176,13 +176,13 @@ func Test_key_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testAssetID}, args{codec.NewLegacyAmino()}},
-		{"+ve", fields{baseIDs.PrototypeAssetID()}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testAssetID.(*baseIDs.AssetID)}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ke := key{
-				AssetID: tt.fields.AssetID,
+			ke := Key{
+				AssetId: tt.fields.AssetID,
 			}
 			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
