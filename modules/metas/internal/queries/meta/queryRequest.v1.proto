@@ -7,5 +7,5 @@ import "gogoproto/gogo.proto";
 message QueryRequest {
   option (gogoproto.goproto_getters) = false;
 
-  ids.DataID data_id = 1;
+  ids.DataID data_i_d = 1;
 }

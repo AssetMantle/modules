@@ -6,5 +6,5 @@ import "schema/ids/base/orderID.v1.proto";
 message Message{
   string from =1;
   ids.IdentityID from_i_d =2;
-  ids.OrderID order_id =3;
+  ids.OrderID order_i_d =3;
 }

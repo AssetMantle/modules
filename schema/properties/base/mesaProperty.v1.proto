@@ -6,5 +6,5 @@ import "schema/ids/base/dataID.v1.proto";
 
 message MesaProperty {
   ids.PropertyID id = 1;
-  ids.DataID data_id = 2;
+  ids.DataID data_i_d = 2;
 }
