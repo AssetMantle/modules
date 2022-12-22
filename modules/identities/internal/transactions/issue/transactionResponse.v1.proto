@@ -1,5 +1,5 @@
 syntax = "proto3";
-package metas.transactions.reveal;
+package identities.transactions.issue;
 
 import "gogoproto/gogo.proto";
 
