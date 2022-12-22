@@ -6,6 +6,7 @@ package order
 import (
 	"errors"
 	"github.com/AssetMantle/modules/modules/orders/internal/common"
+	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -37,17 +38,22 @@ func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
 func newQueryResponse(collection helpers.Collection, error error) helpers.QueryResponse {
+	var list []*mappable.Mappable
+
+	for _, item := range collection.GetList() {
+		list = append(list, item.(*mappable.Mappable))
+	}
 	if error != nil {
 		return &QueryResponse{
 			Success: false,
 			Error:   error.Error(),
-			List:    collection.GetList(),
+			List:    list,
 		}
 	}
 
 	return &QueryResponse{
 		Success: true,
 		Error:   "",
-		List:    collection.GetList(),
+		List:    list,
 	}
 }

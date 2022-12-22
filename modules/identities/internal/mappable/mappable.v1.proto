@@ -1,5 +1,5 @@
 syntax = "proto3";
-package modules;
+package identities;
 
 import "schema/documents/base/document.v1.proto";
 
