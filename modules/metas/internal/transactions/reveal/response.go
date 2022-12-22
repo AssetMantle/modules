@@ -4,6 +4,7 @@
 package reveal
 
 import (
+	"errors"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -12,22 +13,22 @@ type transactionResponse struct {
 	Error   error `json:"error" swaggertype:"string"`
 }
 
-var _ helpers.TransactionResponse = (*transactionResponse)(nil)
+var _ helpers.TransactionResponse = (*TransactionResponse)(nil)
 
-func (transactionResponse transactionResponse) IsSuccessful() bool {
+func (transactionResponse *TransactionResponse) IsSuccessful() bool {
 	return transactionResponse.Success
 }
-func (transactionResponse transactionResponse) GetError() error {
-	return transactionResponse.Error
+func (transactionResponse *TransactionResponse) GetError() error {
+	return errors.New(transactionResponse.Error)
 }
 func newTransactionResponse(error error) helpers.TransactionResponse {
-	success := true
 	if error != nil {
-		success = false
+		return &TransactionResponse{
+			Success: false,
+			Error:   error.Error(),
+		}
 	}
-
-	return transactionResponse{
-		Success: success,
-		Error:   error,
+	return &TransactionResponse{
+		Success: true,
 	}
 }
