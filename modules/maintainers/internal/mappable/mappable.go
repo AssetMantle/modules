@@ -25,8 +25,8 @@ var _ helpers.Mappable = (*Mappable)(nil)
 func (mappable *Mappable) GetKey() helpers.Key {
 	return key.NewKey(base.NewMaintainerID(constansts.MaintainerClassificationID,
 		baseQualified.NewImmutables(baseLists.NewPropertyList(
-			baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(mappable.Maintainer.GetMaintainedClassificationID())),
-			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(mappable.Maintainer.GetIdentityID())),
+			baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(baseDocuments.NewMaintainerFromDocument(mappable.Maintainer).GetMaintainedClassificationID())),
+			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(baseDocuments.NewMaintainerFromDocument(mappable.Maintainer).GetIdentityID())),
 		))))
 }
 func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {

@@ -1,15 +1,10 @@
 syntax = "proto3";
 package metas.transactions.reveal;
 
-import "gogoproto/gogo.proto";
 import "schema/data/base/anyData.v1.proto";
+import "schema/ids/base/identityID.v1.proto";
 
 message Message {
-  option (gogoproto.goproto_getters) = false;
-
-  bytes from = 1;
-  data.AnyData data = 2 [
-    (gogoproto.customtype) = "github.com/AssetMantle/modules/schema/data.AnyData",
-    (gogoproto.nullable) = false
-  ];
+  string from = 1;
+  data.AnyData data = 2;
 }

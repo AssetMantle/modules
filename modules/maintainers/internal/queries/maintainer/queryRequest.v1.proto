@@ -6,5 +6,5 @@ import "gogoproto/gogo.proto";
 
 message QueryRequest {
   option (gogoproto.goproto_getters) = false;
-  ids.MaintainerID maintainer_id = 1;
+  ids.MaintainerID maintainer_i_d = 1;
 }

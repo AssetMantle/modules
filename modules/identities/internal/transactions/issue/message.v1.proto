@@ -1,0 +1,17 @@
+syntax = "proto3";
+package identities.transactions.issue;
+
+import "schema/ids/base/classificationID.v1.proto";
+import "schema/ids/base/identityID.v1.proto";
+import "schema/lists/base/propertyList.v1.proto";
+
+message Message {
+  string from = 1;
+  ids.IdentityID from_i_d = 2;
+  string to = 3;
+  ids.ClassificationID classification_i_d = 4;
+  lists.PropertyList immutable_meta_properties = 5;
+  lists.PropertyList immutable_properties = 6;
+  lists.PropertyList mutable_meta_properties = 7;
+  lists.PropertyList mutable_properties = 8;
+}

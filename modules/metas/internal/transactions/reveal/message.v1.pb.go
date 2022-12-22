@@ -5,9 +5,8 @@ package reveal
 
 import (
 	fmt "fmt"
-	github_com_AssetMantle_modules_schema_data "github.com/AssetMantle/modules/schema/data"
-	_ "github.com/AssetMantle/modules/schema/data/base"
-	_ "github.com/cosmos/gogoproto/gogoproto"
+	base "github.com/AssetMantle/modules/schema/data/base"
+	_ "github.com/AssetMantle/modules/schema/ids/base"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
@@ -26,8 +25,8 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Message struct {
-	From []byte                                             `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
-	Data github_com_AssetMantle_modules_schema_data.AnyData `protobuf:"bytes,2,opt,name=data,proto3,customtype=github.com/AssetMantle/modules/schema/data.AnyData" json:"data"`
+	From string        `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
+	Data *base.AnyData `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 }
 
 func (m *Message) Reset()         { *m = Message{} }
@@ -63,6 +62,20 @@ func (m *Message) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Message proto.InternalMessageInfo
 
+func (m *Message) GetFrom() string {
+	if m != nil {
+		return m.From
+	}
+	return ""
+}
+
+func (m *Message) GetData() *base.AnyData {
+	if m != nil {
+		return m.Data
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*Message)(nil), "metas.transactions.reveal.Message")
 }
@@ -72,6 +85,7 @@ func init() {
 }
 
 var fileDescriptor_b2150b3df21f6910 = []byte{
+
 	// 347 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xb2, 0xce, 0xcd, 0x4f, 0x29,
 	0xcd, 0x49, 0x2d, 0xd6, 0xcf, 0x4d, 0x2d, 0x49, 0x2c, 0xd6, 0xcf, 0xcc, 0x2b, 0x49, 0x2d, 0xca,
@@ -117,16 +131,18 @@ func (m *Message) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	{
-		size := m.Data.Size()
-		i -= size
-		if _, err := m.Data.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
+	if m.Data != nil {
+		{
+			size, err := m.Data.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMessageV1(dAtA, i, uint64(size))
 		}
-		i = encodeVarintMessageV1(dAtA, i, uint64(size))
+		i--
+		dAtA[i] = 0x12
 	}
-	i--
-	dAtA[i] = 0x12
 	if len(m.From) > 0 {
 		i -= len(m.From)
 		copy(dAtA[i:], m.From)
@@ -158,8 +174,10 @@ func (m *Message) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMessageV1(uint64(l))
 	}
-	l = m.Data.Size()
-	n += 1 + l + sovMessageV1(uint64(l))
+	if m.Data != nil {
+		l = m.Data.Size()
+		n += 1 + l + sovMessageV1(uint64(l))
+	}
 	return n
 }
 
@@ -202,7 +220,7 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field From", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowMessageV1
@@ -212,25 +230,23 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthMessageV1
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthMessageV1
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.From = append(m.From[:0], dAtA[iNdEx:postIndex]...)
-			if m.From == nil {
-				m.From = []byte{}
-			}
+			m.From = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -260,6 +276,9 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
+			}
+			if m.Data == nil {
+				m.Data = &base.AnyData{}
 			}
 			if err := m.Data.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err

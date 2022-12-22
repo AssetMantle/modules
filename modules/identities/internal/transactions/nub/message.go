@@ -19,7 +19,7 @@ import (
 
 type message struct {
 	From  sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	NubID ids.ID              `json:"nubID" valid:"required~required field nubID missing"`
+	NubID ids.StringID        `json:"nubID" valid:"required~required field nubID missing"`
 }
 
 var _ sdkTypes.Msg = message{}
