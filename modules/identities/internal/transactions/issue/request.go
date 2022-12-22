@@ -5,6 +5,7 @@ package issue
 
 import (
 	"encoding/json"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 
@@ -23,18 +24,18 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-type transactionRequest struct {
-	BaseReq                 rest.BaseReq `json:"baseReq"`
-	To                      string       `json:"to" valid:"required~required field to missing, matches(^[a-z0-9]+$)~invalid field to"`
-	FromID                  string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID "`
-	ClassificationID        string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^[A-Za-z0-9-_=.]+$)~invalid field classificationID"`
-	ImmutableMetaProperties string       `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing, matches(^.*$)~invalid field immutableMetaProperties"`
-	ImmutableProperties     string       `json:"immutableProperties" valid:"required~required field immutableProperties missing, matches(^.*$)~invalid field immutableProperties"`
-	MutableMetaProperties   string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing, matches(^.*$)~invalid field mutableMetaProperties"`
-	MutableProperties       string       `json:"mutableProperties" valid:"required~required field mutableProperties missing, matches(^.*$)~invalid field mutableProperties"`
-}
+//type transactionRequest struct {
+//	BaseReq                 rest.BaseReq `json:"baseReq"`
+//	To                      string       `json:"to" valid:"required~required field to missing, matches(^[a-z0-9]+$)~invalid field to"`
+//	FromID                  string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID "`
+//	ClassificationID        string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^[A-Za-z0-9-_=.]+$)~invalid field classificationID"`
+//	ImmutableMetaProperties string       `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing, matches(^.*$)~invalid field immutableMetaProperties"`
+//	ImmutableProperties     string       `json:"immutableProperties" valid:"required~required field immutableProperties missing, matches(^.*$)~invalid field immutableProperties"`
+//	MutableMetaProperties   string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing, matches(^.*$)~invalid field mutableMetaProperties"`
+//	MutableProperties       string       `json:"mutableProperties" valid:"required~required field mutableProperties missing, matches(^.*$)~invalid field mutableProperties"`
+//}
 
-var _ helpers.TransactionRequest = (*transactionRequest)(nil)
+var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
 
 // Validate godoc
 // @Summary Issue an identity
@@ -46,7 +47,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /identities/issue [post]
-func (transactionRequest transactionRequest) Validate() error {
+func (transactionRequest *TransactionRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(transactionRequest)
 	if err != nil {
 		return err
@@ -57,9 +58,13 @@ func (transactionRequest transactionRequest) Validate() error {
 	}
 	return nil
 }
-func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
+func (m *TransactionRequest) RegisterInterface(registry types.InterfaceRegistry) {
+	//TODO implement me
+	panic("implement me")
+}
+func (transactionRequest *TransactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
-		cliCommand.ReadBaseReq(context),
+		cliCommand.ReadBaseReq(context).From,
 		cliCommand.ReadString(constants.To),
 		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.ClassificationID),
@@ -69,18 +74,18 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadString(constants.MutableProperties),
 	), nil
 }
-func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
+func (transactionRequest *TransactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
 	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
 		return nil, err
 	}
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
-	return transactionRequest.BaseReq
+func (transactionRequest *TransactionRequest) GetBaseReq() rest.BaseReq {
+	panic("Implement me")
 }
-func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
+	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.From)
 	if err != nil {
 		return nil, err
 	}
@@ -112,12 +117,12 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	}
 	mutableProperties = mutableProperties.ScrubData()
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromId)
 	if err != nil {
 		return nil, err
 	}
 
-	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationID)
+	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationId)
 	if err != nil {
 		return nil, err
 	}
@@ -132,18 +137,18 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		mutableProperties,
 	), nil
 }
-func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, transactionRequest{})
+func (*TransactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, &TransactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
-	return transactionRequest{}
+	return &TransactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, to string, fromID string, classificationID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
-	return transactionRequest{
-		BaseReq:                 baseReq,
+func newTransactionRequest(from string, to string, fromID string, classificationID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
+	return &TransactionRequest{
+		From:                    from,
 		To:                      to,
-		FromID:                  fromID,
-		ClassificationID:        classificationID,
+		FromId:                  fromID,
+		ClassificationId:        classificationID,
 		ImmutableMetaProperties: immutableMetaProperties,
 		ImmutableProperties:     immutableProperties,
 		MutableMetaProperties:   mutableMetaProperties,

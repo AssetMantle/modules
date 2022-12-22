@@ -94,7 +94,6 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 		if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
 			return
 		}
-
 		baseReq := transactionRequest.GetBaseReq()
 		baseReq = baseReq.Sanitize()
 		if !baseReq.ValidateBasic(responseWriter) {
