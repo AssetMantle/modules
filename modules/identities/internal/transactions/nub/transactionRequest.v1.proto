@@ -1,0 +1,11 @@
+syntax = "proto3";
+package identities.transactions.nub;
+
+import "gogoproto/gogo.proto";
+
+message TransactionRequest {
+  option (gogoproto.goproto_getters) = false;
+
+  string from = 1;
+  string nub_id = 2;
+}
