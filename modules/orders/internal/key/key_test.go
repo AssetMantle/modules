@@ -35,7 +35,7 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		{"+ve", args{testOrderID}, key{OrderID: testOrderID}},
+		{"+ve", args{testOrderID.(*baseIds.OrderID)}, &Key{OrderId: testOrderID.(*baseIds.OrderID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -51,7 +51,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", key{}},
+		{"+ve", &Key{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -69,12 +69,12 @@ func Test_keyFromInterface(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    key
+		want    Key
 		wantErr bool
 	}{
-		{"+ve", args{}, key{}, true},
-		{"+ve", args{NewKey(testOrderID)}, key{testOrderID}, false},
-		{"-ve", args{baseIds.NewStringID("StringID")}, key{}, true},
+		{"+ve", args{}, Key{}, true},
+		{"+ve", args{NewKey(testOrderID)}, Key{testOrderID.(*baseIds.OrderID)}, false},
+		{"-ve", args{baseIds.NewStringID("StringID")}, Key{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -92,7 +92,7 @@ func Test_keyFromInterface(t *testing.T) {
 
 func Test_key_Equals(t *testing.T) {
 	type fields struct {
-		OrderID ids.OrderID
+		OrderID *baseIds.OrderID
 	}
 	type args struct {
 		compareKey helpers.Key
@@ -103,12 +103,12 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"+ve", fields{testOrderID}, args{key{testOrderID}}, true},
+		{"+ve", fields{testOrderID.(*baseIds.OrderID)}, args{&Key{testOrderID.(*baseIds.OrderID)}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				OrderID: tt.fields.OrderID,
+			key := Key{
+				OrderId: tt.fields.OrderID,
 			}
 			if got := key.Equals(tt.args.compareKey); got != tt.want {
 				t.Errorf("Equals() = %v, want %v", got, tt.want)
@@ -119,19 +119,19 @@ func Test_key_Equals(t *testing.T) {
 
 func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 	type fields struct {
-		OrderID ids.OrderID
+		OrderID *baseIds.OrderID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{testOrderID}, module.StoreKeyPrefix.GenerateStoreKey(key{testOrderID}.Bytes())},
+		{"+ve", fields{testOrderID.(*baseIds.OrderID)}, module.StoreKeyPrefix.GenerateStoreKey(testOrderID.(*baseIds.OrderID).Bytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				OrderID: tt.fields.OrderID,
+			key := Key{
+				OrderId: tt.fields.OrderID,
 			}
 			if got := key.GenerateStoreKeyBytes(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GenerateStoreKeyBytes() = %v, want %v", got, tt.want)
@@ -142,19 +142,19 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 
 func Test_key_IsPartial(t *testing.T) {
 	type fields struct {
-		OrderID ids.OrderID
+		OrderID *baseIds.OrderID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   bool
 	}{
-		{"+ve", fields{testOrderID}, false},
+		{"+ve", fields{testOrderID.(*baseIds.OrderID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				OrderID: tt.fields.OrderID,
+			key := Key{
+				OrderId: tt.fields.OrderID,
 			}
 			if got := key.IsPartial(); got != tt.want {
 				t.Errorf("IsPartial() = %v, want %v", got, tt.want)
@@ -165,7 +165,7 @@ func Test_key_IsPartial(t *testing.T) {
 
 func Test_key_RegisterCodec(t *testing.T) {
 	type fields struct {
-		OrderID ids.OrderID
+		OrderID *baseIds.OrderID
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -175,14 +175,14 @@ func Test_key_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testOrderID}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testOrderID.(*baseIds.OrderID)}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ke := key{
-				OrderID: tt.fields.OrderID,
+			key := Key{
+				OrderId: tt.fields.OrderID,
 			}
-			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
+			key.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }
