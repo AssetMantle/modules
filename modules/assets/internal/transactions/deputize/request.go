@@ -67,6 +67,7 @@ func (transactionRequest *TransactionRequest) RegisterInterface(registry types.I
 }
 func (transactionRequest *TransactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
+		cliCommand.ReadBaseReq(context).From,
 		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.ToID),
 		cliCommand.ReadString(constants.ClassificationID),
@@ -135,8 +136,9 @@ func (*TransactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmi
 func requestPrototype() helpers.TransactionRequest {
 	return &TransactionRequest{}
 }
-func newTransactionRequest(fromID string, toID string, classificationID string, maintainedProperties string, canMintAsset bool, canBurnAsset bool, canRenumerateAsset bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) helpers.TransactionRequest {
+func newTransactionRequest(from string, fromID string, toID string, classificationID string, maintainedProperties string, canMintAsset bool, canBurnAsset bool, canRenumerateAsset bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) helpers.TransactionRequest {
 	return &TransactionRequest{
+		From:                 from,
 		FromId:               fromID,
 		ToId:                 toID,
 		ClassificationId:     classificationID,

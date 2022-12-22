@@ -47,6 +47,7 @@ func (transactionRequest *TransactionRequest) RegisterInterface(registry types.I
 }
 func (transactionRequest *TransactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
+		cliCommand.ReadBaseReq(context).From,
 		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.AssetID),
 	), nil
@@ -89,8 +90,9 @@ func (*TransactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmi
 func requestPrototype() helpers.TransactionRequest {
 	return &TransactionRequest{}
 }
-func newTransactionRequest(fromID string, assetID string) helpers.TransactionRequest {
+func newTransactionRequest(from string, fromID string, assetID string) helpers.TransactionRequest {
 	return &TransactionRequest{
+		From:    from,
 		FromId:  fromID,
 		AssetId: assetID,
 	}

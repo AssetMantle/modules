@@ -1,5 +1,5 @@
 syntax = "proto3";
-package assets.transactions.mutate;
+package identities.transactions.revoke;
 
 import "gogoproto/gogo.proto";
 
@@ -8,7 +8,6 @@ message TransactionRequest {
 
   string from = 1;
   string from_id = 2;
-  string asset_id = 3;
-  string mutable_meta_properties = 4;
-  string mutable_properties = 5;
+  string to_id = 3;
+  string classification_id =  4;
 }

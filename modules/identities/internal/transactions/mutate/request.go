@@ -5,6 +5,7 @@ package mutate
 
 import (
 	"encoding/json"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 
@@ -23,15 +24,15 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-type transactionRequest struct {
-	BaseReq               rest.BaseReq `json:"baseReq"`
-	FromID                string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
-	IdentityID            string       `json:"identityID" valid:"required~required field identityID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field identityID"`
-	MutableMetaProperties string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing, matches(^.*$)~invalid field mutableMetaProperties"`
-	MutableProperties     string       `json:"mutableProperties" valid:"required~required field mutableProperties missing, matches(^.*$)~invalid field mutableProperties"`
-}
+//type transactionRequest struct {
+//	BaseReq               rest.BaseReq `json:"baseReq"`
+//	FromID                string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
+//	IdentityID            string       `json:"identityID" valid:"required~required field identityID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field identityID"`
+//	MutableMetaProperties string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing, matches(^.*$)~invalid field mutableMetaProperties"`
+//	MutableProperties     string       `json:"mutableProperties" valid:"required~required field mutableProperties missing, matches(^.*$)~invalid field mutableProperties"`
+//}
 
-var _ helpers.TransactionRequest = (*transactionRequest)(nil)
+var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
 
 // Validate godoc
 // @Summary Mutate an identity
@@ -43,7 +44,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /identities/mutate [post]
-func (transactionRequest transactionRequest) Validate() error {
+func (transactionRequest *TransactionRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(transactionRequest)
 	if err != nil {
 		return err
@@ -54,26 +55,30 @@ func (transactionRequest transactionRequest) Validate() error {
 	}
 	return nil
 }
-func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
+func (m *TransactionRequest) RegisterInterface(registry types.InterfaceRegistry) {
+	//TODO implement me
+	panic("implement me")
+}
+func (transactionRequest *TransactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
-		cliCommand.ReadBaseReq(context),
+		cliCommand.ReadBaseReq(context).From,
 		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.IdentityID),
 		cliCommand.ReadString(constants.MutableMetaProperties),
 		cliCommand.ReadString(constants.MutableProperties),
 	), nil
 }
-func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
+func (transactionRequest *TransactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
 	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
 		return nil, err
 	}
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
-	return transactionRequest.BaseReq
+func (transactionRequest *TransactionRequest) GetBaseReq() rest.BaseReq {
+	panic("Implement me")
 }
-func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
+func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
 	if err != nil {
 		return nil, err
@@ -90,12 +95,12 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	}
 	mutableProperties = mutableProperties.ScrubData()
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromId)
 	if err != nil {
 		return nil, err
 	}
 
-	identityID, err := baseIDs.ReadIdentityID(transactionRequest.IdentityID)
+	identityID, err := baseIDs.ReadIdentityID(transactionRequest.IdentityId)
 	if err != nil {
 		return nil, err
 	}
@@ -108,17 +113,17 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		mutableProperties,
 	), nil
 }
-func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, transactionRequest{})
+func (*TransactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, &TransactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
-	return transactionRequest{}
+	return &TransactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, identityID string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
-	return transactionRequest{
-		BaseReq:               baseReq,
-		FromID:                fromID,
-		IdentityID:            identityID,
+func newTransactionRequest(from string, fromID string, identityID string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
+	return &TransactionRequest{
+		From:                  from,
+		FromId:                fromID,
+		IdentityId:            identityID,
 		MutableMetaProperties: mutableMetaProperties,
 		MutableProperties:     mutableProperties,
 	}

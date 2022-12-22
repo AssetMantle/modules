@@ -62,6 +62,7 @@ func (transactionRequest *TransactionRequest) RegisterInterface(registry types.I
 }
 func (transactionRequest *TransactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
+		cliCommand.ReadBaseReq(context).From,
 		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.ToID),
 		cliCommand.ReadString(constants.ClassificationID),
@@ -142,8 +143,9 @@ func requestPrototype() helpers.TransactionRequest {
 	return &TransactionRequest{}
 }
 
-func newTransactionRequest(fromID string, toID string, classificationID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
+func newTransactionRequest(from string, fromID string, toID string, classificationID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return &TransactionRequest{
+		From:                    from,
 		FromId:                  fromID,
 		ToId:                    toID,
 		ClassificationId:        classificationID,

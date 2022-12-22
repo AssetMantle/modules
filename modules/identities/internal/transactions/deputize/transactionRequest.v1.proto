@@ -1,5 +1,5 @@
 syntax = "proto3";
-package assets.transactions.deputize;
+package identities.transactions.deputize;
 
 import "gogoproto/gogo.proto";
 
