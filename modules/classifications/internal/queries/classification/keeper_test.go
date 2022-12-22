@@ -4,6 +4,7 @@
 package classification
 
 import (
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"testing"
 
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -52,7 +53,10 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 	}, false, log.NewNopLogger())
 
 	mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	encodingConfig := simapp.MakeTestEncodingConfig()
+	appCodec := encodingConfig.Marshaler
 	ParamsKeeper := paramsKeeper.NewKeeper(
+		appCodec,
 		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,

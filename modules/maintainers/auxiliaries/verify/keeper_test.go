@@ -5,6 +5,7 @@ package verify
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"reflect"
 	"testing"
 
@@ -99,7 +100,10 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
+	encodingConfig := simapp.MakeTestEncodingConfig()
+	appCodec := encodingConfig.Marshaler
 	ParamsKeeper := paramsKeeper.NewKeeper(
+		appCodec,
 		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,

@@ -1,12 +1,12 @@
 syntax = "proto3";
-package maintainer;
+package split;
 
 import "gogoproto/gogo.proto";
-import "modules/maintainers/internal/mappable/mappable.v1.proto";
+import "modules/splits/internal/mappable/mappable.v1.proto";
 
 message QueryResponse {
   option (gogoproto.goproto_getters) = false;
   bool success = 1;
   string error = 2;
-  repeated maintainers.Mappable list = 3;
+  repeated splits.Mappable list = 3;
 }
