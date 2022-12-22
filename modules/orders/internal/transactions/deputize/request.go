@@ -5,6 +5,7 @@ package deputize
 
 import (
 	"encoding/json"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -19,21 +20,21 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-type transactionRequest struct {
-	BaseReq              rest.BaseReq `json:"baseReq"`
-	FromID               string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
-	ToID                 string       `json:"toID" valid:"required~required field toID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field toID"`
-	ClassificationID     string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^[A-Za-z0-9-_=.]+$)~invalid field classificationID"`
-	MaintainedProperties string       `json:"maintainedProperties" valid:"required~required field maintainedProperties missing, matches(^.*$)~invalid field maintainedProperties"`
-	CanMintAsset         bool         `json:"canMintAsset"`
-	CanBurnAsset         bool         `json:"canBurnAsset"`
-	CanRenumerateAsset   bool         `json:"canRenumerateAsset"`
-	CanAddMaintainer     bool         `json:"canAddMaintainer"`
-	CanRemoveMaintainer  bool         `json:"canRemoveMaintainer"`
-	CanMutateMaintainer  bool         `json:"canMutateMaintainer"`
-}
+//type transactionRequest struct {
+//	BaseReq              rest.BaseReq `json:"baseReq"`
+//	FromID               string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
+//	ToID                 string       `json:"toID" valid:"required~required field toID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field toID"`
+//	ClassificationID     string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^[A-Za-z0-9-_=.]+$)~invalid field classificationID"`
+//	MaintainedProperties string       `json:"maintainedProperties" valid:"required~required field maintainedProperties missing, matches(^.*$)~invalid field maintainedProperties"`
+//	CanMintAsset         bool         `json:"canMintAsset"`
+//	CanBurnAsset         bool         `json:"canBurnAsset"`
+//	CanRenumerateAsset   bool         `json:"canRenumerateAsset"`
+//	CanAddMaintainer     bool         `json:"canAddMaintainer"`
+//	CanRemoveMaintainer  bool         `json:"canRemoveMaintainer"`
+//	CanMutateMaintainer  bool         `json:"canMutateMaintainer"`
+//}
 
-var _ helpers.TransactionRequest = (*transactionRequest)(nil)
+var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
 
 // Validate godoc
 // @Summary Deputize order transaction
@@ -45,13 +46,17 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /orders/deputize [post]
-func (transactionRequest transactionRequest) Validate() error {
+func (transactionRequest *TransactionRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(transactionRequest)
 	return err
 }
-func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
+func (transactionRequest *TransactionRequest) RegisterInterface(registry types.InterfaceRegistry) {
+	//TODO implement me
+	panic("implement me")
+}
+func (transactionRequest *TransactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
-		cliCommand.ReadBaseReq(context),
+		cliCommand.ReadBaseReq(context).From,
 		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.ToID),
 		cliCommand.ReadString(constants.ClassificationID),
@@ -64,17 +69,17 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadBool(constants.CanMutateMaintainer),
 	), nil
 }
-func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
+func (transactionRequest *TransactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
 	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
 		return nil, err
 	}
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
-	return transactionRequest.BaseReq
+func (transactionRequest *TransactionRequest) GetBaseReq() rest.BaseReq {
+	panic("Implement me")
 }
-func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
+func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
 	if err != nil {
 		return nil, err
@@ -85,17 +90,17 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromId)
 	if err != nil {
 		return nil, err
 	}
 
-	toID, err := baseIDs.ReadIdentityID(transactionRequest.ToID)
+	toID, err := baseIDs.ReadIdentityID(transactionRequest.ToId)
 	if err != nil {
 		return nil, err
 	}
 
-	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationID)
+	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationId)
 	if err != nil {
 		return nil, err
 	}
@@ -114,18 +119,18 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		transactionRequest.CanMutateMaintainer,
 	), nil
 }
-func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, transactionRequest{})
+func (*TransactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, &TransactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
-	return transactionRequest{}
+	return &TransactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainedProperties string, canMintAsset bool, canBurnAsset bool, canRenumerateAsset bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) helpers.TransactionRequest {
-	return transactionRequest{
-		BaseReq:              baseReq,
-		FromID:               fromID,
-		ToID:                 toID,
-		ClassificationID:     classificationID,
+func newTransactionRequest(from string, fromID string, toID string, classificationID string, maintainedProperties string, canMintAsset bool, canBurnAsset bool, canRenumerateAsset bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) helpers.TransactionRequest {
+	return &TransactionRequest{
+		From:                 from,
+		FromId:               fromID,
+		ToId:                 toID,
+		ClassificationId:     classificationID,
 		MaintainedProperties: maintainedProperties,
 		CanMintAsset:         canMintAsset,
 		CanBurnAsset:         canBurnAsset,

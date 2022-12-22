@@ -5,6 +5,7 @@ package unwrap
 
 import (
 	"encoding/json"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -19,14 +20,14 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-type transactionRequest struct {
-	BaseReq   rest.BaseReq `json:"baseReq"`
-	FromID    string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
-	OwnableID string       `json:"ownableID" valid:"required~required field ownableID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field ownableID"`
-	Value     string       `json:"value" valid:"required~required field value missing, matches(^[0-9]+$)~invalid field value"`
-}
+//type transactionRequest struct {
+//	BaseReq   rest.BaseReq `json:"baseReq"`
+//	FromID    string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
+//	OwnableID string       `json:"ownableID" valid:"required~required field ownableID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field ownableID"`
+//	Value     string       `json:"value" valid:"required~required field value missing, matches(^[0-9]+$)~invalid field value"`
+//}
 
-var _ helpers.TransactionRequest = (*transactionRequest)(nil)
+var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
 
 // Validate godoc
 // @Summary Unwrap split transaction
@@ -38,29 +39,33 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default {object} transactionResponse "Message for an unexpected error response."
 // @Router /splits/unwrap [post]
-func (transactionRequest transactionRequest) Validate() error {
+func (transactionRequest *TransactionRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(transactionRequest)
 	return err
 }
-func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
+func (transactionRequest *TransactionRequest) RegisterInterface(registry types.InterfaceRegistry) {
+	//TODO implement me
+	panic("implement me")
+}
+func (transactionRequest *TransactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
-		cliCommand.ReadBaseReq(context),
+		cliCommand.ReadBaseReq(context).From,
 		cliCommand.ReadString(constants.FromID),
 		cliCommand.ReadString(constants.OwnableID),
 		cliCommand.ReadString(constants.Value),
 	), nil
 }
-func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
+func (transactionRequest *TransactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
 	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
 		return nil, err
 	}
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
-	return transactionRequest.BaseReq
+func (transactionRequest *TransactionRequest) GetBaseReq() rest.BaseReq {
+	panic("Implement me")
 }
-func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
+func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
 	if err != nil {
 		return nil, err
@@ -71,12 +76,12 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, errorConstants.InvalidRequest
 	}
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromId)
 	if err != nil {
 		return nil, err
 	}
 
-	ownableID, err := baseIDs.ReadOwnableID(transactionRequest.OwnableID)
+	ownableID, err := baseIDs.ReadOwnableID(transactionRequest.OwnableId)
 	if err != nil {
 		return nil, err
 	}
@@ -88,17 +93,17 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		value,
 	), nil
 }
-func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, transactionRequest{})
+func (*TransactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, &TransactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
-	return transactionRequest{}
+	return &TransactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, ownableID string, value string) helpers.TransactionRequest {
-	return transactionRequest{
-		BaseReq:   baseReq,
-		FromID:    fromID,
-		OwnableID: ownableID,
+func newTransactionRequest(from string, fromID string, ownableID string, value string) helpers.TransactionRequest {
+	return &TransactionRequest{
+		From:      from,
+		FromId:    fromID,
+		OwnableId: ownableID,
 		Value:     value,
 	}
 }
