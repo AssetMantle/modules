@@ -53,7 +53,6 @@ func newQueryResponse(collection helpers.Collection, error error) helpers.QueryR
 
 	return &QueryResponse{
 		Success: true,
-		Error:   "",
 		List:    list,
 	}
 }
