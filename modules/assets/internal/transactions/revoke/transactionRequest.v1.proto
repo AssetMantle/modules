@@ -1,0 +1,12 @@
+syntax = "proto3";
+package revoke;
+
+import "gogoproto/gogo.proto";
+
+message TransactionRequest {
+  option (gogoproto.goproto_getters) = false;
+
+  string from_id = 1;
+  string to_id = 2;
+  string classification_id = 3;
+}

@@ -1,0 +1,14 @@
+syntax = "proto3";
+package define;
+
+import "gogoproto/gogo.proto";
+
+message TransactionRequest {
+  option (gogoproto.goproto_getters) = false;
+
+  string from_id = 1;
+  string immutable_meta_properties = 2;
+  string immutable_properties = 3;
+  string mutable_meta_properties = 4;
+  string mutable_properties = 5;
+}

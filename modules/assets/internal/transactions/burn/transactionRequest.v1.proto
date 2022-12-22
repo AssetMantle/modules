@@ -1,0 +1,11 @@
+syntax = "proto3";
+package burn;
+
+import "gogoproto/gogo.proto";
+
+message TransactionRequest {
+  option (gogoproto.goproto_getters) = false;
+
+  string from_id = 1;
+  string asset_id = 2;
+}

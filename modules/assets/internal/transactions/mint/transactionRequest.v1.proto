@@ -1,0 +1,16 @@
+syntax = "proto3";
+package mint;
+
+import "gogoproto/gogo.proto";
+
+message TransactionRequest {
+  option (gogoproto.goproto_getters) = false;
+
+  string from_id = 1;
+  string to_id = 2;
+  string classification_id = 3;
+  string immutable_meta_properties = 4;
+  string immutable_properties = 5;
+  string mutable_meta_properties = 6;
+  string mutable_properties = 7;
+}
