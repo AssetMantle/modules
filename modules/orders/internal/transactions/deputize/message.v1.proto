@@ -1,0 +1,20 @@
+syntax = "proto3";
+package orders.transactions.deputize;
+
+import "schema/ids/base/classificationID.v1.proto";
+import "schema/ids/base/identityID.v1.proto";
+import "schema/lists/base/propertyList.v1.proto";
+
+message Message {
+  string from = 1;
+  ids.IdentityID from_i_d = 2;
+  ids.IdentityID to_i_d = 3;
+  ids.ClassificationID classification_i_d = 4;
+  lists.PropertyList maintained_properties = 5;
+  bool CanMintAsset = 6;
+  bool CanBurnAsset = 7;
+  bool CanRenumerateAsset = 8;
+  bool CanAddMaintainer = 9;
+  bool CanRemoveMaintainer = 10;
+  bool CanMutateMaintainer = 11;
+}
