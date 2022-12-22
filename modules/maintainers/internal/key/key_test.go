@@ -184,10 +184,10 @@ func Test_key_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ke := Key{
+			key := Key{
 				MaintainerId: tt.fields.MaintainerID,
 			}
-			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
+			key.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }
