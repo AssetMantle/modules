@@ -79,7 +79,7 @@ func (transactionRequest *TransactionRequest) GetBaseReq() rest.BaseReq {
 	panic("Implement me")
 }
 func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.From)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +127,7 @@ func requestPrototype() helpers.TransactionRequest {
 	return &TransactionRequest{}
 }
 
-func newTransactionRequest(froms string, fromID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
+func newTransactionRequest(from string, fromID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return &TransactionRequest{
 		From:                    from,
 		FromId:                  fromID,

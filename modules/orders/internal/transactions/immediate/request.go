@@ -86,7 +86,7 @@ func (transactionRequest *TransactionRequest) GetBaseReq() rest.BaseReq {
 }
 
 func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.From)
 	if err != nil {
 		return nil, err
 	}
