@@ -37,8 +37,8 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		{"+ve with nil", args{}, key{}},
-		{"+ve", args{createTestData()}, key{createTestData()}},
+		{"+ve with nil", args{}, &Key{}},
+		{"+ve", args{createTestData().(*baseIDs.MaintainerID)}, &Key{createTestData().(*baseIDs.MaintainerID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -54,7 +54,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", key{}},
+		{"+ve", &Key{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -72,10 +72,10 @@ func Test_keyFromInterface(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    key
+		want    Key
 		wantErr bool
 	}{
-		{"+ve", args{NewKey(createTestData())}, key{createTestData()}, false},
+		{"+ve", args{NewKey(createTestData().(*baseIDs.MaintainerID))}, Key{createTestData().(*baseIDs.MaintainerID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -93,7 +93,7 @@ func Test_keyFromInterface(t *testing.T) {
 
 func Test_key_Equals(t *testing.T) {
 	type fields struct {
-		MaintainerID ids.MaintainerID
+		MaintainerID *baseIDs.MaintainerID
 	}
 	type args struct {
 		compareKey helpers.Key
@@ -104,13 +104,13 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"+ve", fields{createTestData()}, args{NewKey(createTestData())}, true},
-		{"-ve", fields{createTestData()}, args{NewKey(baseIDs.PrototypeMaintainerID())}, false},
+		{"+ve", fields{createTestData().(*baseIDs.MaintainerID)}, args{NewKey(createTestData())}, true},
+		{"-ve", fields{createTestData().(*baseIDs.MaintainerID)}, args{NewKey(baseIDs.PrototypeMaintainerID())}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				MaintainerID: tt.fields.MaintainerID,
+			key := Key{
+				MaintainerId: tt.fields.MaintainerID,
 			}
 			if got := key.Equals(tt.args.compareKey); got != tt.want {
 				t.Errorf("Equals() = %v, want %v", got, tt.want)
@@ -121,20 +121,20 @@ func Test_key_Equals(t *testing.T) {
 
 func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 	type fields struct {
-		MaintainerID ids.MaintainerID
+		MaintainerID *baseIDs.MaintainerID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{createTestData()}, module.StoreKeyPrefix.GenerateStoreKey(key{createTestData()}.Bytes())},
-		{"-ve", fields{baseIDs.PrototypeMaintainerID()}, module.StoreKeyPrefix.GenerateStoreKey(key{baseIDs.PrototypeMaintainerID()}.Bytes())},
+		{"+ve", fields{createTestData().(*baseIDs.MaintainerID)}, module.StoreKeyPrefix.GenerateStoreKey(createTestData().(*baseIDs.MaintainerID).Bytes())},
+		{"-ve", fields{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}, module.StoreKeyPrefix.GenerateStoreKey(baseIDs.PrototypeMaintainerID().Bytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				MaintainerID: tt.fields.MaintainerID,
+			key := Key{
+				MaintainerId: tt.fields.MaintainerID,
 			}
 			if got := key.GenerateStoreKeyBytes(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GenerateStoreKeyBytes() = %v, want %v", got, tt.want)
@@ -145,20 +145,20 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 
 func Test_key_IsPartial(t *testing.T) {
 	type fields struct {
-		MaintainerID ids.MaintainerID
+		MaintainerID *baseIDs.MaintainerID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   bool
 	}{
-		{"+ve", fields{createTestData()}, false},
-		{"-ve", fields{baseIDs.PrototypeMaintainerID()}, true},
+		{"+ve", fields{createTestData().(*baseIDs.MaintainerID)}, false},
+		{"-ve", fields{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				MaintainerID: tt.fields.MaintainerID,
+			key := Key{
+				MaintainerId: tt.fields.MaintainerID,
 			}
 			if got := key.IsPartial(); got != tt.want {
 				t.Errorf("IsPartial() = %v, want %v", got, tt.want)
@@ -169,7 +169,7 @@ func Test_key_IsPartial(t *testing.T) {
 
 func Test_key_RegisterCodec(t *testing.T) {
 	type fields struct {
-		MaintainerID ids.MaintainerID
+		MaintainerID *baseIDs.MaintainerID
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -179,13 +179,13 @@ func Test_key_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{createTestData()}, args{codec.NewLegacyAmino()}},
-		{"-ve", fields{createTestData()}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{createTestData().(*baseIDs.MaintainerID)}, args{codec.NewLegacyAmino()}},
+		{"-ve", fields{createTestData().(*baseIDs.MaintainerID)}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ke := key{
-				MaintainerID: tt.fields.MaintainerID,
+			ke := Key{
+				MaintainerId: tt.fields.MaintainerID,
 			}
 			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
