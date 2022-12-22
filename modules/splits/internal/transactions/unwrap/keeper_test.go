@@ -5,6 +5,8 @@ package unwrap
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/simapp"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"reflect"
 	"testing"
 
@@ -66,7 +68,10 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	keyStaking := sdkTypes.NewKVStoreKey(stakingTypes.StoreKey)
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	encodingConfig := simapp.MakeTestEncodingConfig()
+	appCodec := encodingConfig.Marshaler
 	paramsKeeper := paramsKeeper.NewKeeper(
+		appCodec,
 		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,
@@ -113,7 +118,6 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		stakingTypes.NotBondedPoolName: {authTypes.Burner, authTypes.Staking},
 		stakingTypes.BondedPoolName:    {authTypes.Burner, authTypes.Staking},
 	}
-
 	sk := staking.NewKeeper(legacyAmino, keyStaking, supplyKeeper, paramsKeeper.Subspace(staking.DefaultParamspace))
 	sk.SetParams(context, staking.DefaultParams())
 	intToken := sdkTypes.TokensFromConsensusPower(100000000)

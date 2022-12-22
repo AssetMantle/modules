@@ -4,6 +4,7 @@
 package nub
 
 import (
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"reflect"
 	"testing"
 
@@ -44,7 +45,10 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	encodingConfig := simapp.MakeTestEncodingConfig()
+	appCodec := encodingConfig.Marshaler
 	ParamsKeeper := paramsKeeper.NewKeeper(
+		appCodec,
 		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,

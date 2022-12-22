@@ -5,6 +5,8 @@ package wrap
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/simapp"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"reflect"
 	"testing"
 
@@ -66,7 +68,10 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	keyStaking := sdkTypes.NewKVStoreKey(stakingTypes.StoreKey)
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	encodingConfig := simapp.MakeTestEncodingConfig()
+	appCodec := encodingConfig.Marshaler
 	paramsKeeper := paramsKeeper.NewKeeper(
+		appCodec,
 		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,
@@ -162,7 +167,10 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	_, _, Mapper, Parameters, _ := createTestInput(t)
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	paramsKeeper := paramsKeeper.NewKeeper.NewKeeper(
+	encodingConfig := simapp.MakeTestEncodingConfig()
+	appCodec := encodingConfig.Marshaler
+	paramsKeeper := paramsKeeper.NewKeeper(
+		appCodec,
 		codec.NewLegacyAmino(),
 		paramsStoreKey,
 		paramsTransientStoreKeys,
