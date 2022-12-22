@@ -1,0 +1,11 @@
+syntax = "proto3";
+package reveal;
+
+import "gogoproto/gogo.proto";
+
+message TransactionRequest{
+  option (gogoproto.goproto_getters) = false;
+
+  string from = 1;
+  string data = 2;
+}

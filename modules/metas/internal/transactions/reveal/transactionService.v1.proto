@@ -1,0 +1,13 @@
+syntax = "proto3";
+package reveal;
+
+import "modules/metas/internal/transactions/reveal/message.v1.proto";
+import "modules/metas/internal/transactions/reveal/transactionResponse.v1.proto";
+import "google/api/annotations.proto";
+
+service Transaction{
+
+  rpc Reveal(Message) returns (TransactionResponse){
+    option (google.api.http).post = "/mantle/metas/reveal";
+  }
+}

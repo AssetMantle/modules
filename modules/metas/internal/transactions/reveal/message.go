@@ -4,58 +4,69 @@
 package reveal
 
 import (
-	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
-
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/utilities/transaction"
+	"github.com/asaskevich/govalidator"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
-type message struct {
-	From sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	Data data.Data           `json:"data" valid:"required~required field data missing"`
+//type message struct {
+//	From sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
+//	Data data.Data           `json:"data" valid:"required~required field data missing"`
+//}
+
+var _ helpers.Message = &Message{}
+
+func (message *Message) RegisterInterface(registry types.InterfaceRegistry) {
+	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
+		&Message{},
+	)
+	msgservice.RegisterMsgServiceDesc(registry, &_Transaction_serviceDesc)
 }
 
-var _ sdkTypes.Msg = message{}
-
-func (message message) Route() string { return module.Name }
-func (message message) Type() string  { return Transaction.GetName() }
-func (message message) ValidateBasic() error {
+func (message *Message) GenerateOnSuccessEvents() sdkTypes.Events {
+	return nil
+}
+func (message *Message) Route() string { return module.Name }
+func (message *Message) Type() string  { return Transaction.GetName() }
+func (message *Message) ValidateBasic() error {
 	if _, err := govalidator.ValidateStruct(message); err != nil {
 		return sdkErrors.Wrap(constants.IncorrectMessage, err.Error())
 	}
 
 	return nil
 }
-func (message message) GetSignBytes() []byte {
+func (message *Message) GetSignBytes() []byte {
 	return sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message))
 }
-func (message message) GetSigners() []sdkTypes.AccAddress {
+func (message *Message) GetSigners() []sdkTypes.AccAddress {
 	return []sdkTypes.AccAddress{message.From}
 }
-func (message) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, message{})
+func (*Message) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, &Message{})
 }
-func messageFromInterface(msg sdkTypes.Msg) message {
+func messageFromInterface(msg sdkTypes.Msg) *Message {
 	switch value := msg.(type) {
-	case message:
+	case *Message:
 		return value
 	default:
-		return message{}
+		return &Message{}
 	}
 }
 func messagePrototype() helpers.Message {
-	return message{}
+	return &Message{}
 }
 
 func newMessage(from sdkTypes.AccAddress, data data.Data) sdkTypes.Msg {
-	return message{
+	return &Message{
 		From: from,
 		Data: data,
 	}
