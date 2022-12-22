@@ -7,5 +7,5 @@ message TransactionRequest {
   option (gogoproto.goproto_getters) = false;
 
   string from = 1;
-  string nub_id = 2;
+  string nub_i_d = 2;
 }

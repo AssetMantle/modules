@@ -15,16 +15,16 @@ import "schema/ids/base/stringID.v1.proto";
 
 message AnyID {
   oneof impl {
-    AssetID asset_id = 1;
-    ClassificationID classification_id = 2;
-    DataID data_id = 3;
-    HashID hash_id = 4;
-    IdentityID identity_id = 5;
-    MaintainerID maintainer_id = 6;
-    OrderID order_id = 7;
-    OwnableID ownable_id = 8;
-    PropertyID property_id = 9;
-    SplitID split_id = 10;
-    StringID string_id = 11;
+    AssetID asset_i_d = 1;
+    ClassificationID classification_i_d = 2;
+    DataID data_i_d = 3;
+    HashID hash_i_d = 4;
+    IdentityID identity_i_d = 5;
+    MaintainerID maintainer_i_d = 6;
+    OrderID order_i_d = 7;
+    OwnableID ownable_i_d = 8;
+    PropertyID property_i_d = 9;
+    SplitID split_i_d = 10;
+    StringID string_i_d = 11;
   }
 }

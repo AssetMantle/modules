@@ -7,7 +7,7 @@ message TransactionRequest {
   option (gogoproto.goproto_getters) = false;
 
   string from = 1;
-  string from_id = 2;
+  string from_i_d = 2;
   string taker_ownable_split = 3;
-  string order_id =  4;
+  string order_i_d =  4;
 }

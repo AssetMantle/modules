@@ -7,6 +7,6 @@ message TransactionRequest {
   option (gogoproto.goproto_getters) = false;
 
   string from = 1;
-  string from_id = 2;
-  string identity_id = 3;
+  string from_i_d = 2;
+  string identity_i_d = 3;
 }

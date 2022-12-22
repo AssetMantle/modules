@@ -7,7 +7,7 @@ message TransactionRequest {
   option (gogoproto.goproto_getters) = false;
 
   string from = 1;
-  string from_id = 2;
-  string to_id = 3;
-  string classification_id =  4;
+  string from_i_d = 2;
+  string to_i_d = 3;
+  string classification_i_d =  4;
 }

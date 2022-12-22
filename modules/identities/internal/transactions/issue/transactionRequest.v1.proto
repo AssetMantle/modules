@@ -8,8 +8,8 @@ message TransactionRequest {
 
   string from = 1;
   string to = 2;
-  string from_id = 3;
-  string classification_id = 4;
+  string from_i_d = 3;
+  string classification_i_d = 4;
   string immutable_meta_properties = 5;
   string immutable_properties = 6;
   string mutable_meta_properties = 7;

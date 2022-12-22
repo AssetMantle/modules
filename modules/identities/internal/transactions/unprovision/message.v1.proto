@@ -1,0 +1,10 @@
+syntax = "proto3";
+package identities.transactions.unprovision;
+
+import "schema/ids/base/identityID.v1.proto";
+
+message Message {
+  string from = 1;
+  string to = 2;
+  ids.IdentityID identity_i_d = 3;
+}

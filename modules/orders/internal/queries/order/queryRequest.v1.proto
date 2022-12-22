@@ -4,5 +4,5 @@ package order;
 import "schema/ids/base/orderID.v1.proto";
 
 message QueryRequest {
-  ids.OrderID order_id = 1;
+  ids.OrderID order_i_d = 1;
 }

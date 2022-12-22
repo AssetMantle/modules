@@ -36,7 +36,7 @@ type message struct {
 	MutableProperties       lists.PropertyList `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
 }
 
-var _ sdkTypes.Msg = message{}
+var _ helpers.Message = message{}
 
 func (message message) Route() string { return module.Name }
 func (message message) Type() string  { return Transaction.GetName() }

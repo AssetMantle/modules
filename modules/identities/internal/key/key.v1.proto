@@ -4,5 +4,5 @@ package identities;
 import "schema/ids/base/identityID.v1.proto";
 
 message Key {
-  ids.IdentityID identity_id = 1;
+  ids.IdentityID identity_i_d = 1;
 }
