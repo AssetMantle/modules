@@ -58,10 +58,10 @@ func (transactionRequest *TransactionRequest) FromJSON(rawMessage json.RawMessag
 	return transactionRequest, nil
 }
 func (transactionRequest *TransactionRequest) GetBaseReq() rest.BaseReq {
-	return transactionRequest.BaseReq
+	panic("I do not exist")
 }
 func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.From)
 	if err != nil {
 		return nil, err
 	}
