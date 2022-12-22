@@ -23,7 +23,7 @@ func (*Key) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, Key{})
 }
 func (key *Key) IsPartial() bool {
-	return key.AssetId == nil
+	return len(key.AssetId.HashId.Bytes()) == 0
 }
 func (key *Key) Equals(compareKey helpers.Key) bool {
 	if CompareKey, err := keyFromInterface(compareKey); err != nil {
