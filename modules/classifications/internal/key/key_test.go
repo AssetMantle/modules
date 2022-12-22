@@ -36,7 +36,7 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		{"+ve", args{createTestInput()}, key{createTestInput()}},
+		{"+ve", args{createTestInput()}, &Key{createTestInput().(*baseIDs.ClassificationID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -52,7 +52,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", key{}},
+		{"+ve", &Key{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -70,11 +70,11 @@ func Test_keyFromInterface(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    key
+		want    Key
 		wantErr bool
 	}{
-		{"+ve", args{NewKey(createTestInput())}, key{createTestInput()}, false},
-		{"+ve MetaDataError", args{}, key{}, true},
+		{"+ve", args{NewKey(createTestInput())}, Key{createTestInput().(*baseIDs.ClassificationID)}, false},
+		{"+ve MetaDataError", args{}, Key{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -92,7 +92,7 @@ func Test_keyFromInterface(t *testing.T) {
 
 func Test_key_Equals(t *testing.T) {
 	type fields struct {
-		ClassificationID ids.ClassificationID
+		ClassificationID *baseIDs.ClassificationID
 	}
 	type args struct {
 		compareKey helpers.Key
@@ -103,13 +103,13 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"+ve", fields{createTestInput()}, args{key{createTestInput()}}, true},
-		{"+ve", fields{createTestInput()}, args{baseHelpers.KeyPrototype()}, false},
+		{"+ve", fields{createTestInput().(*baseIDs.ClassificationID)}, args{&Key{createTestInput().(*baseIDs.ClassificationID)}}, true},
+		{"+ve", fields{createTestInput().(*baseIDs.ClassificationID)}, args{baseHelpers.KeyPrototype()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				ClassificationID: tt.fields.ClassificationID,
+			key := Key{
+				ClassificationId: tt.fields.ClassificationID,
 			}
 			if got := key.Equals(tt.args.compareKey); got != tt.want {
 				t.Errorf("Equals() = %v, want %v", got, tt.want)
@@ -120,19 +120,19 @@ func Test_key_Equals(t *testing.T) {
 
 func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 	type fields struct {
-		ClassificationID ids.ClassificationID
+		ClassificationID *baseIDs.ClassificationID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{createTestInput()}, module.StoreKeyPrefix.GenerateStoreKey(key{createTestInput()}.Bytes())},
+		{"+ve", fields{createTestInput().(*baseIDs.ClassificationID)}, module.StoreKeyPrefix.GenerateStoreKey(createTestInput().(*baseIDs.ClassificationID).Bytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				ClassificationID: tt.fields.ClassificationID,
+			key := Key{
+				ClassificationId: tt.fields.ClassificationID,
 			}
 			if got := key.GenerateStoreKeyBytes(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GenerateStoreKeyBytes() = %v, want %v", got, tt.want)
@@ -143,20 +143,20 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 
 func Test_key_IsPartial(t *testing.T) {
 	type fields struct {
-		ClassificationID ids.ClassificationID
+		ClassificationID *baseIDs.ClassificationID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   bool
 	}{
-		{"+ve", fields{createTestInput()}, false},
-		{"-ve", fields{baseIDs.PrototypeClassificationID()}, true},
+		{"+ve", fields{createTestInput().(*baseIDs.ClassificationID)}, false},
+		{"-ve", fields{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				ClassificationID: tt.fields.ClassificationID,
+			key := Key{
+				ClassificationId: tt.fields.ClassificationID,
 			}
 			if got := key.IsPartial(); got != tt.want {
 				t.Errorf("IsPartial() = %v, want %v", got, tt.want)
@@ -167,7 +167,7 @@ func Test_key_IsPartial(t *testing.T) {
 
 func Test_key_RegisterCodec(t *testing.T) {
 	type fields struct {
-		ClassificationID ids.ClassificationID
+		ClassificationID *baseIDs.ClassificationID
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -177,12 +177,12 @@ func Test_key_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{createTestInput()}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{createTestInput().(*baseIDs.ClassificationID)}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ke := key{
-				ClassificationID: tt.fields.ClassificationID,
+			ke := Key{
+				ClassificationId: tt.fields.ClassificationID,
 			}
 			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
