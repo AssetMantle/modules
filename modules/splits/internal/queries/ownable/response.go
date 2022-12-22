@@ -4,6 +4,7 @@
 package ownable
 
 import (
+	"errors"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
@@ -22,7 +23,7 @@ func (queryResponse queryResponse) IsSuccessful() bool {
 	return queryResponse.Success
 }
 func (queryResponse queryResponse) GetError() error {
-	return queryResponse.Error
+	return errors.New(queryResponse.Error)
 }
 func (queryResponse queryResponse) Encode() ([]byte, error) {
 	return common.LegacyAmino.MarshalJSON(queryResponse)

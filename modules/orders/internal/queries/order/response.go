@@ -4,6 +4,7 @@
 package order
 
 import (
+	"errors"
 	"github.com/AssetMantle/modules/modules/orders/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
@@ -20,7 +21,7 @@ func (queryResponse *QueryResponse) IsSuccessful() bool {
 	return queryResponse.Success
 }
 func (queryResponse *QueryResponse) GetError() error {
-	return queryResponse.Error
+	return errors.New(queryResponse.Error)
 }
 func (queryResponse *QueryResponse) Encode() ([]byte, error) {
 	return common.LegacyAmino.MarshalJSON(queryResponse)
@@ -36,14 +37,17 @@ func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
 func newQueryResponse(collection helpers.Collection, error error) helpers.QueryResponse {
-	success := true
 	if error != nil {
-		success = false
+		return &QueryResponse{
+			Success: false,
+			Error:   error.Error(),
+			List:    collection.GetList(),
+		}
 	}
 
 	return &QueryResponse{
-		Success: success,
-		Error:   error,
+		Success: true,
+		Error:   "",
 		List:    collection.GetList(),
 	}
 }
