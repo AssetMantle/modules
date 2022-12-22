@@ -14,7 +14,7 @@ import (
 
 // type document struct {
 //	ids.ClassificationID
-//	qualified.ImmutableList
+//	qualified.Immutables
 //	qualified.Mutables
 // }
 
@@ -27,9 +27,9 @@ func (document *Document) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(document.GetClassificationID().Bytes(), document.GetImmutables().GenerateHashID().Bytes())
 }
 func (document *Document) GetProperty(propertyID ids.PropertyID) properties.Property {
-	if property := document.ImmutableList.GetProperty(propertyID); property != nil {
+	if property := document.Immutables.GetProperty(propertyID); property != nil {
 		return property
-	} else if property := document.MutableList.GetProperty(propertyID); property != nil {
+	} else if property := document.Mutables.GetProperty(propertyID); property != nil {
 		return property
 	} else {
 		return nil
@@ -39,22 +39,22 @@ func (document *Document) GetClassificationID() ids.ClassificationID {
 	return document.ClassificationId
 }
 func (document *Document) GetImmutables() qualified.Immutables {
-	return document.ImmutableList
+	return document.Immutables
 }
 func (document *Document) GetMutables() qualified.Mutables {
-	return document.MutableList
+	return document.Mutables
 }
 
 // TODO write test case
 func (document *Document) Mutate(propertyList ...properties.Property) documents.Document {
-	document.MutableList = document.MutableList.Mutate(propertyList...).(*base.Mutables)
+	document.Mutables = document.Mutables.Mutate(propertyList...).(*base.Mutables)
 	return document
 }
 
 func NewDocument(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) documents.Document {
 	return &Document{
 		ClassificationId: classificationID.(*baseIDs.ClassificationID),
-		ImmutableList:    immutables.(*base.Immutables),
-		MutableList:      mutables.(*base.Mutables),
+		Immutables:       immutables.(*base.Immutables),
+		Mutables:         mutables.(*base.Mutables),
 	}
 }

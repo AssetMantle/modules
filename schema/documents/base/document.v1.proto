@@ -4,9 +4,12 @@ package documents;
 import "schema/ids/base/classificationID.v1.proto";
 import "schema/qualified/base/immutables.v1.proto";
 import "schema/qualified/base/mutables.v1.proto";
+import "gogoproto/gogo.proto";
 
 message Document {
+  option (gogoproto.goproto_getters) = false;
+
   ids.ClassificationID classification_id = 1;
-  qualified.Immutables immutable_list = 2;
-  qualified.Mutables mutable_list = 3;
+  qualified.Immutables immutables = 2;
+  qualified.Mutables mutables = 3;
 }
