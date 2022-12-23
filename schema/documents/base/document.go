@@ -36,7 +36,7 @@ func (document *Document) GetProperty(propertyID ids.PropertyID) properties.Prop
 	}
 }
 func (document *Document) GetClassificationID() ids.ClassificationID {
-	return document.ClassificationId
+	return document.ClassificationID
 }
 func (document *Document) GetImmutables() qualified.Immutables {
 	return document.Immutables
@@ -53,7 +53,7 @@ func (document *Document) Mutate(propertyList ...properties.Property) documents.
 
 func NewDocument(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) documents.Document {
 	return &Document{
-		ClassificationId: classificationID.(*baseIDs.ClassificationID),
+		ClassificationID: classificationID.(*baseIDs.ClassificationID),
 		Immutables:       immutables.(*base.Immutables),
 		Mutables:         mutables.(*base.Mutables),
 	}

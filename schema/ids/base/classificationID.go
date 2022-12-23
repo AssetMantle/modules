@@ -14,16 +14,16 @@ import (
 var _ ids.ClassificationID = (*ClassificationID)(nil)
 
 func (classificationID *ClassificationID) Bytes() []byte {
-	return classificationID.HashId.IdBytes
+	return classificationID.HashID.IdBytes
 }
 func (classificationID *ClassificationID) IsClassificationID() {}
 func (classificationID *ClassificationID) Compare(listable traits.Listable) int {
-	return classificationID.HashId.Compare(classificationIDFromInterface(listable).HashId)
+	return classificationID.HashID.Compare(classificationIDFromInterface(listable).HashID)
 }
 func (classificationID *ClassificationID) ToAnyID() ids.AnyID {
 	return &AnyID{
-		Impl: &AnyID_ClassificationId{
-			ClassificationId: classificationID,
+		Impl: &AnyID_ClassificationID{
+			ClassificationID: classificationID,
 		},
 	}
 }
@@ -48,18 +48,18 @@ func NewClassificationID(immutables qualified.Immutables, mutables qualified.Mut
 		mutableIDByteList[i] = property.GetID().Bytes()
 	}
 
-	return &ClassificationID{HashId: GenerateHashID(GenerateHashID(immutableIDByteList...).Bytes(), GenerateHashID(mutableIDByteList...).Bytes(), immutables.GenerateHashID().Bytes()).(*HashID)}
+	return &ClassificationID{HashID: GenerateHashID(GenerateHashID(immutableIDByteList...).Bytes(), GenerateHashID(mutableIDByteList...).Bytes(), immutables.GenerateHashID().Bytes()).(*HashID)}
 }
 
 func PrototypeClassificationID() ids.ClassificationID {
 	return &ClassificationID{
-		HashId: PrototypeHashID().(*HashID),
+		HashID: PrototypeHashID().(*HashID),
 	}
 }
 
 func ReadClassificationID(classificationIDString string) (ids.ClassificationID, error) {
 	if hashID, err := ReadHashID(classificationIDString); err == nil {
-		return &ClassificationID{HashId: hashID.(*HashID)}, nil
+		return &ClassificationID{HashID: hashID.(*HashID)}, nil
 	}
 
 	if classificationIDString == "" {

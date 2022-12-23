@@ -4,5 +4,5 @@ package metas;
 import "schema/ids/base/dataID.v1.proto";
 
 message Key {
-  ids.DataID data_id = 1;
+  ids.DataID data_i_d = 1;
 }

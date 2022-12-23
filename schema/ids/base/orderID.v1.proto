@@ -2,7 +2,10 @@ syntax = "proto3";
 package ids;
 
 import "schema/ids/base/hashID.v1.proto";
+import "gogoproto/gogo.proto";
 
 message OrderID {
-  HashID order_id = 1;
+  option (gogoproto.goproto_getters) = false;
+
+  HashID order_i_d = 1;
 }

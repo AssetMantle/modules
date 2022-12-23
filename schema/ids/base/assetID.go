@@ -19,7 +19,7 @@ import (
 var _ ids.AssetID = (*AssetID)(nil)
 
 func (assetID *AssetID) Bytes() []byte {
-	return assetID.HashId.IdBytes
+	return assetID.HashID.IdBytes
 }
 func (assetID *AssetID) IsOwnableID() {}
 func (assetID *AssetID) IsAssetID()   {}
@@ -29,8 +29,8 @@ func (assetID *AssetID) Compare(listable traits.Listable) int {
 }
 func (assetID *AssetID) ToAnyID() ids.AnyID {
 	return &AnyID{
-		Impl: &AnyID_AssetId{
-			AssetId: assetID,
+		Impl: &AnyID_AssetID{
+			AssetID: assetID,
 		},
 	}
 }
@@ -44,20 +44,20 @@ func assetIDFromInterface(i interface{}) *AssetID {
 }
 func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
 	return &AssetID{
-		HashId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
+		HashID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
 	}
 }
 
 func PrototypeAssetID() ids.AssetID {
 	return &AssetID{
-		HashId: PrototypeHashID().(*HashID),
+		HashID: PrototypeHashID().(*HashID),
 	}
 }
 
 func ReadAssetID(assetIDString string) (ids.AssetID, error) {
 	if hashID, err := ReadHashID(assetIDString); err == nil {
 		return &AssetID{
-			HashId: hashID.(*HashID),
+			HashID: hashID.(*HashID),
 		}, nil
 	}
 

@@ -1,8 +1,11 @@
 syntax = "proto3";
 package ids;
 
+import "gogoproto/gogo.proto";
 
 message HashID {
+  option (gogoproto.goproto_getters) = false;
+
   bytes id_bytes = 1;
 }
 
