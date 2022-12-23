@@ -23,7 +23,7 @@ func (queryKeeper queryKeeper) Ownable(ctx context.Context, request *QueryReques
 var _ helpers.QueryKeeper = (*queryKeeper)(nil)
 
 func (queryKeeper queryKeeper) Enquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
-	return newQueryResponse(utilities.GetOwnableTotalSplitsValue(queryKeeper.mapper.NewCollection(context), queryRequestFromInterface(queryRequest).OwnableId), nil)
+	return newQueryResponse(utilities.GetOwnableTotalSplitsValue(queryKeeper.mapper.NewCollection(context), queryRequestFromInterface(queryRequest).OwnableID), nil)
 }
 
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

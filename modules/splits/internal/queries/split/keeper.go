@@ -23,7 +23,7 @@ func (queryKeeper queryKeeper) Split(ctx context.Context, request *QueryRequest)
 var _ helpers.QueryKeeper = (*queryKeeper)(nil)
 
 func (queryKeeper queryKeeper) Enquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
-	return newQueryResponse(queryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(queryRequestFromInterface(queryRequest).SplitId)), nil)
+	return newQueryResponse(queryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(queryRequestFromInterface(queryRequest).SplitID)), nil)
 }
 
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
