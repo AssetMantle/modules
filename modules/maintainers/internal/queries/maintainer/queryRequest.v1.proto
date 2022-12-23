@@ -1,5 +1,5 @@
 syntax = "proto3";
-package maintainer;
+package maintainers.queries.maintainer;
 
 import "schema/ids/base/maintainerID.v1.proto";
 import "gogoproto/gogo.proto";

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package classification;
+package classifications.queries.classification;
 
 import "schema/ids/base/classificationID.v1.proto";
 

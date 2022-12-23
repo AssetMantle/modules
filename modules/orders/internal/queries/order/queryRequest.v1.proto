@@ -1,5 +1,5 @@
 syntax = "proto3";
-package order;
+package orders.queries.order;
 
 import "schema/ids/base/orderID.v1.proto";
 

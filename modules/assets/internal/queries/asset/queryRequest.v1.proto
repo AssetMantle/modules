@@ -1,5 +1,5 @@
 syntax = "proto3";
-package asset;
+package assets.queries.asset;
 
 import "schema/ids/base/assetID.v1.proto";
 

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package meta;
+package metas.queries.meta;
 
 import "gogoproto/gogo.proto";
 import "modules/metas/internal/mappable/mappable.v1.proto";

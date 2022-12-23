@@ -1,5 +1,5 @@
 syntax = "proto3";
-package meta;
+package metas.queries.meta;
 
 import "schema/ids/base/dataID.v1.proto";
 import "gogoproto/gogo.proto";
