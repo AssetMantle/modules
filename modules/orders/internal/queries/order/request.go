@@ -70,5 +70,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 func newQueryRequest(orderID ids.OrderID) helpers.QueryRequest {
-	return &QueryRequest{OrderId: orderID.(*baseIDs.OrderID)}
+	return &QueryRequest{OrderID: orderID.(*baseIDs.OrderID)}
 }

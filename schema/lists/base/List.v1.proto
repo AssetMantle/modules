@@ -4,8 +4,11 @@ package lists;
 import "schema/lists/base/anyDataList.proto";
 import "schema/lists/base/idList.v1.proto";
 import "schema/lists/base/propertyList.v1.proto";
+import "gogoproto/gogo.proto";
 
 message List {
+  option (gogoproto.goproto_getters) = false;
+
   oneof Impl {
     lists.AnyDataList data_list = 1;
     lists.IDList id_list = 2;

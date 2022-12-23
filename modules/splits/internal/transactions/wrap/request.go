@@ -73,7 +73,7 @@ func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromId)
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	), nil
 }
 func (*TransactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, transactionRequest{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, &TransactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
 	return &TransactionRequest{}
@@ -93,7 +93,7 @@ func requestPrototype() helpers.TransactionRequest {
 func newTransactionRequest(from string, fromID string, coins string) helpers.TransactionRequest {
 	return &TransactionRequest{
 		From:   from,
-		FromId: fromID,
+		FromID: fromID,
 		Coins:  coins,
 	}
 }

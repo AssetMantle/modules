@@ -30,7 +30,7 @@ func (key *Key) Equals(compareKey helpers.Key) bool {
 		return false
 	} else {
 		// TODO test nil IdentityID case
-		return key.IdentityId.Compare(CompareKey.IdentityId) == 0
+		return key.IdentityId.Compare(CompareKey.IdentityID) == 0
 	}
 }
 func keyFromInterface(i interface{}) (*Key, error) {
@@ -43,7 +43,7 @@ func keyFromInterface(i interface{}) (*Key, error) {
 }
 
 func NewKey(identityID ids.IdentityID) helpers.Key {
-	return &Key{IdentityId: identityID.(*base.IdentityID)}
+	return &Key{IdentityID: identityID.(*base.IdentityID)}
 }
 
 func Prototype() helpers.Key {

@@ -91,27 +91,27 @@ func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromId)
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
 	if err != nil {
 		return nil, err
 	}
 
-	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationId)
+	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationID)
 	if err != nil {
 		return nil, err
 	}
 
-	takerID, err := baseIDs.ReadIdentityID(transactionRequest.TakerId)
+	takerID, err := baseIDs.ReadIdentityID(transactionRequest.TakerID)
 	if err != nil {
 		return nil, err
 	}
 
-	makerOwnableID, err := baseIDs.ReadOwnableID(transactionRequest.MakerOwnableId)
+	makerOwnableID, err := baseIDs.ReadOwnableID(transactionRequest.MakerOwnableID)
 	if err != nil {
 		return nil, err
 	}
 
-	takerOwnableID, err := baseIDs.ReadOwnableID(transactionRequest.TakerOwnableId)
+	takerOwnableID, err := baseIDs.ReadOwnableID(transactionRequest.TakerOwnableID)
 	if err != nil {
 		return nil, err
 	}
@@ -174,11 +174,11 @@ func requestPrototype() helpers.TransactionRequest {
 func newTransactionRequest(from string, fromID string, classificationID string, takerID string, makerOwnableID string, takerOwnableID string, expiresIn int64, makerOwnableSplit, takerOwnableSplit string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return &TransactionRequest{
 		From:                    from,
-		FromId:                  fromID,
-		ClassificationId:        classificationID,
-		TakerId:                 takerID,
-		MakerOwnableId:          makerOwnableID,
-		TakerOwnableId:          takerOwnableID,
+		FromID:                  fromID,
+		ClassificationID:        classificationID,
+		TakerID:                 takerID,
+		MakerOwnableID:          makerOwnableID,
+		TakerOwnableID:          takerOwnableID,
 		ExpiresIn:               expiresIn,
 		MakerOwnableSplit:       makerOwnableSplit,
 		TakerOwnableSplit:       takerOwnableSplit,
