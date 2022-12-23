@@ -14,8 +14,11 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	baseIds "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	typesSchema "github.com/AssetMantle/modules/schema/types"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -62,18 +65,18 @@ func messagePrototype() helpers.Message {
 }
 func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, takerID ids.IdentityID, makerOwnableID ids.OwnableID, takerOwnableID ids.OwnableID, expiresIn typesSchema.Height, makerOwnableSplit sdkTypes.Dec, takerOwnableSplit sdkTypes.Dec, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return &Message{
-		From:                    from,
-		FromID:                  fromID,
-		ClassificationID:        classificationID,
-		TakerID:                 takerID,
-		MakerOwnableID:          makerOwnableID,
-		TakerOwnableID:          takerOwnableID,
-		ExpiresIn:               expiresIn,
+		From:                    from.String(),
+		FromID:                  fromID.(*baseIds.IdentityID),
+		ClassificationID:        classificationID.(*baseIds.ClassificationID),
+		TakerID:                 takerID.(*baseIds.IdentityID),
+		MakerOwnableID:          makerOwnableID.(*baseIds.OwnableID),
+		TakerOwnableID:          takerOwnableID.(*baseIds.OwnableID),
+		ExpiresIn:               expiresIn.(*baseTypes.Height),
 		MakerOwnableSplit:       makerOwnableSplit,
 		TakerOwnableSplit:       takerOwnableSplit,
-		ImmutableMetaProperties: immutableMetaProperties,
-		ImmutableProperties:     immutableProperties,
-		MutableMetaProperties:   mutableMetaProperties,
-		MutableProperties:       mutableProperties,
+		ImmutableMetaProperties: immutableMetaProperties.(*baseLists.PropertyList),
+		ImmutableProperties:     immutableProperties.(*baseLists.PropertyList),
+		MutableMetaProperties:   mutableMetaProperties.(*baseLists.PropertyList),
+		MutableProperties:       mutableProperties.(*baseLists.PropertyList),
 	}
 }
