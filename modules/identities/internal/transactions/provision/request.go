@@ -73,7 +73,7 @@ func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	identityID, err := baseIDs.ReadIdentityID(transactionRequest.IdentityId)
+	identityID, err := baseIDs.ReadIdentityID(transactionRequest.IdentityID)
 	if err != nil {
 		return nil, err
 	}
@@ -94,6 +94,6 @@ func newTransactionRequest(from string, to string, identityID string) helpers.Tr
 	return &TransactionRequest{
 		From:       from,
 		To:         to,
-		IdentityId: identityID,
+		IdentityID: identityID,
 	}
 }

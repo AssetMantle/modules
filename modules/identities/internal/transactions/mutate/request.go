@@ -95,12 +95,12 @@ func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	}
 	mutableProperties = mutableProperties.ScrubData()
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromId)
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
 	if err != nil {
 		return nil, err
 	}
 
-	identityID, err := baseIDs.ReadIdentityID(transactionRequest.IdentityId)
+	identityID, err := baseIDs.ReadIdentityID(transactionRequest.IdentityID)
 	if err != nil {
 		return nil, err
 	}
@@ -122,8 +122,8 @@ func requestPrototype() helpers.TransactionRequest {
 func newTransactionRequest(from string, fromID string, identityID string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return &TransactionRequest{
 		From:                  from,
-		FromId:                fromID,
-		IdentityId:            identityID,
+		FromID:                fromID,
+		IdentityID:            identityID,
 		MutableMetaProperties: mutableMetaProperties,
 		MutableProperties:     mutableProperties,
 	}
