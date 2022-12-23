@@ -6,6 +6,7 @@ package modify
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -14,72 +15,53 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	typesSchema "github.com/AssetMantle/modules/schema/types"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
-	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
-type message struct {
-	From                  sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	FromID                ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
-	ids.OrderID           `json:"orderID" valid:"required~required field orderID missing"`
-	MakerOwnableSplit     sdkTypes.Dec       `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing"`
-	TakerOwnableSplit     sdkTypes.Dec       `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing"`
-	ExpiresIn             types.Height       `json:"expiresIn" valid:"required~required field expiresIn missing"`
-	MutableMetaProperties lists.PropertyList `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing"`
-	MutableProperties     lists.PropertyList `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
-}
+var _ helpers.Message = (*Message)(nil)
 
-var _ sdkTypes.Msg = message{}
-
-func (message message) Route() string { return module.Name }
-func (message message) Type() string  { return Transaction.GetName() }
-func (message message) ValidateBasic() error {
-	if _, err := govalidator.ValidateStruct(message); err != nil {
+func (message *Message) Type() string { return Transaction.GetName() }
+func (message *Message) ValidateBasic() error {
+	var _, err = govalidator.ValidateStruct(message)
+	if err != nil {
 		return sdkErrors.Wrap(errorConstants.IncorrectMessage, err.Error())
-	}
-
-	if message.TakerOwnableSplit.LTE(sdkTypes.ZeroDec()) || message.MakerOwnableSplit.LTE(sdkTypes.ZeroDec()) {
-		return sdkErrors.Wrap(errorConstants.IncorrectMessage, "")
-	}
-
-	if message.ExpiresIn.Compare(baseTypes.NewHeight(0)) <= 0 {
-		return sdkErrors.Wrap(errorConstants.IncorrectMessage, "")
 	}
 
 	return nil
 }
-func (message message) GetSignBytes() []byte {
-	if len(message.MutableMetaProperties.GetList()) == 0 {
-		message.MutableMetaProperties = base.NewPropertyList(nil)
+func (message *Message) GetSigners() []sdkTypes.AccAddress {
+	from, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil {
+		panic(err)
 	}
-	if len(message.MutableProperties.GetList()) == 0 {
-		message.MutableProperties = base.NewPropertyList(nil)
-	}
-	return sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message))
+	return []sdkTypes.AccAddress{from}
 }
-func (message message) GetSigners() []sdkTypes.AccAddress {
-	return []sdkTypes.AccAddress{message.From}
+func (*Message) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Message{})
 }
-func (message) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, message{})
+func (message *Message) RegisterInterface(interfaceRegistry types.InterfaceRegistry) {
+	interfaceRegistry.RegisterImplementations((*sdkTypes.Msg)(nil), message)
 }
-func messageFromInterface(msg sdkTypes.Msg) message {
+func (message *Message) GenerateOnSuccessEvents() sdkTypes.Events {
+	return sdkTypes.Events{sdkTypes.NewEvent(
+		sdkTypes.EventTypeMessage,
+		sdkTypes.NewAttribute(sdkTypes.AttributeKeyModule, module.Name+"."+message.Type()),
+	)}
+}
+func messageFromInterface(msg sdkTypes.Msg) *Message {
 	switch value := msg.(type) {
-	case message:
+	case *Message:
 		return value
 	default:
-		return message{}
+		return &Message{}
 	}
 }
 func messagePrototype() helpers.Message {
-	return message{}
+	return &Message{}
 }
-
-func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, orderID ids.OrderID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn types.Height, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
-	return message{
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, orderID ids.OrderID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn typesSchema.Height, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+	return &Message{
 		From:                  from,
 		FromID:                fromID,
 		OrderID:               orderID,
