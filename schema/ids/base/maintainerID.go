@@ -14,16 +14,16 @@ import (
 var _ ids.MaintainerID = (*MaintainerID)(nil)
 
 func (maintainerID *MaintainerID) Bytes() []byte {
-	return maintainerID.HashId.IdBytes
+	return maintainerID.HashID.IdBytes
 }
 func (maintainerID *MaintainerID) IsMaintainerID() {}
 func (maintainerID *MaintainerID) Compare(listable traits.Listable) int {
-	return maintainerID.HashId.Compare(maintainerIDFromInterface(listable).HashId)
+	return maintainerID.HashID.Compare(maintainerIDFromInterface(listable).HashID)
 }
 func (maintainerID *MaintainerID) ToAnyID() ids.AnyID {
 	return &AnyID{
-		Impl: &AnyID_MaintainerId{
-			MaintainerId: maintainerID,
+		Impl: &AnyID_MaintainerID{
+			MaintainerID: maintainerID,
 		},
 	}
 }
@@ -38,20 +38,20 @@ func maintainerIDFromInterface(i interface{}) *MaintainerID {
 }
 func NewMaintainerID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.MaintainerID {
 	return &MaintainerID{
-		HashId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
+		HashID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
 	}
 }
 
 func PrototypeMaintainerID() ids.MaintainerID {
 	return &MaintainerID{
-		HashId: PrototypeHashID().(*HashID),
+		HashID: PrototypeHashID().(*HashID),
 	}
 }
 
 func ReadMaintainerID(maintainerIDString string) (ids.MaintainerID, error) {
 	if hashID, err := ReadHashID(maintainerIDString); err == nil {
 		return &MaintainerID{
-			HashId: hashID.(*HashID),
+			HashID: hashID.(*HashID),
 		}, nil
 	}
 

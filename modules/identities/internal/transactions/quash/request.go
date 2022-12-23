@@ -68,12 +68,12 @@ func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromId)
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
 	if err != nil {
 		return nil, err
 	}
 
-	identityID, err := baseIDs.ReadIdentityID(transactionRequest.IdentityId)
+	identityID, err := baseIDs.ReadIdentityID(transactionRequest.IdentityID)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ func requestPrototype() helpers.TransactionRequest {
 func newTransactionRequest(from string, fromID string, identityID string) helpers.TransactionRequest {
 	return &TransactionRequest{
 		From:       from,
-		FromId:     fromID,
-		IdentityId: identityID,
+		FromID:     fromID,
+		IdentityID: identityID,
 	}
 }
