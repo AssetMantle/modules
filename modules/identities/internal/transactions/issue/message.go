@@ -14,7 +14,9 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	baseIds "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -61,13 +63,13 @@ func messagePrototype() helpers.Message {
 }
 func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return &Message{
-		From:                    from,
-		To:                      to,
-		FromID:                  fromID,
-		ClassificationID:        classificationID,
-		ImmutableMetaProperties: immutableMetaProperties,
-		ImmutableProperties:     immutableProperties,
-		MutableMetaProperties:   mutableMetaProperties,
-		MutableProperties:       mutableProperties,
+		From:                    from.String(),
+		To:                      to.String(),
+		FromID:                  fromID.(*baseIds.IdentityID),
+		ClassificationID:        classificationID.(*baseIds.ClassificationID),
+		ImmutableMetaProperties: immutableMetaProperties.(*baseLists.PropertyList),
+		ImmutableProperties:     immutableProperties.(*baseLists.PropertyList),
+		MutableMetaProperties:   mutableMetaProperties.(*baseLists.PropertyList),
+		MutableProperties:       mutableProperties.(*baseLists.PropertyList),
 	}
 }
