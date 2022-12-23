@@ -4,6 +4,7 @@
 package asset
 
 import (
+	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
@@ -12,6 +13,11 @@ import (
 
 type queryKeeper struct {
 	mapper helpers.Mapper
+}
+
+func (queryKeeper queryKeeper) Asset(ctx context.Context, request *QueryRequest) (*QueryResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.QueryKeeper = (*queryKeeper)(nil)

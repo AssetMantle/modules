@@ -4,6 +4,7 @@
 package identity
 
 import (
+	"context"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
@@ -24,11 +25,12 @@ var Query = baseHelpers.NewQuery(
 	responsePrototype,
 	keeperPrototype,
 
-	func(grpc.Server, helpers.QueryKeeper) {
-		panic("implement me")
+	func(server grpc.Server, keeper helpers.QueryKeeper) {
+		RegisterQueryServer(server, keeper.(*queryKeeper))
 	},
-	func(client.Context, *runtime.ServeMux) error {
-		panic("implement me")
+	func(ctx client.Context, mux *runtime.ServeMux) error {
+		err := RegisterQueryHandlerClient(context.Background(), mux, NewQueryClient(ctx))
+		return err
 	},
 
 	constants.IdentityID,
