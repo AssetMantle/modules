@@ -7,9 +7,9 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//type identityID struct {
+// type identityID struct {
 //	ids.HashID
-//}
+// }
 
 var _ ids.IdentityID = (*IdentityID)(nil)
 

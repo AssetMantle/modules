@@ -6,6 +6,7 @@ package burn
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -13,21 +14,14 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
-	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
-type message struct {
-	From    sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	FromID  ids.IdentityID      `json:"fromID" valid:"required~required field fromID missing"`
-	AssetID ids.AssetID         `json:"assetID" valid:"required~required field assetID missing"`
-}
+var _ helpers.Message = (*Message)(nil)
 
-var _ helpers.Message = message{}
-
-func (message message) Route() string { return module.Name }
-func (message message) Type() string  { return Transaction.GetName() }
-func (message message) ValidateBasic() error {
+func (message *Message) Type() string { return Transaction.GetName() }
+func (message *Message) ValidateBasic() error {
 	var _, err = govalidator.ValidateStruct(message)
 	if err != nil {
 		return sdkErrors.Wrap(errorConstants.IncorrectMessage, err.Error())
@@ -35,30 +29,40 @@ func (message message) ValidateBasic() error {
 
 	return nil
 }
-func (message message) GetSignBytes() []byte {
-	return sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message))
+func (message *Message) GetSigners() []sdkTypes.AccAddress {
+	from, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil {
+		panic(err)
+	}
+	return []sdkTypes.AccAddress{from}
 }
-func (message message) GetSigners() []sdkTypes.AccAddress {
-	return []sdkTypes.AccAddress{message.From}
+func (*Message) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Message{})
 }
-func (message) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, message{})
+func (message *Message) RegisterInterface(interfaceRegistry types.InterfaceRegistry) {
+	interfaceRegistry.RegisterImplementations((*sdkTypes.Msg)(nil), message)
 }
-func messageFromInterface(msg sdkTypes.Msg) message {
+func (message *Message) GenerateOnSuccessEvents() sdkTypes.Events {
+	return sdkTypes.Events{sdkTypes.NewEvent(
+		sdkTypes.EventTypeMessage,
+		sdkTypes.NewAttribute(sdkTypes.AttributeKeyModule, module.Name+"."+message.Type()),
+	)}
+}
+func messageFromInterface(msg sdkTypes.Msg) *Message {
 	switch value := msg.(type) {
-	case message:
+	case *Message:
 		return value
 	default:
-		return message{}
+		return &Message{}
 	}
 }
 func messagePrototype() helpers.Message {
-	return message{}
+	return &Message{}
 }
 func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, assetID ids.AssetID) sdkTypes.Msg {
-	return message{
-		From:    from,
-		FromID:  fromID,
-		AssetID: assetID,
+	return &Message{
+		From:    from.String(),
+		FromID:  fromID.(*base.IdentityID),
+		AssetID: assetID.(*base.AssetID),
 	}
 }
