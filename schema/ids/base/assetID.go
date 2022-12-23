@@ -19,7 +19,7 @@ import (
 var _ ids.AssetID = (*AssetID)(nil)
 
 func (assetID *AssetID) Bytes() []byte {
-	return assetID.HashId.IdBytes
+	return assetID.HashID.IdBytes
 }
 func (assetID *AssetID) IsOwnableID() {}
 func (assetID *AssetID) IsAssetID()   {}
@@ -29,8 +29,8 @@ func (assetID *AssetID) Compare(listable traits.Listable) int {
 }
 func (assetID *AssetID) ToAnyID() ids.AnyID {
 	return &AnyID{
-		Impl: &AnyID_AssetId{
-			AssetId: assetID,
+		Impl: &AnyID_AssetID{
+			AssetID: assetID,
 		},
 	}
 }

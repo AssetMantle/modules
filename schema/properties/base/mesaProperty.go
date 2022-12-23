@@ -28,7 +28,7 @@ func (mesaProperty *MesaProperty) GetID() ids.PropertyID {
 	return mesaProperty.Id
 }
 func (mesaProperty *MesaProperty) GetDataID() ids.DataID {
-	return mesaProperty.DataId
+	return mesaProperty.DataID
 }
 func (mesaProperty *MesaProperty) GetKey() ids.StringID {
 	return mesaProperty.Id.GetKey()
