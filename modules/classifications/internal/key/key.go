@@ -4,32 +4,32 @@
 package key
 
 import (
+	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 var _ helpers.Key = (*Key)(nil)
 
 func (key *Key) GenerateStoreKeyBytes() []byte {
-	return module.StoreKeyPrefix.GenerateStoreKey(key.ClassificationId.Bytes())
+	return module.StoreKeyPrefix.GenerateStoreKey(key.ClassificationID.Bytes())
 }
 func (*Key) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, Key{})
 }
 func (key *Key) IsPartial() bool {
-	return len(key.ClassificationId.Bytes()) == 0
+	return len(key.ClassificationID.Bytes()) == 0
 }
 func (key *Key) Equals(compareKey helpers.Key) bool {
 	if CompareKey, err := keyFromInterface(compareKey); err != nil {
 		return false
 	} else {
-		return key.ClassificationId.Compare(CompareKey.ClassificationId) == 0
+		return key.ClassificationID.Compare(CompareKey.ClassificationID) == 0
 	}
 }
 func keyFromInterface(i interface{}) (*Key, error) {
@@ -43,7 +43,7 @@ func keyFromInterface(i interface{}) (*Key, error) {
 
 func NewKey(classificationID ids.ClassificationID) helpers.Key {
 	return &Key{
-		ClassificationId: classificationID.(*base.ClassificationID),
+		ClassificationID: classificationID.(*base.ClassificationID),
 	}
 }
 

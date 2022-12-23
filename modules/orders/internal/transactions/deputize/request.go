@@ -90,17 +90,17 @@ func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromId)
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
 	if err != nil {
 		return nil, err
 	}
 
-	toID, err := baseIDs.ReadIdentityID(transactionRequest.ToId)
+	toID, err := baseIDs.ReadIdentityID(transactionRequest.ToID)
 	if err != nil {
 		return nil, err
 	}
 
-	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationId)
+	classificationID, err := baseIDs.ReadClassificationID(transactionRequest.ClassificationID)
 	if err != nil {
 		return nil, err
 	}
@@ -128,9 +128,9 @@ func requestPrototype() helpers.TransactionRequest {
 func newTransactionRequest(from string, fromID string, toID string, classificationID string, maintainedProperties string, canMintAsset bool, canBurnAsset bool, canRenumerateAsset bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) helpers.TransactionRequest {
 	return &TransactionRequest{
 		From:                 from,
-		FromId:               fromID,
-		ToId:                 toID,
-		ClassificationId:     classificationID,
+		FromID:               fromID,
+		ToID:                 toID,
+		ClassificationID:     classificationID,
 		MaintainedProperties: maintainedProperties,
 		CanMintAsset:         canMintAsset,
 		CanBurnAsset:         canBurnAsset,

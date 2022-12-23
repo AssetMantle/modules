@@ -44,20 +44,20 @@ func assetIDFromInterface(i interface{}) *AssetID {
 }
 func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
 	return &AssetID{
-		HashId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
+		HashID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
 	}
 }
 
 func PrototypeAssetID() ids.AssetID {
 	return &AssetID{
-		HashId: PrototypeHashID().(*HashID),
+		HashID: PrototypeHashID().(*HashID),
 	}
 }
 
 func ReadAssetID(assetIDString string) (ids.AssetID, error) {
 	if hashID, err := ReadHashID(assetIDString); err == nil {
 		return &AssetID{
-			HashId: hashID.(*HashID),
+			HashID: hashID.(*HashID),
 		}, nil
 	}
 

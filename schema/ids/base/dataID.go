@@ -21,17 +21,17 @@ import (
 var _ ids.DataID = (*DataID)(nil)
 
 func (dataID *DataID) GetHashID() ids.HashID {
-	return dataID.HashId
+	return dataID.HashID
 }
 func (dataID *DataID) IsDataID() {
 }
 func (dataID *DataID) DataIDString() string {
-	return stringUtilities.JoinIDStrings(dataID.TypeId.String(), dataID.HashId.String())
+	return stringUtilities.JoinIDStrings(dataID.TypeID.String(), dataID.HashID.String())
 }
 func (dataID *DataID) Bytes() []byte {
 	var Bytes []byte
-	Bytes = append(Bytes, dataID.TypeId.Bytes()...)
-	Bytes = append(Bytes, dataID.HashId.Bytes()...)
+	Bytes = append(Bytes, dataID.TypeID.Bytes()...)
+	Bytes = append(Bytes, dataID.HashID.Bytes()...)
 
 	return Bytes
 }
@@ -40,8 +40,8 @@ func (dataID *DataID) Compare(listable traits.Listable) int {
 }
 func (dataID *DataID) ToAnyID() ids.AnyID {
 	return &AnyID{
-		Impl: &AnyID_DataId{
-			DataId: dataID,
+		Impl: &AnyID_DataID{
+			DataID: dataID,
 		},
 	}
 }
@@ -61,15 +61,15 @@ func GenerateDataID(data data.Data) ids.DataID {
 	}
 
 	return &DataID{
-		TypeId: data.GetType().(*StringID),
-		HashId: data.GenerateHashID().(*HashID),
+		TypeID: data.GetType().(*StringID),
+		HashID: data.GenerateHashID().(*HashID),
 	}
 }
 
 func PrototypeDataID() ids.DataID {
 	return &DataID{
-		TypeId: PrototypeStringID().(*StringID),
-		HashId: PrototypeHashID().(*HashID),
+		TypeID: PrototypeStringID().(*StringID),
+		HashID: PrototypeHashID().(*HashID),
 	}
 }
 
@@ -78,8 +78,8 @@ func ReadDataID(dataIDString string) (ids.DataID, error) {
 		Type := NewStringID(typeAndHashIdString[0])
 		if hashID, err := ReadHashID(typeAndHashIdString[1]); err == nil {
 			return &DataID{
-				TypeId: Type.(*StringID),
-				HashId: hashID.(*HashID),
+				TypeID: Type.(*StringID),
+				HashID: hashID.(*HashID),
 			}, nil
 		}
 	}

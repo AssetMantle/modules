@@ -75,12 +75,12 @@ func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromId)
+	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
 	if err != nil {
 		return nil, err
 	}
 
-	orderID, err := baseIDs.ReadOrderID(transactionRequest.OrderId)
+	orderID, err := baseIDs.ReadOrderID(transactionRequest.OrderID)
 	if err != nil {
 		return nil, err
 	}
@@ -101,8 +101,8 @@ func requestPrototype() helpers.TransactionRequest {
 func newTransactionRequest(from string, fromID string, takerOwnableSplit string, orderID string) helpers.TransactionRequest {
 	return &TransactionRequest{
 		From:              from,
-		FromId:            fromID,
+		FromID:            fromID,
 		TakerOwnableSplit: takerOwnableSplit,
-		OrderId:           orderID,
+		OrderID:           orderID,
 	}
 }
