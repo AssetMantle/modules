@@ -7,7 +7,7 @@ message TransactionRequest{
   option (gogoproto.goproto_getters) = false;
 
   string from = 1;
-  string from_id = 2;
+  string from_i_d = 2;
   string immutable_meta_properties = 3;
   string immutable_properties = 4;
   string mutable_meta_properties = 5;

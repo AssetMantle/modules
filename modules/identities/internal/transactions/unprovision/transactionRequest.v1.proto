@@ -8,5 +8,5 @@ message TransactionRequest {
 
   string from = 1;
   string to = 2;
-  string identity_id =  3;
+  string identity_i_d =  3;
 }
