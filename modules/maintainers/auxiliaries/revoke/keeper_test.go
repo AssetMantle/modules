@@ -5,6 +5,7 @@ package revoke
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"reflect"
 	"testing"
 

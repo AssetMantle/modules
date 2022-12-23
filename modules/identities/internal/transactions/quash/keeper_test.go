@@ -5,6 +5,7 @@ package quash
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"reflect"
 	"testing"
 
