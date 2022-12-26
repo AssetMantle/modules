@@ -32,16 +32,16 @@ var (
 	immutables        = baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables          = baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 
-	testClassificationID = baseIDs.NewClassificationID(immutables, mutables)
-	testFromID           = baseIDs.NewIdentityID(testClassificationID, immutables)
-	testOrderID          = baseIDs.NewOrderID(testClassificationID, immutables)
-	testOrderID1         = baseIDs.PrototypeOrderID()
-	testBaseRequest      = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
+	testClassificationID = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)
+	testFromID           = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
+	testOrderID          = baseIDs.NewOrderID(testClassificationID, immutables).(*baseIDs.OrderID)
+	testOrderID1         = baseIDs.PrototypeOrderID().(*baseIDs.OrderID)
+	testBaseReq          = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 )
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		baseReq rest.BaseReq
+		From    string
 		fromID  string
 		orderID string
 	}
@@ -50,12 +50,12 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, testFromID.String(), testOrderID.String()}, newTransactionRequest(testBaseRequest, testFromID.String(), testOrderID.String())},
-		{"+ve", args{testBaseRequest, testFromID.String(), testOrderID1.String()}, newTransactionRequest(testBaseRequest, testFromID.String(), testOrderID1.String())},
+		{"+ve", args{fromAddress, testFromID.String(), testOrderID.String()}, newTransactionRequest(fromAddress, testFromID.String(), testOrderID.String())},
+		{"+ve", args{fromAddress, testFromID.String(), testOrderID1.String()}, newTransactionRequest(fromAddress, testFromID.String(), testOrderID1.String())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.orderID); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.From, tt.args.fromID, tt.args.orderID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -67,7 +67,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", transactionRequest{}},
+		{"+ve", &TransactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -83,7 +83,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	viper.Set(constants.FromID.GetName(), testFromID.String())
 	viper.Set(constants.OrderID.GetName(), testOrderID.String())
 	type fields struct {
-		BaseReq rest.BaseReq
+		From    string
 		FromID  string
 		OrderID string
 	}
@@ -98,12 +98,12 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.String(), testOrderID.String()}, args{cliCommand, context}, newTransactionRequest(testBaseRequest, testFromID.String(), testOrderID.String()), false},
+		{"+ve", fields{fromAddress, testFromID.String(), testOrderID.String()}, args{cliCommand, context}, newTransactionRequest(fromAddress, testFromID.String(), testOrderID.String()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
+			transactionRequest := &TransactionRequest{
+				From:    tt.fields.From,
 				FromID:  tt.fields.FromID,
 				OrderID: tt.fields.OrderID,
 			}
@@ -120,13 +120,13 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
-	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, testFromID.String(), testOrderID.String()))
+	jsonMessage, err := json.Marshal(newTransactionRequest(fromAddress, testFromID.String(), testOrderID.String()))
 	require.NoError(t, err)
-	jsonMessage1, err := json.Marshal(newTransactionRequest(testBaseRequest, testFromID.String(), testOrderID1.String()))
+	jsonMessage1, err := json.Marshal(newTransactionRequest(fromAddress, testFromID.String(), testOrderID1.String()))
 	require.NoError(t, err)
 
 	type fields struct {
-		BaseReq rest.BaseReq
+		From    string
 		FromID  string
 		OrderID string
 	}
@@ -140,13 +140,13 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.String(), testOrderID.String()}, args{jsonMessage}, transactionRequest{testBaseRequest, testFromID.String(), testOrderID.String()}, false},
-		{"+ve with nil", fields{testBaseRequest, testFromID.String(), testOrderID1.String()}, args{jsonMessage1}, transactionRequest{testBaseRequest, testFromID.String(), testOrderID1.String()}, false},
+		{"+ve", fields{fromAddress, testFromID.String(), testOrderID.String()}, args{jsonMessage}, &TransactionRequest{fromAddress, testFromID.String(), testOrderID.String()}, false},
+		{"+ve with nil", fields{fromAddress, testFromID.String(), testOrderID1.String()}, args{jsonMessage1}, &TransactionRequest{fromAddress, testFromID.String(), testOrderID1.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
+			transactionRequest := &TransactionRequest{
+				From:    tt.fields.From,
 				FromID:  tt.fields.FromID,
 				OrderID: tt.fields.OrderID,
 			}
@@ -164,7 +164,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
+		From    string
 		FromID  string
 		OrderID string
 	}
@@ -173,13 +173,13 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   rest.BaseReq
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.String(), testOrderID.String()}, testBaseRequest},
-		{"+ve with nil", fields{testBaseRequest, testFromID.String(), testOrderID1.String()}, testBaseRequest},
+		{"+ve", fields{fromAddress, testFromID.String(), testOrderID.String()}, fromAddress},
+		{"+ve with nil", fields{fromAddress, testFromID.String(), testOrderID1.String()}, fromAddress},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
+			transactionRequest := &TransactionRequest{
+				From:    tt.fields.From,
 				FromID:  tt.fields.FromID,
 				OrderID: tt.fields.OrderID,
 			}
@@ -192,7 +192,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
+		From    string
 		FromID  string
 		OrderID string
 	}
@@ -202,12 +202,12 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.String(), testOrderID.String()}, newMessage(fromAccAddress, testFromID, testOrderID), false},
+		{"+ve", fields{fromAddress, testFromID.String(), testOrderID.String()}, newMessage(fromAccAddress, testFromID, testOrderID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
+			transactionRequest := &TransactionRequest{
+				From:    tt.fields.From,
 				FromID:  tt.fields.FromID,
 				OrderID: tt.fields.OrderID,
 			}
@@ -225,7 +225,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
+		From    string
 		FromID  string
 		OrderID string
 	}
@@ -237,13 +237,13 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.String(), testOrderID.String()}, args{codec.NewLegacyAmino()}},
-		{"+ve with nil", fields{testBaseRequest, testFromID.String(), testOrderID1.String()}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAddress, testFromID.String(), testOrderID.String()}, args{codec.NewLegacyAmino()}},
+		{"+ve with nil", fields{fromAddress, testFromID.String(), testOrderID1.String()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
+			tr := &TransactionRequest{
+				From:    tt.fields.From,
 				FromID:  tt.fields.FromID,
 				OrderID: tt.fields.OrderID,
 			}
@@ -254,7 +254,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
+		From    string
 		FromID  string
 		OrderID string
 	}
@@ -263,13 +263,13 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.String(), testOrderID.String()}, false},
-		{"+ve with nil", fields{testBaseRequest, testFromID.String(), testOrderID1.String()}, true},
+		{"+ve", fields{fromAddress, testFromID.String(), testOrderID.String()}, false},
+		{"+ve with nil", fields{fromAddress, testFromID.String(), testOrderID1.String()}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
+			transactionRequest := &TransactionRequest{
+				From:    tt.fields.From,
 				FromID:  tt.fields.FromID,
 				OrderID: tt.fields.OrderID,
 			}
