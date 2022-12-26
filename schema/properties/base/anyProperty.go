@@ -8,7 +8,6 @@ import (
 )
 
 type getter interface {
-	isAnyProperty_Impl
 	GetProperty() properties.Property
 }
 
