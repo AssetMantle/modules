@@ -14,8 +14,11 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	baseIds "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	typesSchema "github.com/AssetMantle/modules/schema/types"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -62,13 +65,13 @@ func messagePrototype() helpers.Message {
 }
 func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, orderID ids.OrderID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn typesSchema.Height, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return &Message{
-		From:                  from,
-		FromID:                fromID,
-		OrderID:               orderID,
+		From:                  from.String(),
+		FromID:                fromID.(*baseIds.IdentityID),
+		OrderID:               orderID.(*baseIds.OrderID),
 		TakerOwnableSplit:     takerOwnableSplit,
 		MakerOwnableSplit:     makerOwnableSplit,
-		ExpiresIn:             expiresIn,
-		MutableMetaProperties: mutableMetaProperties,
-		MutableProperties:     mutableProperties,
+		ExpiresIn:             expiresIn.(*baseTypes.Height),
+		MutableMetaProperties: mutableMetaProperties.(*baseLists.PropertyList),
+		MutableProperties:     mutableProperties.(*baseLists.PropertyList),
 	}
 }
