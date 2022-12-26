@@ -1,0 +1,10 @@
+syntax = "proto3";
+package identities.transactions.quash;
+
+import "schema/ids/base/identityID.v1.proto";
+
+message Message {
+  string from = 1;
+  ids.IdentityID from_i_d = 2;
+  ids.IdentityID identity_i_d = 3;
+}

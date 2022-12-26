@@ -1,0 +1,15 @@
+syntax = "proto3";
+package splits.transactions.wrap;
+
+import "cosmos/base/v1beta1/coin.proto";
+import "gogoproto/gogo.proto";
+import "schema/ids/base/identityID.v1.proto";
+
+message Message {
+  string from = 1;
+  ids.IdentityID from_i_d = 2;
+  repeated cosmos.base.v1beta1.Coin coins = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+}

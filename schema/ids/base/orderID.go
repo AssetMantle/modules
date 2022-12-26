@@ -14,16 +14,16 @@ import (
 var _ ids.OrderID = (*OrderID)(nil)
 
 func (orderID *OrderID) Bytes() []byte {
-	return orderID.OrderId.IdBytes
+	return orderID.OrderID.IdBytes
 }
 func (orderID *OrderID) IsOrderID() {}
 func (orderID *OrderID) Compare(listable traits.Listable) int {
-	return orderID.OrderId.Compare(orderIDFromInterface(listable).OrderId)
+	return orderID.OrderID.Compare(orderIDFromInterface(listable).OrderID)
 }
 func (orderID *OrderID) ToAnyID() ids.AnyID {
 	return &AnyID{
-		Impl: &AnyID_OrderId{
-			OrderId: orderID,
+		Impl: &AnyID_OrderID{
+			OrderID: orderID,
 		},
 	}
 }
@@ -39,20 +39,20 @@ func orderIDFromInterface(i interface{}) *OrderID {
 
 func NewOrderID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.OrderID {
 	return &OrderID{
-		OrderId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
+		OrderID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
 	}
 }
 
 func PrototypeOrderID() ids.OrderID {
 	return &OrderID{
-		OrderId: PrototypeHashID().(*HashID),
+		OrderID: PrototypeHashID().(*HashID),
 	}
 }
 
 func ReadOrderID(orderIDString string) (ids.OrderID, error) {
 	if hashID, err := ReadHashID(orderIDString); err == nil {
 		return &OrderID{
-			OrderId: hashID.(*HashID),
+			OrderID: hashID.(*HashID),
 		}, nil
 	}
 

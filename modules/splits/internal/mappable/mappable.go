@@ -10,6 +10,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -23,7 +24,7 @@ func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 }
 
 func NewMappable(split types.Split) helpers.Mappable {
-	return &Mappable{Split: split.(*types.Split)}
+	return &Mappable{Split: split.(*baseTypes.Split)}
 }
 
 func Prototype() helpers.Mappable {

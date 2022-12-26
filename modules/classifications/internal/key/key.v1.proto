@@ -4,5 +4,5 @@ package classifications;
 import "schema/ids/base/classificationID.v1.proto";
 
 message Key {
-  ids.ClassificationID classification_id = 1;
+  ids.ClassificationID classification_i_d = 1;
 }

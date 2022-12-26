@@ -7,30 +7,30 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//type identityID struct {
+// type identityID struct {
 //	ids.HashID
-//}
+// }
 
 var _ ids.IdentityID = (*IdentityID)(nil)
 
 // TODO deprecate
 func (identityID *IdentityID) IsIdentityID() {}
 func (identityID *IdentityID) IDString() string {
-	return identityID.HashId.EncodedString()
+	return identityID.HashID.EncodedString()
 }
 func (identityID *IdentityID) GetHashID() ids.HashID {
-	return identityID.HashId
+	return identityID.HashID
 }
 func (identityID *IdentityID) Bytes() []byte {
-	return identityID.HashId.Bytes()
+	return identityID.HashID.Bytes()
 }
 func (identityID *IdentityID) Compare(listable traits.Listable) int {
-	return identityID.HashId.Compare(identityIDFromInterface(listable).HashId)
+	return identityID.HashID.Compare(identityIDFromInterface(listable).HashID)
 }
 func (identityID *IdentityID) ToAnyID() ids.AnyID {
 	return &AnyID{
-		Impl: &AnyID_IdentityId{
-			IdentityId: identityID,
+		Impl: &AnyID_IdentityID{
+			IdentityID: identityID,
 		},
 	}
 }
@@ -46,13 +46,13 @@ func identityIDFromInterface(i interface{}) *IdentityID {
 
 func NewIdentityID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.IdentityID {
 	return &IdentityID{
-		HashId: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
+		HashID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
 	}
 }
 
 func PrototypeIdentityID() ids.IdentityID {
 	return &IdentityID{
-		HashId: PrototypeHashID().(*HashID),
+		HashID: PrototypeHashID().(*HashID),
 	}
 }
 
@@ -60,7 +60,7 @@ func ReadIdentityID(identityIDString string) (ids.IdentityID, error) {
 
 	if hashID, err := ReadHashID(identityIDString); err == nil {
 		return &IdentityID{
-			HashId: hashID.(*HashID),
+			HashID: hashID.(*HashID),
 		}, nil
 	}
 

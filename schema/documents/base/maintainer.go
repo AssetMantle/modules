@@ -98,3 +98,6 @@ func NewMaintainer(identityID ids.IdentityID, maintainedClassificationID ids.Cla
 		),
 	}
 }
+func NewMaintainerFromDocument(document documents.Document) documents.Maintainer {
+	return maintainer{Document: document}
+}
