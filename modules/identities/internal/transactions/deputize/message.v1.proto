@@ -11,7 +11,7 @@ message Message {
   ids.IdentityID to_i_d = 3;
   ids.ClassificationID classification_i_d = 4;
   lists.PropertyList maintained_properties = 5;
-  bool can_mint_assets = 6;
+  bool can_mint_asset = 6;
   bool can_burn_asset = 7;
   bool can_renumerate_asset = 8;
   bool can_add_maintainer = 9;

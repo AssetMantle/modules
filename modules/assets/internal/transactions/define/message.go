@@ -16,6 +16,7 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIds "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -64,9 +65,9 @@ func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, immutableMetaPr
 	return &Message{
 		From:                    from.String(),
 		FromID:                  fromID.(*baseIds.IdentityID),
-		ImmutableMetaProperties: immutableMetaProperties,
-		ImmutableProperties:     immutableProperties,
-		MutableMetaProperties:   mutableMetaProperties,
-		MutableProperties:       mutableProperties,
+		ImmutableMetaProperties: immutableMetaProperties.(*baseLists.PropertyList),
+		ImmutableProperties:     immutableProperties.(*baseLists.PropertyList),
+		MutableMetaProperties:   mutableMetaProperties.(*baseLists.PropertyList),
+		MutableProperties:       mutableProperties.(*baseLists.PropertyList),
 	}
 }
