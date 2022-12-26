@@ -12,6 +12,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
 	"github.com/AssetMantle/modules/schema/data"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -60,7 +61,7 @@ func messagePrototype() helpers.Message {
 }
 func newMessage(from sdkTypes.AccAddress, data data.Data) sdkTypes.Msg {
 	return &Message{
-		From: from,
-		Data: data,
+		From: from.String(),
+		Data: data.ToAnyData().(*baseData.AnyData),
 	}
 }

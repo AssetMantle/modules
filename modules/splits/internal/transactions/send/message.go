@@ -14,6 +14,7 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	baseIds "github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -60,10 +61,10 @@ func messagePrototype() helpers.Message {
 }
 func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) sdkTypes.Msg {
 	return &Message{
-		From:      from,
-		FromID:    fromID,
-		ToID:      toID,
-		OwnableID: ownableID,
+		From:      from.String(),
+		FromID:    fromID.(*baseIds.IdentityID),
+		ToID:      toID.(*baseIds.IdentityID),
+		OwnableID: ownableID.(*baseIds.OwnableID),
 		Value:     value,
 	}
 }
