@@ -6,10 +6,9 @@ import (
 )
 
 type getter interface {
-	GetID() ids.ID
+	getID() ids.ID
 }
 
-var _ ids.ID = (*AnyID)(nil)
 var _ getter = (*AnyID_ClassificationID)(nil)
 var _ getter = (*AnyID_AssetID)(nil)
 var _ getter = (*AnyID_DataID)(nil)
@@ -22,37 +21,37 @@ var _ getter = (*AnyID_PropertyID)(nil)
 var _ getter = (*AnyID_SplitID)(nil)
 var _ getter = (*AnyID_StringID)(nil)
 
-func (m *AnyID_ClassificationID) GetID() ids.ID {
+func (m *AnyID_ClassificationID) getID() ids.ID {
 	return m.ClassificationID
 }
-func (m *AnyID_AssetID) GetID() ids.ID {
+func (m *AnyID_AssetID) getID() ids.ID {
 	return m.AssetID
 }
-func (m *AnyID_DataID) GetID() ids.ID {
+func (m *AnyID_DataID) getID() ids.ID {
 	return m.DataID
 }
-func (m *AnyID_HashID) GetID() ids.ID {
+func (m *AnyID_HashID) getID() ids.ID {
 	return m.HashID
 }
-func (m *AnyID_IdentityID) GetID() ids.ID {
+func (m *AnyID_IdentityID) getID() ids.ID {
 	return m.IdentityID
 }
-func (m *AnyID_MaintainerID) GetID() ids.ID {
+func (m *AnyID_MaintainerID) getID() ids.ID {
 	return m.MaintainerID
 }
-func (m *AnyID_OrderID) GetID() ids.ID {
+func (m *AnyID_OrderID) getID() ids.ID {
 	return m.OrderID
 }
-func (m *AnyID_OwnableID) GetID() ids.ID {
+func (m *AnyID_OwnableID) getID() ids.ID {
 	return m.OwnableID
 }
-func (m *AnyID_PropertyID) GetID() ids.ID {
+func (m *AnyID_PropertyID) getID() ids.ID {
 	return m.PropertyID
 }
-func (m *AnyID_SplitID) GetID() ids.ID {
+func (m *AnyID_SplitID) getID() ids.ID {
 	return m.SplitID
 }
-func (m *AnyID_StringID) GetID() ids.ID {
+func (m *AnyID_StringID) getID() ids.ID {
 	return m.StringID
 }
 
