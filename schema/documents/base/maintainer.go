@@ -77,7 +77,7 @@ func (maintainer maintainer) MaintainsProperty(propertyID ids.PropertyID) bool {
 
 // TODO: Move to a common package
 func idListToDataList(idList lists.IDList) lists.AnyDataList {
-	dataList := baseLists.NewDataList()
+	dataList := baseData.NewDataList()
 	for _, id := range idList.GetList() {
 		dataList = dataList.Add(baseData.NewIDData(id))
 	}

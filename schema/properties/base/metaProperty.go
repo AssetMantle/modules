@@ -5,7 +5,7 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/schema/data"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -61,12 +61,12 @@ func NewEmptyMetaPropertyFromID(propertyID ids.PropertyID) properties.MetaProper
 		Id: propertyID.(*baseIDs.PropertyID),
 	}
 }
-func NewMetaProperty(key ids.StringID, data data.Data) properties.Property {
+func NewMetaProperty(key ids.StringID, data data.AnyData) properties.Property {
 	if data == nil || key == nil {
 		panic(errorConstants.MetaDataError)
 	}
 	return &MetaProperty{
 		Id:      baseIDs.NewPropertyID(key, data.GetType()).(*baseIDs.PropertyID),
-		AnyData: data.(*baseData.AnyData),
+		AnyData: data.ToAnyData().(*base.AnyData),
 	}
 }

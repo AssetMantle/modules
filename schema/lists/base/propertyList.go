@@ -94,7 +94,7 @@ func NewPropertyList(properties ...properties.Property) lists.PropertyList {
 	var propertyList []*base.AnyProperty
 
 	for _, dataVal := range properties {
-		propertyList = append(propertyList, dataVal.(*base.AnyProperty))
+		propertyList = append(propertyList, dataVal.ToAnyProperty().(*base.AnyProperty))
 	}
 	return &PropertyList{PropertyList: propertyList}
 }

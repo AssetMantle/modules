@@ -67,11 +67,7 @@ func BooleanDataPrototype() data.Data {
 }
 
 func NewBooleanData(value bool) data.Data {
-	return &AnyData{
-		Impl: &AnyData_BooleanData{
-			BooleanData: &BooleanData{
-				Value: value,
-			},
-		},
+	return &BooleanData{
+		Value: value,
 	}
 }

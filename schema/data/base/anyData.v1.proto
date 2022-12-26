@@ -19,6 +19,6 @@ message AnyData {
     HeightData height_data = 4;
     IDData i_d_data = 5;
     StringData string_data = 6;
-    string list_data = 7 [(gogoproto.customtype) = "github.com/AssetMantle/modules/schema/data/base.ListData"];
+    string list_data = 7 [(gogoproto.customtype) = "ListData"];
   }
 }

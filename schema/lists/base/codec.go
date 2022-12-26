@@ -10,7 +10,6 @@ import (
 )
 
 func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyDataList{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, IDList{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, list{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, PropertyList{})

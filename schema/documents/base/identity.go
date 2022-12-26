@@ -8,7 +8,6 @@ import (
 	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
@@ -41,7 +40,7 @@ func (identity identity) GetAuthentication() lists.AnyDataList {
 			dataList = append(dataList, anyData.(*baseData.AnyData).Impl.(data.Data))
 		}
 	}
-	return base.NewDataList(dataList...)
+	return baseData.NewDataList(dataList...)
 }
 func (identity identity) IsProvisioned(accAddress sdkTypes.AccAddress) bool {
 	_, isProvisioned := identity.GetAuthentication().Search(baseData.NewAccAddressData(accAddress))

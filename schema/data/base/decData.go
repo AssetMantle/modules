@@ -59,11 +59,7 @@ func DecDataPrototype() data.Data {
 }
 
 func NewDecData(value sdkTypes.Dec) data.Data {
-	return &AnyData{
-		Impl: &AnyData_DecData{
-			DecData: &DecData{
-				Value: value,
-			},
-		},
+	return &DecData{
+		Value: value,
 	}
 }
