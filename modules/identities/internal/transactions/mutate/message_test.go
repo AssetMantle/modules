@@ -48,10 +48,10 @@ func Test_messageFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want message
+		want Message
 	}{
-		{"+ve with nil", args{}, message{}},
-		{"+ve", args{message{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}}, message{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}},
+		{"+ve with nil", args{}, Message{}},
+		{"+ve", args{&Message{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}}, Message{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -67,7 +67,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", message{}},
+		{"+ve", Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -290,8 +290,8 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want types.Msg
 	}{
-		{"+ve with nil", args{}, message{}},
-		{"+ve", args{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, message{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}},
+		{"+ve with nil", args{}, Message{}},
+		{"+ve", args{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, Message{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

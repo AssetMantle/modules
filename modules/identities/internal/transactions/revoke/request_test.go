@@ -218,7 +218,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Type & Data same but Not matching
-		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, message{testFromAccAddress, testFromID, testToID, testClassificationID}, false},
+		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, Message{testFromAccAddress, testFromID, testToID, testClassificationID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

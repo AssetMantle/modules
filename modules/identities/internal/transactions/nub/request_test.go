@@ -133,7 +133,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, args{sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, baseIds.NewStringID("nubID")}))}, transactionRequest{testBaseReq, "nubID"}, false},
+		{"+ve", fields{testBaseReq, "nubID"}, args{sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(Message{fromAccAddress, baseIds.NewStringID("nubID")}))}, transactionRequest{testBaseReq, "nubID"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -193,7 +193,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, message{fromAccAddress, baseIds.NewStringID("nubID")}, false},
+		{"+ve", fields{testBaseReq, "nubID"}, Message{fromAccAddress, baseIds.NewStringID("nubID")}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

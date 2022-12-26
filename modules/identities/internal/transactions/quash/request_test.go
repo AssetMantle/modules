@@ -206,7 +206,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testFromID.String(), testFromID.String()}, message{fromAccAddress, testFromID, testFromID}, false},
+		{"+ve", fields{testBaseReq, testFromID.String(), testFromID.String()}, Message{fromAccAddress, testFromID, testFromID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -36,10 +36,10 @@ func Test_messageFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want message
+		want Message
 	}{
-		{"+ve", args{message{From: fromAccAddress, NubID: testNubID}}, message{From: fromAccAddress, NubID: testNubID}},
-		{"+ve", args{nil}, message{}},
+		{"+ve", args{&Message{From: fromAccAddress, NubID: testNubID}}, Message{From: fromAccAddress, NubID: testNubID}},
+		{"+ve", args{nil}, Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -55,7 +55,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", message{}},
+		{"+ve", Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -77,11 +77,11 @@ func Test_message_GetSignBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{fromAccAddress, testNubID}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, testNubID}))},
+		{"+ve", fields{fromAccAddress, testNubID}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(Message{fromAccAddress, testNubID}))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := Message{
 				From:  tt.fields.From,
 				NubID: tt.fields.NubID,
 			}
@@ -107,7 +107,7 @@ func Test_message_GetSigners(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := Message{
 				From:  tt.fields.From,
 				NubID: tt.fields.NubID,
 			}
@@ -136,7 +136,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			me := message{
+			me := Message{
 				From:  tt.fields.From,
 				NubID: tt.fields.NubID,
 			}
@@ -160,7 +160,7 @@ func Test_message_Route(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := Message{
 				From:  tt.fields.From,
 				NubID: tt.fields.NubID,
 			}
@@ -186,7 +186,7 @@ func Test_message_Type(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := Message{
 				From:  tt.fields.From,
 				NubID: tt.fields.NubID,
 			}
@@ -213,7 +213,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := Message{
 				From:  tt.fields.From,
 				NubID: tt.fields.NubID,
 			}
@@ -235,7 +235,7 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want sdkTypes.Msg
 	}{
-		{"+ve", args{fromAccAddress, testNubID}, message{fromAccAddress, testNubID}},
+		{"+ve", args{fromAccAddress, testNubID}, Message{fromAccAddress, testNubID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

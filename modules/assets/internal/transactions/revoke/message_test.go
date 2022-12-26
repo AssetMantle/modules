@@ -39,7 +39,7 @@ func Test_messageFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want message
+		want Message
 	}{
 		{"+ve", args{newMessage(fromAccAddress, fromID, fromID, classificationID)}, newMessage(fromAccAddress, fromID, fromID, classificationID).(message)},
 	}
@@ -57,7 +57,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", message{}},
+		{"+ve", Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -256,7 +256,7 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want sdkTypes.Msg
 	}{
-		{"+ve with nil", args{}, message{}},
+		{"+ve with nil", args{}, Message{}},
 		{"+ve", args{fromAccAddress, fromID, fromID, classificationID}, newMessage(fromAccAddress, fromID, fromID, classificationID)},
 	}
 	for _, tt := range tests {

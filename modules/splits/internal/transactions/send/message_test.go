@@ -23,9 +23,9 @@ func Test_messageFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want message
+		want Message
 	}{
-		{"+ve", args{newMessage(fromAccAddress, fromID, fromID, ownableID, testRate)}, message{fromAccAddress, fromID, fromID, ownableID, testRate}},
+		{"+ve", args{newMessage(fromAccAddress, fromID, fromID, ownableID, testRate)}, Message{fromAccAddress, fromID, fromID, ownableID, testRate}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -41,7 +41,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", message{}},
+		{"+ve", Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -252,7 +252,7 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want types.Msg
 	}{
-		{"+ve", args{fromAccAddress, fromID, fromID, ownableID, testRate}, message{fromAccAddress, fromID, fromID, ownableID, testRate}},
+		{"+ve", args{fromAccAddress, fromID, fromID, ownableID, testRate}, Message{fromAccAddress, fromID, fromID, ownableID, testRate}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -48,9 +48,9 @@ func Test_messageFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want message
+		want Message
 	}{
-		{"+ve", args{testMessage}, message{fromAccAddress, toAccAddress, testIdentityID}},
+		{"+ve", args{testMessage}, Message{fromAccAddress, toAccAddress, testIdentityID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -66,7 +66,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", message{}},
+		{"+ve", Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -94,7 +94,7 @@ func Test_message_GetSignBytes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := Message{
 				From:       tt.fields.From,
 				To:         tt.fields.To,
 				IdentityID: tt.fields.IdentityID,
@@ -123,7 +123,7 @@ func Test_message_GetSigners(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := Message{
 				From:       tt.fields.From,
 				To:         tt.fields.To,
 				IdentityID: tt.fields.IdentityID,
@@ -266,8 +266,8 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want sdkTypes.Msg
 	}{
-		{"+ve", args{fromAccAddress, toAccAddress, testIdentityID}, message{fromAccAddress, toAccAddress, testIdentityID}},
-		{"-ve", args{}, message{}},
+		{"+ve", args{fromAccAddress, toAccAddress, testIdentityID}, Message{fromAccAddress, toAccAddress, testIdentityID}},
+		{"-ve", args{}, Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
