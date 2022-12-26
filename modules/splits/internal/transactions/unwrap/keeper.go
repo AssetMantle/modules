@@ -25,16 +25,22 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil {
+		panic("Could not get from address from Bech32 string")
+	}
+
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
 	splits := transactionKeeper.mapper.NewCollection(context)
-	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, sdkTypes.NewDecFromInt(message.Value)); err != nil {
+	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, message.Value); err != nil {
 		return newTransactionResponse(err)
 	}
 
-	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(context, module.Name, message.From, sdkTypes.NewCoins(sdkTypes.NewCoin(message.OwnableID.String(), message.Value))); err != nil {
+	//TODO: Check if roundint() is apt
+	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(context, module.Name, fromAddress, sdkTypes.NewCoins(sdkTypes.NewCoin(message.OwnableID.String(), message.Value.RoundInt()))); err != nil {
 		return newTransactionResponse(err)
 	}
 

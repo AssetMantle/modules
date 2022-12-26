@@ -31,17 +31,23 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.From, message.FromIdentity)); !auxiliaryResponse.IsSuccessful() {
+
+	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil {
+		panic("Could not get from address from Bech32 string")
+	}
+
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.FromIdentity)).Get(key.NewKey(message.FromIdentity))
+	mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.FromID)).Get(key.NewKey(message.FromID))
 	if mappable == nil {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 	identity := mappable.(documents.Identity)
 
-	if !identity.(documents.Identity).IsProvisioned(message.From) {
+	if !identity.(documents.Identity).IsProvisioned(fromAddress) {
 		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
@@ -54,7 +60,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(err)
 	}
 
-	if auxiliaryResponse := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.FromIdentity, mutables)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.FromID, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
