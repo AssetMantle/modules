@@ -1,0 +1,12 @@
+syntax = "proto3";
+package orders.transactions.take;
+
+import "google/api/annotations.proto";
+import "modules/orders/internal/transactions/take/message.v1.proto";
+import "modules/orders/internal/transactions/take/transactionResponse.v1.proto";
+
+service Transaction {
+  rpc Take(take.Message) returns (take.TransactionResponse) {
+    option (google.api.http).post = "/mantle/metas/take";
+  }
+}

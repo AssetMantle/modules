@@ -1,5 +1,5 @@
 syntax = "proto3";
-package assets.define.burn;
+package assets.transactions.define;
 
 import "gogoproto/gogo.proto";
 
