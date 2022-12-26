@@ -56,13 +56,13 @@ func (m *AnyID_StringID) get() ids.ID {
 }
 
 func (m *AnyID) Compare(listable traits.Listable) int {
-	return m.Impl.(ids.ID).Compare(listable)
+	return m.Impl.(getter).get().Compare(listable)
 }
 
 func (m *AnyID) Bytes() []byte {
-	return m.Impl.(ids.ID).Bytes()
+	return m.Impl.(getter).get().Bytes()
 }
 
 func (m *AnyID) ToAnyID() ids.AnyID {
-	return m.Impl.(ids.ID).ToAnyID()
+	return m.Impl.(getter).get().ToAnyID()
 }
