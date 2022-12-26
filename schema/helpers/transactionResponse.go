@@ -3,6 +3,9 @@
 
 package helpers
 
+import "github.com/gogo/protobuf/proto"
+
 type TransactionResponse interface {
+	proto.Message
 	Response
 }

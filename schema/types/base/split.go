@@ -17,10 +17,10 @@ import (
 var _ types.Split = (*Split)(nil)
 
 func (split *Split) GetOwnerID() ids.IdentityID {
-	return split.OwnerId
+	return split.OwnerID
 }
 func (split *Split) GetOwnableID() ids.OwnableID {
-	return split.OwnableId
+	return split.OwnableID
 }
 func (split *Split) GetValue() sdkTypes.Dec {
 	return split.Value
@@ -39,8 +39,8 @@ func (split *Split) CanSend(outValue sdkTypes.Dec) bool {
 
 func NewSplit(ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) types.Split {
 	return &Split{
-		OwnerId:   ownerID.(*base.IdentityID),
-		OwnableId: ownableID.(*base.OwnableID),
+		OwnerID:   ownerID.(*base.IdentityID),
+		OwnableID: ownableID.(*base.OwnableID),
 		Value:     value,
 	}
 }

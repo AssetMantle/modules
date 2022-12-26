@@ -5,9 +5,9 @@ package wrap
 
 import (
 	fmt "fmt"
-	v1beta1 "github.com/AssetMantle/modules/cosmos/base/v1beta1"
 	base "github.com/AssetMantle/modules/schema/ids/base"
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
+	types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
@@ -346,7 +346,7 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Coins = append(m.Coins, v1beta1.Coin{})
+			m.Coins = append(m.Coins, types.Coin{})
 			if err := m.Coins[len(m.Coins)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}

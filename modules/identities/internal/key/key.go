@@ -17,20 +17,20 @@ import (
 var _ helpers.Key = (*Key)(nil)
 
 func (key *Key) GenerateStoreKeyBytes() []byte {
-	return module.StoreKeyPrefix.GenerateStoreKey(key.IdentityId.Bytes())
+	return module.StoreKeyPrefix.GenerateStoreKey(key.IdentityID.Bytes())
 }
 func (*Key) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, Key{})
 }
 func (key *Key) IsPartial() bool {
-	return len(key.IdentityId.GetHashID().Bytes()) == 0
+	return len(key.IdentityID.GetHashID().Bytes()) == 0
 }
 func (key *Key) Equals(compareKey helpers.Key) bool {
 	if CompareKey, err := keyFromInterface(compareKey); err != nil {
 		return false
 	} else {
 		// TODO test nil IdentityID case
-		return key.IdentityId.Compare(CompareKey.IdentityID) == 0
+		return key.IdentityID.Compare(CompareKey.IdentityID) == 0
 	}
 }
 func keyFromInterface(i interface{}) (*Key, error) {
