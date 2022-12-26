@@ -11,9 +11,9 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//type hashID struct {
+// type hashID struct {
 //	HashBytes []byte
-//}
+// }
 
 var _ ids.HashID = (*HashID)(nil)
 
@@ -21,10 +21,10 @@ func (hashID *HashID) IsHashID() {}
 
 // TODO test if nil and empty result in ""
 func (hashID *HashID) EncodedString() string {
-	return base64.URLEncoding.EncodeToString(hashID.IdBytes)
+	return base64.URLEncoding.EncodeToString(hashID.IDBytes)
 }
 func (hashID *HashID) Bytes() []byte {
-	return hashID.IdBytes
+	return hashID.IDBytes
 }
 func (hashID *HashID) Compare(listable traits.Listable) int {
 	return bytes.Compare(hashID.Bytes(), hashIDFromInterface(listable).Bytes())
@@ -57,7 +57,7 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 	}
 
 	if len(nonEmptyByteList) == 0 {
-		return &HashID{IdBytes: nil}
+		return &HashID{IDBytes: nil}
 	}
 
 	sort.Slice(nonEmptyByteList, func(i, j int) bool { return bytes.Compare(nonEmptyByteList[i], nonEmptyByteList[j]) == -1 })
@@ -69,7 +69,7 @@ func GenerateHashID(toHashList ...[]byte) ids.HashID {
 		panic(err)
 	}
 
-	return &HashID{IdBytes: hash.Sum(nil)}
+	return &HashID{IDBytes: hash.Sum(nil)}
 }
 
 func PrototypeHashID() ids.HashID {
@@ -78,7 +78,7 @@ func PrototypeHashID() ids.HashID {
 
 func ReadHashID(hashIDString string) (ids.HashID, error) {
 	if hashBytes, err := base64.URLEncoding.DecodeString(hashIDString); err == nil {
-		return &HashID{IdBytes: hashBytes}, nil
+		return &HashID{IDBytes: hashBytes}, nil
 	}
 
 	if hashIDString == "" {

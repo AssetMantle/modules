@@ -6,6 +6,6 @@ import "gogoproto/gogo.proto";
 message HashID {
   option (gogoproto.goproto_getters) = false;
 
-  bytes id_bytes = 1;
+  bytes i_d_bytes = 1;
 }
 

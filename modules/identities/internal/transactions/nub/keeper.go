@@ -5,6 +5,7 @@ package nub
 
 import (
 	"context"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
@@ -28,7 +29,7 @@ type transactionKeeper struct {
 }
 
 func (transactionKeeper transactionKeeper) Nub(ctx context.Context, message *Message) (*TransactionResponse, error) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
@@ -53,7 +54,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
-	identities.Add(mappable.NewMappable(base.NewIdentity(constansts.NubClassificationID, immutables, baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseLists.NewDataList(baseData.NewAccAddressData(address)))))))))
+	identities.Add(mappable.NewMappable(base.NewIdentity(constansts.NubClassificationID, immutables, baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewDataList(baseData.NewAccAddressData(address)))))))))
 
 	return newTransactionResponse(nil)
 }

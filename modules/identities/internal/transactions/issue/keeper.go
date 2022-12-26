@@ -5,6 +5,7 @@ package issue
 
 import (
 	"context"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
@@ -31,7 +32,7 @@ type transactionKeeper struct {
 }
 
 func (transactionKeeper transactionKeeper) Issue(ctx context.Context, message *Message) (*TransactionResponse, error) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
@@ -67,7 +68,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		panic("Could not get from address from Bech32 string")
 	}
 
-	authenticationProperty := baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseLists.NewDataList(baseData.NewAccAddressData(toAddress))))
+	authenticationProperty := baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewDataList(baseData.NewAccAddressData(toAddress))))
 	mutableMetaProperties := baseLists.NewPropertyList(append(message.MutableMetaProperties.GetList(), authenticationProperty)...)
 
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))

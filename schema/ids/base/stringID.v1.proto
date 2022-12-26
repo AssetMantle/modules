@@ -6,5 +6,5 @@ import "gogoproto/gogo.proto";
 message StringID {
   option (gogoproto.goproto_getters) = false;
 
-  string id_string = 1;
+  string i_d_string = 1;
 }

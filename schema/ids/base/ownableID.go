@@ -9,15 +9,15 @@ import (
 )
 
 // TODO rename to something more appropriate
-//type ownableID struct {
+// type ownableID struct {
 //	ids.StringID
-//}
+// }
 
 var _ ids.OwnableID = (*OwnableID)(nil)
 
-//TODO: Verify
+// TODO: Verify
 func (ownableID *OwnableID) Bytes() []byte {
-	return []byte(ownableID.StringID.IdString)
+	return []byte(ownableID.StringID.IDString)
 }
 func (ownableID *OwnableID) IsOwnableID() {}
 func (ownableID *OwnableID) Compare(listable traits.Listable) int {
