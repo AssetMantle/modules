@@ -4,18 +4,19 @@
 package base
 
 import (
+	"sort"
+
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	"sort"
 )
 
 var _ lists.IDList = (*IDList)(nil)
 
 func (idList *IDList) GetList() []ids.AnyID {
-	returnIDList := make([]ids.AnyID, len(idList.IdList))
+	returnIDList := make([]ids.AnyID, len(idList.IDList))
 
-	for i, listable := range idList.IdList {
+	for i, listable := range idList.IDList {
 		returnIDList[i] = listable
 	}
 
@@ -23,13 +24,13 @@ func (idList *IDList) GetList() []ids.AnyID {
 }
 func (idList *IDList) Search(id ids.ID) (index int, found bool) {
 	index = sort.Search(
-		len(idList.IdList),
+		len(idList.IDList),
 		func(i int) bool {
-			return idList.IdList[i].Compare(id) >= 0
+			return idList.IDList[i].Compare(id) >= 0
 		},
 	)
 
-	if index < len(idList.IdList) && idList.IdList[index].Compare(id) == 0 {
+	if index < len(idList.IDList) && idList.IDList[index].Compare(id) == 0 {
 		return index, true
 	}
 
@@ -39,9 +40,9 @@ func (idList *IDList) Add(ids ...ids.ID) lists.IDList {
 	updatedList := idList
 	for _, listable := range ids {
 		if index, found := updatedList.Search(listable); !found {
-			updatedList.IdList = append(updatedList.IdList, listable.(*baseIDs.AnyID))
-			copy(updatedList.IdList[index+1:], updatedList.IdList[index:])
-			updatedList.IdList[index] = listable.(*baseIDs.AnyID)
+			updatedList.IDList = append(updatedList.IDList, listable.(*baseIDs.AnyID))
+			copy(updatedList.IDList[index+1:], updatedList.IDList[index:])
+			updatedList.IDList[index] = listable.(*baseIDs.AnyID)
 		}
 	}
 	return updatedList
@@ -51,7 +52,7 @@ func (idList *IDList) Remove(ids ...ids.ID) lists.IDList {
 
 	for _, listable := range ids {
 		if index, found := updatedList.Search(listable); found {
-			updatedList.IdList = append(updatedList.IdList[:index], updatedList.IdList[index+1:]...)
+			updatedList.IDList = append(updatedList.IDList[:index], updatedList.IDList[index+1:]...)
 		}
 	}
 
@@ -62,5 +63,5 @@ func NewIDList(ids ...ids.ID) lists.IDList {
 	for _, dataVal := range ids {
 		idList = append(idList, dataVal.(*baseIDs.AnyID))
 	}
-	return &IDList{IdList: idList}
+	return &IDList{IDList: idList}
 }

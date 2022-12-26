@@ -12,14 +12,14 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//type assetID struct {
+// type assetID struct {
 //	ids.HashID
-//}
+// }
 
 var _ ids.AssetID = (*AssetID)(nil)
 
 func (assetID *AssetID) Bytes() []byte {
-	return assetID.HashID.IdBytes
+	return assetID.HashID.IDBytes
 }
 func (assetID *AssetID) IsOwnableID() {}
 func (assetID *AssetID) IsAssetID()   {}

@@ -7,14 +7,14 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//type orderID struct {
+// type orderID struct {
 //	ids.HashID
-//}
+// }
 
 var _ ids.OrderID = (*OrderID)(nil)
 
 func (orderID *OrderID) Bytes() []byte {
-	return orderID.OrderID.IdBytes
+	return orderID.OrderID.IDBytes
 }
 func (orderID *OrderID) IsOrderID() {}
 func (orderID *OrderID) Compare(listable traits.Listable) int {
