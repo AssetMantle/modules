@@ -11,7 +11,6 @@ import (
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
@@ -90,7 +89,7 @@ func readListData(dataString string) (data.Data, error) {
 		dataList[i] = Data
 	}
 
-	return base.NewListData(baseLists.NewDataList(dataList...)), nil
+	return base.NewListData(base.NewDataList(dataList...)), nil
 }
 func readStringData(dataString string) (data.Data, error) {
 	if dataString == "" {

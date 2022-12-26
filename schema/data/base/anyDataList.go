@@ -5,7 +5,6 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/schema/data"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"sort"
 )
@@ -30,9 +29,9 @@ func (dataList *AnyDataList) Add(data ...data.AnyData) lists.AnyDataList {
 	updatedList := dataList
 	for _, listable := range data {
 		if index, found := updatedList.Search(listable); !found {
-			updatedList.DataList = append(updatedList.DataList, listable.(*baseData.AnyData))
+			updatedList.DataList = append(updatedList.DataList, listable.(*AnyData))
 			copy(updatedList.DataList[index+1:], updatedList.DataList[index:])
-			updatedList.DataList[index] = listable.(*baseData.AnyData)
+			updatedList.DataList[index] = listable.(*AnyData)
 		}
 	}
 	return updatedList
@@ -63,9 +62,9 @@ func (dataList *AnyDataList) Remove(data ...data.AnyData) lists.AnyDataList {
 }
 
 func NewDataList(data ...data.Data) lists.AnyDataList {
-	var dataList []*baseData.AnyData
+	var dataList []*AnyData
 	for _, dataVal := range data {
-		dataList = append(dataList, dataVal.ToAnyData().(*baseData.AnyData))
+		dataList = append(dataList, dataVal.ToAnyData().(*AnyData))
 	}
 	return &AnyDataList{DataList: dataList}
 }

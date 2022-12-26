@@ -27,7 +27,10 @@ func (codec codec) GetLegacyAmino() *sdkCodec.LegacyAmino {
 func (codec codec) InitializeAndSeal() helpers.Codec {
 	return codec
 }
+func (codec codec) UnpackAny(any *sdkCodecTypes.Any, iface interface{}) error {
+	return codec.InterfaceRegistry.UnpackAny(any, iface)
+}
 
 func CodecPrototype() helpers.Codec {
-	return codec{}
+	return &codec{}
 }

@@ -54,11 +54,7 @@ func StringDataPrototype() data.Data {
 }
 
 func NewStringData(value string) data.Data {
-	return &AnyData{
-		Impl: &AnyData_StringData{
-			StringData: &StringData{
-				Value: value,
-			},
-		},
+	return &StringData{
+		Value: value,
 	}
 }

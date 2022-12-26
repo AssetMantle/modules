@@ -1,5 +1,5 @@
 syntax = "proto3";
-package lists;
+package data;
 
 import "schema/data/base/anyData.v1.proto";
 import "gogoproto/gogo.proto";
@@ -7,5 +7,5 @@ import "gogoproto/gogo.proto";
 message AnyDataList {
   option (gogoproto.goproto_getters) = false;
 
-  repeated data.AnyData data_list = 1;
+  repeated AnyData data_list = 1;
 }

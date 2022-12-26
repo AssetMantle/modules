@@ -12,7 +12,6 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
@@ -29,11 +28,11 @@ func (listData *ListData) Search(data data.AnyData) (int, bool) {
 	return listData.Value.Search(data)
 }
 func (listData *ListData) Add(data ...data.AnyData) data.ListData {
-	listData.Value = listData.Value.Add(data...).(*base.AnyDataList)
+	listData.Value = listData.Value.Add(data...).(*AnyDataList)
 	return listData
 }
 func (listData *ListData) Remove(data ...data.AnyData) data.ListData {
-	listData.Value = listData.Value.Remove(data...).(*base.AnyDataList)
+	listData.Value = listData.Value.Remove(data...).(*AnyDataList)
 	return listData
 }
 func (listData *ListData) GetID() ids.DataID {
@@ -63,7 +62,7 @@ func (listData *ListData) GetType() ids.StringID {
 	return dataConstants.ListDataID
 }
 func (listData *ListData) ZeroValue() data.Data {
-	return NewListData(base.NewDataList([]data.Data{}...))
+	return NewListData(NewDataList([]data.Data{}...))
 }
 func (listData *ListData) GenerateHashID() ids.HashID {
 	if listData.Compare(listData.ZeroValue()) == 0 {
@@ -95,5 +94,5 @@ func ListDataPrototype() data.ListData {
 // NewListData
 // * onus of ensuring all Data are of the same type is on DataList
 func NewListData(value lists.AnyDataList) data.ListData {
-	return &ListData{Value: value.(*base.AnyDataList)}
+	return &ListData{Value: value.(*AnyDataList)}
 }

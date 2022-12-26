@@ -54,11 +54,7 @@ func IDDataPrototype() data.Data {
 }
 
 func NewIDData(value ids.ID) data.Data {
-	return &AnyData{
-		Impl: &AnyData_IDData{
-			IDData: &IDData{
-				Value: value.(*baseIDs.AnyID),
-			},
-		},
+	return &IDData{
+		Value: value.ToAnyID().(*baseIDs.AnyID),
 	}
 }
