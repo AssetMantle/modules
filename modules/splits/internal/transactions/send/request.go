@@ -5,6 +5,7 @@ package send
 
 import (
 	"encoding/json"
+
 	"github.com/cosmos/cosmos-sdk/codec/types"
 
 	"github.com/asaskevich/govalidator"
@@ -44,8 +45,6 @@ func (transactionRequest *TransactionRequest) Validate() error {
 	return err
 }
 func (transactionRequest *TransactionRequest) RegisterInterface(registry types.InterfaceRegistry) {
-	//TODO implement me
-	panic("implement me")
 }
 func (transactionRequest *TransactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(

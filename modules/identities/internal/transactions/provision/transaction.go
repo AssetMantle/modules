@@ -5,6 +5,7 @@ package provision
 
 import (
 	"context"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/gogo/protobuf/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -24,7 +25,7 @@ var Transaction = baseHelpers.NewTransaction(
 	keeperPrototype,
 
 	func(server grpc.Server, keeper helpers.TransactionKeeper) {
-		RegisterTransactionServer(server, keeper.(*transactionKeeper))
+		RegisterTransactionServer(server, keeper.(transactionKeeper))
 	},
 	func(clientCtx client.Context, mux *runtime.ServeMux) error {
 		return RegisterTransactionHandlerClient(context.Background(), mux, NewTransactionClient(clientCtx))

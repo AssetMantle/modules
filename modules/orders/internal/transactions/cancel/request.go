@@ -5,6 +5,7 @@ package cancel
 
 import (
 	"encoding/json"
+
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -18,11 +19,11 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-//type transactionRequest struct {
+// type transactionRequest struct {
 //	BaseReq rest.BaseReq `json:"baseReq"`
 //	FromID  string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
 //	OrderID string       `json:"orderID" valid:"required~required field orderID missing, matches(^[A-Za-z0-9-_=.|*]+$)~invalid field orderID"`
-//}
+// }
 
 var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
 
@@ -41,8 +42,6 @@ func (transactionRequest *TransactionRequest) Validate() error {
 	return err
 }
 func (transactionRequest *TransactionRequest) RegisterInterface(registry types.InterfaceRegistry) {
-	//TODO implement me
-	panic("implement me")
 }
 func (transactionRequest *TransactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(

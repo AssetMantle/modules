@@ -5,13 +5,15 @@ package ownable
 
 import (
 	"context"
+
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/gogo/protobuf/grpc"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/gogo/protobuf/grpc"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 )
 
 var Query = baseHelpers.NewQuery(
@@ -26,7 +28,7 @@ var Query = baseHelpers.NewQuery(
 	keeperPrototype,
 
 	func(server grpc.Server, keeper helpers.QueryKeeper) {
-		RegisterQueryServer(server, keeper.(*queryKeeper))
+		RegisterQueryServer(server, keeper.(queryKeeper))
 	},
 	func(ctx client.Context, mux *runtime.ServeMux) error {
 		err := RegisterQueryHandlerClient(context.Background(), mux, NewQueryClient(ctx))
