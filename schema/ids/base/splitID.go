@@ -17,16 +17,16 @@ import (
 var _ ids.SplitID = (*SplitID)(nil)
 
 func (splitID *SplitID) GetOwnableID() ids.OwnableID {
-	return splitID.OwnableId
+	return splitID.OwnableID
 }
 func (splitID *SplitID) IsSplitID() {}
 func (splitID *SplitID) Bytes() []byte {
 	return append(
-		splitID.OwnerId.Bytes(),
-		splitID.OwnableId.Bytes()...)
+		splitID.OwnerID.Bytes(),
+		splitID.OwnableID.Bytes()...)
 }
 func (splitID *SplitID) SplitIDString() string {
-	return stringUtilities.JoinIDStrings(splitID.OwnerId.String(), splitID.OwnableId.String())
+	return stringUtilities.JoinIDStrings(splitID.OwnerID.String(), splitID.OwnableID.String())
 }
 func (splitID *SplitID) Compare(listable traits.Listable) int {
 	return bytes.Compare(splitID.Bytes(), splitIDFromInterface(listable).Bytes())
@@ -50,15 +50,15 @@ func splitIDFromInterface(i interface{}) *SplitID {
 
 func NewSplitID(ownerID ids.IdentityID, ownableID ids.OwnableID) ids.SplitID {
 	return &SplitID{
-		OwnerId:   ownerID.(*IdentityID),
-		OwnableId: ownableID.(*OwnableID),
+		OwnerID:   ownerID.(*IdentityID),
+		OwnableID: ownableID.(*OwnableID),
 	}
 }
 
 func PrototypeSplitID() ids.SplitID {
 	return &SplitID{
-		OwnerId:   PrototypeIdentityID().(*IdentityID),
-		OwnableId: PrototypeOwnableID().(*OwnableID),
+		OwnerID:   PrototypeIdentityID().(*IdentityID),
+		OwnableID: PrototypeOwnableID().(*OwnableID),
 	}
 }
 
@@ -67,8 +67,8 @@ func ReadSplitID(splitIDString string) (ids.SplitID, error) {
 		if ownerID, err := ReadIdentityID(splitIDStringSplit[0]); err == nil {
 			if ownableID, err := ReadOwnableID(splitIDStringSplit[1]); err == nil {
 				return &SplitID{
-					OwnerId:   ownerID.(*IdentityID),
-					OwnableId: ownableID.(*OwnableID),
+					OwnerID:   ownerID.(*IdentityID),
+					OwnableID: ownableID.(*OwnableID),
 				}, nil
 			}
 		}
