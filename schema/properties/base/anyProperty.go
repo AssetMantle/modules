@@ -11,7 +11,6 @@ type getter interface {
 	getProperty() properties.Property
 }
 
-var _ properties.Property = (*AnyProperty)(nil)
 var _ getter = (*AnyProperty_MetaProperty)(nil)
 var _ getter = (*AnyProperty_MesaProperty)(nil)
 
