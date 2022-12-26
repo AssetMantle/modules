@@ -6,8 +6,6 @@ package reveal
 import (
 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/codec/types"
-
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -20,12 +18,12 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-// type transactionRequest struct {
-//	BaseReq rest.BaseReq `json:"baseReq"`
-//	Data    string       `json:"data" valid:"required~required field data missing, matches(^[DHIS]{1}[|]{1}.*$)"`
-// }
+type transactionRequest struct {
+	BaseReq rest.BaseReq `json:"baseReq"`
+	Data    string       `json:"data" valid:"required~required field data missing, matches(^[DHIS]{1}[|]{1}.*$)"`
+}
 
-var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
+var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
 // Validate godoc
 // @Summary Reveal metas transaction
@@ -37,30 +35,28 @@ var _ helpers.TransactionRequest = (*TransactionRequest)(nil)
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /metas/reveal [post]
-func (transactionRequest *TransactionRequest) Validate() error {
+func (transactionRequest transactionRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(transactionRequest)
 	return err
 }
-func (transactionRequest *TransactionRequest) RegisterInterface(registry types.InterfaceRegistry) {
-}
-func (transactionRequest *TransactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
+func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
-		cliCommand.ReadBaseReq(context).From,
+		cliCommand.ReadBaseReq(context),
 		cliCommand.ReadString(constants.Data),
 	), nil
 }
-func (transactionRequest *TransactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
+func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
 	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
 		return nil, err
 	}
 
 	return transactionRequest, nil
 }
-func (transactionRequest *TransactionRequest) GetBaseReq() rest.BaseReq {
-	panic("I do not exist")
+func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
+	return transactionRequest.BaseReq
 }
-func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.From)
+func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
+	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
 	if err != nil {
 		return nil, err
 	}
@@ -75,15 +71,15 @@ func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		data,
 	), nil
 }
-func (*TransactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, &TransactionRequest{})
+func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
-	return &TransactionRequest{}
+	return transactionRequest{}
 }
-func newTransactionRequest(from string, data string) helpers.TransactionRequest {
-	return &TransactionRequest{
-		From: from,
-		Data: data,
+func newTransactionRequest(baseReq rest.BaseReq, data string) helpers.TransactionRequest {
+	return transactionRequest{
+		BaseReq: baseReq,
+		Data:    data,
 	}
 }

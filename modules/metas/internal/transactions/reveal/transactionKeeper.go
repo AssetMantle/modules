@@ -5,7 +5,8 @@ package reveal
 
 import (
 	"context"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
@@ -19,28 +20,27 @@ type transactionKeeper struct {
 	parameters helpers.Parameters
 }
 
-func (transactionKeeper transactionKeeper) Reveal(ctx context.Context, message *Message) (*TransactionResponse, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
-	message := messageFromInterface(msg)
+func (transactionKeeper transactionKeeper) Transact(context types.Context, message helpers.Message) helpers.TransactionResponse {
+	_, err := transactionKeeper.Handle(context.Context(), message.(*Message))
+	return newTransactionResponse(err)
+}
+
+func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
 	dataID := baseIDs.GenerateDataID(message.Data)
-	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(dataID))
+	metas := transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)).Fetch(key.NewKey(dataID))
 
 	data := metas.Get(key.NewKey(dataID))
 	if data != nil {
-		return newTransactionResponse(constants.EntityAlreadyExists)
+		return nil, constants.EntityAlreadyExists
 	}
 
 	if message.Data.GenerateHashID().Compare(baseIDs.GenerateHashID()) != 0 {
 		metas.Add(mappable.NewMappable(message.Data))
 	}
 
-	return newTransactionResponse(nil)
+	return &Response{}, nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, _ []interface{}) helpers.Keeper {
