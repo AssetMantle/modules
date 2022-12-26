@@ -25,11 +25,16 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil {
+		panic("Could not get from address from Bech32 string")
+	}
+
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if err := transactionKeeper.bankKeeper.SendCoinsFromAccountToModule(context, message.From, module.Name, message.Coins); err != nil {
+	if err := transactionKeeper.bankKeeper.SendCoinsFromAccountToModule(context, fromAddress, module.Name, message.Coins); err != nil {
 		return newTransactionResponse(err)
 	}
 

@@ -31,6 +31,11 @@ var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)
 
+	address, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil {
+		panic("Could not get from address from Bech32 string")
+	}
+
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.NubIDProperty.GetKey(), baseData.NewIDData(message.NubID))))
 
 	// TODO ***** add nub classificationID to genesis
@@ -42,7 +47,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
-	identities.Add(mappable.NewMappable(base.NewIdentity(constansts.NubClassificationID, immutables, baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseLists.NewDataList(baseData.NewAccAddressData(message.From)))))))))
+	identities.Add(mappable.NewMappable(base.NewIdentity(constansts.NubClassificationID, immutables, baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseLists.NewDataList(baseData.NewAccAddressData(address)))))))))
 
 	return newTransactionResponse(nil)
 }

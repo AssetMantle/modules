@@ -38,7 +38,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.From, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil {
+		panic("Could not get from address from Bech32 string")
+	}
+
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
@@ -51,7 +56,12 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errorConstants.EntityAlreadyExists)
 	}
 
-	authenticationProperty := baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseLists.NewDataList(baseData.NewAccAddressData(message.To))))
+	toAddress, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil {
+		panic("Could not get from address from Bech32 string")
+	}
+
+	authenticationProperty := baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseLists.NewDataList(baseData.NewAccAddressData(toAddress))))
 	mutableMetaProperties := baseLists.NewPropertyList(append(message.MutableMetaProperties.GetList(), authenticationProperty)...)
 
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))

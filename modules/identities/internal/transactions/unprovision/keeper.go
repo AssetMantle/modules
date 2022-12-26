@@ -33,16 +33,25 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	identity := Mappable.(documents.Identity)
 
-	if !identity.IsProvisioned(message.From) {
+	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil {
+		panic("Could not get from address from Bech32 string")
+	}
+
+	toAddress, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil {
+		panic("Could not get To address from Bech32 string")
+	}
+
+	if !identity.IsProvisioned(fromAddress) {
 		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
-	if !identity.IsProvisioned(message.To) {
+	if !identity.IsProvisioned(toAddress) {
 		return newTransactionResponse(errorConstants.EntityNotFound)
 	}
 
-	identities.Mutate(mappable.NewMappable(identity.UnprovisionAddress(message.To)))
-
+	identities.Mutate(mappable.NewMappable(identity.UnprovisionAddress(toAddress)))
 	return newTransactionResponse(nil)
 }
 
