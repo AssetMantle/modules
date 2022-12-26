@@ -54,8 +54,8 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve with nil", args{}, transactionRequest{}},
-		{"+ve", args{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, transactionRequest{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}},
+		{"+ve with nil", args{}, TransactionRequest{}},
+		{"+ve", args{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, TransactionRequest{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -71,7 +71,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", transactionRequest{}},
+		{"+ve", TransactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -107,11 +107,11 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{cliCommand, context}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.ToID), cliCommand.ReadString(constants.ClassificationID)}, false},
+		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{cliCommand, context}, TransactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.ToID), cliCommand.ReadString(constants.ClassificationID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:          tt.fields.BaseReq,
 				FromID:           tt.fields.FromID,
 				ToID:             tt.fields.ToID,
@@ -149,11 +149,11 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, testFromID, testToID, testClassificationID}))}, transactionRequest{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, false},
+		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, testFromID, testToID, testClassificationID}))}, TransactionRequest{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:          tt.fields.BaseReq,
 				FromID:           tt.fields.FromID,
 				ToID:             tt.fields.ToID,
@@ -188,7 +188,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:          tt.fields.BaseReq,
 				FromID:           tt.fields.FromID,
 				ToID:             tt.fields.ToID,
@@ -222,7 +222,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:          tt.fields.BaseReq,
 				FromID:           tt.fields.FromID,
 				ToID:             tt.fields.ToID,
@@ -261,7 +261,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
+			tr := TransactionRequest{
 				BaseReq:          tt.fields.BaseReq,
 				FromID:           tt.fields.FromID,
 				ToID:             tt.fields.ToID,
@@ -290,7 +290,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:          tt.fields.BaseReq,
 				FromID:           tt.fields.FromID,
 				ToID:             tt.fields.ToID,

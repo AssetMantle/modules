@@ -37,7 +37,7 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, fromID.String(), fromID.String(), classificationID.String()}, transactionRequest{testBaseRequest, fromID.String(), fromID.String(), classificationID.String()}},
+		{"+ve", args{testBaseRequest, fromID.String(), fromID.String(), classificationID.String()}, TransactionRequest{testBaseRequest, fromID.String(), fromID.String(), classificationID.String()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -53,7 +53,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", transactionRequest{}},
+		{"+ve", TransactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -90,7 +90,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:          tt.fields.BaseReq,
 				FromID:           tt.fields.FromID,
 				ToID:             tt.fields.ToID,
@@ -129,7 +129,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:          tt.fields.BaseReq,
 				FromID:           tt.fields.FromID,
 				ToID:             tt.fields.ToID,
@@ -163,7 +163,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:          tt.fields.BaseReq,
 				FromID:           tt.fields.FromID,
 				ToID:             tt.fields.ToID,
@@ -193,7 +193,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:          tt.fields.BaseReq,
 				FromID:           tt.fields.FromID,
 				ToID:             tt.fields.ToID,
@@ -230,7 +230,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
+			tr := TransactionRequest{
 				BaseReq:          tt.fields.BaseReq,
 				FromID:           tt.fields.FromID,
 				ToID:             tt.fields.ToID,
@@ -257,7 +257,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:          tt.fields.BaseReq,
 				FromID:           tt.fields.FromID,
 				ToID:             tt.fields.ToID,

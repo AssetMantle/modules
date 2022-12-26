@@ -43,7 +43,7 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, transactionRequest{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}},
+		{"+ve", args{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, TransactionRequest{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -59,7 +59,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", transactionRequest{}},
+		{"+ve", TransactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -97,11 +97,11 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{BaseReq: rest.BaseReq{From: context.GetFromAddress().String(), ChainID: context.ChainID, Simulate: context.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanMintAsset: false, CanBurnAsset: false, CanRenumerateAsset: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, args{cliCommand, context}, transactionRequest{BaseReq: rest.BaseReq{From: context.GetFromAddress().String(), ChainID: context.ChainID, Simulate: context.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, false},
+		{"+ve", fields{BaseReq: rest.BaseReq{From: context.GetFromAddress().String(), ChainID: context.ChainID, Simulate: context.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanMintAsset: false, CanBurnAsset: false, CanRenumerateAsset: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, args{cliCommand, context}, TransactionRequest{BaseReq: rest.BaseReq{From: context.GetFromAddress().String(), ChainID: context.ChainID, Simulate: context.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:              tt.fields.BaseReq,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
@@ -157,11 +157,11 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, args{jsonMessage}, transactionRequest{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, false},
+		{"+ve", fields{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, args{jsonMessage}, TransactionRequest{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:              tt.fields.BaseReq,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
@@ -215,7 +215,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:              tt.fields.BaseReq,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
@@ -263,7 +263,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:              tt.fields.BaseReq,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
@@ -320,7 +320,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
+			tr := TransactionRequest{
 				BaseReq:              tt.fields.BaseReq,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
@@ -367,7 +367,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:              tt.fields.BaseReq,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,

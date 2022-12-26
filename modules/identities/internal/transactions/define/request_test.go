@@ -50,7 +50,7 @@ func Test_newTransactionRequest(t *testing.T) {
 		want helpers.TransactionRequest
 	}{
 
-		{"+ve", args{testBaseReq, "fromID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}},
+		{"+ve", args{testBaseReq, "fromID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, TransactionRequest{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -67,7 +67,7 @@ func Test_requestPrototype(t *testing.T) {
 		want helpers.TransactionRequest
 	}{
 
-		{"+ve", transactionRequest{}},
+		{"+ve", TransactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -104,11 +104,11 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", fields{BaseReq: testBaseReq, FromID: "", ImmutableMetaProperties: "", ImmutableProperties: "", MutableMetaProperties: "", MutableProperties: ""}, args{cliCommand, context}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.ImmutableMetaProperties), cliCommand.ReadString(constants.ImmutableProperties), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
+		{"+ve", fields{BaseReq: testBaseReq, FromID: "", ImmutableMetaProperties: "", ImmutableProperties: "", MutableMetaProperties: "", MutableProperties: ""}, args{cliCommand, context}, TransactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.ImmutableMetaProperties), cliCommand.ReadString(constants.ImmutableProperties), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:                 tt.fields.BaseReq,
 				FromID:                  tt.fields.FromID,
 				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
@@ -162,11 +162,11 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, args{jsonMessage}, transactionRequest{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, false},
+		{"+ve", fields{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, args{jsonMessage}, TransactionRequest{BaseReq: testBaseReq, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:                 tt.fields.BaseReq,
 				FromID:                  tt.fields.FromID,
 				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
@@ -217,7 +217,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:                 tt.fields.BaseReq,
 				FromID:                  tt.fields.FromID,
 				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
@@ -275,7 +275,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:                 tt.fields.BaseReq,
 				FromID:                  tt.fields.FromID,
 				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
@@ -324,7 +324,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
+			tr := TransactionRequest{
 				BaseReq:                 tt.fields.BaseReq,
 				FromID:                  tt.fields.FromID,
 				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
@@ -363,7 +363,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
+			transactionRequest := TransactionRequest{
 				BaseReq:                 tt.fields.BaseReq,
 				FromID:                  tt.fields.FromID,
 				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
