@@ -90,7 +90,7 @@ func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		from,
 		fromID,
 		ownableID,
-		value,
+		sdkTypes.NewDecFromInt(value),
 	), nil
 }
 func (*TransactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {

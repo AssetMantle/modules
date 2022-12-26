@@ -45,7 +45,7 @@ func (transactionRequest *TransactionRequest) Validate() error {
 		return err
 	}
 	inputValidator := base.NewInputValidator(constants.NubIDExpression)
-	if !inputValidator.IsValid(transactionRequest.NubId) {
+	if !inputValidator.IsValid(transactionRequest.NubID) {
 		return errorConstants.IncorrectFormat
 	}
 	return nil
@@ -78,7 +78,7 @@ func (transactionRequest *TransactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 
 	return newMessage(
 		from,
-		baseIDs.NewStringID(transactionRequest.NubId),
+		baseIDs.NewStringID(transactionRequest.NubID),
 	), nil
 }
 func (*TransactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
@@ -90,6 +90,6 @@ func requestPrototype() helpers.TransactionRequest {
 func newTransactionRequest(from, nubID string) helpers.TransactionRequest {
 	return &TransactionRequest{
 		From:  from,
-		NubId: nubID,
+		NubID: nubID,
 	}
 }

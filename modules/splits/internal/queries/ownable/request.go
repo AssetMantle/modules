@@ -71,5 +71,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 func newQueryRequest(ownableID ids.OwnableID) helpers.QueryRequest {
-	return &QueryRequest{OwnableId: ownableID.(*baseIDs.OwnableID)}
+	return &QueryRequest{OwnableID: ownableID.(*baseIDs.OwnableID)}
 }
