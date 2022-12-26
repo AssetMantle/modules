@@ -37,7 +37,7 @@ func (mesaProperty *MesaProperty) GetType() ids.StringID {
 	return mesaProperty.Id.GetType()
 }
 func (mesaProperty *MesaProperty) GetHash() ids.HashID {
-	return mesaProperty.DataId.GetHashID()
+	return mesaProperty.DataID.GetHashID()
 }
 func (mesaProperty *MesaProperty) IsMeta() bool {
 	return false
@@ -79,6 +79,6 @@ func NewEmptyMesaPropertyFromID(propertyID ids.PropertyID) properties.MesaProper
 func NewMesaProperty(key ids.StringID, data data.Data) properties.Property {
 	return &MesaProperty{
 		Id:     baseIDs.NewPropertyID(key, data.GetType()).(*baseIDs.PropertyID),
-		DataId: data.GetID().(*baseIDs.DataID),
+		DataID: data.GetID().(*baseIDs.DataID),
 	}
 }

@@ -17,19 +17,19 @@ import (
 var _ helpers.Key = (*Key)(nil)
 
 func (key *Key) GenerateStoreKeyBytes() []byte {
-	return module.StoreKeyPrefix.GenerateStoreKey(key.SplitId.Bytes())
+	return module.StoreKeyPrefix.GenerateStoreKey(key.SplitID.Bytes())
 }
 func (*Key) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, &Key{})
 }
 func (key *Key) IsPartial() bool {
-	return len(key.SplitId.GetOwnableID().Bytes()) == 0
+	return len(key.SplitID.GetOwnableID().Bytes()) == 0
 }
 func (key *Key) Equals(compareKey helpers.Key) bool {
 	if compareKey, err := keyFromInterface(compareKey); err != nil {
 		return false
 	} else {
-		return key.SplitId.Compare(compareKey.SplitId) == 0
+		return key.SplitID.Compare(compareKey.SplitID) == 0
 	}
 }
 func keyFromInterface(i interface{}) (*Key, error) {
@@ -43,7 +43,7 @@ func keyFromInterface(i interface{}) (*Key, error) {
 
 func NewKey(splitID ids.SplitID) helpers.Key {
 	return &Key{
-		SplitId: splitID.(*base.SplitID),
+		SplitID: splitID.(*base.SplitID),
 	}
 }
 

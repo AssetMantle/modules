@@ -33,8 +33,8 @@ func (splitID *SplitID) Compare(listable traits.Listable) int {
 }
 func (splitID *SplitID) ToAnyID() ids.AnyID {
 	return &AnyID{
-		Impl: &AnyID_SplitId{
-			SplitId: splitID,
+		Impl: &AnyID_SplitID{
+			SplitID: splitID,
 		},
 	}
 }

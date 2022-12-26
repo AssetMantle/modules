@@ -3,12 +3,7 @@
 
 package helpers
 
-import (
-	"github.com/gogo/protobuf/proto"
-)
-
 type Response interface {
-	proto.Message
 	IsSuccessful() bool
 	GetError() error
 }
