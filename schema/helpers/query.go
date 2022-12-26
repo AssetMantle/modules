@@ -8,10 +8,10 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"google.golang.org/grpc"
 )
 
 type Query interface {
@@ -19,8 +19,7 @@ type Query interface {
 	Command() *cobra.Command
 	HandleMessage(sdkTypes.Context, abciTypes.RequestQuery) ([]byte, error)
 	RESTQueryHandler(client.Context) http.HandlerFunc
-	GRPCGatewayHandler(client.Context) (method string, pattern runtime.Pattern, handlerFunc runtime.HandlerFunc)
-	Service() (*grpc.ServiceDesc, interface{})
+	RegisterService(module.Configurator)
+	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)
 	Initialize(Mapper, Parameters, ...interface{}) Query
-	GetGRPCConfigurator() GRPCConfigurator
 }

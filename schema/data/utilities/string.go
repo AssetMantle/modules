@@ -12,6 +12,7 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 func readAccAddressData(dataString string) (data.Data, error) {
@@ -63,7 +64,7 @@ func readHeightData(dataString string) (data.Data, error) {
 	return base.NewHeightData(baseTypes.NewHeight(height)), nil
 }
 
-// TODO read complex IDs than string PropertyID
+// TODO read complex IDs than string ID
 func readIDData(dataString string) (data.Data, error) {
 	if dataString == "" {
 		return base.IDDataPrototype(), nil
@@ -71,7 +72,25 @@ func readIDData(dataString string) (data.Data, error) {
 
 	return base.NewIDData(baseIDs.NewStringID(dataString)), nil
 }
+func readListData(dataString string) (data.Data, error) {
+	if dataString == "" {
+		return base.ListDataPrototype(), nil
+	}
 
+	dataStringList := stringUtilities.SplitListString(dataString)
+	dataList := make([]data.Data, len(dataStringList))
+
+	for i, datumString := range dataStringList {
+		Data, err := ReadData(datumString)
+		if err != nil {
+			return base.ListDataPrototype(), err
+		}
+
+		dataList[i] = Data
+	}
+
+	return base.NewListData(base.NewDataList(dataList...)), nil
+}
 func readStringData(dataString string) (data.Data, error) {
 	if dataString == "" {
 		return base.StringDataPrototype(), nil
@@ -109,6 +128,8 @@ func ReadData(dataString string) (data.Data, error) {
 			Data, err = readHeightData(dataValueString)
 		case dataConstants.IDDataID.String():
 			Data, err = readIDData(dataValueString)
+		case dataConstants.ListDataID.String():
+			Data, err = readListData(dataValueString)
 		case dataConstants.StringDataID.String():
 			Data, err = readStringData(dataValueString)
 		default:

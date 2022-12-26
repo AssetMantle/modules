@@ -2,6 +2,7 @@ package ids
 
 type SplitID interface {
 	ID
-	GetOwnableID() ID
+	GetOwnableID() OwnableID
 	IsSplitID()
+	SplitIDString() string
 }

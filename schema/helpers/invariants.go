@@ -5,5 +5,5 @@ import (
 )
 
 type Invariants interface {
-	RegisterInvariants(sdkTypes.InvariantRegistry)
+	Register(sdkTypes.InvariantRegistry)
 }

@@ -4,7 +4,7 @@
 package helpers
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gogo/protobuf/proto"
 
@@ -13,14 +13,13 @@ import (
 
 type Genesis interface {
 	proto.Message
-
 	Default() Genesis
 	Validate() error
 	Import(sdkTypes.Context, Mapper, Parameters)
 	Export(sdkTypes.Context, Mapper, Parameters) Genesis
 
-	Encode(codec.JSONCodec) []byte
-	Decode(codec.JSONCodec, []byte) Genesis
+	Encode(sdkCodec.JSONCodec) []byte
+	Decode(sdkCodec.JSONCodec, []byte) Genesis
 
 	Initialize([]Mappable, []parameters.Parameter) Genesis
 

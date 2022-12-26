@@ -1,0 +1,8 @@
+syntax = "proto3";
+package maintainers;
+
+import "schema/ids/base/maintainerID.v1.proto";
+
+message Key {
+  ids.MaintainerID maintainer_i_d = 1;
+}

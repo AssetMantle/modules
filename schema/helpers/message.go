@@ -11,8 +11,8 @@ import (
 
 type Message interface {
 	// TODO check if register message code is required
-	RegisterCodec(*codec.LegacyAmino)
-	RegisterInterfaces(types.InterfaceRegistry)
+	RegisterLegacyAminoCodec(*codec.LegacyAmino)
+	RegisterInterface(types.InterfaceRegistry)
 	GenerateOnSuccessEvents() sdkTypes.Events
 	Type() string
 	sdkTypes.Msg

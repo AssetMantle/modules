@@ -1,0 +1,12 @@
+syntax = "proto3";
+package assets.queries.asset;
+
+import "gogoproto/gogo.proto";
+import "modules/assets/internal/mappable/mappable.v1.proto";
+
+message QueryResponse {
+  option (gogoproto.goproto_getters) = false;
+  bool success = 1;
+  string error = 2;
+  repeated assets.Mappable list = 3;
+}

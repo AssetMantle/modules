@@ -4,16 +4,16 @@
 package base
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/asaskevich/govalidator"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 )
 
 type genesis struct {
-	codec *codec.LegacyAmino
-
 	keyPrototype      func() helpers.Key
 	mappablePrototype func() helpers.Mappable
 
@@ -24,51 +24,53 @@ type genesis struct {
 	ParameterList []parametersSchema.Parameter `json:"parameterList"`
 }
 
+var _ helpers.Genesis = (*genesis)(nil)
+
 func (genesis genesis) Reset() {
-	// TODO implement me
-	panic("implement me")
-}
-func (genesis genesis) String() string {
-	// TODO implement me
-	panic("implement me")
-}
-func (genesis genesis) ProtoMessage() {
-	// TODO implement me
+	//TODO implement me
 	panic("implement me")
 }
 
-var _ helpers.Genesis = (*genesis)(nil)
+func (genesis genesis) String() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (genesis genesis) ProtoMessage() {
+	//TODO implement me
+	panic("implement me")
+}
 
 func (genesis genesis) Default() helpers.Genesis {
 	return genesis.Initialize(genesis.defaultMappableList, genesis.defaultParameterList)
 }
 func (genesis genesis) Validate() error {
-	//if len(genesis.ParameterList) != len(genesis.defaultParameterList) {
-	//	return constants.InvalidParameter
-	//}
-	//
-	//for _, parameter := range genesis.ParameterList {
-	//	var isPresent bool
-	//	for _, defaultParameter := range genesis.defaultParameterList {
-	//		isPresent = false
-	//		if defaultParameter.GetID().Compare(parameter.GetID()) == 0 {
-	//			isPresent = true
-	//			break
-	//		}
-	//	}
-	//
-	//	if !isPresent {
-	//		return constants.InvalidParameter
-	//	}
-	//
-	//	if err := parameter.Validate(); err != nil {
-	//		return err
-	//	}
-	//}
-	//
-	//_, err := govalidator.ValidateStruct(genesis)
+	if len(genesis.ParameterList) != len(genesis.defaultParameterList) {
+		return constants.InvalidParameter
+	}
 
-	return nil
+	for _, parameter := range genesis.ParameterList {
+		var isPresent bool
+		for _, defaultParameter := range genesis.defaultParameterList {
+			isPresent = false
+			if defaultParameter.GetID().Compare(parameter.GetID()) == 0 {
+				isPresent = true
+				break
+			}
+		}
+
+		if !isPresent {
+			return constants.InvalidParameter
+		}
+
+		if err := parameter.Validate(); err != nil {
+			return err
+		}
+	}
+
+	_, err := govalidator.ValidateStruct(genesis)
+
+	return err
 }
 func (genesis genesis) Import(context sdkTypes.Context, mapper helpers.Mapper, parameters helpers.Parameters) {
 	for _, mappable := range genesis.MappableList {
@@ -94,17 +96,17 @@ func (genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper, p
 
 	return genesis.Initialize(mappableList, parameters.GetList())
 }
-func (genesis genesis) Encode(jsonCodec codec.JSONCodec) []byte {
-	bytes, _ := genesis.codec.MarshalJSON(genesis)
-	// if err != nil {
-	//	panic(err)
-	// }
+func (genesis genesis) Encode(jsonCodec sdkCodec.JSONCodec) []byte {
+	bytes, err := jsonCodec.MarshalJSON(genesis)
+	if err != nil {
+		panic(err)
+	}
 
 	return bytes
 }
-func (genesis genesis) Decode(jsonCodec codec.JSONCodec, byte []byte) helpers.Genesis {
+func (genesis genesis) Decode(jsonCodec sdkCodec.JSONCodec, byte []byte) helpers.Genesis {
 	newGenesis := genesis
-	if err := genesis.codec.UnmarshalJSON(byte, &newGenesis); err != nil {
+	if err := jsonCodec.UnmarshalJSON(byte, &newGenesis); err != nil {
 		panic(err)
 	}
 
@@ -130,9 +132,9 @@ func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList
 		genesis.ParameterList = parameterList
 	}
 
-	// if err := genesis.Validate(); err != nil {
-	// 	panic(err)
-	// }
+	if err := genesis.Validate(); err != nil {
+		panic(err)
+	}
 
 	return genesis
 }
@@ -145,14 +147,7 @@ func (genesis genesis) GetMappableList() []helpers.Mappable {
 }
 
 func NewGenesis(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable, defaultMappableList []helpers.Mappable, defaultParameterList []parametersSchema.Parameter) helpers.Genesis {
-	Codec := codec.NewLegacyAmino()
-	keyPrototype().RegisterCodec(Codec)
-	mappablePrototype().RegisterCodec(Codec)
-	helpers.RegisterCodec(Codec)
-	Codec.Seal()
-
 	return genesis{
-		codec:                Codec,
 		keyPrototype:         keyPrototype,
 		mappablePrototype:    mappablePrototype,
 		defaultMappableList:  defaultMappableList,

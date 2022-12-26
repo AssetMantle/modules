@@ -1,0 +1,12 @@
+syntax = "proto3";
+package assets.transactions.burn;
+
+import "google/api/annotations.proto";
+import "modules/assets/internal/transactions/burn/message.v1.proto";
+import "modules/assets/internal/transactions/burn/transactionResponse.v1.proto";
+
+service Transaction {
+  rpc Burn(burn.Message) returns (burn.TransactionResponse) {
+    option (google.api.http).post = "/mantle/assets/burn";
+  }
+}

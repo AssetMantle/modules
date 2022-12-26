@@ -7,10 +7,10 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 )
 
-type DataList interface {
+type AnyDataList interface {
 	Size() int
-	GetList() []data.Data
-	Search(data.Data) (int, bool)
-	Add(...data.Data) DataList
-	Remove(...data.Data) DataList
+	GetList() []data.AnyData
+	Search(data.AnyData) (int, bool)
+	Add(...data.AnyData) AnyDataList
+	Remove(...data.AnyData) AnyDataList
 }
