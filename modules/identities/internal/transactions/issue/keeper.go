@@ -4,6 +4,7 @@
 package issue
 
 import (
+	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
@@ -27,6 +28,11 @@ type transactionKeeper struct {
 	authenticateAuxiliary      helpers.Auxiliary
 	conformAuxiliary           helpers.Auxiliary
 	maintainersVerifyAuxiliary helpers.Auxiliary
+}
+
+func (transactionKeeper transactionKeeper) Issue(ctx context.Context, message *Message) (*TransactionResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)

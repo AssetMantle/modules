@@ -4,6 +4,7 @@
 package mutate
 
 import (
+	"context"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/gogo/protobuf/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -22,11 +23,11 @@ var Transaction = baseHelpers.NewTransaction(
 	messagePrototype,
 	keeperPrototype,
 
-	func(grpc.Server, helpers.TransactionKeeper) {
-		panic("implement me")
+	func(server grpc.Server, keeper helpers.TransactionKeeper) {
+		RegisterTransactionServer(server, keeper.(*transactionKeeper))
 	},
-	func(client.Context, *runtime.ServeMux) error {
-		panic("implement me")
+	func(clientCtx client.Context, mux *runtime.ServeMux) error {
+		return RegisterTransactionHandlerClient(context.Background(), mux, NewTransactionClient(clientCtx))
 	},
 
 	constants.IdentityID,

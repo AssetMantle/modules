@@ -4,6 +4,7 @@
 package define
 
 import (
+	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
@@ -25,6 +26,11 @@ type transactionKeeper struct {
 	defineAuxiliary       helpers.Auxiliary
 	superAuxiliary        helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
+}
+
+func (transactionKeeper transactionKeeper) Define(ctx context.Context, message *Message) (*TransactionResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)

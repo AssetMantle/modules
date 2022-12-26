@@ -4,6 +4,7 @@
 package unwrap
 
 import (
+	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
@@ -19,6 +20,11 @@ type transactionKeeper struct {
 	parameters            helpers.Parameters
 	bankKeeper            bankKeeper.Keeper
 	authenticateAuxiliary helpers.Auxiliary
+}
+
+func (transactionKeeper transactionKeeper) Unwrap(ctx context.Context, message *Message) (*TransactionResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
