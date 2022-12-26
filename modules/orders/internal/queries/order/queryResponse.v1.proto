@@ -1,5 +1,5 @@
 syntax = "proto3";
-package order;
+package orders.queries.order;
 
 import "gogoproto/gogo.proto";
 import "modules/orders/internal/mappable/mappable.v1.proto";

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package identity;
+package identities.queries.identity;
 
 import "gogoproto/gogo.proto";
 import "modules/identities/internal/mappable/mappable.v1.proto";

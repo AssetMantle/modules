@@ -4,12 +4,14 @@
 package base
 
 import (
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/gogo/protobuf/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	cosmosTypesModule "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -19,27 +21,30 @@ import (
 )
 
 type query struct {
-	name              string
-	cliCommand        helpers.CLICommand
-	moduleName        string
-	queryKeeper       helpers.QueryKeeper
-	requestPrototype  func() helpers.QueryRequest
-	responsePrototype func() helpers.QueryResponse
-	keeperPrototype   func() helpers.QueryKeeper
-}
-
-func (query query) RegisterService(configurator cosmosTypesModule.Configurator) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (query query) RegisterGRPCGatewayRoute(context client.Context, serveMux *runtime.ServeMux) {
-	//TODO implement me
-	panic("implement me")
+	name                 string
+	cliCommand           helpers.CLICommand
+	moduleName           string
+	queryKeeper          helpers.QueryKeeper
+	requestPrototype     func() helpers.QueryRequest
+	responsePrototype    func() helpers.QueryResponse
+	keeperPrototype      func() helpers.QueryKeeper
+	serviceRegistrar     func(grpc.Server, helpers.QueryKeeper)
+	grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error
 }
 
 var _ helpers.Query = (*query)(nil)
 
+func (query query) RegisterService(configurator sdkTypesModule.Configurator) {
+	if query.queryKeeper == nil {
+		panic(errorConstants.UninitializedUsage)
+	}
+	query.serviceRegistrar(configurator.QueryServer(), query.queryKeeper)
+}
+func (query query) RegisterGRPCGatewayRoute(context client.Context, serveMux *runtime.ServeMux) {
+	if err := query.grpcGatewayRegistrar(context, serveMux); err != nil {
+		panic(err)
+	}
+}
 func (query query) GetName() string { return query.name }
 func (query query) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
@@ -116,13 +121,15 @@ func (query query) query(queryRequest helpers.QueryRequest, context client.Conte
 	return context.QueryWithData("custom"+"/"+query.moduleName+"/"+query.name, bytes)
 }
 
-func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, flagList ...helpers.CLIFlag) helpers.Query {
+func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, serviceRegistrar func(grpc.Server, helpers.QueryKeeper), grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error, flagList ...helpers.CLIFlag) helpers.Query {
 	return query{
-		name:              name,
-		cliCommand:        NewCLICommand(name, short, long, flagList),
-		moduleName:        moduleName,
-		requestPrototype:  requestPrototype,
-		responsePrototype: responsePrototype,
-		keeperPrototype:   keeperPrototype,
+		name:                 name,
+		cliCommand:           NewCLICommand(name, short, long, flagList),
+		moduleName:           moduleName,
+		requestPrototype:     requestPrototype,
+		responsePrototype:    responsePrototype,
+		keeperPrototype:      keeperPrototype,
+		serviceRegistrar:     serviceRegistrar,
+		grpcGatewayRegistrar: grpcGatewayRegistrar,
 	}
 }

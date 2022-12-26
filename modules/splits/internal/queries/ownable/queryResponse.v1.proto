@@ -1,5 +1,5 @@
 syntax = "proto3";
-package ownable;
+package splits.queries.ownable;
 
 import "gogoproto/gogo.proto";
 

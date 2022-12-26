@@ -1,5 +1,5 @@
 syntax = "proto3";
-package classification;
+package classifications.queries.classification;
 
 import "gogoproto/gogo.proto";
 import "modules/classifications/internal/mappable/mappable.v1.proto";

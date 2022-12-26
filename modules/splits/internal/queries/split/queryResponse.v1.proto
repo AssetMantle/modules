@@ -1,5 +1,5 @@
 syntax = "proto3";
-package split;
+package splits.queries.split;
 
 import "gogoproto/gogo.proto";
 import "modules/splits/internal/mappable/mappable.v1.proto";

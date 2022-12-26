@@ -1,5 +1,5 @@
 syntax = "proto3";
-package split;
+package splits.queries.split;
 
 import "schema/ids/base/splitID.v1.proto";
 

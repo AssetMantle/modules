@@ -4,20 +4,25 @@
 package meta
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
+	"context"
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type queryKeeper struct {
 	mapper helpers.Mapper
 }
 
+func (queryKeeper queryKeeper) Meta(ctx context.Context, request *QueryRequest) (*QueryResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 var _ helpers.QueryKeeper = (*queryKeeper)(nil)
 
 func (queryKeeper queryKeeper) Enquire(context sdkTypes.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
-	return newQueryResponse(queryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(queryRequestFromInterface(queryRequest).DataId)), nil)
+	return newQueryResponse(queryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(queryRequestFromInterface(queryRequest).DataID)), nil)
 }
 
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

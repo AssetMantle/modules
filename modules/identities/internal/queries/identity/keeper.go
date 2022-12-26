@@ -4,6 +4,7 @@
 package identity
 
 import (
+	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
@@ -12,6 +13,11 @@ import (
 
 type queryKeeper struct {
 	mapper helpers.Mapper
+}
+
+func (queryKeeper queryKeeper) Identity(ctx context.Context, request *QueryRequest) (*QueryResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.QueryKeeper = (*queryKeeper)(nil)
