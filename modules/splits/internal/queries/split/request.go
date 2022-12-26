@@ -71,5 +71,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 func newQueryRequest(splitID ids.SplitID) helpers.QueryRequest {
-	return &QueryRequest{SplitId: splitID.(*baseIDs.SplitID)}
+	return &QueryRequest{SplitID: splitID.(*baseIDs.SplitID)}
 }

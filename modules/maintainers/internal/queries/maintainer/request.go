@@ -76,5 +76,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 }
 
 func newQueryRequest(maintainerID ids.MaintainerID) helpers.QueryRequest {
-	return &QueryRequest{MaintainerId: maintainerID.(*baseIDs.MaintainerID)}
+	return &QueryRequest{MaintainerID: maintainerID.(*baseIDs.MaintainerID)}
 }
