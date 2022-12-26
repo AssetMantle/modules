@@ -4,6 +4,7 @@
 package mutate
 
 import (
+	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
@@ -24,6 +25,11 @@ type transactionKeeper struct {
 	authenticateAuxiliary helpers.Auxiliary
 	maintainAuxiliary     helpers.Auxiliary
 	memberAuxiliary       helpers.Auxiliary
+}
+
+func (transactionKeeper transactionKeeper) Mutate(ctx context.Context, message *Message) (*TransactionResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)

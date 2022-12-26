@@ -4,6 +4,7 @@
 package cancel
 
 import (
+	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
@@ -23,6 +24,11 @@ type transactionKeeper struct {
 	supplementAuxiliary   helpers.Auxiliary
 	transferAuxiliary     helpers.Auxiliary
 	authenticateAuxiliary helpers.Auxiliary
+}
+
+func (transactionKeeper transactionKeeper) Cancel(ctx context.Context, message *Message) (*TransactionResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)

@@ -4,6 +4,7 @@
 package quash
 
 import (
+	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
@@ -20,6 +21,11 @@ type transactionKeeper struct {
 	mapper                helpers.Mapper
 	supplementAuxiliary   helpers.Auxiliary
 	authenticateAuxiliary helpers.Auxiliary
+}
+
+func (transactionKeeper transactionKeeper) Quash(ctx context.Context, message *Message) (*TransactionResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)

@@ -4,6 +4,7 @@
 package reveal
 
 import (
+	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
@@ -16,6 +17,11 @@ import (
 type transactionKeeper struct {
 	mapper     helpers.Mapper
 	parameters helpers.Parameters
+}
+
+func (transactionKeeper transactionKeeper) Reveal(ctx context.Context, message *Message) (*TransactionResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)

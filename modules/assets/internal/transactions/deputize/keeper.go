@@ -4,6 +4,7 @@
 package deputize
 
 import (
+	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
@@ -17,6 +18,11 @@ type transactionKeeper struct {
 	parameters            helpers.Parameters
 	authenticateAuxiliary helpers.Auxiliary
 	deputizeAuxiliary     helpers.Auxiliary
+}
+
+func (transactionKeeper transactionKeeper) Deputize(ctx context.Context, message *Message) (*TransactionResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)

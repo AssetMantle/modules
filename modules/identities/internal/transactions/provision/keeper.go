@@ -4,6 +4,7 @@
 package provision
 
 import (
+	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
@@ -18,6 +19,11 @@ import (
 type transactionKeeper struct {
 	mapper              helpers.Mapper
 	supplementAuxiliary helpers.Auxiliary
+}
+
+func (transactionKeeper transactionKeeper) Provision(ctx context.Context, message *Message) (*TransactionResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)

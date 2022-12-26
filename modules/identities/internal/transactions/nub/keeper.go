@@ -4,6 +4,7 @@
 package nub
 
 import (
+	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
@@ -24,6 +25,11 @@ import (
 type transactionKeeper struct {
 	mapper          helpers.Mapper
 	defineAuxiliary helpers.Auxiliary
+}
+
+func (transactionKeeper transactionKeeper) Nub(ctx context.Context, message *Message) (*TransactionResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)

@@ -28,9 +28,8 @@ var Query = baseHelpers.NewQuery(
 	func(server grpc.Server, keeper helpers.QueryKeeper) {
 		RegisterQueryServer(server, keeper.(*queryKeeper))
 	},
-	func(ctx client.Context, mux *runtime.ServeMux) error {
-		err := RegisterQueryHandlerClient(context.Background(), mux, NewQueryClient(ctx))
-		return err
+	func(clientCtx client.Context, mux *runtime.ServeMux) error {
+		return RegisterQueryHandlerClient(context.Background(), mux, NewQueryClient(clientCtx))
 	},
 
 	constants.ClassificationID,

@@ -4,6 +4,7 @@
 package burn
 
 import (
+	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
@@ -29,7 +30,13 @@ type transactionKeeper struct {
 	authenticateAuxiliary helpers.Auxiliary
 }
 
+func (transactionKeeper transactionKeeper) Burn(ctx context.Context, message *Message) (*TransactionResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
+var _ TransactionServer = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, msg sdkTypes.Msg) helpers.TransactionResponse {
 	message := messageFromInterface(msg)

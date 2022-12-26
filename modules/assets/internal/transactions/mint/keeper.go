@@ -4,6 +4,7 @@
 package mint
 
 import (
+	"context"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
@@ -30,6 +31,11 @@ type transactionKeeper struct {
 	mintAuxiliary              helpers.Auxiliary
 	authenticateAuxiliary      helpers.Auxiliary
 	maintainersVerifyAuxiliary helpers.Auxiliary
+}
+
+func (transactionKeeper transactionKeeper) Mint(ctx context.Context, message *Message) (*TransactionResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
