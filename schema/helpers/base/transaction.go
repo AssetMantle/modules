@@ -233,7 +233,6 @@ func (transaction transaction) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.Le
 }
 func (transaction transaction) RegisterInterfaces(interfaceRegistry codecTypes.InterfaceRegistry) {
 	transaction.messagePrototype().RegisterInterface(interfaceRegistry)
-	transaction.requestPrototype().RegisterInterface(interfaceRegistry)
 }
 func (transaction transaction) RegisterService(configurator sdkTypesModule.Configurator) {
 	if transaction.keeper == nil {
