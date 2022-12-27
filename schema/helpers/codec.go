@@ -7,10 +7,11 @@ import (
 )
 
 type Codec interface {
-	types.InterfaceRegistry
-	codec.Codec
 	client.TxConfig
-	GetLegacyAmino() *codec.LegacyAmino
+	codec.Codec
+
 	GetProtoCodec() *codec.ProtoCodec
-	InitializeAndSeal() Codec
+	GetLegacyAmino() *codec.LegacyAmino
+	InterfaceRegistry() types.InterfaceRegistry
+	Initialize() Codec
 }
