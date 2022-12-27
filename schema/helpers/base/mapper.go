@@ -68,7 +68,7 @@ func (mapper mapper) Iterate(context sdkTypes.Context, partialKey helpers.Key, a
 	}(kvStorePrefixIterator)
 
 	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {
-		var mappable helpers.Mappable
+		mappable := mapper.mappablePrototype()
 		CodecPrototype().MustUnmarshal(kvStorePrefixIterator.Value(), mappable)
 		if accumulator(mappable) {
 			break
@@ -87,8 +87,7 @@ func (mapper mapper) ReverseIterate(context sdkTypes.Context, partialKey helpers
 	}(kvStoreReversePrefixIterator)
 
 	for ; kvStoreReversePrefixIterator.Valid(); kvStoreReversePrefixIterator.Next() {
-		var mappable helpers.Mappable
-
+		mappable := mapper.mappablePrototype()
 		CodecPrototype().MustUnmarshal(kvStoreReversePrefixIterator.Value(), mappable)
 
 		if accumulator(mappable) {
@@ -98,12 +97,10 @@ func (mapper mapper) ReverseIterate(context sdkTypes.Context, partialKey helpers
 }
 func (mapper mapper) StoreDecoder(kvA kv.Pair, kvB kv.Pair) string {
 	if bytes.Equal(kvA.Key[:1], mapper.keyPrototype().GenerateStoreKeyBytes()) {
-		var mappableA helpers.Mappable
-
+		mappableA := mapper.mappablePrototype()
 		CodecPrototype().MustUnmarshal(kvA.Value, mappableA)
 
-		var mappableB helpers.Mappable
-
+		mappableB := mapper.mappablePrototype()
 		CodecPrototype().MustUnmarshal(kvB.Value, mappableB)
 
 		return fmt.Sprintf("%v\n%v", mappableA, mappableB)
