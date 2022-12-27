@@ -25,10 +25,10 @@ var Transaction = baseHelpers.NewTransaction(
 	keeperPrototype,
 
 	func(server grpc.Server, keeper helpers.TransactionKeeper) {
-		RegisterTransactionServer(server, keeper.(transactionKeeper))
+		RegisterServiceServer(server, keeper.(transactionKeeper))
 	},
 	func(clientCtx client.Context, mux *runtime.ServeMux) error {
-		return RegisterTransactionHandlerClient(context.Background(), mux, NewTransactionClient(clientCtx))
+		return RegisterServiceHandlerClient(context.Background(), mux, NewServiceClient(clientCtx))
 	},
 
 	constants.IdentityID,
