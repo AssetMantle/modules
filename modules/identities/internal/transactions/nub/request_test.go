@@ -23,6 +23,10 @@ import (
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
+var (
+	fromAddress = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
+)
+
 func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, sdkTypes.AccAddress, rest.BaseReq) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
@@ -31,7 +35,6 @@ func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICom
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.NubID})
 
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
@@ -41,21 +44,20 @@ func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICom
 }
 
 func Test_newTransactionRequest(t *testing.T) {
-	_, _, _, _, _, testBaseReq := CreateTestInputForRequest(t)
 	type args struct {
-		baseReq rest.BaseReq
-		nubID   string
+		From  string
+		nubID string
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseReq, "nubID"}, TransactionRequest{testBaseReq, "nubID"}},
+		{"+ve", args{fromAddress, "nubID"}, &TransactionRequest{fromAddress, "nubID"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.nubID); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.From, tt.args.nubID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -67,7 +69,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", TransactionRequest{}},
+		{"+ve", &TransactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -79,11 +81,11 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	_, cliCommand, context, _, _, testBaseReq := CreateTestInputForRequest(t)
+	_, cliCommand, context, _, _, _ := CreateTestInputForRequest(t)
 
 	type fields struct {
-		BaseReq rest.BaseReq
-		NubID   string
+		From  string
+		NubID string
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -96,13 +98,13 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, args{cliCommand, context}, TransactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.NubID)}, false},
+		{"+ve", fields{fromAddress, "nubID"}, args{cliCommand, context}, &TransactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.NubID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				NubID:   tt.fields.NubID,
+				From:  tt.fields.From,
+				NubID: tt.fields.NubID,
 			}
 			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -117,11 +119,11 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
-	_, _, _, _, fromAccAddress, testBaseReq := CreateTestInputForRequest(t)
+	_, _, _, _, fromAccAddress, _ := CreateTestInputForRequest(t)
 
 	type fields struct {
-		BaseReq rest.BaseReq
-		NubID   string
+		From  string
+		NubID string
 	}
 	type args struct {
 		rawMessage json.RawMessage
@@ -133,13 +135,13 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, args{sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(Message{fromAccAddress, baseIds.NewStringID("nubID")}))}, TransactionRequest{testBaseReq, "nubID"}, false},
+		{"+ve", fields{fromAddress, "nubID"}, args{sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(Message{fromAddress, baseIds.NewStringID("nubID")}))}, &TransactionRequest{fromAddress, "nubID"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				NubID:   tt.fields.NubID,
+				From:  tt.fields.From,
+				NubID: tt.fields.NubID,
 			}
 			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
 			if (err != nil) != tt.wantErr {
@@ -154,24 +156,23 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 }
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
-	_, _, _, _, _, testBaseReq := CreateTestInputForRequest(t)
 
 	type fields struct {
-		BaseReq rest.BaseReq
-		NubID   string
+		From  string
+		NubID string
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   rest.BaseReq
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, testBaseReq},
+		{"+ve", fields{fromAddress, "nubID"}, testBaseReq},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				NubID:   tt.fields.NubID,
+				From:  tt.fields.From,
+				NubID: tt.fields.NubID,
 			}
 			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
@@ -181,11 +182,11 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 }
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
-	_, _, _, _, fromAccAddress, testBaseReq := CreateTestInputForRequest(t)
+	_, _, _, _, fromAccAddress, _ := CreateTestInputForRequest(t)
 
 	type fields struct {
-		BaseReq rest.BaseReq
-		NubID   string
+		From  string
+		NubID string
 	}
 	tests := []struct {
 		name    string
@@ -193,13 +194,13 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, Message{fromAccAddress, baseIds.NewStringID("nubID")}, false},
+		{"+ve", fields{fromAddress, "nubID"}, Message{fromAccAddress, baseIds.NewStringID("nubID")}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				NubID:   tt.fields.NubID,
+				From:  tt.fields.From,
+				NubID: tt.fields.NubID,
 			}
 			got, err := transactionRequest.MakeMsg()
 			if (err != nil) != tt.wantErr {
@@ -214,11 +215,11 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 }
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
-	_, _, _, _, _, testBaseReq := CreateTestInputForRequest(t)
+	_, _, _, _, _, _ := CreateTestInputForRequest(t)
 
 	type fields struct {
-		BaseReq rest.BaseReq
-		NubID   string
+		From  string
+		NubID string
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -228,13 +229,13 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAddress, "nubID"}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tr := TransactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				NubID:   tt.fields.NubID,
+				From:  tt.fields.From,
+				NubID: tt.fields.NubID,
 			}
 			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -242,24 +243,23 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 }
 
 func Test_transactionRequest_Validate(t *testing.T) {
-	_, _, _, _, _, testBaseReq := CreateTestInputForRequest(t)
 
 	type fields struct {
-		BaseReq rest.BaseReq
-		NubID   string
+		From  string
+		NubID string
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, false},
+		{"+ve", fields{fromAddress, "nubID"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				NubID:   tt.fields.NubID,
+				From:  tt.fields.From,
+				NubID: tt.fields.NubID,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)

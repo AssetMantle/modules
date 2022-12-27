@@ -51,11 +51,11 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}, TransactionRequest{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}},
+		{"+ve", args{fromAddress, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}, &TransactionRequest{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.takerOwnableSplit, tt.args.orderID); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.From, tt.args.fromID, tt.args.takerOwnableSplit, tt.args.orderID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -67,7 +67,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", TransactionRequest{}},
+		{"+ve", &TransactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -100,7 +100,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}, args{cliCommand, context}, TransactionRequest{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}, false},
+		{"+ve", fields{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}, args{cliCommand, context}, &TransactionRequest{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -123,7 +123,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
-	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()))
+	jsonMessage, err := json.Marshal(newTransactionRequest(fromAddress, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()))
 	require.NoError(t, err)
 	type fields struct {
 		BaseReq           rest.BaseReq
@@ -141,7 +141,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}, args{jsonMessage}, newTransactionRequest(testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()), false},
+		{"+ve", fields{testBaseRequest, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()}, args{jsonMessage}, newTransactionRequest(fromAddress, testFromID.String(), takerOwnableSplit.String(), testOrderID.String()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -28,6 +28,10 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
+var (
+	fromAddress = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
+)
+
 func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, string, lists.PropertyList, lists.PropertyList, string, sdkTypes.AccAddress, rest.BaseReq) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
@@ -44,7 +48,6 @@ func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, clie
 	mutableProperties, err := utilities.ReadMetaPropertyList(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
@@ -54,9 +57,9 @@ func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, clie
 }
 
 func Test_newTransactionRequest(t *testing.T) {
-	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, testBaseReq := createTestInput(t)
+	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _ := createTestInput(t)
 	type args struct {
-		baseReq               rest.BaseReq
+		From                  string
 		fromID                string
 		identityID            string
 		mutableMetaProperties string
@@ -67,12 +70,12 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, TransactionRequest{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}},
-		{"-ve with nil", args{}, TransactionRequest{}},
+		{"+ve", args{fromAddress, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, &TransactionRequest{fromAddress, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}},
+		{"-ve with nil", args{}, &TransactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.identityID, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.From, tt.args.fromID, tt.args.identityID, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -84,7 +87,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", TransactionRequest{}},
+		{"+ve", &TransactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -96,9 +99,9 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	_, cliCommand, context, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, testBaseReq := createTestInput(t)
+	_, cliCommand, context, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _ := createTestInput(t)
 	type fields struct {
-		BaseReq               rest.BaseReq
+		From                  string
 		FromID                string
 		IdentityID            string
 		MutableMetaProperties string
@@ -115,12 +118,12 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand: cliCommand, context: context}, TransactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.IdentityID), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
+		{"+ve", fields{fromAddress, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand: cliCommand, context: context}, &TransactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.IdentityID), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq:               tt.fields.BaseReq,
+				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				IdentityID:            tt.fields.IdentityID,
 				MutableMetaProperties: tt.fields.MutableMetaProperties,
@@ -139,11 +142,11 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
-	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, testBaseReq := createTestInput(t)
-	jsonMessage, _ := json.Marshal(transactionRequest{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString})
+	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _ := createTestInput(t)
+	jsonMessage, _ := json.Marshal(TransactionRequest{fromAddress, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString})
 
 	type fields struct {
-		BaseReq               rest.BaseReq
+		From                  string
 		FromID                string
 		IdentityID            string
 		MutableMetaProperties string
@@ -159,12 +162,12 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, args{jsonMessage}, TransactionRequest{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, false},
+		{"+ve", fields{fromAddress, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, args{jsonMessage}, &TransactionRequest{fromAddress, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq:               tt.fields.BaseReq,
+				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				IdentityID:            tt.fields.IdentityID,
 				MutableMetaProperties: tt.fields.MutableMetaProperties,
@@ -186,7 +189,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	_, _, context, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, testBaseReq := createTestInput(t)
 
 	type fields struct {
-		BaseReq               rest.BaseReq
+		From                  string
 		FromID                string
 		IdentityID            string
 		MutableMetaProperties string
@@ -198,12 +201,12 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		want   rest.BaseReq
 	}{
 		{"+ve", fields{}, rest.BaseReq{From: context.GetFromAddress().String(), ChainID: context.ChainID, Simulate: context.Simulate}},
-		{"+ve", fields{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, testBaseReq},
+		{"+ve", fields{fromAddress, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, testBaseReq},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq:               tt.fields.BaseReq,
+				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				IdentityID:            tt.fields.IdentityID,
 				MutableMetaProperties: tt.fields.MutableMetaProperties,
@@ -217,13 +220,13 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 }
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
-	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, mutableMetaProperties, mutableProperties, _, fromAccAddress, testBaseReq := createTestInput(t)
+	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, mutableMetaProperties, mutableProperties, _, fromAccAddress, _ := createTestInput(t)
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	type fields struct {
-		BaseReq               rest.BaseReq
+		From                  string
 		FromID                string
 		IdentityID            string
 		MutableMetaProperties string
@@ -235,12 +238,12 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testFromID.String(), testFromID.String(), mutableMetaPropertiesString, mutablePropertiesString}, newMessage(fromAccAddress, testFromID, testFromID, mutableMetaProperties, mutableProperties.ScrubData()), false},
+		{"+ve", fields{fromAddress, testFromID.String(), testFromID.String(), mutableMetaPropertiesString, mutablePropertiesString}, newMessage(fromAccAddress, testFromID, testFromID, mutableMetaProperties, mutableProperties.ScrubData()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq:               tt.fields.BaseReq,
+				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				IdentityID:            tt.fields.IdentityID,
 				MutableMetaProperties: tt.fields.MutableMetaProperties,
@@ -259,10 +262,10 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 }
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
-	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, testBaseReq := createTestInput(t)
+	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _ := createTestInput(t)
 
 	type fields struct {
-		BaseReq               rest.BaseReq
+		From                  string
 		FromID                string
 		IdentityID            string
 		MutableMetaProperties string
@@ -276,12 +279,12 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAddress, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tr := TransactionRequest{
-				BaseReq:               tt.fields.BaseReq,
+				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				IdentityID:            tt.fields.IdentityID,
 				MutableMetaProperties: tt.fields.MutableMetaProperties,
@@ -293,10 +296,10 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 }
 
 func Test_transactionRequest_Validate(t *testing.T) {
-	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, testBaseReq := createTestInput(t)
+	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _ := createTestInput(t)
 
 	type fields struct {
-		BaseReq               rest.BaseReq
+		From                  string
 		FromID                string
 		IdentityID            string
 		MutableMetaProperties string
@@ -307,13 +310,13 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, false},
+		{"+ve", fields{fromAddress, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, false},
 		{"+ve with nil", fields{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq:               tt.fields.BaseReq,
+				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				IdentityID:            tt.fields.IdentityID,
 				MutableMetaProperties: tt.fields.MutableMetaProperties,

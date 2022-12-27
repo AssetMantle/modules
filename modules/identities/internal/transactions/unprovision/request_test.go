@@ -61,12 +61,12 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve wit nil", args{}, TransactionRequest{}},
-		{"+ve", args{testBaseReq, toAddress, testIdentityID.String()}, TransactionRequest{testBaseReq, toAddress, testIdentityID.String()}},
+		{"+ve wit nil", args{}, &TransactionRequest{}},
+		{"+ve", args{fromAddress, toAddress, testIdentityID.String()}, &TransactionRequest{testBaseReq, toAddress, testIdentityID.String()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.to, tt.args.identityID); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.From, tt.args.to, tt.args.identityID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -78,7 +78,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", TransactionRequest{}},
+		{"+ve", &TransactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -113,7 +113,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.String()}, args{cliCommand, context}, TransactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.To), cliCommand.ReadString(constants.IdentityID)}, false},
+		{"+ve", fields{testBaseReq, toAddress, testIdentityID.String()}, args{cliCommand, context}, &TransactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.To), cliCommand.ReadString(constants.IdentityID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -151,7 +151,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.String()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"), toAccAddress, testIdentityID}))}, TransactionRequest{testBaseReq, toAddress, testIdentityID.String()}, false},
+		{"+ve", fields{testBaseReq, toAddress, testIdentityID.String()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"), toAccAddress, testIdentityID}))}, &TransactionRequest{testBaseReq, toAddress, testIdentityID.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -37,14 +37,14 @@ func Test_Reveal_Request(t *testing.T) {
 	require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
-	testTransactionRequest := newTransactionRequest(testBaseReq, data)
+	testTransactionRequest := newTransactionRequest(fromAddress, data)
 
-	require.Equal(t, TransactionRequest{BaseReq: testBaseReq, Data: data}, testTransactionRequest)
+	require.Equal(t, &TransactionRequest{From: fromAddress, Data: data}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
 	requestFromCLI, err := TransactionRequest{}.FromCLI(cliCommand, context)
 	require.Equal(t, nil, err)
-	require.Equal(t, TransactionRequest{BaseReq: rest.BaseReq{From: context.GetFromAddress().String(), ChainID: context.ChainID, Simulate: context.Simulate}, Data: ""}, requestFromCLI)
+	require.Equal(t, &TransactionRequest{From: rest.BaseReq{From: context.GetFromAddress().String(), ChainID: context.ChainID, Simulate: context.Simulate}, Data: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
 	transactionRequestUnmarshalled, err := TransactionRequest{}.FromJSON(jsonMessage)
@@ -69,7 +69,7 @@ func Test_Reveal_Request(t *testing.T) {
 	require.NotNil(t, err)
 	require.Nil(t, msg2)
 
-	require.Equal(t, TransactionRequest{}, requestPrototype())
+	require.Equal(t, &TransactionRequest{}, requestPrototype())
 	require.NotPanics(t, func() {
 		requestPrototype().RegisterLegacyAminoCodec(codec.NewLegacyAmino())
 	})

@@ -46,11 +46,11 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}, TransactionRequest{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}},
+		{"+ve", args{fromAddress, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}, &TransactionRequest{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.assetID, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.From, tt.args.fromID, tt.args.assetID, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -62,7 +62,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", TransactionRequest{}},
+		{"+ve", &TransactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -97,7 +97,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, context}, TransactionRequest{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}, false},
+		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, context}, &TransactionRequest{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -138,7 +138,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties}))}, newTransactionRequest(testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString), false},
+		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties}))}, newTransactionRequest(fromAddress, fromID.String(), testAssetID.String(), mutableMetaPropertiesString, mutablePropertiesString), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

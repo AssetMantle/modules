@@ -24,9 +24,8 @@ func Test_newTransactionRequest(t *testing.T) {
 
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
 
-	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type args struct {
-		baseReq              rest.BaseReq
+		From                 string
 		fromID               string
 		toID                 string
 		classificationID     string
@@ -43,11 +42,11 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, TransactionRequest{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}},
+		{"+ve", args{fromAddress, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, &TransactionRequest{fromAddress, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.toID, tt.args.classificationID, tt.args.maintainedProperties, tt.args.CanMintAsset, tt.args.CanBurnAsset, tt.args.CanRenumerateAsset, tt.args.CanAddMaintainer, tt.args.CanRemoveMaintainer, tt.args.CanMutateMaintainer); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.From, tt.args.fromID, tt.args.toID, tt.args.classificationID, tt.args.maintainedProperties, tt.args.CanMintAsset, tt.args.CanBurnAsset, tt.args.CanRenumerateAsset, tt.args.CanAddMaintainer, tt.args.CanRemoveMaintainer, tt.args.CanMutateMaintainer); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -59,7 +58,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", TransactionRequest{}},
+		{"+ve", &TransactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -74,7 +73,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ToID, constants.ClassificationID, constants.MaintainedProperties, constants.CanMintAsset, constants.CanBurnAsset, constants.CanRenumerateAsset, constants.CanAddMaintainer, constants.CanRemoveMaintainer, constants.CanMutateMaintainer})
 
 	type fields struct {
-		BaseReq              rest.BaseReq
+		From                 string
 		FromID               string
 		ToID                 string
 		ClassificationID     string
@@ -97,12 +96,12 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{BaseReq: rest.BaseReq{From: context.GetFromAddress().String(), ChainID: context.ChainID, Simulate: context.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanMintAsset: false, CanBurnAsset: false, CanRenumerateAsset: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, args{cliCommand, context}, TransactionRequest{BaseReq: rest.BaseReq{From: context.GetFromAddress().String(), ChainID: context.ChainID, Simulate: context.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, false},
+		{"+ve", fields{From: rest.BaseReq{From: context.GetFromAddress().String(), ChainID: context.ChainID, Simulate: context.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanMintAsset: false, CanBurnAsset: false, CanRenumerateAsset: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, args{cliCommand, context}, &TransactionRequest{From: rest.BaseReq{From: context.GetFromAddress().String(), ChainID: context.ChainID, Simulate: context.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq:              tt.fields.BaseReq,
+				From:                 tt.fields.From,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
@@ -133,9 +132,9 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
-	jsonMessage, _ := json.Marshal(newTransactionRequest(testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false))
+	jsonMessage, _ := json.Marshal(newTransactionRequest(fromAddress, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false))
 	type fields struct {
-		BaseReq              rest.BaseReq
+		From                 string
 		FromID               string
 		ToID                 string
 		ClassificationID     string
@@ -157,12 +156,12 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, args{jsonMessage}, TransactionRequest{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, false},
+		{"+ve", fields{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, args{jsonMessage}, &TransactionRequest{testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq:              tt.fields.BaseReq,
+				From:                 tt.fields.From,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
@@ -194,7 +193,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type fields struct {
-		BaseReq              rest.BaseReq
+		From                 string
 		FromID               string
 		ToID                 string
 		ClassificationID     string
@@ -216,7 +215,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq:              tt.fields.BaseReq,
+				From:                 tt.fields.From,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
@@ -241,7 +240,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 	testBaseReq := rest.BaseReq{From: "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c", ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type fields struct {
-		BaseReq              rest.BaseReq
+		From                 string
 		FromID               string
 		ToID                 string
 		ClassificationID     string
@@ -264,7 +263,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq:              tt.fields.BaseReq,
+				From:                 tt.fields.From,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
@@ -296,7 +295,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type fields struct {
-		BaseReq              rest.BaseReq
+		From                 string
 		FromID               string
 		ToID                 string
 		ClassificationID     string
@@ -321,7 +320,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tr := TransactionRequest{
-				BaseReq:              tt.fields.BaseReq,
+				From:                 tt.fields.From,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
@@ -346,7 +345,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type fields struct {
-		BaseReq              rest.BaseReq
+		From                 string
 		FromID               string
 		ToID                 string
 		ClassificationID     string
@@ -368,7 +367,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := TransactionRequest{
-				BaseReq:              tt.fields.BaseReq,
+				From:                 tt.fields.From,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,

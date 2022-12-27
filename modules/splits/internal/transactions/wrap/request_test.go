@@ -40,20 +40,20 @@ var (
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		baseReq rest.BaseReq
-		fromID  string
-		coins   string
+		From   string
+		fromID string
+		coins  string
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, fromID.String(), testRate.String()}, TransactionRequest{testBaseRequest, fromID.String(), testRate.String()}},
+		{"+ve", args{fromAddress, fromID.String(), testRate.String()}, &TransactionRequest{testBaseRequest, fromID.String(), testRate.String()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.coins); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.From, tt.args.fromID, tt.args.coins); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -65,7 +65,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", TransactionRequest{}},
+		{"+ve", &TransactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -81,9 +81,9 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	viper.Set(constants.FromID.GetName(), fromID.String())
 	viper.Set(constants.Coins.GetName(), testRate.String())
 	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
-		Coins   string
+		From   string
+		FromID string
+		Coins  string
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -96,7 +96,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, args{cliCommand, context}, TransactionRequest{testBaseRequest, fromID.String(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, args{cliCommand, context}, &TransactionRequest{testBaseRequest, fromID.String(), testRate.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -118,12 +118,12 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
-	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, fromID.String(), testRate.String()))
+	jsonMessage, err := json.Marshal(newTransactionRequest(fromAddress, fromID.String(), testRate.String()))
 	require.NoError(t, err)
 	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
-		Coins   string
+		From   string
+		FromID string
+		Coins  string
 	}
 	type args struct {
 		rawMessage json.RawMessage
@@ -135,7 +135,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, args{jsonMessage}, newTransactionRequest(testBaseRequest, fromID.String(), testRate.String()), false},
+		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, args{jsonMessage}, newTransactionRequest(fromAddress, fromID.String(), testRate.String()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -158,9 +158,9 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
-		Coins   string
+		From   string
+		FromID string
+		Coins  string
 	}
 	tests := []struct {
 		name   string
@@ -185,9 +185,9 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
-		Coins   string
+		From   string
+		FromID string
+		Coins  string
 	}
 	tests := []struct {
 		name    string
@@ -218,9 +218,9 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
-		Coins   string
+		From   string
+		FromID string
+		Coins  string
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -246,9 +246,9 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
-		Coins   string
+		From   string
+		FromID string
+		Coins  string
 	}
 	tests := []struct {
 		name    string

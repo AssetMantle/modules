@@ -27,7 +27,7 @@ var (
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		baseReq rest.BaseReq
+		From    string
 		fromID  string
 		assetID string
 	}
@@ -36,11 +36,11 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, fromID.String(), testAssetID.String()}, TransactionRequest{testBaseRequest, fromID.String(), testAssetID.String()}},
+		{"+ve", args{fromAddress, fromID.String(), testAssetID.String()}, &TransactionRequest{testBaseRequest, fromID.String(), testAssetID.String()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.assetID); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.From, tt.args.fromID, tt.args.assetID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -52,7 +52,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", TransactionRequest{}},
+		{"+ve", &TransactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -68,7 +68,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	viper.Set(constants.AssetID.GetName(), testAssetID.String())
 	viper.Set(constants.FromID.GetName(), fromID.String())
 	type fields struct {
-		BaseReq rest.BaseReq
+		From    string
 		FromID  string
 		AssetID string
 	}
@@ -83,7 +83,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{BaseReq: testBaseRequest, FromID: fromID.String(), AssetID: testAssetID.String()}, args{cliCommand, context}, newTransactionRequest(testBaseRequest, fromID.String(), testAssetID.String()), false},
+		{"+ve", fields{From: fromAddress, FromID: fromID.String(), AssetID: testAssetID.String()}, args{cliCommand, context}, newTransactionRequest(fromAddress, fromID.String(), testAssetID.String()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -106,7 +106,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
+		From    string
 		FromID  string
 		AssetID string
 	}
@@ -120,7 +120,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, fromID, testAssetID}))}, newTransactionRequest(testBaseRequest, fromID.String(), testAssetID.String()), false},
+		{"+ve", fields{testBaseRequest, fromID.String(), testAssetID.String()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, fromID, testAssetID}))}, newTransactionRequest(fromAddress, fromID.String(), testAssetID.String()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -143,7 +143,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
+		From    string
 		FromID  string
 		AssetID string
 	}
@@ -170,7 +170,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
+		From    string
 		FromID  string
 		AssetID string
 	}
@@ -203,7 +203,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
+		From    string
 		FromID  string
 		AssetID string
 	}
@@ -231,7 +231,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
+		From    string
 		FromID  string
 		AssetID string
 	}
