@@ -5,16 +5,17 @@ package meta
 
 import (
 	"errors"
-	"github.com/AssetMantle/modules/modules/metas/internal/common"
+
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
-//type queryResponse struct {
+// type queryResponse struct {
 //	Success bool               `json:"success"`
 //	Error   error              `json:"error" swaggertype:"string"`
 //	List    []helpers.Mappable `json:"list"`
-//}
+// }
 
 var _ helpers.QueryResponse = (*QueryResponse)(nil)
 
@@ -25,10 +26,10 @@ func (queryResponse *QueryResponse) GetError() error {
 	return errors.New(queryResponse.Error)
 }
 func (queryResponse *QueryResponse) Encode() ([]byte, error) {
-	return common.LegacyAmino.MarshalJSON(queryResponse)
+	return base.CodecPrototype().MarshalJSON(queryResponse)
 }
 func (queryResponse *QueryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
-	if err := common.LegacyAmino.UnmarshalJSON(bytes, &queryResponse); err != nil {
+	if err := base.CodecPrototype().UnmarshalJSON(bytes, queryResponse); err != nil {
 		return nil, err
 	}
 
