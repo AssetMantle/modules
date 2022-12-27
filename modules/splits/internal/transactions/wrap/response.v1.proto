@@ -1,0 +1,4 @@
+syntax = "proto3";
+package splits.transactions.wrap;
+
+message Response {}
