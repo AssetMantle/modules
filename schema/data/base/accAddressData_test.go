@@ -4,7 +4,6 @@
 package base
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/types"
@@ -33,40 +32,13 @@ func TestNewAccAddressData(t *testing.T) {
 		args args
 		want data.Data
 	}{
-		{"+ve", args{_fromAddress}, accAddressData{_fromAddress}},
-		{"-ve with empty string", args{_fromAddress1}, accAddressData{_fromAddress1}},
-		{"-ve", args{nil}, accAddressData{}},
+		{"+ve", args{_fromAddress}, &AccAddressData{_fromAddress}},
+		{"-ve with empty string", args{_fromAddress1}, &AccAddressData{_fromAddress1}},
+		{"-ve", args{nil}, &AccAddressData{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equalf(t, tt.want, NewAccAddressData(tt.args.value), "NewAccAddressData(%v)", tt.args.value)
-		})
-	}
-}
-
-func Test_accAddressDataFromInterface(t *testing.T) {
-	fromAccAddress := sdkTypes.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c")
-	type args struct {
-		listable traits.Listable
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    accAddressData
-		wantErr assert.ErrorAssertionFunc
-	}{
-		{"-ve nil", args{nil}, accAddressData{}, assert.Error},
-		{"-ve empty String", args{accAddressData{}}, accAddressData{}, assert.NoError},
-		{"-ve wrong Address", args{stringData{}}, accAddressData{}, assert.Error},
-		{"+ve", args{accAddressData{fromAccAddress}}, accAddressData{fromAccAddress}, assert.NoError},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := accAddressDataFromInterface(tt.args.listable)
-			if !tt.wantErr(t, err, fmt.Sprintf("accAddressDataFromInterface(%v)", tt.args.listable)) {
-				return
-			}
-			assert.Equalf(t, tt.want, got, "accAddressDataFromInterface(%v)", tt.args.listable)
 		})
 	}
 }
@@ -85,12 +57,12 @@ func Test_accAddressData_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		{"-ve empty String", fields{fromAccAddress}, args{accAddressData{}}, 1},
-		{"+ve", fields{fromAccAddress}, args{accAddressData{fromAccAddress}}, 0},
+		{"-ve empty String", fields{fromAccAddress}, args{&AccAddressData{}}, 1},
+		{"+ve", fields{fromAccAddress}, args{&AccAddressData{fromAccAddress}}, 0},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			accAddressData := accAddressData{
+			accAddressData := AccAddressData{
 				Value: tt.fields.Value,
 			}
 			assert.Equalf(t, tt.want, accAddressData.Compare(tt.args.listable), "Compare(%v)", tt.args.listable)
@@ -109,11 +81,11 @@ func Test_accAddressData_GenerateHashID(t *testing.T) {
 		want   ids.ID
 	}{
 		{"-ve empty String", fields{}, baseIDs.GenerateHashID()},
-		{"+ve", fields{fromAccAddress}, baseIDs.GenerateHashID(accAddressData{fromAccAddress}.Bytes())},
+		{"+ve", fields{fromAccAddress}, baseIDs.GenerateHashID(AccAddressData{fromAccAddress}.Bytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			accAddressData := accAddressData{
+			accAddressData := AccAddressData{
 				Value: tt.fields.Value,
 			}
 			assert.Equalf(t, tt.want, accAddressData.GenerateHashID(), "GenerateHashID()")
@@ -131,12 +103,12 @@ func Test_accAddressData_Get(t *testing.T) {
 		fields fields
 		want   types.AccAddress
 	}{
-		{"-ve empty String", fields{}, accAddressData{}.Value},
-		{"+ve", fields{fromAccAddress}, accAddressData{fromAccAddress}.Value},
+		{"-ve empty String", fields{}, AccAddressData{}.Value},
+		{"+ve", fields{fromAccAddress}, AccAddressData{fromAccAddress}.Value},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			accAddressData := accAddressData{
+			accAddressData := AccAddressData{
 				Value: tt.fields.Value,
 			}
 			assert.Equalf(t, tt.want, accAddressData.Get(), "Get()")
@@ -154,12 +126,12 @@ func Test_accAddressData_GetID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		{"+ve with nil", fields{}, baseIDs.GenerateDataID(accAddressData{})},
-		{"+ve", fields{fromAccAddress}, baseIDs.GenerateDataID(accAddressData{fromAccAddress})},
+		{"+ve with nil", fields{}, baseIDs.GenerateDataID(&AccAddressData{})},
+		{"+ve", fields{fromAccAddress}, baseIDs.GenerateDataID(&AccAddressData{fromAccAddress})},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			accAddressData := accAddressData{
+			accAddressData := AccAddressData{
 				Value: tt.fields.Value,
 			}
 			assert.Equalf(t, tt.want, accAddressData.GetID(), "GetID()")
@@ -182,7 +154,7 @@ func Test_accAddressData_GetType(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			accAddressData := accAddressData{
+			accAddressData := AccAddressData{
 				Value: tt.fields.Value,
 			}
 			assert.Equalf(t, tt.want, accAddressData.GetType(), "GetType()")
@@ -200,12 +172,12 @@ func Test_accAddressData_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve with nil", fields{}, accAddressData{}.Value.String()},
-		{"+ve", fields{fromAccAddress}, accAddressData{fromAccAddress}.Value.String()},
+		{"+ve with nil", fields{}, AccAddressData{}.Value.String()},
+		{"+ve", fields{fromAccAddress}, AccAddressData{fromAccAddress}.Value.String()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			accAddressData := accAddressData{
+			accAddressData := AccAddressData{
 				Value: tt.fields.Value,
 			}
 			assert.Equalf(t, tt.want, accAddressData.String(), "String()")
@@ -229,7 +201,7 @@ func Test_accAddressData_ZeroValue(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			accAddressData := accAddressData{
+			accAddressData := AccAddressData{
 				Value: tt.fields.Value,
 			}
 			assert.Equalf(t, tt.want, accAddressData.ZeroValue(), "ZeroValue()")
@@ -248,12 +220,12 @@ func Test_accAddressData_Bytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve with nil", fields{}, accAddressData{}.Value.Bytes()},
-		{"+ve", fields{_fromAddress}, accAddressData{_fromAddress}.Value.Bytes()},
+		{"+ve with nil", fields{}, AccAddressData{}.Value.Bytes()},
+		{"+ve", fields{_fromAddress}, AccAddressData{_fromAddress}.Value.Bytes()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			accAddressData := accAddressData{
+			accAddressData := AccAddressData{
 				Value: tt.fields.Value,
 			}
 			assert.Equalf(t, tt.want, accAddressData.Bytes(), "Bytes()")
