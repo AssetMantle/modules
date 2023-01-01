@@ -5,21 +5,26 @@ package base
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmKeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 	serverTypes "github.com/cosmos/cosmos-sdk/server/types"
-	"github.com/cosmos/cosmos-sdk/std"
+	"github.com/cosmos/cosmos-sdk/snapshots"
+	"github.com/cosmos/cosmos-sdk/store"
 	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -89,8 +94,10 @@ import (
 	ibcHost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 	ibcAnte "github.com/cosmos/ibc-go/v3/modules/core/ante"
 	ibcKeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
+	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	tendermintJSON "github.com/tendermint/tendermint/libs/json"
 	tendermintLog "github.com/tendermint/tendermint/libs/log"
@@ -118,7 +125,6 @@ import (
 	splitsMint "github.com/AssetMantle/modules/modules/splits/auxiliaries/mint"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
-	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/applications"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/helpers/base"
@@ -255,8 +261,8 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 			return false
 		})
 
-		store := context.KVStore(application.keys[stakingTypes.StoreKey])
-		kvStoreReversePrefixIterator := sdkTypes.KVStoreReversePrefixIterator(store, stakingTypes.ValidatorsKey)
+		kvStore := context.KVStore(application.keys[stakingTypes.StoreKey])
+		kvStoreReversePrefixIterator := sdkTypes.KVStoreReversePrefixIterator(kvStore, stakingTypes.ValidatorsKey)
 		counter := int16(0)
 
 		for ; kvStoreReversePrefixIterator.Valid(); kvStoreReversePrefixIterator.Next() {
@@ -332,11 +338,97 @@ func (application application) RegisterTxService(context client.Context) {
 func (application application) RegisterTendermintService(context client.Context) {
 	tmservice.RegisterTendermintService(application.BaseApp.GRPCQueryRouter(), context, context.InterfaceRegistry)
 }
-func (application application) Initialize(logger tendermintLog.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, appOptions serverTypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
+func (application application) AppCreator(logger tendermintLog.Logger, db tendermintDB.DB, writer io.Writer, appOptions serverTypes.AppOptions) serverTypes.Application {
+	var multiStorePersistentCache sdkTypes.MultiStorePersistentCache
+
+	if cast.ToBool(appOptions.Get(server.FlagInterBlockCache)) {
+		multiStorePersistentCache = store.NewCommitKVStoreCacheManager()
+	}
+
+	skipUpgradeHeights := make(map[int64]bool)
+	for _, h := range cast.ToIntSlice(appOptions.Get(server.FlagUnsafeSkipUpgrades)) {
+		skipUpgradeHeights[int64(h)] = true
+	}
+
+	pruningOpts, err := server.GetPruningOptionsFromFlags(appOptions)
+	if err != nil {
+		panic(err)
+	}
+
+	snapshotDir := filepath.Join(cast.ToString(appOptions.Get(flags.FlagHome)), "data", "snapshots")
+	snapshotDB, err := sdkTypes.NewLevelDB("metadata", snapshotDir)
+	if err != nil {
+		panic(err)
+	}
+	snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
+	if err != nil {
+		panic(err)
+	}
+
+	var wasmOpts []wasm.Option
+	if cast.ToBool(appOptions.Get("telemetry.enabled")) {
+		wasmOpts = append(wasmOpts, wasmKeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
+	}
+
+	return application.Initialize(
+		logger,
+		db,
+		writer,
+		true,
+		cast.ToUint(appOptions.Get(server.FlagInvCheckPeriod)),
+		skipUpgradeHeights,
+		cast.ToString(appOptions.Get(flags.FlagHome)),
+		appOptions,
+		baseapp.SetPruning(pruningOpts),
+		baseapp.SetMinGasPrices(cast.ToString(appOptions.Get(server.FlagMinGasPrices))),
+		baseapp.SetHaltHeight(cast.ToUint64(appOptions.Get(server.FlagHaltHeight))),
+		baseapp.SetHaltTime(cast.ToUint64(appOptions.Get(server.FlagHaltTime))),
+		baseapp.SetMinRetainBlocks(cast.ToUint64(appOptions.Get(server.FlagMinRetainBlocks))),
+		baseapp.SetInterBlockCache(multiStorePersistentCache),
+		baseapp.SetTrace(cast.ToBool(appOptions.Get(server.FlagTrace))),
+		baseapp.SetIndexEvents(cast.ToStringSlice(appOptions.Get(server.FlagIndexEvents))),
+		baseapp.SetSnapshotStore(snapshotStore),
+		baseapp.SetSnapshotInterval(cast.ToUint64(appOptions.Get(server.FlagStateSyncSnapshotInterval))),
+		baseapp.SetSnapshotKeepRecent(cast.ToUint32(appOptions.Get(server.FlagStateSyncSnapshotKeepRecent))))
+}
+func (application application) AppExporter(logger tendermintLog.Logger, db tendermintDB.DB, writer io.Writer, height int64, forZeroHeight bool, jailAllowedAddrs []string, appOptions serverTypes.AppOptions) (serverTypes.ExportedApp, error) {
+	home, ok := appOptions.Get(flags.FlagHome).(string)
+	if !ok || home == "" {
+		return serverTypes.ExportedApp{}, errors.New("application home is not set")
+	}
+
+	var loadLatest bool
+	if height == -1 {
+		loadLatest = true
+	}
+
+	Application := application.Initialize(
+		logger,
+		db,
+		writer,
+		loadLatest,
+		cast.ToUint(appOptions.Get(server.FlagInvCheckPeriod)),
+		map[int64]bool{},
+		home,
+		appOptions,
+	)
+
+	if height != -1 {
+		if err := application.LoadHeight(height); err != nil {
+			return serverTypes.ExportedApp{}, err
+		}
+	}
+
+	return Application.ExportApplicationStateAndValidators(forZeroHeight, jailAllowedAddrs)
+}
+func (application application) ModuleInitFlags(command *cobra.Command) {
+	crisis.AddModuleInitFlags(command)
+}
+func (application application) Initialize(logger tendermintLog.Logger, db tendermintDB.DB, writer io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, appOptions serverTypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
 	application.BaseApp = *baseapp.NewBaseApp(application.name, logger, db, application.GetCodec().TxDecoder(), baseAppOptions...)
-	application.BaseApp.SetCommitMultiStoreTracer(traceStore)
+	application.BaseApp.SetCommitMultiStoreTracer(writer)
 	application.BaseApp.SetVersion(version.Version)
-	application.BaseApp.SetInterfaceRegistry(application.GetCodec())
+	application.BaseApp.SetInterfaceRegistry(application.GetCodec().InterfaceRegistry())
 
 	application.keys = sdkTypes.NewKVStoreKeys(
 		authTypes.StoreKey,
@@ -608,8 +700,8 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		staking.NewAppModule(application.GetCodec(), application.stakingKeeper, AccountKeeper, BankKeeper),
 		upgrade.NewAppModule(UpgradeKeeper),
 		evidence.NewAppModule(EvidenceKeeper),
-		feeGrantModule.NewAppModule(application.GetCodec(), AccountKeeper, BankKeeper, FeeGrantKeeper, application.GetCodec()),
-		authzModule.NewAppModule(application.GetCodec(), AuthzKeeper, AccountKeeper, BankKeeper, application.GetCodec()),
+		feeGrantModule.NewAppModule(application.GetCodec(), AccountKeeper, BankKeeper, FeeGrantKeeper, application.GetCodec().InterfaceRegistry()),
+		authzModule.NewAppModule(application.GetCodec(), AuthzKeeper, AccountKeeper, BankKeeper, application.GetCodec().InterfaceRegistry()),
 		ibc.NewAppModule(IBCKeeper),
 		params.NewAppModule(ParamsKeeper),
 		ibcTransfer.NewAppModule(IBCTransferKeeper),
@@ -706,8 +798,8 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		auth.NewAppModule(application.GetCodec(), AccountKeeper, authSimulation.RandomGenesisAccounts),
 		bank.NewAppModule(application.GetCodec(), BankKeeper, AccountKeeper),
 		capability.NewAppModule(application.GetCodec(), *CapabilityKeeper),
-		feeGrantModule.NewAppModule(application.GetCodec(), AccountKeeper, BankKeeper, FeeGrantKeeper, application.GetCodec()),
-		authzModule.NewAppModule(application.GetCodec(), AuthzKeeper, AccountKeeper, BankKeeper, application.GetCodec()),
+		feeGrantModule.NewAppModule(application.GetCodec(), AccountKeeper, BankKeeper, FeeGrantKeeper, application.GetCodec().InterfaceRegistry()),
+		authzModule.NewAppModule(application.GetCodec(), AuthzKeeper, AccountKeeper, BankKeeper, application.GetCodec().InterfaceRegistry()),
 		gov.NewAppModule(application.GetCodec(), GovKeeper, AccountKeeper, BankKeeper),
 		mint.NewAppModule(application.GetCodec(), MintKeeper, AccountKeeper),
 		staking.NewAppModule(application.GetCodec(), application.stakingKeeper, AccountKeeper, BankKeeper),
@@ -822,21 +914,12 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 
 	return &application
 }
-func makeCodec(moduleBasicManager module.BasicManager) *codec.LegacyAmino {
-	Codec := codec.NewLegacyAmino()
-	moduleBasicManager.RegisterLegacyAminoCodec(Codec)
-	schema.RegisterLegacyAminoCodec(Codec)
-	std.RegisterLegacyAminoCodec(Codec)
-	Codec.Seal()
-
-	return Codec
-}
 
 func NewApplication(name string, moduleBasicManager module.BasicManager, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.Application {
 	return &application{
 		name:                        name,
 		moduleBasicManager:          moduleBasicManager,
-		codec:                       base.CodecPrototype().InitializeAndSeal(),
+		codec:                       base.CodecPrototype().Initialize(),
 		enabledWasmProposalTypeList: enabledWasmProposalTypeList,
 		moduleAccountPermissions:    moduleAccountPermissions,
 		tokenReceiveAllowedModules:  tokenReceiveAllowedModules,
