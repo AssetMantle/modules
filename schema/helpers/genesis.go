@@ -6,13 +6,11 @@ package helpers
 import (
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gogo/protobuf/proto"
 
 	"github.com/AssetMantle/modules/schema/parameters"
 )
 
 type Genesis interface {
-	proto.Message
 	Default() Genesis
 	Validate() error
 	Import(sdkTypes.Context, Mapper, Parameters)

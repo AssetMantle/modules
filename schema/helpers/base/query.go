@@ -4,19 +4,19 @@
 package base
 
 import (
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/gogo/protobuf/grpc"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/gogo/protobuf/grpc"
 	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -34,7 +34,7 @@ type query struct {
 
 var _ helpers.Query = (*query)(nil)
 
-func (query query) RegisterService(configurator sdkTypesModule.Configurator) {
+func (query query) RegisterService(configurator sdkModuleTypes.Configurator) {
 	if query.queryKeeper == nil {
 		panic(errorConstants.UninitializedUsage)
 	}

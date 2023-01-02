@@ -16,7 +16,7 @@ import (
 	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
-	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gogo/protobuf/grpc"
@@ -234,7 +234,7 @@ func (transaction transaction) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.Le
 func (transaction transaction) RegisterInterfaces(interfaceRegistry codecTypes.InterfaceRegistry) {
 	transaction.messagePrototype().RegisterInterface(interfaceRegistry)
 }
-func (transaction transaction) RegisterService(configurator sdkTypesModule.Configurator) {
+func (transaction transaction) RegisterService(configurator sdkModuleTypes.Configurator) {
 	if transaction.keeper == nil {
 		panic(errorConstants.UninitializedUsage)
 	}

@@ -7,14 +7,14 @@ import (
 	"encoding/json"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
 type Module interface {
-	sdkTypesModule.EndBlockAppModule
-	sdkTypesModule.BeginBlockAppModule
-	sdkTypesModule.AppModuleSimulation
+	sdkModuleTypes.EndBlockAppModule
+	sdkModuleTypes.BeginBlockAppModule
+	sdkModuleTypes.AppModuleSimulation
 
 	GetAuxiliary(string) Auxiliary
 
