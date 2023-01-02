@@ -15,8 +15,8 @@ type Parameter interface {
 	Validate() error
 
 	GetID() ids.ID
-	GetData() data.Data
 	GetValidator() func(interface{}) error
+	GetData() data.AnyData
 
 	Mutate(data.Data) Parameter
 }
