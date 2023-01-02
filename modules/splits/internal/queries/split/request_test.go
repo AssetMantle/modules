@@ -146,7 +146,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.SplitID})
-	viper.Set(constants.SplitID.GetName(), splitID.String())
+	viper.Set(constants.SplitID.GetName(), splitID.AsString())
 	type fields struct {
 		SplitID ids.SplitID
 	}
@@ -182,7 +182,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 
 func Test_queryRequest_FromMap(t *testing.T) {
 	vars := make(map[string]string)
-	vars[Query.GetName()] = splitID.String()
+	vars[Query.GetName()] = splitID.AsString()
 	type fields struct {
 		SplitID ids.SplitID
 	}

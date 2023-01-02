@@ -18,7 +18,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	if auxiliaryRequest.OwnerID.String() == "burnError" {
+	if auxiliaryRequest.OwnerID.AsString() == "burnError" {
 		return newAuxiliaryResponse(constants.MockError)
 	}
 

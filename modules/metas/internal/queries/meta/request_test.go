@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/common"
-	base2 "github.com/AssetMantle/modules/schema/data/base"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
@@ -21,7 +21,7 @@ import (
 )
 
 var (
-	testDataID = base.GenerateDataID(base2.NewStringData("Data"))
+	testDataID = base.GenerateDataID(baseData.NewStringData("Data"))
 )
 
 func Test_newQueryRequest(t *testing.T) {
@@ -139,7 +139,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.DataID})
-	viper.Set(constants.DataID.GetName(), testDataID.String())
+	viper.Set(constants.DataID.GetName(), testDataID.AsString())
 	type fields struct {
 		DataID ids.DataID
 	}
@@ -175,9 +175,9 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 
 func Test_queryRequest_FromMap(t *testing.T) {
 	vars := make(map[string]string)
-	vars[Query.GetName()] = testDataID.String()
+	vars[Query.GetName()] = testDataID.AsString()
 	vars1 := make(map[string]string)
-	vars1[Query.GetName()] = testDataID.String()
+	vars1[Query.GetName()] = testDataID.AsString()
 	type fields struct {
 		DataID ids.DataID
 	}

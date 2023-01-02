@@ -30,7 +30,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 			scrubbedPropertyList[i] = property
 		}
 
-		if property.GetID().String() == "scrubError" {
+		if property.GetID().AsString() == "scrubError" {
 			return newAuxiliaryResponse(nil, constants.MockError)
 		}
 	}
