@@ -18,20 +18,20 @@ import (
 var _ data.ListData = (*ListData)(nil)
 
 func (listData *ListData) Get() []data.AnyData {
-	anyDataList := make([]data.AnyData, listData.Size())
+	anyDataList := make([]data.AnyData, len(listData.Value.DataList))
 	for i, anyData := range listData.Value.DataList {
 		anyDataList[i] = anyData
 	}
 	return anyDataList
 }
-func (listData *ListData) Search(data data.AnyData) (int, bool) {
+func (listData *ListData) Search(data data.Data) (int, bool) {
 	return listData.Value.Search(data)
 }
-func (listData *ListData) Add(data ...data.AnyData) data.ListData {
+func (listData *ListData) Add(data ...data.Data) data.ListData {
 	listData.Value = listData.Value.Add(data...).(*AnyDataList)
 	return listData
 }
-func (listData *ListData) Remove(data ...data.AnyData) data.ListData {
+func (listData *ListData) Remove(data ...data.Data) data.ListData {
 	listData.Value = listData.Value.Remove(data...).(*AnyDataList)
 	return listData
 }
@@ -48,7 +48,7 @@ func (listData *ListData) Compare(listable traits.Listable) int {
 	return bytes.Compare(listData.Bytes(), compareListData.Bytes())
 }
 func (listData *ListData) Bytes() []byte {
-	bytesList := make([][]byte, listData.Value.Size())
+	bytesList := make([][]byte, len(listData.Value.DataList))
 
 	for i, datum := range listData.Value.GetList() {
 		if datum != nil {

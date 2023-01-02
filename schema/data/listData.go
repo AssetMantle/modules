@@ -6,7 +6,7 @@ package data
 type ListData interface {
 	Data
 	Get() []AnyData
-	Search(AnyData) (int, bool)
-	Add(...AnyData) ListData
-	Remove(...AnyData) ListData
+	Search(Data) (int, bool)
+	Add(...Data) ListData
+	Remove(...Data) ListData
 }

@@ -62,11 +62,11 @@ func (booleanData *BooleanData) ToAnyData() data.AnyData {
 	}
 }
 
-func BooleanDataPrototype() data.Data {
+func BooleanDataPrototype() data.BooleanData {
 	return &BooleanData{}
 }
 
-func NewBooleanData(value bool) data.Data {
+func NewBooleanData(value bool) data.BooleanData {
 	return &BooleanData{
 		Value: value,
 	}

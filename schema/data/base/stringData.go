@@ -49,11 +49,11 @@ func (stringData *StringData) ToAnyData() data.AnyData {
 	}
 }
 
-func StringDataPrototype() data.Data {
+func StringDataPrototype() data.StringData {
 	return NewStringData("")
 }
 
-func NewStringData(value string) data.Data {
+func NewStringData(value string) data.StringData {
 	return &StringData{
 		Value: value,
 	}

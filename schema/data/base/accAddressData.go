@@ -62,7 +62,7 @@ func GenerateAccAddressData(value sdkTypes.AccAddress) data.Data {
 	return NewAccAddressData(value)
 }
 
-func NewAccAddressData(value sdkTypes.AccAddress) data.AnyData {
+func NewAccAddressData(value sdkTypes.AccAddress) data.AccAddressData {
 	return &AccAddressData{
 		Value: value,
 	}
