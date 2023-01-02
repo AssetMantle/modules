@@ -167,8 +167,8 @@ func Test_dataID_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{NewStringID("B"), NewBooleanData(true).GenerateHashID()}, stringUtilities.JoinIDStrings(NewStringID("B").String(), NewBooleanData(true).GenerateHashID().String())},
-		{"+ve", fields{NewStringID("B"), NewBooleanData(false).GenerateHashID()}, stringUtilities.JoinIDStrings(NewStringID("B").String(), NewBooleanData(false).GenerateHashID().String())},
+		{"+ve", fields{NewStringID("B"), NewBooleanData(true).GenerateHashID()}, stringUtilities.JoinIDStrings(NewStringID("B").AsString(), NewBooleanData(true).GenerateHashID().String())},
+		{"+ve", fields{NewStringID("B"), NewBooleanData(false).GenerateHashID()}, stringUtilities.JoinIDStrings(NewStringID("B").AsString(), NewBooleanData(false).GenerateHashID().String())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -176,7 +176,7 @@ func Test_dataID_String(t *testing.T) {
 				Type:   tt.fields.Type,
 				HashID: tt.fields.HashID,
 			}
-			if got := dataID.String(); got != tt.want {
+			if got := dataID.AsString(); got != tt.want {
 				t.Errorf("String() = %v, want %v", got, tt.want)
 			}
 		})
@@ -264,10 +264,10 @@ func TestReadDataID(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		{"+ve", args{stringUtilities.JoinIDStrings(NewStringID("B").String(), NewBooleanData(true).GenerateHashID().String())}, GenerateDataID(NewBooleanData(true)), false},
+		{"+ve", args{stringUtilities.JoinIDStrings(NewStringID("B").AsString(), NewBooleanData(true).GenerateHashID().String())}, GenerateDataID(NewBooleanData(true)), false},
 		{"+ve with empty string", args{""}, PrototypeDataID(), false},
 		{"+ve with nil", args{}, PrototypeDataID(), false},
-		{"-ve", args{stringUtilities.JoinIDStrings(NewStringID("j").String(), "0")}, dataID{}, true},
+		{"-ve", args{stringUtilities.JoinIDStrings(NewStringID("j").AsString(), "0")}, dataID{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

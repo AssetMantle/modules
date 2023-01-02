@@ -13,6 +13,9 @@ import (
 
 var _ ids.MaintainerID = (*MaintainerID)(nil)
 
+func (maintainerID *MaintainerID) AsString() string {
+	return maintainerID.HashID.AsString()
+}
 func (maintainerID *MaintainerID) Bytes() []byte {
 	return maintainerID.HashID.IDBytes
 }

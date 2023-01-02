@@ -11,19 +11,17 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-// type stringID struct {
-//	IDString string `json:"idString"`
-// }
-
 var _ ids.StringID = (*StringID)(nil)
 
 func (stringID *StringID) IsStringID() {}
-
+func (stringID *StringID) AsString() string {
+	return stringID.IDString
+}
 func (stringID *StringID) Bytes() []byte {
 	return []byte(stringID.IDString)
 }
 func (stringID *StringID) Compare(listable traits.Listable) int {
-	return strings.Compare(stringID.String(), stringIDFromInterface(listable).String())
+	return strings.Compare(stringID.AsString(), stringIDFromInterface(listable).AsString())
 }
 func (stringID *StringID) ToAnyID() ids.AnyID {
 	return &AnyID{

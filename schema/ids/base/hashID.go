@@ -20,7 +20,7 @@ var _ ids.HashID = (*HashID)(nil)
 func (hashID *HashID) IsHashID() {}
 
 // TODO test if nil and empty result in ""
-func (hashID *HashID) EncodedString() string {
+func (hashID *HashID) AsString() string {
 	return base64.URLEncoding.EncodeToString(hashID.IDBytes)
 }
 func (hashID *HashID) Bytes() []byte {

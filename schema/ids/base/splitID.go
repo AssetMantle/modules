@@ -9,13 +9,16 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//type splitID struct {
+// type splitID struct {
 //	OwnerID   ids.IdentityID
 //	OwnableID ids.OwnableID
-//}
+// }
 
 var _ ids.SplitID = (*SplitID)(nil)
 
+func (splitID *SplitID) AsString() string {
+	return stringUtilities.JoinIDStrings(splitID.OwnerID.AsString(), splitID.OwnableID.AsString())
+}
 func (splitID *SplitID) GetOwnableID() ids.OwnableID {
 	return splitID.OwnableID
 }
@@ -26,7 +29,7 @@ func (splitID *SplitID) Bytes() []byte {
 		splitID.OwnableID.Bytes()...)
 }
 func (splitID *SplitID) SplitIDString() string {
-	return stringUtilities.JoinIDStrings(splitID.OwnerID.String(), splitID.OwnableID.String())
+	return stringUtilities.JoinIDStrings(splitID.OwnerID.AsString(), splitID.OwnableID.AsString())
 }
 func (splitID *SplitID) Compare(listable traits.Listable) int {
 	return bytes.Compare(splitID.Bytes(), splitIDFromInterface(listable).Bytes())

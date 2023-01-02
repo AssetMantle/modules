@@ -9,11 +9,11 @@ import (
 )
 
 // TODO rename to something more appropriate
-// type ownableID struct {
-//	ids.StringID
-// }
-
 var _ ids.OwnableID = (*OwnableID)(nil)
+
+func (ownableID *OwnableID) AsString() string {
+	return ownableID.StringID.AsString()
+}
 
 // TODO: Verify
 func (ownableID *OwnableID) Bytes() []byte {
