@@ -40,9 +40,9 @@ func (idList *IDList) Add(ids ...ids.ID) lists.IDList {
 	updatedList := idList
 	for _, listable := range ids {
 		if index, found := updatedList.Search(listable); !found {
-			updatedList.IDList = append(updatedList.IDList, listable.(*baseIDs.AnyID))
+			updatedList.IDList = append(updatedList.IDList, listable.ToAnyID().(*baseIDs.AnyID))
 			copy(updatedList.IDList[index+1:], updatedList.IDList[index:])
-			updatedList.IDList[index] = listable.(*baseIDs.AnyID)
+			updatedList.IDList[index] = listable.ToAnyID().(*baseIDs.AnyID)
 		}
 	}
 	return updatedList
@@ -61,7 +61,7 @@ func (idList *IDList) Remove(ids ...ids.ID) lists.IDList {
 func NewIDList(ids ...ids.ID) lists.IDList {
 	var idList []*baseIDs.AnyID
 	for _, dataVal := range ids {
-		idList = append(idList, dataVal.(*baseIDs.AnyID))
+		idList = append(idList, dataVal.ToAnyID().(*baseIDs.AnyID))
 	}
 	return &IDList{IDList: idList}
 }
