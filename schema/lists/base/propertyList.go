@@ -1,11 +1,12 @@
 package base
 
 import (
+	"sort"
+
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/base"
-	"sort"
 )
 
 var _ lists.PropertyList = (*PropertyList)(nil)
@@ -49,9 +50,9 @@ func (propertyList *PropertyList) Add(properties ...properties.Property) lists.P
 	updatedList := propertyList
 	for _, listable := range properties {
 		if index, found := updatedList.Search(listable); !found {
-			updatedList.PropertyList = append(updatedList.PropertyList, listable.(*base.AnyProperty))
+			updatedList.PropertyList = append(updatedList.PropertyList, listable.ToAnyProperty().(*base.AnyProperty))
 			copy(updatedList.PropertyList[index+1:], updatedList.PropertyList[index:])
-			updatedList.PropertyList[index] = listable.(*base.AnyProperty)
+			updatedList.PropertyList[index] = listable.ToAnyProperty().(*base.AnyProperty)
 		}
 	}
 	return updatedList
@@ -72,7 +73,7 @@ func (propertyList *PropertyList) Mutate(properties ...properties.Property) list
 
 	for _, listable := range properties {
 		if index, found := updatedList.Search(listable); found {
-			updatedList.PropertyList[index] = listable.(*base.AnyProperty)
+			updatedList.PropertyList[index] = listable.ToAnyProperty().(*base.AnyProperty)
 		}
 	}
 
@@ -82,7 +83,7 @@ func (propertyList *PropertyList) ScrubData() lists.PropertyList {
 	newPropertyList := NewPropertyList()
 	for _, listable := range propertyList.PropertyList {
 		if property := listable; property.IsMeta() {
-			newPropertyList = newPropertyList.Add(property.Impl.(properties.Property).ScrubData())
+			newPropertyList = newPropertyList.Add(property.ScrubData())
 		} else {
 			newPropertyList = newPropertyList.Add(property)
 		}
