@@ -15,7 +15,7 @@ type List interface {
 	Get() []traits.Listable
 	// Size
 	// * returns the number of elements in the list
-	Size() int
+	Length() int
 
 	// Search
 	// * returns true and index of element if element is found
