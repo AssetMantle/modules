@@ -5,6 +5,7 @@ import (
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkCodecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/std"
+	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth/tx"
 
 	"github.com/AssetMantle/modules/schema"
@@ -29,10 +30,12 @@ func (codec codec) GetLegacyAmino() *sdkCodec.LegacyAmino {
 func (codec codec) InterfaceRegistry() sdkCodecTypes.InterfaceRegistry {
 	return codec.interfaceRegistry
 }
-func (codec codec) Initialize() helpers.Codec {
+func (codec codec) Initialize(moduleBasicManager sdkModuleTypes.BasicManager) helpers.Codec {
 	std.RegisterLegacyAminoCodec(codec.legacyAmino)
 	std.RegisterInterfaces(codec.interfaceRegistry)
 	schema.RegisterLegacyAminoCodec(codec.legacyAmino)
+	moduleBasicManager.RegisterLegacyAminoCodec(codec.legacyAmino)
+	moduleBasicManager.RegisterInterfaces(codec.interfaceRegistry)
 	return codec
 }
 

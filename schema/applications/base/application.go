@@ -514,7 +514,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		application.keys[stakingTypes.StoreKey],
 		AccountKeeper,
 		BankKeeper,
-		ParamsKeeper.Subspace(stakingTypes.StoreKey),
+		ParamsKeeper.Subspace(stakingTypes.ModuleName),
 	)
 
 	MintKeeper := mintKeeper.NewKeeper(
@@ -581,7 +581,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 	GovKeeper := govKeeper.NewKeeper(
 		application.GetCodec(),
 		application.keys[govTypes.StoreKey],
-		ParamsKeeper.Subspace(govTypes.ModuleName),
+		ParamsKeeper.Subspace(govTypes.ModuleName).WithKeyTable(govTypes.ParamKeyTable()),
 		AccountKeeper,
 		BankKeeper,
 		&application.stakingKeeper,
@@ -736,6 +736,14 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		feegrant.ModuleName,
 		paramsTypes.ModuleName,
 		vestingTypes.ModuleName,
+
+		assets.Prototype().Name(),
+		classifications.Prototype().Name(),
+		identities.Prototype().Name(),
+		maintainers.Prototype().Name(),
+		metas.Prototype().Name(),
+		orders.Prototype().Name(),
+		splits.Prototype().Name(),
 	)
 	application.moduleManager.SetOrderEndBlockers(
 		crisisTypes.ModuleName,
@@ -757,7 +765,14 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		paramsTypes.ModuleName,
 		upgradeTypes.ModuleName,
 		vestingTypes.ModuleName,
-		ordersModule.Name(),
+
+		assets.Prototype().Name(),
+		classifications.Prototype().Name(),
+		identities.Prototype().Name(),
+		maintainers.Prototype().Name(),
+		metas.Prototype().Name(),
+		orders.Prototype().Name(),
+		splits.Prototype().Name(),
 	)
 	application.moduleManager.SetOrderInitGenesis(
 		capabilityTypes.ModuleName,
@@ -919,7 +934,7 @@ func NewApplication(name string, moduleBasicManager module.BasicManager, enabled
 	return &application{
 		name:                        name,
 		moduleBasicManager:          moduleBasicManager,
-		codec:                       base.CodecPrototype().Initialize(),
+		codec:                       base.CodecPrototype().Initialize(moduleBasicManager),
 		enabledWasmProposalTypeList: enabledWasmProposalTypeList,
 		moduleAccountPermissions:    moduleAccountPermissions,
 		tokenReceiveAllowedModules:  tokenReceiveAllowedModules,
