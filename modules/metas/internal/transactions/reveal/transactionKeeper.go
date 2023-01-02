@@ -31,8 +31,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	dataID := baseIDs.GenerateDataID(message.Data)
 	metas := transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)).Fetch(key.NewKey(dataID))
 
-	data := metas.Get(key.NewKey(dataID))
-	if data != nil {
+	Mappable := metas.Get(key.NewKey(dataID))
+	if Mappable != nil {
 		return nil, constants.EntityAlreadyExists
 	}
 

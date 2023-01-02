@@ -5,6 +5,7 @@ package mutate
 
 import (
 	"context"
+
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
@@ -12,7 +13,6 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
-	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -50,7 +50,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if Mappable == nil {
 		return nil, constants.EntityNotFound
 	}
-	identity := Mappable.(documents.Identity)
+	identity := mappable.GetIdentity(Mappable)
 
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
 

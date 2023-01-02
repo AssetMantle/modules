@@ -5,14 +5,15 @@ package provision
 
 import (
 	"context"
+
+	"github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -36,7 +37,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound
 	}
-	identity := Mappable.(documents.Identity)
+	identity := mappable.GetIdentity(Mappable)
 
 	fromAddress, err := types.AccAddressFromBech32(message.From)
 	if err != nil {

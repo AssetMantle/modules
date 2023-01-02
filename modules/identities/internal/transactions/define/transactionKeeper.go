@@ -5,11 +5,13 @@ package define
 
 import (
 	"context"
+
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/schema/documents"
@@ -44,11 +46,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	mappable := transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)).Fetch(key.NewKey(message.FromID)).Get(key.NewKey(message.FromID))
-	if mappable == nil {
+	Mappable := transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)).Fetch(key.NewKey(message.FromID)).Get(key.NewKey(message.FromID))
+	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound
 	}
-	identity := mappable.(documents.Identity)
+	identity := mappable.GetIdentity(Mappable)
 
 	if !identity.(documents.Identity).IsProvisioned(fromAddress) {
 		return nil, errorConstants.NotAuthorized
