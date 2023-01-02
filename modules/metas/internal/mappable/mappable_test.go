@@ -13,7 +13,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
-	base2 "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 func TestNewMappable(t *testing.T) {
@@ -62,7 +62,7 @@ func Test_mappable_GetKey(t *testing.T) {
 		fields fields
 		want   helpers.Key
 	}{
-		{"+ve", fields{base.NewStringData("Data")}, key.NewKey(base2.GenerateDataID(base.NewStringData("Data")))},
+		{"+ve", fields{base.NewStringData("Data")}, key.NewKey(baseIDs.GenerateDataID(base.NewStringData("Data")))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
