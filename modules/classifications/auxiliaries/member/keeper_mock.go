@@ -7,8 +7,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
+	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	"github.com/AssetMantle/modules/schema/data/constants"
-	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -28,7 +28,8 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(context sdkTypes.Context, reques
 		if Mappable == nil {
 			return newAuxiliaryResponse(errorConstants.EntityNotFound)
 		}
-		classification := Mappable.(documents.Classification)
+		classification := mappable.GetClassification(Mappable)
+
 		if auxiliaryRequest.Mutables != nil {
 			if len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()) > len(classification.GetMutables().GetMutablePropertyList().GetList()) {
 				return newAuxiliaryResponse(errorConstants.IncorrectFormat)

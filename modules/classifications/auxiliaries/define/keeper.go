@@ -13,7 +13,7 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/utilities/property"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 )
 
 type auxiliaryKeeper struct {
@@ -29,7 +29,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 	}
 
-	if property.Duplicate(append(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...)) {
+	if utilities.IsDuplicate(append(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...)) {
 		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 	}
 

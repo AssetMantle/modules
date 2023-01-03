@@ -41,6 +41,10 @@ func Prototype() helpers.Mappable {
 	return &Mappable{}
 }
 
+func GetMaintainer(mappable helpers.Mappable) documents.Maintainer {
+	return baseDocuments.NewMaintainerFromDocument(mappable.(*Mappable).Maintainer)
+}
+
 func MappablesFromInterface(mappables []helpers.Mappable) []*Mappable {
 	Mappables := make([]*Mappable, len(mappables))
 	for index, mappable := range mappables {

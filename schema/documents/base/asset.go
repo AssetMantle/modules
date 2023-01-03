@@ -41,3 +41,9 @@ func NewAsset(classificationID ids.ClassificationID, immutables qualified.Immuta
 		Document: NewDocument(classificationID, immutables, mutables),
 	}
 }
+
+func NewAssetFromDocument(document documents.Document) documents.Asset {
+	return asset{
+		Document: document,
+	}
+}

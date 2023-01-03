@@ -1,7 +1,6 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -21,20 +20,19 @@ func (m *AnyProperty_MesaProperty) get() properties.Property {
 	return m.MesaProperty
 }
 
+var _ properties.AnyProperty = (*AnyProperty)(nil)
+
+func (m *AnyProperty) Get() properties.Property {
+	return m.Impl.(getter).get()
+}
 func (m *AnyProperty) GetID() ids.PropertyID {
 	return m.Impl.(getter).get().GetID()
-}
-func (m *AnyProperty) ScrubData() properties.Property {
-	return m.Impl.(getter).get().ScrubData()
 }
 func (m *AnyProperty) GetDataID() ids.DataID {
 	return m.Impl.(getter).get().GetDataID()
 }
 func (m *AnyProperty) GetKey() ids.StringID {
 	return m.Impl.(getter).get().GetKey()
-}
-func (m *AnyProperty) GetData() data.AnyData {
-	return m.Impl.(getter).get().GetData()
 }
 func (m *AnyProperty) GetType() ids.StringID {
 	return m.Impl.(getter).get().GetType()
