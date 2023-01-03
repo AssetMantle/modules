@@ -17,6 +17,7 @@ import (
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
@@ -52,7 +53,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	identity := mappable.GetIdentity(Mappable)
 
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...))
 
 	if auxiliaryResponse := transactionKeeper.memberAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), member.NewAuxiliaryRequest(identity.GetClassificationID(), nil, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
@@ -62,7 +63,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	identities.Mutate(mappable.NewMappable(base.NewIdentity(identity.GetClassificationID(), identity.GetImmutables(), baseQualified.NewMutables(identity.GetMutables().GetMutablePropertyList().Mutate(mutables.GetMutablePropertyList().GetList()...)))))
+	identities.Mutate(mappable.NewMappable(base.NewIdentity(identity.GetClassificationID(), identity.GetImmutables(), baseQualified.NewMutables(identity.GetMutables().GetMutablePropertyList().Mutate(utilities.AnyPropertyListToPropertyList(mutables.GetMutablePropertyList().GetList()...)...)))))
 
 	return &Response{}, nil
 }

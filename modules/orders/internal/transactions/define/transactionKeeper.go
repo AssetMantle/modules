@@ -5,6 +5,9 @@ package define
 
 import (
 	"context"
+
+	"github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
@@ -12,8 +15,8 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 	"github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -42,9 +45,9 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	immutables := base.NewImmutables(baseLists.NewPropertyList(append(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...), constants.ExchangeRateProperty, constants.CreationHeightProperty, constants.MakerOwnableIDProperty, constants.TakerOwnableIDProperty, constants.MakerIDProperty, constants.TakerIDProperty)...))
+	immutables := base.NewImmutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...), constants.ExchangeRateProperty.ToAnyProperty(), constants.CreationHeightProperty.ToAnyProperty(), constants.MakerOwnableIDProperty.ToAnyProperty(), constants.TakerOwnableIDProperty.ToAnyProperty(), constants.MakerIDProperty.ToAnyProperty(), constants.TakerIDProperty.ToAnyProperty())...)...))
 
-	mutables := base.NewMutables(baseLists.NewPropertyList(append(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...), constants.ExpiryHeightProperty, constants.MakerOwnableSplitProperty)...))
+	mutables := base.NewMutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...), constants.ExpiryHeightProperty.ToAnyProperty(), constants.MakerOwnableSplitProperty.ToAnyProperty())...)...))
 
 	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), define.NewAuxiliaryRequest(immutables, mutables)))
 	if err != nil {

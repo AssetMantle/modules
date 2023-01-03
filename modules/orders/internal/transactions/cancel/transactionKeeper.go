@@ -5,16 +5,17 @@ package cancel
 
 import (
 	"context"
+
+	"github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
-	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -49,7 +50,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound
 	}
-	order := Mappable.(documents.Order)
+	order := mappable.GetOrder(Mappable)
 
 	if message.FromID.Compare(order.GetMakerID()) != 0 {
 		return nil, errorConstants.NotAuthorized

@@ -11,15 +11,15 @@ import (
 
 var _ lists.PropertyList = (*PropertyList)(nil)
 
-func (propertyList *PropertyList) GetProperty(propertyID ids.PropertyID) properties.Property {
+func (propertyList *PropertyList) GetProperty(propertyID ids.PropertyID) properties.AnyProperty {
 	if i, found := propertyList.Search(base.NewEmptyMesaPropertyFromID(propertyID)); found {
 		return propertyList.GetList()[i]
 	}
 
 	return nil
 }
-func (propertyList *PropertyList) GetList() []properties.Property {
-	Properties := make([]properties.Property, len(propertyList.PropertyList))
+func (propertyList *PropertyList) GetList() []properties.AnyProperty {
+	Properties := make([]properties.AnyProperty, len(propertyList.PropertyList))
 	for i, listable := range propertyList.PropertyList {
 		Properties[i] = listable
 	}
@@ -83,19 +83,21 @@ func (propertyList *PropertyList) ScrubData() lists.PropertyList {
 	newPropertyList := NewPropertyList()
 	for _, listable := range propertyList.PropertyList {
 		if property := listable; property.IsMeta() {
-			newPropertyList = newPropertyList.Add(property.ScrubData())
+			newPropertyList = newPropertyList.Add(property.Get().(properties.MetaProperty).ScrubData())
 		} else {
 			newPropertyList = newPropertyList.Add(property)
 		}
 	}
 	return newPropertyList
 }
+func (propertyList *PropertyList) sort() lists.PropertyList {
+	sort.Slice(propertyList.PropertyList, func(i, j int) bool {
+		return propertyList.PropertyList[i].Compare(propertyList.PropertyList[j]) <= 0
+	})
+
+	return propertyList
+}
 
 func NewPropertyList(properties ...properties.Property) lists.PropertyList {
-	var propertyList []*base.AnyProperty
-
-	for _, dataVal := range properties {
-		propertyList = append(propertyList, dataVal.ToAnyProperty().(*base.AnyProperty))
-	}
-	return &PropertyList{PropertyList: propertyList}
+	return (&PropertyList{}).Add(properties...)
 }

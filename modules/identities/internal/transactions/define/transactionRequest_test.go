@@ -21,8 +21,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
-	utilitiesProperties "github.com/AssetMantle/modules/schema/properties/utilities"
+	propertiesUtilities "github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
@@ -239,11 +238,11 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 
-	immutableMetaProperties, err := utilitiesProperties.ReadMetaProperty(immutableMetaPropertiesString)
+	immutableMetaProperties, err := propertiesUtilities.ReadMetaProperty(immutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 	immutableProperties, err := utilities.ReadMetaPropertyList(immutablePropertiesString)
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := utilitiesProperties.ReadMetaProperty(mutableMetaPropertiesString)
+	mutableMetaProperties, err := propertiesUtilities.ReadMetaProperty(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 	mutableProperties, err := utilities.ReadMetaPropertyList(mutablePropertiesString)
 	require.Equal(t, nil, err)

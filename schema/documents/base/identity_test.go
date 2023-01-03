@@ -90,7 +90,7 @@ func Test_identity_GetExpiry(t *testing.T) {
 		fields fields
 		want   types.Height
 	}{
-		{"+ve", fields{testIdentity}, constants.ExpiryHeightProperty.GetData().(data.HeightData).Get()},
+		{"+ve", fields{testIdentity}, constants.ExpiryHeightProperty.GetData().Get().(data.HeightData).Get()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -153,7 +153,7 @@ func Test_identity_GetAuthentication(t *testing.T) {
 		fields fields
 		want   lists.DataList
 	}{
-		{"+ve", fields{identity{NewDocument(classificationID, immutables, mutables)}}, baseLists.NewDataList(constants.AuthenticationProperty.GetData().(data.ListData).Get()...)},
+		{"+ve", fields{identity{NewDocument(classificationID, immutables, mutables)}}, baseLists.NewDataList(constants.AuthenticationProperty.GetData().Get().(data.ListData).Get()...)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

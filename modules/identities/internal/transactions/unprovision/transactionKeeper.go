@@ -44,7 +44,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	toAddress, err := types.AccAddressFromBech32(message.From)
+	toAddress, err := types.AccAddressFromBech32(message.To)
 	if err != nil {
 		panic("Could not get To address from Bech32 string")
 	}

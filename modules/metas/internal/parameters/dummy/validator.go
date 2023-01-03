@@ -12,7 +12,7 @@ import (
 func validator(i interface{}) error {
 	switch value := i.(type) {
 	case parameters.Parameter:
-		if value.GetID().Compare(ID) != 0 || value.GetData().(data.DecData).Get().IsNegative() {
+		if value.GetID().Compare(ID) != 0 || value.GetData().Get().(data.DecData).Get().IsNegative() {
 			return constants.InvalidParameter
 		}
 

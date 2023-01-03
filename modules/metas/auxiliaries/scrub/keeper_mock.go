@@ -25,7 +25,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 
 	for i, property := range auxiliaryRequest.PropertyList.GetList() {
 		if property.IsMeta() {
-			scrubbedPropertyList[i] = property.(properties.MetaProperty).ScrubData()
+			scrubbedPropertyList[i] = property.Get().(properties.MetaProperty).ScrubData()
 		} else {
 			scrubbedPropertyList[i] = property
 		}

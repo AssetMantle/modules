@@ -20,10 +20,12 @@ import (
 
 var _ properties.MetaProperty = (*MetaProperty)(nil)
 
+func (metaProperty *MetaProperty) IsMetaProperty() {
+}
 func (metaProperty *MetaProperty) GetData() data.AnyData {
 	return metaProperty.AnyData
 }
-func (metaProperty *MetaProperty) ScrubData() properties.Property {
+func (metaProperty *MetaProperty) ScrubData() properties.MesaProperty {
 	return NewMesaProperty(metaProperty.GetKey(), metaProperty.GetData())
 }
 func (metaProperty *MetaProperty) GetID() ids.PropertyID {
@@ -61,7 +63,7 @@ func NewEmptyMetaPropertyFromID(propertyID ids.PropertyID) properties.MetaProper
 		Id: propertyID.(*baseIDs.PropertyID),
 	}
 }
-func NewMetaProperty(key ids.StringID, data data.Data) properties.Property {
+func NewMetaProperty(key ids.StringID, data data.Data) properties.MetaProperty {
 	if data == nil || key == nil {
 		panic(errorConstants.MetaDataError)
 	}
