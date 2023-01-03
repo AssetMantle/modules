@@ -4,5 +4,4 @@ type IdentityID interface {
 	ID
 	GetHashID() HashID
 	IsIdentityID()
-	IDString() string
 }

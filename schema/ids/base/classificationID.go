@@ -7,12 +7,11 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-// type classificationID struct {
-//	ids.HashID
-// }
-
 var _ ids.ClassificationID = (*ClassificationID)(nil)
 
+func (classificationID *ClassificationID) AsString() string {
+	return classificationID.HashID.AsString()
+}
 func (classificationID *ClassificationID) Bytes() []byte {
 	return classificationID.HashID.IDBytes
 }

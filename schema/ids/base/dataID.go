@@ -13,20 +13,18 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-// type dataID struct {
-//	Type ids.StringID
-//	ids.HashID
-// }
-
 var _ ids.DataID = (*DataID)(nil)
 
+func (dataID *DataID) AsString() string {
+	return stringUtilities.JoinIDStrings(dataID.TypeID.AsString(), dataID.HashID.AsString())
+}
 func (dataID *DataID) GetHashID() ids.HashID {
 	return dataID.HashID
 }
 func (dataID *DataID) IsDataID() {
 }
 func (dataID *DataID) DataIDString() string {
-	return stringUtilities.JoinIDStrings(dataID.TypeID.String(), dataID.HashID.String())
+	return stringUtilities.JoinIDStrings(dataID.TypeID.AsString(), dataID.HashID.AsString())
 }
 func (dataID *DataID) Bytes() []byte {
 	var Bytes []byte

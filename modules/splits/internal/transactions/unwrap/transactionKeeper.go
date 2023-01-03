@@ -45,8 +45,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	//TODO: Check if roundint() is apt
-	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(types.UnwrapSDKContext(context), module.Name, fromAddress, types.NewCoins(types.NewCoin(message.OwnableID.String(), message.Value.RoundInt()))); err != nil {
+	// TODO: Check if roundint() is apt
+	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(types.UnwrapSDKContext(context), module.Name, fromAddress, types.NewCoins(types.NewCoin(message.OwnableID.AsString(), message.Value.RoundInt()))); err != nil {
 		return nil, err
 	}
 

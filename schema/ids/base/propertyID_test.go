@@ -198,7 +198,7 @@ func Test_propertyID_String(t *testing.T) {
 				Key:  tt.fields.Key,
 				Type: tt.fields.Type,
 			}
-			if got := propertyID.String(); got != tt.want {
+			if got := propertyID.AsString(); got != tt.want {
 				t.Errorf("String() = %v, want %v", got, tt.want)
 			}
 		})

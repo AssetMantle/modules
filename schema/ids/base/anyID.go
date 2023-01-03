@@ -55,14 +55,20 @@ func (m *AnyID_StringID) get() ids.ID {
 	return m.StringID
 }
 
+var _ ids.AnyID = (*AnyID)(nil)
+
+func (m *AnyID) AsString() string {
+	return m.Impl.(getter).get().AsString()
+}
+func (m *AnyID) Get() ids.ID {
+	return m.Impl.(getter).get()
+}
 func (m *AnyID) Compare(listable traits.Listable) int {
 	return m.Impl.(getter).get().Compare(listable)
 }
-
 func (m *AnyID) Bytes() []byte {
 	return m.Impl.(getter).get().Bytes()
 }
-
 func (m *AnyID) ToAnyID() ids.AnyID {
 	return m.Impl.(getter).get().ToAnyID()
 }

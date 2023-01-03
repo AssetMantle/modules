@@ -38,7 +38,7 @@ func (idData *IDData) ZeroValue() data.Data {
 func (idData *IDData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(idData.Bytes())
 }
-func (idData *IDData) Get() ids.ID {
+func (idData *IDData) Get() ids.AnyID {
 	return idData.Value
 }
 func (idData *IDData) ToAnyData() data.AnyData {
@@ -49,11 +49,11 @@ func (idData *IDData) ToAnyData() data.AnyData {
 	}
 }
 
-func IDDataPrototype() data.Data {
+func IDDataPrototype() data.IDData {
 	return NewIDData(baseIDs.NewStringID(""))
 }
 
-func NewIDData(value ids.ID) data.Data {
+func NewIDData(value ids.ID) data.IDData {
 	return &IDData{
 		Value: value.ToAnyID().(*baseIDs.AnyID),
 	}

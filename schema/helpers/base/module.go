@@ -12,7 +12,7 @@ import (
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/gorilla/mux"
@@ -127,10 +127,10 @@ func (module module) GetQueryCmd() *cobra.Command {
 
 	return rootQueryCommand
 }
-func (module module) GenerateGenesisState(simulationState *sdkTypesModule.SimulationState) {
+func (module module) GenerateGenesisState(simulationState *sdkModuleTypes.SimulationState) {
 	module.simulatorPrototype().RandomizedGenesisState(simulationState)
 }
-func (module module) ProposalContents(simulationState sdkTypesModule.SimulationState) []simulationTypes.WeightedProposalContent {
+func (module module) ProposalContents(simulationState sdkModuleTypes.SimulationState) []simulationTypes.WeightedProposalContent {
 	return module.simulatorPrototype().WeightedProposalContentList(simulationState)
 }
 func (module module) RandomizedParams(r *rand.Rand) []simulationTypes.ParamChange {
@@ -139,7 +139,7 @@ func (module module) RandomizedParams(r *rand.Rand) []simulationTypes.ParamChang
 func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDecoderRegistry) {
 	storeDecoderRegistry[module.name] = module.mapperPrototype().StoreDecoder
 }
-func (module module) WeightedOperations(simulationState sdkTypesModule.SimulationState) []simulationTypes.WeightedOperation {
+func (module module) WeightedOperations(simulationState sdkModuleTypes.SimulationState) []simulationTypes.WeightedOperation {
 	return module.simulatorPrototype().WeightedOperations(simulationState)
 }
 func (module module) RegisterInvariants(invariantRegistry sdkTypes.InvariantRegistry) {
@@ -175,7 +175,7 @@ func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Quer
 		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())
 	}
 }
-func (module module) RegisterServices(configurator sdkTypesModule.Configurator) {
+func (module module) RegisterServices(configurator sdkModuleTypes.Configurator) {
 	for _, query := range module.queries.GetList() {
 		query.RegisterService(configurator)
 	}

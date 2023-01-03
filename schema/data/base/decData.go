@@ -54,11 +54,11 @@ func (decData *DecData) ToAnyData() data.AnyData {
 		}}
 }
 
-func DecDataPrototype() data.Data {
+func DecDataPrototype() data.DecData {
 	return NewDecData(sdkTypes.ZeroDec()).ZeroValue().(data.DecData)
 }
 
-func NewDecData(value sdkTypes.Dec) data.Data {
+func NewDecData(value sdkTypes.Dec) data.DecData {
 	return &DecData{
 		Value: value,
 	}

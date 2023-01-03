@@ -61,7 +61,7 @@ func HeightDataPrototype() data.HeightData {
 	return NewHeightData(baseTypes.NewHeight(0)).ZeroValue().(data.HeightData)
 }
 
-func NewHeightData(value types.Height) data.Data {
+func NewHeightData(value types.Height) data.HeightData {
 	return &HeightData{
 		Value: value.(*baseTypes.Height),
 	}

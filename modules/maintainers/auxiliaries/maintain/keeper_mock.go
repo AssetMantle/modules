@@ -18,7 +18,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	if auxiliaryRequest.IdentityID.String() == "maintainError" {
+	if auxiliaryRequest.IdentityID.AsString() == "maintainError" {
 		return newAuxiliaryResponse(constants.MockError)
 	}
 

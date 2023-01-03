@@ -8,9 +8,8 @@ import (
 )
 
 type AnyDataList interface {
-	Size() int
 	GetList() []data.AnyData
-	Search(data.AnyData) (int, bool)
-	Add(...data.AnyData) AnyDataList
-	Remove(...data.AnyData) AnyDataList
+	Search(data.Data) (int, bool)
+	Add(...data.Data) AnyDataList
+	Remove(...data.Data) AnyDataList
 }

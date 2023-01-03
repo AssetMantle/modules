@@ -49,7 +49,7 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, fromID.String(), testRate.String()}, transactionRequest{testBaseRequest, fromID.String(), testRate.String()}},
+		{"+ve", args{testBaseRequest, fromID.AsString(), testRate.String()}, transactionRequest{testBaseRequest, fromID.AsString(), testRate.String()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -78,7 +78,7 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.Coins, constants.FromID})
-	viper.Set(constants.FromID.GetName(), fromID.String())
+	viper.Set(constants.FromID.GetName(), fromID.AsString())
 	viper.Set(constants.Coins.GetName(), testRate.String())
 	type fields struct {
 		BaseReq rest.BaseReq
@@ -96,7 +96,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, args{cliCommand, context}, transactionRequest{testBaseRequest, fromID.String(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), testRate.String()}, args{cliCommand, context}, transactionRequest{testBaseRequest, fromID.AsString(), testRate.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -118,7 +118,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
-	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, fromID.String(), testRate.String()))
+	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, fromID.AsString(), testRate.String()))
 	require.NoError(t, err)
 	type fields struct {
 		BaseReq rest.BaseReq
@@ -135,7 +135,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, args{jsonMessage}, newTransactionRequest(testBaseRequest, fromID.String(), testRate.String()), false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), testRate.String()}, args{jsonMessage}, newTransactionRequest(testBaseRequest, fromID.AsString(), testRate.String()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -167,7 +167,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   rest.BaseReq
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, testBaseRequest},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), testRate.String()}, testBaseRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -195,7 +195,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, newMessage(fromAccAddress, fromID, testRate), false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), testRate.String()}, newMessage(fromAccAddress, fromID, testRate), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -230,7 +230,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), testRate.String()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -255,7 +255,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), testRate.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

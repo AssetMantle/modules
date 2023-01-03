@@ -14,7 +14,7 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/common"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
-	base2 "github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -148,8 +148,8 @@ func Test_queryRequest_Encode(t *testing.T) {
 }
 
 func Test_queryRequest_FromCLI(t *testing.T) {
-	cliCommand := base2.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OrderID})
-	viper.Set(constants.OrderID.GetName(), testOrderID.String())
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OrderID})
+	viper.Set(constants.OrderID.GetName(), testOrderID.AsString())
 	type fields struct {
 		OrderID ids.OrderID
 	}
@@ -185,7 +185,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 
 func Test_queryRequest_FromMap(t *testing.T) {
 	vars := make(map[string]string)
-	vars[Query.GetName()] = testOrderID.String()
+	vars[Query.GetName()] = testOrderID.AsString()
 	type fields struct {
 		OrderID ids.OrderID
 	}

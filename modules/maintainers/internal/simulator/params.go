@@ -19,7 +19,7 @@ import (
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(module.Name,
-			dummy.ID.String(),
+			dummy.ID.AsString(),
 			func(r *rand.Rand) string {
 				bytes, err := common.LegacyAmino.MarshalJSON(dummy.Parameter.Mutate(base.NewDecData(sdkTypes.NewDecWithPrec(int64(r.Intn(99)), 2))).GetData())
 				if err != nil {

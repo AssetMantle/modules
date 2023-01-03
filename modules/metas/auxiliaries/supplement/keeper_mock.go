@@ -33,7 +33,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 		} else {
 			propertyList = propertyList.Add(property)
 		}
-		if property.GetID().String() == "supplementError" {
+		if property.GetID().AsString() == "supplementError" {
 			return newAuxiliaryResponse(nil, errorConstants.MockError)
 		}
 	}

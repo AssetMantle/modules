@@ -7,18 +7,17 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-// type orderID struct {
-//	ids.HashID
-// }
-
 var _ ids.OrderID = (*OrderID)(nil)
 
+func (orderID *OrderID) AsString() string {
+	return orderID.HashID.AsString()
+}
 func (orderID *OrderID) Bytes() []byte {
-	return orderID.OrderID.IDBytes
+	return orderID.HashID.IDBytes
 }
 func (orderID *OrderID) IsOrderID() {}
 func (orderID *OrderID) Compare(listable traits.Listable) int {
-	return orderID.OrderID.Compare(orderIDFromInterface(listable).OrderID)
+	return orderID.HashID.Compare(orderIDFromInterface(listable).HashID)
 }
 func (orderID *OrderID) ToAnyID() ids.AnyID {
 	return &AnyID{
@@ -39,20 +38,20 @@ func orderIDFromInterface(i interface{}) *OrderID {
 
 func NewOrderID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.OrderID {
 	return &OrderID{
-		OrderID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
+		HashID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),
 	}
 }
 
 func PrototypeOrderID() ids.OrderID {
 	return &OrderID{
-		OrderID: PrototypeHashID().(*HashID),
+		HashID: PrototypeHashID().(*HashID),
 	}
 }
 
 func ReadOrderID(orderIDString string) (ids.OrderID, error) {
 	if hashID, err := ReadHashID(orderIDString); err == nil {
 		return &OrderID{
-			OrderID: hashID.(*HashID),
+			HashID: hashID.(*HashID),
 		}, nil
 	}
 

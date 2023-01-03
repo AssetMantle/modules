@@ -50,7 +50,7 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, fromID.String(), fromID.String(), classificationID.String(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, transactionRequest{testBaseRequest, fromID.String(), fromID.String(), classificationID.String(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}},
+		{"+ve", args{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, transactionRequest{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -79,9 +79,9 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.ToID, constants.FromID, constants.ClassificationID, constants.MaintainedProperties, constants.CanMintAsset, constants.CanBurnAsset, constants.CanRenumerateAsset, constants.CanAddMaintainer, constants.CanRemoveMaintainer, constants.CanMutateMaintainer})
-	viper.Set(constants.ToID.GetName(), fromID.String())
-	viper.Set(constants.FromID.GetName(), fromID.String())
-	viper.Set(constants.ClassificationID.GetName(), classificationID.String())
+	viper.Set(constants.ToID.GetName(), fromID.AsString())
+	viper.Set(constants.FromID.GetName(), fromID.AsString())
+	viper.Set(constants.ClassificationID.GetName(), classificationID.AsString())
 	viper.Set(constants.MaintainedProperties.GetName(), mutableMetaPropertiesString)
 	viper.Set(constants.CanMintAsset.GetName(), true)
 	viper.Set(constants.CanBurnAsset.GetName(), true)
@@ -113,7 +113,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{}, args{cliCommand, context}, transactionRequest{testBaseRequest, fromID.String(), fromID.String(), classificationID.String(), mutableMetaPropertiesString, true, true, true, true, true, true}, false},
+		{"+ve", fields{}, args{cliCommand, context}, transactionRequest{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), mutableMetaPropertiesString, true, true, true, true, true, true}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -166,7 +166,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), fromID.String(), classificationID.String(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, fromID, fromID, classificationID, mutableMetaProperties, true, true, true, true, true, true}))}, transactionRequest{testBaseRequest, fromID.String(), fromID.String(), classificationID.String(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, fromID, fromID, classificationID, mutableMetaProperties, true, true, true, true, true, true}))}, transactionRequest{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -214,7 +214,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   rest.BaseReq
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), fromID.String(), classificationID.String(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, testBaseRequest},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, testBaseRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -258,7 +258,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), fromID.String(), classificationID.String(), mutableMetaPropertiesString, true, true, true, true, true, true}, newMessage(fromAccAddress, fromID, fromID, classificationID, mutableMetaProperties1, true, true, true, true, true, true), false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), mutableMetaPropertiesString, true, true, true, true, true, true}, newMessage(fromAccAddress, fromID, fromID, classificationID, mutableMetaProperties1, true, true, true, true, true, true), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -309,7 +309,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, fromID.String(), fromID.String(), classificationID.String(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -351,7 +351,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve with nil", fields{}, true},
-		{"+ve", fields{testBaseRequest, fromID.String(), fromID.String(), classificationID.String(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

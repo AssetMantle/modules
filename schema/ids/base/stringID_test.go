@@ -133,7 +133,7 @@ func Test_stringID_String(t *testing.T) {
 			stringID := stringID{
 				IDString: tt.fields.IDString,
 			}
-			if got := stringID.String(); got != tt.want {
+			if got := stringID.AsString(); got != tt.want {
 				t.Errorf("String() = %v, want %v", got, tt.want)
 			}
 		})

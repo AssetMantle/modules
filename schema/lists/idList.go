@@ -8,7 +8,6 @@ import (
 )
 
 type IDList interface {
-	Size() int
 	GetList() []ids.AnyID
 	Search(ids.ID) (index int, found bool)
 	Add(...ids.ID) IDList

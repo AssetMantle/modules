@@ -7,5 +7,5 @@ import (
 )
 
 func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, parameter{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Parameter{})
 }

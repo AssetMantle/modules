@@ -137,7 +137,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OwnableID})
-	viper.Set(constants.OwnableID.GetName(), testOwnableID.String())
+	viper.Set(constants.OwnableID.GetName(), testOwnableID.AsString())
 	type fields struct {
 		OwnableID ids.OwnableID
 	}
@@ -173,7 +173,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 
 func Test_queryRequest_FromMap(t *testing.T) {
 	vars := make(map[string]string)
-	vars[Query.GetName()] = testOwnableID.String()
+	vars[Query.GetName()] = testOwnableID.AsString()
 	type fields struct {
 		OwnableID ids.OwnableID
 	}

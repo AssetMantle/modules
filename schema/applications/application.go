@@ -10,6 +10,7 @@ import (
 	serverTypes "github.com/cosmos/cosmos-sdk/server/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/spf13/cobra"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintLog "github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
@@ -40,6 +41,10 @@ type Application interface {
 	QueryRouter() sdkTypes.QueryRouter
 	Seal()
 	IsSealed() bool
+
+	AppCreator(log.Logger, tendermintDB.DB, io.Writer, serverTypes.AppOptions) serverTypes.Application
+	AppExporter(log.Logger, tendermintDB.DB, io.Writer, int64, bool, []string, serverTypes.AppOptions) (serverTypes.ExportedApp, error)
+	ModuleInitFlags(startCmd *cobra.Command)
 
 	Initialize(logger tendermintLog.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, appOptions serverTypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp)) Application
 }

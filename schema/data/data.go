@@ -12,7 +12,6 @@ import (
 type Data interface {
 	GetID() ids.DataID
 
-	Size() int
 	Unmarshal([]byte) error
 	MarshalTo([]byte) (int, error)
 	String() string

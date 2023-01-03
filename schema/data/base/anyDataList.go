@@ -4,14 +4,15 @@
 package base
 
 import (
+	"sort"
+
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/lists"
-	"sort"
 )
 
 var _ lists.AnyDataList = (*AnyDataList)(nil)
 
-func (dataList *AnyDataList) Search(data data.AnyData) (int, bool) {
+func (dataList *AnyDataList) Search(data data.Data) (int, bool) {
 	index := sort.Search(
 		len(dataList.DataList),
 		func(i int) bool {
@@ -25,13 +26,13 @@ func (dataList *AnyDataList) Search(data data.AnyData) (int, bool) {
 
 	return index, false
 }
-func (dataList *AnyDataList) Add(data ...data.AnyData) lists.AnyDataList {
+func (dataList *AnyDataList) Add(data ...data.Data) lists.AnyDataList {
 	updatedList := dataList
 	for _, listable := range data {
 		if index, found := updatedList.Search(listable); !found {
-			updatedList.DataList = append(updatedList.DataList, listable.(*AnyData))
+			updatedList.DataList = append(updatedList.DataList, listable.ToAnyData().(*AnyData))
 			copy(updatedList.DataList[index+1:], updatedList.DataList[index:])
-			updatedList.DataList[index] = listable.(*AnyData)
+			updatedList.DataList[index] = listable.ToAnyData().(*AnyData)
 		}
 	}
 	return updatedList
@@ -49,7 +50,7 @@ func (dataList *AnyDataList) GetList() []data.AnyData {
 	return DataList
 }
 
-func (dataList *AnyDataList) Remove(data ...data.AnyData) lists.AnyDataList {
+func (dataList *AnyDataList) Remove(data ...data.Data) lists.AnyDataList {
 	updatedList := dataList
 
 	for _, listable := range data {
@@ -63,8 +64,10 @@ func (dataList *AnyDataList) Remove(data ...data.AnyData) lists.AnyDataList {
 
 func NewDataList(data ...data.Data) lists.AnyDataList {
 	var dataList []*AnyData
-	for _, dataVal := range data {
-		dataList = append(dataList, dataVal.ToAnyData().(*AnyData))
+	for _, datum := range data {
+		if datum != nil {
+			dataList = append(dataList, datum.ToAnyData().(*AnyData))
+		}
 	}
 	return &AnyDataList{DataList: dataList}
 }

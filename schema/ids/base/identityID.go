@@ -7,16 +7,11 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-// type identityID struct {
-//	ids.HashID
-// }
-
 var _ ids.IdentityID = (*IdentityID)(nil)
 
-// TODO deprecate
 func (identityID *IdentityID) IsIdentityID() {}
-func (identityID *IdentityID) IDString() string {
-	return identityID.HashID.EncodedString()
+func (identityID *IdentityID) AsString() string {
+	return identityID.HashID.AsString()
 }
 func (identityID *IdentityID) GetHashID() ids.HashID {
 	return identityID.HashID

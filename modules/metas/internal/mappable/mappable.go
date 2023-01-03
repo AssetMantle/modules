@@ -23,10 +23,26 @@ func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, Mappable{})
 }
 
-func NewMappable(data data.AnyData) helpers.Mappable {
-	return &Mappable{Data: data.(*baseData.AnyData)}
+func NewMappable(data data.Data) helpers.Mappable {
+	return &Mappable{Data: data.ToAnyData().(*baseData.AnyData)}
 }
 
 func Prototype() helpers.Mappable {
 	return &Mappable{}
+}
+
+func MappablesFromInterface(mappables []helpers.Mappable) []*Mappable {
+	Mappables := make([]*Mappable, len(mappables))
+	for index, mappable := range mappables {
+		Mappables[index] = mappable.(*Mappable)
+	}
+	return Mappables
+}
+
+func MappablesToInterface(mappables []*Mappable) []helpers.Mappable {
+	Mappables := make([]helpers.Mappable, len(mappables))
+	for index, mappable := range mappables {
+		Mappables[index] = mappable
+	}
+	return Mappables
 }

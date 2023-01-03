@@ -7,8 +7,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
@@ -28,8 +28,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	if Mappable == nil {
 		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}
-
-	identity := Mappable.(documents.Identity)
+	identity := mappable.GetIdentity(Mappable)
 
 	if !identity.IsProvisioned(auxiliaryRequest.Address) {
 		return newAuxiliaryResponse(errorConstants.NotAuthorized)

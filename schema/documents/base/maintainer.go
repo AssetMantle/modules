@@ -22,29 +22,29 @@ var _ documents.Maintainer = (*maintainer)(nil)
 
 func (maintainer maintainer) GetIdentityID() ids.IdentityID {
 	if property := maintainer.GetProperty(constantProperties.IdentityIDProperty.GetID()); property != nil && property.IsMeta() {
-		return property.(properties.MetaProperty).GetData().(data.IDData).Get().(ids.IdentityID)
+		return property.(properties.MetaProperty).GetData().Get().(data.IDData).Get().Get().(ids.IdentityID)
 	}
-	return constantProperties.IdentityIDProperty.GetData().(data.IDData).Get().(ids.IdentityID)
+	return constantProperties.IdentityIDProperty.GetData().Get().(data.IDData).Get().Get().(ids.IdentityID)
 }
 func (maintainer maintainer) GetMaintainedClassificationID() ids.ClassificationID {
 	if property := maintainer.GetProperty(constantProperties.MaintainedClassificationIDProperty.GetID()); property != nil && property.IsMeta() {
-		return property.(properties.MetaProperty).GetData().(data.IDData).Get().(ids.ClassificationID)
+		return property.(properties.MetaProperty).GetData().Get().(data.IDData).Get().Get().(ids.ClassificationID)
 	}
-	return constantProperties.MaintainedClassificationIDProperty.GetData().(data.IDData).Get().(ids.ClassificationID)
+	return constantProperties.MaintainedClassificationIDProperty.GetData().Get().(data.IDData).Get().Get().(ids.ClassificationID)
 }
 func (maintainer maintainer) GetMaintainedProperties() data.ListData {
 	if property := maintainer.GetProperty(constantProperties.MaintainedPropertiesProperty.GetID()); property != nil && property.IsMeta() {
-		return property.(properties.MetaProperty).GetData().(data.ListData)
+		return property.(properties.MetaProperty).GetData().Get().(data.ListData)
 	}
 
-	return constantProperties.MaintainedPropertiesProperty.GetData().(data.ListData)
+	return constantProperties.MaintainedPropertiesProperty.GetData().Get().(data.ListData)
 }
 func (maintainer maintainer) GetPermissions() data.ListData {
 	if property := maintainer.GetProperty(constantProperties.PermissionsProperty.GetID()); property != nil && property.IsMeta() {
-		return property.(properties.MetaProperty).GetData().(data.ListData)
+		return property.(properties.MetaProperty).GetData().Get().(data.ListData)
 	}
 
-	return constantProperties.PermissionsProperty.GetData().(data.ListData)
+	return constantProperties.PermissionsProperty.GetData().Get().(data.ListData)
 }
 func (maintainer maintainer) CanMintAsset() bool {
 	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(constansts.Mint))

@@ -11,7 +11,7 @@ import (
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
+	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/require"
@@ -21,7 +21,7 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	parameters2 "github.com/AssetMantle/modules/schema/parameters"
+	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 	"github.com/AssetMantle/modules/utilities/test"
 	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
@@ -33,7 +33,7 @@ var auxiliariesPrototype = func() helpers.Auxiliaries {
 var genesisPrototype = func() helpers.Genesis {
 	return NewGenesis(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype,
 		[]helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")},
-		[]parameters2.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })})
+		[]parametersSchema.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })})
 }
 var mapperPrototype = func() helpers.Mapper {
 	return NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype)
@@ -119,11 +119,11 @@ func TestModule(t *testing.T) {
 	require.Equal(t, Module.DefaultGenesis(), Module.ExportGenesis(context))
 	// AppModuleSimulation
 	require.Panics(t, func() {
-		Module.GenerateGenesisState(&sdkModule.SimulationState{})
-		Module.ProposalContents(sdkModule.SimulationState{})
+		Module.GenerateGenesisState(&sdkModuleTypes.SimulationState{})
+		Module.ProposalContents(sdkModuleTypes.SimulationState{})
 		Module.RandomizedParams(&rand.Rand{})
 		Module.RegisterStoreDecoder(sdkTypes.StoreDecoderRegistry{})
-		Module.WeightedOperations(sdkModule.SimulationState{})
+		Module.WeightedOperations(sdkModuleTypes.SimulationState{})
 	})
 
 	// types.Module

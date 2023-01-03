@@ -18,7 +18,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	if auxiliaryRequest.OwnableID.String() == "transferError" {
+	if auxiliaryRequest.OwnableID.AsString() == "transferError" {
 		return newAuxiliaryResponse(constants.MockError)
 	}
 

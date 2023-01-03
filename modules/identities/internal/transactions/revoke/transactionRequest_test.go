@@ -55,7 +55,7 @@ func Test_newTransactionRequest(t *testing.T) {
 		want helpers.TransactionRequest
 	}{
 		{"+ve with nil", args{}, transactionRequest{}},
-		{"+ve", args{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, transactionRequest{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}},
+		{"+ve", args{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, transactionRequest{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -107,7 +107,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{cliCommand, context}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.ToID), cliCommand.ReadString(constants.ClassificationID)}, false},
+		{"+ve", fields{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, args{cliCommand, context}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.ToID), cliCommand.ReadString(constants.ClassificationID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -149,7 +149,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, testFromID, testToID, testClassificationID}))}, transactionRequest{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, false},
+		{"+ve", fields{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, testFromID, testToID, testClassificationID}))}, transactionRequest{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -184,7 +184,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   rest.BaseReq
 	}{
-		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, testBaseReq},
+		{"+ve", fields{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, testBaseReq},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -218,7 +218,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Type & Data same but Not matching
-		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, message{testFromAccAddress, testFromID, testToID, testClassificationID}, false},
+		{"+ve", fields{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, message{testFromAccAddress, testFromID, testToID, testClassificationID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -257,7 +257,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 		{"+ve with nil", fields{}, args{codec.NewLegacyAmino()}},
-		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -286,7 +286,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve with nil", fields{}, true},
-		{"+ve", fields{testBaseReq, testFromID.String(), testToID.String(), testClassificationID.String()}, false},
+		{"+ve", fields{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

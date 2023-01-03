@@ -9,7 +9,7 @@ import (
 
 type ID interface {
 	traits.Listable
-	String() string
+	AsString() string
 	Bytes() []byte
 	ToAnyID() AnyID
 }

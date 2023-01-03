@@ -23,21 +23,21 @@ var _ documents.Identity = (*identity)(nil)
 
 func (identity identity) GetExpiry() types.Height {
 	if property := identity.Document.GetProperty(constants.ExpiryHeightProperty.GetID()); property != nil && property.IsMeta() {
-		return property.(properties.MetaProperty).GetData().(data.HeightData).Get()
+		return property.(properties.MetaProperty).GetData().Get().(data.HeightData).Get()
 	}
 
-	return constants.ExpiryHeightProperty.GetData().(data.HeightData).Get()
+	return constants.ExpiryHeightProperty.GetData().Get().(data.HeightData).Get()
 }
 func (identity identity) GetAuthentication() lists.AnyDataList {
 	var dataList []data.Data
 
 	if property := identity.Document.GetProperty(constants.AuthenticationProperty.GetID()); property != nil && property.IsMeta() {
-		for _, anyData := range property.(properties.MetaProperty).GetData().(data.ListData).Get() {
-			dataList = append(dataList, anyData.(*baseData.AnyData).Impl.(data.Data))
+		for _, anyData := range property.(properties.MetaProperty).GetData().Get().(data.ListData).Get() {
+			dataList = append(dataList, anyData)
 		}
 	} else {
-		for _, anyData := range constants.AuthenticationProperty.GetData().(data.ListData).Get() {
-			dataList = append(dataList, anyData.(*baseData.AnyData).Impl.(data.Data))
+		for _, anyData := range constants.AuthenticationProperty.GetData().Get().(data.ListData).Get() {
+			dataList = append(dataList, anyData)
 		}
 	}
 	return baseData.NewDataList(dataList...)
@@ -47,17 +47,17 @@ func (identity identity) IsProvisioned(accAddress sdkTypes.AccAddress) bool {
 	return isProvisioned
 }
 func (identity identity) ProvisionAddress(accAddresses ...sdkTypes.AccAddress) documents.Identity {
-	var accAddressList []data.AnyData
+	var accAddressList []data.Data
 	for _, address := range accAddressesToData(accAddresses...) {
-		accAddressList = append(accAddressList, address.ToAnyData())
+		accAddressList = append(accAddressList, address)
 	}
 	identity.Document = identity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(identity.GetAuthentication().Add(accAddressList...))))
 	return identity
 }
 func (identity identity) UnprovisionAddress(accAddresses ...sdkTypes.AccAddress) documents.Identity {
-	var accAddressList []data.AnyData
+	var accAddressList []data.Data
 	for _, address := range accAddressesToData(accAddresses...) {
-		accAddressList = append(accAddressList, address.ToAnyData())
+		accAddressList = append(accAddressList, address)
 	}
 	identity.Document = identity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(identity.GetAuthentication().Remove(accAddressList...))))
 	return identity
@@ -71,5 +71,9 @@ func accAddressesToData(accAddresses ...sdkTypes.AccAddress) []data.Data {
 }
 
 func NewIdentity(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) documents.Identity {
-	return identity{Document: NewDocument(classificationID, immutables, mutables)}
+	return NewIdentityFromDocument(NewDocument(classificationID, immutables, mutables))
+}
+
+func NewIdentityFromDocument(document documents.Document) documents.Identity {
+	return identity{Document: document}
 }

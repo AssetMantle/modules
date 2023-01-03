@@ -12,13 +12,11 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//type propertyID struct {
-//	Key  ids.StringID
-//	Type ids.StringID
-//}
-
 var _ ids.PropertyID = (*PropertyID)(nil)
 
+func (propertyID *PropertyID) AsString() string {
+	return stringUtilities.JoinIDStrings(propertyID.KeyID.AsString(), propertyID.TypeID.AsString())
+}
 func (propertyID *PropertyID) IsPropertyID() {}
 func (propertyID *PropertyID) GetKey() ids.StringID {
 	return propertyID.KeyID
@@ -27,7 +25,7 @@ func (propertyID *PropertyID) GetType() ids.StringID {
 	return propertyID.TypeID
 }
 func (propertyID *PropertyID) PropertyIDString() string {
-	return stringUtilities.JoinIDStrings(propertyID.KeyID.String(), propertyID.TypeID.String())
+	return stringUtilities.JoinIDStrings(propertyID.KeyID.AsString(), propertyID.TypeID.AsString())
 }
 func (propertyID *PropertyID) Bytes() []byte {
 	var Bytes []byte

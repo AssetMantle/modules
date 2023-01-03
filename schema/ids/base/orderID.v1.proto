@@ -7,5 +7,5 @@ import "gogoproto/gogo.proto";
 message OrderID {
   option (gogoproto.goproto_getters) = false;
 
-  HashID order_i_d = 1;
+  HashID hash_i_d = 1;
 }

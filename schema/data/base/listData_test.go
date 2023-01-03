@@ -210,7 +210,7 @@ func Test_listData_GenerateHashID(t *testing.T) {
 			listData := listData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, listData.GenerateHashID().String(), "GenerateHashID()")
+			assert.Equalf(t, tt.want, listData.GenerateHashID().AsString(), "GenerateHashID()")
 		})
 	}
 }

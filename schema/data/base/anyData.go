@@ -35,6 +35,10 @@ func (x *AnyData_ListData) get() data.Data {
 
 var _ data.AnyData = (*AnyData)(nil)
 
+func (x *AnyData) IsAnyData() {}
+func (x *AnyData) Get() data.Data {
+	return x.Impl.(getter).get()
+}
 func (x *AnyData) GetID() ids.DataID {
 	return x.Impl.(getter).get().GetID()
 }

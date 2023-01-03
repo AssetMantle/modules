@@ -14,7 +14,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	parameters2 "github.com/AssetMantle/modules/schema/parameters"
+	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 	"github.com/AssetMantle/modules/utilities/test"
 )
@@ -26,7 +26,7 @@ func TestParameters(t *testing.T) {
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 	Parameter := baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
-	ParameterList := []parameters2.Parameter{Parameter}
+	ParameterList := []parametersSchema.Parameter{Parameter}
 	Parameters := NewParameters(ParameterList...)
 	subspace := paramsTypes.NewSubspace(legacyAmino, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
 	subspace.SetParamSet(context, Parameters)

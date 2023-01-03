@@ -5,15 +5,16 @@ package quash
 
 import (
 	"context"
+
+	"github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	"github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -46,7 +47,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound
 	}
-	identity := Mappable.(documents.Identity)
+	identity := mappable.GetIdentity(Mappable)
 
 	if identity.GetExpiry().Compare(baseTypes.NewHeight(types.UnwrapSDKContext(context).BlockHeight())) > 0 {
 		return nil, errorConstants.NotAuthorized
