@@ -1,14 +1,14 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package property
+package utilities
 
 import (
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/properties"
 )
 
-func Duplicate(propertyList []properties.Property) bool {
+func IsDuplicate(propertyList []properties.AnyProperty) bool {
 	propertyIDMap := map[ids.ID]bool{}
 
 	for _, property := range propertyList {
@@ -20,4 +20,14 @@ func Duplicate(propertyList []properties.Property) bool {
 	}
 
 	return false
+}
+
+func AnyPropertyListToPropertyList(anyPropertyList ...properties.AnyProperty) []properties.Property {
+	propertyList := make([]properties.Property, len(anyPropertyList))
+
+	for i, property := range anyPropertyList {
+		propertyList[i] = property.(properties.Property)
+	}
+
+	return propertyList
 }

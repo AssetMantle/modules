@@ -9,9 +9,8 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
-	"github.com/AssetMantle/modules/modules/maintainers/internal/utilities"
+	internalUtilities "github.com/AssetMantle/modules/modules/maintainers/internal/utilities"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -20,6 +19,7 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
+	propertiesUtilities "github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
@@ -45,7 +45,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	if Mappable == nil {
 		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
-	fromMaintainer := Mappable.(documents.Maintainer)
+	fromMaintainer := mappable.GetMaintainer(Mappable)
 
 	// TODO test
 	if !(fromMaintainer.CanAddMaintainer() || !auxiliaryRequest.CanAddMaintainer && fromMaintainer.CanMutateMaintainer() || !auxiliaryRequest.CanMutateMaintainer && fromMaintainer.CanRemoveMaintainer() || !auxiliaryRequest.CanRemoveMaintainer) {
@@ -79,14 +79,14 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
 
-		maintainers.Add(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.ToID, auxiliaryRequest.MaintainedClassificationID, auxiliaryRequest.MaintainedProperties.GetPropertyIDList(), utilities.SetPermissions(auxiliaryRequest.CanMintAsset, auxiliaryRequest.CanBurnAsset, auxiliaryRequest.CanRenumerateAsset, auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanRemoveMaintainer, auxiliaryRequest.CanMutateMaintainer))))
+		maintainers.Add(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.ToID, auxiliaryRequest.MaintainedClassificationID, auxiliaryRequest.MaintainedProperties.GetPropertyIDList(), internalUtilities.SetPermissions(auxiliaryRequest.CanMintAsset, auxiliaryRequest.CanBurnAsset, auxiliaryRequest.CanRenumerateAsset, auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanRemoveMaintainer, auxiliaryRequest.CanMutateMaintainer))))
 	} else {
 		if !fromMaintainer.CanMutateMaintainer() {
 			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
 
-		maintainedProperties := Mappable.(documents.Maintainer).GetMutables().GetMutablePropertyList().Add(auxiliaryRequest.MaintainedProperties.GetList()...).Remove(removeMaintainedPropertyList.GetList()...)
-		maintainers.Mutate(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.ToID, auxiliaryRequest.MaintainedClassificationID, maintainedProperties.GetPropertyIDList(), utilities.SetPermissions(auxiliaryRequest.CanMintAsset, auxiliaryRequest.CanBurnAsset, auxiliaryRequest.CanRenumerateAsset, auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanRemoveMaintainer, auxiliaryRequest.CanMutateMaintainer))))
+		maintainedProperties := mappable.GetMaintainer(Mappable).GetMutables().GetMutablePropertyList().Add(propertiesUtilities.AnyPropertyListToPropertyList(auxiliaryRequest.MaintainedProperties.GetList()...)...).Remove(propertiesUtilities.AnyPropertyListToPropertyList(removeMaintainedPropertyList.GetList()...)...)
+		maintainers.Mutate(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.ToID, auxiliaryRequest.MaintainedClassificationID, maintainedProperties.GetPropertyIDList(), internalUtilities.SetPermissions(auxiliaryRequest.CanMintAsset, auxiliaryRequest.CanBurnAsset, auxiliaryRequest.CanRenumerateAsset, auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanRemoveMaintainer, auxiliaryRequest.CanMutateMaintainer))))
 	}
 
 	return newAuxiliaryResponse(nil)

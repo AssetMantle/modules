@@ -15,17 +15,17 @@ import (
 var _ qualified.Immutables = (*Immutables)(nil)
 
 // TODO write test case
-func (immutables Immutables) GetImmutablePropertyList() lists.PropertyList {
+func (immutables *Immutables) GetImmutablePropertyList() lists.PropertyList {
 	if immutables.PropertyList.GetList() == nil {
 		return baseLists.NewPropertyList()
 	}
 
 	return immutables.PropertyList
 }
-func (immutables Immutables) GetProperty(id ids.PropertyID) properties.Property {
+func (immutables *Immutables) GetProperty(id ids.PropertyID) properties.AnyProperty {
 	return immutables.GetImmutablePropertyList().GetProperty(id)
 }
-func (immutables Immutables) GenerateHashID() ids.ID {
+func (immutables *Immutables) GenerateHashID() ids.ID {
 	metaList := make([][]byte, len(immutables.PropertyList.GetList()))
 
 	for i, immutableProperty := range immutables.PropertyList.GetList() {

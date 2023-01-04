@@ -5,20 +5,22 @@ package renumerate
 
 import (
 	"context"
+
+	"github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
+	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -53,7 +55,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound
 	}
-	asset := Mappable.(documents.Asset)
+	asset := mappable.GetAsset(Mappable)
 
 	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), maintain.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, base.NewMutables(baseLists.NewPropertyList(constants.SupplyProperty)))); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
@@ -65,7 +67,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	if supplyMetaProperty := metaProperties.GetProperty(constants.SupplyProperty.GetID()); supplyMetaProperty != nil && supplyMetaProperty.IsMeta() {
-		value := supplyMetaProperty.(properties.MetaProperty).GetData().(data.DecData).Get()
+		value := supplyMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.DecData).Get()
 		if auxiliaryResponse := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, value)); !auxiliaryResponse.IsSuccessful() {
 			return nil, auxiliaryResponse.GetError()
 		}

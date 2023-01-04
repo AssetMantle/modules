@@ -31,6 +31,10 @@ func Prototype() helpers.Mappable {
 	return &Mappable{}
 }
 
+func GetOrder(mappable helpers.Mappable) documents.Order {
+	return base.NewOrderFromDocument(mappable.(*Mappable).Order)
+}
+
 func MappablesFromInterface(mappables []helpers.Mappable) []*Mappable {
 	Mappables := make([]*Mappable, len(mappables))
 	for index, mappable := range mappables {

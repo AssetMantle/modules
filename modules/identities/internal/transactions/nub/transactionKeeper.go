@@ -36,7 +36,6 @@ func (transactionKeeper transactionKeeper) Transact(context types.Context, messa
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
-
 	address, err := types.AccAddressFromBech32(message.From)
 	if err != nil {
 		panic("Could not get from address from Bech32 string")

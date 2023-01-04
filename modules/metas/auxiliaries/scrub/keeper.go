@@ -27,7 +27,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	for i, property := range auxiliaryRequest.PropertyList.GetList() {
 		if property.IsMeta() {
-			metaProperty := property.(properties.MetaProperty)
+			metaProperty := property.Get().(properties.MetaProperty)
 			if metaProperty.GetData().GenerateHashID().Compare(baseIDs.GenerateHashID()) != 0 {
 				metas.Add(mappable.NewMappable(metaProperty.GetData()))
 			}

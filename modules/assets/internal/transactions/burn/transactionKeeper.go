@@ -5,6 +5,9 @@ package burn
 
 import (
 	"context"
+
+	"github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
@@ -12,13 +15,11 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	"github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -53,7 +54,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound
 	}
-	asset := Mappable.(documents.Asset)
+	asset := mappable.GetAsset(Mappable)
 
 	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), supplement.NewAuxiliaryRequest(asset.GetBurn())))
 	if err != nil {
@@ -61,7 +62,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	if burnHeightMetaProperty := metaProperties.GetProperty(constants.BurnHeightProperty.GetID()); burnHeightMetaProperty != nil {
-		burnHeight := burnHeightMetaProperty.(properties.MetaProperty).GetData().(data.HeightData).Get()
+		burnHeight := burnHeightMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.HeightData).Get()
 		if burnHeight.Compare(baseTypes.NewHeight(types.UnwrapSDKContext(context).BlockHeight())) > 0 {
 			return nil, errorConstants.NotAuthorized
 		}

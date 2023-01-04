@@ -26,7 +26,7 @@ func (document *Document) Get() documents.Document {
 func (document *Document) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(document.GetClassificationID().Bytes(), document.GetImmutables().GenerateHashID().Bytes())
 }
-func (document *Document) GetProperty(propertyID ids.PropertyID) properties.Property {
+func (document *Document) GetProperty(propertyID ids.PropertyID) properties.AnyProperty {
 	if property := document.Immutables.GetProperty(propertyID); property != nil {
 		return property
 	} else if property := document.Mutables.GetProperty(propertyID); property != nil {

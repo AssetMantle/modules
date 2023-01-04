@@ -58,10 +58,13 @@ func (idList *IDList) Remove(ids ...ids.ID) lists.IDList {
 
 	return updatedList
 }
+func (idList *IDList) sort() lists.IDList {
+	sort.Slice(idList.IDList, func(i, j int) bool {
+		return idList.IDList[i].Compare(idList.IDList[j]) < 0
+	})
+	return idList
+}
+
 func NewIDList(ids ...ids.ID) lists.IDList {
-	var idList []*baseIDs.AnyID
-	for _, dataVal := range ids {
-		idList = append(idList, dataVal.ToAnyID().(*baseIDs.AnyID))
-	}
-	return &IDList{IDList: idList}
+	return (&IDList{}).Add(ids...)
 }

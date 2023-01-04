@@ -23,6 +23,7 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -48,7 +49,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 		// TODO ***** define a proper new key
 		key.NewKey(baseIDs.PrototypeOrderID()),
 		func(Mappable helpers.Mappable) bool {
-			order := Mappable.(documents.Order)
+			order := mappable.GetOrder(Mappable)
 
 			if order.GetExpiryHeight().Compare(baseTypes.NewHeight(context.BlockHeight())) <= 0 {
 				// TODO ***** check security of sending and receiving from module and module account security
@@ -75,11 +76,11 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 
 		orders.Iterate(key.NewKey(partialOrderID),
 			func(Mappable helpers.Mappable) bool {
-				order := Mappable.(documents.Order)
+				order := mappable.GetOrder(Mappable)
 				orders.Iterate(
 					key.NewKey(baseIDs.PrototypeOrderID()),
 					func(Mappable helpers.Mappable) bool {
-						executableOrder := Mappable.(documents.Order)
+						executableOrder := mappable.GetOrder(Mappable)
 						var leftOrder documents.Order
 						var rightOrder documents.Order
 
@@ -121,7 +122,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 
 								mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))
 
-								orders.Mutate(mappable.NewMappable(base.NewOrder(leftOrder.GetClassificationID(), leftOrder.GetImmutables(), leftOrder.Mutate(mutableProperties.GetList()...).GetMutables())))
+								orders.Mutate(mappable.NewMappable(base.NewOrder(leftOrder.GetClassificationID(), leftOrder.GetImmutables(), leftOrder.Mutate(utilities.AnyPropertyListToPropertyList(mutableProperties.GetList()...)...).GetMutables())))
 								orders.Remove(mappable.NewMappable(rightOrder))
 
 								if executableOrderHeight.Compare(orderHeight) > 0 {
@@ -141,7 +142,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 									panic(err)
 								}
 
-								orders.Mutate(mappable.NewMappable(base.NewOrder(rightOrder.GetClassificationID(), rightOrder.GetImmutables(), rightOrder.GetMutables().Mutate(mutableProperties.GetList()...))))
+								orders.Mutate(mappable.NewMappable(base.NewOrder(rightOrder.GetClassificationID(), rightOrder.GetImmutables(), rightOrder.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(mutableProperties.GetList()...)...))))
 								orders.Remove(mappable.NewMappable(leftOrder))
 
 								if orderHeight.Compare(executableOrderHeight) >= 0 {

@@ -23,7 +23,7 @@ var _ documents.Identity = (*identity)(nil)
 
 func (identity identity) GetExpiry() types.Height {
 	if property := identity.Document.GetProperty(constants.ExpiryHeightProperty.GetID()); property != nil && property.IsMeta() {
-		return property.(properties.MetaProperty).GetData().Get().(data.HeightData).Get()
+		return property.Get().(properties.MetaProperty).GetData().Get().(data.HeightData).Get()
 	}
 
 	return constants.ExpiryHeightProperty.GetData().Get().(data.HeightData).Get()
@@ -32,7 +32,7 @@ func (identity identity) GetAuthentication() lists.AnyDataList {
 	var dataList []data.Data
 
 	if property := identity.Document.GetProperty(constants.AuthenticationProperty.GetID()); property != nil && property.IsMeta() {
-		for _, anyData := range property.(properties.MetaProperty).GetData().Get().(data.ListData).Get() {
+		for _, anyData := range property.Get().(properties.MetaProperty).GetData().Get().(data.ListData).Get() {
 			dataList = append(dataList, anyData)
 		}
 	} else {

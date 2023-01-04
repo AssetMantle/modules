@@ -7,8 +7,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -36,13 +36,14 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(maintainerID))
 
-	maintainer := maintainers.Get(key.NewKey(maintainerID))
-	if maintainer == nil {
+	Mappable := maintainers.Get(key.NewKey(maintainerID))
+	if Mappable == nil {
 		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
+	maintainer := mappable.GetMaintainer(Mappable)
 
 	for _, maintainedProperty := range auxiliaryRequest.MaintainedMutables.GetMutablePropertyList().GetList() {
-		if !maintainer.(documents.Maintainer).MaintainsProperty(maintainedProperty.GetID()) {
+		if !maintainer.MaintainsProperty(maintainedProperty.GetID()) {
 			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
 	}

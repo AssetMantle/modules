@@ -8,7 +8,8 @@ import (
 )
 
 type MetaProperty interface {
+	IsMetaProperty()
 	GetData() data.AnyData
-	ScrubData() Property
+	ScrubData() MesaProperty
 	Property
 }

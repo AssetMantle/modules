@@ -22,26 +22,26 @@ var _ documents.Maintainer = (*maintainer)(nil)
 
 func (maintainer maintainer) GetIdentityID() ids.IdentityID {
 	if property := maintainer.GetProperty(constantProperties.IdentityIDProperty.GetID()); property != nil && property.IsMeta() {
-		return property.(properties.MetaProperty).GetData().Get().(data.IDData).Get().Get().(ids.IdentityID)
+		return property.Get().(properties.MetaProperty).GetData().Get().(data.IDData).Get().Get().(ids.IdentityID)
 	}
 	return constantProperties.IdentityIDProperty.GetData().Get().(data.IDData).Get().Get().(ids.IdentityID)
 }
 func (maintainer maintainer) GetMaintainedClassificationID() ids.ClassificationID {
 	if property := maintainer.GetProperty(constantProperties.MaintainedClassificationIDProperty.GetID()); property != nil && property.IsMeta() {
-		return property.(properties.MetaProperty).GetData().Get().(data.IDData).Get().Get().(ids.ClassificationID)
+		return property.Get().(properties.MetaProperty).GetData().Get().(data.IDData).Get().Get().(ids.ClassificationID)
 	}
 	return constantProperties.MaintainedClassificationIDProperty.GetData().Get().(data.IDData).Get().Get().(ids.ClassificationID)
 }
 func (maintainer maintainer) GetMaintainedProperties() data.ListData {
 	if property := maintainer.GetProperty(constantProperties.MaintainedPropertiesProperty.GetID()); property != nil && property.IsMeta() {
-		return property.(properties.MetaProperty).GetData().Get().(data.ListData)
+		return property.Get().(properties.MetaProperty).GetData().Get().(data.ListData)
 	}
 
 	return constantProperties.MaintainedPropertiesProperty.GetData().Get().(data.ListData)
 }
 func (maintainer maintainer) GetPermissions() data.ListData {
 	if property := maintainer.GetProperty(constantProperties.PermissionsProperty.GetID()); property != nil && property.IsMeta() {
-		return property.(properties.MetaProperty).GetData().Get().(data.ListData)
+		return property.Get().(properties.MetaProperty).GetData().Get().(data.ListData)
 	}
 
 	return constantProperties.PermissionsProperty.GetData().Get().(data.ListData)

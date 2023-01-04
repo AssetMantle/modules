@@ -17,3 +17,9 @@ func NewClassification(immutables qualified.Immutables, mutables qualified.Mutab
 		Document: NewDocument(base.NewClassificationID(immutables, mutables), immutables, mutables),
 	}
 }
+
+func NewClassificationFromDocument(document documents.Document) documents.Classification {
+	return classification{
+		Document: document,
+	}
+}

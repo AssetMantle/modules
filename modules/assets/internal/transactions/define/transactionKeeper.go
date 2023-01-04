@@ -5,14 +5,17 @@ package define
 
 import (
 	"context"
+
+	"github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 	"github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -40,9 +43,9 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	immutables := base.NewImmutables(baseLists.NewPropertyList(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...))
+	immutables := base.NewImmutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)...))
 
-	mutables := base.NewMutables(baseLists.NewPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
+	mutables := base.NewMutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...))
 
 	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), define.NewAuxiliaryRequest(immutables, mutables)))
 	if err != nil {

@@ -33,6 +33,10 @@ func NewMappable(asset documents.Asset) helpers.Mappable {
 	}
 }
 
+func GetAsset(mappable helpers.Mappable) documents.Asset {
+	return base.NewAssetFromDocument(mappable.(*Mappable).Asset)
+}
+
 func MappablesFromInterface(mappables []helpers.Mappable) []*Mappable {
 	Mappables := make([]*Mappable, len(mappables))
 	for index, mappable := range mappables {

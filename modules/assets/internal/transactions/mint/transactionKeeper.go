@@ -5,6 +5,9 @@ package mint
 
 import (
 	"context"
+
+	"github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
@@ -19,8 +22,8 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -54,7 +57,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...))
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)...))
 
 	assetID := baseIDs.NewAssetID(message.ClassificationID, immutables)
 
@@ -63,7 +66,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.EntityAlreadyExists
 	}
 
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...))
 
 	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
@@ -71,8 +74,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	split := types.SmallestDec()
 
-	if metaPropertyList := baseLists.NewPropertyList(append(message.ImmutableMetaProperties.GetList(), message.MutableMetaProperties.GetList()...)...); metaPropertyList.GetProperty(constants.SupplyProperty.GetID()) != nil {
-		split = metaPropertyList.GetProperty(constants.SupplyProperty.GetID()).(properties.MetaProperty).GetData().(data.DecData).Get()
+	if metaPropertyList := baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.ImmutableMetaProperties.GetList(), message.MutableMetaProperties.GetList()...)...)...); metaPropertyList.GetProperty(constants.SupplyProperty.GetID()) != nil {
+		split = metaPropertyList.GetProperty(constants.SupplyProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.DecData).Get()
 	}
 
 	if auxiliaryResponse := transactionKeeper.mintAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), mint.NewAuxiliaryRequest(message.ToID, assetID, split)); !auxiliaryResponse.IsSuccessful() {

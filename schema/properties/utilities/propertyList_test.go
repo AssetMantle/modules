@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package property
+package utilities
 
 import (
 	"testing"
@@ -32,8 +32,8 @@ func TestDuplicate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Duplicate(tt.args.propertyList); got != tt.want {
-				t.Errorf("Duplicate() = %v, want %v", got, tt.want)
+			if got := IsDuplicate(tt.args.propertyList); got != tt.want {
+				t.Errorf("IsDuplicate() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -63,11 +63,5 @@ func (dataList *AnyDataList) Remove(data ...data.Data) lists.AnyDataList {
 }
 
 func NewDataList(data ...data.Data) lists.AnyDataList {
-	var dataList []*AnyData
-	for _, datum := range data {
-		if datum != nil {
-			dataList = append(dataList, datum.ToAnyData().(*AnyData))
-		}
-	}
-	return &AnyDataList{DataList: dataList}
+	return (&AnyDataList{}).Add(data...)
 }

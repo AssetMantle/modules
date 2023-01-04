@@ -5,18 +5,20 @@ package mutate
 
 import (
 	"context"
+
+	"github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
-	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -50,19 +52,19 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if Mappable == nil {
 		return nil, constants.EntityNotFound
 	}
-	asset := Mappable.(documents.Asset)
+	asset := mappable.GetAsset(Mappable)
 
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...))
 
 	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), maintain.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, mutables)); auxiliaryResponse.IsSuccessful() {
-		if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), conform.NewAuxiliaryRequest(asset.GetClassificationID(), nil, asset.GetMutables().Mutate(mutables.GetMutablePropertyList().GetList()...))); !auxiliaryResponse.IsSuccessful() {
+		if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), conform.NewAuxiliaryRequest(asset.GetClassificationID(), nil, asset.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(mutables.GetMutablePropertyList().GetList()...)...))); !auxiliaryResponse.IsSuccessful() {
 			return nil, auxiliaryResponse.GetError()
 		}
 	} else {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	assets.Mutate(mappable.NewMappable(base.NewAsset(asset.GetClassificationID(), asset.GetImmutables(), asset.GetMutables().Mutate(mutables.GetMutablePropertyList().GetList()...))))
+	assets.Mutate(mappable.NewMappable(base.NewAsset(asset.GetClassificationID(), asset.GetImmutables(), asset.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(mutables.GetMutablePropertyList().GetList()...)...))))
 
 	return &Response{}, nil
 }
