@@ -14,9 +14,9 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
-//type queryRequest struct {
+// type queryRequest struct {
 //	ids.OwnableID `json:"ownableID" valid:"required~required field ownableID missing"`
-//}
+// }
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
@@ -71,5 +71,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 func newQueryRequest(ownableID ids.OwnableID) helpers.QueryRequest {
-	return &QueryRequest{OwnableID: ownableID.(*baseIDs.OwnableID)}
+	return &QueryRequest{OwnableID: ownableID.ToAnyOwnableID().(*baseIDs.AnyOwnableID)}
 }

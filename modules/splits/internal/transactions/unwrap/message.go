@@ -63,7 +63,7 @@ func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, ownableID ids.O
 	return &Message{
 		From:      from.String(),
 		FromID:    fromID.(*baseIds.IdentityID),
-		OwnableID: ownableID.(*baseIds.OwnableID),
+		OwnableID: ownableID.ToAnyOwnableID().(*baseIds.AnyOwnableID),
 		Value:     value,
 	}
 }

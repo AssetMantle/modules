@@ -18,7 +18,7 @@ func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, IdentityID{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, MaintainerID{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, OrderID{})
-	codecUtilities.RegisterModuleConcrete(legacyAmino, OwnableID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyOwnableID{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, PropertyID{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, SplitID{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, StringID{})

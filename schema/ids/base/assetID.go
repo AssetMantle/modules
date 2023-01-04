@@ -24,7 +24,7 @@ func (assetID *AssetID) IsOwnableID() {}
 func (assetID *AssetID) IsAssetID()   {}
 func (assetID *AssetID) Compare(listable traits.Listable) int {
 	// TODO devise a better strategy to compare assetID and ownableID
-	return bytes.Compare(assetID.Bytes(), ownableIDFromInterface(listable).Bytes())
+	return bytes.Compare(assetID.Bytes(), assetIDFromInterface(listable).Bytes())
 }
 func (assetID *AssetID) ToAnyID() ids.AnyID {
 	return &AnyID{
@@ -33,6 +33,14 @@ func (assetID *AssetID) ToAnyID() ids.AnyID {
 		},
 	}
 }
+func (assetID *AssetID) ToAnyOwnableID() ids.AnyOwnableID {
+	return &AnyOwnableID{
+		Impl: &AnyOwnableID_AssetID{
+			AssetID: assetID,
+		},
+	}
+}
+
 func assetIDFromInterface(i interface{}) *AssetID {
 	switch value := i.(type) {
 	case *AssetID:

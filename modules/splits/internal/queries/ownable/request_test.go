@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	testOwnableID = baseIds.NewOwnableID(baseIds.NewStringID("OwnerID"))
+	testOwnableID = baseIds.NewCoinID(baseIds.NewStringID("OwnerID"))
 )
 
 func Test_newQueryRequest(t *testing.T) {

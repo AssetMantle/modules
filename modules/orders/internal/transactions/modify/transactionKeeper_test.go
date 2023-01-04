@@ -5,9 +5,10 @@ package modify
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"reflect"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/simapp"
 
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
@@ -156,9 +157,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	mutableMetaProperties := baseLists.NewPropertyList(
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("exchangeRate"), baseData.NewDecData(types.NewDec(10))),
-		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerOwnableID"), baseData.NewIDData(baseIDs.NewOwnableID(baseIDs.NewStringID("makerID")))),
+		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerOwnableID"), baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID("makerID")))),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("creationHeight"), baseData.NewHeightData(baseTypes.NewHeight(1))),
-		baseProperties.NewMetaProperty(baseIDs.NewStringID("takerOwnableID"), baseData.NewIDData(baseIDs.NewOwnableID(baseIDs.NewStringID("takerID")))),
+		baseProperties.NewMetaProperty(baseIDs.NewStringID("takerOwnableID"), baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID("takerID")))),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerID"), baseData.NewIDData(baseIDs.PrototypeIdentityID())),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerID"), baseData.NewIDData(baseIDs.PrototypeIdentityID())),
 	)
@@ -182,8 +183,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	testIdentity.ProvisionAddress([]types.AccAddress{fromAccAddress}...)
 	testOrder := baseDocuments.NewOrder(testClassificationID, immutablesMeta, mutablesMeta)
 	// testOrderID := mappable.NewMappable(testOrder).GetKey()
-	// testMakerOwnableID := baseIDs.NewOwnableID(baseIDs.NewStringID("makerID"))
-	// testTakerOwnableID := baseIDs.NewOwnableID(baseIDs.NewStringID("takerID"))
+	// testMakerOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("makerID"))
+	// testTakerOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("takerID"))
 	testRate := types.NewDec(10)
 	testHeight := baseTypes.NewHeight(1)
 	testOrderID := baseIDs.NewOrderID(testClassificationID, immutablesMeta)

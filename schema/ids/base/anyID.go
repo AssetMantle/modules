@@ -5,21 +5,21 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type getter interface {
+type idGetter interface {
 	get() ids.ID
 }
 
-var _ getter = (*AnyID_ClassificationID)(nil)
-var _ getter = (*AnyID_AssetID)(nil)
-var _ getter = (*AnyID_DataID)(nil)
-var _ getter = (*AnyID_HashID)(nil)
-var _ getter = (*AnyID_IdentityID)(nil)
-var _ getter = (*AnyID_MaintainerID)(nil)
-var _ getter = (*AnyID_OrderID)(nil)
-var _ getter = (*AnyID_OwnableID)(nil)
-var _ getter = (*AnyID_PropertyID)(nil)
-var _ getter = (*AnyID_SplitID)(nil)
-var _ getter = (*AnyID_StringID)(nil)
+var _ idGetter = (*AnyID_ClassificationID)(nil)
+var _ idGetter = (*AnyID_AssetID)(nil)
+var _ idGetter = (*AnyID_DataID)(nil)
+var _ idGetter = (*AnyID_HashID)(nil)
+var _ idGetter = (*AnyID_IdentityID)(nil)
+var _ idGetter = (*AnyID_MaintainerID)(nil)
+var _ idGetter = (*AnyID_OrderID)(nil)
+var _ idGetter = (*AnyID_OwnableID)(nil)
+var _ idGetter = (*AnyID_PropertyID)(nil)
+var _ idGetter = (*AnyID_SplitID)(nil)
+var _ idGetter = (*AnyID_StringID)(nil)
 
 func (m *AnyID_ClassificationID) get() ids.ID {
 	return m.ClassificationID
@@ -58,17 +58,17 @@ func (m *AnyID_StringID) get() ids.ID {
 var _ ids.AnyID = (*AnyID)(nil)
 
 func (m *AnyID) AsString() string {
-	return m.Impl.(getter).get().AsString()
+	return m.Impl.(idGetter).get().AsString()
 }
 func (m *AnyID) Get() ids.ID {
-	return m.Impl.(getter).get()
+	return m.Impl.(idGetter).get()
 }
 func (m *AnyID) Compare(listable traits.Listable) int {
-	return m.Impl.(getter).get().Compare(listable)
+	return m.Impl.(idGetter).get().Compare(listable)
 }
 func (m *AnyID) Bytes() []byte {
-	return m.Impl.(getter).get().Bytes()
+	return m.Impl.(idGetter).get().Bytes()
 }
 func (m *AnyID) ToAnyID() ids.AnyID {
-	return m.Impl.(getter).get().ToAnyID()
+	return m.Impl.(idGetter).get().ToAnyID()
 }

@@ -12,9 +12,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
@@ -25,8 +23,8 @@ type transactionRequest struct {
 	BaseReq               rest.BaseReq `json:"baseReq"`
 	FromID                string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
 	AssetID               string       `json:"assetID" valid:"required~required field assetID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field assetID"`
-	MutableMetaProperties string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing, matches(^.*$)~invalid field mutableMetaProperties"`
-	MutableProperties     string       `json:"mutableProperties" valid:"required~required field mutableProperties missing, matches(^.*$)~invalid field mutableProperties"`
+	MutableMetaProperties string       `json:"mutableMetaProperties" valid:"matches(^.*$)~invalid field mutableMetaProperties"`
+	MutableProperties     string       `json:"mutableProperties" valid:"matches(^.*$)~invalid field mutableProperties"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -45,10 +43,6 @@ func (transactionRequest transactionRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(transactionRequest)
 	if err != nil {
 		return err
-	}
-	inputValidator := base.NewInputValidator(constants.PropertyExpression)
-	if !inputValidator.IsValid(transactionRequest.MutableProperties, transactionRequest.MutableMetaProperties) {
-		return errorConstants.IncorrectFormat
 	}
 	return nil
 }

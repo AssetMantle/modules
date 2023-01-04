@@ -5,6 +5,7 @@ package wrap
 
 import (
 	"context"
+
 	"github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
@@ -23,7 +24,7 @@ type transactionKeeper struct {
 }
 
 func (transactionKeeper transactionKeeper) Wrap(ctx context.Context, message *Message) (*TransactionResponse, error) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
@@ -50,7 +51,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	for _, coin := range message.Coins {
-		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)), message.FromID, baseIDs.NewOwnableID(baseIDs.NewStringID(coin.Denom)), types.NewDecFromInt(coin.Amount)); err != nil {
+		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)), message.FromID, baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom)), types.NewDecFromInt(coin.Amount)); err != nil {
 			return nil, err
 		}
 	}
