@@ -30,7 +30,7 @@ func TestNewPropertyID(t *testing.T) {
 		want ids.PropertyID
 	}{
 
-		{"+ve", args{NewStringID("ID"), NewStringID("ID2")}, propertyID{NewStringID("ID"), NewStringID("ID2")}},
+		{"+ve", args{NewStringID("ID"), NewStringID("ID2")}, &PropertyID{NewStringID("ID").(*StringID), NewStringID("ID2").(*StringID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -49,11 +49,11 @@ func Test_propertyIDFromInterface(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    propertyID
+		want    *PropertyID
 		wantErr bool
 	}{
 
-		{"+ve", args{testPropertyID}, propertyID{testKey, testType}, false},
+		{"+ve", args{testPropertyID}, &PropertyID{testKey.(*StringID), testType.(*StringID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -81,9 +81,9 @@ func Test_propertyID_Bytes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			propertyID := propertyID{
-				Key:  tt.fields.Key,
-				Type: tt.fields.Type,
+			propertyID := &PropertyID{
+				KeyID:  tt.fields.Key.(*StringID),
+				TypeID: tt.fields.Type.(*StringID),
 			}
 			if got := propertyID.Bytes(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Bytes() = %v, want %v", got, tt.want)
@@ -113,9 +113,9 @@ func Test_propertyID_Compare(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			propertyID := propertyID{
-				Key:  tt.fields.Key,
-				Type: tt.fields.Type,
+			propertyID := &PropertyID{
+				KeyID:  tt.fields.Key.(*StringID),
+				TypeID: tt.fields.Type.(*StringID),
 			}
 			if got := propertyID.Compare(tt.args.listable); got != tt.want {
 				t.Errorf("Compare() = %v, want %v", got, tt.want)
@@ -140,9 +140,9 @@ func Test_propertyID_GetKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			propertyID := propertyID{
-				Key:  tt.fields.Key,
-				Type: tt.fields.Type,
+			propertyID := &PropertyID{
+				KeyID:  tt.fields.Key.(*StringID),
+				TypeID: tt.fields.Type.(*StringID),
 			}
 			if got := propertyID.GetKey(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetKey() = %v, want %v", got, tt.want)
@@ -167,9 +167,9 @@ func Test_propertyID_GetType(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			propertyID := propertyID{
-				Key:  tt.fields.Key,
-				Type: tt.fields.Type,
+			propertyID := &PropertyID{
+				KeyID:  tt.fields.Key.(*StringID),
+				TypeID: tt.fields.Type.(*StringID),
 			}
 			if got := propertyID.GetType(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetType() = %v, want %v", got, tt.want)
@@ -194,9 +194,9 @@ func Test_propertyID_String(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			propertyID := propertyID{
-				Key:  tt.fields.Key,
-				Type: tt.fields.Type,
+			propertyID := &PropertyID{
+				KeyID:  tt.fields.Key.(*StringID),
+				TypeID: tt.fields.Type.(*StringID),
 			}
 			if got := propertyID.String(); got != tt.want {
 				t.Errorf("String() = %v, want %v", got, tt.want)
