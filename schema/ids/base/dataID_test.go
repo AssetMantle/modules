@@ -15,7 +15,7 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-func TestNewDataID(t *testing.T) {
+func TestGenerateDataID(t *testing.T) {
 	type args struct {
 		data data.Data
 	}
@@ -25,9 +25,9 @@ func TestNewDataID(t *testing.T) {
 		want      ids.DataID
 		wantError bool
 	}{
-		{"-ve with nil", args{}, dataID{}, true},
-		{"+ve", args{NewBooleanData(true)}, dataID{NewStringID("B"), NewBooleanData(true).GenerateHashID()}, false},
-		{"-ve with invalid data", args{nil}, dataID{}, true},
+		{"-ve with nil", args{}, &DataID{}, true},
+		{"+ve", args{NewBooleanData(true)}, &DataID{NewStringID("B").(*StringID), NewBooleanData(true).GenerateHashID().(*HashID)}, false},
+		{"-ve with invalid data", args{nil}, &DataID{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -51,12 +51,12 @@ func Test_dataIDFromInterface(t *testing.T) {
 	tests := []struct {
 		name      string
 		args      args
-		want      dataID
+		want      *DataID
 		wantError bool
 	}{
-		{"+ve", args{dataID{NewStringID("B"), NewBooleanData(true).GenerateHashID()}}, dataID{NewStringID("B"), NewBooleanData(true).GenerateHashID()}, false},
-		{"-ve", args{dataID{}}, dataID{}, false},
-		{"-ve", args{nil}, dataID{}, true},
+		{"+ve", args{&DataID{NewStringID("B").(*StringID), NewBooleanData(true).GenerateHashID().(*HashID)}}, &DataID{NewStringID("B").(*StringID), NewBooleanData(true).GenerateHashID().(*HashID)}, false},
+		{"-ve", args{&DataID{}}, &DataID{}, false},
+		{"-ve", args{nil}, &DataID{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -89,9 +89,9 @@ func Test_dataID_Bytes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			dataID := dataID{
-				Type:   tt.fields.Type,
-				HashID: tt.fields.HashID,
+			dataID := &DataID{
+				TypeID: tt.fields.Type.(*StringID),
+				HashID: tt.fields.HashID.(*HashID),
 			}
 			if got := dataID.Bytes(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Bytes() = %v, want %v", got, tt.want)
@@ -114,14 +114,14 @@ func Test_dataID_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		{"+ve", fields{NewStringID("B"), NewBooleanData(true).GenerateHashID()}, args{dataID{NewStringID("B"), NewBooleanData(true).GenerateHashID()}}, 0},
-		{"+ve", fields{NewStringID("B"), NewBooleanData(false).GenerateHashID()}, args{dataID{NewStringID("B"), NewBooleanData(true).GenerateHashID()}}, -1},
+		{"+ve", fields{NewStringID("B"), NewBooleanData(true).GenerateHashID()}, args{&DataID{NewStringID("B").(*StringID), NewBooleanData(true).GenerateHashID().(*HashID)}}, 0},
+		{"+ve", fields{NewStringID("B"), NewBooleanData(false).GenerateHashID()}, args{&DataID{NewStringID("B").(*StringID), NewBooleanData(true).GenerateHashID().(*HashID)}}, -1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			dataID := dataID{
-				Type:   tt.fields.Type,
-				HashID: tt.fields.HashID,
+			dataID := &DataID{
+				TypeID: tt.fields.Type.(*StringID),
+				HashID: tt.fields.HashID.(*HashID),
 			}
 			if got := dataID.Compare(tt.args.listable); got != tt.want {
 				t.Errorf("Compare() = %v, want %v", got, tt.want)
@@ -140,15 +140,15 @@ func Test_dataID_GetHashID(t *testing.T) {
 		fields fields
 		want   ids.HashID
 	}{
-		{"+ve", fields{}, dataID{}.HashID},
+		{"+ve", fields{}, DataID{}.HashID},
 		{"+ve", fields{NewStringID("B"), NewBooleanData(true).GenerateHashID()}, NewBooleanData(true).GenerateHashID()},
 		{"+ve", fields{NewStringID("B"), NewBooleanData(false).GenerateHashID()}, NewBooleanData(false).GenerateHashID()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			dataID := dataID{
-				Type:   tt.fields.Type,
-				HashID: tt.fields.HashID,
+			dataID := &DataID{
+				TypeID: tt.fields.Type.(*StringID),
+				HashID: tt.fields.HashID.(*HashID),
 			}
 			if got := dataID.GetHashID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetHashID() = %v, want %v", got, tt.want)
@@ -172,9 +172,9 @@ func Test_dataID_String(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			dataID := dataID{
-				Type:   tt.fields.Type,
-				HashID: tt.fields.HashID,
+			dataID := &DataID{
+				TypeID: tt.fields.Type.(*StringID),
+				HashID: tt.fields.HashID.(*HashID),
 			}
 			if got := dataID.String(); got != tt.want {
 				t.Errorf("String() = %v, want %v", got, tt.want)
@@ -183,9 +183,59 @@ func Test_dataID_String(t *testing.T) {
 	}
 }
 
+func TestReadDataID(t *testing.T) {
+	type args struct {
+		dataIDString string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    ids.DataID
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{"+ve", args{stringUtilities.JoinIDStrings(NewStringID("B").String(), NewBooleanData(true).GenerateHashID().String())}, GenerateDataID(NewBooleanData(true)), false},
+		{"+ve with empty string", args{""}, PrototypeDataID(), false},
+		{"+ve with nil", args{}, PrototypeDataID(), false},
+		{"-ve", args{stringUtilities.JoinIDStrings(NewStringID("j").String(), "0")}, &DataID{}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ReadDataID(tt.args.dataIDString)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ReadDataID() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ReadDataID() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 // mocks for decData
 type booleanData struct {
 	Value bool `json:"value"`
+}
+
+func (booleanData booleanData) Size() int {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (booleanData booleanData) Unmarshal(bytes []byte) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (booleanData booleanData) MarshalTo(bytes []byte) (int, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (booleanData booleanData) ToAnyData() data.AnyData {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ data.BooleanData = (*booleanData)(nil)
@@ -250,35 +300,5 @@ func BooleanDataPrototype() data.BooleanData {
 func NewBooleanData(value bool) data.BooleanData {
 	return booleanData{
 		Value: value,
-	}
-}
-
-func TestReadDataID(t *testing.T) {
-	type args struct {
-		dataIDString string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    ids.DataID
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-		{"+ve", args{stringUtilities.JoinIDStrings(NewStringID("B").String(), NewBooleanData(true).GenerateHashID().String())}, GenerateDataID(NewBooleanData(true)), false},
-		{"+ve with empty string", args{""}, PrototypeDataID(), false},
-		{"+ve with nil", args{}, PrototypeDataID(), false},
-		{"-ve", args{stringUtilities.JoinIDStrings(NewStringID("j").String(), "0")}, dataID{}, true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := ReadDataID(tt.args.dataIDString)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ReadDataID() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ReadDataID() got = %v, want %v", got, tt.want)
-			}
-		})
 	}
 }
