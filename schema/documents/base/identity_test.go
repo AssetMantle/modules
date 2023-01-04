@@ -112,7 +112,7 @@ func Test_identity_ProvisionAddress(t *testing.T) {
 	require.Nil(t, err)
 	fromAccAddress2, err := sdkTypes.AccAddressFromBech32("cosmos1u6xn6rv07p2yzzj2rm8st04x54xe5ur0t9nl5j")
 	require.Nil(t, err)
-	testIdentity.Document = testIdentity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), base.NewListData(testIdentity.GetAuthentication().Add(accAddressesToData([]sdkTypes.AccAddress{fromAccAddress}...)...))))
+	testIdentity.Document = testIdentity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), base.NewListData(testIdentity.GetAuthentication().Add(base.NewAccAddressData(fromAccAddress)))))
 	fmt.Println("TEST:	", testIdentity.IsProvisioned(fromAccAddress))
 	type fields struct {
 		Document documents.Identity
@@ -151,9 +151,9 @@ func Test_identity_GetAuthentication(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   lists.DataList
+		want   lists.AnyDataList
 	}{
-		{"+ve", fields{identity{NewDocument(classificationID, immutables, mutables)}}, baseLists.NewDataList(constants.AuthenticationProperty.GetData().(data.ListData).Get()...)},
+		{"+ve", fields{identity{NewDocument(classificationID, immutables, mutables)}}, baseLists.NewDataList(constants.AuthenticationProperty.GetData().(data.ListData).Get()[0].(*base.AnyData).Impl.(data.Data))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
