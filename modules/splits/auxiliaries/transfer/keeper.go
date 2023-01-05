@@ -11,7 +11,6 @@ import (
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 	"github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -34,12 +33,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	if Mappable == nil {
 		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
-	fromSplit := Mappable.(types.Split)
+	fromSplit := mappable.GetSplit(Mappable)
 
-	switch fromSplit = fromSplit.(types.Split).Send(auxiliaryRequest.Value); {
-	case fromSplit.(types.Split).GetValue().LT(sdkTypes.ZeroDec()):
+	switch fromSplit = fromSplit.Send(auxiliaryRequest.Value); {
+	case fromSplit.GetValue().LT(sdkTypes.ZeroDec()):
 		return newAuxiliaryResponse(constants.NotAuthorized)
-	case fromSplit.(types.Split).GetValue().Equal(sdkTypes.ZeroDec()):
+	case fromSplit.GetValue().Equal(sdkTypes.ZeroDec()):
 		splits.Remove(mappable.NewMappable(fromSplit))
 	default:
 		splits.Mutate(mappable.NewMappable(fromSplit))
@@ -47,10 +46,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 
 	toSplitID := baseIDs.NewSplitID(auxiliaryRequest.ToID, auxiliaryRequest.OwnableID)
 
-	if toSplit, ok := splits.Fetch(key.NewKey(toSplitID)).Get(key.NewKey(toSplitID)).(types.Split); !ok {
+	if Mappable := splits.Fetch(key.NewKey(toSplitID)).Get(key.NewKey(toSplitID)); Mappable == nil {
 		splits.Add(mappable.NewMappable(base.NewSplit(auxiliaryRequest.ToID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value)))
 	} else {
-		splits.Mutate(mappable.NewMappable(toSplit.Receive(auxiliaryRequest.Value)))
+		splits.Mutate(mappable.NewMappable(mappable.GetSplit(Mappable).Receive(auxiliaryRequest.Value)))
 	}
 
 	return newAuxiliaryResponse(nil)
