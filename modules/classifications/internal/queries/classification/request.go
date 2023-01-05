@@ -7,16 +7,16 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 
-	"github.com/AssetMantle/modules/modules/classifications/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
-//type queryRequest struct {
+// type queryRequest struct {
 //	ids.ClassificationID `json:"classificationID" valid:"required~required field classificationID missing"`
-//}
+// }
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
@@ -49,10 +49,10 @@ func (*QueryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, erro
 	}
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
-	return common.LegacyAmino.MarshalJSON(queryRequest)
+	return base.CodecPrototype().MarshalJSON(queryRequest)
 }
 func (queryRequest *QueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
-	if err := common.LegacyAmino.UnmarshalJSON(bytes, &queryRequest); err != nil {
+	if err := base.CodecPrototype().UnmarshalJSON(bytes, queryRequest); err != nil {
 		return nil, err
 	}
 
