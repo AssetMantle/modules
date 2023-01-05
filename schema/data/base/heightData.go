@@ -22,7 +22,7 @@ func (heightData *HeightData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(heightData)
 }
 func (heightData *HeightData) Compare(listable traits.Listable) int {
-	compareHeightData, err := dataFromInterface(listable)
+	compareHeightData, err := dataFromListable(listable)
 	if err != nil {
 		panic(err)
 	}

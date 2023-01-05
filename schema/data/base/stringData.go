@@ -19,7 +19,7 @@ func (stringData *StringData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(stringData)
 }
 func (stringData *StringData) Compare(listable traits.Listable) int {
-	compareStringData, err := dataFromInterface(listable)
+	compareStringData, err := dataFromListable(listable)
 	if err != nil {
 		panic(err)
 	}

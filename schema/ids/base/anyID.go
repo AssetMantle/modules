@@ -1,6 +1,7 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -71,4 +72,14 @@ func (m *AnyID) Bytes() []byte {
 }
 func (m *AnyID) ToAnyID() ids.AnyID {
 	return m.Impl.(idGetter).get().ToAnyID()
+}
+
+func idFromListable(listable traits.Listable) (ids.ID, error) {
+	switch listable.(type) {
+	case ids.ID:
+		return listable.(ids.ID), nil
+
+	default:
+		return nil, constants.MetaDataError
+	}
 }
