@@ -19,7 +19,9 @@ func (parameter *Parameter) GetValidator() func(interface{}) error {
 		return nil
 	}
 }
-
+func (parameter *Parameter) AsString() string {
+	return parameter.ID.IDString
+}
 func (parameter *Parameter) Equal(compareParameter parametersSchema.Parameter) bool {
 	if compareParameter != nil && parameter.ID.Compare(compareParameter.GetID()) == 0 && parameter.Data.GetType().Compare(compareParameter.GetData().GetType()) == 0 && parameter.Data.Compare(compareParameter.GetData()) == 0 {
 		return true

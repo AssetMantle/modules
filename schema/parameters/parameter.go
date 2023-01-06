@@ -9,7 +9,7 @@ import (
 )
 
 type Parameter interface {
-	String() string
+	AsString() string
 
 	Equal(Parameter) bool
 	Validate() error
