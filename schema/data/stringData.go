@@ -5,5 +5,5 @@ package data
 
 type StringData interface {
 	Data
-	Get() string
+	AsString() string
 }

@@ -30,7 +30,9 @@ func (message *Message) ValidateBasic() error {
 	if err != nil {
 		return sdkErrors.Wrap(errorConstants.IncorrectMessage, err.Error())
 	}
-
+	if !sdkTypes.ValidSortableDec(message.MakerOwnableSplit) || !sdkTypes.ValidSortableDec(message.TakerOwnableSplit) {
+		return errorConstants.InvalidParameter
+	}
 	return nil
 }
 func (message *Message) GetSigners() []sdkTypes.AccAddress {

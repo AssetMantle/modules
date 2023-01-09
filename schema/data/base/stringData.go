@@ -27,7 +27,7 @@ func (stringData *StringData) Compare(listable traits.Listable) int {
 	return bytes.Compare(stringData.Bytes(), compareStringData.Bytes())
 }
 func (stringData *StringData) Bytes() []byte {
-	return []byte(stringData.String())
+	return []byte(stringData.AsString())
 }
 func (stringData *StringData) GetType() ids.StringID {
 	return dataConstants.StringDataID
@@ -38,7 +38,7 @@ func (stringData *StringData) ZeroValue() data.Data {
 func (stringData *StringData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(stringData.Bytes())
 }
-func (stringData *StringData) Get() string {
+func (stringData *StringData) AsString() string {
 	return stringData.Value
 }
 func (stringData *StringData) ToAnyData() data.AnyData {
