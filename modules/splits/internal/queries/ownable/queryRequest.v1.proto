@@ -1,8 +1,8 @@
 syntax = "proto3";
 package splits.queries.ownable;
 
-import "schema/ids/base/ownableID.v1.proto";
+import "schema/ids/base/anyOwnableID.v1.proto";
 
 message QueryRequest {
-  ids.OwnableID ownable_i_d = 1;
+  ids.AnyOwnableID ownable_i_d = 1;
 }

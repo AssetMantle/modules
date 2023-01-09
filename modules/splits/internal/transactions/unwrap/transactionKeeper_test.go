@@ -5,10 +5,11 @@ package unwrap
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/simapp"
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"reflect"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/simapp"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
@@ -202,7 +203,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers, Mapper, Parameters, supplyKeeper := createTestInput(t)
-	testOwnableID := baseIds.NewOwnableID(baseIds.NewStringID("stake"))
+	testOwnableID := baseIds.NewCoinID(baseIds.NewStringID("stake"))
 	testRate2 := sdkTypes.NewDec(1)
 	split := baseTypes.NewSplit(fromID, testOwnableID, testRate2)
 	keepers.UnwrapKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(split))

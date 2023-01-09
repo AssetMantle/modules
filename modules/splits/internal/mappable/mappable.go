@@ -31,6 +31,10 @@ func Prototype() helpers.Mappable {
 	return &Mappable{}
 }
 
+func GetSplit(mappable helpers.Mappable) types.Split {
+	return mappable.(*Mappable).Split
+}
+
 func MappablesFromInterface(mappables []helpers.Mappable) []*Mappable {
 	Mappables := make([]*Mappable, len(mappables))
 	for index, mappable := range mappables {

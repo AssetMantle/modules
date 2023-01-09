@@ -5,9 +5,10 @@ package send
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"reflect"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/simapp"
 
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
@@ -139,7 +140,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIds.NewClassificationID(immutables, mutables)
 	fromID := baseIds.NewIdentityID(classificationID, immutables)
-	testOwnableID := baseIds.NewOwnableID(baseIds.NewStringID("OwnerID"))
+	testOwnableID := baseIds.NewCoinID(baseIds.NewStringID("OwnerID"))
 	testRate := sdkTypes.NewDec(1)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

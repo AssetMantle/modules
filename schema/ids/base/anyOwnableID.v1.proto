@@ -1,0 +1,15 @@
+syntax = "proto3";
+package ids;
+
+import "gogoproto/gogo.proto";
+import "schema/ids/base/assetID.v1.proto";
+import "schema/ids/base/coinID.v1.proto";
+
+message AnyOwnableID {
+  option (gogoproto.goproto_getters) = false;
+
+  oneof impl {
+    AssetID asset_i_d = 1;
+    CoinID coin_i_d = 2;
+  }
+}

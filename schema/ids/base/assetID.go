@@ -23,8 +23,11 @@ func (assetID *AssetID) Bytes() []byte {
 func (assetID *AssetID) IsOwnableID() {}
 func (assetID *AssetID) IsAssetID()   {}
 func (assetID *AssetID) Compare(listable traits.Listable) int {
-	// TODO devise a better strategy to compare assetID and ownableID
-	return bytes.Compare(assetID.Bytes(), ownableIDFromInterface(listable).Bytes())
+	compareID, err := idFromListable(listable)
+	if err != nil {
+		panic(err)
+	}
+	return bytes.Compare(assetID.Bytes(), compareID.Bytes())
 }
 func (assetID *AssetID) ToAnyID() ids.AnyID {
 	return &AnyID{
@@ -33,14 +36,14 @@ func (assetID *AssetID) ToAnyID() ids.AnyID {
 		},
 	}
 }
-func assetIDFromInterface(i interface{}) *AssetID {
-	switch value := i.(type) {
-	case *AssetID:
-		return value
-	default:
-		panic(errorConstants.MetaDataError)
+func (assetID *AssetID) ToAnyOwnableID() ids.AnyOwnableID {
+	return &AnyOwnableID{
+		Impl: &AnyOwnableID_AssetID{
+			AssetID: assetID,
+		},
 	}
 }
+
 func NewAssetID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.AssetID {
 	return &AssetID{
 		HashID: GenerateHashID(classificationID.Bytes(), immutables.GenerateHashID().Bytes()).(*HashID),

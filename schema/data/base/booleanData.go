@@ -19,7 +19,7 @@ func (booleanData *BooleanData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(booleanData)
 }
 func (booleanData *BooleanData) Compare(listable traits.Listable) int {
-	compareBooleanData, err := dataFromInterface(listable)
+	compareBooleanData, err := dataFromListable(listable)
 	if err != nil {
 		panic(err)
 	}

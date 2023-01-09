@@ -25,7 +25,7 @@ func TestGetOwnableTotalSplitsValue(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIds.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIds.NewIdentityID(classificationID, immutables)
-	testOwnableID := baseIds.NewOwnableID(baseIds.NewStringID("OwnerID"))
+	testOwnableID := baseIds.NewCoinID(baseIds.NewStringID("OwnerID"))
 	testRate := types.NewDec(10)
 	split := baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
 	context, testMapper := createTestInput1(t)

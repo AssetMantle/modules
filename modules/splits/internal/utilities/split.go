@@ -11,7 +11,6 @@ import (
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 	"github.com/AssetMantle/modules/schema/types/base"
 
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -24,11 +23,11 @@ func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.
 
 	splitID := baseIDs.NewSplitID(ownerID, ownableID)
 
-	split := splits.Fetch(key.NewKey(splitID)).Get(key.NewKey(splitID))
-	if split == nil {
+	Mappable := splits.Fetch(key.NewKey(splitID)).Get(key.NewKey(splitID))
+	if Mappable == nil {
 		splits.Add(mappable.NewMappable(base.NewSplit(ownerID, ownableID, value)))
 	} else {
-		splits.Mutate(mappable.NewMappable(split.(types.Split).Receive(value)))
+		splits.Mutate(mappable.NewMappable(mappable.GetSplit(Mappable).Receive(value)))
 	}
 
 	return splits, nil
@@ -45,7 +44,7 @@ func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID
 	if Mappable == nil {
 		return nil, constants.EntityNotFound
 	}
-	split := Mappable.(types.Split)
+	split := mappable.GetSplit(Mappable)
 
 	switch split = split.Send(value); {
 	case split.GetValue().LT(sdkTypes.ZeroDec()):

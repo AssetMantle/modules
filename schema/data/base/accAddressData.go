@@ -21,7 +21,7 @@ func (accAddressData *AccAddressData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(accAddressData)
 }
 func (accAddressData *AccAddressData) Compare(listable traits.Listable) int {
-	compareAccAddressData, err := dataFromInterface(listable)
+	compareAccAddressData, err := dataFromListable(listable)
 	if err != nil {
 		panic(err)
 	}

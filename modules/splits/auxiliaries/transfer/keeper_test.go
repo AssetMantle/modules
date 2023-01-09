@@ -5,9 +5,10 @@ package transfer
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"reflect"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/simapp"
 
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
@@ -84,7 +85,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIds.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIds.NewIdentityID(classificationID, immutables)
-	testOwnableID := baseIds.NewOwnableID(baseIds.NewStringID("OwnerID"))
+	testOwnableID := baseIds.NewCoinID(baseIds.NewStringID("OwnerID"))
 	testRate := sdkTypes.NewDec(1)
 	split := baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
 	keepers.TransferKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(split))
@@ -104,7 +105,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	}{
 		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(testOwnerIdentityID, testOwnerIdentityID, testOwnableID, testRate)}, newAuxiliaryResponse(nil)},
 		{"+ve Not Authorized", fields{Mapper}, args{context, NewAuxiliaryRequest(testOwnerIdentityID, testOwnerIdentityID, testOwnableID, sdkTypes.ZeroDec())}, newAuxiliaryResponse(errorConstants.NotAuthorized)},
-		{"+ve Entity Not Found", fields{Mapper}, args{context, NewAuxiliaryRequest(testOwnerIdentityID, testOwnerIdentityID, baseIds.NewOwnableID(baseIds.NewStringID("test")), testRate)}, newAuxiliaryResponse(errorConstants.EntityNotFound)},
+		{"+ve Entity Not Found", fields{Mapper}, args{context, NewAuxiliaryRequest(testOwnerIdentityID, testOwnerIdentityID, baseIds.NewCoinID(baseIds.NewStringID("test")), testRate)}, newAuxiliaryResponse(errorConstants.EntityNotFound)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -61,11 +61,11 @@ func (x *AnyData) Compare(listable traits.Listable) int {
 	return x.Impl.(getter).get().Compare(listable)
 }
 
-func dataFromInterface(listable traits.Listable) (data.Data, error) {
+func dataFromListable(listable traits.Listable) (data.Data, error) {
 	switch value := listable.(type) {
 	case data.Data:
 		return value, nil
 	default:
-		panic(errorConstants.MetaDataError)
+		return nil, errorConstants.MetaDataError
 	}
 }
