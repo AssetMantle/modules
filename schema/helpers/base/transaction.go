@@ -136,7 +136,8 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 			WithChainID(baseReq.ChainID).
 			WithSimulateAndExecute(baseReq.Simulate).
 			WithTxConfig(context.TxConfig).
-			WithTimeoutHeight(baseReq.TimeoutHeight)
+			WithTimeoutHeight(baseReq.TimeoutHeight).
+			WithKeybase(context.Keyring)
 
 		msgList := []sdkTypes.Msg{msg}
 
@@ -167,7 +168,8 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 
 		context = context.WithFromAddress(fromAddress)
 		context = context.WithFromName(fromName)
-		context = context.WithBroadcastMode(viper.GetString(flags.FlagBroadcastMode))
+		// TODO ***** from from client.toml, remove hardcode
+		context = context.WithBroadcastMode(flags.BroadcastBlock)
 
 		if queuing.KafkaState.IsEnabled {
 			responseWriter.WriteHeader(http.StatusAccepted)
