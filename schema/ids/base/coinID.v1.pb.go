@@ -27,35 +27,35 @@ type CoinID struct {
 	StringID *StringID `protobuf:"bytes,1,opt,name=string_i_d,json=stringID,proto3" json:"string_i_d,omitempty"`
 }
 
-func (coinID *CoinID) Reset()         { *coinID = CoinID{} }
-func (coinID *CoinID) String() string { return proto.CompactTextString(coinID) }
-func (*CoinID) ProtoMessage()         {}
+func (m *CoinID) Reset()         { *m = CoinID{} }
+func (m *CoinID) String() string { return proto.CompactTextString(m) }
+func (*CoinID) ProtoMessage()    {}
 func (*CoinID) Descriptor() ([]byte, []int) {
 	return fileDescriptor_4f2e37f44a748cbb, []int{0}
 }
-func (coinID *CoinID) XXX_Unmarshal(b []byte) error {
-	return coinID.Unmarshal(b)
+func (m *CoinID) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
 }
-func (coinID *CoinID) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *CoinID) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_CoinID.Marshal(b, coinID, deterministic)
+		return xxx_messageInfo_CoinID.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := coinID.MarshalToSizedBuffer(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (coinID *CoinID) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CoinID.Merge(coinID, src)
+func (m *CoinID) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CoinID.Merge(m, src)
 }
-func (coinID *CoinID) XXX_Size() int {
-	return coinID.Size()
+func (m *CoinID) XXX_Size() int {
+	return m.Size()
 }
-func (coinID *CoinID) XXX_DiscardUnknown() {
-	xxx_messageInfo_CoinID.DiscardUnknown(coinID)
+func (m *CoinID) XXX_DiscardUnknown() {
+	xxx_messageInfo_CoinID.DiscardUnknown(m)
 }
 
 var xxx_messageInfo_CoinID proto.InternalMessageInfo
@@ -86,29 +86,29 @@ var fileDescriptor_4f2e37f44a748cbb = []byte{
 	0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0xe3, 0xd3, 0x14, 0x57, 0x33, 0x01, 0x00, 0x00,
 }
 
-func (coinID *CoinID) Marshal() (dAtA []byte, err error) {
-	size := coinID.Size()
+func (m *CoinID) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := coinID.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
 	return dAtA[:n], nil
 }
 
-func (coinID *CoinID) MarshalTo(dAtA []byte) (int, error) {
-	size := coinID.Size()
-	return coinID.MarshalToSizedBuffer(dAtA[:size])
+func (m *CoinID) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (coinID *CoinID) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *CoinID) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if coinID.StringID != nil {
+	if m.StringID != nil {
 		{
-			size, err := coinID.StringID.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.StringID.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -132,14 +132,14 @@ func encodeVarintCoinIDV1(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (coinID *CoinID) Size() (n int) {
-	if coinID == nil {
+func (m *CoinID) Size() (n int) {
+	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if coinID.StringID != nil {
-		l = coinID.StringID.Size()
+	if m.StringID != nil {
+		l = m.StringID.Size()
 		n += 1 + l + sovCoinIDV1(uint64(l))
 	}
 	return n
@@ -151,7 +151,7 @@ func sovCoinIDV1(x uint64) (n int) {
 func sozCoinIDV1(x uint64) (n int) {
 	return sovCoinIDV1(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (coinID *CoinID) Unmarshal(dAtA []byte) error {
+func (m *CoinID) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -209,10 +209,10 @@ func (coinID *CoinID) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if coinID.StringID == nil {
-				coinID.StringID = &StringID{}
+			if m.StringID == nil {
+				m.StringID = &StringID{}
 			}
-			if err := coinID.StringID.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.StringID.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

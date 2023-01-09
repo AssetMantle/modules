@@ -32,27 +32,27 @@ func (order order) GetCreationHeight() types.Height {
 }
 func (order order) GetMakerOwnableID() ids.OwnableID {
 	if property := order.GetProperty(constants.MakerOwnableIDProperty.GetID()); property != nil && property.IsMeta() {
-		return property.Get().(properties.MetaProperty).GetData().Get().(data.IDData).Get().(ids.OwnableID)
+		return property.Get().(properties.MetaProperty).GetData().Get().(data.IDData).Get().Get().(ids.OwnableID)
 	}
-	return constants.MakerOwnableIDProperty.GetData().Get().(data.IDData).Get().(ids.OwnableID)
+	return constants.MakerOwnableIDProperty.GetData().Get().(data.IDData).Get().Get().(ids.OwnableID)
 }
 func (order order) GetTakerOwnableID() ids.OwnableID {
 	if property := order.GetProperty(constants.TakerOwnableIDProperty.GetID()); property != nil && property.IsMeta() {
-		return property.Get().(properties.MetaProperty).GetData().Get().(data.IDData).Get().(ids.OwnableID)
+		return property.Get().(properties.MetaProperty).GetData().Get().(data.IDData).Get().Get().(ids.OwnableID)
 	}
-	return constants.TakerOwnableIDProperty.GetData().Get().(data.IDData).Get().(ids.OwnableID)
+	return constants.TakerOwnableIDProperty.GetData().Get().(data.IDData).Get().Get().(ids.OwnableID)
 }
 func (order order) GetMakerID() ids.IdentityID {
 	if property := order.GetProperty(constants.MakerIDProperty.GetID()); property != nil && property.IsMeta() {
-		return property.Get().(properties.MetaProperty).GetData().Get().(data.IDData).Get().(ids.IdentityID)
+		return property.Get().(properties.MetaProperty).GetData().Get().(data.IDData).Get().Get().(ids.IdentityID)
 	}
-	return constants.MakerIDProperty.GetData().Get().(data.IDData).Get().(ids.IdentityID)
+	return constants.MakerIDProperty.GetData().Get().(data.IDData).Get().Get().(ids.IdentityID)
 }
 func (order order) GetTakerID() ids.IdentityID {
 	if property := order.GetProperty(constants.TakerIDProperty.GetID()); property != nil && property.IsMeta() {
-		return property.Get().(properties.MetaProperty).GetData().Get().(data.IDData).Get().(ids.IdentityID)
+		return property.Get().(properties.MetaProperty).GetData().Get().(data.IDData).Get().Get().(ids.IdentityID)
 	}
-	return constants.TakerIDProperty.GetData().Get().(data.IDData).Get().(ids.IdentityID)
+	return constants.TakerIDProperty.GetData().Get().(data.IDData).Get().Get().(ids.IdentityID)
 }
 func (order order) GetExpiryHeight() types.Height {
 	if property := order.GetProperty(constants.ExpiryHeightProperty.GetID()); property != nil && property.IsMeta() {
