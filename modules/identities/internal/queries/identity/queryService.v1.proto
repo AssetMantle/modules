@@ -7,6 +7,6 @@ import "modules/identities/internal/queries/identity/queryResponse.v1.proto";
 
 service Query{
   rpc Identity(QueryRequest) returns(QueryResponse){
-    option (google.api.http).get = "/mantle/identities/v1beta1/identity";
+    option (google.api.http).get = "/mantle/identities/v1beta1/identity/{identity_i_d}";
   }
 }

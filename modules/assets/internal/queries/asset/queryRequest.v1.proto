@@ -2,7 +2,8 @@ syntax = "proto3";
 package assets.queries.asset;
 
 import "schema/ids/base/assetID.v1.proto";
+import "gogoproto/gogo.proto";
 
 message QueryRequest {
-  ids.AssetID asset_i_d = 1;
+  string asset_i_d = 1;
 }

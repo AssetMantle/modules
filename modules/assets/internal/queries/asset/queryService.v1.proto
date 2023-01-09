@@ -7,6 +7,6 @@ import "modules/assets/internal/queries/asset/queryResponse.v1.proto";
 
 service Query{
   rpc Asset(QueryRequest) returns(QueryResponse){
-    option (google.api.http).get = "/mantle/assets/v1beta1/asset";
+    option (google.api.http).get = "/mantle/assets/v1beta1/asset/{asset_i_d}";
   }
 }

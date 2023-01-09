@@ -71,5 +71,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 func newQueryRequest(assetID ids.AssetID) helpers.QueryRequest {
-	return &QueryRequest{AssetID: assetID.(*baseIDs.AssetID)}
+	return &QueryRequest{AssetID: assetID.AsString()}
 }
