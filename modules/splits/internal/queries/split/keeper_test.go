@@ -5,9 +5,10 @@ package split
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"reflect"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/simapp"
 
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
@@ -99,7 +100,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIds.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIds.NewIdentityID(classificationID, immutables)
-	testOwnableID := baseIds.NewOwnableID(baseIds.NewStringID("OwnerID"))
+	testOwnableID := baseIds.NewCoinID(baseIds.NewStringID("OwnerID"))
 	splitID := baseIds.NewSplitID(testOwnerIdentityID, testOwnableID)
 	testRate := sdkTypes.NewDec(1)
 	split := baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)

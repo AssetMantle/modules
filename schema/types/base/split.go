@@ -1,18 +1,19 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/ids/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/schema/ids/base"
 
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
-//type split struct {
+// type split struct {
 //	OwnerID   ids.IdentityID
 //	OwnableID ids.OwnableID
 //	Value     sdkTypes.Dec
-//}
+// }
 
 var _ types.Split = (*Split)(nil)
 
@@ -40,7 +41,7 @@ func (split *Split) CanSend(outValue sdkTypes.Dec) bool {
 func NewSplit(ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) types.Split {
 	return &Split{
 		OwnerID:   ownerID.(*base.IdentityID),
-		OwnableID: ownableID.(*base.OwnableID),
+		OwnableID: ownableID.ToAnyOwnableID().(*base.AnyOwnableID),
 		Value:     value,
 	}
 }

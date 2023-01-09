@@ -54,14 +54,14 @@ func splitIDFromInterface(i interface{}) *SplitID {
 func NewSplitID(ownerID ids.IdentityID, ownableID ids.OwnableID) ids.SplitID {
 	return &SplitID{
 		OwnerID:   ownerID.(*IdentityID),
-		OwnableID: ownableID.(*OwnableID),
+		OwnableID: ownableID.ToAnyOwnableID().(*AnyOwnableID),
 	}
 }
 
 func PrototypeSplitID() ids.SplitID {
 	return &SplitID{
 		OwnerID:   PrototypeIdentityID().(*IdentityID),
-		OwnableID: PrototypeOwnableID().(*OwnableID),
+		OwnableID: PrototypeOwnableID().(*AnyOwnableID),
 	}
 }
 
@@ -71,7 +71,7 @@ func ReadSplitID(splitIDString string) (ids.SplitID, error) {
 			if ownableID, err := ReadOwnableID(splitIDStringSplit[1]); err == nil {
 				return &SplitID{
 					OwnerID:   ownerID.(*IdentityID),
-					OwnableID: ownableID.(*OwnableID),
+					OwnableID: ownableID.(*AnyOwnableID),
 				}, nil
 			}
 		}
