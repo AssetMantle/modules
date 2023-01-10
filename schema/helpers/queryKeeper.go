@@ -4,10 +4,10 @@
 package helpers
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
 )
 
 type QueryKeeper interface {
-	Enquire(sdkTypes.Context, QueryRequest) QueryResponse
+	Enquire(context.Context, QueryRequest) QueryResponse
 	Keeper
 }
