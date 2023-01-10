@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	documentsSchema "github.com/AssetMantle/modules/schema/documents"
@@ -96,7 +96,7 @@ func Test_asset_GetLock(t *testing.T) {
 
 func Test_asset_GetSupply(t *testing.T) {
 	classificationID, immutables, _, testDocument := createTestInput()
-	testDocumentWithSupply := NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.SupplyProperty.GetKey(), baseData.NewDecData(types.NewDec(1))))))
+	testDocumentWithSupply := NewDocument(classificationID, immutables, baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(constants.SupplyProperty.GetKey(), baseData.NewDecData(sdkTypes.NewDec(1))))))
 	type fields struct {
 		Document documentsSchema.Document
 	}
@@ -106,7 +106,7 @@ func Test_asset_GetSupply(t *testing.T) {
 		want   properties.Property
 	}{
 		{"+ve", fields{testDocument}, constants.SupplyProperty},
-		{"+ve", fields{testDocumentWithSupply}, baseProperties.NewMesaProperty(constants.SupplyProperty.GetKey(), baseData.NewDecData(types.NewDec(1)))},
+		{"+ve", fields{testDocumentWithSupply}, baseProperties.NewMesaProperty(constants.SupplyProperty.GetKey(), baseData.NewDecData(sdkTypes.NewDec(1)))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

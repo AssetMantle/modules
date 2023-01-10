@@ -7,21 +7,20 @@ import (
 	"reflect"
 	"testing"
 
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/data/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 var (
 	fromAddress        = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAddress1       = "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
-	fromAccAddress, _  = types.AccAddressFromBech32(fromAddress)
-	fromAccAddress1, _ = types.AccAddressFromBech32(fromAddress1)
+	fromAccAddress, _  = sdkTypes.AccAddressFromBech32(fromAddress)
+	fromAccAddress1, _ = sdkTypes.AccAddressFromBech32(fromAddress1)
 	dataList           = []data.Data{base.NewAccAddressData(fromAccAddress), base.NewAccAddressData(fromAccAddress1)}
 )
 
@@ -41,7 +40,7 @@ func TestReadData(t *testing.T) {
 		{"List Data empty list", args{"L|"}, base.NewListData(baseLists.NewDataList()), false},
 		{"Id Data", args{"I|data"}, base.NewIDData(baseIDs.NewStringID("data")), false},
 		{"Height Data", args{"H|100"}, base.NewHeightData(baseTypes.NewHeight(100)), false},
-		{"Dec Data", args{"D|100"}, base.NewDecData(types.NewDec(100)), false},
+		{"Dec Data", args{"D|100"}, base.NewDecData(sdkTypes.NewDec(100)), false},
 		{"Bool Data", args{"B|true"}, base.NewBooleanData(true), false},
 		{"AccAddress data", args{"A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"}, base.NewAccAddressData(fromAccAddress), false},
 		{"-ve String Data", args{"S|S,|newFact"}, base.NewStringData("S,|newFact"), true},
@@ -85,7 +84,7 @@ func Test_joinDataTypeAndValueStrings(t *testing.T) {
 }
 
 func Test_readAccAddressData(t *testing.T) {
-	fromAccAddress, nil := types.AccAddressFromBech32("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c")
+	fromAccAddress, nil := sdkTypes.AccAddressFromBech32("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c")
 	type args struct {
 		dataString string
 	}
@@ -153,8 +152,8 @@ func Test_readDecData(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve nil", args{}, base.DecDataPrototype(), false},
-		{"+ve string", args{"100"}, base.NewDecData(types.NewDec(100)), false},
-		{"+ve with nil", args{"-100"}, base.NewDecData(types.NewDec(-100)), false},
+		{"+ve string", args{"100"}, base.NewDecData(sdkTypes.NewDec(100)), false},
+		{"+ve with nil", args{"-100"}, base.NewDecData(sdkTypes.NewDec(-100)), false},
 		{"-ve", args{"testData"}, base.DecDataPrototype(), true},
 	}
 	for _, tt := range tests {
