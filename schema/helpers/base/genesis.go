@@ -56,7 +56,7 @@ func (genesis genesis) Validate() error {
 }
 func (genesis genesis) Import(context sdkTypes.Context, mapper helpers.Mapper, parameters helpers.Parameters) {
 	for _, mappable := range genesis.GetMappableList() {
-		mapper.Create(context, mappable)
+		mapper.Create(sdkTypes.WrapSDKContext(context), mappable)
 	}
 
 	for _, parameter := range genesis.GetParameterList() {
@@ -70,7 +70,7 @@ func (genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper, p
 		mappableList = append(mappableList, mappable)
 		return false
 	}
-	mapper.Iterate(context, genesis.keyPrototype(), appendMappableList)
+	mapper.Iterate(sdkTypes.WrapSDKContext(context), genesis.keyPrototype(), appendMappableList)
 
 	for _, defaultParameter := range genesis.Default().GetParameterList() {
 		parameters = parameters.Fetch(context, defaultParameter.GetID())

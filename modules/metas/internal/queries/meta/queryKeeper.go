@@ -6,8 +6,6 @@ package meta
 import (
 	"context"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
@@ -23,7 +21,7 @@ func (queryKeeper queryKeeper) Enquire(context context.Context, queryRequest hel
 	return queryResponse
 }
 func (queryKeeper queryKeeper) Handle(context context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
-	return newQueryResponse(queryKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(context)).Fetch(key.NewKey(queryRequestFromInterface(queryRequest).DataID)), nil), nil
+	return newQueryResponse(queryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(queryRequestFromInterface(queryRequest).DataID)), nil), nil
 }
 
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

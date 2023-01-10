@@ -44,11 +44,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	assets := transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)).Fetch(key.NewKey(message.AssetID))
+	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.AssetID))
 
 	Mappable := assets.Get(key.NewKey(message.AssetID))
 	if Mappable == nil {
@@ -56,7 +56,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	asset := mappable.GetAsset(Mappable)
 
-	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), supplement.NewAuxiliaryRequest(asset.GetBurn())))
+	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetBurn())))
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		}
 	}
 
-	if auxiliaryResponse := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, types.ZeroDec())); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, types.ZeroDec())); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 

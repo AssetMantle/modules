@@ -42,7 +42,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
@@ -51,7 +51,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	for _, coin := range message.Coins {
-		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)), message.FromID, baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom)), types.NewDecFromInt(coin.Amount)); err != nil {
+		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom)), types.NewDecFromInt(coin.Amount)); err != nil {
 			return nil, err
 		}
 	}

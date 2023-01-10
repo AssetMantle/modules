@@ -31,7 +31,7 @@ func (transactionKeeper transactionKeeper) Transact(context types.Context, messa
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
 
 	identityID := message.IdentityID
-	identities := transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)).Fetch(key.NewKey(identityID))
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 
 	Mappable := identities.Get(key.NewKey(identityID))
 	if Mappable == nil {

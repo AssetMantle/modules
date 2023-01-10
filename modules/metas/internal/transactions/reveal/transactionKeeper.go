@@ -29,7 +29,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, me
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
 	dataID := baseIDs.GenerateDataID(message.Data)
-	metas := transactionKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(context)).Fetch(key.NewKey(dataID))
+	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(dataID))
 
 	Mappable := metas.Get(key.NewKey(dataID))
 	if Mappable != nil {

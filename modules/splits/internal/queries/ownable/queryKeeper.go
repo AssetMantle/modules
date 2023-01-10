@@ -6,8 +6,6 @@ package ownable
 import (
 	"context"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/modules/splits/internal/utilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
@@ -23,7 +21,7 @@ func (queryKeeper queryKeeper) Enquire(context context.Context, queryRequest hel
 	return queryResponse
 }
 func (queryKeeper queryKeeper) Handle(context context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
-	return newQueryResponse(utilities.GetOwnableTotalSplitsValue(queryKeeper.mapper.NewCollection(sdkTypes.UnwrapSDKContext(context)), queryRequestFromInterface(queryRequest).OwnableID), nil), nil
+	return newQueryResponse(utilities.GetOwnableTotalSplitsValue(queryKeeper.mapper.NewCollection(context), queryRequestFromInterface(queryRequest).OwnableID), nil), nil
 }
 
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
