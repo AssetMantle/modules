@@ -5,8 +5,8 @@ import "google/api/annotations.proto";
 import "modules/splits/internal/queries/split/queryRequest.v1.proto";
 import "modules/splits/internal/queries/split/queryResponse.v1.proto";
 
-service Query{
-  rpc Split(QueryRequest) returns(QueryResponse){
+service Service{
+  rpc Handle(QueryRequest) returns(QueryResponse){
     option (google.api.http).get = "/mantle/splits/v1beta1/split";
   }
 }
