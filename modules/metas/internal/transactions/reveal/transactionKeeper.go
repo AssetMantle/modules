@@ -6,8 +6,6 @@ package reveal
 import (
 	"context"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -22,11 +20,10 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, message helpers.Message) helpers.TransactionResponse {
-	_, err := transactionKeeper.Handle(sdkTypes.WrapSDKContext(context), message.(*Message))
+func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) helpers.TransactionResponse {
+	_, err := transactionKeeper.Handle(context, message.(*Message))
 	return newTransactionResponse(err)
 }
-
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
 	dataID := baseIDs.GenerateDataID(message.Data)
 	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(dataID))

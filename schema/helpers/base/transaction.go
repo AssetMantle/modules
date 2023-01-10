@@ -4,6 +4,7 @@
 package base
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -74,7 +75,7 @@ func (transaction transaction) Command() *cobra.Command {
 
 	return transaction.cliCommand.CreateCommand(runE)
 }
-func (transaction transaction) HandleMessage(context sdkTypes.Context, message helpers.Message) (*sdkTypes.Result, error) {
+func (transaction transaction) HandleMessage(context context.Context, message helpers.Message) (*sdkTypes.Result, error) {
 	if transactionResponse := transaction.keeper.Transact(context, message); !transactionResponse.IsSuccessful() {
 		return nil, transactionResponse.GetError()
 	}

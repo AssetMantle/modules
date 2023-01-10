@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gogo/protobuf/grpc"
@@ -15,6 +14,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"golang.org/x/net/context"
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -73,13 +73,13 @@ func (query query) Command() *cobra.Command {
 
 	return query.cliCommand.CreateCommand(runE)
 }
-func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
+func (query query) HandleMessage(context context.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
 	request, err := query.requestPrototype().Decode(requestQuery.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	return query.queryKeeper.Enquire(sdkTypes.WrapSDKContext(context), request).Encode()
+	return query.queryKeeper.Enquire(context, request).Encode()
 }
 
 func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {

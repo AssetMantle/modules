@@ -153,7 +153,7 @@ func (module module) Route() sdkTypes.Route {
 
 		if message, ok := msg.(helpers.Message); ok {
 			if transaction := module.transactions.Get(message.Type()); transaction != nil {
-				return transaction.HandleMessage(context.WithEventManager(sdkTypes.NewEventManager()), message)
+				return transaction.HandleMessage(sdkTypes.WrapSDKContext(context.WithEventManager(sdkTypes.NewEventManager())), message)
 			}
 		}
 		return nil, constants.IncorrectMessage
@@ -169,7 +169,7 @@ func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Quer
 		}
 
 		if query := module.queries.Get(path[0]); query != nil {
-			return query.HandleMessage(context, requestQuery)
+			return query.HandleMessage(sdkTypes.WrapSDKContext(context), requestQuery)
 		}
 
 		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())

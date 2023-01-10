@@ -4,10 +4,10 @@
 package helpers
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
@@ -17,7 +17,8 @@ import (
 type Query interface {
 	GetName() string
 	Command() *cobra.Command
-	HandleMessage(sdkTypes.Context, abciTypes.RequestQuery) ([]byte, error)
+	// TODO rename to handle query
+	HandleMessage(context.Context, abciTypes.RequestQuery) ([]byte, error)
 	RESTQueryHandler(client.Context) http.HandlerFunc
 	RegisterService(module.Configurator)
 	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)
