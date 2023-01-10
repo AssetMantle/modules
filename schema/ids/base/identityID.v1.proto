@@ -6,6 +6,6 @@ import "schema/ids/base/hashID.v1.proto";
 
 message IdentityID {
   option (gogoproto.goproto_getters) = false;
-  
+
   ids.HashID hash_i_d = 1;
 }

@@ -7,9 +7,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/utilities/test"
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
+
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func TestNewAuxiliary(t *testing.T) {

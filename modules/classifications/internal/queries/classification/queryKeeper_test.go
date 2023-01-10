@@ -4,8 +4,9 @@
 package classification
 
 import (
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/simapp"
 
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 

@@ -5,10 +5,11 @@ package define
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/simapp"
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	"reflect"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/simapp"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"

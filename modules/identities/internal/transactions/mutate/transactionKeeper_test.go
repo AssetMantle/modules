@@ -5,9 +5,10 @@ package mutate
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"reflect"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/simapp"
 
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 

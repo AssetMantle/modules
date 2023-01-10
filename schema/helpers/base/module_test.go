@@ -17,14 +17,15 @@ import (
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
+	"github.com/AssetMantle/modules/utilities/test"
+	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
+
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
-	"github.com/AssetMantle/modules/utilities/test"
-	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 var auxiliariesPrototype = func() helpers.Auxiliaries {

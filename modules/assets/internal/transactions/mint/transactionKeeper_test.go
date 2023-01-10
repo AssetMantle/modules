@@ -5,9 +5,10 @@ package mint
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"reflect"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/simapp"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"

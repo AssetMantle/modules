@@ -8,6 +8,6 @@ message TransactionRequest {
 
   string from = 1;
   string from_i_d = 2;
-  string ownable_i_d =  3;
+  string ownable_i_d = 3;
   string value = 4;
 }
