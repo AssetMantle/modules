@@ -4,10 +4,10 @@
 package helpers
 
 import (
-	"context"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type TransactionKeeper interface {
-	Transact(context.Context, Message) TransactionResponse
+	Transact(sdkTypes.Context, Message) TransactionResponse
 	Keeper
 }

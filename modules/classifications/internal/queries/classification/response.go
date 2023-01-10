@@ -38,7 +38,7 @@ func (queryResponse *QueryResponse) Decode(bytes []byte) (helpers.QueryResponse,
 func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
-func newQueryResponse(collection helpers.Collection, error error) helpers.QueryResponse {
+func newQueryResponse(collection helpers.Collection, error error) *QueryResponse {
 	var list []*mappable.Mappable
 
 	for _, item := range collection.GetList() {

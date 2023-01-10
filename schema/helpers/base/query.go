@@ -79,7 +79,7 @@ func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciType
 		return nil, err
 	}
 
-	return query.queryKeeper.Enquire(context, request).Encode()
+	return query.queryKeeper.Enquire(sdkTypes.WrapSDKContext(context), request).Encode()
 }
 
 func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {

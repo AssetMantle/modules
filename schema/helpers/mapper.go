@@ -4,21 +4,19 @@
 package helpers
 
 import (
-	"context"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 )
 
 type Mapper interface {
-	NewCollection(context.Context) Collection
+	NewCollection(sdkTypes.Context) Collection
 
-	Create(context.Context, Mappable)
-	Read(context.Context, Key) Mappable
-	Update(context.Context, Mappable)
-	Delete(context.Context, Key)
-	Iterate(context.Context, Key, func(Mappable) bool)
-	ReverseIterate(context.Context, Key, func(Mappable) bool)
+	Create(sdkTypes.Context, Mappable)
+	Read(sdkTypes.Context, Key) Mappable
+	Update(sdkTypes.Context, Mappable)
+	Delete(sdkTypes.Context, Key)
+	Iterate(sdkTypes.Context, Key, func(Mappable) bool)
+	ReverseIterate(sdkTypes.Context, Key, func(Mappable) bool)
 
 	StoreDecoder(kv.Pair, kv.Pair) string
 
