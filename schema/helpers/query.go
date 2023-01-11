@@ -17,8 +17,7 @@ import (
 type Query interface {
 	GetName() string
 	Command() *cobra.Command
-	// TODO rename to handle query
-	HandleMessage(context.Context, abciTypes.RequestQuery) ([]byte, error)
+	HandleQuery(context.Context, abciTypes.RequestQuery) ([]byte, error)
 	RESTQueryHandler(client.Context) http.HandlerFunc
 	RegisterService(module.Configurator)
 	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)

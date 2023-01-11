@@ -54,7 +54,7 @@ func TestTransaction(t *testing.T) {
 	require.Nil(t, err)
 	require.Equal(t, `ABCIQuery: Post failed: Post "http://localhost:26657": dial tcp 127.0.0.1:26657: connect: connection refused`,
 		command.ExecuteContext(context.Context()).Error())
-	// HandleMessage
+	// HandleQuery
 	_, err = Transaction.HandleMessage(context, message)
 	require.Nil(t, err)
 

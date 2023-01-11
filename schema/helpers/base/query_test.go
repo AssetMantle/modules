@@ -34,11 +34,11 @@ func TestQuery(t *testing.T) {
 	// GetName
 	require.Equal(t, "test", Query.GetName())
 
-	// HandleMessage
+	// HandleQuery
 	encodedRequest, err := Query.requestPrototype().Encode()
 	require.Nil(t, err)
 
-	_, err = Query.HandleMessage(context, abciTypes.RequestQuery{Data: encodedRequest})
+	_, err = Query.HandleQuery(context, abciTypes.RequestQuery{Data: encodedRequest})
 	require.Nil(t, err)
 
 	command := Query.Command()

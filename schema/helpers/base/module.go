@@ -169,7 +169,7 @@ func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Quer
 		}
 
 		if query := module.queries.Get(path[0]); query != nil {
-			return query.HandleMessage(sdkTypes.WrapSDKContext(context), requestQuery)
+			return query.HandleQuery(sdkTypes.WrapSDKContext(context), requestQuery)
 		}
 
 		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())
