@@ -18,7 +18,6 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 )
 
@@ -32,7 +31,7 @@ func TestGenesis(t *testing.T) {
 	Mapper := NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype).Initialize(storeKey)
 
 	mappableList := []helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")}
-	ParameterList := []parametersSchema.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })}
+	ParameterList := []helpers.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })}
 	Parameters := NewParameters(ParameterList...)
 	subspace := paramsTypes.NewSubspace(legacyAmino, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
 	Parameters = Parameters.Initialize(subspace)

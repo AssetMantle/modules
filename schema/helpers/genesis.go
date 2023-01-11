@@ -7,8 +7,6 @@ import (
 	"context"
 
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/schema/parameters"
 )
 
 type Genesis interface {
@@ -20,8 +18,8 @@ type Genesis interface {
 	Encode(sdkCodec.JSONCodec) []byte
 	Decode(sdkCodec.JSONCodec, []byte) Genesis
 
-	Initialize([]Mappable, []parameters.Parameter) Genesis
+	Initialize([]Mappable, []Parameter) Genesis
 
-	GetParameterList() []parameters.Parameter
+	GetParameterList() []Parameter
 	GetMappableList() []Mappable
 }

@@ -24,7 +24,6 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 )
 
@@ -34,7 +33,7 @@ var auxiliariesPrototype = func() helpers.Auxiliaries {
 var genesisPrototype = func() helpers.Genesis {
 	return NewGenesis(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype,
 		[]helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")},
-		[]parametersSchema.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })})
+		[]helpers.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })})
 }
 var mapperPrototype = func() helpers.Mapper {
 	return NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype)

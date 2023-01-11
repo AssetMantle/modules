@@ -6,9 +6,9 @@ package base
 import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	parametersSchema "github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIds "github.com/AssetMantle/modules/schema/ids/base"
-	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 )
 
 var _ parametersSchema.Parameter = (*Parameter)(nil)

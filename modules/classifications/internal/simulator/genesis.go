@@ -20,7 +20,6 @@ import (
 	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 )
@@ -44,7 +43,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMappable(base.NewClassification(immutables, mutables))
 	}
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, genesis.PrototypeGenesisState().Initialize(mappableList, []parametersSchema.Parameter{dummy.Parameter.Mutate(Data)}))
+	genesisState := baseHelpers.NewGenesis(key.Prototype, genesis.PrototypeGenesisState().Initialize(mappableList, []helpers.Parameter{dummy.Parameter.Mutate(Data)}))
 
 	simulationState.GenState[classificationsModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
 }

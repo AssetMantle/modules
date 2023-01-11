@@ -17,7 +17,6 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/parameters"
 	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
@@ -47,7 +46,6 @@ func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	lists.RegisterLegacyAminoCodec(legacyAmino)
 	baseLists.RegisterLegacyAminoCodec(legacyAmino)
 
-	parameters.RegisterLegacyAminoCodec(legacyAmino)
 	baseParameters.RegisterLegacyAminoCodec(legacyAmino)
 
 	properties.RegisterLegacyAminoCodec(legacyAmino)

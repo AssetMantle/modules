@@ -11,7 +11,6 @@ import (
 
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 )
 
 type genesis struct {
@@ -95,12 +94,12 @@ func (genesis genesis) Decode(jsonCodec sdkCodec.JSONCodec, byte []byte) helpers
 
 	return NewGenesis(genesis.keyPrototype, newGenesisState)
 }
-func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList []parametersSchema.Parameter) helpers.Genesis {
+func (genesis genesis) Initialize(mappableList []helpers.Mappable, parameterList []helpers.Parameter) helpers.Genesis {
 	genesis.genesisState = genesis.genesisState.Initialize(mappableList, parameterList)
 	return genesis
 }
 
-func (genesis genesis) GetParameterList() []parametersSchema.Parameter {
+func (genesis genesis) GetParameterList() []helpers.Parameter {
 	return genesis.genesisState.GetParameters()
 }
 func (genesis genesis) GetMappableList() []helpers.Mappable {

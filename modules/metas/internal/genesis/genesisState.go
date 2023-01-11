@@ -4,7 +4,6 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
 	"github.com/AssetMantle/modules/schema/helpers"
-	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
 )
 
@@ -16,10 +15,10 @@ func (genesisState *GenesisState) Default() helpers.GenesisState {
 func (genesisState *GenesisState) GetMappables() []helpers.Mappable {
 	return mappable.MappablesToInterface(genesisState.Mappables)
 }
-func (genesisState *GenesisState) GetParameters() []parametersSchema.Parameter {
+func (genesisState *GenesisState) GetParameters() []helpers.Parameter {
 	return baseParameters.ParametersToInterfaces(genesisState.Parameters)
 }
-func (genesisState *GenesisState) Initialize(mappableList []helpers.Mappable, parameterList []parametersSchema.Parameter) helpers.GenesisState {
+func (genesisState *GenesisState) Initialize(mappableList []helpers.Mappable, parameterList []helpers.Parameter) helpers.GenesisState {
 	if len(mappableList) == 0 {
 		genesisState.Mappables = mappable.MappablesFromInterface(genesisState.Default().GetMappables())
 	} else {

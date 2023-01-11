@@ -13,11 +13,10 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 )
 
 type parameters struct {
-	parameterList  []parametersSchema.Parameter
+	parameterList  []helpers.Parameter
 	paramsSubspace paramsTypes.Subspace
 }
 
@@ -49,7 +48,7 @@ func (parameters parameters) Equal(compareParameters helpers.Parameters) bool {
 
 	return true
 }
-func (parameters parameters) Get(id ids.ID) parametersSchema.Parameter {
+func (parameters parameters) Get(id ids.ID) helpers.Parameter {
 	for _, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(id) == 0 {
 			return parameter
@@ -58,7 +57,7 @@ func (parameters parameters) Get(id ids.ID) parametersSchema.Parameter {
 
 	return nil
 }
-func (parameters parameters) GetList() []parametersSchema.Parameter {
+func (parameters parameters) GetList() []helpers.Parameter {
 	return parameters.parameterList
 }
 func (parameters parameters) Fetch(context context.Context, id ids.ID) helpers.Parameters {
@@ -74,7 +73,7 @@ func (parameters parameters) Fetch(context context.Context, id ids.ID) helpers.P
 
 	return parameters
 }
-func (parameters parameters) Mutate(context context.Context, newParameter parametersSchema.Parameter) helpers.Parameters {
+func (parameters parameters) Mutate(context context.Context, newParameter helpers.Parameter) helpers.Parameters {
 	for i, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(newParameter.GetID()) == 0 {
 			parameters.parameterList[i] = newParameter
@@ -103,7 +102,7 @@ func (parameters parameters) Initialize(paramsSubspace paramsTypes.Subspace) hel
 	return parameters
 }
 
-func NewParameters(parameterList ...parametersSchema.Parameter) helpers.Parameters {
+func NewParameters(parameterList ...helpers.Parameter) helpers.Parameters {
 	return parameters{
 		parameterList: parameterList,
 	}

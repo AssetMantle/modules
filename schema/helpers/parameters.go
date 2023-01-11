@@ -9,7 +9,6 @@ import (
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/parameters"
 )
 
 type Parameters interface {
@@ -18,11 +17,11 @@ type Parameters interface {
 	Validate() error
 	Equal(Parameters) bool
 
-	Get(ids.ID) parameters.Parameter
-	GetList() []parameters.Parameter
+	Get(ids.ID) Parameter
+	GetList() []Parameter
 
 	Fetch(context.Context, ids.ID) Parameters
-	Mutate(context.Context, parameters.Parameter) Parameters
+	Mutate(context.Context, Parameter) Parameters
 
 	GetKeyTable() paramsTypes.KeyTable
 	// / TODO
