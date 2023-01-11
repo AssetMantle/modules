@@ -206,10 +206,10 @@ func (module module) ExportGenesis(context sdkTypes.Context, jsonCodec sdkCodec.
 	return module.genesisPrototype().Export(context, module.mapper, module.parameters).Encode(jsonCodec)
 }
 func (module module) BeginBlock(context sdkTypes.Context, beginBlockRequest abciTypes.RequestBeginBlock) {
-	module.block.Begin(context, beginBlockRequest)
+	module.block.Begin(sdkTypes.WrapSDKContext(context), beginBlockRequest)
 }
 func (module module) EndBlock(context sdkTypes.Context, endBlockRequest abciTypes.RequestEndBlock) []abciTypes.ValidatorUpdate {
-	module.block.End(context, endBlockRequest)
+	module.block.End(sdkTypes.WrapSDKContext(context), endBlockRequest)
 	return []abciTypes.ValidatorUpdate{}
 }
 func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {

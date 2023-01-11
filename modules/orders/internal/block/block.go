@@ -4,6 +4,8 @@
 package block
 
 import (
+	"context"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
@@ -37,13 +39,13 @@ type block struct {
 
 var _ helpers.Block = (*block)(nil)
 
-func (block block) Begin(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {
+func (block block) Begin(_ context.Context, _ abciTypes.RequestBeginBlock) {
 
 }
 
-func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
+func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 	executeOrders := make(map[ids.OrderID]bool)
-	orders := block.mapper.NewCollection(sdkTypes.WrapSDKContext(context))
+	orders := block.mapper.NewCollection(context)
 
 	orders.Iterate(
 		// TODO ***** define a proper new key
@@ -51,9 +53,9 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 		func(Mappable helpers.Mappable) bool {
 			order := mappable.GetOrder(Mappable)
 
-			if order.GetExpiryHeight().Compare(baseTypes.NewHeight(context.BlockHeight())) <= 0 {
+			if order.GetExpiryHeight().Compare(baseTypes.CurrentHeight(context)) <= 0 {
 				// TODO ***** check security of sending and receiving from module and module account security
-				if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(sdkTypes.WrapSDKContext(context), transfer.NewAuxiliaryRequest(module.ModuleIdentityID, order.GetMakerID(), order.GetMakerOwnableID(), order.GetMakerOwnableSplit())); !auxiliaryResponse.IsSuccessful() {
+				if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, order.GetMakerID(), order.GetMakerOwnableID(), order.GetMakerOwnableSplit())); !auxiliaryResponse.IsSuccessful() {
 					panic(auxiliaryResponse.GetError())
 				}
 				orders.Remove(mappable.NewMappable(order))
@@ -113,10 +115,10 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 						if leftOrderExchangeRate.MulTruncate(rightOrderExchangeRate).MulTruncate(sdkTypes.SmallestDec()).MulTruncate(sdkTypes.SmallestDec()).LTE(sdkTypes.OneDec()) {
 							switch {
 							case leftOrderMakerOwnableSplit.GT(rightOrderTakerOwnableSplitDemanded):
-								if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(sdkTypes.WrapSDKContext(context), transfer.NewAuxiliaryRequest(module.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerOwnableID(), rightOrderMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+								if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerOwnableID(), rightOrderMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 									panic(auxiliaryResponse.GetError())
 								}
-								if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(sdkTypes.WrapSDKContext(context), transfer.NewAuxiliaryRequest(module.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerOwnableID(), rightOrderTakerOwnableSplitDemanded)); !auxiliaryResponse.IsSuccessful() {
+								if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerOwnableID(), rightOrderTakerOwnableSplitDemanded)); !auxiliaryResponse.IsSuccessful() {
 									panic(auxiliaryResponse.GetError())
 								}
 
@@ -130,14 +132,14 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								}
 							case leftOrderMakerOwnableSplit.LT(rightOrderTakerOwnableSplitDemanded):
 								sendToLeftOrder := leftOrderMakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(rightOrderExchangeRate)
-								if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(sdkTypes.WrapSDKContext(context), transfer.NewAuxiliaryRequest(module.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerOwnableID(), sendToLeftOrder)); !auxiliaryResponse.IsSuccessful() {
+								if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerOwnableID(), sendToLeftOrder)); !auxiliaryResponse.IsSuccessful() {
 									panic(auxiliaryResponse.GetError())
 								}
-								if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(sdkTypes.WrapSDKContext(context), transfer.NewAuxiliaryRequest(module.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerOwnableID(), leftOrderMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+								if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerOwnableID(), leftOrderMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 									panic(auxiliaryResponse.GetError())
 								}
 
-								mutableProperties, err := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(sdkTypes.WrapSDKContext(context), scrub.NewAuxiliaryRequest(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder)))))))
+								mutableProperties, err := scrub.GetPropertiesFromResponse(block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder)))))))
 								if err != nil {
 									panic(err)
 								}
@@ -150,10 +152,10 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 								}
 							default:
 								// case leftOrderMakerOwnableSplit.Equal(rightOrderTakerOwnableSplitDemanded):
-								if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(sdkTypes.WrapSDKContext(context), transfer.NewAuxiliaryRequest(module.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerOwnableID(), rightOrderMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+								if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerOwnableID(), rightOrderMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 									panic(auxiliaryResponse.GetError())
 								}
-								if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(sdkTypes.WrapSDKContext(context), transfer.NewAuxiliaryRequest(module.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerOwnableID(), leftOrderMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+								if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerOwnableID(), leftOrderMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 									panic(auxiliaryResponse.GetError())
 								}
 
