@@ -30,7 +30,7 @@ func (x *AnyData_StringData) get() data.Data {
 	return x.StringData
 }
 func (x *AnyData_ListData) get() data.Data {
-	return &x.ListData
+	return x.ListData
 }
 
 var _ data.AnyData = (*AnyData)(nil)

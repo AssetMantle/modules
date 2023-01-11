@@ -89,7 +89,7 @@ func readListData(dataString string) (data.Data, error) {
 		dataList[i] = Data
 	}
 
-	return base.NewListData(base.NewDataList(dataList...)), nil
+	return base.NewListData(dataList...), nil
 }
 func readStringData(dataString string) (data.Data, error) {
 	if dataString == "" {

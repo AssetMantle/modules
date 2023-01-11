@@ -5,35 +5,60 @@ package base
 
 import (
 	"bytes"
+	"sort"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
 var _ data.ListData = (*ListData)(nil)
 
 func (listData *ListData) Get() []data.AnyData {
-	anyDataList := make([]data.AnyData, len(listData.Value.DataList))
-	for i, anyData := range listData.Value.DataList {
+	anyDataList := make([]data.AnyData, len(listData.DataList))
+	for i, anyData := range listData.DataList {
 		anyDataList[i] = anyData
 	}
 	return anyDataList
 }
 func (listData *ListData) Search(data data.Data) (int, bool) {
-	return listData.Value.Search(data)
+	index := sort.Search(
+		len(listData.DataList),
+		func(i int) bool {
+			return listData.DataList[i].Compare(data) >= 0
+		},
+	)
+
+	if index < len(listData.DataList) && listData.DataList[index].Compare(data) == 0 {
+		return index, true
+	}
+
+	return index, false
 }
 func (listData *ListData) Add(data ...data.Data) data.ListData {
-	listData.Value = listData.Value.Add(data...).(*AnyDataList)
-	return listData
+	updatedList := listData
+	for _, listable := range data {
+		if index, found := updatedList.Search(listable); !found {
+			updatedList.DataList = append(updatedList.DataList, listable.ToAnyData().(*AnyData))
+			copy(updatedList.DataList[index+1:], updatedList.DataList[index:])
+			updatedList.DataList[index] = listable.ToAnyData().(*AnyData)
+		}
+	}
+	return updatedList
 }
 func (listData *ListData) Remove(data ...data.Data) data.ListData {
-	listData.Value = listData.Value.Remove(data...).(*AnyDataList)
-	return listData
+	updatedList := listData
+
+	for _, listable := range data {
+		if index, found := updatedList.Search(listable); found {
+			updatedList.DataList = append(updatedList.DataList[:index], updatedList.DataList[index+1:]...)
+		}
+	}
+
+	return updatedList
 }
 func (listData *ListData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(listData)
@@ -48,9 +73,9 @@ func (listData *ListData) Compare(listable traits.Listable) int {
 	return bytes.Compare(listData.Bytes(), compareListData.Bytes())
 }
 func (listData *ListData) Bytes() []byte {
-	bytesList := make([][]byte, len(listData.Value.DataList))
+	bytesList := make([][]byte, len(listData.DataList))
 
-	for i, datum := range listData.Value.GetList() {
+	for i, datum := range listData.DataList {
 		if datum != nil {
 			bytesList[i] = datum.Bytes()
 		}
@@ -62,7 +87,7 @@ func (listData *ListData) GetType() ids.StringID {
 	return dataConstants.ListDataID
 }
 func (listData *ListData) ZeroValue() data.Data {
-	return NewListData(NewDataList([]data.Data{}...))
+	return NewListData([]data.Data{}...)
 }
 func (listData *ListData) GenerateHashID() ids.HashID {
 	if listData.Compare(listData.ZeroValue()) == 0 {
@@ -93,6 +118,10 @@ func ListDataPrototype() data.ListData {
 
 // NewListData
 // * onus of ensuring all Data are of the same type is on DataList
-func NewListData(value lists.AnyDataList) data.ListData {
-	return &ListData{Value: value.(*AnyDataList)}
+func NewListData(data ...data.Data) data.ListData {
+	dataList := make([]*AnyData, 0)
+	for _, datum := range data {
+		dataList = append(dataList, datum.ToAnyData().(*AnyData))
+	}
+	return &ListData{DataList: dataList}
 }
