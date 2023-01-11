@@ -17,21 +17,35 @@ import (
 var _ data.ListData = (*ListData)(nil)
 
 func (listData *ListData) Get() []data.AnyData {
-	anyDataList := make([]data.AnyData, len(listData.Value.DataList))
-	for i, anyData := range listData.Value.DataList {
+	anyDataList := make([]data.AnyData, len(listData.DataList))
+	for i, anyData := range listData.DataList {
 		anyDataList[i] = anyData
 	}
 	return anyDataList
 }
 func (listData *ListData) Search(data data.Data) (int, bool) {
-	return listData.Value.Search(data)
+	dataList := NewDataList()
+	for _, val := range listData.DataList {
+		dataList = dataList.Add(val.Get())
+	}
+	return dataList.Search(data)
 }
 func (listData *ListData) Add(data ...data.Data) data.ListData {
-	listData.Value = listData.Value.Add(data...).(*AnyDataList)
+	for _, i := range data {
+		listData.DataList = append(listData.DataList, i.ToAnyData().(*AnyData))
+	}
 	return listData
 }
 func (listData *ListData) Remove(data ...data.Data) data.ListData {
-	listData.Value = listData.Value.Remove(data...).(*AnyDataList)
+	dataList := NewDataList()
+	for _, val := range listData.DataList {
+		dataList = dataList.Add(val.Get())
+	}
+	dataList = dataList.Remove(data...)
+	listData.DataList = make([]*AnyData, 0)
+	for _, datum := range dataList.GetList() {
+		listData.DataList = append(listData.DataList, datum.ToAnyData().(*AnyData))
+	}
 	return listData
 }
 func (listData *ListData) GetID() ids.DataID {
@@ -47,9 +61,9 @@ func (listData *ListData) Compare(listable traits.Listable) int {
 	return bytes.Compare(listData.Bytes(), compareListData.Bytes())
 }
 func (listData *ListData) Bytes() []byte {
-	bytesList := make([][]byte, len(listData.Value.DataList))
+	bytesList := make([][]byte, len(listData.DataList))
 
-	for i, datum := range listData.Value.GetList() {
+	for i, datum := range listData.DataList {
 		if datum != nil {
 			bytesList[i] = datum.Bytes()
 		}
@@ -61,7 +75,7 @@ func (listData *ListData) GetType() ids.StringID {
 	return dataConstants.ListDataID
 }
 func (listData *ListData) ZeroValue() data.Data {
-	return NewListData(NewDataList([]data.Data{}...))
+	return NewListData([]data.Data{}...)
 }
 func (listData *ListData) GenerateHashID() ids.HashID {
 	if listData.Compare(listData.ZeroValue()) == 0 {
@@ -92,6 +106,10 @@ func ListDataPrototype() data.ListData {
 
 // NewListData
 // * onus of ensuring all Data are of the same type is on DataList
-func NewListData(anyData ...data.AnyData) data.ListData {
-	return &ListData{}.Add(anyData)
+func NewListData(data ...data.Data) data.ListData {
+	dataList := make([]*AnyData, 0)
+	for _, datum := range data {
+		dataList = append(dataList, datum.ToAnyData().(*AnyData))
+	}
+	return &ListData{DataList: dataList}
 }
