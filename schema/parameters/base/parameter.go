@@ -6,12 +6,12 @@ package base
 import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	parametersSchema "github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIds "github.com/AssetMantle/modules/schema/ids/base"
 )
 
-var _ parametersSchema.Parameter = (*Parameter)(nil)
+var _ helpers.Parameter = (*Parameter)(nil)
 
 func (parameter *Parameter) GetValidator() func(interface{}) error {
 	// TODO correct
@@ -22,7 +22,7 @@ func (parameter *Parameter) GetValidator() func(interface{}) error {
 func (parameter *Parameter) AsString() string {
 	return parameter.ID.IDString
 }
-func (parameter *Parameter) Equal(compareParameter parametersSchema.Parameter) bool {
+func (parameter *Parameter) Equal(compareParameter helpers.Parameter) bool {
 	if compareParameter != nil && parameter.ID.Compare(compareParameter.GetID()) == 0 && parameter.Data.GetType().Compare(compareParameter.GetData().GetType()) == 0 && parameter.Data.Compare(compareParameter.GetData()) == 0 {
 		return true
 	}
@@ -39,20 +39,20 @@ func (parameter *Parameter) GetID() ids.ID {
 func (parameter *Parameter) GetData() data.AnyData {
 	return parameter.Data
 }
-func (parameter *Parameter) Mutate(data data.Data) parametersSchema.Parameter {
+func (parameter *Parameter) Mutate(data data.Data) helpers.Parameter {
 	// TODO ****** data type check
 	parameter.Data = data.ToAnyData().(*baseData.AnyData)
 	return parameter
 }
 
-func NewParameter(id ids.StringID, data data.Data, validator func(interface{}) error) parametersSchema.Parameter {
+func NewParameter(id ids.StringID, data data.Data, validator func(interface{}) error) helpers.Parameter {
 	return &Parameter{
 		ID:   id.(*baseIds.StringID),
 		Data: data.ToAnyData().(*baseData.AnyData),
 	}
 }
 
-func ParametersFromInterfaces(parameters []parametersSchema.Parameter) []*Parameter {
+func ParametersFromInterfaces(parameters []helpers.Parameter) []*Parameter {
 	Parameters := make([]*Parameter, len(parameters))
 	for index, parameter := range parameters {
 		Parameters[index] = parameter.(*Parameter)
@@ -60,8 +60,8 @@ func ParametersFromInterfaces(parameters []parametersSchema.Parameter) []*Parame
 	return Parameters
 }
 
-func ParametersToInterfaces(parameters []*Parameter) []parametersSchema.Parameter {
-	Parameters := make([]parametersSchema.Parameter, len(parameters))
+func ParametersToInterfaces(parameters []*Parameter) []helpers.Parameter {
+	Parameters := make([]helpers.Parameter, len(parameters))
 	for index, parameter := range parameters {
 		Parameters[index] = parameter
 	}
