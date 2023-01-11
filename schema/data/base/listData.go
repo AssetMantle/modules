@@ -74,7 +74,7 @@ func (listData *ListData) GenerateHashID() ids.HashID {
 func (listData *ListData) ToAnyData() data.AnyData {
 	return &AnyData{
 		Impl: &AnyData_ListData{
-			ListData: *listData,
+			ListData: listData,
 		},
 	}
 }
