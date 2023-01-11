@@ -5,6 +5,7 @@ package base
 
 import (
 	"bytes"
+	"sort"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
@@ -24,29 +25,40 @@ func (listData *ListData) Get() []data.AnyData {
 	return anyDataList
 }
 func (listData *ListData) Search(data data.Data) (int, bool) {
-	dataList := NewDataList()
-	for _, val := range listData.DataList {
-		dataList = dataList.Add(val.Get())
+	index := sort.Search(
+		len(dataList.DataList),
+		func(i int) bool {
+			return dataList.DataList[i].Compare(data) >= 0
+		},
+	)
+
+	if index < len(dataList.DataList) && dataList.DataList[index].Compare(data) == 0 {
+		return index, true
 	}
-	return dataList.Search(data)
+
+	return index, false
 }
 func (listData *ListData) Add(data ...data.Data) data.ListData {
-	for _, i := range data {
-		listData.DataList = append(listData.DataList, i.ToAnyData().(*AnyData))
+	updatedList := dataList
+	for _, listable := range data {
+		if index, found := updatedList.Search(listable); !found {
+			updatedList.DataList = append(updatedList.DataList, listable.ToAnyData().(*AnyData))
+			copy(updatedList.DataList[index+1:], updatedList.DataList[index:])
+			updatedList.DataList[index] = listable.ToAnyData().(*AnyData)
+		}
 	}
-	return listData
+	return updatedList
 }
 func (listData *ListData) Remove(data ...data.Data) data.ListData {
-	dataList := NewDataList()
-	for _, val := range listData.DataList {
-		dataList = dataList.Add(val.Get())
+	updatedList := dataList
+
+	for _, listable := range data {
+		if index, found := updatedList.Search(listable); found {
+			updatedList.DataList = append(updatedList.DataList[:index], updatedList.DataList[index+1:]...)
+		}
 	}
-	dataList = dataList.Remove(data...)
-	listData.DataList = make([]*AnyData, 0)
-	for _, datum := range dataList.GetList() {
-		listData.DataList = append(listData.DataList, datum.ToAnyData().(*AnyData))
-	}
-	return listData
+
+	return updatedList
 }
 func (listData *ListData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(listData)
