@@ -33,11 +33,6 @@ type transactionKeeper struct {
 	authenticateAuxiliary helpers.Auxiliary
 }
 
-func (transactionKeeper transactionKeeper) Take(ctx context.Context, message *Message) (*TransactionResponse, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) helpers.TransactionResponse {
