@@ -4,9 +4,10 @@
 package base
 
 import (
+	"context"
+
 	"github.com/asaskevich/govalidator"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -54,23 +55,23 @@ func (genesis genesis) Validate() error {
 
 	return err
 }
-func (genesis genesis) Import(context sdkTypes.Context, mapper helpers.Mapper, parameters helpers.Parameters) {
+func (genesis genesis) Import(context context.Context, mapper helpers.Mapper, parameters helpers.Parameters) {
 	for _, mappable := range genesis.GetMappableList() {
-		mapper.Create(sdkTypes.WrapSDKContext(context), mappable)
+		mapper.Create(context, mappable)
 	}
 
 	for _, parameter := range genesis.GetParameterList() {
 		parameters.Mutate(context, parameter)
 	}
 }
-func (genesis genesis) Export(context sdkTypes.Context, mapper helpers.Mapper, parameters helpers.Parameters) helpers.Genesis {
+func (genesis genesis) Export(context context.Context, mapper helpers.Mapper, parameters helpers.Parameters) helpers.Genesis {
 	var mappableList []helpers.Mappable
 
 	appendMappableList := func(mappable helpers.Mappable) bool {
 		mappableList = append(mappableList, mappable)
 		return false
 	}
-	mapper.Iterate(sdkTypes.WrapSDKContext(context), genesis.keyPrototype(), appendMappableList)
+	mapper.Iterate(context, genesis.keyPrototype(), appendMappableList)
 
 	for _, defaultParameter := range genesis.Default().GetParameterList() {
 		parameters = parameters.Fetch(context, defaultParameter.GetID())

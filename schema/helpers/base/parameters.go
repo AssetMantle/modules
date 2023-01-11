@@ -8,6 +8,7 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"golang.org/x/net/context"
 
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -60,10 +61,10 @@ func (parameters parameters) Get(id ids.ID) parametersSchema.Parameter {
 func (parameters parameters) GetList() []parametersSchema.Parameter {
 	return parameters.parameterList
 }
-func (parameters parameters) Fetch(context sdkTypes.Context, id ids.ID) helpers.Parameters {
+func (parameters parameters) Fetch(context context.Context, id ids.ID) helpers.Parameters {
 	var Data data.AnyData
 
-	parameters.paramsSubspace.Get(context, id.Bytes(), &Data)
+	parameters.paramsSubspace.Get(sdkTypes.UnwrapSDKContext(context), id.Bytes(), &Data)
 
 	for i, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(id) == 0 {
@@ -73,11 +74,11 @@ func (parameters parameters) Fetch(context sdkTypes.Context, id ids.ID) helpers.
 
 	return parameters
 }
-func (parameters parameters) Mutate(context sdkTypes.Context, newParameter parametersSchema.Parameter) helpers.Parameters {
+func (parameters parameters) Mutate(context context.Context, newParameter parametersSchema.Parameter) helpers.Parameters {
 	for i, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(newParameter.GetID()) == 0 {
 			parameters.parameterList[i] = newParameter
-			parameters.paramsSubspace.Set(context, parameter.GetID().Bytes(), parameter.GetData())
+			parameters.paramsSubspace.Set(sdkTypes.UnwrapSDKContext(context), parameter.GetID().Bytes(), parameter.GetData())
 
 			break
 		}
