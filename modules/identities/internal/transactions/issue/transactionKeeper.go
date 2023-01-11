@@ -68,7 +68,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	authenticationProperty := baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewDataList(baseData.NewAccAddressData(toAddress))))
+	authenticationProperty := baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewAccAddressData(toAddress)))
 	mutableMetaProperties := baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.MutableMetaProperties.GetList(), authenticationProperty.ToAnyProperty())...)...)
 
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...))
