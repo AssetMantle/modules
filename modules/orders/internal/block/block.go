@@ -4,6 +4,8 @@
 package block
 
 import (
+	"context"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
@@ -37,11 +39,11 @@ type block struct {
 
 var _ helpers.Block = (*block)(nil)
 
-func (block block) Begin(_ sdkTypes.Context, _ abciTypes.RequestBeginBlock) {
+func (block block) Begin(_ context.Context, _ abciTypes.RequestBeginBlock) {
 
 }
 
-func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
+func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 	executeOrders := make(map[ids.OrderID]bool)
 	orders := block.mapper.NewCollection(context)
 
@@ -51,7 +53,7 @@ func (block block) End(context sdkTypes.Context, _ abciTypes.RequestEndBlock) {
 		func(Mappable helpers.Mappable) bool {
 			order := mappable.GetOrder(Mappable)
 
-			if order.GetExpiryHeight().Compare(baseTypes.NewHeight(context.BlockHeight())) <= 0 {
+			if order.GetExpiryHeight().Compare(baseTypes.CurrentHeight(context)) <= 0 {
 				// TODO ***** check security of sending and receiving from module and module account security
 				if auxiliaryResponse := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, order.GetMakerID(), order.GetMakerOwnableID(), order.GetMakerOwnableSplit())); !auxiliaryResponse.IsSuccessful() {
 					panic(auxiliaryResponse.GetError())

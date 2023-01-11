@@ -4,8 +4,11 @@
 package base
 
 import (
+	"context"
 	"encoding/binary"
 	"strconv"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/types"
 )
@@ -39,4 +42,12 @@ func NewHeight(value int64) types.Height {
 	}
 
 	return &Height{Value: value}
+}
+
+func CurrentHeight(context context.Context) types.Height {
+	return NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())
+}
+
+func NewCurrentOffsetHeight(value int64, context context.Context) types.Height {
+	return NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight() + value)
 }

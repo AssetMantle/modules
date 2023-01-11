@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gogo/protobuf/grpc"
@@ -15,6 +14,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"golang.org/x/net/context"
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -48,17 +48,17 @@ func (query query) RegisterGRPCGatewayRoute(context client.Context, serveMux *ru
 func (query query) GetName() string { return query.name }
 func (query query) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
-		context, err := client.GetClientTxContext(command)
+		clientContext, err := client.GetClientTxContext(command)
 		if err != nil {
 			return err
 		}
 
-		queryRequest, err := query.requestPrototype().FromCLI(query.cliCommand, context)
+		queryRequest, err := query.requestPrototype().FromCLI(query.cliCommand, clientContext)
 		if err != nil {
 			return err
 		}
 
-		responseBytes, _, err := query.query(queryRequest, context)
+		responseBytes, _, err := query.query(queryRequest, clientContext)
 		if err != nil {
 			return err
 		}
@@ -68,12 +68,12 @@ func (query query) Command() *cobra.Command {
 			return err
 		}
 
-		return context.PrintProto(response)
+		return clientContext.PrintProto(response)
 	}
 
 	return query.cliCommand.CreateCommand(runE)
 }
-func (query query) HandleMessage(context sdkTypes.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
+func (query query) HandleQuery(context context.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
 	request, err := query.requestPrototype().Decode(requestQuery.Data)
 	if err != nil {
 		return nil, err
@@ -86,7 +86,7 @@ func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		responseWriter.Header().Set("Content-Type", "application/json")
 
-		context, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, context, httpRequest)
+		clientContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, context, httpRequest)
 		if !ok {
 			return
 		}
@@ -97,14 +97,14 @@ func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
 			return
 		}
 
-		response, height, err := query.query(queryRequest, context)
+		response, height, err := query.query(queryRequest, clientContext)
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		context = context.WithHeight(height)
-		rest.PostProcessResponse(responseWriter, context, response)
+		clientContext = clientContext.WithHeight(height)
+		rest.PostProcessResponse(responseWriter, clientContext, response)
 	}
 }
 func (query query) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Query {

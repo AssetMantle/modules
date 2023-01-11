@@ -6,7 +6,7 @@ package quash
 import (
 	"context"
 
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
@@ -25,23 +25,23 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context types.Context, message helpers.Message) helpers.TransactionResponse {
-	_, err := transactionKeeper.Handle(context.Context(), message.(*Message))
+func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) helpers.TransactionResponse {
+	_, err := transactionKeeper.Handle(context, message.(*Message))
 	return newTransactionResponse(err)
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
 
-	fromAddress, err := types.AccAddressFromBech32(message.From)
+	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
 	if err != nil {
 		panic("Could not get from address from Bech32 string")
 	}
 
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	identities := transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)).Fetch(key.NewKey(message.IdentityID))
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.IdentityID))
 
 	Mappable := identities.Get(key.NewKey(message.IdentityID))
 	if Mappable == nil {
@@ -49,7 +49,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	identity := mappable.GetIdentity(Mappable)
 
-	if identity.GetExpiry().Compare(baseTypes.NewHeight(types.UnwrapSDKContext(context).BlockHeight())) > 0 {
+	if identity.GetExpiry().Compare(baseTypes.NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())) > 0 {
 		return nil, errorConstants.NotAuthorized
 	}
 

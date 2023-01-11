@@ -18,9 +18,10 @@ import (
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/utilities/test"
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
+
+	"github.com/AssetMantle/modules/schema"
 )
 
 func TestTransaction(t *testing.T) {
@@ -53,7 +54,7 @@ func TestTransaction(t *testing.T) {
 	require.Nil(t, err)
 	require.Equal(t, `ABCIQuery: Post failed: Post "http://localhost:26657": dial tcp 127.0.0.1:26657: connect: connection refused`,
 		command.ExecuteContext(context.Context()).Error())
-	// HandleMessage
+	// HandleQuery
 	_, err = Transaction.HandleMessage(context, message)
 	require.Nil(t, err)
 

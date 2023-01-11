@@ -27,12 +27,11 @@ var Query = baseHelpers.NewQuery(
 	responsePrototype,
 	keeperPrototype,
 
-	func(server grpc.Server, keeper helpers.QueryKeeper) {
-		RegisterQueryServer(server, keeper.(queryKeeper))
+	func(server grpc.Server, QueryKeeper helpers.QueryKeeper) {
+		RegisterServiceServer(server, QueryKeeper.(queryKeeper))
 	},
-	func(ctx client.Context, mux *runtime.ServeMux) error {
-		err := RegisterQueryHandlerClient(context.Background(), mux, NewQueryClient(ctx))
-		return err
+	func(clientContext client.Context, serveMux *runtime.ServeMux) error {
+		return RegisterServiceHandlerClient(context.Background(), serveMux, NewServiceClient(clientContext))
 	},
 
 	constants.OwnableID,

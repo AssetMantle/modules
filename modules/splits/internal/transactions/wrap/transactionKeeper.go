@@ -6,7 +6,7 @@ package wrap
 import (
 	"context"
 
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
@@ -30,28 +30,28 @@ func (transactionKeeper transactionKeeper) Wrap(ctx context.Context, message *Me
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context types.Context, message helpers.Message) helpers.TransactionResponse {
-	_, err := transactionKeeper.Handle(context.Context(), message.(*Message))
+func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) helpers.TransactionResponse {
+	_, err := transactionKeeper.Handle(context, message.(*Message))
 	return newTransactionResponse(err)
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
 
-	fromAddress, err := types.AccAddressFromBech32(message.From)
+	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
 	if err != nil {
 		panic("Could not get from address from Bech32 string")
 	}
 
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	if err := transactionKeeper.bankKeeper.SendCoinsFromAccountToModule(types.UnwrapSDKContext(context), fromAddress, module.Name, message.Coins); err != nil {
+	if err := transactionKeeper.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), fromAddress, module.Name, message.Coins); err != nil {
 		return nil, err
 	}
 
 	for _, coin := range message.Coins {
-		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)), message.FromID, baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom)), types.NewDecFromInt(coin.Amount)); err != nil {
+		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom)), sdkTypes.NewDecFromInt(coin.Amount)); err != nil {
 			return nil, err
 		}
 	}

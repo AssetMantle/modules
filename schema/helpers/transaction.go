@@ -4,6 +4,7 @@
 package helpers
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
@@ -19,7 +20,7 @@ import (
 type Transaction interface {
 	GetName() string
 	Command() *cobra.Command
-	HandleMessage(sdkTypes.Context, Message) (*sdkTypes.Result, error)
+	HandleMessage(context.Context, Message) (*sdkTypes.Result, error)
 	RESTRequestHandler(client.Context) http.HandlerFunc
 	RegisterLegacyAminoCodec(amino *codec.LegacyAmino)
 	RegisterInterfaces(types.InterfaceRegistry)

@@ -4,8 +4,9 @@
 package queuing
 
 import (
-	"github.com/cosmos/cosmos-sdk/client/tx"
 	"strings"
+
+	"github.com/cosmos/cosmos-sdk/client/tx"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"

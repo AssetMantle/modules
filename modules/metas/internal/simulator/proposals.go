@@ -6,7 +6,7 @@ package simulator
 import (
 	"math/rand"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -23,7 +23,7 @@ func (simulator) WeightedProposalContentList(module.SimulationState) []simulatio
 	}
 }
 
-func simulateTextProposalContent(r *rand.Rand, _ sdk.Context, _ []simulationTypes.Account) simulationTypes.Content {
+func simulateTextProposalContent(r *rand.Rand, _ sdkTypes.Context, _ []simulationTypes.Account) simulationTypes.Content {
 	return types.NewTextProposal(
 		simulationTypes.RandStringOfLength(r, 140),
 		simulationTypes.RandStringOfLength(r, 5000),

@@ -30,8 +30,8 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context types.Context, message helpers.Message) helpers.TransactionResponse {
-	_, err := transactionKeeper.Handle(context.Context(), message.(*Message))
+func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) helpers.TransactionResponse {
+	_, err := transactionKeeper.Handle(context, message.(*Message))
 	return newTransactionResponse(err)
 }
 
@@ -47,7 +47,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	identityID := baseIDs.NewIdentityID(constansts.NubClassificationID, immutables)
 
-	identities := transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)).Fetch(key.NewKey(identityID))
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 	if identities.Get(key.NewKey(identityID)) != nil {
 		return nil, errorConstants.EntityAlreadyExists
 	}

@@ -32,8 +32,8 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context types.Context, message helpers.Message) helpers.TransactionResponse {
-	_, err := transactionKeeper.Handle(context.Context(), message.(*Message))
+func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) helpers.TransactionResponse {
+	_, err := transactionKeeper.Handle(context, message.(*Message))
 	return newTransactionResponse(err)
 }
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
@@ -42,11 +42,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	Mappable := transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)).Fetch(key.NewKey(message.FromID)).Get(key.NewKey(message.FromID))
+	Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.FromID)).Get(key.NewKey(message.FromID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound
 	}
@@ -60,12 +60,12 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	mutables := base.NewMutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...), constants.AuthenticationProperty.ToAnyProperty())...)...))
 
-	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), define.NewAuxiliaryRequest(immutables, mutables)))
+	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(immutables, mutables)))
 	if err != nil {
 		return nil, err
 	}
 
-	if auxiliaryResponse := transactionKeeper.superAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), super.NewAuxiliaryRequest(classificationID, message.FromID, mutables)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.FromID, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 

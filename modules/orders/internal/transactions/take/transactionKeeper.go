@@ -6,7 +6,7 @@ package take
 import (
 	"context"
 
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
@@ -40,23 +40,23 @@ func (transactionKeeper transactionKeeper) Take(ctx context.Context, message *Me
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context types.Context, message helpers.Message) helpers.TransactionResponse {
-	_, err := transactionKeeper.Handle(context.Context(), message.(*Message))
+func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) helpers.TransactionResponse {
+	_, err := transactionKeeper.Handle(context, message.(*Message))
 	return newTransactionResponse(err)
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
 
-	address, err := types.AccAddressFromBech32(message.From)
+	address, err := sdkTypes.AccAddressFromBech32(message.From)
 	if err != nil {
 		panic("Could not get from address from Bech32 string")
 	}
 
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), authenticate.NewAuxiliaryRequest(address, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(address, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, errorConstants.EntityNotFound
 	}
 
-	orders := transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)).Fetch(key.NewKey(message.OrderID))
+	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.OrderID))
 
 	Mappable := orders.Get(key.NewKey(message.OrderID))
 	if Mappable == nil {
@@ -68,17 +68,17 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized
 	}
 
-	makerReceiveTakerOwnableSplit := order.GetMakerOwnableSplit().MulTruncate(order.GetExchangeRate()).MulTruncate(types.SmallestDec())
-	takerReceiveMakerOwnableSplit := message.TakerOwnableSplit.QuoTruncate(types.SmallestDec()).QuoTruncate(order.GetExchangeRate())
+	makerReceiveTakerOwnableSplit := order.GetMakerOwnableSplit().MulTruncate(order.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec())
+	takerReceiveMakerOwnableSplit := message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(order.GetExchangeRate())
 
 	switch updatedMakerOwnableSplit := order.GetMakerOwnableSplit().Sub(takerReceiveMakerOwnableSplit); {
-	case updatedMakerOwnableSplit.Equal(types.ZeroDec()):
+	case updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()):
 		if message.TakerOwnableSplit.LT(makerReceiveTakerOwnableSplit) {
 			return nil, errorConstants.InsufficientBalance
 		}
 
 		orders.Remove(mappable.NewMappable(order))
-	case updatedMakerOwnableSplit.LT(types.ZeroDec()):
+	case updatedMakerOwnableSplit.LT(sdkTypes.ZeroDec()):
 		if message.TakerOwnableSplit.LT(makerReceiveTakerOwnableSplit) {
 			return nil, errorConstants.InsufficientBalance
 		}
@@ -93,11 +93,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		orders.Mutate(mappable.NewMappable(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(mutableProperties.GetList()...)...))))
 	}
 
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), makerReceiveTakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), makerReceiveTakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), transfer.NewAuxiliaryRequest(module.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), takerReceiveMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), takerReceiveMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 

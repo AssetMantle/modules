@@ -4,8 +4,9 @@
 package key
 
 import (
-	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/AssetMantle/modules/schema/ids/base"
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"

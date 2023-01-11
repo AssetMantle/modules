@@ -4,9 +4,10 @@
 package make
 
 import (
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"os"
 	"testing"
+
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/x/simulation"

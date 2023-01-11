@@ -9,5 +9,5 @@ message TransactionRequest {
   string from = 1;
   string from_i_d = 2;
   string to_i_d = 3;
-  string classification_i_d =  4;
+  string classification_i_d = 4;
 }

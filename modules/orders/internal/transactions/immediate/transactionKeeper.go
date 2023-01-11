@@ -6,7 +6,7 @@ package immediate
 import (
 	"context"
 
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
@@ -39,29 +39,29 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context types.Context, message helpers.Message) helpers.TransactionResponse {
-	_, err := transactionKeeper.Handle(context.Context(), message.(*Message))
+func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) helpers.TransactionResponse {
+	_, err := transactionKeeper.Handle(context, message.(*Message))
 	return newTransactionResponse(err)
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
 
-	fromAddress, err := types.AccAddressFromBech32(message.From)
+	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
 	if err != nil {
 		panic("Could not get from address from Bech32 string")
 	}
 
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), transfer.NewAuxiliaryRequest(message.FromID, module.ModuleIdentityID, message.MakerOwnableID, message.MakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, module.ModuleIdentityID, message.MakerOwnableID, message.MakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
 	immutableMetaProperties := message.ImmutableMetaProperties.
-		Add(baseProperties.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(message.TakerOwnableSplit.QuoTruncate(types.SmallestDec()).QuoTruncate(message.MakerOwnableSplit)))).
-		Add(baseProperties.NewMetaProperty(constants.CreationHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(types.UnwrapSDKContext(context).BlockHeight())))).
+		Add(baseProperties.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(message.MakerOwnableSplit)))).
+		Add(baseProperties.NewMetaProperty(constants.CreationHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())))).
 		Add(baseProperties.NewMetaProperty(constants.MakerOwnableIDProperty.GetKey(), baseData.NewIDData(message.MakerOwnableID))).
 		Add(baseProperties.NewMetaProperty(constants.TakerOwnableIDProperty.GetKey(), baseData.NewIDData(message.TakerOwnableID))).
 		Add(baseProperties.NewMetaProperty(constants.MakerIDProperty.GetKey(), baseData.NewIDData(message.FromID))).
@@ -69,18 +69,18 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)...))
 	orderID := baseIDs.NewOrderID(message.ClassificationID, immutables)
-	orders := transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)).Fetch(key.NewKey(orderID))
+	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(orderID))
 
 	if order := orders.Get(key.NewKey(orderID)); order != nil {
 		return nil, errorConstants.EntityAlreadyExists
 	}
 
-	mutableMetaProperties := message.MutableMetaProperties.Add(baseProperties.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+types.UnwrapSDKContext(context).BlockHeight()))))
+	mutableMetaProperties := message.MutableMetaProperties.Add(baseProperties.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+sdkTypes.UnwrapSDKContext(context).BlockHeight()))))
 	mutableMetaProperties = mutableMetaProperties.Add(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(message.MakerOwnableSplit)))
 
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...))
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
@@ -94,17 +94,17 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	accumulator := func(mappableOrder helpers.Mappable) bool {
 		executableOrder := mappable.GetOrder(mappableOrder)
 
-		executableOrderTakerOwnableSplitDemanded := executableOrder.GetExchangeRate().MulTruncate(executableOrder.GetMakerOwnableSplit()).MulTruncate(types.SmallestDec())
+		executableOrderTakerOwnableSplitDemanded := executableOrder.GetExchangeRate().MulTruncate(executableOrder.GetMakerOwnableSplit()).MulTruncate(sdkTypes.SmallestDec())
 
-		if order.GetExchangeRate().MulTruncate(executableOrder.GetExchangeRate()).MulTruncate(types.SmallestDec()).MulTruncate(types.SmallestDec()).LTE(types.OneDec()) {
+		if order.GetExchangeRate().MulTruncate(executableOrder.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec()).MulTruncate(sdkTypes.SmallestDec()).LTE(sdkTypes.OneDec()) {
 			switch {
 			case orderLeftOverMakerOwnableSplit.GT(executableOrderTakerOwnableSplitDemanded):
 				// sending to buyer
-				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), transfer.NewAuxiliaryRequest(module.ModuleIdentityID, order.GetMakerID(), order.GetTakerOwnableID(), executableOrder.GetMakerOwnableSplit())); !auxiliaryResponse.IsSuccessful() {
+				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, order.GetMakerID(), order.GetTakerOwnableID(), executableOrder.GetMakerOwnableSplit())); !auxiliaryResponse.IsSuccessful() {
 					panic(auxiliaryResponse.GetError())
 				}
 				// sending to executableOrder
-				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), transfer.NewAuxiliaryRequest(module.ModuleIdentityID, executableOrder.GetMakerID(), order.GetMakerOwnableID(), executableOrderTakerOwnableSplitDemanded)); !auxiliaryResponse.IsSuccessful() {
+				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, executableOrder.GetMakerID(), order.GetMakerOwnableID(), executableOrderTakerOwnableSplitDemanded)); !auxiliaryResponse.IsSuccessful() {
 					panic(auxiliaryResponse.GetError())
 				}
 
@@ -113,12 +113,12 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 				orders.Remove(mappable.NewMappable(executableOrder))
 			case orderLeftOverMakerOwnableSplit.LT(executableOrderTakerOwnableSplitDemanded):
 				// sending to buyer
-				sendToBuyer := orderLeftOverMakerOwnableSplit.QuoTruncate(types.SmallestDec()).QuoTruncate(executableOrder.GetExchangeRate())
-				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), transfer.NewAuxiliaryRequest(module.ModuleIdentityID, order.GetMakerID(), order.GetTakerOwnableID(), sendToBuyer)); !auxiliaryResponse.IsSuccessful() {
+				sendToBuyer := orderLeftOverMakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(executableOrder.GetExchangeRate())
+				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, order.GetMakerID(), order.GetTakerOwnableID(), sendToBuyer)); !auxiliaryResponse.IsSuccessful() {
 					panic(auxiliaryResponse.GetError())
 				}
 				// sending to executableOrder
-				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), transfer.NewAuxiliaryRequest(module.ModuleIdentityID, executableOrder.GetMakerID(), order.GetMakerOwnableID(), orderLeftOverMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, executableOrder.GetMakerID(), order.GetMakerOwnableID(), orderLeftOverMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 					panic(auxiliaryResponse.GetError())
 				}
 
@@ -126,27 +126,27 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 				orders.Mutate(mappable.NewMappable(base.NewOrder(executableOrder.GetClassificationID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(mutableProperties.GetList()...)...))))
 
-				orderLeftOverMakerOwnableSplit = types.ZeroDec()
+				orderLeftOverMakerOwnableSplit = sdkTypes.ZeroDec()
 			default:
 				// case orderLeftOverMakerOwnableSplit.Equal(executableOrderTakerOwnableSplitDemanded):
 				// sending to buyer
-				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), transfer.NewAuxiliaryRequest(module.ModuleIdentityID, order.GetMakerID(), order.GetTakerOwnableID(), executableOrder.GetMakerOwnableSplit())); !auxiliaryResponse.IsSuccessful() {
+				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, order.GetMakerID(), order.GetTakerOwnableID(), executableOrder.GetMakerOwnableSplit())); !auxiliaryResponse.IsSuccessful() {
 					panic(auxiliaryResponse.GetError())
 				}
 				// sending to seller
-				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), transfer.NewAuxiliaryRequest(module.ModuleIdentityID, executableOrder.GetMakerID(), order.GetMakerOwnableID(), orderLeftOverMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
+				if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, executableOrder.GetMakerID(), order.GetMakerOwnableID(), orderLeftOverMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
 					panic(auxiliaryResponse.GetError())
 				}
 
 				orders.Remove(mappable.NewMappable(executableOrder))
 
-				orderLeftOverMakerOwnableSplit = types.ZeroDec()
+				orderLeftOverMakerOwnableSplit = sdkTypes.ZeroDec()
 			}
 
 			orderMutated = true
 		}
 
-		if orderLeftOverMakerOwnableSplit.Equal(types.ZeroDec()) {
+		if orderLeftOverMakerOwnableSplit.Equal(sdkTypes.ZeroDec()) {
 			orders.Remove(mappable.NewMappable(order))
 			return true
 		}
@@ -156,7 +156,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	orders.Iterate(mappable.NewMappable(order).GetKey(), accumulator)
 
-	if !orderLeftOverMakerOwnableSplit.Equal(types.ZeroDec()) && orderMutated {
+	if !orderLeftOverMakerOwnableSplit.Equal(sdkTypes.ZeroDec()) && orderMutated {
 		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(orderLeftOverMakerOwnableSplit)))
 
 		orders.Mutate(mappable.NewMappable(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(mutableProperties.GetList()...)...))))

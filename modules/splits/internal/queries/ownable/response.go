@@ -39,7 +39,7 @@ func (queryResponse *QueryResponse) Decode(bytes []byte) (helpers.QueryResponse,
 func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
-func newQueryResponse(value sdkTypes.Dec, error error) helpers.QueryResponse {
+func newQueryResponse(value sdkTypes.Dec, error error) *QueryResponse {
 	if error != nil {
 		return &QueryResponse{
 			Success: false,

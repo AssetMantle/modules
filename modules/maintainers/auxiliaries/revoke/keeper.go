@@ -4,7 +4,7 @@
 package revoke
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
@@ -25,7 +25,7 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context)
 

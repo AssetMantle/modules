@@ -6,7 +6,7 @@ package mutate
 import (
 	"context"
 
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
@@ -30,22 +30,22 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context types.Context, message helpers.Message) helpers.TransactionResponse {
-	_, err := transactionKeeper.Handle(context.Context(), message.(*Message))
+func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) helpers.TransactionResponse {
+	_, err := transactionKeeper.Handle(context, message.(*Message))
 	return newTransactionResponse(err)
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
-	fromAddress, err := types.AccAddressFromBech32(message.From)
+	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
 	if err != nil {
 		panic("Could not get from address from Bech32 string")
 	}
 
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	identities := transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)).Fetch(key.NewKey(message.IdentityID))
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.IdentityID))
 
 	Mappable := identities.Get(key.NewKey(message.IdentityID))
 	if Mappable == nil {
@@ -55,11 +55,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...))
 
-	if auxiliaryResponse := transactionKeeper.memberAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), member.NewAuxiliaryRequest(identity.GetClassificationID(), nil, mutables)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.memberAuxiliary.GetKeeper().Help(context, member.NewAuxiliaryRequest(identity.GetClassificationID(), nil, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(types.UnwrapSDKContext(context), maintain.NewAuxiliaryRequest(identity.GetClassificationID(), message.FromID, mutables)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(identity.GetClassificationID(), message.FromID, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 

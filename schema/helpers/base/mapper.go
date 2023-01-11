@@ -5,6 +5,7 @@ package base
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -21,20 +22,19 @@ type mapper struct {
 
 var _ helpers.Mapper = (*mapper)(nil)
 
-func (mapper mapper) NewCollection(context sdkTypes.Context) helpers.Collection {
+func (mapper mapper) NewCollection(context context.Context) helpers.Collection {
 	return collection{}.Initialize(context, mapper)
 }
-
 func (mapper mapper) GetKVStoreKey() *sdkTypes.KVStoreKey {
 	return mapper.kvStoreKey
 }
-func (mapper mapper) Create(context sdkTypes.Context, mappable helpers.Mappable) {
+func (mapper mapper) Create(context context.Context, mappable helpers.Mappable) {
 	Bytes := CodecPrototype().MustMarshal(mappable)
-	kvStore := context.KVStore(mapper.kvStoreKey)
+	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
 	kvStore.Set(mappable.GetKey().GenerateStoreKeyBytes(), Bytes)
 }
-func (mapper mapper) Read(context sdkTypes.Context, key helpers.Key) helpers.Mappable {
-	kvStore := context.KVStore(mapper.kvStoreKey)
+func (mapper mapper) Read(context context.Context, key helpers.Key) helpers.Mappable {
+	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
 
 	Bytes := kvStore.Get(key.GenerateStoreKeyBytes())
 	if Bytes == nil {
@@ -46,24 +46,24 @@ func (mapper mapper) Read(context sdkTypes.Context, key helpers.Key) helpers.Map
 
 	return mappable
 }
-func (mapper mapper) Update(context sdkTypes.Context, mappable helpers.Mappable) {
+func (mapper mapper) Update(context context.Context, mappable helpers.Mappable) {
 	Bytes := CodecPrototype().MustMarshal(mappable)
 	key := mappable.GetKey()
-	kvStore := context.KVStore(mapper.kvStoreKey)
+	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
 	kvStore.Set(key.GenerateStoreKeyBytes(), Bytes)
 }
-func (mapper mapper) Delete(context sdkTypes.Context, key helpers.Key) {
-	kvStore := context.KVStore(mapper.kvStoreKey)
+func (mapper mapper) Delete(context context.Context, key helpers.Key) {
+	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
 	kvStore.Delete(key.GenerateStoreKeyBytes())
 }
-func (mapper mapper) Iterate(context sdkTypes.Context, partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
-	store := context.KVStore(mapper.kvStoreKey)
+func (mapper mapper) Iterate(context context.Context, partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
+	store := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
 	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(store, partialKey.GenerateStoreKeyBytes())
 
 	defer func(kvStorePrefixIterator sdkTypes.Iterator) {
 		err := kvStorePrefixIterator.Close()
 		if err != nil {
-			context.Logger().Debug(err.Error())
+			sdkTypes.UnwrapSDKContext(context).Logger().Debug(err.Error())
 		}
 	}(kvStorePrefixIterator)
 
@@ -75,14 +75,14 @@ func (mapper mapper) Iterate(context sdkTypes.Context, partialKey helpers.Key, a
 		}
 	}
 }
-func (mapper mapper) ReverseIterate(context sdkTypes.Context, partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
-	store := context.KVStore(mapper.kvStoreKey)
+func (mapper mapper) ReverseIterate(context context.Context, partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
+	store := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
 	kvStoreReversePrefixIterator := sdkTypes.KVStoreReversePrefixIterator(store, partialKey.GenerateStoreKeyBytes())
 
 	defer func(kvStoreReversePrefixIterator sdkTypes.Iterator) {
 		err := kvStoreReversePrefixIterator.Close()
 		if err != nil {
-			context.Logger().Debug(err.Error())
+			sdkTypes.UnwrapSDKContext(context).Logger().Debug(err.Error())
 		}
 	}(kvStoreReversePrefixIterator)
 

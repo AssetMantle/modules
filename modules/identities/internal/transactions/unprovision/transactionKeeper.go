@@ -6,7 +6,7 @@ package unprovision
 import (
 	"context"
 
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
@@ -23,15 +23,15 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context types.Context, message helpers.Message) helpers.TransactionResponse {
-	_, err := transactionKeeper.Handle(context.Context(), message.(*Message))
+func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) helpers.TransactionResponse {
+	_, err := transactionKeeper.Handle(context, message.(*Message))
 	return newTransactionResponse(err)
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
 
 	identityID := message.IdentityID
-	identities := transactionKeeper.mapper.NewCollection(types.UnwrapSDKContext(context)).Fetch(key.NewKey(identityID))
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 
 	Mappable := identities.Get(key.NewKey(identityID))
 	if Mappable == nil {
@@ -39,12 +39,12 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	identity := mappable.GetIdentity(Mappable)
 
-	fromAddress, err := types.AccAddressFromBech32(message.From)
+	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
 	if err != nil {
 		panic("Could not get from address from Bech32 string")
 	}
 
-	toAddress, err := types.AccAddressFromBech32(message.To)
+	toAddress, err := sdkTypes.AccAddressFromBech32(message.To)
 	if err != nil {
 		panic("Could not get To address from Bech32 string")
 	}

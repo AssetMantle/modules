@@ -23,8 +23,9 @@ import (
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
+
+	"github.com/AssetMantle/modules/schema"
 )
 
 func TestHandler(t *testing.T) {

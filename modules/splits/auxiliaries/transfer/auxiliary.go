@@ -11,8 +11,3 @@ var Auxiliary = baseHelpers.NewAuxiliary(
 	"transfer",
 	keeperPrototype,
 )
-
-var AuxiliaryMock = baseHelpers.NewAuxiliary(
-	"transfer",
-	keeperPrototypeMock,
-)

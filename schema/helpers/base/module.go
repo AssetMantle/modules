@@ -153,7 +153,7 @@ func (module module) Route() sdkTypes.Route {
 
 		if message, ok := msg.(helpers.Message); ok {
 			if transaction := module.transactions.Get(message.Type()); transaction != nil {
-				return transaction.HandleMessage(context.WithEventManager(sdkTypes.NewEventManager()), message)
+				return transaction.HandleMessage(sdkTypes.WrapSDKContext(context.WithEventManager(sdkTypes.NewEventManager())), message)
 			}
 		}
 		return nil, constants.IncorrectMessage
@@ -169,7 +169,7 @@ func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Quer
 		}
 
 		if query := module.queries.Get(path[0]); query != nil {
-			return query.HandleMessage(context, requestQuery)
+			return query.HandleQuery(sdkTypes.WrapSDKContext(context), requestQuery)
 		}
 
 		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())
@@ -194,7 +194,7 @@ func (module module) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JS
 		panic(constants.UninitializedUsage)
 	}
 
-	genesisState.Import(context, module.mapper, module.parameters)
+	genesisState.Import(sdkTypes.WrapSDKContext(context), module.mapper, module.parameters)
 
 	return []abciTypes.ValidatorUpdate{}
 }
@@ -203,13 +203,13 @@ func (module module) ExportGenesis(context sdkTypes.Context, jsonCodec sdkCodec.
 		panic(constants.UninitializedUsage)
 	}
 
-	return module.genesisPrototype().Export(context, module.mapper, module.parameters).Encode(jsonCodec)
+	return module.genesisPrototype().Export(sdkTypes.WrapSDKContext(context), module.mapper, module.parameters).Encode(jsonCodec)
 }
 func (module module) BeginBlock(context sdkTypes.Context, beginBlockRequest abciTypes.RequestBeginBlock) {
-	module.block.Begin(context, beginBlockRequest)
+	module.block.Begin(sdkTypes.WrapSDKContext(context), beginBlockRequest)
 }
 func (module module) EndBlock(context sdkTypes.Context, endBlockRequest abciTypes.RequestEndBlock) []abciTypes.ValidatorUpdate {
-	module.block.End(context, endBlockRequest)
+	module.block.End(sdkTypes.WrapSDKContext(context), endBlockRequest)
 	return []abciTypes.ValidatorUpdate{}
 }
 func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {

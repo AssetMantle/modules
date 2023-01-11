@@ -4,7 +4,7 @@
 package scrub
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -19,7 +19,7 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
 	scrubbedPropertyList := make([]properties.Property, len(auxiliaryRequest.PropertyList.GetList()))

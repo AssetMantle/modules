@@ -10,9 +10,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/utilities/test"
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
+
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func TestMapper(t *testing.T) {

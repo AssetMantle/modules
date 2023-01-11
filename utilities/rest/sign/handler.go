@@ -4,6 +4,8 @@
 package sign
 
 import (
+	"net/http"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -12,7 +14,6 @@ import (
 	authSigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
-	"net/http"
 )
 
 func handler(context client.Context) http.HandlerFunc {

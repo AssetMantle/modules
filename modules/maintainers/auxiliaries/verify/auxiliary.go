@@ -11,8 +11,3 @@ var Auxiliary = baseHelpers.NewAuxiliary(
 	"maintainersVerify",
 	keeperPrototype,
 )
-
-var AuxiliaryMock = baseHelpers.NewAuxiliary(
-	"maintainersVerify",
-	keeperPrototypeMock,
-)

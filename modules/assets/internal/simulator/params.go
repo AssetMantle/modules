@@ -6,7 +6,7 @@ package simulator
 import (
 	"math/rand"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/cosmos/cosmos-sdk/x/simulation"
@@ -22,7 +22,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 		simulation.NewSimParamChange(module.Name,
 			dummy.ID.AsString(),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON(dummy.Parameter.Mutate(base.NewDecData(sdk.NewDecWithPrec(int64(r.Intn(99)), 2))).GetData())
+				bytes, err := common.LegacyAmino.MarshalJSON(dummy.Parameter.Mutate(base.NewDecData(sdkTypes.NewDecWithPrec(int64(r.Intn(99)), 2))).GetData())
 				if err != nil {
 					panic(err)
 				}

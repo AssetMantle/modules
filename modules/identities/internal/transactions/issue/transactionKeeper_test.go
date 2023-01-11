@@ -5,16 +5,17 @@ package issue
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"reflect"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/simapp"
 
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
@@ -49,15 +50,15 @@ var (
 	maintainersVerifyAuxiliary helpers.Auxiliary
 )
 
-func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper) {
+func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 
-	storeKey := types.NewKVStoreKey("test")
-	paramsStoreKey := types.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := types.NewTransientStoreKey("testParamsTransient")
+	storeKey := sdkTypes.NewKVStoreKey("test")
+	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
+	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
@@ -71,13 +72,13 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper) 
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
-	commitMultiStore.MountStoreWithDB(storeKey, types.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, types.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, types.StoreTypeTransient, memDB)
+	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := types.NewContext(commitMultiStore, protoTendermintTypes.Header{
+	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
@@ -147,10 +148,10 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers, mapper := CreateTestInput(t)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := types.AccAddressFromBech32(fromAddress)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 	toAddress := "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
-	toAccAddress, err := types.AccAddressFromBech32(toAddress)
+	toAccAddress, err := sdkTypes.AccAddressFromBech32(toAddress)
 	require.Nil(t, err)
 	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID11"), baseData.NewStringData("ImmutableData")))
@@ -161,7 +162,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	classificationID := baseIds.NewClassificationID(immutables, mutables)
 	fromIdentityID := baseIds.NewIdentityID(classificationID, immutables)
 	identity := baseDocuments.NewIdentity(classificationID, immutables, mutables)
-	identity = identity.ProvisionAddress([]types.AccAddress{fromAccAddress}...)
+	identity = identity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
 	identity.Mutate(immutableMetaProperties.GetList()...)
 	keepers.IssueKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(identity))
 	type fields struct {
@@ -171,8 +172,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		maintainersVerifyAuxiliary helpers.Auxiliary
 	}
 	type args struct {
-		context types.Context
-		msg     types.Msg
+		context sdkTypes.Context
+		msg     sdkTypes.Msg
 	}
 	tests := []struct {
 		name   string

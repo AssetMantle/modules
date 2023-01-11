@@ -3,9 +3,11 @@
 
 package helpers
 
-import sdkTypes "github.com/cosmos/cosmos-sdk/types"
+import (
+	"context"
+)
 
 type AuxiliaryKeeper interface {
-	Help(sdkTypes.Context, AuxiliaryRequest) AuxiliaryResponse
+	Help(context.Context, AuxiliaryRequest) AuxiliaryResponse
 	Keeper
 }

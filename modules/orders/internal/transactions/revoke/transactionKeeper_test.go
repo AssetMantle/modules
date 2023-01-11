@@ -5,18 +5,18 @@ package revoke
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"reflect"
 	"testing"
 
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
@@ -27,15 +27,12 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
+	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-
-	"github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 var (
@@ -47,15 +44,15 @@ type TestKeepers struct {
 	RevokeKeeper helpers.TransactionKeeper
 }
 
-func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
+func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 
-	storeKey := types.NewKVStoreKey("test")
-	paramsStoreKey := types.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := types.NewTransientStoreKey("testParamsTransient")
+	storeKey := sdkTypes.NewKVStoreKey("test")
+	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
+	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
@@ -69,16 +66,16 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
-	commitMultiStore.MountStoreWithDB(storeKey, types.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, types.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, types.StoreTypeTransient, memDB)
+	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
 	authenticateAuxiliary = authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
 	revokeAuxiliary = revoke.AuxiliaryMock.Initialize(Mapper, Parameters)
 
-	context := types.NewContext(commitMultiStore, protoTendermintTypes.Header{
+	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
@@ -148,7 +145,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	immutablesMeta := baseQualified.NewImmutables(immutableMetaProperties)
 	mutablesMeta := baseQualified.NewMutables(mutableMetaProperties)
 	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutablesMeta, mutablesMeta)
-	testIdentity.ProvisionAddress([]types.AccAddress{fromAccAddress}...)
+	testIdentity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
 	testOrder := baseDocuments.NewOrder(testClassificationID, immutablesMeta, mutablesMeta)
 	keepers.RevokeKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testOrder))
 	type fields struct {
@@ -158,8 +155,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		revokeAuxiliary       helpers.Auxiliary
 	}
 	type args struct {
-		context types.Context
-		msg     types.Msg
+		context sdkTypes.Context
+		msg     sdkTypes.Msg
 	}
 	tests := []struct {
 		name   string

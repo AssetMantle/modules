@@ -4,7 +4,7 @@
 package helpers
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
 )
 
 // Collection a list of mappable with create CRUD methods
@@ -18,5 +18,5 @@ type Collection interface {
 	Add(Mappable) Collection
 	Remove(Mappable) Collection
 	Mutate(Mappable) Collection
-	Initialize(sdkTypes.Context, Mapper) Collection
+	Initialize(context.Context, Mapper) Collection
 }

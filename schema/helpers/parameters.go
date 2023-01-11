@@ -4,7 +4,8 @@
 package helpers
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
+
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/AssetMantle/modules/schema/ids"
@@ -20,8 +21,8 @@ type Parameters interface {
 	Get(ids.ID) parameters.Parameter
 	GetList() []parameters.Parameter
 
-	Fetch(sdkTypes.Context, ids.ID) Parameters
-	Mutate(sdkTypes.Context, parameters.Parameter) Parameters
+	Fetch(context.Context, ids.ID) Parameters
+	Mutate(context.Context, parameters.Parameter) Parameters
 
 	GetKeyTable() paramsTypes.KeyTable
 	// / TODO

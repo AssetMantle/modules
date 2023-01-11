@@ -4,7 +4,7 @@
 package verify
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
@@ -24,7 +24,7 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	maintainerID := base.NewMaintainerID(constansts.MaintainerClassificationID,
 		baseQualified.NewImmutables(baseLists.NewPropertyList(

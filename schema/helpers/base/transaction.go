@@ -4,6 +4,7 @@
 package base
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -74,7 +75,7 @@ func (transaction transaction) Command() *cobra.Command {
 
 	return transaction.cliCommand.CreateCommand(runE)
 }
-func (transaction transaction) HandleMessage(context sdkTypes.Context, message helpers.Message) (*sdkTypes.Result, error) {
+func (transaction transaction) HandleMessage(context context.Context, message helpers.Message) (*sdkTypes.Result, error) {
 	if transactionResponse := transaction.keeper.Transact(context, message); !transactionResponse.IsSuccessful() {
 		return nil, transactionResponse.GetError()
 	}
@@ -136,7 +137,8 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 			WithChainID(baseReq.ChainID).
 			WithSimulateAndExecute(baseReq.Simulate).
 			WithTxConfig(context.TxConfig).
-			WithTimeoutHeight(baseReq.TimeoutHeight)
+			WithTimeoutHeight(baseReq.TimeoutHeight).
+			WithKeybase(context.Keyring)
 
 		msgList := []sdkTypes.Msg{msg}
 
@@ -167,7 +169,8 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 
 		context = context.WithFromAddress(fromAddress)
 		context = context.WithFromName(fromName)
-		context = context.WithBroadcastMode(viper.GetString(flags.FlagBroadcastMode))
+		// TODO ***** from from client.toml, remove hardcode
+		context = context.WithBroadcastMode(flags.BroadcastBlock)
 
 		if queuing.KafkaState.IsEnabled {
 			responseWriter.WriteHeader(http.StatusAccepted)
