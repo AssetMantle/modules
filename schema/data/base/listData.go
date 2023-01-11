@@ -18,21 +18,35 @@ import (
 var _ data.ListData = (*ListData)(nil)
 
 func (listData *ListData) Get() []data.AnyData {
-	anyDataList := make([]data.AnyData, len(listData.Value.DataList))
-	for i, anyData := range listData.Value.DataList {
+	anyDataList := make([]data.AnyData, len(listData.Value))
+	for i, anyData := range listData.Value {
 		anyDataList[i] = anyData
 	}
 	return anyDataList
 }
 func (listData *ListData) Search(data data.Data) (int, bool) {
-	return listData.Value.Search(data)
+	dataList := NewDataList()
+	for _, val := range listData.Value {
+		dataList = dataList.Add(val.Get())
+	}
+	return dataList.Search(data)
 }
 func (listData *ListData) Add(data ...data.Data) data.ListData {
-	listData.Value = listData.Value.Add(data...).(*AnyDataList)
+	for _, i := range data {
+		listData.Value = append(listData.Value, i.ToAnyData().(*AnyData))
+	}
 	return listData
 }
 func (listData *ListData) Remove(data ...data.Data) data.ListData {
-	listData.Value = listData.Value.Remove(data...).(*AnyDataList)
+	dataList := NewDataList()
+	for _, val := range listData.Value {
+		dataList = dataList.Add(val.Get())
+	}
+	dataList = dataList.Remove(data...)
+	listData.Value = make([]*AnyData, 0)
+	for _, datum := range dataList.GetList() {
+		listData.Value = append(listData.Value, datum.ToAnyData().(*AnyData))
+	}
 	return listData
 }
 func (listData *ListData) GetID() ids.DataID {
@@ -48,9 +62,9 @@ func (listData *ListData) Compare(listable traits.Listable) int {
 	return bytes.Compare(listData.Bytes(), compareListData.Bytes())
 }
 func (listData *ListData) Bytes() []byte {
-	bytesList := make([][]byte, len(listData.Value.DataList))
+	bytesList := make([][]byte, len(listData.Value))
 
-	for i, datum := range listData.Value.GetList() {
+	for i, datum := range listData.Value {
 		if datum != nil {
 			bytesList[i] = datum.Bytes()
 		}
@@ -94,5 +108,9 @@ func ListDataPrototype() data.ListData {
 // NewListData
 // * onus of ensuring all Data are of the same type is on DataList
 func NewListData(value lists.AnyDataList) data.ListData {
-	return &ListData{Value: value.(*AnyDataList)}
+	dataList := make([]*AnyData, 0)
+	for _, datum := range value.GetList() {
+		dataList = append(dataList, datum.ToAnyData().(*AnyData))
+	}
+	return &ListData{Value: dataList}
 }

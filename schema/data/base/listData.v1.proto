@@ -1,11 +1,11 @@
 syntax = "proto3";
 package data;
 
-import "schema/data/base/anyDataList.proto";
+import "schema/data/base/anyData.v1.proto";
 import "gogoproto/gogo.proto";
 
 message ListData {
   option (gogoproto.goproto_getters) = false;
 
-  AnyDataList value = 1;
+  repeated AnyData value = 1;
 }
