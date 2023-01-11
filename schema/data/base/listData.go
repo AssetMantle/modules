@@ -26,20 +26,20 @@ func (listData *ListData) Get() []data.AnyData {
 }
 func (listData *ListData) Search(data data.Data) (int, bool) {
 	index := sort.Search(
-		len(dataList.DataList),
+		len(listData.DataList),
 		func(i int) bool {
-			return dataList.DataList[i].Compare(data) >= 0
+			return listData.DataList[i].Compare(data) >= 0
 		},
 	)
 
-	if index < len(dataList.DataList) && dataList.DataList[index].Compare(data) == 0 {
+	if index < len(listData.DataList) && listData.DataList[index].Compare(data) == 0 {
 		return index, true
 	}
 
 	return index, false
 }
 func (listData *ListData) Add(data ...data.Data) data.ListData {
-	updatedList := dataList
+	updatedList := listData
 	for _, listable := range data {
 		if index, found := updatedList.Search(listable); !found {
 			updatedList.DataList = append(updatedList.DataList, listable.ToAnyData().(*AnyData))
@@ -50,7 +50,7 @@ func (listData *ListData) Add(data ...data.Data) data.ListData {
 	return updatedList
 }
 func (listData *ListData) Remove(data ...data.Data) data.ListData {
-	updatedList := dataList
+	updatedList := listData
 
 	for _, listable := range data {
 		if index, found := updatedList.Search(listable); found {
