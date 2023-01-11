@@ -26,11 +26,5 @@ message AnyData {
 message ListData {
   option (gogoproto.goproto_getters) = false;
 
-  AnyDataList value = 1;
-}
-
-message AnyDataList {
-  option (gogoproto.goproto_getters) = false;
-
   repeated AnyData data_list = 1;
 }

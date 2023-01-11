@@ -11,7 +11,6 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
@@ -93,6 +92,6 @@ func ListDataPrototype() data.ListData {
 
 // NewListData
 // * onus of ensuring all Data are of the same type is on DataList
-func NewListData(value lists.AnyDataList) data.ListData {
-	return &ListData{Value: value.(*AnyDataList)}
+func NewListData(anyData ...data.AnyData) data.ListData {
+	return &ListData{}.Add(anyData)
 }
