@@ -7,7 +7,6 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
@@ -28,7 +27,7 @@ func (identity identity) GetExpiry() types.Height {
 
 	return constants.ExpiryHeightProperty.GetData().Get().(data.HeightData).Get()
 }
-func (identity identity) GetAuthentication() lists.AnyDataList {
+func (identity identity) GetAuthentication() data.ListData {
 	var dataList []data.Data
 
 	if property := identity.Document.GetProperty(constants.AuthenticationProperty.GetID()); property != nil && property.IsMeta() {
@@ -40,7 +39,7 @@ func (identity identity) GetAuthentication() lists.AnyDataList {
 			dataList = append(dataList, anyData)
 		}
 	}
-	return baseData.NewDataList(dataList...)
+	return baseData.NewListData(dataList...)
 }
 func (identity identity) IsProvisioned(accAddress sdkTypes.AccAddress) bool {
 	_, isProvisioned := identity.GetAuthentication().Search(baseData.NewAccAddressData(accAddress))
