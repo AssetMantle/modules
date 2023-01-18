@@ -6,6 +6,7 @@ package base
 import (
 	"encoding/json"
 	"errors"
+	utilitiesRest "github.com/AssetMantle/modules/utilities/rest"
 	"io"
 	"log"
 	"net/http"
@@ -323,6 +324,7 @@ func (application application) RegisterAPIRoutes(server *api.Server, apiConfig c
 	tmservice.RegisterGRPCGatewayRoutes(clientCtx, server.GRPCGatewayRouter)
 	application.moduleBasicManager.RegisterRESTRoutes(clientCtx, server.Router)
 	application.moduleBasicManager.RegisterGRPCGatewayRoutes(clientCtx, server.GRPCGatewayRouter)
+	utilitiesRest.RegisterRESTRoutes(clientCtx, server.Router)
 	if apiConfig.Swagger {
 		Fs, err := fs.New()
 		if err != nil {
