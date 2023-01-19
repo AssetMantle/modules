@@ -4,8 +4,10 @@
 package module
 
 import (
-	"github.com/AssetMantle/modules/constants/keys"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 const Name = "splits"
-const StoreKeyPrefix = keys.Splits
+const ConsensusVersion = 1
+
+var StoreKeyPrefix = constants.SplitsStoreKeyPrefix

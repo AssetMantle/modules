@@ -5,20 +5,20 @@ package meta
 
 import (
 	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 
-	"github.com/AssetMantle/modules/modules/metas/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
-type queryRequest struct {
-	MetaID ids.ID `json:"metaID" valid:"required~required field metaID missing"`
-}
+// type queryRequest struct {
+//	ids.DataID `json:"dataID" valid:"required~required field dataID missing"`
+// }
 
-var _ helpers.QueryRequest = (*queryRequest)(nil)
+var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
 // Validate godoc
 // @Summary Search for metadata by meta ID
@@ -26,41 +26,49 @@ var _ helpers.QueryRequest = (*queryRequest)(nil)
 // @Accept json
 // @Produce json
 // @Tags Metas
-// @Param metaID path string true "Unique identifier of metadata value."
+// @Param dataID path string true "Unique identifier of metadata value."
 // @Success 200 {object} queryResponse "Message for a successful query response"
 // @Failure default  {object}  queryResponse "Message for an unexpected error response."
-// @Router /metas/metas/{metaID} [get]
-func (queryRequest queryRequest) Validate() error {
+// @Router /metas/metas/{dataID} [get]
+func (queryRequest *QueryRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(queryRequest)
 	return err
 }
-func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewID(cliCommand.ReadString(constants.MetaID)))
+func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
+	if dataID, err := baseIDs.ReadDataID(cliCommand.ReadString(constants.DataID)); err != nil {
+		return &QueryRequest{}, err
+	} else {
+		return newQueryRequest(dataID), nil
+	}
 }
-func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewID(vars[Query.GetName()]))
+func (*QueryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
+	if dataID, err := baseIDs.ReadDataID(vars[Query.GetName()]); err != nil {
+		return &QueryRequest{}, err
+	} else {
+		return newQueryRequest(dataID), nil
+	}
 }
-func (queryRequest queryRequest) Encode() ([]byte, error) {
-	return common.Codec.MarshalJSON(queryRequest)
+func (queryRequest *QueryRequest) Encode() ([]byte, error) {
+	return base.CodecPrototype().MarshalJSON(queryRequest)
 }
-func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
-	if err := common.Codec.UnmarshalJSON(bytes, &queryRequest); err != nil {
+func (queryRequest *QueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
+	if err := base.CodecPrototype().UnmarshalJSON(bytes, queryRequest); err != nil {
 		return nil, err
 	}
 
 	return queryRequest, nil
 }
 func requestPrototype() helpers.QueryRequest {
-	return queryRequest{}
+	return &QueryRequest{}
 }
-func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
+func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	switch value := request.(type) {
-	case queryRequest:
+	case *QueryRequest:
 		return value
 	default:
-		return queryRequest{}
+		return &QueryRequest{}
 	}
 }
-func newQueryRequest(metaID ids.ID) helpers.QueryRequest {
-	return queryRequest{MetaID: metaID}
+func newQueryRequest(dataID ids.DataID) helpers.QueryRequest {
+	return &QueryRequest{DataID: dataID.(*baseIDs.DataID)}
 }

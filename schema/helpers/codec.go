@@ -1,13 +1,18 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
-
 package helpers
 
-import "github.com/cosmos/cosmos-sdk/codec"
+import (
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
+)
 
-func RegisterCodec(codec *codec.Codec) {
-	codec.RegisterInterface((*Mappable)(nil), nil)
-	codec.RegisterInterface((*QueryRequest)(nil), nil)
-	codec.RegisterInterface((*QueryResponse)(nil), nil)
-	codec.RegisterInterface((*TransactionRequest)(nil), nil)
+type Codec interface {
+	client.TxConfig
+	codec.Codec
+
+	GetProtoCodec() *codec.ProtoCodec
+	GetLegacyAmino() *codec.LegacyAmino
+	InterfaceRegistry() types.InterfaceRegistry
+	Initialize(module.BasicManager) Codec
 }

@@ -4,53 +4,60 @@
 package schema
 
 import (
-	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/documents"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
+	"github.com/AssetMantle/modules/schema/errors"
+	baseErrors "github.com/AssetMantle/modules/schema/errors/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/mappables"
 	"github.com/AssetMantle/modules/schema/parameters"
 	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types"
+	"github.com/AssetMantle/modules/schema/traits"
+	typesSchema "github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
-func RegisterCodec(codec *codec.Codec) {
-	codec.RegisterInterface((*error)(nil), nil)
+func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 
-	codec.RegisterInterface((*traits.Listable)(nil), nil)
-	data.RegisterCodec(codec)
-	baseData.RegisterCodec(codec)
+	data.RegisterLegacyAminoCodec(legacyAmino)
+	baseData.RegisterLegacyAminoCodec(legacyAmino)
 
-	helpers.RegisterCodec(codec)
+	documents.RegisterLegacyAminoCodec(legacyAmino)
+	baseDocuments.RegisterLegacyAminoCodec(legacyAmino)
 
-	ids.RegisterCodec(codec)
-	baseIDs.RegisterCodec(codec)
+	errors.RegisterLegacyAminoCodec(legacyAmino)
+	baseErrors.RegisterLegacyAminoCodec(legacyAmino)
 
-	lists.RegisterCodec(codec)
-	baseLists.RegisterCodec(codec)
+	helpers.RegisterLegacyAminoCodec(legacyAmino)
 
-	mappables.RegisterCodec(codec)
+	ids.RegisterLegacyAminoCodec(legacyAmino)
+	baseIDs.RegisterLegacyAminoCodec(legacyAmino)
 
-	parameters.RegisterCodec(codec)
-	baseParameters.RegisterCodec(codec)
+	lists.RegisterLegacyAminoCodec(legacyAmino)
+	baseLists.RegisterLegacyAminoCodec(legacyAmino)
 
-	properties.RegisterCodec(codec)
-	baseProperties.RegisterCodec(codec)
+	parameters.RegisterLegacyAminoCodec(legacyAmino)
+	baseParameters.RegisterLegacyAminoCodec(legacyAmino)
 
-	qualified.RegisterCodec(codec)
-	baseQualified.RegisterCodec(codec)
+	properties.RegisterLegacyAminoCodec(legacyAmino)
+	baseProperties.RegisterLegacyAminoCodec(legacyAmino)
 
-	types.RegisterCodec(codec)
-	baseTypes.RegisterCodec(codec)
+	qualified.RegisterLegacyAminoCodec(legacyAmino)
+	baseQualified.RegisterLegacyAminoCodec(legacyAmino)
+
+	traits.RegisterLegacyAminoCodec(legacyAmino)
+
+	typesSchema.RegisterLegacyAminoCodec(legacyAmino)
+	baseTypes.RegisterLegacyAminoCodec(legacyAmino)
 }

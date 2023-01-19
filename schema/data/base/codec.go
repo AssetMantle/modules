@@ -9,12 +9,22 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-func RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, accAddressData{})
-	codecUtilities.RegisterModuleConcrete(codec, booleanData{})
-	codecUtilities.RegisterModuleConcrete(codec, decData{})
-	codecUtilities.RegisterModuleConcrete(codec, heightData{})
-	codecUtilities.RegisterModuleConcrete(codec, idData{})
-	codecUtilities.RegisterModuleConcrete(codec, listData{})
-	codecUtilities.RegisterModuleConcrete(codec, stringData{})
+func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AccAddressData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, BooleanData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, DecData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, HeightData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, IDData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, ListData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, StringData{})
+
+	legacyAmino.RegisterInterface((*isAnyData_Impl)(nil), nil)
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData_AccAddressData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData_BooleanData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData_DecData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData_HeightData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData_IDData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData_ListData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData_StringData{})
 }

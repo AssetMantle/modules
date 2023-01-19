@@ -8,16 +8,15 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	clientContext "github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
+	"github.com/AssetMantle/modules/utilities/test"
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestQuery(t *testing.T) {
-	context, storeKey, _ := base.SetupTest(t)
-	codec := base.MakeCodec()
+	context, storeKey, _ := test.SetupTest(t)
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 	Query := NewQuery("test", "t", "testQuery", "test", base.TestQueryRequestPrototype,
 		base.TestQueryResponsePrototype, base.TestQueryKeeperPrototype).Initialize(Mapper, parametersPrototype()).(query)
@@ -35,28 +34,31 @@ func TestQuery(t *testing.T) {
 	// GetName
 	require.Equal(t, "test", Query.GetName())
 
-	// HandleMessage
+	// HandleQuery
 	encodedRequest, err := Query.requestPrototype().Encode()
 	require.Nil(t, err)
 
-	_, err = Query.HandleMessage(context, abciTypes.RequestQuery{Data: encodedRequest})
+	_, err = Query.HandleQuery(context, abciTypes.RequestQuery{Data: encodedRequest})
 	require.Nil(t, err)
 
-	command := Query.Command(codec)
+	command := Query.Command()
 	command.SetArgs([]string{
 		"test"})
+	err = command.ParseFlags([]string{"--node", "tcp://localhost:26657"})
+	require.Nil(t, err)
 	require.Equal(t, `ABCIQuery: Post failed: Post "http://localhost:26657": dial tcp 127.0.0.1:26657: connect: connection refused`,
 		command.ExecuteContext(context.Context()).Error())
 
+	// require.Equal(t, nil, command.ExecuteContext(context.Context()))
+
 	// RESTQueryHandler
-	cliContext := clientContext.NewCLIContext().WithCodec(codec).WithChainID("test")
-	Query.RESTQueryHandler(cliContext)
+	Query.RESTQueryHandler(context)
 
 	// RPC ERROR
 	testRequest1, err := http.NewRequest("GET", "/test", nil)
 	require.Nil(t, err)
 	responseRecorder := httptest.NewRecorder()
-	Query.RESTQueryHandler(cliContext).ServeHTTP(responseRecorder, testRequest1)
+	Query.RESTQueryHandler(context).ServeHTTP(responseRecorder, testRequest1)
 	require.Equal(t, responseRecorder.Code, http.StatusInternalServerError)
 
 }

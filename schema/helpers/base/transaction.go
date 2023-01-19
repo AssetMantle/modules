@@ -4,57 +4,64 @@
 package base
 
 import (
-	"bufio"
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
 	"reflect"
-	"strings"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/client/keys"
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
+	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	authClient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/gogo/protobuf/grpc"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/utilities/rest/queuing"
 )
 
 type transaction struct {
-	name             string
-	cliCommand       helpers.CLICommand
-	keeper           helpers.TransactionKeeper
-	requestPrototype func() helpers.TransactionRequest
-	messagePrototype func() helpers.Message
-	keeperPrototype  func() helpers.TransactionKeeper
+	name                 string
+	cliCommand           helpers.CLICommand
+	keeper               helpers.TransactionKeeper
+	requestPrototype     func() helpers.TransactionRequest
+	messagePrototype     func() helpers.Message
+	keeperPrototype      func() helpers.TransactionKeeper
+	serviceRegistrar     func(grpc.Server, helpers.TransactionKeeper)
+	grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error
 }
 
 var _ helpers.Transaction = (*transaction)(nil)
 
 func (transaction transaction) GetName() string { return transaction.name }
-func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
+func (transaction transaction) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
-		bufioReader := bufio.NewReader(command.InOrStdin())
-		transactionBuilder := auth.NewTxBuilderFromCLI(bufioReader).WithTxEncoder(authClient.GetTxEncoder(codec))
-		cliContext := context.NewCLIContextWithInput(bufioReader).WithCodec(codec)
-
-		transactionRequest, err := transaction.requestPrototype().FromCLI(transaction.cliCommand, cliContext)
+		context, err := client.GetClientTxContext(command)
 		if err != nil {
 			return err
 		}
 
-		var msg sdkTypes.Msg
+		transactionRequest, err := transaction.requestPrototype().FromCLI(transaction.cliCommand, context)
+		if err != nil {
+			return err
+		}
 
-		msg, err = transactionRequest.MakeMsg()
+		if err = transactionRequest.Validate(); err != nil {
+			return err
+		}
+
+		msg, err := transactionRequest.MakeMsg()
 		if err != nil {
 			return err
 		}
@@ -63,66 +70,49 @@ func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
 			return err
 		}
 
-		return authClient.GenerateOrBroadcastMsgs(cliContext, transactionBuilder, []sdkTypes.Msg{msg})
+		return tx.GenerateOrBroadcastTxCLI(context, command.Flags(), msg)
 	}
 
 	return transaction.cliCommand.CreateCommand(runE)
 }
-
-func (transaction transaction) HandleMessage(context sdkTypes.Context, message sdkTypes.Msg) (*sdkTypes.Result, error) {
+func (transaction transaction) HandleMessage(context context.Context, message helpers.Message) (*sdkTypes.Result, error) {
 	if transactionResponse := transaction.keeper.Transact(context, message); !transactionResponse.IsSuccessful() {
 		return nil, transactionResponse.GetError()
 	}
 
-	context.EventManager().EmitEvent(
-		sdkTypes.NewEvent(
-			sdkTypes.EventTypeMessage,
-			sdkTypes.NewAttribute(sdkTypes.AttributeKeyModule, message.Route()),
-		),
-	)
-
-	return &sdkTypes.Result{Events: context.EventManager().Events()}, nil
+	return &sdkTypes.Result{Events: message.GenerateOnSuccessEvents().ToABCIEvents()}, nil
 }
-
-func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext) http.HandlerFunc {
+func (transaction transaction) RESTRequestHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		transactionRequest := transaction.requestPrototype()
-		if !rest.ReadRESTReq(responseWriter, httpRequest, cliContext.Codec, &transactionRequest) {
+		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
 			return
 		} else if reflect.TypeOf(transaction.requestPrototype()) != reflect.TypeOf(transactionRequest) {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
+			rest.CheckBadRequestError(responseWriter, errorConstants.InvalidRequest)
 			return
 		}
 
-		err := transactionRequest.Validate()
-		if err != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+		if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
 			return
 		}
-
 		baseReq := transactionRequest.GetBaseReq()
-
-		var msg sdkTypes.Msg
-		msg, err = transactionRequest.MakeMsg()
-		// TODO write one method
-		if err != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
-			return
-		}
-
 		baseReq = baseReq.Sanitize()
 		if !baseReq.ValidateBasic(responseWriter) {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, "")
+
+		}
+
+		msg, err := transactionRequest.MakeMsg()
+		if err != nil {
+			rest.CheckBadRequestError(responseWriter, err)
 			return
 		}
 
-		if err = msg.ValidateBasic(); err != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+		if rest.CheckBadRequestError(responseWriter, msg.ValidateBasic()) {
 			return
 		}
 
 		if viper.GetBool(flags.FlagGenerateOnly) {
-			authClient.WriteGenerateStdTxResponse(responseWriter, cliContext, baseReq, []sdkTypes.Msg{msg})
+			tx.WriteGeneratedTxResponse(context, responseWriter, baseReq, []sdkTypes.Msg{msg}...)
 			return
 		}
 
@@ -131,51 +121,56 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 			return
 		}
 
-		var simAndExec bool
-		var gas uint64
-
-		simAndExec, gas, err = flags.ParseGas(baseReq.Gas)
-		if err != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+		gasSetting, err := flags.ParseGasSetting(baseReq.Gas)
+		if rest.CheckBadRequestError(responseWriter, err) {
 			return
 		}
 
-		txBuilder := types.NewTxBuilder(
-			authClient.GetTxEncoder(cliContext.Codec), baseReq.AccountNumber, baseReq.Sequence, gas, gasAdj,
-			baseReq.Simulate, baseReq.ChainID, baseReq.Memo, baseReq.Fees, baseReq.GasPrices,
-		)
+		transactionFactory := tx.Factory{}.
+			WithFees(baseReq.Fees.String()).
+			WithGasPrices(baseReq.GasPrices.String()).
+			WithAccountNumber(baseReq.AccountNumber).
+			WithSequence(baseReq.Sequence).
+			WithGas(gasSetting.Gas).
+			WithGasAdjustment(gasAdj).
+			WithMemo(baseReq.Memo).
+			WithChainID(baseReq.ChainID).
+			WithSimulateAndExecute(baseReq.Simulate).
+			WithTxConfig(context.TxConfig).
+			WithTimeoutHeight(baseReq.TimeoutHeight).
+			WithKeybase(context.Keyring)
+
 		msgList := []sdkTypes.Msg{msg}
 
-		if baseReq.Simulate || simAndExec {
+		if baseReq.Simulate || gasSetting.Simulate {
 			if gasAdj < 0 {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, errors.ErrOutOfGas.Error())
+				rest.CheckBadRequestError(responseWriter, errors.ErrOutOfGas)
 				return
 			}
 
-			txBuilder, err = authClient.EnrichWithGas(txBuilder, cliContext, msgList)
-			if err != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+			_, adjusted, err := tx.CalculateGas(context, transactionFactory, msgList...)
+			if rest.CheckInternalServerError(responseWriter, err) {
 				return
 			}
+
+			transactionFactory = transactionFactory.WithGas(adjusted)
 
 			if baseReq.Simulate {
-				rest.WriteSimulationResponse(responseWriter, cliContext.Codec, txBuilder.Gas())
+				rest.WriteSimulationResponse(responseWriter, context.LegacyAmino, transactionFactory.Gas())
 				return
 			}
 		}
 
-		var fromAddress sdkTypes.AccAddress
-		var fromName string
-
-		fromAddress, fromName, err = context.GetFromFields(strings.NewReader(keys.DefaultKeyPass), baseReq.From, viper.GetBool(flags.FlagGenerateOnly))
+		fromAddress, fromName, _, err := client.GetFromFields(context.Keyring, baseReq.From, viper.GetBool(flags.FlagGenerateOnly))
 		if err != nil {
-			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+			rest.CheckBadRequestError(responseWriter, err)
 			return
 		}
 
-		cliContext = cliContext.WithFromAddress(fromAddress)
-		cliContext = cliContext.WithFromName(fromName)
-		cliContext = cliContext.WithBroadcastMode(viper.GetString(flags.FlagBroadcastMode))
+		context = context.WithFromAddress(fromAddress)
+		context = context.WithFromName(fromName)
+		// TODO ***** from from client.toml, remove hardcode
+		context = context.WithBroadcastMode(flags.BroadcastBlock)
 
 		if queuing.KafkaState.IsEnabled {
 			responseWriter.WriteHeader(http.StatusAccepted)
@@ -184,48 +179,47 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 				msg,
 				queuing.TicketID(random.GenerateUniqueIdentifier(transaction.name)),
 				baseReq,
-				cliContext),
-				cliContext.Codec,
+				context),
+				context.LegacyAmino,
 			)
 
 			if _, err = responseWriter.Write(output); err != nil {
 				log.Printf("could not write response: %v", err)
 			}
 		} else {
-			var accountNumber uint64
-			var sequence uint64
 
-			accountNumber, sequence, err = types.NewAccountRetriever(cliContext).GetAccountNumberSequence(fromAddress)
+			accountNumber, sequence, err := types.AccountRetriever{}.GetAccountNumberSequence(context, fromAddress)
 			if err != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+				rest.CheckBadRequestError(responseWriter, err)
 				return
 			}
 
-			txBuilder = txBuilder.WithAccountNumber(accountNumber)
-			txBuilder = txBuilder.WithSequence(sequence)
-
-			var stdMsg []byte
-
-			stdMsg, err = txBuilder.BuildAndSign(fromName, keys.DefaultKeyPass, msgList)
+			transactionFactory = transactionFactory.WithAccountNumber(accountNumber).WithSequence(sequence)
+			transactionBuilder, err := transactionFactory.BuildUnsignedTx(msgList...)
 			if err != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+				rest.CheckBadRequestError(responseWriter, err)
 				return
 			}
 
-			// broadcast to a node
-			var response sdkTypes.TxResponse
-
-			response, err = cliContext.BroadcastTx(stdMsg)
-			if err != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+			if rest.CheckBadRequestError(responseWriter, tx.Sign(transactionFactory, fromName, transactionBuilder, true)) {
 				return
 			}
 
-			var output []byte
-
-			output, err = cliContext.Codec.MarshalJSON(response)
+			transactionBytes, err := context.TxConfig.TxEncoder()(transactionBuilder.GetTx())
 			if err != nil {
-				rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+				rest.CheckBadRequestError(responseWriter, err)
+				return
+			}
+
+			response, err := context.BroadcastTx(transactionBytes)
+			if err != nil {
+				rest.CheckBadRequestError(responseWriter, err)
+				return
+			}
+
+			output, err := context.Codec.MarshalJSON(response)
+			if err != nil {
+				rest.CheckBadRequestError(responseWriter, err)
 				return
 			}
 
@@ -236,10 +230,23 @@ func (transaction transaction) RESTRequestHandler(cliContext context.CLIContext)
 		}
 	}
 }
-
-func (transaction transaction) RegisterCodec(codec *codec.Codec) {
-	transaction.messagePrototype().RegisterCodec(codec)
-	transaction.requestPrototype().RegisterCodec(codec)
+func (transaction transaction) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.LegacyAmino) {
+	transaction.messagePrototype().RegisterLegacyAminoCodec(legacyAmino)
+	transaction.requestPrototype().RegisterLegacyAminoCodec(legacyAmino)
+}
+func (transaction transaction) RegisterInterfaces(interfaceRegistry codecTypes.InterfaceRegistry) {
+	transaction.messagePrototype().RegisterInterface(interfaceRegistry)
+}
+func (transaction transaction) RegisterService(configurator sdkModuleTypes.Configurator) {
+	if transaction.keeper == nil {
+		panic(errorConstants.UninitializedUsage)
+	}
+	transaction.serviceRegistrar(configurator.MsgServer(), transaction.keeper)
+}
+func (transaction transaction) RegisterGRPCGatewayRoute(context client.Context, serveMux *runtime.ServeMux) {
+	if err := transaction.grpcGatewayRegistrar(context, serveMux); err != nil {
+		panic(err)
+	}
 }
 func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessage) (sdkTypes.Msg, error) {
 	transactionRequest, err := transaction.requestPrototype().FromJSON(rawMessage)
@@ -249,18 +256,19 @@ func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessa
 
 	return transactionRequest.MakeMsg()
 }
-
 func (transaction transaction) InitializeKeeper(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Transaction {
 	transaction.keeper = transaction.keeperPrototype().Initialize(mapper, parameters, auxiliaryKeepers).(helpers.TransactionKeeper)
 	return transaction
 }
 
-func NewTransaction(name string, short string, long string, requestPrototype func() helpers.TransactionRequest, messagePrototype func() helpers.Message, keeperPrototype func() helpers.TransactionKeeper, flagList ...helpers.CLIFlag) helpers.Transaction {
+func NewTransaction(name string, short string, long string, requestPrototype func() helpers.TransactionRequest, messagePrototype func() helpers.Message, keeperPrototype func() helpers.TransactionKeeper, serviceRegistrar func(grpc.Server, helpers.TransactionKeeper), grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error, flagList ...helpers.CLIFlag) helpers.Transaction {
 	return transaction{
-		name:             name,
-		cliCommand:       NewCLICommand(name, short, long, flagList),
-		requestPrototype: requestPrototype,
-		messagePrototype: messagePrototype,
-		keeperPrototype:  keeperPrototype,
+		name:                 name,
+		cliCommand:           NewCLICommand(name, short, long, flagList),
+		requestPrototype:     requestPrototype,
+		messagePrototype:     messagePrototype,
+		keeperPrototype:      keeperPrototype,
+		serviceRegistrar:     serviceRegistrar,
+		grpcGatewayRegistrar: grpcGatewayRegistrar,
 	}
 }

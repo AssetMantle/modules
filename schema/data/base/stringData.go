@@ -4,65 +4,57 @@
 package base
 
 import (
-	"strings"
+	"bytes"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
-type stringData struct {
-	Value string `json:"value"`
-}
+var _ data.StringData = (*StringData)(nil)
 
-var _ data.StringData = (*stringData)(nil)
-
-func (stringData stringData) GetID() ids.DataID {
-	return baseIDs.NewDataID(stringData)
+func (stringData *StringData) GetID() ids.DataID {
+	return baseIDs.GenerateDataID(stringData)
 }
-func (stringData stringData) Compare(listable traits.Listable) int {
-	compareStringData, err := stringDataFromInterface(listable)
+func (stringData *StringData) Compare(listable traits.Listable) int {
+	compareStringData, err := dataFromListable(listable)
 	if err != nil {
 		panic(err)
 	}
 
-	return strings.Compare(stringData.Value, compareStringData.Value)
+	return bytes.Compare(stringData.Bytes(), compareStringData.Bytes())
 }
-func (stringData stringData) String() string {
-	return stringData.Value
+func (stringData *StringData) Bytes() []byte {
+	return []byte(stringData.AsString())
 }
-func (stringData stringData) GetType() ids.ID {
-	return idsConstants.StringDataID
+func (stringData *StringData) GetType() ids.StringID {
+	return dataConstants.StringDataID
 }
-func (stringData stringData) ZeroValue() data.Data {
+func (stringData *StringData) ZeroValue() data.Data {
 	return NewStringData("")
 }
-func (stringData stringData) GenerateHash() ids.ID {
-	return baseIDs.NewID(stringUtilities.Hash(stringData.Value))
+func (stringData *StringData) GenerateHashID() ids.HashID {
+	return baseIDs.GenerateHashID(stringData.Bytes())
 }
-func (stringData stringData) Get() string {
+func (stringData *StringData) AsString() string {
 	return stringData.Value
 }
-
-func stringDataFromInterface(listable traits.Listable) (stringData, error) {
-	switch value := listable.(type) {
-	case stringData:
-		return value, nil
-	default:
-		return stringData{}, errors.MetaDataError
+func (stringData *StringData) ToAnyData() data.AnyData {
+	return &AnyData{
+		Impl: &AnyData_StringData{
+			StringData: stringData,
+		},
 	}
 }
 
-func NewStringData(value string) data.Data {
-	return stringData{
+func StringDataPrototype() data.StringData {
+	return NewStringData("")
+}
+
+func NewStringData(value string) data.StringData {
+	return &StringData{
 		Value: value,
 	}
-}
-
-func ReadStringData(stringData string) (data.Data, error) {
-	return NewStringData(stringData), nil
 }

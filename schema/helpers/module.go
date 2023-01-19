@@ -7,18 +7,18 @@ import (
 	"encoding/json"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/params"
+	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
 type Module interface {
-	sdkTypesModule.AppModuleBasic
-	sdkTypesModule.AppModule
-	sdkTypesModule.AppModuleSimulation
+	sdkModuleTypes.EndBlockAppModule
+	sdkModuleTypes.BeginBlockAppModule
+	sdkModuleTypes.AppModuleSimulation
 
 	GetAuxiliary(string) Auxiliary
 
 	DecodeModuleTransactionRequest(string, json.RawMessage) (sdkTypes.Msg, error)
 
-	Initialize(*sdkTypes.KVStoreKey, params.Subspace, ...interface{}) Module
+	Initialize(*sdkTypes.KVStoreKey, paramsTypes.Subspace, ...interface{}) Module
 }

@@ -4,8 +4,10 @@
 package module
 
 import (
-	"github.com/AssetMantle/modules/constants/keys"
+	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 const Name = "assets"
-const StoreKeyPrefix = keys.Assets
+const ConsensusVersion = 1
+
+var StoreKeyPrefix = constants.AssetsStoreKeyPrefix

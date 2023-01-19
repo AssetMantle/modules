@@ -4,30 +4,33 @@
 package block
 
 import (
+	"fmt"
+	"reflect"
+	"testing"
+
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
+	"github.com/cosmos/cosmos-sdk/store"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
+	tendermintDB "github.com/tendermint/tm-db"
+
 	"github.com/AssetMantle/modules/modules/assets/internal/mapper"
 	"github.com/AssetMantle/modules/modules/assets/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
 )
 
 func CreateAssetsTestInput(t *testing.T) sdkTypes.Context {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
+
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
@@ -40,7 +43,7 @@ func CreateAssetsTestInput(t *testing.T) sdkTypes.Context {
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
+	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
@@ -107,7 +110,9 @@ func Test_block_End(t *testing.T) {
 }
 
 func Test_block_Initialize(t *testing.T) {
-	//testBlock := block{mapper.Prototype(), parameters.Prototype()}
+	testMapper := mapper.Prototype()
+	testParameter := parameters.Prototype()
+	testBlock := block{testMapper, testParameter}
 	type fields struct {
 		mapper     helpers.Mapper
 		parameters helpers.Parameters
@@ -123,8 +128,7 @@ func Test_block_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Block
 	}{
-		// TODO: Add test cases.
-		//{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{mapper.Prototype(), parameters.Prototype(), []helpers.Auxiliary{}}, Prototype()},
+		{"+ve", fields{testMapper, testParameter}, args{testMapper, testParameter, []interface{}{}}, testBlock},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -132,8 +136,25 @@ func Test_block_Initialize(t *testing.T) {
 				mapper:     tt.fields.mapper,
 				parameters: tt.fields.parameters,
 			}
-			if got := block.Initialize(tt.args.mapper, tt.args.parameters, tt.args.in2...); !reflect.DeepEqual(got, tt.want) {
+			if got := block.Initialize(tt.args.mapper, tt.args.parameters, tt.args.in2...); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestPrototype(t *testing.T) {
+	tests := []struct {
+		name string
+		want helpers.Block
+	}{
+
+		{"+ve", block{}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Prototype() = %v, want %v", got, tt.want)
 			}
 		})
 	}

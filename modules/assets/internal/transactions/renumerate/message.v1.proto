@@ -1,0 +1,11 @@
+syntax = "proto3";
+package assets.transactions.renumerate;
+
+import "schema/ids/base/assetID.v1.proto";
+import "schema/ids/base/identityID.v1.proto";
+
+message Message {
+  string from = 1;
+  ids.IdentityID from_i_d = 2;
+  ids.AssetID asset_i_d = 3;
+}

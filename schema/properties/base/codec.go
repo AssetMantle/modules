@@ -6,7 +6,8 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-func RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, metaProperty{})
-	codecUtilities.RegisterModuleConcrete(codec, property{})
+func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyProperty{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, MetaProperty{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, MesaProperty{})
 }

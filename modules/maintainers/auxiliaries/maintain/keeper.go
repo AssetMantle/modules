@@ -4,12 +4,19 @@
 package maintain
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/mappables"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/ids/constansts"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type auxiliaryKeeper struct {
@@ -18,19 +25,26 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	maintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.IdentityID)
-	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(maintainerID))
 
-	maintainer := maintainers.Get(key.FromID(maintainerID))
-	if maintainer == nil {
-		return newAuxiliaryResponse(errors.EntityNotFound)
+	maintainerID := baseIDs.NewMaintainerID(constansts.MaintainerClassificationID,
+		baseQualified.NewImmutables(baseLists.NewPropertyList(
+			baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.MaintainedClassificationID)),
+			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.IdentityID)),
+		)))
+
+	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(maintainerID))
+
+	Mappable := maintainers.Get(key.NewKey(maintainerID))
+	if Mappable == nil {
+		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
+	maintainer := mappable.GetMaintainer(Mappable)
 
-	for _, maintainedProperty := range auxiliaryRequest.MaintainedProperties.GetList() {
-		if !maintainer.(mappables.Maintainer).MaintainsProperty(maintainedProperty.GetID()) {
-			return newAuxiliaryResponse(errors.NotAuthorized)
+	for _, maintainedProperty := range auxiliaryRequest.MaintainedMutables.GetMutablePropertyList().GetList() {
+		if !maintainer.MaintainsProperty(maintainedProperty.GetID()) {
+			return newAuxiliaryResponse(constants.NotAuthorized)
 		}
 	}
 

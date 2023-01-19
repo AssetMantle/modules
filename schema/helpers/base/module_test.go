@@ -8,21 +8,24 @@ import (
 	"math/rand"
 	"testing"
 
-	clientContext "github.com/cosmos/cosmos-sdk/client/context"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	sdkModule "github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/params"
+	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
+	"github.com/AssetMantle/modules/utilities/test"
+	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
+
+	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	parameters2 "github.com/AssetMantle/modules/schema/parameters"
+	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
-	helpersTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers"
-	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 var auxiliariesPrototype = func() helpers.Auxiliaries {
@@ -31,13 +34,13 @@ var auxiliariesPrototype = func() helpers.Auxiliaries {
 var genesisPrototype = func() helpers.Genesis {
 	return NewGenesis(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype,
 		[]helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")},
-		[]parameters2.Parameter{baseTypes.NewParameter(baseIDs.NewID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })})
+		[]parametersSchema.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })})
 }
 var mapperPrototype = func() helpers.Mapper {
 	return NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype)
 }
 var parametersPrototype = func() helpers.Parameters {
-	return NewParameters(baseTypes.NewParameter(baseIDs.NewID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil }))
+	return NewParameters(baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil }))
 }
 var queriesPrototype = func() helpers.Queries {
 	return queries{[]helpers.Query{NewQuery("testQuery", "q", "testQuery", "test", baseTestUtilities.TestQueryRequestPrototype,
@@ -48,12 +51,16 @@ var transactionsPrototype = func() helpers.Transactions {
 	return transactions{[]helpers.Transaction{NewTransaction("TestMessage", "", "", baseTestUtilities.TestTransactionRequestPrototype, baseTestUtilities.TestMessagePrototype,
 		baseTestUtilities.TestTransactionKeeperPrototype)}}
 }
-var blockPrototype = func() helpers.Block { return helpersTestUtilities.TestBlockPrototype() }
+var blockPrototype = func() helpers.Block { return baseTestUtilities.TestBlockPrototype() }
 
 func TestModule(t *testing.T) {
-	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
-	codec := baseTestUtilities.MakeCodec()
-	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test") // .WithKeyTable(parametersPrototype().GetKeyTable())
+	context, storeKey, transientStoreKey := test.SetupTest(t)
+	var legacyAmino = sdkCodec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
+
+	subspace := paramsTypes.NewSubspace(legacyAmino, storeKey, transientStoreKey, "test") // .WithKeyTable(parametersPrototype().GetKeyTable())
 	// subspace.SetParamSet(context, parametersPrototype())
 	Module := NewModule("test", auxiliariesPrototype, genesisPrototype,
 		mapperPrototype, parametersPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype, blockPrototype).Initialize(storeKey, subspace).(module)
@@ -61,8 +68,8 @@ func TestModule(t *testing.T) {
 	// AppModuleBasic
 	require.Equal(t, "test", Module.Name())
 
-	// RegisterCodec
-	Module.RegisterCodec(codec)
+	// RegisterLegacyAminoCodec
+	Module.RegisterLegacyAminoCodec(legacyAmino)
 
 	require.NotPanics(t, func() {
 		Module.DefaultGenesis()
@@ -72,16 +79,14 @@ func TestModule(t *testing.T) {
 	})
 	require.Nil(t, Module.ValidateGenesis(Module.DefaultGenesis()))
 
-	// RegisterRESTRoutes
-	cliContext := clientContext.NewCLIContext().WithCodec(codec).WithChainID("test")
 	router := mux.NewRouter()
 	require.NotPanics(t, func() {
-		Module.RegisterRESTRoutes(cliContext, router)
+		Module.RegisterRESTRoutes(context, router)
 	})
 
 	// GetTxCmd
-	require.Equal(t, "test", Module.GetTxCmd(codec).Name())
-	require.Equal(t, "test", Module.GetQueryCmd(codec).Name())
+	require.Equal(t, "test", Module.GetTxCmd(legacyAmino).Name())
+	require.Equal(t, "test", Module.GetQueryCmd(legacyAmino).Name())
 
 	// AppModule
 	require.NotPanics(t, func() {
@@ -115,11 +120,11 @@ func TestModule(t *testing.T) {
 	require.Equal(t, Module.DefaultGenesis(), Module.ExportGenesis(context))
 	// AppModuleSimulation
 	require.Panics(t, func() {
-		Module.GenerateGenesisState(&sdkModule.SimulationState{})
-		Module.ProposalContents(sdkModule.SimulationState{})
+		Module.GenerateGenesisState(&sdkModuleTypes.SimulationState{})
+		Module.ProposalContents(sdkModuleTypes.SimulationState{})
 		Module.RandomizedParams(&rand.Rand{})
 		Module.RegisterStoreDecoder(sdkTypes.StoreDecoderRegistry{})
-		Module.WeightedOperations(sdkModule.SimulationState{})
+		Module.WeightedOperations(sdkModuleTypes.SimulationState{})
 	})
 
 	// types.Module

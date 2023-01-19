@@ -2,9 +2,9 @@ name: Lint
 
 on:
   pull_request:
-  push:
     branches:
       - master
+      - main
     paths:
       - "**.go"
       - "**.mod"

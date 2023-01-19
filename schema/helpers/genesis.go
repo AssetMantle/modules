@@ -4,7 +4,9 @@
 package helpers
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
+
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/schema/parameters"
 )
@@ -12,11 +14,11 @@ import (
 type Genesis interface {
 	Default() Genesis
 	Validate() error
-	Import(sdkTypes.Context, Mapper, Parameters)
-	Export(sdkTypes.Context, Mapper, Parameters) Genesis
+	Import(context.Context, Mapper, Parameters)
+	Export(context.Context, Mapper, Parameters) Genesis
 
-	Encode() []byte
-	Decode([]byte) Genesis
+	Encode(sdkCodec.JSONCodec) []byte
+	Decode(sdkCodec.JSONCodec, []byte) Genesis
 
 	Initialize([]Mappable, []parameters.Parameter) Genesis
 

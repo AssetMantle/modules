@@ -8,11 +8,13 @@ import (
 	"os"
 	"testing"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+
 	"github.com/cosmos/cosmos-sdk/store"
 
 	"github.com/AssetMantle/modules/schema/applications/base"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -24,7 +26,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 
@@ -68,15 +69,15 @@ func TestAppImportExport(t *testing.T) {
 
 	require.NoError(t, err, "simulation setup failed")
 
-	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, moduleAccountPermissions, tokenReceiveAllowedModules)
-	simulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), fauxMerkleModeOpt).(*base.SimulationApplication)
+	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, moduleAccountPermissions, tokenReceiveAllowedModules).(*base.SimulationApplication)
+	simulationApplication := prototype.InitializeSimulationApplication(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), fauxMerkleModeOpt).(*base.SimulationApplication)
 	require.Equal(t, "SimulationApplication", simulationApplication.Name())
 
 	// Run randomized simulation
 	_, simParams, simErr := simulation.SimulateFromSeed(
 		t, os.Stdout, simulationApplication.GetBaseApp(), simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()),
 		simapp.SimulationOperations(simulationApplication, simulationApplication.Codec(), config),
-		simulationApplication.ModuleAccountAddrs(), config,
+		simulationApplication.ModuleAccountAddresses(), config,
 	)
 
 	// export state and simParams before the simulation error is checked
@@ -124,7 +125,7 @@ func TestAppImportExport(t *testing.T) {
 		{simulationApplication.GetKey(mint.StoreKey), newSimulationApplication.GetKey(mint.StoreKey), [][]byte{}},
 		{simulationApplication.GetKey(distribution.StoreKey), newSimulationApplication.GetKey(distribution.StoreKey), [][]byte{}},
 		{simulationApplication.GetKey(supply.StoreKey), newSimulationApplication.GetKey(supply.StoreKey), [][]byte{}},
-		{simulationApplication.GetKey(params.StoreKey), newSimulationApplication.GetKey(params.StoreKey), [][]byte{}},
+		{simulationApplication.GetKey(paramsTypes.StoreKey), newSimulationApplication.GetKey(params.StoreKey), [][]byte{}},
 		{simulationApplication.GetKey(gov.StoreKey), newSimulationApplication.GetKey(gov.StoreKey), [][]byte{}},
 		{simulationApplication.GetKey(wasm.StoreKey), newSimulationApplication.GetKey(wasm.StoreKey), [][]byte{}},
 		{simulationApplication.GetKey(assets.Prototype().Name()), newSimulationApplication.GetKey(assets.Prototype().Name()), [][]byte{}},

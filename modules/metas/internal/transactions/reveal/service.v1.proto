@@ -1,0 +1,12 @@
+syntax = "proto3";
+package metas.transactions.reveal;
+
+import "google/api/annotations.proto";
+import "modules/metas/internal/transactions/reveal/message.v1.proto";
+import "modules/metas/internal/transactions/reveal/response.v1.proto";
+
+service Service {
+  rpc Handle(Message) returns (Response) {
+    option (google.api.http).post = "/mantle/metas/reveal";
+  }
+}

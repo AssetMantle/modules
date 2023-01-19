@@ -1,0 +1,10 @@
+syntax = "proto3";
+package orders.transactions.cancel;
+import "schema/ids/base/identityID.v1.proto";
+import "schema/ids/base/orderID.v1.proto";
+
+message Message{
+  string from = 1;
+  ids.IdentityID from_i_d = 2;
+  ids.OrderID order_i_d = 3;
+}

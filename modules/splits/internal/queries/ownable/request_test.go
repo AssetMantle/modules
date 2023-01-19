@@ -4,57 +4,243 @@
 package ownable
 
 import (
+	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
-	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIds "github.com/AssetMantle/modules/schema/ids/base"
 )
 
-func Test_Split_Request(t *testing.T) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
+var (
+	testOwnableID = baseIds.NewCoinID(baseIds.NewStringID("OwnerID"))
+)
 
-	testSplitID := baseIDs.NewID("OwnableID")
-	testQueryRequest := newQueryRequest(testSplitID)
-	require.Equal(t, nil, testQueryRequest.Validate())
-	require.Equal(t, queryRequest{}, requestPrototype())
+func Test_newQueryRequest(t *testing.T) {
+	type args struct {
+		ownableID ids.OwnableID
+	}
+	tests := []struct {
+		name string
+		args args
+		want helpers.QueryRequest
+	}{
+		{"+ve", args{testOwnableID}, newQueryRequest(testOwnableID)},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := newQueryRequest(tt.args.ownableID); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("newQueryRequest() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.SplitID})
-	cliContext := context.NewCLIContext().WithCodec(Codec)
-	require.Panics(t, func() {
-		require.Equal(t, newQueryRequest(baseIDs.NewID("")), queryRequest{}.FromCLI(cliCommand, cliContext))
-	})
+func Test_queryRequestFromInterface(t *testing.T) {
+	type args struct {
+		request helpers.QueryRequest
+	}
+	tests := []struct {
+		name string
+		args args
+		want queryRequest
+	}{
+		{"+ve", args{newQueryRequest(testOwnableID)}, newQueryRequest(testOwnableID).(queryRequest)},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := queryRequestFromInterface(tt.args.request); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("queryRequestFromInterface() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
+func Test_queryRequest_Decode(t *testing.T) {
+	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testOwnableID))
+	require.NoError(t, err)
+	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeOwnableID()))
+	require.NoError(t, err1)
+	type fields struct {
+		OwnableID ids.OwnableID
+	}
+	type args struct {
+		bytes []byte
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    helpers.QueryRequest
+		wantErr bool
+	}{
+		{"+ve", fields{testOwnableID}, args{encodedReq}, newQueryRequest(testOwnableID), false},
+		{"+ve", fields{baseIds.PrototypeOwnableID()}, args{encodedReq1}, newQueryRequest(baseIds.PrototypeOwnableID()), false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			queryRequest := queryRequest{
+				OwnableID: tt.fields.OwnableID,
+			}
+			got, err := queryRequest.Decode(tt.args.bytes)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Decode() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Decode() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_queryRequest_Encode(t *testing.T) {
+	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testOwnableID))
+	require.NoError(t, err)
+	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeOwnableID()))
+	require.NoError(t, err1)
+	type fields struct {
+		OwnableID ids.OwnableID
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		want    []byte
+		wantErr bool
+	}{
+		{"+ve", fields{testOwnableID}, encodedReq, false},
+		{"+ve", fields{baseIds.PrototypeOwnableID()}, encodedReq1, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			queryRequest := queryRequest{
+				OwnableID: tt.fields.OwnableID,
+			}
+			got, err := queryRequest.Encode()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Encode() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Encode() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_queryRequest_FromCLI(t *testing.T) {
+	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OwnableID})
+	viper.Set(constants.OwnableID.GetName(), testOwnableID.AsString())
+	type fields struct {
+		OwnableID ids.OwnableID
+	}
+	type args struct {
+		cliCommand helpers.CLICommand
+		context    client.Context
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    helpers.QueryRequest
+		wantErr bool
+	}{
+		{"+ve", fields{testOwnableID}, args{cliCommand, context}, newQueryRequest(testOwnableID), false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			qu := queryRequest{
+				OwnableID: tt.fields.OwnableID,
+			}
+			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.context)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_queryRequest_FromMap(t *testing.T) {
 	vars := make(map[string]string)
-	vars["ownables"] = "randomString"
-	require.Equal(t, newQueryRequest(baseIDs.NewID("randomString")), queryRequest{}.FromMap(vars))
+	vars[Query.GetName()] = testOwnableID.AsString()
+	type fields struct {
+		OwnableID ids.OwnableID
+	}
+	type args struct {
+		vars map[string]string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    helpers.QueryRequest
+		wantErr bool
+	}{
+		{"+ve", fields{testOwnableID}, args{vars}, newQueryRequest(testOwnableID), false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			qu := queryRequest{
+				OwnableID: tt.fields.OwnableID,
+			}
+			got, err := qu.FromMap(tt.args.vars)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FromMap() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FromMap() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	encodedRequest, err := testQueryRequest.Encode()
-	encodedResult, _ := common.Codec.MarshalJSON(testQueryRequest)
-	require.Equal(t, encodedResult, encodedRequest)
-	require.Nil(t, err)
+func Test_queryRequest_Validate(t *testing.T) {
+	type fields struct {
+		OwnableID ids.OwnableID
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		wantErr bool
+	}{
+		{"+ve", fields{testOwnableID}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			queryRequest := queryRequest{
+				OwnableID: tt.fields.OwnableID,
+			}
+			if err := queryRequest.Validate(); (err != nil) != tt.wantErr {
+				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
 
-	decodedRequest, err := queryRequest{}.Decode(encodedRequest)
-	require.Equal(t, testQueryRequest, decodedRequest)
-	require.Equal(t, nil, err)
-
-	randomDecode, _ := queryRequest{}.Decode(baseIDs.NewID("").Bytes())
-	require.Equal(t, nil, randomDecode)
-	require.Equal(t, testQueryRequest, queryRequestFromInterface(testQueryRequest))
-	require.Equal(t, queryRequest{}, queryRequestFromInterface(nil))
+func Test_requestPrototype(t *testing.T) {
+	tests := []struct {
+		name string
+		want helpers.QueryRequest
+	}{
+		{"+ve", queryRequest{}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := requestPrototype(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("requestPrototype() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

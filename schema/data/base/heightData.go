@@ -4,80 +4,65 @@
 package base
 
 import (
-	"strconv"
+	"bytes"
+	"encoding/binary"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
-type heightData struct {
-	Value types.Height `json:"value"`
-}
+var _ data.HeightData = (*HeightData)(nil)
 
-var _ data.HeightData = (*heightData)(nil)
-
-func (heightData heightData) GetID() ids.DataID {
-	return baseIDs.NewDataID(heightData)
+func (heightData *HeightData) GetID() ids.DataID {
+	return baseIDs.GenerateDataID(heightData)
 }
-func (heightData heightData) Compare(listable traits.Listable) int {
-	compareHeightData, err := heightDataFromInterface(listable)
+func (heightData *HeightData) Compare(listable traits.Listable) int {
+	compareHeightData, err := dataFromListable(listable)
 	if err != nil {
 		panic(err)
 	}
 
-	return heightData.Value.Compare(compareHeightData.Value)
+	return bytes.Compare(heightData.Bytes(), compareHeightData.Bytes())
 }
-func (heightData heightData) String() string {
-	return strconv.FormatInt(heightData.Value.Get(), 10)
+func (heightData *HeightData) Bytes() []byte {
+	Bytes := make([]byte, 8)
+	binary.LittleEndian.PutUint64(Bytes, uint64(heightData.Get().Get()))
+	return Bytes
 }
-func (heightData heightData) GetType() ids.ID {
-	return idsConstants.HeightDataID
+func (heightData *HeightData) GetType() ids.StringID {
+	return dataConstants.HeightDataID
 }
-func (heightData heightData) ZeroValue() data.Data {
-	return NewHeightData(baseTypes.NewHeight(0))
+func (heightData *HeightData) ZeroValue() data.Data {
+	return NewHeightData(baseTypes.NewHeight(-1))
 }
-func (heightData heightData) GenerateHash() ids.ID {
+func (heightData *HeightData) GenerateHashID() ids.HashID {
 	if heightData.Compare(heightData.ZeroValue()) == 0 {
-		return baseIDs.NewID("")
+		return baseIDs.GenerateHashID()
 	}
-
-	return baseIDs.NewID(stringUtilities.Hash(strconv.FormatInt(heightData.Value.Get(), 10)))
+	return baseIDs.GenerateHashID(heightData.Bytes())
 }
-func (heightData heightData) Get() types.Height {
+func (heightData *HeightData) Get() types.Height {
 	return heightData.Value
 }
-
-func heightDataFromInterface(listable traits.Listable) (heightData, error) {
-	switch value := listable.(type) {
-	case heightData:
-		return value, nil
-	default:
-		return heightData{}, errors.MetaDataError
+func (heightData *HeightData) ToAnyData() data.AnyData {
+	return &AnyData{
+		Impl: &AnyData_HeightData{
+			HeightData: heightData,
+		},
 	}
 }
 
-func NewHeightData(value types.Height) data.Data {
-	return heightData{
-		Value: value,
-	}
+func HeightDataPrototype() data.HeightData {
+	return NewHeightData(baseTypes.NewHeight(0)).ZeroValue().(data.HeightData)
 }
 
-func ReadHeightData(dataString string) (data.Data, error) {
-	if dataString == "" {
-		return heightData{}.ZeroValue(), nil
+func NewHeightData(value types.Height) data.HeightData {
+	return &HeightData{
+		Value: value.(*baseTypes.Height),
 	}
-
-	height, err := strconv.ParseInt(dataString, 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewHeightData(baseTypes.NewHeight(height)), nil
 }

@@ -6,23 +6,30 @@ package base
 import (
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/x/params"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
+	"github.com/AssetMantle/modules/utilities/test"
+
+	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	parameters2 "github.com/AssetMantle/modules/schema/parameters"
+	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
-	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestParameters(t *testing.T) {
-	context, storeKey, transientStoreKey := baseTestUtilities.SetupTest(t)
-	codec := baseTestUtilities.MakeCodec()
-	Parameter := baseTypes.NewParameter(baseIDs.NewID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
-	ParameterList := []parameters2.Parameter{Parameter}
+	context, storeKey, transientStoreKey := test.SetupTest(t)
+	var legacyAmino = sdkCodec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
+	Parameter := baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
+	ParameterList := []parametersSchema.Parameter{Parameter}
 	Parameters := NewParameters(ParameterList...)
-	subspace := params.NewSubspace(codec, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
+	subspace := paramsTypes.NewSubspace(legacyAmino, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
 	subspace.SetParamSet(context, Parameters)
 	Parameters = Parameters.Initialize(subspace).(parameters)
 
@@ -39,9 +46,9 @@ func TestParameters(t *testing.T) {
 	require.Nil(t, err)
 
 	require.NotPanics(t, func() {
-		Parameters.Fetch(context, baseIDs.NewID("testParameter"))
+		Parameters.Fetch(context, baseIDs.NewStringID("testParameter"))
 	})
 
 	require.Equal(t, "testData123", Parameters.Mutate(context,
-		baseTypes.NewParameter(baseIDs.NewID("testParameter"), baseData.NewStringData("testData123"), func(interface{}) error { return nil })).Get(baseIDs.NewID("testParameter")).GetData().String())
+		baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData123"), func(interface{}) error { return nil })).Get(baseIDs.NewStringID("testParameter")).GetData().String())
 }

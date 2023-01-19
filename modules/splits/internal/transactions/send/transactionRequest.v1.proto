@@ -1,0 +1,14 @@
+syntax = "proto3";
+package splits.transactions.send;
+
+import "gogoproto/gogo.proto";
+
+message TransactionRequest {
+  option (gogoproto.goproto_getters) = false;
+
+  string from = 1;
+  string from_i_d = 2;
+  string to_i_d = 3;
+  string ownable_i_d = 4;
+  string value = 5;
+}

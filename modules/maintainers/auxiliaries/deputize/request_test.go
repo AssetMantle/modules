@@ -4,26 +4,101 @@
 package deputize
 
 import (
+	"reflect"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/lists"
 )
 
-func Test_Deputize_Request(t *testing.T) {
-	classificationID := baseIDs.NewID("classificationID")
-	identityID := baseIDs.NewID("identityID")
-	maintainedProperties := base.NewPropertyList(baseProperties.NewProperty(baseIDs.NewID("ID1"), baseData.NewStringData("Data1")))
+func TestNewAuxiliaryRequest(t *testing.T) {
+	type args struct {
+		fromID                     ids.IdentityID
+		toID                       ids.IdentityID
+		maintainedClassificationID ids.ClassificationID
+		maintainedProperties       lists.PropertyList
+		canMintAsset               bool
+		canBurnAsset               bool
+		canRenumerateAsset         bool
+		canAddMaintainer           bool
+		canRemoveMaintainer        bool
+		canMutateMaintainer        bool
+	}
+	tests := []struct {
+		name string
+		args args
+		want helpers.AuxiliaryRequest
+	}{
+		{"+ve", args{testFromID, testFromID, testClassificationID, maintainedProperties, true, true, true, true, true, true}, auxiliaryRequest{testFromID, testFromID, testClassificationID, maintainedProperties, true, true, true, true, true, true}},
+		{"+ve with nil", args{}, auxiliaryRequest{}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewAuxiliaryRequest(tt.args.fromID, tt.args.toID, tt.args.maintainedClassificationID, tt.args.maintainedProperties, tt.args.canMintAsset, tt.args.canBurnAsset, tt.args.canRenumerateAsset, tt.args.canAddMaintainer, tt.args.canRemoveMaintainer, tt.args.canMutateMaintainer); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewAuxiliaryRequest() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	testAuxiliaryRequest := NewAuxiliaryRequest(identityID, identityID, classificationID, maintainedProperties, false, false, false)
+func Test_auxiliaryRequestFromInterface(t *testing.T) {
+	type args struct {
+		request helpers.AuxiliaryRequest
+	}
+	tests := []struct {
+		name string
+		args args
+		want auxiliaryRequest
+	}{
+		{"+ve", args{NewAuxiliaryRequest(testFromID, testFromID, testClassificationID, maintainedProperties, true, true, true, true, true, true)}, auxiliaryRequest{testFromID, testFromID, testClassificationID, maintainedProperties, true, true, true, true, true, true}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := auxiliaryRequestFromInterface(tt.args.request); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("auxiliaryRequestFromInterface() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	require.Equal(t, testAuxiliaryRequest, auxiliaryRequest{FromID: identityID, ToID: identityID, ClassificationID: classificationID, MaintainedProperties: maintainedProperties})
-	require.Equal(t, nil, testAuxiliaryRequest.Validate())
-	require.Equal(t, testAuxiliaryRequest, auxiliaryRequestFromInterface(testAuxiliaryRequest))
-	require.Equal(t, auxiliaryRequest{}, auxiliaryRequestFromInterface(nil))
-
+func Test_auxiliaryRequest_Validate(t *testing.T) {
+	type fields struct {
+		FromID                     ids.IdentityID
+		ToID                       ids.IdentityID
+		MaintainedClassificationID ids.ClassificationID
+		MaintainedProperties       lists.PropertyList
+		CanMintAsset               bool
+		CanBurnAsset               bool
+		CanRenumerateAsset         bool
+		CanAddMaintainer           bool
+		CanRemoveMaintainer        bool
+		CanMutateMaintainer        bool
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		wantErr bool
+	}{
+		{"+ve", fields{testFromID, testFromID, testClassificationID, maintainedProperties, true, true, true, true, true, true}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			auxiliaryRequest := auxiliaryRequest{
+				FromID:                     tt.fields.FromID,
+				ToID:                       tt.fields.ToID,
+				MaintainedClassificationID: tt.fields.MaintainedClassificationID,
+				MaintainedProperties:       tt.fields.MaintainedProperties,
+				CanMintAsset:               tt.fields.CanMintAsset,
+				CanBurnAsset:               tt.fields.CanBurnAsset,
+				CanRenumerateAsset:         tt.fields.CanRenumerateAsset,
+				CanAddMaintainer:           tt.fields.CanAddMaintainer,
+				CanRemoveMaintainer:        tt.fields.CanRemoveMaintainer,
+				CanMutateMaintainer:        tt.fields.CanMutateMaintainer,
+			}
+			if err := auxiliaryRequest.Validate(); (err != nil) != tt.wantErr {
+				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
 }

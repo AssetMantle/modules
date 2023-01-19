@@ -4,6 +4,13 @@
 package define
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -11,27 +18,22 @@ import (
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
 	"github.com/AssetMantle/modules/utilities/transaction"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
 func Test_messageFromInterface(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
-
+	testFromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
+	require.NoError(t, err)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaProperties, err := utilities.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
-	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	type args struct {
 		msg sdkTypes.Msg
@@ -72,28 +74,29 @@ func Test_messagePrototype(t *testing.T) {
 }
 
 func Test_message_GetSignBytes(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
+	testFromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
+	require.NoError(t, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaProperties, err := utilities.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
-	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	_message := message{fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}
 
 	type fields struct {
 		From                    sdkTypes.AccAddress
-		FromID                  ids.ID
-		ImmutableMetaProperties lists.MetaPropertyList
+		FromIdentity            ids.IdentityID
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -102,13 +105,13 @@ func Test_message_GetSignBytes(t *testing.T) {
 		want   []byte
 	}{
 
-		{"+ve", fields{fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(_message))},
+		{"+ve", fields{fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(_message))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := message{
 				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
+				FromIdentity:            tt.fields.FromIdentity,
 				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
 				ImmutableProperties:     tt.fields.ImmutableProperties,
 				MutableMetaProperties:   tt.fields.MutableMetaProperties,
@@ -122,26 +125,27 @@ func Test_message_GetSignBytes(t *testing.T) {
 }
 
 func Test_message_GetSigners(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
+	testFromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
+	require.NoError(t, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaProperties, err := utilities.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
-	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	type fields struct {
 		From                    sdkTypes.AccAddress
-		FromID                  ids.ID
-		ImmutableMetaProperties lists.MetaPropertyList
+		FromIdentity            ids.IdentityID
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -156,7 +160,7 @@ func Test_message_GetSigners(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			message := message{
 				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
+				FromIdentity:            tt.fields.FromIdentity,
 				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
 				ImmutableProperties:     tt.fields.ImmutableProperties,
 				MutableMetaProperties:   tt.fields.MutableMetaProperties,
@@ -170,30 +174,31 @@ func Test_message_GetSigners(t *testing.T) {
 }
 
 func Test_message_RegisterCodec(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
+	testFromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
+	require.NoError(t, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaProperties, err := utilities.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
-	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	type fields struct {
 		From                    sdkTypes.AccAddress
-		FromID                  ids.ID
-		ImmutableMetaProperties lists.MetaPropertyList
+		FromIdentity            ids.IdentityID
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	type args struct {
-		codec *codec.Codec
+		legacyAmino *codec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
@@ -201,44 +206,45 @@ func Test_message_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve", fields{fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, args{codec.New()}},
+		{"+ve", fields{fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			me := message{
 				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
+				FromIdentity:            tt.fields.FromIdentity,
 				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
 				ImmutableProperties:     tt.fields.ImmutableProperties,
 				MutableMetaProperties:   tt.fields.MutableMetaProperties,
 				MutableProperties:       tt.fields.MutableProperties,
 			}
-			me.RegisterCodec(tt.args.codec)
+			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }
 
 func Test_message_Route(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
+	testFromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
+	require.NoError(t, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaProperties, err := utilities.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
-	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	type fields struct {
 		From                    sdkTypes.AccAddress
-		FromID                  ids.ID
-		ImmutableMetaProperties lists.MetaPropertyList
+		FromIdentity            ids.IdentityID
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -253,7 +259,7 @@ func Test_message_Route(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			message := message{
 				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
+				FromIdentity:            tt.fields.FromIdentity,
 				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
 				ImmutableProperties:     tt.fields.ImmutableProperties,
 				MutableMetaProperties:   tt.fields.MutableMetaProperties,
@@ -267,26 +273,27 @@ func Test_message_Route(t *testing.T) {
 }
 
 func Test_message_Type(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
+	testFromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
+	require.NoError(t, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaProperties, err := utilities.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
-	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	type fields struct {
 		From                    sdkTypes.AccAddress
-		FromID                  ids.ID
-		ImmutableMetaProperties lists.MetaPropertyList
+		FromIdentity            ids.IdentityID
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -301,7 +308,7 @@ func Test_message_Type(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			message := message{
 				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
+				FromIdentity:            tt.fields.FromIdentity,
 				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
 				ImmutableProperties:     tt.fields.ImmutableProperties,
 				MutableMetaProperties:   tt.fields.MutableMetaProperties,
@@ -315,26 +322,27 @@ func Test_message_Type(t *testing.T) {
 }
 
 func Test_message_ValidateBasic(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
+	testFromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
+	require.NoError(t, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaProperties, err := utilities.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
-	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	type fields struct {
 		From                    sdkTypes.AccAddress
-		FromID                  ids.ID
-		ImmutableMetaProperties lists.MetaPropertyList
+		FromIdentity            ids.IdentityID
+		ImmutableMetaProperties lists.PropertyList
 		ImmutableProperties     lists.PropertyList
-		MutableMetaProperties   lists.MetaPropertyList
+		MutableMetaProperties   lists.PropertyList
 		MutableProperties       lists.PropertyList
 	}
 	tests := []struct {
@@ -349,7 +357,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			message := message{
 				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
+				FromIdentity:            tt.fields.FromIdentity,
 				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
 				ImmutableProperties:     tt.fields.ImmutableProperties,
 				MutableMetaProperties:   tt.fields.MutableMetaProperties,
@@ -363,26 +371,27 @@ func Test_message_ValidateBasic(t *testing.T) {
 }
 
 func Test_newMessage(t *testing.T) {
-	testFromID := baseIDs.NewID("fromID")
+	testFromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
+	require.NoError(t, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaProperties, err := utilities.ReadMetaProperties("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
-	immutableProperties, err := utilities.ReadProperties("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := utilities.ReadMetaProperties("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
-	mutableProperties, err := utilities.ReadProperties("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	type args struct {
 		from                    sdkTypes.AccAddress
-		fromID                  ids.ID
-		immutableMetaProperties lists.MetaPropertyList
+		fromID                  ids.IdentityID
+		immutableMetaProperties lists.PropertyList
 		immutableProperties     lists.PropertyList
-		mutableMetaProperties   lists.MetaPropertyList
+		mutableMetaProperties   lists.PropertyList
 		mutableProperties       lists.PropertyList
 	}
 	tests := []struct {

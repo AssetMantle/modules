@@ -1,58 +1,103 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
-
 package base
 
 import (
+	"sort"
+
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/base"
-	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type propertyList struct {
-	lists.List
-}
+var _ lists.PropertyList = (*PropertyList)(nil)
 
-var _ lists.PropertyList = (*propertyList)(nil)
-
-// TODO write test
-func (propertyList propertyList) GetProperty(propertyID ids.PropertyID) properties.Property {
-	if i, found := propertyList.List.Search(base.NewEmptyPropertyFromID(propertyID)); found {
+func (propertyList *PropertyList) GetProperty(propertyID ids.PropertyID) properties.AnyProperty {
+	if i, found := propertyList.Search(base.NewEmptyMesaPropertyFromID(propertyID)); found {
 		return propertyList.GetList()[i]
 	}
+
 	return nil
 }
-func (propertyList propertyList) GetList() []properties.Property {
-	Properties := make([]properties.Property, propertyList.List.Size())
-	for i, listable := range propertyList.List.Get() {
-		Properties[i] = listable.(properties.Property)
+func (propertyList *PropertyList) GetList() []properties.AnyProperty {
+	Properties := make([]properties.AnyProperty, len(propertyList.PropertyList))
+	for i, listable := range propertyList.PropertyList {
+		Properties[i] = listable
 	}
-
 	return Properties
 }
-func (propertyList propertyList) Add(properties ...properties.Property) lists.PropertyList {
-	propertyList.List = propertyList.List.Add(propertiesToListables(properties...)...)
-	return propertyList
-}
-func (propertyList propertyList) Remove(properties ...properties.Property) lists.PropertyList {
-	propertyList.List = propertyList.List.Remove(propertiesToListables(properties...)...)
-	return propertyList
-}
-func (propertyList propertyList) Mutate(properties ...properties.Property) lists.PropertyList {
-	propertyList.List = propertyList.List.Mutate(propertiesToListables(properties...)...)
-	return propertyList
-}
+func (propertyList *PropertyList) Search(property properties.Property) (index int, found bool) {
+	index = sort.Search(
+		len(propertyList.PropertyList),
+		func(i int) bool {
+			return propertyList.PropertyList[i].Compare(property) >= 0
+		},
+	)
 
-func propertiesToListables(properties ...properties.Property) []traits.Listable {
-	listables := make([]traits.Listable, len(properties))
-	for i, property := range properties {
-		listables[i] = property
+	if index < len(propertyList.PropertyList) && propertyList.PropertyList[index].Compare(property) == 0 {
+		return index, true
 	}
-	return listables
+
+	return index, false
+}
+func (propertyList *PropertyList) GetPropertyIDList() lists.IDList {
+	propertyIDList := NewIDList()
+	for _, property := range propertyList.GetList() {
+		propertyIDList = propertyIDList.Add(property.GetID())
+	}
+	return propertyIDList
+}
+func (propertyList *PropertyList) Add(properties ...properties.Property) lists.PropertyList {
+	updatedList := propertyList
+	for _, listable := range properties {
+		if index, found := updatedList.Search(listable); !found {
+			updatedList.PropertyList = append(updatedList.PropertyList, listable.ToAnyProperty().(*base.AnyProperty))
+			copy(updatedList.PropertyList[index+1:], updatedList.PropertyList[index:])
+			updatedList.PropertyList[index] = listable.ToAnyProperty().(*base.AnyProperty)
+		}
+	}
+	return updatedList
+}
+func (propertyList *PropertyList) Remove(properties ...properties.Property) lists.PropertyList {
+	updatedList := propertyList
+
+	for _, listable := range properties {
+		if index, found := updatedList.Search(listable); found {
+			updatedList.PropertyList = append(updatedList.PropertyList[:index], updatedList.PropertyList[index+1:]...)
+		}
+	}
+
+	return updatedList
+}
+func (propertyList *PropertyList) Mutate(properties ...properties.Property) lists.PropertyList {
+	updatedList := propertyList
+
+	for _, listable := range properties {
+		if index, found := updatedList.Search(listable); found {
+			updatedList.PropertyList[index] = listable.ToAnyProperty().(*base.AnyProperty)
+		}
+	}
+
+	return updatedList
+}
+func (propertyList *PropertyList) ScrubData() lists.PropertyList {
+	newPropertyList := NewPropertyList()
+	for _, listable := range propertyList.PropertyList {
+		if property := listable; property.IsMeta() {
+			newPropertyList = newPropertyList.Add(property.Get().(properties.MetaProperty).ScrubData())
+		} else {
+			newPropertyList = newPropertyList.Add(property)
+		}
+	}
+	return newPropertyList
+}
+func (propertyList *PropertyList) sort() lists.PropertyList {
+	sort.Slice(propertyList.PropertyList, func(i, j int) bool {
+		return propertyList.PropertyList[i].Compare(propertyList.PropertyList[j]) <= 0
+	})
+
+	return propertyList
 }
 
 func NewPropertyList(properties ...properties.Property) lists.PropertyList {
-	return propertyList{List: NewList(propertiesToListables(properties...)...)}
+	return (&PropertyList{}).Add(properties...)
 }

@@ -4,15 +4,16 @@
 package define
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
 
-	"github.com/AssetMantle/modules/constants"
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
+	"github.com/AssetMantle/modules/modules/classifications/internal/module"
+	"github.com/AssetMantle/modules/schema/documents/base"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/utilities/property"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 )
 
 type auxiliaryKeeper struct {
@@ -21,27 +22,27 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	if len(auxiliaryRequest.ImmutableProperties.GetList())+len(auxiliaryRequest.MutableProperties.GetList()) > constants.MaxPropertyCount {
-		return newAuxiliaryResponse(nil, errors.InvalidRequest)
+	if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList())+len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()) > module.MaxPropertyCount {
+		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 	}
 
-	if property.Duplicate(append(auxiliaryRequest.ImmutableProperties.GetList(), auxiliaryRequest.MutableProperties.GetList()...)) {
-		return newAuxiliaryResponse(nil, errors.InvalidRequest)
+	if utilities.IsDuplicate(append(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...)) {
+		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 	}
 
-	classificationID := key.NewClassificationID(baseIDs.NewID(context.ChainID()), auxiliaryRequest.ImmutableProperties, auxiliaryRequest.MutableProperties)
+	classificationID := baseIDs.NewClassificationID(auxiliaryRequest.Immutables, auxiliaryRequest.Mutables)
 
-	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(classificationID))
-	if classifications.Get(key.FromID(classificationID)) != nil {
-		return newAuxiliaryResponse(baseIDs.NewID(classificationID.String()), errors.EntityAlreadyExists)
+	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(classificationID))
+	if classifications.Get(key.NewKey(classificationID)) != nil {
+		return newAuxiliaryResponse(classificationID, errorConstants.EntityAlreadyExists)
 	}
 
-	classifications.Add(mappable.NewClassification(classificationID, auxiliaryRequest.ImmutableProperties, auxiliaryRequest.MutableProperties))
+	classifications.Add(mappable.NewMappable(base.NewClassification(auxiliaryRequest.Immutables, auxiliaryRequest.Mutables)))
 
-	return newAuxiliaryResponse(baseIDs.NewID(classificationID.String()), nil)
+	return newAuxiliaryResponse(classificationID, nil)
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

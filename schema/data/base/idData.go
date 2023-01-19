@@ -6,63 +6,55 @@ package base
 import (
 	"bytes"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
-type idData struct {
-	Value ids.ID `json:"value"`
-}
+var _ data.IDData = (*IDData)(nil)
 
-var _ data.IDData = (*idData)(nil)
-
-func (idData idData) GetID() ids.DataID {
-	return baseIDs.NewDataID(idData)
+func (idData *IDData) GetID() ids.DataID {
+	return baseIDs.GenerateDataID(idData)
 }
-func (idData idData) Compare(listable traits.Listable) int {
-	compareIDData, err := idDataFromInterface(listable)
+func (idData *IDData) Compare(listable traits.Listable) int {
+	compareIDData, err := dataFromListable(listable)
 	if err != nil {
 		panic(err)
 	}
 
-	return bytes.Compare(idData.Value.Bytes(), compareIDData.Value.Bytes())
+	return bytes.Compare(idData.Bytes(), compareIDData.Bytes())
 }
-func (idData idData) String() string {
-	return idData.Value.String()
+func (idData *IDData) Bytes() []byte {
+	return idData.Value.Bytes()
 }
-func (idData idData) GetType() ids.ID {
-	return idsConstants.IDDataID
+func (idData *IDData) GetType() ids.StringID {
+	return dataConstants.IDDataID
 }
-func (idData idData) ZeroValue() data.Data {
-	return NewIDData(baseIDs.NewID(""))
+func (idData *IDData) ZeroValue() data.Data {
+	return IDDataPrototype()
 }
-func (idData idData) GenerateHash() ids.ID {
-	return baseIDs.NewID(stringUtilities.Hash(idData.Value.String()))
+func (idData *IDData) GenerateHashID() ids.HashID {
+	return baseIDs.GenerateHashID(idData.Bytes())
 }
-func (idData idData) Get() ids.ID {
+func (idData *IDData) Get() ids.AnyID {
 	return idData.Value
 }
-
-func idDataFromInterface(listable traits.Listable) (idData, error) {
-	switch value := listable.(type) {
-	case idData:
-		return value, nil
-	default:
-		return idData{}, errors.MetaDataError
+func (idData *IDData) ToAnyData() data.AnyData {
+	return &AnyData{
+		Impl: &AnyData_IDData{
+			IDData: idData,
+		},
 	}
 }
 
-func NewIDData(value ids.ID) data.Data {
-	return idData{
-		Value: value,
-	}
+func IDDataPrototype() data.IDData {
+	return NewIDData(baseIDs.NewStringID(""))
 }
 
-func ReadIDData(idDataString string) (data.Data, error) {
-	return NewIDData(baseIDs.NewID(idDataString)), nil
+func NewIDData(value ids.ID) data.IDData {
+	return &IDData{
+		Value: value.ToAnyID().(*baseIDs.AnyID),
+	}
 }

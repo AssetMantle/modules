@@ -4,83 +4,70 @@
 package base
 
 import (
-	"strconv"
+	"bytes"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type booleanData struct {
-	Value bool `json:"value"`
-}
+var _ data.BooleanData = (*BooleanData)(nil)
 
-var _ data.BooleanData = (*booleanData)(nil)
-
-func (booleanData booleanData) GetID() ids.DataID {
-	return baseIDs.NewDataID(booleanData)
+func (booleanData *BooleanData) GetID() ids.DataID {
+	return baseIDs.GenerateDataID(booleanData)
 }
-func (booleanData booleanData) Compare(listable traits.Listable) int {
-	compareBooleanData, Error := booleanDataFromInterface(listable)
-	if Error != nil {
-		panic(Error)
+func (booleanData *BooleanData) Compare(listable traits.Listable) int {
+	compareBooleanData, err := dataFromListable(listable)
+	if err != nil {
+		panic(err)
 	}
 
-	if booleanData.Value == compareBooleanData.Value {
+	if value := bytes.Compare(booleanData.Bytes(), compareBooleanData.Bytes()); value == 0 {
 		return 0
-	} else if booleanData.Value == true {
+	} else if value > 0 {
 		return 1
+	} else {
+		return -1
 	}
-
-	return -1
 }
-func (booleanData booleanData) String() string {
-	return strconv.FormatBool(booleanData.Value)
+func (booleanData *BooleanData) Bytes() []byte {
+	if booleanData.Get() {
+		return []byte{0x1}
+	}
+	return []byte{0x0}
 }
-func (booleanData booleanData) GetType() ids.ID {
-	return idsConstants.BooleanDataID
+func (booleanData *BooleanData) GetType() ids.StringID {
+	return dataConstants.BooleanDataID
 }
-func (booleanData booleanData) ZeroValue() data.Data {
+func (booleanData *BooleanData) ZeroValue() data.Data {
 	return NewBooleanData(false)
 }
-func (booleanData booleanData) GenerateHash() ids.ID {
+func (booleanData *BooleanData) GenerateHashID() ids.HashID {
 	if booleanData.Compare(booleanData.ZeroValue()) == 0 {
-		return baseIDs.NewID(strconv.FormatBool(false))
+		return baseIDs.GenerateHashID()
 	}
 
-	return baseIDs.NewID(strconv.FormatBool(true))
+	return baseIDs.GenerateHashID(booleanData.Bytes())
 }
-func (booleanData booleanData) Get() bool {
+func (booleanData *BooleanData) Get() bool {
 	return booleanData.Value
 }
-
-func booleanDataFromInterface(listable traits.Listable) (booleanData, error) {
-	switch value := listable.(type) {
-	case booleanData:
-		return value, nil
-	default:
-		return booleanData{}, errors.MetaDataError
+func (booleanData *BooleanData) ToAnyData() data.AnyData {
+	return &AnyData{
+		Impl: &AnyData_BooleanData{
+			BooleanData: booleanData,
+		},
 	}
 }
 
-func NewBooleanData(value bool) data.Data {
-	return booleanData{
+func BooleanDataPrototype() data.BooleanData {
+	return &BooleanData{}
+}
+
+func NewBooleanData(value bool) data.BooleanData {
+	return &BooleanData{
 		Value: value,
 	}
-}
-
-func ReadBooleanData(dataString string) (data.Data, error) {
-	if dataString == "" {
-		return booleanData{}.ZeroValue(), nil
-	}
-
-	Bool, Error := strconv.ParseBool(dataString)
-	if Error != nil {
-		return booleanData{}.ZeroValue(), Error
-	}
-
-	return NewBooleanData(Bool), nil
 }

@@ -4,6 +4,13 @@
 package deputize
 
 import (
+	"context"
+
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/gogo/protobuf/grpc"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+
+	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
@@ -17,11 +24,21 @@ var Transaction = baseHelpers.NewTransaction(
 	messagePrototype,
 	keeperPrototype,
 
+	func(server grpc.Server, keeper helpers.TransactionKeeper) {
+		RegisterServiceServer(server, keeper.(transactionKeeper))
+	},
+	func(clientCtx client.Context, mux *runtime.ServeMux) error {
+		return RegisterServiceHandlerClient(context.Background(), mux, NewServiceClient(clientCtx))
+	},
+
 	constants.FromID,
 	constants.ToID,
 	constants.ClassificationID,
 	constants.MaintainedProperties,
-	constants.AddMaintainer,
-	constants.RemoveMaintainer,
-	constants.MutateMaintainer,
+	constants.CanMintAsset,
+	constants.CanBurnAsset,
+	constants.CanRenumerateAsset,
+	constants.CanAddMaintainer,
+	constants.CanRemoveMaintainer,
+	constants.CanMutateMaintainer,
 )

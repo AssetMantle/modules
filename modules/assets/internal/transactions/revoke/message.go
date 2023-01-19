@@ -6,62 +6,64 @@ package revoke
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	baseIds "github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
-	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
-type message struct {
-	From             sdkTypes.AccAddress `json:"from" valid:"required~required field from missing"`
-	FromID           ids.ID              `json:"fromID" valid:"required~required field fromID missing"`
-	ToID             ids.ID              `json:"toID" valid:"required~required field toID missing"`
-	ClassificationID ids.ID              `json:"classificationID" valid:"required~required field classificationID missing"`
-}
+var _ helpers.Message = (*Message)(nil)
 
-var _ sdkTypes.Msg = message{}
-
-func (message message) Route() string { return module.Name }
-func (message message) Type() string  { return Transaction.GetName() }
-func (message message) ValidateBasic() error {
-	var _, Error = govalidator.ValidateStruct(message)
-	if Error != nil {
-		return sdkErrors.Wrap(errors.IncorrectMessage, Error.Error())
+func (message *Message) Type() string { return Transaction.GetName() }
+func (message *Message) ValidateBasic() error {
+	var _, err = govalidator.ValidateStruct(message)
+	if err != nil {
+		return sdkErrors.Wrap(errorConstants.IncorrectMessage, err.Error())
 	}
 
 	return nil
 }
-func (message message) GetSignBytes() []byte {
-	return sdkTypes.MustSortJSON(transaction.RegisterCodec(messagePrototype).MustMarshalJSON(message))
+func (message *Message) GetSigners() []sdkTypes.AccAddress {
+	from, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil {
+		panic(err)
+	}
+	return []sdkTypes.AccAddress{from}
 }
-func (message message) GetSigners() []sdkTypes.AccAddress {
-	return []sdkTypes.AccAddress{message.From}
+func (*Message) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, Message{})
 }
-func (message) RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, message{})
+func (message *Message) RegisterInterface(interfaceRegistry types.InterfaceRegistry) {
+	interfaceRegistry.RegisterImplementations((*sdkTypes.Msg)(nil), message)
 }
-func messageFromInterface(msg sdkTypes.Msg) message {
+func (message *Message) GenerateOnSuccessEvents() sdkTypes.Events {
+	return sdkTypes.Events{sdkTypes.NewEvent(
+		sdkTypes.EventTypeMessage,
+		sdkTypes.NewAttribute(sdkTypes.AttributeKeyModule, module.Name+"."+message.Type()),
+	)}
+}
+func messageFromInterface(msg sdkTypes.Msg) *Message {
 	switch value := msg.(type) {
-	case message:
+	case *Message:
 		return value
 	default:
-		return message{}
+		return &Message{}
 	}
 }
 func messagePrototype() helpers.Message {
-	return message{}
+	return &Message{}
 }
-
-func newMessage(from sdkTypes.AccAddress, fromID ids.ID, toID ids.ID, classificationID ids.ID) sdkTypes.Msg {
-	return message{
-		From:             from,
-		FromID:           fromID,
-		ToID:             toID,
-		ClassificationID: classificationID,
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, classificationID ids.ClassificationID) sdkTypes.Msg {
+	return &Message{
+		From:             from.String(),
+		FromID:           fromID.(*baseIds.IdentityID),
+		ToID:             toID.(*baseIds.IdentityID),
+		ClassificationID: classificationID.(*baseIds.ClassificationID),
 	}
 }

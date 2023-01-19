@@ -4,13 +4,13 @@
 package member
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
+	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/mappables"
 )
 
 type auxiliaryKeeper struct {
@@ -19,36 +19,36 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(auxiliaryRequest.ClassificationID))
+	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.ClassificationID))
 
-	Mappable := classifications.Get(key.FromID(auxiliaryRequest.ClassificationID))
+	Mappable := classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID))
 	if Mappable == nil {
-		return newAuxiliaryResponse(errors.EntityNotFound)
+		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}
-	classification := Mappable.(mappables.Classification)
+	classification := mappable.GetClassification(Mappable)
 
-	if auxiliaryRequest.ImmutableProperties != nil {
-		if len(auxiliaryRequest.ImmutableProperties.GetList()) > len(classification.GetImmutablePropertyList().GetList()) {
-			return newAuxiliaryResponse(errors.IncorrectFormat)
+	if auxiliaryRequest.Immutables != nil {
+		if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList()) > len(classification.GetImmutables().GetImmutablePropertyList().GetList()) {
+			return newAuxiliaryResponse(errorConstants.IncorrectFormat)
 		}
 
-		for _, immutableProperty := range auxiliaryRequest.ImmutableProperties.GetList() {
-			if property := classification.GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || immutableProperty.GetHash().Compare(baseIDs.NewID("")) != 0 && property.GetHash().Compare(immutableProperty.GetHash()) != 0 {
-				return newAuxiliaryResponse(errors.IncorrectFormat)
+		for _, immutableProperty := range auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList() {
+			if property := classification.GetImmutables().GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || immutableProperty.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) != 0 && property.GetDataID().GetHashID().Compare(immutableProperty.GetDataID().GetHashID()) != 0 {
+				return newAuxiliaryResponse(errorConstants.IncorrectFormat)
 			}
 		}
 	}
 
-	if auxiliaryRequest.MutableProperties != nil {
-		if len(auxiliaryRequest.MutableProperties.GetList()) > len(classification.GetMutablePropertyList().GetList()) {
-			return newAuxiliaryResponse(errors.IncorrectFormat)
+	if auxiliaryRequest.Mutables != nil {
+		if len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()) > len(classification.GetMutables().GetMutablePropertyList().GetList()) {
+			return newAuxiliaryResponse(errorConstants.IncorrectFormat)
 		}
 
-		for _, mutableProperty := range auxiliaryRequest.MutableProperties.GetList() {
-			if property := classification.GetMutablePropertyList().GetProperty(mutableProperty.GetID()); property == nil {
-				return newAuxiliaryResponse(errors.IncorrectFormat)
+		for _, mutableProperty := range auxiliaryRequest.Mutables.GetMutablePropertyList().GetList() {
+			if property := classification.GetMutables().GetMutablePropertyList().GetProperty(mutableProperty.GetID()); property == nil {
+				return newAuxiliaryResponse(errorConstants.IncorrectFormat)
 			}
 		}
 	}

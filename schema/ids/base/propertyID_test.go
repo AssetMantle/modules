@@ -4,24 +4,25 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/traits"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
-func createTestInputForPropertyID() (ids.ID, ids.ID, ids.PropertyID) {
-	testKey := NewID("ID")
-	testType := NewID("ID2")
+func createTestInputForPropertyID() (ids.StringID, ids.StringID, ids.PropertyID) {
+	testKey := NewStringID("ID")
+	testType := NewStringID("ID2")
 	testPropertyID := NewPropertyID(testKey, testType)
 	return testKey, testType, testPropertyID
 }
 
 func TestNewPropertyID(t *testing.T) {
 	type args struct {
-		key  ids.ID
-		Type ids.ID
+		key  ids.StringID
+		Type ids.StringID
 	}
 	tests := []struct {
 		name string
@@ -29,7 +30,7 @@ func TestNewPropertyID(t *testing.T) {
 		want ids.PropertyID
 	}{
 
-		{"+ve", args{NewID("ID"), NewID("ID2")}, propertyID{NewID("ID"), NewID("ID2")}},
+		{"+ve", args{NewStringID("ID"), NewStringID("ID2")}, propertyID{NewStringID("ID"), NewStringID("ID2")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -56,11 +57,7 @@ func Test_propertyIDFromInterface(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := propertyIDFromInterface(tt.args.listable)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("propertyIDFromInterface() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got := propertyIDFromInterface(tt.args.listable)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("propertyIDFromInterface() got = %v, want %v", got, tt.want)
 			}
@@ -71,8 +68,8 @@ func Test_propertyIDFromInterface(t *testing.T) {
 func Test_propertyID_Bytes(t *testing.T) {
 	testKey, testType, _ := createTestInputForPropertyID()
 	type fields struct {
-		Key  ids.ID
-		Type ids.ID
+		Key  ids.StringID
+		Type ids.StringID
 	}
 	tests := []struct {
 		name   string
@@ -98,8 +95,8 @@ func Test_propertyID_Bytes(t *testing.T) {
 func Test_propertyID_Compare(t *testing.T) {
 	testKey, testType, testPropertyID := createTestInputForPropertyID()
 	type fields struct {
-		Key  ids.ID
-		Type ids.ID
+		Key  ids.StringID
+		Type ids.StringID
 	}
 	type args struct {
 		listable traits.Listable
@@ -130,13 +127,13 @@ func Test_propertyID_Compare(t *testing.T) {
 func Test_propertyID_GetKey(t *testing.T) {
 	testKey, testType, _ := createTestInputForPropertyID()
 	type fields struct {
-		Key  ids.ID
-		Type ids.ID
+		Key  ids.StringID
+		Type ids.StringID
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   ids.ID
+		want   ids.StringID
 	}{
 
 		{"+ve", fields{testKey, testType}, testKey},
@@ -157,13 +154,13 @@ func Test_propertyID_GetKey(t *testing.T) {
 func Test_propertyID_GetType(t *testing.T) {
 	testKey, testType, _ := createTestInputForPropertyID()
 	type fields struct {
-		Key  ids.ID
-		Type ids.ID
+		Key  ids.StringID
+		Type ids.StringID
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   ids.ID
+		want   ids.StringID
 	}{
 
 		{"+ve", fields{testKey, testType}, testType},
@@ -184,8 +181,8 @@ func Test_propertyID_GetType(t *testing.T) {
 func Test_propertyID_String(t *testing.T) {
 	testKey, testType, _ := createTestInputForPropertyID()
 	type fields struct {
-		Key  ids.ID
-		Type ids.ID
+		Key  ids.StringID
+		Type ids.StringID
 	}
 	tests := []struct {
 		name   string
@@ -193,7 +190,7 @@ func Test_propertyID_String(t *testing.T) {
 		want   string
 	}{
 
-		{"+ve", fields{testKey, testType}, strings.Join([]string{testKey.String(), testType.String()}, "|")},
+		{"+ve", fields{testKey, testType}, strings.Join([]string{testKey.String(), testType.String()}, ".")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -201,7 +198,7 @@ func Test_propertyID_String(t *testing.T) {
 				Key:  tt.fields.Key,
 				Type: tt.fields.Type,
 			}
-			if got := propertyID.String(); got != tt.want {
+			if got := propertyID.AsString(); got != tt.want {
 				t.Errorf("String() = %v, want %v", got, tt.want)
 			}
 		})

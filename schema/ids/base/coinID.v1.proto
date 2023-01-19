@@ -1,0 +1,11 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/stringID.v1.proto";
+import "gogoproto/gogo.proto";
+
+message CoinID{
+  option (gogoproto.goproto_getters) = false;
+
+  StringID string_i_d = 1;
+}

@@ -4,36 +4,33 @@
 package applications
 
 import (
-	"testing"
-
-	"github.com/cosmos/cosmos-sdk/types/module"
-
-	"github.com/cosmos/cosmos-sdk/x/auth/exported"
-
-	"github.com/cosmos/cosmos-sdk/simapp"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
+	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/server/api"
+	"github.com/cosmos/cosmos-sdk/server/config"
+	"github.com/cosmos/cosmos-sdk/simapp"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
+	crisisKeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
 type SimulationApplication interface {
-	Application
 	simapp.App
 
 	GetBaseApp() *baseapp.BaseApp
-	GetKey(storeKey string) *sdk.KVStoreKey
-	GetTKey(storeKey string) *sdk.TransientStoreKey
-	GetSubspace(moduleName string) params.Subspace
-	GetModuleAccountPermissions() map[string][]string
-	GetBlackListedAddresses() map[string]bool
-	ModuleManager() *module.Manager
+	GetAppCodec() codec.Codec
+	InterfaceRegistry() codecTypes.InterfaceRegistry
+	GetKey(storeKey string) *sdkTypes.KVStoreKey
+	GetTKey(storeKey string) *sdkTypes.TransientStoreKey
+	GetMemKey(storeKey string) *sdkTypes.MemoryStoreKey
+	GetSubspace(moduleName string) paramsTypes.Subspace
+	SimulationManager() *module.SimulationManager
+	RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig)
+	RegisterTxService(clientCtx client.Context)
+	RegisterTendermintService(clientCtx client.Context)
 
-	CheckBalance(*testing.T, sdk.AccAddress, sdk.Coins)
-
-	AddTestAddresses(sdk.Context, int, sdk.Int) []sdk.AccAddress
-
-	Setup(bool) SimulationApplication
-	SetupWithGenesisAccounts([]exported.GenesisAccount) SimulationApplication
-	NewTestApplication(bool) (SimulationApplication, sdk.Context)
+	GetCrisisKeeper() crisisKeeper.Keeper
 }

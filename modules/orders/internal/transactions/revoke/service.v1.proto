@@ -1,0 +1,12 @@
+syntax = "proto3";
+package orders.transactions.revoke;
+
+import "google/api/annotations.proto";
+import "modules/orders/internal/transactions/revoke/message.v1.proto";
+import "modules/orders/internal/transactions/revoke/response.v1.proto";
+
+service Service {
+  rpc Handle(Message) returns (Response) {
+    option (google.api.http).post = "/mantle/orders/revoke";
+  }
+}

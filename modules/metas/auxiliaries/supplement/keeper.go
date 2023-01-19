@@ -4,18 +4,15 @@
 package supplement
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
 
-	"github.com/AssetMantle/modules/constants"
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/mappables"
-	"github.com/AssetMantle/modules/schema/properties"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	"github.com/AssetMantle/modules/schema/properties/utilities"
 )
 
 type auxiliaryKeeper struct {
@@ -24,32 +21,25 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	var metaPropertyList []properties.MetaProperty
+	propertyList := baseLists.NewPropertyList()
 
 	for _, property := range auxiliaryRequest.PropertyList {
-		var meta helpers.Mappable
-
-		if property.GetHash().Compare(baseIDs.NewID("")) == 0 {
-			if data, Error := utilities.ReadMetaProperty(property.GetType().String() + constants.DataTypeAndValueSeparator); Error == nil {
-				meta = mappable.NewMeta(data.GetData())
-			} else {
-				return newAuxiliaryResponse(nil, Error)
-			}
+		if property.IsMeta() {
+			propertyList = propertyList.Add(property)
+		} else if property.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) == 0 {
+			propertyList = propertyList.Add(baseProperties.NewMetaProperty(property.GetKey(), utilities.GetZeroValueDataFromID(property.GetType())))
 		} else {
-			metaID := key.NewMetaID(property.GetType(), property.GetHash())
-			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(metaID))
-			meta = metas.Get(key.FromID(metaID))
-		}
-
-		if meta != nil {
-			metaPropertyList = append(metaPropertyList, baseProperties.NewMetaProperty(property.GetID().GetKey(), meta.(mappables.Meta).GetData()))
+			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(property.GetDataID()))
+			if Mappable := metas.Get(key.NewKey(property.GetDataID())); Mappable != nil {
+				propertyList = propertyList.Add(baseProperties.NewMetaProperty(property.GetKey(), mappable.GetData(Mappable)))
+			}
 		}
 	}
 
-	return newAuxiliaryResponse(base.NewMetaPropertyList(metaPropertyList...), nil)
+	return newAuxiliaryResponse(propertyList, nil)
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {

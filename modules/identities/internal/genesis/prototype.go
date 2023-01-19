@@ -5,12 +5,11 @@ package genesis
 
 import (
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
-	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
-	"github.com/AssetMantle/modules/modules/identities/internal/parameters"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
+// TODO ***** add module nub IDs
 func Prototype() helpers.Genesis {
-	return baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{}, parameters.Prototype().GetList())
+	return baseHelpers.NewGenesis(key.Prototype, PrototypeGenesisState())
 }

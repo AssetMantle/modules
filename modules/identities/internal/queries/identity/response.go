@@ -4,46 +4,56 @@
 package identity
 
 import (
-	"github.com/AssetMantle/modules/modules/identities/internal/common"
+	"errors"
+
+	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 )
 
-type queryResponse struct {
-	Success bool               `json:"success"`
-	Error   error              `json:"error" swaggertype:"string"`
-	List    []helpers.Mappable `json:"list"`
-}
+// type queryResponse struct {
+//	Success bool               `json:"success"`
+//	Error   error              `json:"error" swaggertype:"string"`
+//	List    []helpers.Mappable `json:"list"`
+// }
 
-var _ helpers.QueryResponse = (*queryResponse)(nil)
+var _ helpers.QueryResponse = (*QueryResponse)(nil)
 
-func (queryResponse queryResponse) IsSuccessful() bool {
+func (queryResponse *QueryResponse) IsSuccessful() bool {
 	return queryResponse.Success
 }
-func (queryResponse queryResponse) GetError() error {
-	return queryResponse.Error
+func (queryResponse *QueryResponse) GetError() error {
+	return errors.New(queryResponse.Error)
 }
-func (queryResponse queryResponse) Encode() ([]byte, error) {
-	return common.Codec.MarshalJSON(queryResponse)
+func (queryResponse *QueryResponse) Encode() ([]byte, error) {
+	return base.CodecPrototype().MarshalJSON(queryResponse)
 }
-func (queryResponse queryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
-	if err := common.Codec.UnmarshalJSON(bytes, &queryResponse); err != nil {
+func (queryResponse *QueryResponse) Decode(bytes []byte) (helpers.QueryResponse, error) {
+	if err := base.CodecPrototype().UnmarshalJSON(bytes, queryResponse); err != nil {
 		return nil, err
 	}
 
 	return queryResponse, nil
 }
 func responsePrototype() helpers.QueryResponse {
-	return queryResponse{}
+	return &QueryResponse{}
 }
-func newQueryResponse(collection helpers.Collection, error error) helpers.QueryResponse {
-	success := true
+func newQueryResponse(collection helpers.Collection, error error) *QueryResponse {
+	var list []*mappable.Mappable
+
+	for _, item := range collection.GetList() {
+		list = append(list, item.(*mappable.Mappable))
+	}
 	if error != nil {
-		success = false
+		return &QueryResponse{
+			Success: false,
+			Error:   error.Error(),
+			List:    list,
+		}
 	}
 
-	return queryResponse{
-		Success: success,
-		Error:   error,
-		List:    collection.GetList(),
+	return &QueryResponse{
+		Success: true,
+		List:    list,
 	}
 }

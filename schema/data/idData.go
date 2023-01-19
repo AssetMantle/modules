@@ -9,5 +9,5 @@ import (
 
 type IDData interface {
 	Data
-	Get() ids.ID
+	Get() ids.AnyID
 }

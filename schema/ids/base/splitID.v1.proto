@@ -1,0 +1,13 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/identityID.v1.proto";
+import "schema/ids/base/anyOwnableID.v1.proto";
+import "gogoproto/gogo.proto";
+
+message SplitID {
+  option (gogoproto.goproto_getters) = false;
+
+  IdentityID owner_i_d = 1;
+  AnyOwnableID ownable_i_d = 2;
+}

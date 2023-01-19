@@ -7,23 +7,25 @@ import (
 	"math/rand"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
-func (simulator) WeightedProposalContentList() []simulation.WeightedProposalContent {
-	return []simulation.WeightedProposalContent{
-		{
-			AppParamsKey:       OpWeightSubmitTextProposal,
-			DefaultWeight:      DefaultWeightTextProposal,
-			ContentSimulatorFn: simulateTextProposalContent,
-		},
+func (simulator) WeightedProposalContentList(module.SimulationState) []simulationTypes.WeightedProposalContent {
+	return []simulationTypes.WeightedProposalContent{
+		simulation.NewWeightedProposalContent(
+			OpWeightSubmitTextProposal,
+			DefaultWeightTextProposal,
+			simulateTextProposalContent,
+		),
 	}
 }
 
-func simulateTextProposalContent(r *rand.Rand, _ sdk.Context, _ []simulation.Account) types.Content {
+func simulateTextProposalContent(r *rand.Rand, _ sdk.Context, _ []simulationTypes.Account) simulationTypes.Content {
 	return types.NewTextProposal(
-		simulation.RandStringOfLength(r, 140),
-		simulation.RandStringOfLength(r, 5000),
+		simulationTypes.RandStringOfLength(r, 140),
+		simulationTypes.RandStringOfLength(r, 5000),
 	)
 }

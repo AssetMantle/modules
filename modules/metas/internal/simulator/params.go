@@ -7,6 +7,7 @@ import (
 	"math/rand"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/common"
@@ -15,12 +16,12 @@ import (
 	"github.com/AssetMantle/modules/schema/data/base"
 )
 
-func (simulator) ParamChangeList(_ *rand.Rand) []simulation.ParamChange {
-	return []simulation.ParamChange{
+func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
+	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(module.Name,
-			dummy.ID.String(),
+			dummy.ID.AsString(),
 			func(r *rand.Rand) string {
-				bytes, err := common.Codec.MarshalJSON(dummy.Parameter.Mutate(base.NewDecData(sdk.NewDecWithPrec(int64(r.Intn(99)), 2))).GetData())
+				bytes, err := common.LegacyAmino.MarshalJSON(dummy.Parameter.Mutate(base.NewDecData(sdk.NewDecWithPrec(int64(r.Intn(99)), 2))).GetData())
 				if err != nil {
 					panic(err)
 				}

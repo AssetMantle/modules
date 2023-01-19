@@ -3,16 +3,30 @@
 
 package base
 
-import "github.com/AssetMantle/modules/schema/types"
+import (
+	"context"
+	"encoding/binary"
+	"strconv"
 
-type height struct {
-	Value int64 `json:"height"`
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/schema/types"
+)
+
+var _ types.Height = (*Height)(nil)
+
+func (height *Height) StringHeight() string {
+	return strconv.FormatInt(height.Get(), 10)
 }
 
-var _ types.Height = (*height)(nil)
+func (height *Height) Bytes() []byte {
+	Bytes := make([]byte, 8)
+	binary.LittleEndian.PutUint64(Bytes, uint64(height.Get()))
+	return Bytes
+}
 
-func (height height) Get() int64 { return height.Value }
-func (height height) Compare(compareHeight types.Height) int {
+func (height *Height) Get() int64 { return height.Value }
+func (height *Height) Compare(compareHeight types.Height) int {
 	if height.Get() > compareHeight.Get() {
 		return 1
 	} else if height.Get() < compareHeight.Get() {
@@ -27,5 +41,13 @@ func NewHeight(value int64) types.Height {
 		value = -1
 	}
 
-	return height{Value: value}
+	return &Height{Value: value}
+}
+
+func CurrentHeight(context context.Context) types.Height {
+	return NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())
+}
+
+func NewCurrentOffsetHeight(value int64, context context.Context) types.Height {
+	return NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight() + value)
 }

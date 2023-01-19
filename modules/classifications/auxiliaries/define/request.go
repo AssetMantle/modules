@@ -7,12 +7,12 @@ import (
 	"github.com/asaskevich/govalidator"
 
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/qualified"
 )
 
 type auxiliaryRequest struct {
-	ImmutableProperties lists.PropertyList `json:"immutableProperties" valid:"required~required field immutableProperties missing"`
-	MutableProperties   lists.PropertyList `json:"mutableProperties" valid:"required~required field mutableProperties missing"`
+	qualified.Immutables `json:"immutables" valid:"required~required field immutableProperties missing"`
+	qualified.Mutables   `json:"mutables" valid:"required~required field mutableProperties missing"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -31,9 +31,9 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(immutableProperties lists.PropertyList, mutableProperties lists.PropertyList) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(immutables qualified.Immutables, mutables qualified.Mutables) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		ImmutableProperties: immutableProperties,
-		MutableProperties:   mutableProperties,
+		Immutables: immutables,
+		Mutables:   mutables,
 	}
 }

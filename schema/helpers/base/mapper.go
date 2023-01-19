@@ -5,102 +5,103 @@ package base
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/libs/kv"
+	"github.com/cosmos/cosmos-sdk/types/kv"
 
-	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type mapper struct {
 	kvStoreKey        *sdkTypes.KVStoreKey
-	codec             *codec.Codec
 	keyPrototype      func() helpers.Key
 	mappablePrototype func() helpers.Mappable
 }
 
 var _ helpers.Mapper = (*mapper)(nil)
 
-func (mapper mapper) NewCollection(context sdkTypes.Context) helpers.Collection {
+func (mapper mapper) NewCollection(context context.Context) helpers.Collection {
 	return collection{}.Initialize(context, mapper)
 }
-
 func (mapper mapper) GetKVStoreKey() *sdkTypes.KVStoreKey {
 	return mapper.kvStoreKey
 }
-func (mapper mapper) Create(context sdkTypes.Context, mappable helpers.Mappable) {
-	Bytes := mapper.codec.MustMarshalBinaryBare(mappable)
-	kvStore := context.KVStore(mapper.kvStoreKey)
+func (mapper mapper) Create(context context.Context, mappable helpers.Mappable) {
+	Bytes := CodecPrototype().MustMarshal(mappable)
+	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
 	kvStore.Set(mappable.GetKey().GenerateStoreKeyBytes(), Bytes)
 }
-func (mapper mapper) Read(context sdkTypes.Context, key helpers.Key) helpers.Mappable {
-	kvStore := context.KVStore(mapper.kvStoreKey)
+func (mapper mapper) Read(context context.Context, key helpers.Key) helpers.Mappable {
+	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
 
 	Bytes := kvStore.Get(key.GenerateStoreKeyBytes())
 	if Bytes == nil {
 		return nil
 	}
 
-	var mappable helpers.Mappable
-
-	mapper.codec.MustUnmarshalBinaryBare(Bytes, &mappable)
+	mappable := mapper.mappablePrototype()
+	CodecPrototype().MustUnmarshal(Bytes, mappable)
 
 	return mappable
 }
-func (mapper mapper) Update(context sdkTypes.Context, mappable helpers.Mappable) {
-	Bytes := mapper.codec.MustMarshalBinaryBare(mappable)
+func (mapper mapper) Update(context context.Context, mappable helpers.Mappable) {
+	Bytes := CodecPrototype().MustMarshal(mappable)
 	key := mappable.GetKey()
-	kvStore := context.KVStore(mapper.kvStoreKey)
+	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
 	kvStore.Set(key.GenerateStoreKeyBytes(), Bytes)
 }
-func (mapper mapper) Delete(context sdkTypes.Context, key helpers.Key) {
-	kvStore := context.KVStore(mapper.kvStoreKey)
+func (mapper mapper) Delete(context context.Context, key helpers.Key) {
+	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
 	kvStore.Delete(key.GenerateStoreKeyBytes())
 }
-func (mapper mapper) Iterate(context sdkTypes.Context, partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
-	store := context.KVStore(mapper.kvStoreKey)
+func (mapper mapper) Iterate(context context.Context, partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
+	store := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
 	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(store, partialKey.GenerateStoreKeyBytes())
 
-	defer kvStorePrefixIterator.Close()
+	defer func(kvStorePrefixIterator sdkTypes.Iterator) {
+		err := kvStorePrefixIterator.Close()
+		if err != nil {
+			sdkTypes.UnwrapSDKContext(context).Logger().Debug(err.Error())
+		}
+	}(kvStorePrefixIterator)
 
 	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {
-		var mappable helpers.Mappable
-
-		mapper.codec.MustUnmarshalBinaryBare(kvStorePrefixIterator.Value(), &mappable)
-
+		mappable := mapper.mappablePrototype()
+		CodecPrototype().MustUnmarshal(kvStorePrefixIterator.Value(), mappable)
 		if accumulator(mappable) {
 			break
 		}
 	}
 }
-func (mapper mapper) ReverseIterate(context sdkTypes.Context, partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
-	store := context.KVStore(mapper.kvStoreKey)
+func (mapper mapper) ReverseIterate(context context.Context, partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
+	store := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
 	kvStoreReversePrefixIterator := sdkTypes.KVStoreReversePrefixIterator(store, partialKey.GenerateStoreKeyBytes())
 
-	defer kvStoreReversePrefixIterator.Close()
+	defer func(kvStoreReversePrefixIterator sdkTypes.Iterator) {
+		err := kvStoreReversePrefixIterator.Close()
+		if err != nil {
+			sdkTypes.UnwrapSDKContext(context).Logger().Debug(err.Error())
+		}
+	}(kvStoreReversePrefixIterator)
 
 	for ; kvStoreReversePrefixIterator.Valid(); kvStoreReversePrefixIterator.Next() {
-		var mappable helpers.Mappable
-
-		mapper.codec.MustUnmarshalBinaryBare(kvStoreReversePrefixIterator.Value(), &mappable)
+		mappable := mapper.mappablePrototype()
+		CodecPrototype().MustUnmarshal(kvStoreReversePrefixIterator.Value(), mappable)
 
 		if accumulator(mappable) {
 			break
 		}
 	}
 }
-func (mapper mapper) StoreDecoder(_ *codec.Codec, kvA kv.Pair, kvB kv.Pair) string {
+func (mapper mapper) StoreDecoder(kvA kv.Pair, kvB kv.Pair) string {
 	if bytes.Equal(kvA.Key[:1], mapper.keyPrototype().GenerateStoreKeyBytes()) {
-		var mappableA helpers.Mappable
+		mappableA := mapper.mappablePrototype()
+		CodecPrototype().MustUnmarshal(kvA.Value, mappableA)
 
-		mapper.codec.MustUnmarshalBinaryBare(kvA.Value, &mappableA)
-
-		var mappableB helpers.Mappable
-
-		mapper.codec.MustUnmarshalBinaryBare(kvB.Value, &mappableB)
+		mappableB := mapper.mappablePrototype()
+		CodecPrototype().MustUnmarshal(kvB.Value, mappableB)
 
 		return fmt.Sprintf("%v\n%v", mappableA, mappableB)
 	}
@@ -112,14 +113,7 @@ func (mapper mapper) Initialize(kvStoreKey *sdkTypes.KVStoreKey) helpers.Mapper 
 	return mapper
 }
 func NewMapper(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) helpers.Mapper {
-	Codec := codec.New()
-	keyPrototype().RegisterCodec(Codec)
-	mappablePrototype().RegisterCodec(Codec)
-	schema.RegisterCodec(Codec)
-	Codec.Seal()
-
 	return mapper{
-		codec:             Codec,
 		keyPrototype:      keyPrototype,
 		mappablePrototype: mappablePrototype,
 	}

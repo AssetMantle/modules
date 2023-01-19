@@ -9,14 +9,14 @@ import (
 )
 
 type Parameter interface {
-	String() string
+	AsString() string
 
 	Equal(Parameter) bool
 	Validate() error
 
 	GetID() ids.ID
-	GetData() data.Data
 	GetValidator() func(interface{}) error
+	GetData() data.AnyData
 
 	Mutate(data.Data) Parameter
 }

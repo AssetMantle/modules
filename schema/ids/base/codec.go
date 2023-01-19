@@ -9,8 +9,17 @@ import (
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-func RegisterCodec(codec *codec.Codec) {
-	codecUtilities.RegisterModuleConcrete(codec, dataID{})
-	codecUtilities.RegisterModuleConcrete(codec, id{})
-	codecUtilities.RegisterModuleConcrete(codec, propertyID{})
+func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AssetID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, ClassificationID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, DataID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, HashID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, IdentityID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, MaintainerID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, OrderID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyOwnableID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, PropertyID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, SplitID{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, StringID{})
 }

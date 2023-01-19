@@ -4,13 +4,16 @@
 package transfer
 
 import (
+	"context"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/mappables"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/types/base"
 )
 
 type auxiliaryKeeper struct {
@@ -19,35 +22,36 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	if auxiliaryRequest.Value.LTE(sdkTypes.ZeroDec()) {
-		return newAuxiliaryResponse(errors.NotAuthorized)
+		return newAuxiliaryResponse(constants.NotAuthorized)
 	}
 
-	fromSplitID := key.NewSplitID(auxiliaryRequest.FromID, auxiliaryRequest.OwnableID)
 	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
-	fromSplit := splits.Fetch(key.FromID(fromSplitID)).Get(key.FromID(fromSplitID))
-	if fromSplit == nil {
-		return newAuxiliaryResponse(errors.EntityNotFound)
+	fromSplitID := baseIDs.NewSplitID(auxiliaryRequest.FromID, auxiliaryRequest.OwnableID)
+	Mappable := splits.Fetch(key.NewKey(fromSplitID)).Get(key.NewKey(fromSplitID))
+	if Mappable == nil {
+		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
+	fromSplit := mappable.GetSplit(Mappable)
 
-	switch fromSplit = fromSplit.(mappables.Split).Send(auxiliaryRequest.Value).(mappables.Split); {
-	case fromSplit.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
-		return newAuxiliaryResponse(errors.NotAuthorized)
-	case fromSplit.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):
-		splits.Remove(fromSplit)
+	switch fromSplit = fromSplit.Send(auxiliaryRequest.Value); {
+	case fromSplit.GetValue().LT(sdkTypes.ZeroDec()):
+		return newAuxiliaryResponse(constants.NotAuthorized)
+	case fromSplit.GetValue().Equal(sdkTypes.ZeroDec()):
+		splits.Remove(mappable.NewMappable(fromSplit))
 	default:
-		splits.Mutate(fromSplit)
+		splits.Mutate(mappable.NewMappable(fromSplit))
 	}
 
-	toSplitID := key.NewSplitID(auxiliaryRequest.ToID, auxiliaryRequest.OwnableID)
+	toSplitID := baseIDs.NewSplitID(auxiliaryRequest.ToID, auxiliaryRequest.OwnableID)
 
-	if toSplit, ok := splits.Fetch(key.FromID(toSplitID)).Get(key.FromID(toSplitID)).(mappables.Split); !ok {
-		splits.Add(mappable.NewSplit(toSplitID, auxiliaryRequest.Value))
+	if Mappable := splits.Fetch(key.NewKey(toSplitID)).Get(key.NewKey(toSplitID)); Mappable == nil {
+		splits.Add(mappable.NewMappable(base.NewSplit(auxiliaryRequest.ToID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value)))
 	} else {
-		splits.Mutate(toSplit.Receive(auxiliaryRequest.Value).(mappables.Split))
+		splits.Mutate(mappable.NewMappable(mappable.GetSplit(Mappable).Receive(auxiliaryRequest.Value)))
 	}
 
 	return newAuxiliaryResponse(nil)

@@ -4,12 +4,13 @@
 package helpers
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
+
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 )
 
 type Block interface {
-	Begin(sdkTypes.Context, abciTypes.RequestBeginBlock)
-	End(sdkTypes.Context, abciTypes.RequestEndBlock)
+	Begin(context.Context, abciTypes.RequestBeginBlock)
+	End(context.Context, abciTypes.RequestEndBlock)
 	Initialize(Mapper, Parameters, ...interface{}) Block
 }

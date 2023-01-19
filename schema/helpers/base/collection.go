@@ -4,7 +4,7 @@
 package base
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
 
 	"github.com/AssetMantle/modules/schema/helpers"
 )
@@ -14,7 +14,7 @@ type collection struct {
 	List []helpers.Mappable `json:"list" valid:"required~required field list missing"`
 
 	mapper  helpers.Mapper
-	context sdkTypes.Context
+	context context.Context
 }
 
 var _ helpers.Collection = (*collection)(nil)
@@ -86,8 +86,7 @@ func (collection collection) Mutate(mappable helpers.Mappable) helpers.Collectio
 
 	return collection
 }
-
-func (collection collection) Initialize(context sdkTypes.Context, mapper helpers.Mapper) helpers.Collection {
+func (collection collection) Initialize(context context.Context, mapper helpers.Mapper) helpers.Collection {
 	collection.mapper = mapper
 	collection.context = context
 

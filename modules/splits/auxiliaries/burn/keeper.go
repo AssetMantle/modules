@@ -4,12 +4,15 @@
 package burn
 
 import (
+	"context"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
+	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/mappables"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type auxiliaryKeeper struct {
@@ -18,23 +21,24 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	splitID := key.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
-	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.FromID(splitID))
+	splitID := baseIDs.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
+	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(splitID))
 
-	split := splits.Get(key.FromID(splitID))
-	if split == nil {
-		return newAuxiliaryResponse(errors.EntityNotFound)
+	Mappable := splits.Get(key.NewKey(splitID))
+	if Mappable == nil {
+		return newAuxiliaryResponse(constants.EntityNotFound)
 	}
+	split := mappable.GetSplit(Mappable)
 
-	switch split = split.(mappables.Split).Send(auxiliaryRequest.Value).(mappables.Split); {
-	case split.(mappables.Split).GetValue().LT(sdkTypes.ZeroDec()):
-		return newAuxiliaryResponse(errors.InsufficientBalance)
-	case split.(mappables.Split).GetValue().Equal(sdkTypes.ZeroDec()):
-		splits.Remove(split)
+	switch split = split.Send(auxiliaryRequest.Value); {
+	case split.GetValue().LT(sdkTypes.ZeroDec()):
+		return newAuxiliaryResponse(constants.InsufficientBalance)
+	case split.GetValue().Equal(sdkTypes.ZeroDec()):
+		splits.Remove(mappable.NewMappable(split))
 	default:
-		splits.Mutate(split)
+		splits.Mutate(mappable.NewMappable(split))
 	}
 
 	return newAuxiliaryResponse(nil)

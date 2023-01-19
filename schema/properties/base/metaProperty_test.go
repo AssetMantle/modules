@@ -7,6 +7,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
@@ -14,8 +16,8 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-func createTestInput() (ids.ID, ids.PropertyID, data.Data, properties.MetaProperty) {
-	testKey := base.NewID("ID")
+func createTestInput() (ids.StringID, ids.PropertyID, data.Data, properties.MetaProperty) {
+	testKey := base.NewStringID("ID")
 	testData := NewStringData("Data")
 	testPropertyID := base.NewPropertyID(testKey, testData.GetType())
 	testMetaProperty := NewMetaProperty(testKey, testData)
@@ -32,7 +34,6 @@ func TestNewEmptyMetaPropertyFromID(t *testing.T) {
 		args args
 		want properties.MetaProperty
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{testPropertyID}, metaProperty{ID: testPropertyID}},
 		{"+ve with nil", args{}, metaProperty{}},
 	}
@@ -48,50 +49,24 @@ func TestNewEmptyMetaPropertyFromID(t *testing.T) {
 func TestNewMetaProperty(t *testing.T) {
 	testKey, testPropertyID, testData, _ := createTestInput()
 	type args struct {
-		key  ids.ID
+		key  ids.StringID
 		data data.Data
 	}
 	tests := []struct {
-		name string
-		args args
-		want properties.MetaProperty
+		name        string
+		args        args
+		want        properties.MetaProperty
+		shouldPanic bool
 	}{
-		// TODO: Add test cases.
-		{"+ve", args{testKey, testData}, metaProperty{testPropertyID, testData}},
+		{"+ve", args{testKey, testData}, metaProperty{testPropertyID, testData}, false},
+		{"+ve", args{nil, nil}, metaProperty{nil, nil}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMetaProperty(tt.args.key, tt.args.data); !reflect.DeepEqual(got, tt.want) {
+			if tt.shouldPanic {
+				assert.Panics(t, func() { NewMetaProperty(tt.args.key, tt.args.data) }, "The code did not panic, but it should panic")
+			} else if got := NewMetaProperty(tt.args.key, tt.args.data); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewMetaProperty() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_metaPropertyFromInterface(t *testing.T) {
-	_, testPropertyID, testData, testMetaProperty := createTestInput()
-	type args struct {
-		listable traits.Listable
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    metaProperty
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-		{"+ve", args{testMetaProperty}, metaProperty{testPropertyID, testData}, false},
-		{"+ve with nil", args{metaProperty{}}, metaProperty{}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := metaPropertyFromInterface(tt.args.listable)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("metaPropertyFromInterface() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("metaPropertyFromInterface() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -112,10 +87,9 @@ func Test_metaProperty_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testPropertyID, testData}, args{testMetaProperty}, 0},
-		{"+ve compare with metaProperty with no Data", fields{testPropertyID, testData}, args{metaProperty{ID: base.NewPropertyID(base.NewID("ID"), base.NewID("S"))}}, 0},
-		{"+ve", fields{testPropertyID, testData}, args{metaProperty{ID: base.NewPropertyID(base.NewID("ID"), base.NewID("S")), Data: NewStringData("Data2")}}, 0}}
+		{"+ve compare with metaProperty with no Data", fields{testPropertyID, testData}, args{metaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S"))}}, 0},
+		{"+ve", fields{testPropertyID, testData}, args{metaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")), Data: NewStringData("Data2")}}, 0}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := metaProperty{
@@ -140,7 +114,6 @@ func Test_metaProperty_GetData(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testPropertyID, testData}, testData},
 		{"+ve with nil", fields{}, nil},
 	}
@@ -168,7 +141,6 @@ func Test_metaProperty_GetDataID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testPropertyID, testData}, testMetaProperty.GetData().GetID()},
 	}
 	for _, tt := range tests {
@@ -179,33 +151,6 @@ func Test_metaProperty_GetDataID(t *testing.T) {
 			}
 			if got := metaProperty.GetDataID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetDataID() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_metaProperty_GetHash(t *testing.T) {
-	_, testPropertyID, testData, _ := createTestInput()
-	type fields struct {
-		ID   ids.PropertyID
-		Data data.Data
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   ids.ID
-	}{
-		// TODO: Add test cases.
-		{"+ve", fields{testPropertyID, testData}, testData.GenerateHash()},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			metaProperty := metaProperty{
-				ID:   tt.fields.ID,
-				Data: tt.fields.Data,
-			}
-			if got := metaProperty.GetHash(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetHash() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -222,7 +167,6 @@ func Test_metaProperty_GetID(t *testing.T) {
 		fields fields
 		want   ids.PropertyID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testPropertyID, testData}, testPropertyID},
 		{"+ve", fields{}, metaProperty{}.ID},
 	}
@@ -250,7 +194,6 @@ func Test_metaProperty_GetKey(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testPropertyID, testData}, testKey},
 	}
 	for _, tt := range tests {
@@ -277,7 +220,6 @@ func Test_metaProperty_GetType(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testPropertyID, testData}, testData.GetType()},
 	}
 	for _, tt := range tests {
@@ -304,8 +246,7 @@ func Test_metaProperty_RemoveData(t *testing.T) {
 		fields fields
 		want   properties.Property
 	}{
-		// TODO: Add test cases.
-		{"+ve", fields{testPropertyID, testData}, property{ID: testPropertyID, DataID: testData.GetID()}},
+		{"+ve", fields{testPropertyID, testData}, mesaProperty{ID: testPropertyID, DataID: testData.GetID()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -313,8 +254,8 @@ func Test_metaProperty_RemoveData(t *testing.T) {
 				ID:   tt.fields.ID,
 				Data: tt.fields.Data,
 			}
-			if got := metaProperty.RemoveData(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("RemoveData() = %v, want %v", got, tt.want)
+			if got := metaProperty.ScrubData(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ScrubData() = %v, want %v", got, tt.want)
 			}
 		})
 	}

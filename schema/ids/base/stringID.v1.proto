@@ -1,0 +1,10 @@
+syntax = "proto3";
+package ids;
+
+import "gogoproto/gogo.proto";
+
+message StringID {
+  option (gogoproto.goproto_getters) = false;
+
+  string i_d_string = 1;
+}

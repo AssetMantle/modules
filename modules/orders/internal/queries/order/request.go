@@ -5,20 +5,20 @@ package order
 
 import (
 	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 
-	"github.com/AssetMantle/modules/modules/orders/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
-type queryRequest struct {
-	OrderID ids.ID `json:"orderID" valid:"required~required field orderID missing"`
-}
+// type queryRequest struct {
+//	ids.OrderID `json:"orderID" valid:"required~required field orderID missing"`
+// }
 
-var _ helpers.QueryRequest = (*queryRequest)(nil)
+var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
 // Validate godoc
 // @Summary Query order using order id
@@ -30,37 +30,45 @@ var _ helpers.QueryRequest = (*queryRequest)(nil)
 // @Success 200 {object} queryResponse "Message for a successful response"
 // @Failure default  {object}  queryResponse "Message for an unexpected error response."
 // @Router /orders/orders/{orderID} [get]
-func (queryRequest queryRequest) Validate() error {
+func (queryRequest *QueryRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(queryRequest)
 	return err
 }
-func (queryRequest queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewID(cliCommand.ReadString(constants.OrderID)))
+func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
+	if orderID, err := baseIDs.ReadOrderID(cliCommand.ReadString(constants.OrderID)); err != nil {
+		return &QueryRequest{}, err
+	} else {
+		return newQueryRequest(orderID), nil
+	}
 }
-func (queryRequest queryRequest) FromMap(vars map[string]string) helpers.QueryRequest {
-	return newQueryRequest(baseIDs.NewID(vars[Query.GetName()]))
+func (*QueryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
+	if orderID, err := baseIDs.ReadOrderID(vars[Query.GetName()]); err != nil {
+		return &QueryRequest{}, err
+	} else {
+		return newQueryRequest(orderID), nil
+	}
 }
-func (queryRequest queryRequest) Encode() ([]byte, error) {
-	return common.Codec.MarshalJSON(queryRequest)
+func (queryRequest *QueryRequest) Encode() ([]byte, error) {
+	return base.CodecPrototype().MarshalJSON(queryRequest)
 }
-func (queryRequest queryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
-	if err := common.Codec.UnmarshalJSON(bytes, &queryRequest); err != nil {
+func (queryRequest *QueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
+	if err := base.CodecPrototype().UnmarshalJSON(bytes, queryRequest); err != nil {
 		return nil, err
 	}
 
 	return queryRequest, nil
 }
 func requestPrototype() helpers.QueryRequest {
-	return queryRequest{}
+	return &QueryRequest{}
 }
-func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
+func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	switch value := request.(type) {
-	case queryRequest:
+	case *QueryRequest:
 		return value
 	default:
-		return queryRequest{}
+		return &QueryRequest{}
 	}
 }
-func newQueryRequest(orderID ids.ID) helpers.QueryRequest {
-	return queryRequest{OrderID: orderID}
+func newQueryRequest(orderID ids.OrderID) helpers.QueryRequest {
+	return &QueryRequest{OrderID: orderID.(*baseIDs.OrderID)}
 }

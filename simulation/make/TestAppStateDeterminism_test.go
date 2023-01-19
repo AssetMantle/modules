@@ -11,16 +11,14 @@ import (
 	"testing"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-
-	"github.com/AssetMantle/modules/schema/applications/base"
-
 	"github.com/cosmos/cosmos-sdk/simapp"
-
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/schema/applications/base"
 )
 
 func TestAppStateDeterminism(t *testing.T) {
@@ -52,15 +50,15 @@ func TestAppStateDeterminism(t *testing.T) {
 
 			db := dbm.NewMemDB()
 
-			prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, moduleAccountPermissions, tokenReceiveAllowedModules)
-			simulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), interBlockCacheOpt()).(*base.SimulationApplication)
+			prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, moduleAccountPermissions, tokenReceiveAllowedModules).(*base.SimulationApplication)
+			simulationApplication := prototype.InitializeSimulationApplication(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), interBlockCacheOpt()).(*base.SimulationApplication)
 
 			fmt.Printf(
 				"running non-determinism simulation; seed %d: %d/%d, attempt: %d/%d\n",
 				config.Seed, i+1, numSeeds, j+1, numTimesToRunPerSeed,
 			)
 
-			_, _, err := simulation.SimulateFromSeed(t, os.Stdout, simulationApplication.GetBaseApp(), simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()), simapp.SimulationOperations(simulationApplication, simulationApplication.Codec(), config), simulationApplication.ModuleAccountAddrs(), config)
+			_, _, err := simulation.SimulateFromSeed(t, os.Stdout, simulationApplication.GetBaseApp(), simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()), simapp.SimulationOperations(simulationApplication, simulationApplication.Codec(), config), simulationApplication.ModuleAccountAddresses(), config)
 			require.NoError(t, err)
 
 			if config.Commit {

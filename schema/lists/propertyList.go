@@ -1,6 +1,3 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
-
 package lists
 
 import (
@@ -9,10 +6,13 @@ import (
 )
 
 type PropertyList interface {
-	GetProperty(ids.PropertyID) properties.Property
-	GetList() []properties.Property
+	GetProperty(ids.PropertyID) properties.AnyProperty
+	GetList() []properties.AnyProperty
+	GetPropertyIDList() IDList
 
 	Add(...properties.Property) PropertyList
 	Remove(...properties.Property) PropertyList
 	Mutate(...properties.Property) PropertyList
+
+	ScrubData() PropertyList
 }

@@ -18,9 +18,9 @@ var counter int64
 // GenerateUniqueIdentifier is a random unique ID generator, output is a string.
 // Warning: Non-deterministic, not to used to generate blockchain state, for testing and client utility only
 func GenerateUniqueIdentifier(prefix ...string) string {
-	randomNumber, Error := rand.Int(rand.Reader, big.NewInt(89999))
-	if Error != nil {
-		panic(Error)
+	randomNumber, err := rand.Int(rand.Reader, big.NewInt(89999))
+	if err != nil {
+		panic(err)
 	}
 
 	atomic.AddInt64(&counter, 1)

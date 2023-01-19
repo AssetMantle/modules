@@ -8,19 +8,22 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
+	"github.com/AssetMantle/modules/modules/splits/internal/genesis"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	splitsModule "github.com/AssetMantle/modules/modules/splits/internal/module"
-	"github.com/AssetMantle/modules/modules/splits/internal/parameters"
 	"github.com/AssetMantle/modules/modules/splits/internal/parameters/dummy"
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/data/base"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	parameters2 "github.com/AssetMantle/modules/schema/parameters"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/modules/schema/types/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 )
 
@@ -29,19 +32,21 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		dummy.ID.String(),
+		dummy.ID.AsString(),
 		&Data,
 		simulationState.Rand,
-		func(rand *rand.Rand) { Data = base.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
+		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
 	mappableList := make([]helpers.Mappable, simulationState.Rand.Intn(99))
 
 	for i := range mappableList {
-		mappableList[i] = mappable.NewSplit(key.NewSplitID(baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand)), simulation.RandomDecAmount(simulationState.Rand, sdkTypes.NewDec(9999999999)))
+		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
+		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
+		mappableList[i] = mappable.NewMappable(base.NewSplit(baseIDs.NewIdentityID(baseIDs.NewClassificationID(immutables, mutables), immutables), baseIDs.NewCoinID(baseIDs.NewStringID(simulationTypes.RandStringOfLength(simulationState.Rand, simulationState.Rand.Intn(99)))), simulationTypes.RandomDecAmount(simulationState.Rand, sdkTypes.NewDec(9999999999))))
 	}
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []parameters2.Parameter{dummy.Parameter.Mutate(Data)})
+	genesisState := baseHelpers.NewGenesis(key.Prototype, genesis.PrototypeGenesisState().Initialize(mappableList, []parametersSchema.Parameter{dummy.Parameter.Mutate(Data)}))
 
-	simulationState.GenState[splitsModule.Name] = common.Codec.MustMarshalJSON(genesisState)
+	simulationState.GenState[splitsModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
 }

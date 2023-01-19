@@ -4,30 +4,26 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/client"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
+
+	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func initialize() (helpers.CLICommand, []helpers.CLIFlag) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
-	cliContext := context.NewCLIContext().WithCodec(Codec)
-	cliContext = cliContext.WithChainID("chainID")
+	var legacyAmino = sdkCodec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
 
 	testCliFlag := NewCLIFlag("name", "value", ",usage")
 	testCliFlag2 := NewCLIFlag("name2", int64(-1), ",usage")
@@ -65,7 +61,7 @@ func TestNewCLICommand(t *testing.T) {
 }
 
 func Test_cliCommand_CreateCommand(t *testing.T) {
-	//_, testCliFlagList := initialize()
+	// _, testCliFlagList := initialize()
 	type fields struct {
 		use         string
 		short       string
@@ -108,7 +104,7 @@ func Test_cliCommand_ReadBaseReq(t *testing.T) {
 		cliFlagList []helpers.CLIFlag
 	}
 	type args struct {
-		cliContext context.CLIContext
+		context client.Context
 	}
 	tests := []struct {
 		name   string
@@ -117,8 +113,8 @@ func Test_cliCommand_ReadBaseReq(t *testing.T) {
 		want   rest.BaseReq
 	}{
 
-		{"+ve", fields{"", "", "", testCliFlagList}, args{context.CLIContext{ChainID: "chainID"}}, rest.BaseReq{ChainID: "chainID"}},
-		{"-ve for nil", fields{"", "", "", nil}, args{context.CLIContext{ChainID: ""}}, rest.BaseReq{ChainID: ""}},
+		{"+ve", fields{"", "", "", testCliFlagList}, args{client.Context{ChainID: "chainID"}}, rest.BaseReq{ChainID: "chainID"}},
+		{"-ve for nil", fields{"", "", "", nil}, args{client.Context{ChainID: ""}}, rest.BaseReq{ChainID: ""}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -128,7 +124,7 @@ func Test_cliCommand_ReadBaseReq(t *testing.T) {
 				long:        tt.fields.long,
 				cliFlagList: tt.fields.cliFlagList,
 			}
-			if got := cliCommand.ReadBaseReq(tt.args.cliContext); !reflect.DeepEqual(got, tt.want) {
+			if got := cliCommand.ReadBaseReq(tt.args.context); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ReadBaseReq() = %v, want %v", got, tt.want)
 			}
 		})
@@ -197,7 +193,7 @@ func Test_cliCommand_ReadInt(t *testing.T) {
 		{"-ve unregistered flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", 1, ",usage")}, 1, true},
 		{"+ve", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name3", 123, ",usage")}, 0, false},
 		{"-ve should panic", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name4", struct{}{}, ",usage")}, 0, true},
-		//{"-ve should not panic", fields{"", "", "", nil}, args{NewCLIFlag("name4", 123, ",usage")}, 0, false},
+		// {"-ve should not panic", fields{"", "", "", nil}, args{NewCLIFlag("name4", 123, ",usage")}, 0, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

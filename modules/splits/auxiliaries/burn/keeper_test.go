@@ -4,52 +4,60 @@
 package burn
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
+	"github.com/cosmos/cosmos-sdk/simapp"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/cosmos/cosmos-sdk/x/params"
+	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	"github.com/AssetMantle/modules/modules/splits/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type TestKeepers struct {
-	SplitsKeeper helpers.AuxiliaryKeeper
+	BurnKeeper helpers.AuxiliaryKeeper
 }
 
-func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
+func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
 
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
-	paramsKeeper := params.NewKeeper(
-		Codec,
+	encodingConfig := simapp.MakeTestEncodingConfig()
+	appCodec := encodingConfig.Marshaler
+	ParamsKeeper := paramsKeeper.NewKeeper(
+		appCodec,
+		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
+	Parameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -59,61 +67,97 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
+	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		SplitsKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
+		BurnKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
 
-	return context, keepers
-
+	return context, keepers, Mapper, Parameters
 }
 
-func Test_Burn_Aux_Keeper_Help(t *testing.T) {
-	context, keepers := CreateTestInput(t)
+func Test_auxiliaryKeeper_Help(t *testing.T) {
+	context, keepers, Mapper, _ := createTestInput(t)
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	classificationID := baseIds.NewClassificationID(immutables, mutables)
+	testOwnerIdentityID := baseIds.NewIdentityID(classificationID, immutables)
+	testOwnableID := baseIds.NewCoinID(baseIds.NewStringID("OwnerID"))
+	testRate := sdkTypes.NewDec(1)
+	split := baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
+	keepers.BurnKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(split))
+	type fields struct {
+		mapper helpers.Mapper
+	}
+	type args struct {
+		context sdkTypes.Context
+		request helpers.AuxiliaryRequest
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   helpers.AuxiliaryResponse
+	}{
+		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(testOwnerIdentityID, testOwnableID, testRate)}, newAuxiliaryResponse(nil)},
+		{"+ve Entity Not Found", fields{Mapper}, args{context, NewAuxiliaryRequest(baseIds.PrototypeIdentityID(), testOwnableID, testRate)}, newAuxiliaryResponse(errorConstants.EntityNotFound)},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			auxiliaryKeeper := auxiliaryKeeper{
+				mapper: tt.fields.mapper,
+			}
+			if got := auxiliaryKeeper.Help(tt.args.context, tt.args.request); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Help() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	ownerID := baseIDs.NewID("ownerID")
-	ownableID := baseIDs.NewID("ownableID")
+func Test_auxiliaryKeeper_Initialize(t *testing.T) {
+	_, _, Mapper, Parameters := createTestInput(t)
+	type fields struct {
+		mapper helpers.Mapper
+	}
+	type args struct {
+		mapper helpers.Mapper
+		in1    helpers.Parameters
+		in2    []interface{}
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   helpers.Keeper
+	}{
+		{"+ve", fields{Mapper}, args{Mapper, Parameters, []interface{}{}}, auxiliaryKeeper{Mapper}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			au := auxiliaryKeeper{
+				mapper: tt.fields.mapper,
+			}
+			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
+				t.Errorf("Initialize() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
-	ownerID2 := baseIDs.NewID("ownerID2")
-	ownableID2 := baseIDs.NewID("ownableID2")
-
-	splitID := key.NewSplitID(ownerID, ownableID)
-	splitID2 := key.NewSplitID(ownerID2, ownableID2)
-	splits := sdkTypes.NewDec(10)
-
-	keepers.SplitsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewSplit(splitID, splits)).Add(mappable.NewSplit(splitID2, splits))
-
-	t.Run("PositiveCase- mutate split", func(t *testing.T) {
-		want := newAuxiliaryResponse(nil)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, ownableID, sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("PositiveCase- remove split", func(t *testing.T) {
-		want := newAuxiliaryResponse(nil)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID2, ownableID2, sdkTypes.NewDec(10))); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase-Nil Value", func(t *testing.T) {
-		t.Parallel()
-		want := newAuxiliaryResponse(errors.EntityNotFound)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(baseIDs.NewID("negativeTestOwner"), baseIDs.NewID("negativeTestOwnable"), sdkTypes.NewDec(1))); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase-Insufficient Balance", func(t *testing.T) {
-		t.Parallel()
-		want := newAuxiliaryResponse(errors.InsufficientBalance)
-		if got := keepers.SplitsKeeper.Help(context, NewAuxiliaryRequest(ownerID, ownableID, sdkTypes.NewDec(1234))); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
+func Test_keeperPrototype(t *testing.T) {
+	tests := []struct {
+		name string
+		want helpers.AuxiliaryKeeper
+	}{
+		{"+ve", auxiliaryKeeper{}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

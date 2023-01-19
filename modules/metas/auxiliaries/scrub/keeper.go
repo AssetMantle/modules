@@ -4,7 +4,7 @@
 package scrub
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -19,18 +19,22 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	scrubbedPropertyList := make([]properties.Property, len(auxiliaryRequest.MetaPropertyList))
+	scrubbedPropertyList := make([]properties.Property, len(auxiliaryRequest.PropertyList.GetList()))
 	metas := auxiliaryKeeper.mapper.NewCollection(context)
 
-	for i, metaProperty := range auxiliaryRequest.MetaPropertyList {
-		if metaProperty.GetHash().Compare(baseIDs.NewID("")) != 0 {
-			metas.Add(mappable.NewMeta(metaProperty.GetData()))
+	for i, property := range auxiliaryRequest.PropertyList.GetList() {
+		if property.IsMeta() {
+			metaProperty := property.Get().(properties.MetaProperty)
+			if metaProperty.GetData().GenerateHashID().Compare(baseIDs.GenerateHashID()) != 0 {
+				metas.Add(mappable.NewMappable(metaProperty.GetData()))
+			}
+			scrubbedPropertyList[i] = metaProperty.ScrubData()
+		} else {
+			scrubbedPropertyList[i] = property
 		}
-
-		scrubbedPropertyList[i] = metaProperty.RemoveData()
 	}
 
 	return newAuxiliaryResponse(baseLists.NewPropertyList(scrubbedPropertyList...), nil)

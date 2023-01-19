@@ -4,12 +4,19 @@
 package revoke
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/mappables"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/ids/constansts"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 type auxiliaryKeeper struct {
@@ -18,27 +25,33 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	fromMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.FromID)
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context)
 
-	fromMaintainer := maintainers.Fetch(key.FromID(fromMaintainerID)).Get(key.FromID(fromMaintainerID))
-	if fromMaintainer == nil {
-		return newAuxiliaryResponse(errors.EntityNotFound)
+	fromMaintainerID := baseIDs.NewMaintainerID(constansts.MaintainerClassificationID,
+		baseQualified.NewImmutables(baseLists.NewPropertyList(
+			baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.MaintainedClassificationID)),
+			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.FromID)),
+		)))
+
+	if Mappable := maintainers.Fetch(key.NewKey(fromMaintainerID)).Get(key.NewKey(fromMaintainerID)); Mappable == nil {
+		return newAuxiliaryResponse(errorConstants.EntityNotFound)
+	} else if !mappable.GetMaintainer(Mappable).CanRemoveMaintainer() {
+		return newAuxiliaryResponse(errorConstants.NotAuthorized)
 	}
 
-	if !fromMaintainer.(mappables.Maintainer).CanRemoveMaintainer() {
-		return newAuxiliaryResponse(errors.NotAuthorized)
-	}
+	toMaintainerID := baseIDs.NewMaintainerID(constansts.MaintainerClassificationID,
+		baseQualified.NewImmutables(baseLists.NewPropertyList(
+			baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.MaintainedClassificationID)),
+			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.ToID)),
+		)))
 
-	toMaintainerID := key.NewMaintainerID(auxiliaryRequest.ClassificationID, auxiliaryRequest.ToID)
-	toMaintainer := maintainers.Fetch(key.FromID(toMaintainerID)).Get(key.FromID(toMaintainerID))
-	if toMaintainer == nil {
-		return newAuxiliaryResponse(errors.EntityNotFound)
+	if Mappable := maintainers.Fetch(key.NewKey(toMaintainerID)).Get(key.NewKey(toMaintainerID)); Mappable == nil {
+		return newAuxiliaryResponse(errorConstants.EntityNotFound)
+	} else {
+		maintainers.Remove(Mappable)
 	}
-
-	maintainers.Remove(toMaintainer)
 
 	return newAuxiliaryResponse(nil)
 }

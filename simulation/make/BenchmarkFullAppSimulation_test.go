@@ -7,7 +7,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/stretchr/testify/require"
@@ -23,14 +24,19 @@ func BenchmarkFullAppSimulation(b *testing.B) {
 
 	require.NoError(b, err, "simulation setup failed")
 
-	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, moduleAccountPermissions, tokenReceiveAllowedModules)
-	simulationApplication := prototype.Initialize(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), interBlockCacheOpt()).(*base.SimulationApplication)
+	simulationApplication := base.NewSimulationApplication(logger, db, nil, true, map[int64]bool{}, DefaultNodeHome, simapp.FlagPeriodValue, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, interBlockCacheOpt())
 
 	// run randomized simulation
 	_, simParams, simErr := simulation.SimulateFromSeed(
-		b, os.Stdout, simulationApplication.GetBaseApp(), simapp.AppStateFn(simulationApplication.Codec(), simulationApplication.SimulationManager()),
-		simapp.SimulationOperations(simulationApplication, simulationApplication.Codec(), config),
-		simulationApplication.ModuleAccountAddrs(), config,
+		b,
+		os.Stdout,
+		simulationApplication.GetBaseApp(),
+		simapp.AppStateFn(simulationApplication.GetAppCodec(), simulationApplication.SimulationManager()),
+		simulationTypes.RandomAccounts,
+		simapp.SimulationOperations(simulationApplication, simulationApplication.GetAppCodec(), config),
+		simulationApplication.ModuleAccountAddrs(),
+		config,
+		simulationApplication.GetAppCodec(),
 	)
 
 	// export state and simParams before the simulation error is checked

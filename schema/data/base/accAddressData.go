@@ -8,76 +8,62 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/schema/data"
-	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
-type accAddressData struct {
-	Value sdkTypes.AccAddress `json:"value"`
-}
+var _ data.AccAddressData = (*AccAddressData)(nil)
 
-var _ data.AccAddressData = (*accAddressData)(nil)
-
-func (accAddressData accAddressData) GetID() ids.DataID {
-	return baseIDs.NewDataID(accAddressData)
+func (accAddressData *AccAddressData) GetID() ids.DataID {
+	return baseIDs.GenerateDataID(accAddressData)
 }
-func (accAddressData accAddressData) Compare(listable traits.Listable) int {
-	compareAccAddressData, err := accAddressDataFromInterface(listable)
+func (accAddressData *AccAddressData) Compare(listable traits.Listable) int {
+	compareAccAddressData, err := dataFromListable(listable)
 	if err != nil {
 		panic(err)
 	}
-
-	return bytes.Compare(accAddressData.Value.Bytes(), compareAccAddressData.Value.Bytes())
+	return bytes.Compare(accAddressData.Bytes(), compareAccAddressData.Bytes())
 }
-func (accAddressData accAddressData) String() string {
-	return accAddressData.Value.String()
+func (accAddressData *AccAddressData) Bytes() []byte {
+	return sdkTypes.AccAddress(accAddressData.Value).Bytes()
 }
-func (accAddressData accAddressData) GetType() ids.ID {
-	return idsConstants.AccAddressDataID
+func (accAddressData *AccAddressData) GetType() ids.StringID {
+	return dataConstants.AccAddressDataID
 }
-func (accAddressData accAddressData) ZeroValue() data.Data {
-	return NewAccAddressData(sdkTypes.AccAddress{})
+func (accAddressData *AccAddressData) ZeroValue() data.Data {
+	return AccAddressDataPrototype()
 }
-func (accAddressData accAddressData) GenerateHash() ids.ID {
+func (accAddressData *AccAddressData) GenerateHashID() ids.HashID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
-		return baseIDs.NewID("")
+		// TODO test
+		return baseIDs.GenerateHashID()
 	}
 
-	return baseIDs.NewID(stringUtilities.Hash(accAddressData.Value.String()))
+	return baseIDs.GenerateHashID(accAddressData.Bytes())
 }
-func (accAddressData accAddressData) Get() sdkTypes.AccAddress {
+func (accAddressData *AccAddressData) Get() sdkTypes.AccAddress {
 	return accAddressData.Value
 }
-
-func accAddressDataFromInterface(listable traits.Listable) (accAddressData, error) {
-	switch value := listable.(type) {
-	case accAddressData:
-		return value, nil
-	default:
-		return accAddressData{}, errors.MetaDataError
-	}
+func (accAddressData *AccAddressData) ToAnyData() data.AnyData {
+	return &AnyData{
+		Impl: &AnyData_AccAddressData{
+			AccAddressData: accAddressData,
+		}}
 }
 
-func NewAccAddressData(value sdkTypes.AccAddress) data.Data {
-	return accAddressData{
+func AccAddressDataPrototype() data.Data {
+	return NewAccAddressData(sdkTypes.AccAddress{})
+}
+
+func GenerateAccAddressData(value sdkTypes.AccAddress) data.Data {
+	return NewAccAddressData(value)
+}
+
+func NewAccAddressData(value sdkTypes.AccAddress) data.AccAddressData {
+	return &AccAddressData{
 		Value: value,
 	}
-}
-
-func ReadAccAddressData(dataString string) (data.Data, error) {
-	if dataString == "" {
-		return accAddressData{}.ZeroValue(), nil
-	}
-
-	accAddress, err := sdkTypes.AccAddressFromBech32(dataString)
-	if err != nil {
-		return accAddressData{}.ZeroValue(), err
-	}
-
-	return NewAccAddressData(accAddress), nil
 }

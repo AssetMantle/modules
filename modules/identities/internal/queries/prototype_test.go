@@ -4,11 +4,13 @@
 package queries
 
 import (
+	"fmt"
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/modules/identities/internal/queries/identity"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"reflect"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {
@@ -16,14 +18,13 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Queries
 	}{
-		// TODO: Getting same data, but i.e not equal
 		{"+ve", baseHelpers.NewQueries(
 			identity.Query,
 		)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype(); !reflect.DeepEqual(got.GetList(), tt.want.GetList()) {
+			if got := Prototype(); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Prototype() = %v, want %v", got, tt.want)
 			}
 		})

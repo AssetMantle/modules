@@ -12,13 +12,16 @@ import (
 )
 
 type auxiliaryRequest struct {
-	FromID               ids.ID             `json:"fromID" valid:"required~required field fromID missing"`
-	ToID                 ids.ID             `json:"toID" valid:"required~required field toID missing"`
-	ClassificationID     ids.ID             `json:"classificationID" valid:"required~required field classificationID missing"`
-	MaintainedProperties lists.PropertyList `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
-	AddMaintainer        bool               `json:"addMaintainer"`
-	RemoveMaintainer     bool               `json:"removeMaintainer"`
-	MutateMaintainer     bool               `json:"mutateMaintainer"`
+	FromID                     ids.IdentityID       `json:"fromID" valid:"required~required field fromID missing"`
+	ToID                       ids.IdentityID       `json:"toID" valid:"required~required field toID missing"`
+	MaintainedClassificationID ids.ClassificationID `json:"maintainedClassificationID" valid:"required~required field maintainedClassificationID missing"`
+	MaintainedProperties       lists.PropertyList   `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
+	CanMintAsset               bool                 `json:"canMintAsset"`
+	CanBurnAsset               bool                 `json:"canBurnAsset"`
+	CanRenumerateAsset         bool                 `json:"canRenumerateAsset"`
+	CanAddMaintainer           bool                 `json:"canAddMaintainer"`
+	CanRemoveMaintainer        bool                 `json:"canRemoveMaintainer"`
+	CanMutateMaintainer        bool                 `json:"canMutateMaintainer"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -37,14 +40,17 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(fromID ids.ID, toID ids.ID, classificationID ids.ID, maintainedProperties lists.PropertyList, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(fromID ids.IdentityID, toID ids.IdentityID, maintainedClassificationID ids.ClassificationID, maintainedProperties lists.PropertyList, canMintAsset bool, canBurnAsset bool, canRenumerateAsset bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		FromID:               fromID,
-		ToID:                 toID,
-		ClassificationID:     classificationID,
-		MaintainedProperties: maintainedProperties,
-		AddMaintainer:        addMaintainer,
-		RemoveMaintainer:     removeMaintainer,
-		MutateMaintainer:     mutateMaintainer,
+		FromID:                     fromID,
+		ToID:                       toID,
+		MaintainedClassificationID: maintainedClassificationID,
+		MaintainedProperties:       maintainedProperties,
+		CanMintAsset:               canMintAsset,
+		CanBurnAsset:               canBurnAsset,
+		CanRenumerateAsset:         canRenumerateAsset,
+		CanAddMaintainer:           canAddMaintainer,
+		CanRemoveMaintainer:        canRemoveMaintainer,
+		CanMutateMaintainer:        canMutateMaintainer,
 	}
 }

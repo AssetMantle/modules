@@ -1,0 +1,12 @@
+syntax = "proto3";
+package metas.queries.meta;
+
+import "gogoproto/gogo.proto";
+import "modules/metas/internal/mappable/mappable.v1.proto";
+
+message QueryResponse {
+  option (gogoproto.goproto_getters) = false;
+  bool success = 1;
+  string error = 2;
+  repeated metas.Mappable list = 3;
+}

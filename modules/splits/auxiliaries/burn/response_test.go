@@ -4,21 +4,82 @@
 package burn
 
 import (
+	"reflect"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/constants/errors"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-func Test_Burn_Response(t *testing.T) {
-	testAuxiliaryResponse := newAuxiliaryResponse(nil)
-	require.Equal(t, auxiliaryResponse{Success: true, Error: nil}, testAuxiliaryResponse)
-	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())
-	require.Equal(t, nil, testAuxiliaryResponse.GetError())
+func Test_auxiliaryResponse_GetError(t *testing.T) {
+	type fields struct {
+		Success bool
+		Error   error
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		wantErr bool
+	}{
+		{"+ve", fields{true, nil}, false},
+		{"+ve", fields{false, errorConstants.EntityNotFound}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			auxiliaryResponse := auxiliaryResponse{
+				Success: tt.fields.Success,
+				Error:   tt.fields.Error,
+			}
+			if err := auxiliaryResponse.GetError(); (err != nil) != tt.wantErr {
+				t.Errorf("GetError() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
 
-	testAuxiliaryResponse2 := newAuxiliaryResponse(errors.IncorrectFormat)
-	require.Equal(t, auxiliaryResponse{Success: false, Error: errors.IncorrectFormat}, testAuxiliaryResponse2)
-	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
-	require.Equal(t, errors.IncorrectFormat, testAuxiliaryResponse2.GetError())
+func Test_auxiliaryResponse_IsSuccessful(t *testing.T) {
+	type fields struct {
+		Success bool
+		Error   error
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   bool
+	}{
+		{"+ve", fields{true, nil}, true},
+		{"+ve", fields{false, errorConstants.EntityNotFound}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			auxiliaryResponse := auxiliaryResponse{
+				Success: tt.fields.Success,
+				Error:   tt.fields.Error,
+			}
+			if got := auxiliaryResponse.IsSuccessful(); got != tt.want {
+				t.Errorf("IsSuccessful() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_newAuxiliaryResponse(t *testing.T) {
+	type args struct {
+		error error
+	}
+	tests := []struct {
+		name string
+		args args
+		want helpers.AuxiliaryResponse
+	}{
+		{"+ve", args{nil}, auxiliaryResponse{true, nil}},
+		{"-ve", args{errorConstants.EntityNotFound}, auxiliaryResponse{false, errorConstants.EntityNotFound}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := newAuxiliaryResponse(tt.args.error); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("newAuxiliaryResponse() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

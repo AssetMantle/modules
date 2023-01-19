@@ -7,8 +7,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
-func RegisterCodec(codec *codec.Codec) {
-	codec.RegisterInterface((*DataID)(nil), nil)
-	codec.RegisterInterface((*ID)(nil), nil)
-	codec.RegisterInterface((*PropertyID)(nil), nil)
+func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	legacyAmino.RegisterInterface((*AssetID)(nil), nil)
+	legacyAmino.RegisterInterface((*ClassificationID)(nil), nil)
+	legacyAmino.RegisterInterface((*DataID)(nil), nil)
+	legacyAmino.RegisterInterface((*HashID)(nil), nil)
+	legacyAmino.RegisterInterface((*ID)(nil), nil)
+	legacyAmino.RegisterInterface((*IdentityID)(nil), nil)
+	legacyAmino.RegisterInterface((*MaintainerID)(nil), nil)
+	legacyAmino.RegisterInterface((*OrderID)(nil), nil)
+	legacyAmino.RegisterInterface((*OwnableID)(nil), nil)
+	legacyAmino.RegisterInterface((*PropertyID)(nil), nil)
+	legacyAmino.RegisterInterface((*SplitID)(nil), nil)
+	legacyAmino.RegisterInterface((*StringID)(nil), nil)
 }

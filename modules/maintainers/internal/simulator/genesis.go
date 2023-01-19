@@ -6,21 +6,29 @@ package simulator
 import (
 	"math/rand"
 
+	"github.com/AssetMantle/modules/modules/maintainers/internal/genesis"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/utilities"
+	"github.com/AssetMantle/modules/schema/documents/base"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+
+	"github.com/AssetMantle/modules/utilities/random"
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/common"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	maintainersModule "github.com/AssetMantle/modules/modules/maintainers/internal/module"
-	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters/dummy"
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/data/base"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	parameters2 "github.com/AssetMantle/modules/schema/parameters"
-	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
+	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -28,19 +36,23 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		dummy.ID.String(),
+		dummy.ID.AsString(),
 		&Data,
 		simulationState.Rand,
-		func(rand *rand.Rand) { Data = base.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
+		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
 	mappableList := make([]helpers.Mappable, simulationState.Rand.Intn(99))
 
+	var classificationID ids.ClassificationID
 	for i := range mappableList {
-		mappableList[i] = mappable.NewMaintainer(key.NewMaintainerID(baseSimulation.GenerateRandomID(simulationState.Rand), baseSimulation.GenerateRandomID(simulationState.Rand)), baseSimulation.GenerateRandomProperties(simulationState.Rand), baseSimulation.GenerateRandomProperties(simulationState.Rand))
+		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
+		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
+		classificationID = baseIDs.NewClassificationID(immutables, mutables)
+		mappableList[i] = mappable.NewMappable(base.NewMaintainer(baseIDs.NewIdentityID(classificationID, immutables), classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool())))
 	}
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, nil, parameters.Prototype().GetList()).Initialize(mappableList, []parameters2.Parameter{dummy.Parameter.Mutate(Data)})
+	genesisState := baseHelpers.NewGenesis(key.Prototype, genesis.PrototypeGenesisState().Initialize(mappableList, []parametersSchema.Parameter{dummy.Parameter.Mutate(Data)}))
 
-	simulationState.GenState[maintainersModule.Name] = common.Codec.MustMarshalJSON(genesisState)
+	simulationState.GenState[maintainersModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
 }

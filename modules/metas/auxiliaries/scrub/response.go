@@ -4,15 +4,15 @@
 package scrub
 
 import (
-	"github.com/AssetMantle/modules/constants/errors"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/lists"
 )
 
 type auxiliaryResponse struct {
-	Success    bool               `json:"success"`
-	Error      error              `json:"error"`
-	Properties lists.PropertyList `json:"properties"`
+	Success            bool  `json:"success"`
+	Error              error `json:"error"`
+	lists.PropertyList `json:"propertyList"`
 }
 
 var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
@@ -32,8 +32,8 @@ func newAuxiliaryResponse(properties lists.PropertyList, error error) helpers.Au
 	}
 
 	return auxiliaryResponse{
-		Success:    true,
-		Properties: properties,
+		Success:      true,
+		PropertyList: properties,
 	}
 }
 
@@ -41,11 +41,11 @@ func GetPropertiesFromResponse(response helpers.AuxiliaryResponse) (lists.Proper
 	switch value := response.(type) {
 	case auxiliaryResponse:
 		if value.IsSuccessful() {
-			return value.Properties, nil
+			return value.PropertyList, nil
 		}
 
 		return nil, value.GetError()
 	default:
-		return nil, errors.NotAuthorized
+		return nil, constants.NotAuthorized
 	}
 }

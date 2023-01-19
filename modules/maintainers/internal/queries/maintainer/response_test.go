@@ -6,29 +6,27 @@ package maintainer
 import (
 	"testing"
 
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/constants/errors"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/common"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mapper"
 	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {
-	var Codec = codec.New()
-	schema.RegisterCodec(Codec)
-	sdkTypes.RegisterCodec(Codec)
-	codec.RegisterCrypto(Codec)
-	codec.RegisterEvidences(Codec)
-	vesting.RegisterCodec(Codec)
-	Codec.Seal()
+	var legacyAmino = codec.NewLegacyAmino()
+	schema.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	legacyAmino.Seal()
 
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
@@ -42,7 +40,7 @@ func CreateTestInput(t *testing.T) sdkTypes.Context {
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, abciTypes.Header{
+	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
@@ -54,15 +52,15 @@ func Test_Maintainer_Response(t *testing.T) {
 	collection := mapper.Prototype().NewCollection(context)
 
 	testQueryResponse := newQueryResponse(collection, nil)
-	testQueryResponseWithError := newQueryResponse(collection, errors.IncorrectFormat)
+	testQueryResponseWithError := newQueryResponse(collection, constants.IncorrectFormat)
 
 	require.Equal(t, true, testQueryResponse.IsSuccessful())
 	require.Equal(t, false, testQueryResponseWithError.IsSuccessful())
 	require.Equal(t, nil, testQueryResponse.GetError())
-	require.Equal(t, errors.IncorrectFormat, testQueryResponseWithError.GetError())
+	require.Equal(t, constants.IncorrectFormat, testQueryResponseWithError.GetError())
 
 	encodedResponse, _ := testQueryResponse.Encode()
-	bytes, _ := common.Codec.MarshalJSON(testQueryResponse)
+	bytes, _ := common.LegacyAmino.MarshalJSON(testQueryResponse)
 	require.Equal(t, bytes, encodedResponse)
 
 	decodedResponse, _ := queryResponse{}.Decode(bytes)

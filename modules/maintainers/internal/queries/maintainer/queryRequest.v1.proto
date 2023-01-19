@@ -1,0 +1,10 @@
+syntax = "proto3";
+package maintainers.queries.maintainer;
+
+import "schema/ids/base/maintainerID.v1.proto";
+import "gogoproto/gogo.proto";
+
+message QueryRequest {
+  option (gogoproto.goproto_getters) = false;
+  ids.MaintainerID maintainer_i_d = 1;
+}

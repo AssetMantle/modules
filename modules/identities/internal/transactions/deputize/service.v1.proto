@@ -1,0 +1,12 @@
+syntax = "proto3";
+package identities.transactions.deputize;
+
+import "google/api/annotations.proto";
+import "modules/identities/internal/transactions/deputize/message.v1.proto";
+import "modules/identities/internal/transactions/deputize/response.v1.proto";
+
+service Service {
+  rpc Handle(Message) returns (Response) {
+    option (google.api.http).post = "/mantle/identities/deputize";
+  }
+}

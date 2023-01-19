@@ -1,0 +1,10 @@
+syntax = "proto3";
+package data;
+
+import "gogoproto/gogo.proto";
+
+message AccAddressData{
+  option (gogoproto.goproto_getters) = false;
+
+  bytes value = 1;
+}

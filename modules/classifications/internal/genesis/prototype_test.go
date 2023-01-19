@@ -6,6 +6,8 @@ package genesis
 import (
 	"testing"
 
+	"github.com/AssetMantle/modules/schema/documents/constants"
+
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
@@ -17,6 +19,6 @@ import (
 
 func TestPrototype(t *testing.T) {
 	require.Panics(t, func() {
-		require.Equal(t, Prototype(), baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{}, parameters.Prototype().GetList()))
+		require.Equal(t, Prototype(), baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{mappable.NewMappable(constants.NubClassification), mappable.NewMappable(constants.MaintainerClassification)}, parameters.Prototype().GetList()))
 	})
 }
