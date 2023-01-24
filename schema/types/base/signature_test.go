@@ -22,6 +22,16 @@ type testableStringID struct {
 	IDString string
 }
 
+func (t testableStringID) AsString() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t testableStringID) ToAnyID() ids.AnyID {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (t testableStringID) Compare(listable traits.Listable) int {
 	// TODO implement me
 	panic("implement me")

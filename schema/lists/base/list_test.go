@@ -162,7 +162,7 @@ func Test_list_Size(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.list.Size(); got != tt.want {
+			if got := len(tt.list); got != tt.want {
 				t.Errorf("Size() = %v, want %v", got, tt.want)
 			}
 		})

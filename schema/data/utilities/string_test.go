@@ -12,7 +12,6 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -36,15 +35,15 @@ func TestReadData(t *testing.T) {
 	}{
 		{"String Data", args{"S|newFact"}, base.NewStringData("newFact"), false},
 		{"-ve Unknown Data", args{"SomeRandomData"}, nil, true},
-		{"List Data", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(baseLists.NewDataList(dataList...)), false},
-		{"List Data empty list", args{"L|"}, base.NewListData(baseLists.NewDataList()), false},
+		{"List Data", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(base.NewListData(dataList...)), false},
+		{"List Data empty list", args{"L|"}, base.NewListData(base.NewListData()), false},
 		{"Id Data", args{"I|data"}, base.NewIDData(baseIDs.NewStringID("data")), false},
 		{"Height Data", args{"H|100"}, base.NewHeightData(baseTypes.NewHeight(100)), false},
 		{"Dec Data", args{"D|100"}, base.NewDecData(sdkTypes.NewDec(100)), false},
 		{"Bool Data", args{"B|true"}, base.NewBooleanData(true), false},
 		{"AccAddress data", args{"A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"}, base.NewAccAddressData(fromAccAddress), false},
 		{"-ve String Data", args{"S|S,|newFact"}, base.NewStringData("S,|newFact"), true},
-		{"-ve List Data String", args{"L|S|,TestData,S|,Test"}, base.NewListData(baseLists.NewDataList([]data.Data{base.NewStringData("S|,TestData"), base.NewStringData("S|,Test")}...)), true},
+		{"-ve List Data String", args{"L|S|,TestData,S|,Test"}, base.NewListData(base.NewListData([]data.Data{base.NewStringData("S|,TestData"), base.NewStringData("S|,Test")}...)), true},
 	}
 
 	for _, tt := range tests {
@@ -94,9 +93,9 @@ func Test_readAccAddressData(t *testing.T) {
 		want    data.AccAddressData
 		wantErr bool
 	}{
-		{"+ve nil", args{}, base.AccAddressDataPrototype(), false},
+		{"+ve nil", args{}, base.AccAddressDataPrototype().(data.AccAddressData), false},
 		{"+ve string", args{"cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"}, base.NewAccAddressData(fromAccAddress), false},
-		{"-ve", args{"testData"}, base.AccAddressDataPrototype(), true},
+		{"-ve", args{"testData"}, base.AccAddressDataPrototype().(data.AccAddressData), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -239,7 +238,7 @@ func Test_readListData(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve nil", args{}, base.ListDataPrototype(), false},
-		{"+ve string", args{"S|1,S|2,S|3"}, base.NewListData(baseLists.NewDataList([]data.Data{base.NewStringData("1"), base.NewStringData("2"), base.NewStringData("3")}...)), false},
+		{"+ve string", args{"S|1,S|2,S|3"}, base.NewListData(base.NewListData([]data.Data{base.NewStringData("1"), base.NewStringData("2"), base.NewStringData("3")}...)), false},
 		{"-ve", args{"testData"}, base.ListDataPrototype(), true},
 	}
 	for _, tt := range tests {

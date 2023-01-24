@@ -4,19 +4,19 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/modules/schema/traits"
 	"reflect"
 	"strings"
 	"testing"
-
-	"github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/traits"
 )
 
 func Test_idList_Add(t *testing.T) {
 	type fields struct {
-		List lists.List
+		List []*baseIds.AnyID
 	}
 	type args struct {
 		ids []ids.ID
@@ -27,13 +27,13 @@ func Test_idList_Add(t *testing.T) {
 		args   args
 		want   lists.IDList
 	}{
-		{"+ve for nil", fields{NewList()}, args{[]ids.ID{NewStringID("ID")}}, idList{NewList(idsToListables([]ids.ID{NewStringID("ID")}...)...)}},                                                               // TODO: panic for nil
-		{"+ve", fields{NewList(idsToListables([]ids.ID{NewStringID("ID")}...)...)}, args{[]ids.ID{NewStringID("ID1")}}, idList{NewList(idsToListables([]ids.ID{NewStringID("ID"), NewStringID("ID1")}...)...)}}, // TODO: report
+		{"+ve for nil", fields{[]*baseIds.AnyID{}}, args{[]ids.ID{NewStringID("ID")}}, &IDList{[]*baseIds.AnyID{NewStringID("ID").ToAnyID().(*baseIds.AnyID)}}},                                                                                     // TODO: panic for nil
+		{"+ve", fields{[]*baseIds.AnyID{NewStringID("ID").ToAnyID().(*baseIds.AnyID)}}, args{[]ids.ID{NewStringID("ID1")}}, &IDList{[]*baseIds.AnyID{NewStringID("ID").ToAnyID().(*baseIds.AnyID), NewStringID("ID1").ToAnyID().(*baseIds.AnyID)}}}, // TODO: report
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			idList := idList{
-				List: tt.fields.List,
+			idList := &IDList{
+				IDList: tt.fields.List,
 			}
 			if got := idList.Add(tt.args.ids...); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Add() = %v, want %v", got, tt.want)
@@ -44,20 +44,20 @@ func Test_idList_Add(t *testing.T) {
 
 func Test_idList_GetList(t *testing.T) {
 	type fields struct {
-		List lists.List
+		List []*baseIds.AnyID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   []ids.ID
 	}{
-		{"+ve with nil", fields{NewList()}, []ids.ID{}},
-		{"+ve", fields{NewList(idsToListables([]ids.ID{NewStringID("Data")}...)...)}, []ids.ID{NewStringID("Data").(ids.ID)}},
+		{"+ve with nil", fields{[]*baseIds.AnyID{}}, []ids.ID{}},
+		{"+ve", fields{[]*baseIds.AnyID{NewStringID("Data").ToAnyID().(*baseIds.AnyID)}}, []ids.ID{NewStringID("Data").(ids.ID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			idList := idList{
-				List: tt.fields.List,
+			idList := IDList{
+				IDList: tt.fields.List,
 			}
 			if got := idList.GetList(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetList() = %v, want %v", got, tt.want)
@@ -68,7 +68,7 @@ func Test_idList_GetList(t *testing.T) {
 
 func Test_idList_Remove(t *testing.T) {
 	type fields struct {
-		List lists.List
+		List []*baseIds.AnyID
 	}
 	type args struct {
 		ids []ids.ID
@@ -79,13 +79,13 @@ func Test_idList_Remove(t *testing.T) {
 		args   args
 		want   lists.IDList
 	}{
-		{"-ve with no removal", fields{NewList(idsToListables(NewStringID("ID1"), NewStringID("ID2"), NewStringID("ID3"))...)}, args{}, idList{NewList(idsToListables(NewStringID("ID1"), NewStringID("ID2"), NewStringID("ID3"))...)}},
-		{"+ve with removal", fields{NewList(idsToListables(NewStringID("ID1"), NewStringID("ID2"), NewStringID("ID3"))...)}, args{[]ids.ID{NewStringID("ID3")}}, idList{NewList(idsToListables(NewStringID("ID1"), NewStringID("ID2"))...)}},
+		{"-ve with no removal", fields{[]*baseIds.AnyID{NewStringID("ID1").ToAnyID().(*baseIds.AnyID), NewStringID("ID2").ToAnyID().(*baseIds.AnyID), NewStringID("ID3").ToAnyID().(*baseIds.AnyID)}}, args{}, &IDList{[]*baseIds.AnyID{NewStringID("ID1").ToAnyID().(*baseIds.AnyID), NewStringID("ID2").ToAnyID().(*baseIds.AnyID), NewStringID("ID3").ToAnyID().(*baseIds.AnyID)}}},
+		{"+ve with removal", fields{[]*baseIds.AnyID{NewStringID("ID1").ToAnyID().(*baseIds.AnyID), NewStringID("ID2").ToAnyID().(*baseIds.AnyID), NewStringID("ID3").ToAnyID().(*baseIds.AnyID)}}, args{[]ids.ID{NewStringID("ID3")}}, &IDList{[]*baseIds.AnyID{NewStringID("ID1").ToAnyID().(*baseIds.AnyID), NewStringID("ID2").ToAnyID().(*baseIds.AnyID)}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			idList := idList{
-				List: tt.fields.List,
+			idList := IDList{
+				IDList: tt.fields.List,
 			}
 			if got := idList.Remove(tt.args.ids...); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Remove() = %v, want %v", got, tt.want)
@@ -96,7 +96,7 @@ func Test_idList_Remove(t *testing.T) {
 
 func Test_idList_Search(t *testing.T) {
 	type fields struct {
-		List lists.List
+		List []*baseIds.AnyID
 	}
 	type args struct {
 		id ids.ID
@@ -108,14 +108,14 @@ func Test_idList_Search(t *testing.T) {
 		wantIndex int
 		wantFound bool
 	}{
-		{"+ve with nil", fields{NewList(idsToListables([]ids.ID{}...)...)}, args{NewStringID("ID")}, 0, false}, // TODO report issue
-		{"+ve", fields{NewList(idsToListables([]ids.ID{NewStringID("ID")}...)...)}, args{NewStringID("ID")}, 0, true},
-		{"-ve with no entry", fields{NewList(idsToListables([]ids.ID{NewStringID("ID")}...)...)}, args{NewStringID("ID1")}, 1, false},
+		{"+ve with nil", fields{[]*baseIds.AnyID{}}, args{NewStringID("ID")}, 0, false}, // TODO report issue
+		{"+ve", fields{[]*baseIds.AnyID{NewStringID("ID").ToAnyID().(*baseIds.AnyID)}}, args{NewStringID("ID")}, 0, true},
+		{"-ve with no entry", fields{[]*baseIds.AnyID{NewStringID("ID").ToAnyID().(*baseIds.AnyID)}}, args{NewStringID("ID1")}, 1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			idList := idList{
-				List: tt.fields.List,
+			idList := IDList{
+				IDList: tt.fields.List,
 			}
 			gotIndex, gotFound := idList.Search(tt.args.id)
 			if gotIndex != tt.wantIndex {
@@ -128,26 +128,27 @@ func Test_idList_Search(t *testing.T) {
 	}
 }
 
-func Test_idsToListables(t *testing.T) {
-	type args struct {
-		ids []ids.ID
-	}
-	tests := []struct {
-		name string
-		args args
-		want []traits.Listable
-	}{
-		{"+ve with nil", args{}, []traits.Listable{}},
-		{"+ve", args{[]ids.ID{NewStringID("ID")}}, []traits.Listable{NewStringID("ID")}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := idsToListables(tt.args.ids...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("idsToListables() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+//
+//func Test_idsToListables(t *testing.T) {
+//	type args struct {
+//		ids []ids.ID
+//	}
+//	tests := []struct {
+//		name string
+//		args args
+//		want []traits.Listable
+//	}{
+//		{"+ve with nil", args{}, []traits.Listable{}},
+//		{"+ve", args{[]ids.ID{NewStringID("ID")}}, []traits.Listable{NewStringID("ID")}},
+//	}
+//	for _, tt := range tests {
+//		t.Run(tt.name, func(t *testing.T) {
+//			if got := idsToListables(tt.args.ids...); !reflect.DeepEqual(got, tt.want) {
+//				t.Errorf("idsToListables() = %v, want %v", got, tt.want)
+//			}
+//		})
+//	}
+//}
 
 // mocks
 
