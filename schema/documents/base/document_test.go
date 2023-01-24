@@ -22,7 +22,7 @@ import (
 
 func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, documents.Document) {
 	testImmutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	testMutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList()))))
+	testMutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseData.NewListData()))))
 	classificationID := baseIDs.NewClassificationID(testImmutables, testMutables)
 	testDocument := NewDocument(classificationID, testImmutables, testMutables)
 	return classificationID, testImmutables, testMutables, testDocument
