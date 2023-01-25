@@ -16,11 +16,11 @@ import (
 )
 
 func TestCollection(t *testing.T) {
-	context, storeKey, _ := test.SetupTest(t)
+	context, storeKey, _, _ := test.SetupTest(t)
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 
 	// Initialize
-	Collection := collection{}.Initialize(context, Mapper).(collection)
+	Collection := collection{}.Initialize(context.Context(), Mapper).(collection)
 	require.Equal(t, reflect.TypeOf(Mapper), reflect.TypeOf(Collection.mapper))
 
 	// Add

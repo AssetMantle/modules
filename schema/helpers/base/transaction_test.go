@@ -6,6 +6,7 @@ package base
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/AssetMantle/modules/schema/helpers"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -25,17 +26,17 @@ import (
 )
 
 func TestTransaction(t *testing.T) {
-	context, storeKey, _ := test.SetupTest(t)
+	context, storeKey, _, cliCtx := test.SetupTest(t)
 	var legacyAmino = sdkCodec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 	Transaction := NewTransaction("test", "", "", base.TestTransactionRequestPrototype, base.TestMessagePrototype,
-		base.TestTransactionKeeperPrototype).InitializeKeeper(Mapper, parametersPrototype()).(transaction)
-	require.Equal(t, "TestMessage", base.TestMessagePrototype().Route())
-	require.NotNil(t, base.TestMessagePrototype().GetSignBytes())
-	require.Equal(t, nil, base.TestTransactionKeeperPrototype().Transact(context, nil).GetError())
+		base.TestTransactionKeeperPrototype, nil, nil).InitializeKeeper(Mapper, parametersPrototype()).(transaction)
+	require.Equal(t, "TestMessage", base.TestMessagePrototype().(*base.TestMessage).Route())
+	require.NotNil(t, base.TestMessagePrototype().(*base.TestMessage).GetSignBytes())
+	require.Equal(t, nil, base.TestTransactionKeeperPrototype().Transact(context.Context(), nil).GetError())
 
 	// GetName
 	require.Equal(t, "test", Transaction.GetName())
@@ -55,7 +56,7 @@ func TestTransaction(t *testing.T) {
 	require.Equal(t, `ABCIQuery: Post failed: Post "http://localhost:26657": dial tcp 127.0.0.1:26657: connect: connection refused`,
 		command.ExecuteContext(context.Context()).Error())
 	// HandleQuery
-	_, err = Transaction.HandleMessage(context, message)
+	_, err = Transaction.HandleMessage(context.Context(), message.(helpers.Message))
 	require.Nil(t, err)
 
 	// RPC ERROR
@@ -66,7 +67,7 @@ func TestTransaction(t *testing.T) {
 	testRequest1, err := http.NewRequest("GET", "/test", bytes.NewBuffer(request1))
 	require.Nil(t, err)
 	responseRecorder := httptest.NewRecorder()
-	Transaction.RESTRequestHandler(context).ServeHTTP(responseRecorder, testRequest1)
+	Transaction.RESTRequestHandler(cliCtx).ServeHTTP(responseRecorder, testRequest1)
 	require.Equal(t, `{"error":"ABCIQuery: Post failed: Post \"http://localhost:26657\": dial tcp 127.0.0.1:26657: connect: connection refused"}`, responseRecorder.Body.String())
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 
@@ -75,7 +76,7 @@ func TestTransaction(t *testing.T) {
 	testRequest2, err := http.NewRequest("GET", "/test", bytes.NewBuffer(request2))
 	require.Nil(t, err)
 	responseRecorder = httptest.NewRecorder()
-	Transaction.RESTRequestHandler(context).ServeHTTP(responseRecorder, testRequest2)
+	Transaction.RESTRequestHandler(cliCtx).ServeHTTP(responseRecorder, testRequest2)
 	require.Equal(t, `{"error":"failed to decode JSON payload: JSON encoding of interfaces require non-empty type field."}`, responseRecorder.Body.String())
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 
@@ -87,7 +88,7 @@ func TestTransaction(t *testing.T) {
 	testRequest3, err := http.NewRequest("GET", "/test", bytes.NewBuffer(request3))
 	require.Nil(t, err)
 	responseRecorder = httptest.NewRecorder()
-	Transaction.RESTRequestHandler(context).ServeHTTP(responseRecorder, testRequest3)
+	Transaction.RESTRequestHandler(cliCtx).ServeHTTP(responseRecorder, testRequest3)
 	require.Equal(t, `{"error":"chain-id required but not specified"}{"error":""}`, responseRecorder.Body.String())
 	require.Equal(t, http.StatusUnauthorized, responseRecorder.Code)
 
@@ -99,7 +100,7 @@ func TestTransaction(t *testing.T) {
 	testRequest4, err := http.NewRequest("GET", "/test", bytes.NewBuffer(request4))
 	require.Nil(t, err)
 	responseRecorder = httptest.NewRecorder()
-	Transaction.RESTRequestHandler(context).ServeHTTP(responseRecorder, testRequest4)
+	Transaction.RESTRequestHandler(cliCtx).ServeHTTP(responseRecorder, testRequest4)
 	require.Equal(t, `{"error":"ABCIQuery: Post failed: Post \"http://localhost:26657\": dial tcp 127.0.0.1:26657: connect: connection refused"}`, responseRecorder.Body.String())
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 
@@ -112,7 +113,7 @@ func TestTransaction(t *testing.T) {
 	testRequest5, err := http.NewRequest("GET", "/test", bytes.NewBuffer(request5))
 	require.Nil(t, err)
 	responseRecorder = httptest.NewRecorder()
-	Transaction.RESTRequestHandler(context).ServeHTTP(responseRecorder, testRequest5)
+	Transaction.RESTRequestHandler(cliCtx).ServeHTTP(responseRecorder, testRequest5)
 	require.Equal(t, http.StatusOK, responseRecorder.Code)
 
 }
