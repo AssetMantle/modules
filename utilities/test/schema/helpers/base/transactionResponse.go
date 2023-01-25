@@ -4,6 +4,7 @@
 package base
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -69,7 +70,7 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (t transactionKeeper) Transact(_ sdkTypes.Context, _ sdkTypes.Msg) helpers.TransactionResponse {
+func (t transactionKeeper) Transact(_ context.Context, _ helpers.Message) helpers.TransactionResponse {
 	return transactionResponse{Success: true, Error: nil}
 }
 

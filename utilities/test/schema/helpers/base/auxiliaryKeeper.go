@@ -4,8 +4,7 @@
 package base
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
+	"context"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -15,7 +14,7 @@ type testAuxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*testAuxiliaryKeeper)(nil)
 
-func (t testAuxiliaryKeeper) Help(_ sdkTypes.Context, _ helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (t testAuxiliaryKeeper) Help(_ context.Context, _ helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	return nil
 }
 

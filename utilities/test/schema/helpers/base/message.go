@@ -5,6 +5,7 @@ package base
 
 import (
 	"encoding/json"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -12,20 +13,25 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-// TestMessage msg type for testing
-type TestMessage struct {
-	From sdkTypes.AccAddress
-	ID   string
-}
-
 var _ helpers.Message = (*TestMessage)(nil)
 
 func NewTestMessage(addr sdkTypes.AccAddress, id string) sdkTypes.Msg {
-	return TestMessage{
+	return &TestMessage{
 		From: addr,
 		ID:   id,
 	}
 }
+
+func (m *TestMessage) RegisterInterface(registry types.InterfaceRegistry) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m *TestMessage) GenerateOnSuccessEvents() sdkTypes.Events {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (message TestMessage) Route() string { return "TestMessage" }
 func (message TestMessage) Type() string  { return "TestMessage" }
 func (message TestMessage) GetSignBytes() []byte {
@@ -45,5 +51,5 @@ func (message TestMessage) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmi
 }
 
 func TestMessagePrototype() helpers.Message {
-	return TestMessage{}
+	return &TestMessage{}
 }

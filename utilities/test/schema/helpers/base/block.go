@@ -4,7 +4,7 @@
 package base
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"context"
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -17,11 +17,11 @@ type block struct {
 
 var _ helpers.Block = (*block)(nil)
 
-func (b block) Begin(_ sdkTypes.Context, _ abci.RequestBeginBlock) {
+func (b block) Begin(_ context.Context, _ abci.RequestBeginBlock) {
 
 }
 
-func (b block) End(_ sdkTypes.Context, _ abci.RequestEndBlock) {
+func (b block) End(_ context.Context, _ abci.RequestEndBlock) {
 
 }
 
