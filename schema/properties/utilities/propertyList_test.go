@@ -14,21 +14,21 @@ import (
 
 func TestDuplicate(t *testing.T) {
 	type args struct {
-		propertyList []properties.Property
+		propertyList []properties.AnyProperty
 	}
 	tests := []struct {
 		name string
 		args args
 		want bool
 	}{
-		{"Positive Case, Unique PropertyList", args{propertyList: []properties.Property{baseProperties.NewMesaProperty(baseIDs.NewStringID("a"), baseData.NewStringData("factA")),
-			baseProperties.NewMesaProperty(baseIDs.NewStringID("b"), baseData.NewStringData("factB")),
-			baseProperties.NewMesaProperty(baseIDs.NewStringID("c"), baseData.NewStringData("factC")),
-			baseProperties.NewMesaProperty(baseIDs.NewStringID("d"), baseData.NewStringData("factD"))}}, false},
-		{"Negative Case, DuplicateExists", args{propertyList: []properties.Property{baseProperties.NewMesaProperty(baseIDs.NewStringID("a"), baseData.NewStringData("factA")),
-			baseProperties.NewMesaProperty(baseIDs.NewStringID("b"), baseData.NewStringData("factB")),
-			baseProperties.NewMesaProperty(baseIDs.NewStringID("c"), baseData.NewStringData("factC")),
-			baseProperties.NewMesaProperty(baseIDs.NewStringID("a"), baseData.NewStringData("factD"))}}, true},
+		{"Positive Case, Unique PropertyList", args{propertyList: []properties.AnyProperty{baseProperties.NewMesaProperty(baseIDs.NewStringID("a"), baseData.NewStringData("factA")).ToAnyProperty(),
+			baseProperties.NewMesaProperty(baseIDs.NewStringID("b"), baseData.NewStringData("factB")).ToAnyProperty(),
+			baseProperties.NewMesaProperty(baseIDs.NewStringID("c"), baseData.NewStringData("factC")).ToAnyProperty(),
+			baseProperties.NewMesaProperty(baseIDs.NewStringID("d"), baseData.NewStringData("factD")).ToAnyProperty()}}, false},
+		{"Negative Case, DuplicateExists", args{propertyList: []properties.AnyProperty{baseProperties.NewMesaProperty(baseIDs.NewStringID("a"), baseData.NewStringData("factA")).ToAnyProperty(),
+			baseProperties.NewMesaProperty(baseIDs.NewStringID("b"), baseData.NewStringData("factB")).ToAnyProperty(),
+			baseProperties.NewMesaProperty(baseIDs.NewStringID("c"), baseData.NewStringData("factC")).ToAnyProperty(),
+			baseProperties.NewMesaProperty(baseIDs.NewStringID("a"), baseData.NewStringData("factD")).ToAnyProperty()}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
