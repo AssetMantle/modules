@@ -8,8 +8,6 @@ import (
 	"math/rand"
 	"testing"
 
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/std"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -20,7 +18,6 @@ import (
 	"github.com/AssetMantle/modules/utilities/test"
 	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 
-	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -28,12 +25,13 @@ import (
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 )
 
+//TODO: Add grpc gateway handling for tests
+
 var auxiliariesPrototype = func() helpers.Auxiliaries {
 	return auxiliaries{[]helpers.Auxiliary{NewAuxiliary("testAuxiliary", baseTestUtilities.TestAuxiliaryKeeperPrototype)}}
 }
 var genesisPrototype = func() helpers.Genesis {
-	return NewGenesis(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype,
-		[]helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")},
+	return NewGenesis(baseTestUtilities.KeyPrototype, baseTestUtilities.PrototypeGenesisState()).Initialize([]helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")},
 		[]parametersSchema.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })})
 }
 var mapperPrototype = func() helpers.Mapper {
@@ -44,49 +42,47 @@ var parametersPrototype = func() helpers.Parameters {
 }
 var queriesPrototype = func() helpers.Queries {
 	return queries{[]helpers.Query{NewQuery("testQuery", "q", "testQuery", "test", baseTestUtilities.TestQueryRequestPrototype,
-		baseTestUtilities.TestQueryResponsePrototype, baseTestUtilities.TestQueryKeeperPrototype)}}
+		baseTestUtilities.TestQueryResponsePrototype, baseTestUtilities.TestQueryKeeperPrototype, nil, nil)}}
 }
 var simulatorPrototype = func() helpers.Simulator { return nil }
 var transactionsPrototype = func() helpers.Transactions {
 	return transactions{[]helpers.Transaction{NewTransaction("TestMessage", "", "", baseTestUtilities.TestTransactionRequestPrototype, baseTestUtilities.TestMessagePrototype,
-		baseTestUtilities.TestTransactionKeeperPrototype)}}
+		baseTestUtilities.TestTransactionKeeperPrototype, nil, nil)}}
 }
 var blockPrototype = func() helpers.Block { return baseTestUtilities.TestBlockPrototype() }
 
 func TestModule(t *testing.T) {
-	context, storeKey, transientStoreKey := test.SetupTest(t)
-	var legacyAmino = sdkCodec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
-	std.RegisterLegacyAminoCodec(legacyAmino)
-	legacyAmino.Seal()
+	context, storeKey, transientStoreKey, cliCtx := test.SetupTest(t)
 
-	subspace := paramsTypes.NewSubspace(legacyAmino, storeKey, transientStoreKey, "test") // .WithKeyTable(parametersPrototype().GetKeyTable())
+	codec := CodecPrototype()
+
+	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test") // .WithKeyTable(parametersPrototype().GetKeyTable())
 	// subspace.SetParamSet(context, parametersPrototype())
-	Module := NewModule("test", auxiliariesPrototype, genesisPrototype,
-		mapperPrototype, parametersPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype, blockPrototype).Initialize(storeKey, subspace).(module)
+	Module := NewModule("test", 1, auxiliariesPrototype, blockPrototype, genesisPrototype, nil,
+		mapperPrototype, parametersPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype).Initialize(storeKey, subspace).(module)
 
 	// AppModuleBasic
 	require.Equal(t, "test", Module.Name())
 
 	// RegisterLegacyAminoCodec
-	Module.RegisterLegacyAminoCodec(legacyAmino)
+	Module.RegisterLegacyAminoCodec(codec.GetLegacyAmino())
 
 	require.NotPanics(t, func() {
-		Module.DefaultGenesis()
+		Module.DefaultGenesis(codec.GetProtoCodec())
 	})
 
 	require.NotPanics(t, func() {
 	})
-	require.Nil(t, Module.ValidateGenesis(Module.DefaultGenesis()))
+	require.Nil(t, Module.ValidateGenesis(codec.GetProtoCodec(), nil, Module.DefaultGenesis(codec.GetProtoCodec())))
 
 	router := mux.NewRouter()
 	require.NotPanics(t, func() {
-		Module.RegisterRESTRoutes(context, router)
+		Module.RegisterRESTRoutes(cliCtx, router)
 	})
 
 	// GetTxCmd
-	require.Equal(t, "test", Module.GetTxCmd(legacyAmino).Name())
-	require.Equal(t, "test", Module.GetQueryCmd(legacyAmino).Name())
+	require.Equal(t, "test", Module.GetTxCmd().Name())
+	require.Equal(t, "test", Module.GetQueryCmd().Name())
 
 	// AppModule
 	require.NotPanics(t, func() {
@@ -94,7 +90,7 @@ func TestModule(t *testing.T) {
 	})
 	require.Equal(t, "test", Module.Route())
 
-	response, err := Module.NewHandler()(context, baseTestUtilities.NewTestMessage(sdkTypes.AccAddress("addr"), "id"))
+	response, err := Module.Route().Handler()(context, baseTestUtilities.NewTestMessage(sdkTypes.AccAddress("addr"), "id"))
 	require.Nil(t, err)
 	require.NotNil(t, response)
 
@@ -103,7 +99,7 @@ func TestModule(t *testing.T) {
 	encodedRequest, err := Module.queries.Get("testQuery").(query).requestPrototype().Encode()
 	require.Nil(t, err)
 
-	queryResponse, err := Module.NewQuerierHandler()(context, []string{"testQuery"}, abciTypes.RequestQuery{Data: encodedRequest})
+	queryResponse, err := Module.LegacyQuerierHandler(codec.GetLegacyAmino())(context, []string{"testQuery"}, abciTypes.RequestQuery{Data: encodedRequest})
 	require.Nil(t, err)
 	require.NotNil(t, queryResponse)
 
@@ -114,10 +110,10 @@ func TestModule(t *testing.T) {
 	require.Equal(t, []abciTypes.ValidatorUpdate{}, endBlockResponse)
 
 	require.NotPanics(t, func() {
-		Module.InitGenesis(context, Module.DefaultGenesis())
+		Module.InitGenesis(context, codec.GetProtoCodec(), Module.DefaultGenesis(codec.GetProtoCodec()))
 	})
 
-	require.Equal(t, Module.DefaultGenesis(), Module.ExportGenesis(context))
+	require.Equal(t, Module.DefaultGenesis(codec.GetProtoCodec()), Module.ExportGenesis(context, codec.GetProtoCodec()))
 	// AppModuleSimulation
 	require.Panics(t, func() {
 		Module.GenerateGenesisState(&sdkModuleTypes.SimulationState{})
