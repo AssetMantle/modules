@@ -18,6 +18,9 @@ var _ data.IDData = (*IDData)(nil)
 func (idData *IDData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(idData)
 }
+func (idData *IDData) AsString() string {
+	return idData.Value.AsString()
+}
 func (idData *IDData) Compare(listable traits.Listable) int {
 	compareIDData, err := dataFromListable(listable)
 	if err != nil {

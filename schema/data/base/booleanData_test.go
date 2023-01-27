@@ -223,7 +223,7 @@ func Test_booleanData_String(t *testing.T) {
 			booleanData := &BooleanData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, booleanData.String(), "String()")
+			assert.Equalf(t, tt.want, booleanData.AsString(), "String()")
 		})
 	}
 }

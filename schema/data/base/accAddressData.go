@@ -27,6 +27,9 @@ func (accAddressData *AccAddressData) Compare(listable traits.Listable) int {
 	}
 	return bytes.Compare(accAddressData.Bytes(), compareAccAddressData.Bytes())
 }
+func (accAddressData *AccAddressData) AsString() string {
+	return sdkTypes.AccAddress(accAddressData.Value).String()
+}
 func (accAddressData *AccAddressData) Bytes() []byte {
 	return sdkTypes.AccAddress(accAddressData.Value).Bytes()
 }
