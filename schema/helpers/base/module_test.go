@@ -57,7 +57,7 @@ func TestModule(t *testing.T) {
 	codec := CodecPrototype()
 
 	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test") // .WithKeyTable(parametersPrototype().GetKeyTable())
-	// subspace.SetParamSet(context, parametersPrototype())
+	// subspace.SetParamSet(sdkTypes.UnwrapSDKContext(context), parametersPrototype())
 	Module := NewModule("test", 1, auxiliariesPrototype, blockPrototype, genesisPrototype, nil,
 		mapperPrototype, parametersPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype).Initialize(storeKey, subspace).(module)
 
@@ -90,7 +90,7 @@ func TestModule(t *testing.T) {
 	})
 	require.Equal(t, "test", Module.Route())
 
-	response, err := Module.Route().Handler()(context, baseTestUtilities.NewTestMessage(sdkTypes.AccAddress("addr"), "id"))
+	response, err := Module.Route().Handler()(sdkTypes.UnwrapSDKContext(context), baseTestUtilities.NewTestMessage(sdkTypes.AccAddress("addr"), "id"))
 	require.Nil(t, err)
 	require.NotNil(t, response)
 
@@ -99,21 +99,21 @@ func TestModule(t *testing.T) {
 	encodedRequest, err := Module.queries.Get("testQuery").(query).requestPrototype().Encode()
 	require.Nil(t, err)
 
-	queryResponse, err := Module.LegacyQuerierHandler(codec.GetLegacyAmino())(context, []string{"testQuery"}, abciTypes.RequestQuery{Data: encodedRequest})
+	queryResponse, err := Module.LegacyQuerierHandler(codec.GetLegacyAmino())(sdkTypes.UnwrapSDKContext(context), []string{"testQuery"}, abciTypes.RequestQuery{Data: encodedRequest})
 	require.Nil(t, err)
 	require.NotNil(t, queryResponse)
 
 	require.NotPanics(t, func() {
-		Module.BeginBlock(context, abciTypes.RequestBeginBlock{})
+		Module.BeginBlock(sdkTypes.UnwrapSDKContext(context), abciTypes.RequestBeginBlock{})
 	})
-	endBlockResponse := Module.EndBlock(context, abciTypes.RequestEndBlock{})
+	endBlockResponse := Module.EndBlock(sdkTypes.UnwrapSDKContext(context), abciTypes.RequestEndBlock{})
 	require.Equal(t, []abciTypes.ValidatorUpdate{}, endBlockResponse)
 
 	require.NotPanics(t, func() {
-		Module.InitGenesis(context, codec.GetProtoCodec(), Module.DefaultGenesis(codec.GetProtoCodec()))
+		Module.InitGenesis(sdkTypes.UnwrapSDKContext(context), codec.GetProtoCodec(), Module.DefaultGenesis(codec.GetProtoCodec()))
 	})
 
-	require.Equal(t, Module.DefaultGenesis(codec.GetProtoCodec()), Module.ExportGenesis(context, codec.GetProtoCodec()))
+	require.Equal(t, Module.DefaultGenesis(codec.GetProtoCodec()), Module.ExportGenesis(sdkTypes.UnwrapSDKContext(context), codec.GetProtoCodec()))
 	// AppModuleSimulation
 	require.Panics(t, func() {
 		Module.GenerateGenesisState(&sdkModuleTypes.SimulationState{})

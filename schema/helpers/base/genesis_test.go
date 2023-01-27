@@ -48,10 +48,10 @@ func TestGenesis(t *testing.T) {
 	require.Equal(t, rawMessage, Genesis.Decode(codec.GetProtoCodec(), rawMessage).Encode(codec.GetProtoCodec()))
 
 	require.NotPanics(t, func() {
-		Genesis.Import(context.Context(), Mapper, Parameters)
+		Genesis.Import(context, Mapper, Parameters)
 	})
 	require.NotPanics(t, func() {
-		err := Genesis.Export(context.Context(), Mapper, Parameters).Validate()
+		err := Genesis.Export(context, Mapper, Parameters).Validate()
 		require.Nil(t, err)
 	})
 }

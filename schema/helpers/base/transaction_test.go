@@ -36,7 +36,7 @@ func TestTransaction(t *testing.T) {
 		base.TestTransactionKeeperPrototype, nil, nil).InitializeKeeper(Mapper, parametersPrototype()).(transaction)
 	require.Equal(t, "TestMessage", base.TestMessagePrototype().(*base.TestMessage).Route())
 	require.NotNil(t, base.TestMessagePrototype().(*base.TestMessage).GetSignBytes())
-	require.Equal(t, nil, base.TestTransactionKeeperPrototype().Transact(context.Context(), nil).GetError())
+	require.Equal(t, nil, base.TestTransactionKeeperPrototype().Transact(context, nil).GetError())
 
 	// GetName
 	require.Equal(t, "test", Transaction.GetName())
@@ -54,9 +54,9 @@ func TestTransaction(t *testing.T) {
 	err = command.ParseFlags([]string{"--node", "tcp://localhost:26657"})
 	require.Nil(t, err)
 	require.Equal(t, `ABCIQuery: Post failed: Post "http://localhost:26657": dial tcp 127.0.0.1:26657: connect: connection refused`,
-		command.ExecuteContext(context.Context()).Error())
+		command.ExecuteContext(context).Error())
 	// HandleQuery
-	_, err = Transaction.HandleMessage(context.Context(), message.(helpers.Message))
+	_, err = Transaction.HandleMessage(context, message.(helpers.Message))
 	require.Nil(t, err)
 
 	// RPC ERROR

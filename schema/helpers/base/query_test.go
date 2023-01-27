@@ -24,7 +24,7 @@ func TestQuery(t *testing.T) {
 		nil,
 	).Initialize(Mapper, parametersPrototype()).(query)
 
-	require.Equal(t, nil, base.TestQueryKeeperPrototype().(base.TestQueryKeeper).Help(context.Context(), nil))
+	require.Equal(t, nil, base.TestQueryKeeperPrototype().(base.TestQueryKeeper).Help(context, nil))
 	require.Equal(t, nil, base.TestQueryRequestPrototype().Validate())
 	require.Equal(t, false, base.TestQueryResponsePrototype().IsSuccessful())
 	require.Equal(t, nil, base.TestQueryResponsePrototype().GetError())
@@ -41,7 +41,7 @@ func TestQuery(t *testing.T) {
 	encodedRequest, err := Query.requestPrototype().Encode()
 	require.Nil(t, err)
 
-	_, err = Query.HandleQuery(context.Context(), abciTypes.RequestQuery{Data: encodedRequest})
+	_, err = Query.HandleQuery(context, abciTypes.RequestQuery{Data: encodedRequest})
 	require.Nil(t, err)
 
 	command := Query.Command()
@@ -50,7 +50,7 @@ func TestQuery(t *testing.T) {
 	err = command.ParseFlags([]string{"--node", "tcp://localhost:26657"})
 	require.Nil(t, err)
 	require.Equal(t, `ABCIQuery: Post failed: Post "http://localhost:26657": dial tcp 127.0.0.1:26657: connect: connection refused`,
-		command.ExecuteContext(context.Context()).Error())
+		command.ExecuteContext(context).Error())
 
 	// require.Equal(t, nil, command.ExecuteContext(context.Context()))
 

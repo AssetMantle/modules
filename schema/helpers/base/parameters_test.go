@@ -4,6 +4,7 @@
 package base
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"testing"
 
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -26,7 +27,7 @@ func TestParameters(t *testing.T) {
 	ParameterList := []parametersSchema.Parameter{Parameter}
 	Parameters := NewParameters(ParameterList...).(*parameters)
 	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
-	subspace.SetParamSet(context, Parameters)
+	subspace.SetParamSet(sdkTypes.UnwrapSDKContext(context), Parameters)
 	Parameters = Parameters.Initialize(subspace).(*parameters)
 
 	require.NotNil(t, Parameters.ParamSetPairs())
@@ -42,9 +43,9 @@ func TestParameters(t *testing.T) {
 	require.Nil(t, err)
 
 	require.NotPanics(t, func() {
-		Parameters.Fetch(context.Context(), baseIDs.NewStringID("testParameter"))
+		Parameters.Fetch(context, baseIDs.NewStringID("testParameter"))
 	})
 
-	require.Equal(t, "testData123", Parameters.Mutate(context.Context(),
+	require.Equal(t, "testData123", Parameters.Mutate(context,
 		baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData123"), func(interface{}) error { return nil })).Get(baseIDs.NewStringID("testParameter")).GetData().String())
 }
