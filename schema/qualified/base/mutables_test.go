@@ -27,6 +27,7 @@ func TestNewMutables(t *testing.T) {
 		want qualified.Mutables
 	}{
 		{"+ve", args{}, &Mutables{}},
+		{"+ve empty list", args{base.NewPropertyList()}, &Mutables{PropertyList: &base.PropertyList{}}},
 		{"+ve", args{base.NewPropertyList(testMutableProperties)}, &Mutables{base.NewPropertyList(testMutableProperties).(*base.PropertyList)}},
 	}
 	for _, tt := range tests {
