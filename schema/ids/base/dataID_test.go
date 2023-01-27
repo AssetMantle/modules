@@ -133,8 +133,8 @@ func Test_dataID_Compare(t *testing.T) {
 
 func Test_dataID_GetHashID(t *testing.T) {
 	type fields struct {
-		Type   ids.StringID
-		HashID ids.HashID
+		Type   *StringID
+		HashID *HashID
 	}
 	tests := []struct {
 		name   string
@@ -142,14 +142,14 @@ func Test_dataID_GetHashID(t *testing.T) {
 		want   ids.HashID
 	}{
 		{"+ve", fields{}, (&DataID{}).HashID},
-		{"+ve", fields{NewStringID("B"), NewBooleanData(true).GenerateHashID()}, NewBooleanData(true).GenerateHashID()},
-		{"+ve", fields{NewStringID("B"), NewBooleanData(false).GenerateHashID()}, NewBooleanData(false).GenerateHashID()},
+		{"+ve", fields{NewStringID("B").(*StringID), NewBooleanData(true).GenerateHashID().(*HashID)}, NewBooleanData(true).GenerateHashID()},
+		{"+ve", fields{NewStringID("B").(*StringID), NewBooleanData(false).GenerateHashID().(*HashID)}, NewBooleanData(false).GenerateHashID()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dataID := &DataID{
-				TypeID: tt.fields.Type.(*StringID),
-				HashID: tt.fields.HashID.(*HashID),
+				TypeID: tt.fields.Type,
+				HashID: tt.fields.HashID,
 			}
 			if got := dataID.GetHashID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetHashID() = %v, want %v", got, tt.want)
@@ -160,22 +160,22 @@ func Test_dataID_GetHashID(t *testing.T) {
 
 func Test_dataID_String(t *testing.T) {
 	type fields struct {
-		Type   ids.StringID
-		HashID ids.HashID
+		Type   *StringID
+		HashID *HashID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{NewStringID("B"), NewBooleanData(true).GenerateHashID()}, stringUtilities.JoinIDStrings(NewStringID("B").AsString(), NewBooleanData(true).GenerateHashID().AsString())},
-		{"+ve", fields{NewStringID("B"), NewBooleanData(false).GenerateHashID()}, stringUtilities.JoinIDStrings(NewStringID("B").AsString(), NewBooleanData(false).GenerateHashID().AsString())},
+		{"+ve", fields{NewStringID("B").(*StringID), NewBooleanData(true).GenerateHashID().(*HashID)}, stringUtilities.JoinIDStrings(NewStringID("B").AsString(), NewBooleanData(true).GenerateHashID().AsString())},
+		{"+ve", fields{NewStringID("B").(*StringID), NewBooleanData(false).GenerateHashID().(*HashID)}, stringUtilities.JoinIDStrings(NewStringID("B").AsString(), NewBooleanData(false).GenerateHashID().AsString())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			dataID := &DataID{
-				TypeID: tt.fields.Type.(*StringID),
-				HashID: tt.fields.HashID.(*HashID),
+				TypeID: tt.fields.Type,
+				HashID: tt.fields.HashID,
 			}
 			if got := dataID.AsString(); got != tt.want {
 				t.Errorf("String() = %v, want %v", got, tt.want)
