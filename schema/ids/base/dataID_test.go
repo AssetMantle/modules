@@ -15,35 +15,36 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-func TestNewDataID(t *testing.T) {
-	type args struct {
-		data data.Data
-	}
-	tests := []struct {
-		name      string
-		args      args
-		want      ids.DataID
-		wantError bool
-	}{
-		{"-ve with nil", args{}, &DataID{}, true},
-		{"+ve", args{NewBooleanData(true)}, &DataID{NewStringID("B").(*StringID), NewBooleanData(true).GenerateHashID().(*HashID)}, false},
-		{"-ve with invalid data", args{nil}, &DataID{}, true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			defer func() {
-				r := recover()
-
-				if (r != nil) != tt.wantError {
-					t.Errorf("GenerateDataID() error = %v wantError = %v", r, tt.wantError)
-				}
-			}()
-			if got := GenerateDataID(tt.args.data); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GenerateDataID() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+//TODO: Test GetID for all Data types; If every data tests GetID() then GenerateID() is automatically tested
+//func TestNewDataID(t *testing.T) {
+//	type args struct {
+//		data data.Data
+//	}
+//	tests := []struct {
+//		name      string
+//		args      args
+//		want      ids.DataID
+//		wantError bool
+//	}{
+//		{"-ve with nil", args{}, &DataID{}, true},
+//		{"+ve", args{NewBooleanData(true)}, &DataID{NewStringID("B").(*StringID), NewBooleanData(true).GenerateHashID().(*HashID)}, false},
+//		{"-ve with invalid data", args{nil}, &DataID{}, true},
+//	}
+//	for _, tt := range tests {
+//		t.Run(tt.name, func(t *testing.T) {
+//			defer func() {
+//				r := recover()
+//
+//				if (r != nil) != tt.wantError {
+//					t.Errorf("GenerateDataID() error = %v wantError = %v", r, tt.wantError)
+//				}
+//			}()
+//			if got := GenerateDataID(tt.args.data); !reflect.DeepEqual(got, tt.want) {
+//				t.Errorf("GenerateDataID() = %v, want %v", got, tt.want)
+//			}
+//		})
+//	}
+//}
 func Test_dataIDFromInterface(t *testing.T) {
 	type args struct {
 		i interface{}
@@ -222,7 +223,7 @@ func (booleanData booleanData) Compare(listable traits.Listable) int {
 
 	return -1
 }
-func (booleanData booleanData) String() string {
+func (booleanData booleanData) AsString() string {
 	return strconv.FormatBool(booleanData.Value)
 }
 

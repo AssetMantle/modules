@@ -285,7 +285,7 @@ func (decData decData) Compare(listable traits.Listable) int {
 
 	return 0
 }
-func (decData decData) String() string {
+func (decData decData) AsString() string {
 	return decData.Value.String()
 }
 func (decData decData) Bytes() []byte {
