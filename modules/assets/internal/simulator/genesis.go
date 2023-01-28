@@ -42,7 +42,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	for i := range mappableList {
 		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
 		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
-		mappableList[i] = mappable.NewMappable(base.NewAsset(baseIDs.NewClassificationID(immutables, mutables), immutables, mutables))
+		mappableList[i] = mappable.NewMappable(base.NewAsset(baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID), immutables.(*baseQualified.Immutables), mutables.(*baseQualified.Mutables)))
 	}
 
 	genesisState := baseHelpers.NewGenesis(key.Prototype, genesis.PrototypeGenesisState().Initialize(mappableList, []parametersSchema.Parameter{dummy.Parameter.Mutate(Data)}))

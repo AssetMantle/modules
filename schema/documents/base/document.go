@@ -51,10 +51,10 @@ func (document *Document) Mutate(propertyList ...properties.Property) documents.
 	return document
 }
 
-func NewDocument(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) documents.Document {
+func NewDocument(classificationID *baseIDs.ClassificationID, immutables *base.Immutables, mutables *base.Mutables) documents.Document {
 	return &Document{
-		ClassificationID: classificationID.(*baseIDs.ClassificationID),
-		Immutables:       immutables.(*base.Immutables),
-		Mutables:         mutables.(*base.Mutables),
+		ClassificationID: classificationID,
+		Immutables:       immutables,
+		Mutables:         mutables,
 	}
 }

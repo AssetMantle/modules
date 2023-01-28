@@ -1,6 +1,8 @@
 package base
 
 import (
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data"
@@ -8,7 +10,6 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
-	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -67,7 +68,7 @@ func (order order) GetMakerOwnableSplit() sdkTypes.Dec {
 	return constants.MakerOwnableSplitProperty.GetData().Get().(data.DecData).Get()
 }
 
-func NewOrder(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) documents.Order {
+func NewOrder(classificationID *baseIDs.ClassificationID, immutables *baseQualified.Immutables, mutables *baseQualified.Mutables) documents.Order {
 	return order{Document: NewDocument(classificationID, immutables, mutables)}
 }
 

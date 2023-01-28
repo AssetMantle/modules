@@ -82,7 +82,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	assets.Add(mappable.NewMappable(base.NewAsset(message.ClassificationID, immutables, mutables)))
+	assets.Add(mappable.NewMappable(base.NewAsset(message.ClassificationID, immutables.(*baseQualified.Immutables), mutables.(*baseQualified.Mutables))))
 
 	return &Response{}, nil
 }

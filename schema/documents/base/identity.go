@@ -1,16 +1,16 @@
 package base
 
 import (
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
-	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
-	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -69,7 +69,7 @@ func accAddressesToData(accAddresses ...sdkTypes.AccAddress) []data.Data {
 	return accAddressData
 }
 
-func NewIdentity(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) documents.Identity {
+func NewIdentity(classificationID *baseIDs.ClassificationID, immutables *baseQualified.Immutables, mutables *baseQualified.Mutables) documents.Identity {
 	return NewIdentityFromDocument(NewDocument(classificationID, immutables, mutables))
 }
 
