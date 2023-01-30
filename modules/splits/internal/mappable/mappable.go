@@ -50,11 +50,3 @@ func MappablesToInterface(mappables []*Mappable) []helpers.Mappable {
 	}
 	return Mappables
 }
-
-func ProduceList(mappables []helpers.Mappable) []*Mappable {
-	var list []*Mappable
-	for _, item := range mappables {
-		list = append(list, item.(*Mappable))
-	}
-	return list
-}

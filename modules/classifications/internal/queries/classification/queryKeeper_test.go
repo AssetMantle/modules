@@ -80,6 +80,6 @@ func Test_Query_Keeper_Classification(t *testing.T) {
 	keepers.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(baseDocuments.NewClassification(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))))
 
 	testQueryRequest := newQueryRequest(classificationID)
-	require.Equal(t, &QueryResponse{Success: true, Error: "", List: ProduceList(keepers.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Fetch(key.NewKey(classificationID)).GetList())}, keepers.(queryKeeper).Enquire(sdkTypes.WrapSDKContext(context), testQueryRequest))
+	require.Equal(t, &QueryResponse{Success: true, Error: "", List: mappable.MappablesFromInterface(keepers.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Fetch(key.NewKey(classificationID)).GetList())}, keepers.(queryKeeper).Enquire(sdkTypes.WrapSDKContext(context), testQueryRequest))
 
 }
