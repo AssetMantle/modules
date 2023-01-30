@@ -4,6 +4,8 @@
 package identity
 
 import (
+	"context"
+	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"reflect"
 	"testing"
 
@@ -24,7 +26,15 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-func CreateTestInputContext(t *testing.T) sdkTypes.Context {
+func ProduceList(mappables []helpers.Mappable) []*mappable.Mappable {
+	var list []*mappable.Mappable
+	for _, item := range mappables {
+		list = append(list, item.(*mappable.Mappable))
+	}
+	return list
+}
+
+func CreateTestInputContext(t *testing.T) context.Context {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -46,7 +56,7 @@ func CreateTestInputContext(t *testing.T) sdkTypes.Context {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	return context
+	return sdkTypes.WrapSDKContext(context)
 }
 
 func Test_newQueryResponse(t *testing.T) {
@@ -62,8 +72,8 @@ func Test_newQueryResponse(t *testing.T) {
 		want helpers.QueryResponse
 	}{
 
-		{"+ve", args{collection: collection, error: nil}, queryResponse{Success: true, Error: nil}},
-		{"-ve with error", args{collection: collection, error: constants.IncorrectFormat}, queryResponse{Success: false, Error: constants.IncorrectFormat}},
+		{"+ve", args{collection: collection, error: nil}, &QueryResponse{Success: true, Error: ""}},
+		{"-ve with error", args{collection: collection, error: constants.IncorrectFormat}, &QueryResponse{Success: false, Error: constants.IncorrectFormat.Error()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -81,7 +91,7 @@ func Test_queryResponse_Decode(t *testing.T) {
 	encodedResponse, _ := testQueryResponse.Encode()
 	type fields struct {
 		Success bool
-		Error   error
+		Error   string
 		List    []helpers.Mappable
 	}
 	type args struct {
@@ -95,14 +105,14 @@ func Test_queryResponse_Decode(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", fields{Success: true, Error: nil}, args{bytes: encodedResponse}, testQueryResponse, false},
+		{"+ve", fields{Success: true, Error: ""}, args{bytes: encodedResponse}, testQueryResponse, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryResponse := queryResponse{
+			queryResponse := &QueryResponse{
 				Success: tt.fields.Success,
 				Error:   tt.fields.Error,
-				List:    tt.fields.List,
+				List:    ProduceList(tt.fields.List),
 			}
 			got, err := queryResponse.Decode(tt.args.bytes)
 			if (err != nil) != tt.wantErr {
@@ -119,8 +129,8 @@ func Test_queryResponse_Decode(t *testing.T) {
 func Test_queryResponse_Encode(t *testing.T) {
 	context := CreateTestInputContext(t)
 	collection := mapper.Prototype().NewCollection(context)
-	encodedByte, err := common.LegacyAmino.MarshalJSON(queryResponse{Success: true, Error: nil, List: collection.GetList()})
-	encodedByteWithError, _err := common.LegacyAmino.MarshalJSON(queryResponse{Success: false, Error: constants.IncorrectFormat, List: collection.GetList()})
+	encodedByte, err := common.LegacyAmino.MarshalJSON(&QueryResponse{Success: true, Error: "", List: ProduceList(collection.GetList())})
+	encodedByteWithError, _err := common.LegacyAmino.MarshalJSON(&QueryResponse{Success: false, Error: constants.IncorrectFormat.Error(), List: ProduceList(collection.GetList())})
 	require.Nil(t, err)
 	type fields struct {
 		Success bool
@@ -139,10 +149,10 @@ func Test_queryResponse_Encode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryResponse := queryResponse{
+			queryResponse := &QueryResponse{
 				Success: tt.fields.Success,
-				Error:   tt.fields.Error,
-				List:    tt.fields.List,
+				Error:   tt.fields.Error.Error(),
+				List:    ProduceList(tt.fields.List),
 			}
 			got, err := queryResponse.Encode()
 			if (err != nil) != tt.wantErr {
@@ -173,10 +183,10 @@ func Test_queryResponse_GetError(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryResponse := queryResponse{
+			queryResponse := &QueryResponse{
 				Success: tt.fields.Success,
-				Error:   tt.fields.Error,
-				List:    tt.fields.List,
+				Error:   tt.fields.Error.Error(),
+				List:    ProduceList(tt.fields.List),
 			}
 			if err := queryResponse.GetError(); (err != nil) != tt.wantErr {
 				t.Errorf("GetError() error = %v, wantErr %v", err, tt.wantErr)
@@ -202,10 +212,10 @@ func Test_queryResponse_IsSuccessful(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryResponse := queryResponse{
+			queryResponse := &QueryResponse{
 				Success: tt.fields.Success,
-				Error:   tt.fields.Error,
-				List:    tt.fields.List,
+				Error:   tt.fields.Error.Error(),
+				List:    ProduceList(tt.fields.List),
 			}
 			if got := queryResponse.IsSuccessful(); got != tt.want {
 				t.Errorf("IsSuccessful() = %v, want %v", got, tt.want)
@@ -220,7 +230,7 @@ func Test_responsePrototype(t *testing.T) {
 		want helpers.QueryResponse
 	}{
 
-		{"+ve", queryResponse{}},
+		{"+ve", &QueryResponse{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
