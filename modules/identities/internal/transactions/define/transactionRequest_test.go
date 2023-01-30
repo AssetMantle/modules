@@ -271,7 +271,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{BaseReq: testBaseReq, FromID: testIdentity.String(), ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, newMessage(fromAccAddress, testIdentity, baseLists.NewPropertyList(immutableMetaProperties), immutableProperties.ScrubData(), baseLists.NewPropertyList(mutableMetaProperties), mutableProperties.ScrubData()), false},
+		{"+ve", fields{BaseReq: testBaseReq, FromID: testIdentity.AsString(), ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, newMessage(fromAccAddress, testIdentity, baseLists.NewPropertyList(immutableMetaProperties), immutableProperties.ScrubData(), baseLists.NewPropertyList(mutableMetaProperties), mutableProperties.ScrubData()), false},
 		{"-ve wrong Identity", fields{BaseReq: testBaseReq, FromID: "WrongIdentity", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, nil, true},
 	}
 	for _, tt := range tests {

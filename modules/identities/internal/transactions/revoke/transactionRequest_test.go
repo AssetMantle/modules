@@ -22,7 +22,6 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
-	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
@@ -30,7 +29,7 @@ import (
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
-func createTestInput(t *testing.T) (rest.BaseReq, string, ids.IdentityID, ids.IdentityID, ids.ClassificationID) {
+func createTestInput(t *testing.T) (rest.BaseReq, string, *baseIDs.IdentityID, *baseIDs.IdentityID, *baseIDs.ClassificationID) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -39,7 +38,7 @@ func createTestInput(t *testing.T) (rest.BaseReq, string, ids.IdentityID, ids.Id
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 	testToAddress := "cosmos1vx8knpllrj7n963p9ttd80w47kpacrhuts497x"
-	return testBaseReq, testToAddress, testFromID, testToID, testClassificationID
+	return testBaseReq, testToAddress, testFromID.(*baseIDs.IdentityID), testToID.(*baseIDs.IdentityID), testClassificationID.(*baseIDs.ClassificationID)
 }
 
 func Test_newTransactionRequest(t *testing.T) {
@@ -220,7 +219,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Type & Data same but Not matching
-		{"+ve", fields{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, message{testFromAccAddress, testFromID, testToID, testClassificationID}, false},
+		{"+ve", fields{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, &Message{testFromAccAddress.String(), testFromID, testToID, testClassificationID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
