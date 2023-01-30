@@ -4,6 +4,7 @@
 package ownable
 
 import (
+	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -137,6 +138,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OwnableID})
+
 	viper.Set(constants.OwnableID.GetName(), testOwnableID.AsString())
 	type fields struct {
 		OwnableID *baseIds.AnyOwnableID
@@ -152,7 +154,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testOwnableID}, args{cliCommand, context}, newQueryRequest(testOwnableID), false},
+		{"+ve", fields{testOwnableID}, args{cliCommand, test.TestClientContext}, newQueryRequest(testOwnableID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

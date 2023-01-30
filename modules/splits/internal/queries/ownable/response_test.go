@@ -28,11 +28,11 @@ func Test_Split_Response(t *testing.T) {
 	bytes, _ := common.LegacyAmino.MarshalJSON(testQueryResponse)
 	require.Equal(t, bytes, encodedResponse)
 
-	decodedResponse, _ := queryResponse{}.Decode(bytes)
+	decodedResponse, _ := (&QueryResponse{}).Decode(bytes)
 	require.Equal(t, testQueryResponse, decodedResponse)
 
-	decodedResponse2, _ := queryResponse{}.Decode([]byte{})
+	decodedResponse2, _ := (&QueryResponse{}).Decode([]byte{})
 	require.Equal(t, nil, decodedResponse2)
 
-	require.Equal(t, queryResponse{}, responsePrototype())
+	require.Equal(t, &QueryResponse{}, responsePrototype())
 }

@@ -6,6 +6,7 @@ package deputize
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -79,6 +80,7 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.ToID, constants.FromID, constants.ClassificationID, constants.MaintainedProperties, constants.CanMintAsset, constants.CanBurnAsset, constants.CanRenumerateAsset, constants.CanAddMaintainer, constants.CanRemoveMaintainer, constants.CanMutateMaintainer})
+
 	viper.Set(constants.ToID.GetName(), fromID.AsString())
 	viper.Set(constants.FromID.GetName(), fromID.AsString())
 	viper.Set(constants.ClassificationID.GetName(), classificationID.AsString())
@@ -113,7 +115,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{}, args{cliCommand, context}, transactionRequest{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), mutableMetaPropertiesString, true, true, true, true, true, true}, false},
+		{"+ve", fields{}, args{cliCommand, test.TestClientContext}, transactionRequest{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), mutableMetaPropertiesString, true, true, true, true, true, true}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

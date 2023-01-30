@@ -6,6 +6,7 @@ package unwrap
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/AssetMantle/modules/utilities/test"
 	"math/big"
 	"reflect"
 	"testing"
@@ -80,6 +81,7 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OwnableID, constants.FromID, constants.Value})
+
 	viper.Set(constants.FromID.GetName(), fromID.AsString())
 	viper.Set(constants.OwnableID.GetName(), ownableID.AsString())
 	viper.Set(constants.Value.GetName(), testRate.String())
@@ -100,7 +102,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}, args{cliCommand, context}, transactionRequest{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}, args{cliCommand, test.TestClientContext}, transactionRequest{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

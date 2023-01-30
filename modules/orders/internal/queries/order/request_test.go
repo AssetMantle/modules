@@ -4,6 +4,7 @@
 package order
 
 import (
+	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -149,6 +150,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OrderID})
+
 	viper.Set(constants.OrderID.GetName(), testOrderID.AsString())
 	type fields struct {
 		OrderID *baseIDs.OrderID
@@ -164,7 +166,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testOrderID}, args{cliCommand, context}, newQueryRequest(testOrderID), false},
+		{"+ve", fields{testOrderID}, args{cliCommand, test.TestClientContext}, newQueryRequest(testOrderID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

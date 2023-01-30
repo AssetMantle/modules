@@ -6,6 +6,7 @@ package immediate
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -100,6 +101,7 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ClassificationID, constants.TakerID, constants.MakerOwnableID, constants.TakerOwnableID, constants.ExpiresIn, constants.MakerOwnableSplit, constants.TakerOwnableSplit, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
+
 	viper.Set(constants.FromID.GetName(), testFromID.AsString())
 	viper.Set(constants.ClassificationID.GetName(), testClassificationID.AsString())
 	viper.Set(constants.TakerID.GetName(), testFromID.AsString())
@@ -138,7 +140,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerOwnableID.AsString(), takerOwnableID.AsString(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, context}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerOwnableID.AsString(), takerOwnableID.AsString(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString), false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerOwnableID.AsString(), takerOwnableID.AsString(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, test.TestClientContext}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerOwnableID.AsString(), takerOwnableID.AsString(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

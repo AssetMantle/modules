@@ -4,6 +4,7 @@
 package split
 
 import (
+	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -146,6 +147,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.SplitID})
+
 	viper.Set(constants.SplitID.GetName(), splitID.AsString())
 	type fields struct {
 		SplitID *baseIds.SplitID
@@ -161,7 +163,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{splitID}, args{cliCommand, context}, newQueryRequest(splitID), false},
+		{"+ve", fields{splitID}, args{cliCommand, test.TestClientContext}, newQueryRequest(splitID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
