@@ -38,7 +38,7 @@ func TestNewMappable(t *testing.T) {
 		args args
 		want helpers.Mappable
 	}{
-		{"+ve", args{testOrder}, mappable{baseDocuments.NewOrder(classificationID, immutables, mutables)}},
+		{"+ve", args{testOrder}, &Mappable{baseDocuments.NewOrder(classificationID, immutables, mutables).Get().(*baseDocuments.Document)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -54,7 +54,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		{"+ve", mappable{}},
+		{"+ve", &Mappable{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -80,8 +80,8 @@ func Test_mappable_GetKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mappable := mappable{
-				Order: tt.fields.Order,
+			mappable := &Mappable{
+				Order: tt.fields.Order.Get().(*baseDocuments.Document),
 			}
 			if tt.wantPanic {
 				require.Panics(t, func() {
@@ -111,8 +111,8 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ma := mappable{
-				Order: tt.fields.Order,
+			ma := &Mappable{
+				Order: tt.fields.Order.Get().(*baseDocuments.Document),
 			}
 			ma.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
