@@ -49,7 +49,7 @@ func CreateTestInput(t *testing.T) sdkTypes.Context {
 
 func Test_Asset_Response(t *testing.T) {
 	context := CreateTestInput(t)
-	collection := mapper.Prototype().sdkTypes.WrapSDKContext(context)
+	collection := mapper.Prototype().NewCollection(sdkTypes.WrapSDKContext(context))
 
 	testQueryResponse := newQueryResponse(collection, nil)
 	testQueryResponseWithError := newQueryResponse(collection, constants.IncorrectFormat)
@@ -63,11 +63,11 @@ func Test_Asset_Response(t *testing.T) {
 	bytes, _ := common.LegacyAmino.MarshalJSON(testQueryResponse)
 	require.Equal(t, bytes, encodedResponse)
 
-	decodedResponse, _ := queryResponse{}.Decode(bytes)
+	decodedResponse, _ := (&QueryResponse{}).Decode(bytes)
 	require.Equal(t, testQueryResponse, decodedResponse)
 
-	decodedResponse2, _ := queryResponse{}.Decode([]byte{})
+	decodedResponse2, _ := (&QueryResponse{}).Decode([]byte{})
 	require.Equal(t, nil, decodedResponse2)
 
-	require.Equal(t, queryResponse{}, responsePrototype())
+	require.Equal(t, &QueryResponse{}, responsePrototype())
 }
